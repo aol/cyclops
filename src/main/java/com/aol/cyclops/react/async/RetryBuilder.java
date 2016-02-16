@@ -1,4 +1,4 @@
-package com.aol.cyclops.react;
+package com.aol.cyclops.react.async;
 
 import java.util.concurrent.Executors;
 

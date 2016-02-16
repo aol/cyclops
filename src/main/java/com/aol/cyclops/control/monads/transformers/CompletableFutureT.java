@@ -6,8 +6,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.jooq.lambda.function.Function1;
-
 import com.aol.cyclops.control.AnyM;
 
 /**
@@ -48,7 +46,7 @@ public class CompletableFutureT<A> {
 	 * @param peek  Consumer to accept current value of CompletableFuture
 	 * @return CompletableFutureT with peek call
 	 */
-   public CompletableFutureT<A> peek(Consumer<A> peek){
+   public CompletableFutureT<A> peek(Consumer<? super A> peek){
 	  
        return of(run.peek(future-> future.thenApply(a->{peek.accept(a); return a;})));
    }
@@ -68,7 +66,7 @@ public class CompletableFutureT<A> {
 	 * @param f Mapping function for the wrapped CompletableFuture
 	 * @return CompletableFutureT that applies the map function to the wrapped CompletableFuture
 	 */   
-   public <B> CompletableFutureT<B> map(Function<A,B> f){
+   public <B> CompletableFutureT<B> map(Function<? super A,? extends B> f){
        return new CompletableFutureT<B>(run.map(o-> o.thenApply(f)));
    }
    /**
@@ -86,7 +84,7 @@ public class CompletableFutureT<A> {
 	 * @return CompletableFutureT that applies the flatMap function to the wrapped CompletableFuture
 	 */
 
-   public <B> CompletableFutureT<B> flatMap(Function1<A,CompletableFutureT<B>> f){
+   public <B> CompletableFutureT<B> flatMap(Function<? super A,CompletableFutureT<B>> f){
 	   return of(run.map(future-> future.thenCompose(a-> f.apply(a).run.asSequence().toList().get(0))));
    }
    /**
@@ -118,7 +116,7 @@ public class CompletableFutureT<A> {
 	 * @param fn Function to enhance with functionality from CompletableFuture and another monad type
 	 * @return Function that accepts and returns an CompletableFutureT
 	 */   
-   public static <U, R> Function<CompletableFutureT<U>, CompletableFutureT<R>> lift(Function<U, R> fn) {
+   public static <U, R> Function<CompletableFutureT<U>, CompletableFutureT<R>> lift(Function<? super U,? extends R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));
 	}
    /**
@@ -151,7 +149,7 @@ public class CompletableFutureT<A> {
   	 * @param fn BiFunction to enhance with functionality from CompletableFuture and another monad type
   	 * @return Function that accepts and returns an CompletableFutureT
   	 */
-	public static <U1, U2, R> BiFunction<CompletableFutureT<U1>, CompletableFutureT<U2>, CompletableFutureT<R>> lift2(BiFunction<U1, U2, R> fn) {
+	public static <U1, U2, R> BiFunction<CompletableFutureT<U1>, CompletableFutureT<U2>, CompletableFutureT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
 		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 	/**

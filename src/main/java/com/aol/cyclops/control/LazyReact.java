@@ -17,9 +17,9 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.react.RetryBuilder;
+import com.aol.cyclops.react.async.RetryBuilder;
 import com.aol.cyclops.react.async.subscription.Subscription;
-import com.aol.cyclops.react.config.MaxActive;
+import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.react.stream.InfiniteClosingSpliterator;
 import com.aol.cyclops.react.stream.InfiniteClosingSpliteratorFromIterator;
 import com.aol.cyclops.react.stream.ReactBuilder;

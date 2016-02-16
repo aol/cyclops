@@ -16,7 +16,7 @@ import com.aol.cyclops.react.async.future.FastFuture;
 import com.aol.cyclops.react.collectors.lazy.EmptyCollector;
 import com.aol.cyclops.react.collectors.lazy.IncrementalReducer;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
-import com.aol.cyclops.react.config.MaxActive;
+import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.react.exceptions.SimpleReactProcessingException;
 import com.aol.cyclops.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.react.stream.MissingValue;

@@ -6,8 +6,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.react.async.Queue.ClosedQueueException;
-import com.aol.cyclops.react.util.SimpleTimer;
 import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops.util.SimpleTimer;
 
 import lombok.AllArgsConstructor;
 

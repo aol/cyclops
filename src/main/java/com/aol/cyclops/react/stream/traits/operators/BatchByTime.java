@@ -18,14 +18,7 @@ import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.Queue.ClosedQueueException;
 import com.aol.cyclops.react.async.Queue.QueueTimeoutException;
 import com.aol.cyclops.react.async.subscription.Continueable;
-import com.aol.cyclops.react.util.SimpleTimer;
-/*
- * considerations
- * 
- *  1. read time out (loop again)
- *  2. Queue closed - return result
- *  3. entry should always be non-empty while queue is open (at list one result)
- */
+import com.aol.cyclops.util.SimpleTimer;
 
 @AllArgsConstructor
 public class BatchByTime<U> implements Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>>{

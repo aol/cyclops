@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.config.MaxActive;
 import com.aol.cyclops.react.stream.traits.ConfigurableStream;
 
 public class SamplingCollectorTest {

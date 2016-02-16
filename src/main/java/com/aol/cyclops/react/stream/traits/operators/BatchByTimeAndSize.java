@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.Queue.ClosedQueueException;
 import com.aol.cyclops.react.async.Queue.QueueTimeoutException;
-import com.aol.cyclops.react.util.SimpleTimer;
+import com.aol.cyclops.util.SimpleTimer;
 
 @AllArgsConstructor
 public class BatchByTimeAndSize<U> implements Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> {

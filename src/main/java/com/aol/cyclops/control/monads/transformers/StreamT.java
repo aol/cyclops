@@ -53,7 +53,7 @@ public class StreamT<T> {
   	 * @param peek  Consumer to accept current value of Stream
   	 * @return StreamT with peek call
   	 */
-   public StreamT<T> peek(Consumer<T> peek){
+   public StreamT<T> peek(Consumer<? super T> peek){
 	   return map(a-> {peek.accept(a); return a;});
    }
    /**
@@ -69,7 +69,7 @@ public class StreamT<T> {
  	 * @param test Predicate to filter the wrapped Stream
  	 * @return StreamT that applies the provided filter
  	 */
-   public StreamT<T> filter(Predicate<T> test){
+   public StreamT<T> filter(Predicate<? super T> test){
        return of(run.map(stream-> stream.filter(test)));
    }
    /**
@@ -88,7 +88,7 @@ public class StreamT<T> {
 	 * @param f Mapping function for the wrapped Stream
 	 * @return StreamT that applies the map function to the wrapped Stream
 	 */
-   public <B> StreamT<B> map(Function<T,B> f){
+   public <B> StreamT<B> map(Function<? super T,? extends B> f){
        return new StreamT<B>(run.map(o-> o.map(f)));
    }
    /**
@@ -105,7 +105,7 @@ public class StreamT<T> {
 	 * @param f FlatMap function
 	 * @return StreamT that applies the flatMap function to the wrapped Stream
 	 */
-   public <B> StreamT<B> flatMap(Function<T,StreamT<B>> f){
+   public <B> StreamT<B> flatMap(Function<? super T,StreamT<? extends B>> f){
 	   return of(run.map(stream-> stream.flatMap(a-> f.apply(a).run.asSequence())
 			   							.<B>flatMap(a->a)));
    }
@@ -136,7 +136,7 @@ public class StreamT<T> {
  	 * @param fn Function to enhance with functionality from Stream and another monad type
  	 * @return Function that accepts and returns an StreamT
  	 */
-   public static <U, R> Function<StreamT<U>, StreamT<R>> lift(Function<U, R> fn) {
+   public static <U, R> Function<StreamT<U>, StreamT<R>> lift(Function<? super U,? extends R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));
 	}
    /**

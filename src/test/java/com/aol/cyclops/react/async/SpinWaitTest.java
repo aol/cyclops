@@ -13,7 +13,7 @@ import com.aol.cyclops.react.async.wait.NoWaitRetry;
 import com.aol.cyclops.react.async.wait.SpinWait;
 import com.aol.cyclops.react.async.wait.WaitStrategy.Offerable;
 import com.aol.cyclops.react.async.wait.WaitStrategy.Takeable;
-import com.aol.cyclops.react.util.SimpleTimer;
+import com.aol.cyclops.util.SimpleTimer;
 
 public class SpinWaitTest {
 	int called = 0;

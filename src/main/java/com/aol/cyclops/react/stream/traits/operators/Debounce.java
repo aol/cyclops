@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 
 import com.aol.cyclops.react.async.Queue.ClosedQueueException;
 import com.aol.cyclops.react.async.Queue.QueueTimeoutException;
-import com.aol.cyclops.react.util.SimpleTimer;
+import com.aol.cyclops.util.SimpleTimer;
 
 @AllArgsConstructor
 public class Debounce<T> implements Function<Supplier<T>, Supplier<T>>{

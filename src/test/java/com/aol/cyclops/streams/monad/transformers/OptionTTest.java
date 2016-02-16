@@ -1,4 +1,4 @@
-package com.aol.cyclops.lambda.monads.transformers;
+package com.aol.cyclops.streams.monad.transformers;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

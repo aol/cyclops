@@ -13,7 +13,6 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
 import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.config.MaxActive;
 import com.aol.cyclops.react.stream.traits.BlockingStream;
 
 /**

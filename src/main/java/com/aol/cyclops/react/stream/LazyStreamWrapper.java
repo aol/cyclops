@@ -8,8 +8,8 @@ import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.async.future.FastFuture;
 import com.aol.cyclops.react.async.future.FinalPipeline;
+import com.aol.cyclops.react.async.future.FuturePool;
 import com.aol.cyclops.react.async.future.PipelineBuilder;
-import com.aol.cyclops.react.async.future.pool.FuturePool;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;

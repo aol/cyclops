@@ -55,7 +55,7 @@ public class ListT<T> {
 	 * @param peek  Consumer to accept current value of List
 	 * @return ListT with peek call
 	 */
-   public ListT<T> peek(Consumer<T> peek){
+   public ListT<T> peek(Consumer<? super T> peek){
 	   return map(a-> {peek.accept(a); return a;});
      
    }
@@ -72,7 +72,7 @@ public class ListT<T> {
 	 * @param test Predicate to filter the wrapped List
 	 * @return ListT that applies the provided filter
 	 */
-   public ListT<T> filter(Predicate<T> test){
+   public ListT<T> filter(Predicate<? super T> test){
        return of(run.map(stream-> ReactiveSeq.fromList(stream).filter(test).toList()));
    }
    /**
@@ -91,8 +91,8 @@ public class ListT<T> {
 	 * @param f Mapping function for the wrapped List
 	 * @return ListT that applies the map function to the wrapped List
 	 */
-   public <B> ListT<B> map(Function<T,B> f){
-       return of(run.map(o-> ReactiveSeq.fromList(o).map(f).toList()));
+   public <B> ListT<B> map(Function<? super T,? extends B> f){
+       return of(run.map(o-> (List<B>)ReactiveSeq.fromList(o).map(f).toList()));
    }
    /**
 	 * Flat Map the wrapped List
@@ -108,7 +108,7 @@ public class ListT<T> {
 	 * @param f FlatMap function
 	 * @return ListT that applies the flatMap function to the wrapped List
 	 */
-   public <B> ListT<B> flatMap(Function1<T,ListT<B>> f){
+   public <B> ListT<B> flatMap(Function1<? super T,ListT<B>> f){
 	  
 	   return of( run.map(stream-> ReactiveSeq.fromList(stream).flatMap(a-> f.apply(a).run.asSequence()).flatMap(a->a.stream())
 			   .toList()));
@@ -140,7 +140,7 @@ public class ListT<T> {
 	 * @param fn Function to enhance with functionality from List and another monad type
 	 * @return Function that accepts and returns an ListT
 	 */
-   public static <U, R> Function<ListT<U>, ListT<R>> lift(Function<U, R> fn) {
+   public static <U, R> Function<ListT<U>, ListT<R>> lift(Function<? super U, ? extends R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));
    }
    /**
@@ -172,7 +172,7 @@ public class ListT<T> {
 	 * @param fn BiFunction to enhance with functionality from List and another monad type
 	 * @return Function that accepts and returns an ListT
 	 */
-	public static <U1, U2, R> BiFunction<ListT<U1>, ListT<U2>, ListT<R>> lift2(BiFunction<U1, U2, R> fn) {
+	public static <U1, U2, R> BiFunction<ListT<U1>, ListT<U2>, ListT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
 		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 	/**

@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.blockers;
+package com.aol.cyclops.react.collectors.lazy;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -19,7 +19,7 @@ import org.pcollections.ConsPStack;
 
 import com.aol.cyclops.react.exceptions.ThrowsSoftened;
 import com.aol.cyclops.react.stream.Status;
-import com.aol.cyclops.react.util.SimpleTimer;
+import com.aol.cyclops.util.SimpleTimer;
 
 
 @AllArgsConstructor

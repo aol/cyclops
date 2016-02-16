@@ -2,8 +2,8 @@
 package com.aol.cyclops.internal.comprehensions.donotation;
 
 import com.aol.cyclops.types.anyM.*;
+import com.aol.cyclops.util.function.*;
 import com.aol.cyclops.control.Reader;
-import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
 import java.io.BufferedReader;
@@ -682,12 +682,15 @@ public class DoComp5<T1,T2,T3,T4,T5> extends DoComp{
 		 * @param f To be applied to every element in the for comprehension
 		 * @return For comprehension result
 		 */
-		public <R> AnyMSeq<R> yield(Function<? super T1,Function<? super T2,Function<? super T3,Function<T4,Function<? super T5,? extends R>>>>> f){
+		public <R> AnyMSeq<R> yield(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>> f){
 			if(getOrgType()!=null)
 				return new MonadWrapper(this.yieldInternal(f),this.getOrgType()).anyMSeq();
 			else
 				return AnyM.ofSeq(this.yieldInternal(f));
 		}
+		public <R> AnyMSeq<R> yield(QuintFunction<? super T1,? super T2,? super T3,? super T4,? super T5,? extends R> f){
+            return this.yield(CurryVariance.curry5(f));
+        }
 		
 		
 		/**

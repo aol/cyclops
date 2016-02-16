@@ -70,13 +70,13 @@ public class TryTTest {
 	@Test
 	public void filterFail(){
 		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofMonad(Stream.of(Try.of(10))));
-		assertThat(optionT.filter(num->num<10).unwrap().<Stream<Try<String,RuntimeException>>>unwrap()
+		assertThat(optionT.filter(num->num<10).unwrap().<Stream<Optional<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Optional.empty()));
 	}
 	@Test
 	public void filterSuccess(){
 		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.fromStream(Stream.of(Try.of(10))));
-		assertThat(optionT.filter(num->num==10).unwrap().<Stream<Try<String,RuntimeException>>>unwrap()
+		assertThat(optionT.filter(num->num==10).unwrap().<Stream<Optional<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Optional.of(10)));
 	}
 	@Test

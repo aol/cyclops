@@ -23,11 +23,11 @@ import java.util.stream.StreamSupport;
 import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.async.Queue;
+import com.aol.cyclops.react.async.RetryBuilder;
 import com.aol.cyclops.react.async.factories.QueueFactory;
 import com.aol.cyclops.react.async.subscription.Continueable;
-import com.aol.cyclops.react.blockers.Blocker;
+import com.aol.cyclops.react.collectors.lazy.Blocker;
 import com.aol.cyclops.react.exceptions.SimpleReactFailedStageException;
 import com.aol.cyclops.react.exceptions.ThrowsSoftened;
 import com.aol.cyclops.react.stream.BaseSimpleReact;

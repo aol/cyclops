@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.react.config.MaxActive;
-import com.aol.cyclops.react.util.SimpleTimer;
+import com.aol.cyclops.react.collectors.lazy.MaxActive;
+import com.aol.cyclops.util.SimpleTimer;
 
 public class ReactToList {
 	static List res;

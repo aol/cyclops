@@ -22,8 +22,16 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 /**
+ * eXclusive Or (Xor)
+ * 
  * 'Right' (or primary type) biased disjunct union.
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
+ *  
+ *  <pre>
+ *  {@code 
+ *      Xor.primary("hello").map(v->v+" world") 
+ *      //Xor.primary["hello world"]
+ *  }
  *  
  * 
  * @author johnmcclean
@@ -33,6 +41,24 @@ import lombok.EqualsAndHashCode;
  */
 public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterable<PT>,Applicativable<PT>{
 
+	/**
+	 * Create an instance of the secondary type. Most methods are biased to the primary type,
+	 * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
+	 * 
+	 * <pre>
+	 * {@code 
+	 *   Xor.<Integer,Integer>secondary(10).map(i->i+1);
+	 *   //Xor.secondary[10]
+	 *    
+	 *    Xor.<Integer,Integer>secondary(10).swap().map(i->i+1);
+	 *    //Xor.primary[11]
+	 * }
+	 * </pre>
+	 * 
+	 * 
+	 * @param value to wrap
+	 * @return Secondary instance of Xor
+	 */
 	public static <ST,PT> Xor<ST,PT> secondary(ST value){
 		return new Secondary<>(value);
 	}

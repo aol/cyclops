@@ -4,6 +4,7 @@ import com.aol.cyclops.types.anyM.*;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
+import com.aol.cyclops.util.function.CurryVariance;
 import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
@@ -14,6 +15,8 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
@@ -736,6 +739,9 @@ public class DoComp2<T1, T2> extends DoComp {
 		else
 			return AnyM.ofSeq(this.yieldInternal(f));
 	}
+	public <R> AnyMSeq<R> yield(BiFunction<? super T1, ? super T2, ? extends R> f) {
+       return this.yield(CurryVariance.curry2(f));
+    }
 
 	/**
 	 * Filter data
@@ -758,5 +764,5 @@ public class DoComp2<T1, T2> extends DoComp {
 	public DoComp2<T1, T2> filter(Function<? super T1, Function<? super T2, Boolean>> f) {
 		return new DoComp2(getAssigned().plus(getAssigned().size(), new Entry("$$internalGUARD" + getAssigned().size(), new Guard(f))),getOrgType());
 	}
-
+	
 }

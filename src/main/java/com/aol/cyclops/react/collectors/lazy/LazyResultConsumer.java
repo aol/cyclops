@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.config.MaxActive;
 import com.aol.cyclops.react.stream.traits.ConfigurableStream;
 
 /**

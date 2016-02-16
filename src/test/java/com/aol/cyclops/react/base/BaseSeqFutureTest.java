@@ -102,12 +102,12 @@ public abstract class BaseSeqFutureTest {
 	
 	@Test
 	public void testAnyMatchFalse(){
-	    for(int i=0;i<10000;i++)
+	   
 	        assertThat(of(1,2,3,4,5).futureOperations().anyMatch(it-> it.equals(8)).join(),is(false));
 	}
 	@Test
 	public void testAllMatchFalse(){
-	    for(int i=0;i<10000;i++)
+	   
 	        assertThat(of(1,2,3,4,5).futureOperations().allMatch(it-> it<0 && it >6).join(),is(false));
 	}
 	@Test

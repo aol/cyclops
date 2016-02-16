@@ -5,12 +5,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
@@ -27,7 +29,7 @@ import com.aol.cyclops.util.function.Memoize;
  *
  * @param <T>
  */
-public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativable<T>{
+public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>, Filterable<T>, Applicativable<T>{
 
 	public static<T> Eval<T> now(T value){
 		return new Now<T>(value);
@@ -60,6 +62,24 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>,  Applicativa
 	public T get();
 	
 	
+	@Override
+    default <U> Maybe<U> ofType(Class<U> type) {
+       
+        return (Maybe<U>)Filterable.super.ofType(type);
+    }
+    @Override
+    default Maybe<T> filterNot(Predicate<? super T> fn) {
+       
+        return (Maybe<T>)Filterable.super.filterNot(fn);
+    }
+    @Override
+    default Maybe<T> notNull() {
+       
+        return (Maybe<T>)Filterable.super.notNull();
+    }
+    default Maybe<T> filter(Predicate<? super T> pred){
+	    return toMaybe().filter(pred);
+	}
 	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)

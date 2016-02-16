@@ -42,7 +42,7 @@ import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.async.subscription.Subscription;
 import com.aol.cyclops.react.collectors.lazy.BatchingCollector;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
-import com.aol.cyclops.react.config.MaxActive;
+import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.react.threads.ReactPool;
@@ -313,14 +313,30 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		return reverse().foldLeft(identity, accumulator);
 	}
 	@Override
+	public Optional<U> min(Comparator<? super U> comparator) {
+        return StreamUtils.min(this, comparator);
+    }
+	@Override
+    public Optional<U> max(Comparator<? super U> comparator) {
+        return StreamUtils.max(this, comparator);
+    }
+	@Override
+    public long count() {
+        return this.collect(Collectors.toList() ).size();
+    }
+
+
+	@Override
 	public  boolean allMatch(Predicate<? super U> c) {
+	   
 		
-		return filterNot(c).count()>0;
+		return filterNot(c).count()==0l;
 	}
+	
 	@Override
 	public  boolean anyMatch(Predicate<? super U> c) {
 		
-		return filterNot(c).findAny().isPresent();
+		return filter(c).findAny().isPresent();
 	}
 	@Override
 	public  boolean xMatch(int num, Predicate<? super U> c) {

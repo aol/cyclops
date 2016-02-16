@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.util;
+package com.aol.cyclops.util;
 
 
 /**

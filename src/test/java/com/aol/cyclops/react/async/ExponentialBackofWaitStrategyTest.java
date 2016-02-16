@@ -11,7 +11,7 @@ import com.aol.cyclops.react.async.wait.DirectWaitStrategy;
 import com.aol.cyclops.react.async.wait.ExponentialBackofWaitStrategy;
 import com.aol.cyclops.react.async.wait.WaitStrategy.Offerable;
 import com.aol.cyclops.react.async.wait.WaitStrategy.Takeable;
-import com.aol.cyclops.react.util.SimpleTimer;
+import com.aol.cyclops.util.SimpleTimer;
 
 public class ExponentialBackofWaitStrategyTest {
 	int called = 0;

@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.react.extractors.Extractors;
-import com.aol.cyclops.react.util.SimpleTimer;
+import com.aol.cyclops.util.SimpleTimer;
 
 
 

@@ -21,7 +21,7 @@ import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.cyclops.react.RetryBuilder;
+import com.aol.cyclops.react.async.RetryBuilder;
 import com.aol.cyclops.react.stream.ReactBuilder;
 import com.aol.cyclops.react.stream.ThreadPools;
 import com.aol.cyclops.react.stream.simple.SimpleReactStreamImpl;

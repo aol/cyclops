@@ -1,8 +1,6 @@
-package com.aol.cyclops.react.async.future.pool;
+package com.aol.cyclops.react.async.future;
 
 import java.util.function.Supplier;
-
-import com.aol.cyclops.react.async.future.FastFuture;
 
 import lombok.AllArgsConstructor;
 import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;

@@ -1,7 +1,7 @@
 
 package com.aol.cyclops.internal.comprehensions.donotation;
 import com.aol.cyclops.control.Reader;
-import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
+import com.aol.cyclops.util.function.*;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
 import java.io.BufferedReader;
@@ -690,6 +690,9 @@ public class DoComp4<T1,T2,T3,T4> extends DoComp{
 			else
 				return AnyM.ofSeq(this.yieldInternal(f));
 		}
+		public <R> AnyMSeq<R> yield(QuadFunction<? super T1,? super T2,? super T3,? super T4,? extends R> f){
+           return this.yield(CurryVariance.curry4(f));
+        }
 		
 		
 		/**

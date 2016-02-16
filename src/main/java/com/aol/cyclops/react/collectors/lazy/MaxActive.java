@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.config;
+package com.aol.cyclops.react.collectors.lazy;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

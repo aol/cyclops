@@ -56,7 +56,7 @@ public class OptionalT<T> {
 	 * @param peek  Consumer to accept current value of Optional
 	 * @return OptionalT with peek call
 	 */
-	public OptionalT<T> peek(Consumer<T> peek) {
+	public OptionalT<T> peek(Consumer<? super T> peek) {
 		return of(run.peek(opt -> opt.map(a -> {
 			peek.accept(a);
 			return a;
@@ -76,7 +76,7 @@ public class OptionalT<T> {
 	 * @param test Predicate to filter the wrapped Optional
 	 * @return OptionalT that applies the provided filter
 	 */
-	public OptionalT<T> filter(Predicate<T> test) {
+	public OptionalT<T> filter(Predicate<? super T> test) {
 		return of(run.map(opt -> opt.filter(test)));
 	}
 
@@ -96,7 +96,7 @@ public class OptionalT<T> {
 	 * @param f Mapping function for the wrapped Optional
 	 * @return OptionalT that applies the map function to the wrapped Optional
 	 */
-	public <B> OptionalT<B> map(Function<T, B> f) {
+	public <B> OptionalT<B> map(Function<? super T,? extends B> f) {
 		return new OptionalT<B>(run.map(o -> o.map(f)));
 	}
 
@@ -114,7 +114,7 @@ public class OptionalT<T> {
 	 * @param f FlatMap function
 	 * @return OptionalT that applies the flatMap function to the wrapped Optional
 	 */
-	public <B> OptionalT<B> flatMap(Function1<T, OptionalT<B>> f) {
+	public <B> OptionalT<B> flatMap(Function1<? super T, OptionalT<? extends B>> f) {
 
 		return of(run.bind(opt -> {
 			if (opt.isPresent())
@@ -187,7 +187,7 @@ public class OptionalT<T> {
 	 * @param fn BiFunction to enhance with functionality from Optional and another monad type
 	 * @return Function that accepts and returns an OptionalT
 	 */
-	public static <U1, U2, R> BiFunction<OptionalT<U1>, OptionalT<U2>, OptionalT<R>> lift2(BiFunction<U1, U2, R> fn) {
+	public static <U1, U2, R> BiFunction<OptionalT<U1>, OptionalT<U2>, OptionalT<R>> lift2(BiFunction<? super U1, ? super U2,? extends R> fn) {
 		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 

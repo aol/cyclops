@@ -58,7 +58,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param peek  Consumer to accept current value of Try
 	 * @return TryT with peek call
 	 */
-	public TryT<T,X> peek(Consumer<T> peek) {
+	public TryT<T,X> peek(Consumer<? super T> peek) {
 		return of(run.peek(opt -> opt.map(a -> {
 			peek.accept(a);
 			return a;
@@ -78,8 +78,8 @@ public class TryT<T,X extends Throwable> {
 	 * @param test Predicate to filter the wrapped Try
 	 * @return OptionalT that applies the provided filter
 	 */
-	public OptionalT<T> filter(Predicate<T> test) {
-		return OptionalT.of(run.map(opt -> opt.filter(test)));
+	public MaybeT<T> filter(Predicate<? super T> test) {
+		return MaybeT.of(run.map(opt -> opt.filter(test)));
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param f Mapping function for the wrapped Try
 	 * @return TryT that applies the map function to the wrapped Try
 	 */
-	public <B> TryT<B,X> map(Function<T, B> f) {
+	public <B> TryT<B,X> map(Function<? super T,? extends B> f) {
 		return new TryT<B,X>(run.map(o -> o.map(f)));
 	}
 
@@ -116,7 +116,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param f FlatMap function
 	 * @return TryT that applies the flatMap function to the wrapped Try
 	 */
-	public <B> TryT<B,X> flatMap(Function1<T, TryT<B,X>> f) {
+	public <B> TryT<B,X> flatMap(Function<? super T, TryT<B,X>> f) {
 
 		return of(run.bind(opt -> {
 			if (opt.isSuccess())
@@ -156,7 +156,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param fn Function to enhance with functionality from Try and another monad type
 	 * @return Function that accepts and returns an TryT
 	 */
-	public static <U, R, X extends Throwable> Function<TryT<U,X>, TryT<R,X>> lift(Function<U, R> fn) {
+	public static <U, R, X extends Throwable> Function<TryT<U,X>, TryT<R,X>> lift(Function<? super U,? extends R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));
 	}
 
@@ -190,7 +190,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param fn BiFunction to enhance with functionality from Try and another monad type
 	 * @return Function that accepts and returns an TryT
 	 */
-	public static <U1, U2, R, X extends Throwable> BiFunction<TryT<U1,X>, TryT<U2,X>, TryT<R,X>> lift2(BiFunction<U1, U2, R> fn) {
+	public static <U1, U2, R, X extends Throwable> BiFunction<TryT<U1,X>, TryT<U2,X>, TryT<R,X>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
 		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 

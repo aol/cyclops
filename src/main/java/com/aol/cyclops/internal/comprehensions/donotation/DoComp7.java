@@ -1,9 +1,8 @@
 
 package com.aol.cyclops.internal.comprehensions.donotation;
-
+import com.aol.cyclops.util.function.*;
 import com.aol.cyclops.types.anyM.*;
 import com.aol.cyclops.control.Reader;
-import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
 import java.io.BufferedReader;
@@ -24,7 +23,7 @@ import org.pcollections.PStack;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-	public class DoComp7<T1,T2,T3,T4,T5,T6,T7> extends DoComp{
+public class DoComp7<T1,T2,T3,T4,T5,T6,T7> extends DoComp{
 		public DoComp7(PStack<Entry> assigned,Class orgType) {
 			super(assigned,orgType);
 			
@@ -685,12 +684,15 @@ import com.aol.cyclops.control.ReactiveSeq;
 		 * @param f To be applied to every element in the for comprehension
 		 * @return For comprehension result
 		 */
-		public <R> AnyMSeq<R> yield(Function<? super T1,Function<? super T2,Function<? super T3,Function<T4,Function<? super T5,Function<? super T6,Function<? super T7,? extends R>>>>>>> f){
+		public <R> AnyMSeq<R> yield(Function<? super T1,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,Function<? super T6,Function<? super T7,? extends R>>>>>>> f){
 			if(getOrgType()!=null)
 				return new MonadWrapper(this.yieldInternal(f),this.getOrgType()).anyMSeq();
 			else
 				return AnyM.ofSeq(this.yieldInternal(f));
 		}
+		public <R> AnyMSeq<R> yield(HeptFunction<? super T1,? super T2,? super T3,? super T4,? super T5,? super T6,? super T7,? extends R> f){
+            return this.yield(CurryVariance.curry7(f));
+        }
 		
 		
 		/**

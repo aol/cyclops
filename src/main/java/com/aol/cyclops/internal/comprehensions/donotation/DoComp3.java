@@ -2,7 +2,8 @@
 package com.aol.cyclops.internal.comprehensions.donotation;
 
 import com.aol.cyclops.types.anyM.*;
-import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
+import com.aol.cyclops.util.function.CurryVariance;
+import com.aol.cyclops.util.function.*;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
 import java.io.BufferedReader;
@@ -694,6 +695,9 @@ public class DoComp3<T1,T2,T3> extends DoComp{
 			else
 				return AnyM.ofSeq(this.yieldInternal(f));
 		}
+		public <R> AnyMSeq<R> yield(TriFunction<? super T1,? super T2,? super T3,? extends R> f){
+            return this.yield(CurryVariance.curry3(f));
+        }
 		
 		
 		/**

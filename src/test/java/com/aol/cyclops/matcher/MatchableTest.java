@@ -89,10 +89,7 @@ public class MatchableTest {
 	   
 	    
 		Matchable.of("hello").<String>mayMatch(c->c.is(when("hello"),then("world")));
-		//assertThat(Matchable.of("hello").<String>mayMatch(c->c.is(i->"world", "hello"))),equalTo(Maybe.of("world"));
-	//	assertThat(Matchable.of("hello").mayMatch(c->c.is(in -> "world", "hello"))),equalTo(Maybe.of("world")));
-		
-	 Matchable.from(()->"hello",()->ListX.of(1,2,3))
+		Matchable.from(()->"hello",()->ListX.of(1,2,3))
 	 			.visit((num,list)-> list.orElse(ListX.empty())
 	 											.visit((x,xs)-> xs.toList()));
 	 			     

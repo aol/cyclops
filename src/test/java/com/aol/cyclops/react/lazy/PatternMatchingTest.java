@@ -58,9 +58,9 @@ public class PatternMatchingTest {
 		List<String> result = LazyFutureStream.of(new MyCase2(1,2),new MyCase2(3,4))
 											  .capture(e->e.printStackTrace())
 											  .patternMatch(
-													  c->c.is(when(Predicates.type(MyCase.class).isGuard(1,2)), then("one") )
-													  	  .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
-													  	  .is(when(Predicates.type(MyCase.class).isGuard(5,6)),then(()->"three"))
+													  c->c.is(when(Predicates.type(MyCase2.class).isGuard(1,2)), then("one") )
+													  	  .is(when(Predicates.type(MyCase2.class).isGuard(3,4)),then(()->"two"))
+													  	  .is(when(Predicates.type(MyCase2.class).isGuard(5,6)),then(()->"three"))
 													  	,otherwise("n/a")
 													  )
 											  .toList();

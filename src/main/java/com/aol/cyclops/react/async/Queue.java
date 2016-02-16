@@ -23,8 +23,8 @@ import com.aol.cyclops.react.async.wait.DirectWaitStrategy;
 import com.aol.cyclops.react.async.wait.WaitStrategy;
 import com.aol.cyclops.react.exceptions.SimpleReactProcessingException;
 import com.aol.cyclops.react.stream.traits.Continuation;
-import com.aol.cyclops.react.util.SimpleTimer;
 import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops.util.SimpleTimer;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

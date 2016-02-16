@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Stream;
@@ -25,7 +26,8 @@ import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.anyM.*;
 import com.aol.cyclops.control.ReactiveSeq;
-	public class DoComp1<T1> extends DoComp{
+	
+public class DoComp1<T1> extends DoComp{
 		public DoComp1(PStack<Entry> assigned, Class orgType) {
 			super(assigned,orgType);
 			
@@ -710,7 +712,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 		 * @param f To be applied to every element in the for comprehension
 		 * @return For comprehension result
 		 */
-		public <R> AnyMSeq<R> yield(Function<? super T1,R> f){
+		public <R> AnyMSeq<R> yield(Function<? super T1,? extends R> f){
 			if(getOrgType()!=null)
 				return new MonadWrapper(this.yieldInternal(f),this.getOrgType()).anyMSeq();
 			else
@@ -733,9 +735,13 @@ import com.aol.cyclops.control.ReactiveSeq;
 		 * @param f To be applied to every element in the for comprehension
 		 * @return Current stage with guard / filter applied
 		 */
-		public  DoComp1<T1> filter(Function<? super T1,Boolean> f){
-			return new DoComp1(getAssigned().plus(getAssigned().size(),new Entry("$$internalGUARD"+getAssigned().size(),new Guard(f))),getOrgType());
-		}
+		public  DoComp1<T1> filter(Predicate<? super T1> f){
+            return new DoComp1(getAssigned().plus(getAssigned().size(),new Entry("$$internalGUARD"+getAssigned().size(),new Guard(f))),getOrgType());
+        }
+		
+		
+		
+       
 		
 	}
 

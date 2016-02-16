@@ -51,7 +51,7 @@ public class StreamableT<T> {
 	 * @param peek  Consumer to accept current value of Streamable
 	 * @return StreamableT with peek call
 	 */
-   public StreamableT<T> peek(Consumer<T> peek){
+   public StreamableT<T> peek(Consumer<? super T> peek){
 	   return map(a-> {peek.accept(a); return a;});
      
    }
@@ -68,7 +68,7 @@ public class StreamableT<T> {
   	 * @param test Predicate to filter the wrapped Streamable
   	 * @return StreamableT that applies the provided filter
   	 */
-   public StreamableT<T> filter(Predicate<T> test){
+   public StreamableT<T> filter(Predicate<? super T> test){
        return of(run.map(stream-> stream.filter(test)));
    }
    /**
@@ -87,7 +87,7 @@ public class StreamableT<T> {
 	 * @param f Mapping function for the wrapped Streamable
 	 * @return StreamableT that applies the map function to the wrapped Streamable
 	 */
-   public <B> StreamableT<B> map(Function<T,B> f){
+   public <B> StreamableT<B> map(Function<? super T,? extends B> f){
        return new StreamableT<B>(run.map(o-> o.map(f)));
    }
    /**
@@ -104,7 +104,7 @@ public class StreamableT<T> {
 	 * @param f FlatMap function
 	 * @return StreamableT that applies the flatMap function to the wrapped Streamable
 	 */
-   public <B> StreamableT<B> flatMap(Function1<T,StreamableT<B>> f){
+   public <B> StreamableT<B> flatMap(Function<? super T,StreamableT<? extends B>> f){
 	   return of(run.map(stream-> stream.flatMap(a-> Streamable.fromStream(f.apply(a).run.asSequence()))
 			   							.<B>flatMap(a->a)));
    }
@@ -137,7 +137,7 @@ public class StreamableT<T> {
 	 * @param fn Function to enhance with functionality from Streamable and another monad type
 	 * @return Function that accepts and returns an StreamableT
 	 */
-   public static <U, R> Function<StreamableT<U>, StreamableT<R>> lift(Function<U, R> fn) {
+   public static <U, R> Function<StreamableT<U>, StreamableT<R>> lift(Function<? super U,? extends R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));
    }
    /**
@@ -169,7 +169,7 @@ public class StreamableT<T> {
   	 * @param fn BiFunction to enhance with functionality from Streamable and another monad type
   	 * @return Function that accepts and returns an StreamableT
   	 */
-	public static <U1, U2, R> BiFunction<StreamableT<U1>, StreamableT<U2>, StreamableT<R>> lift2(BiFunction<U1, U2, R> fn) {
+	public static <U1, U2, R> BiFunction<StreamableT<U1>, StreamableT<U2>, StreamableT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
 		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 	/**

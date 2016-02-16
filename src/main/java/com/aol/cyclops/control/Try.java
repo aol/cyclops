@@ -136,7 +136,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	 *          Do nothing to a Failure
 	 * @return this if Success and Predicate holds, or if Failure. New Failure if Success and Predicate fails
 	 */
-	public Optional<T> filter(Predicate<? super T> p);
+	public Maybe<T> filter(Predicate<? super T> p);
 	
 	/**
 	 * @param consumer Accept Exception if present (Failure)
@@ -652,11 +652,11 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 		 * @see com.aol.cyclops.trycatch.Try#filter(java.util.function.Predicate)
 		 */
 		@Override
-		public Optional<T> filter(Predicate<? super T> p) {
+		public Maybe<T> filter(Predicate<? super T> p) {
 			if(p.test(value))
-				return Optional.of(get());
+				return Maybe.of(get());
 			else
-				return Optional.empty();
+				return Maybe.none();
 		}
 
 		/* 
@@ -927,8 +927,8 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 		 * @see com.aol.cyclops.trycatch.Try#filter(java.util.function.Predicate)
 		 */
 		@Override
-		public Optional<T> filter(Predicate<? super T> p) {
-			return Optional.empty();
+		public Maybe<T> filter(Predicate<? super T> p) {
+			return Maybe.none();
 		}
 		
 		/* 

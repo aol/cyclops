@@ -124,8 +124,8 @@ public class ForEachLFSTest {
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
-		Stream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
-		StreamUtils.forEachWithError(stream,  i->list.add(i),
+		LazyFutureStream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		stream.forEachWithError(i->list.add(i),
 								e->error=e);
 		
 		assertThat(list,hasItems(1,2,3));

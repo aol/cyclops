@@ -57,6 +57,7 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
+import com.aol.cyclops.react.reactivestreams.reactiveseq.SubscriberForCyclops;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
@@ -2050,7 +2051,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @return A reactive-streams Subscriber
 	 */
 	public static <T> CyclopsSubscriber<T> subscriber() {
-		return ReactiveStreamsLoader.subscriber.get().subscribe();
+		return new SubscriberForCyclops<T>().subscribe();
 	}
 
 	public static <T> ReactiveSeq<T> empty(){

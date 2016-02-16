@@ -62,7 +62,7 @@ public class SetT<T> {
 	 * @param peek  Consumer to accept current value of Set
 	 * @return SetT with peek call
 	 */
-   public SetT<T> peek(Consumer<T> peek){
+   public SetT<T> peek(Consumer<? super T> peek){
 	   return map(a-> {peek.accept(a); return a;});
      
    }
@@ -79,7 +79,7 @@ public class SetT<T> {
 	 * @param test Predicate to filter the wrapped Set
 	 * @return SetT that applies the provided filter
 	 */
-   public SetT<T> filter(Predicate<T> test){
+   public SetT<T> filter(Predicate<? super T> test){
        return of(run.map(stream-> ReactiveSeq.fromIterable(stream).filter(test).toSet()));
    }
    /**
@@ -98,8 +98,8 @@ public class SetT<T> {
 	 * @param f Mapping function for the wrapped Set
 	 * @return SetT that applies the map function to the wrapped Set
 	 */
-   public <B> SetT<B> map(Function<T,B> f){
-       return of(run.map(o-> ReactiveSeq.fromIterable(o).map(f).toSet()));
+   public <B> SetT<B> map(Function<? super T,? extends B> f){
+       return of(run.map(o-> (Set<B>)ReactiveSeq.fromIterable(o).map(f).toSet()));
    }
    /**
 	 * Flat Map the wrapped Set
@@ -115,7 +115,7 @@ public class SetT<T> {
 	 * @param f FlatMap function
 	 * @return SetT that applies the flatMap function to the wrapped Set
 	 */
-   public <B> SetT<B> flatMap(Function1<T,SetT<B>> f){
+   public <B> SetT<B> flatMap(Function<? super T,SetT<B>> f){
 	  
 	   return of( run.map(stream-> ReactiveSeq.fromIterable(stream).flatMap(a-> f.apply(a).run.asSequence()).flatMap(a->a.stream())
 			   .toSet()));
@@ -147,7 +147,7 @@ public class SetT<T> {
 	 * @param fn Function to enhance with functionality from Set and another monad type
 	 * @return Function that accepts and returns an SetT
 	 */
-   public static <U, R> Function<SetT<U>, SetT<R>> lift(Function<U, R> fn) {
+   public static <U, R> Function<SetT<U>, SetT<R>> lift(Function<? super U,? extends R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));
    }
    /**
@@ -179,7 +179,7 @@ public class SetT<T> {
 	 * @param fn BiFunction to enhance with functionality from Set and another monad type
 	 * @return Function that accepts and returns an SetT
 	 */
-	public static <U1, U2, R> BiFunction<SetT<U1>, SetT<U2>, SetT<R>> lift2(BiFunction<U1, U2, R> fn) {
+	public static <U1, U2, R> BiFunction<SetT<U1>, SetT<U2>, SetT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
 		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 	/**

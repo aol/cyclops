@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.experimental.Wither;
 
 import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.config.MaxActive;
 /**
  * A collector that periodically joins active completablefutures
  * but does not store the results
