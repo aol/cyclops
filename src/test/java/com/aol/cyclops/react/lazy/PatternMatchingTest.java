@@ -67,7 +67,7 @@ public class PatternMatchingTest {
 		assertThat(result,equalTo(Arrays.asList("one","two")));
 	}
 	@AllArgsConstructor
-	static class MyCase implements Decomposable{
+	static class MyCase{
 		int first;
 		int second;
 	}

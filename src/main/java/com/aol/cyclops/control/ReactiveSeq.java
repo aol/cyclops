@@ -3670,7 +3670,6 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	@Override
 	default boolean noneMatch(Matcher<? super T> m) {
-		
 		return SequenceMCollectable.super.noneMatch(m);
 	}
 
@@ -3722,14 +3721,14 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 
 	@Override
 	default Optional<T> max(Comparator<? super T> comparator) {
+
+		return StreamUtils.max(this, comparator);
 		
-		return SequenceMCollectable.super.max(comparator);
 	}
 
 	@Override
 	default Optional<T> min(Comparator<? super T> comparator) {
-		// TODO Auto-generated method stub
-		return SequenceMCollectable.super.min(comparator);
+	    return StreamUtils.min(this, comparator);
 	}
 
 	

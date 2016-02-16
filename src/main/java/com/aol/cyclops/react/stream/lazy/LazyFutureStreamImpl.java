@@ -36,7 +36,6 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.react.async.Queue;
 import com.aol.cyclops.react.async.factories.QueueFactories;
 import com.aol.cyclops.react.async.factories.QueueFactory;
 import com.aol.cyclops.react.async.subscription.Continueable;
