@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Failure;
 import com.aol.cyclops.control.Try.Success;
@@ -74,11 +75,11 @@ public class SuccessTest {
 
 	@Test
 	public void testFilter() {
-		assertThat(success.filter(x->x>5),equalTo(Optional.of(value)));
+		assertThat(success.filter(x->x>5),equalTo(Maybe.of(value)));
 	}
 	@Test
 	public void testFilterFail() {
-		assertThat(success.filter(x->x>15),equalTo(Optional.empty()));
+		assertThat(success.filter(x->x>15),equalTo(Maybe.none()));
 	}
 
 	@Test

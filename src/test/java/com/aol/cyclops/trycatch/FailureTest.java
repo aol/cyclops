@@ -17,6 +17,8 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Failure;
 import com.aol.cyclops.control.Try.Success;
 
@@ -50,12 +52,12 @@ public class FailureTest {
 
 	@Test
 	public void testFlatMap() {
-		assertThat(failure.flatMap(x->Success.of(10)),equalTo(failure));
+		assertThat(failure.flatMap(x->Try.success(10)),equalTo(failure));
 	}
 
 	@Test
 	public void testFilter() {
-		assertThat(failure.filter(x->x==10),equalTo(Optional.empty()));
+		assertThat(failure.filter(x->x==10),equalTo(Maybe.none()));
 	}
 
 	@Test
