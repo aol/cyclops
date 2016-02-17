@@ -36,16 +36,17 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.AnyMSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Traversable;
+import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
-public abstract class AbstractCollectionXTest {
-	public abstract <T> CollectionX<T> empty();
-	public abstract <T> CollectionX<T> of(T... values);
+public abstract class AbstractAnyMSeqTest {
+	public abstract <T> AnyMSeq<T> empty();
+	public abstract <T> AnyMSeq<T> of(T... values);
 	
 
 	@Test
@@ -133,8 +134,8 @@ public abstract class AbstractCollectionXTest {
 	
 	
 	
-	CollectionX<Integer> empty;
-	CollectionX<Integer> nonEmpty;
+	AnyMSeq<Integer> empty;
+	AnyMSeq<Integer> nonEmpty;
 
 	@Before
 	public void setup(){
@@ -261,7 +262,7 @@ public abstract class AbstractCollectionXTest {
 	   
 	    @Test
 	    public void testSkipWhile() {
-	        Supplier<CollectionX<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<AnyMSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertTrue(s.get().dropWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	      
@@ -270,7 +271,7 @@ public abstract class AbstractCollectionXTest {
 
 	    @Test
 	    public void testSkipUntil() {
-	        Supplier<CollectionX<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<AnyMSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
 	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
@@ -280,7 +281,7 @@ public abstract class AbstractCollectionXTest {
 
 	    @Test
 	    public void testLimitWhile() {
-	        Supplier<CollectionX<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<AnyMSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().takeWhile(i -> false).toList());
 	        assertTrue( s.get().takeWhile(i -> i < 3).toList().size()!=5);       
@@ -303,7 +304,7 @@ public abstract class AbstractCollectionXTest {
 
 	    @Test
 	    public void testMinByMaxBy() {
-	        Supplier<CollectionX<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+	        Supplier<AnyMSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
 	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
@@ -735,7 +736,7 @@ public abstract class AbstractCollectionXTest {
 	public void zipEmpty() throws Exception {
 		
 		
-		final CollectionX<Integer> zipped = this.<Integer>empty().zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
+		final AnyMSeq<Integer> zipped = this.<Integer>empty().zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -744,7 +745,7 @@ public abstract class AbstractCollectionXTest {
 		
 		
 		
-		final CollectionX<Integer> zipped = this.<Integer>empty().zip(of(1,2), (a, b) -> a + b);
+		final AnyMSeq<Integer> zipped = this.<Integer>empty().zip(of(1,2), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -752,7 +753,7 @@ public abstract class AbstractCollectionXTest {
 	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
 		
 		
-		final CollectionX<Integer> zipped = of(1,2,3).zip(this.<Integer>empty(), (a, b) -> a + b);
+		final AnyMSeq<Integer> zipped = of(1,2,3).zip(this.<Integer>empty(), (a, b) -> a + b);
 
 		
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
@@ -761,11 +762,11 @@ public abstract class AbstractCollectionXTest {
 	@Test
 	public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
 		
-		final CollectionX<String> first = of("A", "B", "C");
-		final CollectionX<Integer> second = of(1, 2, 3);
+		final AnyMSeq<String> first = of("A", "B", "C");
+		final AnyMSeq<Integer> second = of(1, 2, 3);
 
 		
-		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
@@ -775,20 +776,20 @@ public abstract class AbstractCollectionXTest {
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
-		final CollectionX<String> first = of("A", "B", "C");
-		final CollectionX<Integer> second = of(1, 2, 3, 4);
+		final AnyMSeq<String> first = of("A", "B", "C");
+		final AnyMSeq<Integer> second = of(1, 2, 3, 4);
 
 		
-		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
-		final CollectionX<String> first = of("A", "B", "C","D");
-		final CollectionX<Integer> second = of(1, 2, 3);
-		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<String> first = of("A", "B", "C","D");
+		final AnyMSeq<Integer> second = of(1, 2, 3);
+		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -809,21 +810,21 @@ public abstract class AbstractCollectionXTest {
 	
 	@Test
 	public void shouldTrimSecondFixedSeqIfLongerStream() throws Exception {
-		final CollectionX<String> first = of("A", "B", "C");
-		final CollectionX<Integer> second = of(1, 2, 3, 4);
+		final AnyMSeq<String> first = of("A", "B", "C");
+		final AnyMSeq<Integer> second = of(1, 2, 3, 4);
 
 		
-		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLongerStream() throws Exception {
-		final CollectionX<String> first = of("A", "B", "C","D");
-		final CollectionX<Integer> second = of(1, 2, 3);
+		final AnyMSeq<String> first = of("A", "B", "C","D");
+		final AnyMSeq<Integer> second = of(1, 2, 3);
 		
-		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -843,20 +844,20 @@ public abstract class AbstractCollectionXTest {
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLongerSequence() throws Exception {
-		final CollectionX<String> first = of("A", "B", "C");
-		final CollectionX<Integer> second = of(1, 2, 3, 4);
+		final AnyMSeq<String> first = of("A", "B", "C");
+		final AnyMSeq<Integer> second = of(1, 2, 3, 4);
 
 		
-		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLongerSequence() throws Exception {
-		final CollectionX<String> first = of("A", "B", "C","D");
-		final CollectionX<Integer> second = of(1, 2, 3);
-		final CollectionX<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<String> first = of("A", "B", "C","D");
+		final AnyMSeq<Integer> second = of(1, 2, 3);
+		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));

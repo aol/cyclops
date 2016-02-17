@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,9 +24,9 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
@@ -694,7 +695,48 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		
 		return (ListX<T>)MutableCollectionX.super.removeMatches(m);
 	}
+	  @Override
+	    default <C extends Collection<T>> ListX<C> grouped(int size, Supplier<C> supplier) {
+	        
+	        return (ListX<C>)MutableCollectionX.super.grouped(size, supplier);
+	    }
 
+
+	    @Override
+	    default ListX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+	        
+	        return (ListX<ListX<T>>)MutableCollectionX.super.groupedUntil(predicate);
+	    }
+
+
+	    @Override
+	    default ListX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+	        
+	        return (ListX<ListX<T>>)MutableCollectionX.super.groupedWhile(predicate);
+	    }
+
+
+	    @Override
+	    default <C extends Collection<? super T>> ListX<C> groupedWhile(Predicate<? super T> predicate,
+	            Supplier<C> factory) {
+	        
+	        return (ListX<C>)MutableCollectionX.super.groupedWhile(predicate, factory);
+	    }
+
+
+	    @Override
+	    default <C extends Collection<? super T>> ListX<C> groupedUntil(Predicate<? super T> predicate,
+	            Supplier<C> factory) {
+	        
+	        return (ListX<C>)MutableCollectionX.super.groupedUntil(predicate, factory);
+	    }
+
+
+	    @Override
+	    default ListX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+	        
+	        return (ListX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
+	    }
 	
 	
 }

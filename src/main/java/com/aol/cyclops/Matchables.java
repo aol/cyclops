@@ -31,6 +31,7 @@ import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 public class Matchables {
+    
 	public static<X extends Throwable> MTuple4<Class<X>,String,Throwable,MatchableIterable<StackTraceElement>> throwable(X t){
 		return Matchable.from(()->(Class)t.getClass(),
 							  ()->t.getMessage(),

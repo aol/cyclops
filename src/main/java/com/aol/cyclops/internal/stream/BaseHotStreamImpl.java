@@ -63,7 +63,7 @@ public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T> implemen
 		connections.getAndSet(connected, queue);
 		connected++;
 		unpause();
-		return StreamUtils.sequenceM(StreamSupport.stream(
+		return StreamUtils.reactiveSeq(StreamSupport.stream(
                 new ClosingSpliterator(Long.MAX_VALUE, queue,open), false),Optional.empty());
 	}
 

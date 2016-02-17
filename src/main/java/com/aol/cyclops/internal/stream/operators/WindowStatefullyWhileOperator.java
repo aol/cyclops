@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
@@ -15,19 +16,19 @@ import lombok.Value;
 public class WindowStatefullyWhileOperator<T> {
 	 private static final Object UNSET = new Object();
 	Stream<T> stream;
-	public Stream<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<? super T>,? super T> predicate){
+	public Stream<ListX<T>> windowStatefullyWhile(BiPredicate<ListX<? super T>,? super T> predicate){
 		Iterator<T> it = stream.iterator();
-		return StreamUtils.stream(new Iterator<Streamable<T>>(){
-			Streamable<T> last= Streamable.empty();
+		return StreamUtils.stream(new Iterator<ListX<T>>(){
+			ListX<T> last= ListX.empty();
 			T value = (T)UNSET;
 			@Override
 			public boolean hasNext() {
 				return value!=UNSET || it.hasNext();
 			}
 			@Override
-			public Streamable<T> next() {
+			public ListX<T> next() {
 				
-				List<T> list = new ArrayList<>();
+				ListX<T> list = ListX.of();
 				if(value!=UNSET)
 					list.add(value);
 				T value;
@@ -47,7 +48,7 @@ label:					while(it.hasNext()) {
 						
 				}
 				
-				return last = Streamable.fromIterable(list);
+				return last = list;
 			}
 			
 		});

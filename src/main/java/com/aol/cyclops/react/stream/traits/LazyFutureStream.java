@@ -844,7 +844,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
       
     }
     /* 
-     * @see com.aol.cyclops.sequence.SequenceM#findFirst()
+     * @see com.aol.cyclops.control.ReactiveSeq#findFirst()
      */
     default Optional<U> findFirst(){
         List<U> results = this.run(Collectors.toList());
@@ -971,6 +971,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).debounce(time, unit));
 
     }
+    
+    
 
 
     /**
@@ -1001,35 +1003,13 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      *            values
      * @return Stream of batched values
      */
-    default <C extends Collection<U>>LazyFutureStream<C> batch(Function<Supplier<U>, Supplier<C>> fn){
+    default <C extends Collection<U>>LazyFutureStream<C> group(Function<Supplier<U>, Supplier<C>> fn){
         Queue queue = toQueue();
         return fromStream(queue.streamBatchNoTimeout(getSubscription(), fn));
     }
 
 
-    /**
-     *
-     * Batch the elements in this stream into Lists of specified size
-     *
-     * <pre>
-     * {@code
-     * LazyFutureStream.of(1,2,3,4,5,6)
-     * 					.batchBySize(3)
-     * 					.toList();
-     *
-     *  // [[1,2,3],[4,5,6]]
-     * }
-     *
-     * </pre>
-     *
-     * @param size
-     *            Size of lists elements should be batched into
-     * @return Stream of Lists
-     */
-    default  LazyFutureStream<ListX<U>> batchBySize(int size) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).batchBySize(size));
 
-    }
     /*
      * Batch the elements in the Stream by a combination of Size and Time
      * If batch exceeds max size it will be split
@@ -1059,7 +1039,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      *	@return batched stream
      * @see com.aol.cyclops.react.stream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
      */
-    default LazyFutureStream<ListX<U>> batchBySizeAndTime(int size,long time, TimeUnit unit) {
+    default LazyFutureStream<ListX<U>> groupedBySizeAndTime(int size,long time, TimeUnit unit) {
         Queue<U> queue = toQueue();
         Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ListXImpl<>());
         return (LazyFutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());
@@ -1086,9 +1066,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      *            Create the batch holding collection
      * @return Stream of Collections
      */
-    default <C extends Collection<U>> LazyFutureStream<C> batchBySize(int size,
+    default <C extends Collection<U>> LazyFutureStream<C> grouped(int size,
             Supplier<C> supplier) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).batchBySize(size,supplier));
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).grouped(size,supplier));
 
     }
 
@@ -1225,7 +1205,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      *            Time unit during which all elements should be collected
      * @return Stream of Lists
      */
-    default LazyFutureStream<ListX<U>> batchByTime(long time, TimeUnit unit) {
+    default LazyFutureStream<ListX<U>> groupedByTime(long time, TimeUnit unit) {
         Queue queue = toQueue();
         Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit,
                 this.getSubscription(),queue,()->new ListXImpl<>());
@@ -1256,7 +1236,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      *            Instantiates the collections used in the batching
      * @return Stream of collections
      */
-    default  <C extends Collection<U>> LazyFutureStream<C> batchByTime(long time,
+    default  <C extends Collection<U>> LazyFutureStream<C> groupedByTime(long time,
             TimeUnit unit, Supplier<C> factory) {
         Queue queue = toQueue();
         Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit, this.getSubscription(),queue,(Supplier)factory);
@@ -1711,6 +1691,41 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
     }
 
+    @Override
+    default  LazyFutureStream<U> takeWhile(Predicate<? super U> p) {
+       
+        return this.limitWhile(p);
+    }
+
+    @Override
+    default LazyFutureStream<U>  dropWhile(Predicate<? super U> p) {
+       
+        return this.skipWhile(p);
+    }
+
+    @Override
+    default LazyFutureStream<U> takeUntil(Predicate<? super U> p) {
+        
+        return this.takeUntil(p);
+    }
+
+    @Override
+    default LazyFutureStream<U>  dropUntil(Predicate<? super U> p) {
+       
+        return this.dropUntil(p);
+    }
+
+    @Override
+    default LazyFutureStream<U>  dropRight(int num) {
+        
+        return this.dropRight(num);
+    }
+
+    @Override
+    default ReactiveSeq<U> takeRight(int num) {
+        
+        return this.takeRight(num);
+    }
     /*
      * LazyFutureStream.of(1,2,3,4).skip(2)
      *
@@ -1876,7 +1891,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#slice(long, long)
+     * @see com.aol.cyclops.control.ReactiveSeq#slice(long, long)
      */
     @Override
     default LazyFutureStream<U> slice(long from, long to) {
@@ -2336,7 +2351,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     /** START SEQUENCEM **/
     /*
      *	@return This Stream with a different type (can be used to narrow or widen)
-     * @see com.aol.cyclops.sequence.SequenceM#unwrap()
+     * @see com.aol.cyclops.control.ReactiveSeq#unwrap()
      */
     @Override
     default <R> R unwrap() {
@@ -2355,7 +2370,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      *  }
      *  </pre>
      *
-     * @see com.aol.cyclops.sequence.SequenceM#flatten()
+     * @see com.aol.cyclops.control.ReactiveSeq#flatten()
      */
     @Override
     default <T1>  LazyFutureStream<T1> flatten() {
@@ -2365,7 +2380,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
     /* Optional empty, if empty Stream. Otherwise collects to a List
      *	@return this Stream as an Optional
-     * @see com.aol.cyclops.sequence.SequenceM#toOptional()
+     * @see com.aol.cyclops.control.ReactiveSeq#toOptional()
      */
     @Override
     default Optional<ListX<U>> toOptional() {
@@ -2385,7 +2400,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * </pre>
      * Future is populated asynchronously using current Streams task executor
      * @return This Stream as a CompletableFuture
-     * @see com.aol.cyclops.sequence.SequenceM#toCompletableFuture()
+     * @see com.aol.cyclops.control.ReactiveSeq#toCompletableFuture()
      */
     @Override
     default CompletableFuture<ListX<U>> toCompletableFuture() {
@@ -2489,14 +2504,14 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
     
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#findAny()
+     * @see com.aol.cyclops.control.ReactiveSeq#findAny()
      */
     @Override
     default Optional<U> findAny() {
         return ReactiveSeq.fromStream(stream()).findAny();
     }
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#toSet()
+     * @see com.aol.cyclops.control.ReactiveSeq#toSet()
      */
     @Override
     default Set<U> toSet() {
@@ -2504,7 +2519,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#toList()
+     * @see com.aol.cyclops.control.ReactiveSeq#toList()
      */
     @Override
     default List<U> toList() {
@@ -2512,7 +2527,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#toCollection(java.util.function.Supplier)
+     * @see com.aol.cyclops.control.ReactiveSeq#toCollection(java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<U>> C toCollection(
@@ -2521,7 +2536,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#distinct(java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#distinct(java.util.function.Function)
      */
     @Override
     default <R> ReactiveSeq<U> distinct(
@@ -2532,7 +2547,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
     /*
      *	Duplicate the data in this Stream. To duplicate into 2 LazyFutureStreams use actOnFutures#duplicate
-     * @see com.aol.cyclops.sequence.SequenceM#duplicateSequence()
+     * @see com.aol.cyclops.control.ReactiveSeq#duplicateSequence()
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicateSequence() {
@@ -2542,7 +2557,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     /*
      * Triplicate the data in this Stream. To triplicate into 3 LazyFutureStreams use actOnFutures#triplicate
      *
-     * @see com.aol.cyclops.sequence.SequenceM#triplicate()
+     * @see com.aol.cyclops.control.ReactiveSeq#triplicate()
      */
     @Override
     default Tuple3<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> triplicate() {
@@ -2552,7 +2567,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
     /*
      * Quadruplicate the data in this Stream. To quadruplicate into 3 LazyFutureStreams use actOnFutures#quadruplicate
-     * @see com.aol.cyclops.sequence.SequenceM#quadruplicate()
+     * @see com.aol.cyclops.control.ReactiveSeq#quadruplicate()
      */
     @Override
     default Tuple4<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> quadruplicate() {
@@ -2561,7 +2576,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#splitSequenceAtHead()
+     * @see com.aol.cyclops.control.ReactiveSeq#splitSequenceAtHead()
      */
     @Override
     default Tuple2<Optional<U>, ReactiveSeq<U>> splitSequenceAtHead() {
@@ -2570,7 +2585,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#splitAt(int)
+     * @see com.aol.cyclops.control.ReactiveSeq#splitAt(int)
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> splitAt(int where) {
@@ -2579,7 +2594,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#splitBy(java.util.function.Predicate)
+     * @see com.aol.cyclops.control.ReactiveSeq#splitBy(java.util.function.Predicate)
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> splitBy(Predicate<U> splitter) {
@@ -2588,7 +2603,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#partitionSequence(java.util.function.Predicate)
+     * @see com.aol.cyclops.control.ReactiveSeq#partitionSequence(java.util.function.Predicate)
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partitionSequence(
@@ -2600,7 +2615,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#cycle(com.aol.cyclops.sequence.Monoid, int)
+     * @see com.aol.cyclops.control.ReactiveSeq#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
     default  LazyFutureStream<U> cycle(Monoid<U> m, int times) {
@@ -2612,7 +2627,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#zipStream(java.util.stream.Stream)
+     * @see com.aol.cyclops.control.ReactiveSeq#zipStream(java.util.stream.Stream)
      */
     @Override
     default <R> LazyFutureStream<Tuple2<U, R>> zipStream(Stream<R> other) {
@@ -2622,7 +2637,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops.control.ReactiveSeq#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, R> LazyFutureStream<Tuple3<U, S, R>> zip3(Stream<? extends S> second,
@@ -2632,7 +2647,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops.control.ReactiveSeq#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> LazyFutureStream<Tuple4<U, T2, T3, T4>> zip4(
@@ -2644,7 +2659,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#zipSequence(com.aol.cyclops.sequence.SequenceM, java.util.function.BiFunction)
+     * @see com.aol.cyclops.control.ReactiveSeq#zipSequence(com.aol.cyclops.control.ReactiveSeq, java.util.function.BiFunction)
      */
     @Override
     default <S, R> LazyFutureStream<R> zipSequence(ReactiveSeq<? extends S> second,
@@ -2654,7 +2669,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#zipAnyM(com.aol.cyclops.monad.AnyM, java.util.function.BiFunction)
+     * @see com.aol.cyclops.control.ReactiveSeq#zipAnyM(com.aol.cyclops.monad.AnyM, java.util.function.BiFunction)
      */
     @Override
     default <S, R> LazyFutureStream<R> zipAnyM(AnyM<? extends S> second,
@@ -2664,7 +2679,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#zipStream(java.util.stream.BaseStream, java.util.function.BiFunction)
+     * @see com.aol.cyclops.control.ReactiveSeq#zipStream(java.util.stream.BaseStream, java.util.function.BiFunction)
      */
     @Override
     default <S, R> LazyFutureStream<R> zipStream(
@@ -2676,7 +2691,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#grouped(int)
+     * @see com.aol.cyclops.control.ReactiveSeq#grouped(int)
      */
     @Override
     default LazyFutureStream<ListX<U>> grouped(int groupSize) {
@@ -2689,7 +2704,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#scanLeft(com.aol.cyclops.sequence.Monoid)
+     * @see com.aol.cyclops.control.ReactiveSeq#scanLeft(com.aol.cyclops.sequence.Monoid)
      */
     @Override
     default LazyFutureStream<U> scanLeft(Monoid<U> monoid) {
@@ -2707,7 +2722,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
    
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#toStreamable()
+     * @see com.aol.cyclops.control.ReactiveSeq#toStreamable()
      */
     @Override
     default Streamable<U> toStreamable() {
@@ -2718,7 +2733,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#toStream()
+     * @see com.aol.cyclops.control.ReactiveSeq#toStream()
      */
     @Override
     default <U> Stream<U> toStream() {
@@ -2728,7 +2743,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#startsWith(java.lang.Iterable)
+     * @see com.aol.cyclops.control.ReactiveSeq#startsWith(java.lang.Iterable)
      */
     @Override
     default boolean startsWith(Iterable<U> iterable) {
@@ -2737,7 +2752,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#startsWith(java.util.Iterator)
+     * @see com.aol.cyclops.control.ReactiveSeq#startsWith(java.util.Iterator)
      */
     @Override
     default boolean startsWith(Iterator<U> iterator) {
@@ -2746,7 +2761,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#endsWith(java.lang.Iterable)
+     * @see com.aol.cyclops.control.ReactiveSeq#endsWith(java.lang.Iterable)
      */
     @Override
     default boolean endsWith(Iterable<U> iterable) {
@@ -2754,7 +2769,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#endsWith(java.util.stream.Stream)
+     * @see com.aol.cyclops.control.ReactiveSeq#endsWith(java.util.stream.Stream)
      */
     @Override
     default boolean endsWith(Stream<U> stream) {
@@ -2762,7 +2777,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#anyM()
+     * @see com.aol.cyclops.control.ReactiveSeq#anyM()
      */
     @Override
     default AnyM<U> anyM() {
@@ -2771,7 +2786,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#flatMapAnyM(java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#flatMapAnyM(java.util.function.Function)
      */
     @Override
     default <R> LazyFutureStream<R> flatMapAnyM(
@@ -2781,7 +2796,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#flatMapCollection(java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#flatMapCollection(java.util.function.Function)
      */
     @Override
     default <R> LazyFutureStream<R> flatMapCollection(
@@ -2791,7 +2806,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#flatMapStream(java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#flatMapStream(java.util.function.Function)
      */
     @Override
     default <R> LazyFutureStream<R> flatMapStream(
@@ -2801,7 +2816,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#flatMapOptional(java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#flatMapOptional(java.util.function.Function)
      */
     @Override
     default <R> LazyFutureStream<R> flatMapOptional(
@@ -2813,7 +2828,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#flatMapCharSequence(java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#flatMapCharSequence(java.util.function.Function)
      */
     @Override
     default LazyFutureStream<Character> flatMapCharSequence(
@@ -2823,7 +2838,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#flatMapFile(java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#flatMapFile(java.util.function.Function)
      */
     @Override
     default LazyFutureStream<String> flatMapFile(Function<? super U, File> fn) {
@@ -2832,7 +2847,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#flatMapURL(java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#flatMapURL(java.util.function.Function)
      */
     @Override
     default LazyFutureStream<String> flatMapURL(Function<? super U, URL> fn) {
@@ -2841,7 +2856,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#flatMapBufferedReader(java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#flatMapBufferedReader(java.util.function.Function)
      */
     @Override
     default LazyFutureStream<String> flatMapBufferedReader(
@@ -2853,7 +2868,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#toLazyCollection()
+     * @see com.aol.cyclops.control.ReactiveSeq#toLazyCollection()
      */
     @Override
     default CollectionX<U> toLazyCollection() {
@@ -2862,7 +2877,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#toConcurrentLazyCollection()
+     * @see com.aol.cyclops.control.ReactiveSeq#toConcurrentLazyCollection()
      */
     @Override
     default CollectionX<U> toConcurrentLazyCollection() {
@@ -2871,7 +2886,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#toConcurrentLazyStreamable()
+     * @see com.aol.cyclops.control.ReactiveSeq#toConcurrentLazyStreamable()
      */
     @Override
     default Streamable<U> toConcurrentLazyStreamable() {
@@ -2882,7 +2897,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#appendStream(java.util.stream.Stream)
+     * @see com.aol.cyclops.control.ReactiveSeq#appendStream(java.util.stream.Stream)
      */
     @Override
     default LazyFutureStream<U> appendStream(Stream<U> stream) {
@@ -2891,7 +2906,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#prependStream(java.util.stream.Stream)
+     * @see com.aol.cyclops.control.ReactiveSeq#prependStream(java.util.stream.Stream)
      */
     @Override
     default LazyFutureStream<U> prependStream(Stream<U> stream) {
@@ -2900,7 +2915,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#append(java.lang.Object[])
+     * @see com.aol.cyclops.control.ReactiveSeq#append(java.lang.Object[])
      */
     @Override
     default LazyFutureStream<U> append(U... values) {
@@ -2909,7 +2924,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#prepend(java.lang.Object[])
+     * @see com.aol.cyclops.control.ReactiveSeq#prepend(java.lang.Object[])
      */
     @Override
     default LazyFutureStream<U> prepend(U... values) {
@@ -2918,7 +2933,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#insertAt(int, java.lang.Object[])
+     * @see com.aol.cyclops.control.ReactiveSeq#insertAt(int, java.lang.Object[])
      */
     @Override
     default LazyFutureStream<U> insertAt(int pos, U... values) {
@@ -2927,7 +2942,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#deleteBetween(int, int)
+     * @see com.aol.cyclops.control.ReactiveSeq#deleteBetween(int, int)
      */
     @Override
     default LazyFutureStream<U> deleteBetween(int start, int end) {
@@ -2936,7 +2951,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#insertStreamAt(int, java.util.stream.Stream)
+     * @see com.aol.cyclops.control.ReactiveSeq#insertStreamAt(int, java.util.stream.Stream)
      */
     @Override
     default LazyFutureStream<U> insertStreamAt(int pos, Stream<U> stream) {
@@ -2952,7 +2967,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
     }
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#futureOperations(java.util.concurrent.Executor)
+     * @see com.aol.cyclops.control.ReactiveSeq#futureOperations(java.util.concurrent.Executor)
      */
     @Override
     default FutureOperations<U> futureOperations(Executor exec) {
@@ -2962,7 +2977,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
    
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#skip(long, java.util.concurrent.TimeUnit)
+     * @see com.aol.cyclops.control.ReactiveSeq#skip(long, java.util.concurrent.TimeUnit)
      */
     @Override
     default LazyFutureStream<U> skip(long time, TimeUnit unit) {
@@ -2971,7 +2986,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#limit(long, java.util.concurrent.TimeUnit)
+     * @see com.aol.cyclops.control.ReactiveSeq#limit(long, java.util.concurrent.TimeUnit)
      */
     @Override
     default LazyFutureStream<U> limit(long time, TimeUnit unit) {
@@ -2981,7 +2996,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#skipLast(int)
+     * @see com.aol.cyclops.control.ReactiveSeq#skipLast(int)
      */
     @Override
     default LazyFutureStream<U> skipLast(int num) {
@@ -2990,7 +3005,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#limitLast(int)
+     * @see com.aol.cyclops.control.ReactiveSeq#limitLast(int)
      */
     @Override
     default LazyFutureStream<U> limitLast(int num) {
@@ -3001,7 +3016,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#firstValue()
+     * @see com.aol.cyclops.control.ReactiveSeq#firstValue()
      */
     @Override
     default U firstValue() {
@@ -3018,10 +3033,10 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * If batch exceeds max time it will be split
      * Excludes Null values (neccessary for timeout handling)
      *
-     * @see com.aol.cyclops.sequence.SequenceM#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit, java.util.function.Supplier)
+     * @see com.aol.cyclops.control.ReactiveSeq#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super U>> LazyFutureStream<C> batchBySizeAndTime(int size,
+    default <C extends Collection<? super U>> LazyFutureStream<C> groupedBySizeAndTime(int size,
             long time, TimeUnit unit, Supplier<C> factory) {
             Queue<U> queue = toQueue();
             Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize(size,time,unit,factory);
@@ -3029,83 +3044,42 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
 
+   
     /*
-     * Window the elements in the Stream by a combination of Size and Time
-     * If batch exceeds max size it will be split
-     * If batch exceeds max time it will be split
-     * Excludes Null values (neccessary for timeout handling)
-     * @see com.aol.cyclops.sequence.SequenceM#windowBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
+     * @see com.aol.cyclops.control.ReactiveSeq#groupedStatefullyWhile(java.util.function.BiPredicate)
      */
     @Override
-    default LazyFutureStream<Streamable<U>> windowBySizeAndTime(int maxSize,
-            long maxTime, TimeUnit maxTimeUnit) {
+    default LazyFutureStream<ListX<U>> groupedStatefullyWhile(
+            BiPredicate<ListX<? super U>,? super U> predicate) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .windowBySizeAndTime(maxSize, maxTime, maxTimeUnit));
+                .groupedStatefullyWhile(predicate));
+    }
+    /*
+     * @see com.aol.cyclops.control.ReactiveSeq#batchUntil(java.util.function.Predicate)
+     */
+    @Override
+    default LazyFutureStream<ListX<U>> groupedUntil(Predicate<? super U> predicate) {
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                .groupedUntil(predicate));
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#windowWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops.control.ReactiveSeq#batchWhile(java.util.function.Predicate)
      */
     @Override
-    default LazyFutureStream<Streamable<U>> windowWhile(Predicate<? super U> predicate) {
+    default LazyFutureStream<ListX<U>> groupedWhile(Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .windowWhile(predicate));
+                .groupedWhile(predicate));
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#windowUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops.control.ReactiveSeq#batchWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default LazyFutureStream<Streamable<U>> windowUntil(Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .windowUntil(predicate));
-    }
-
-    /*
-     * @see com.aol.cyclops.sequence.SequenceM#windowStatefullyWhile(java.util.function.BiPredicate)
-     */
-    @Override
-    default LazyFutureStream<Streamable<U>> windowStatefullyWhile(
-            BiPredicate<Streamable<? super U>,? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .windowStatefullyWhile(predicate));
-    }
-
-    /*
-     * @see com.aol.cyclops.sequence.SequenceM#windowByTime(long, java.util.concurrent.TimeUnit)
-     */
-    @Override
-    default LazyFutureStream<Streamable<U>> windowByTime(long time, TimeUnit t) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .windowByTime(time,t));
-    }
-
-    /*
-     * @see com.aol.cyclops.sequence.SequenceM#batchUntil(java.util.function.Predicate)
-     */
-    @Override
-    default LazyFutureStream<ListX<U>> batchUntil(Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .batchUntil(predicate));
-    }
-
-    /*
-     * @see com.aol.cyclops.sequence.SequenceM#batchWhile(java.util.function.Predicate)
-     */
-    @Override
-    default LazyFutureStream<ListX<U>> batchWhile(Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .batchWhile(predicate));
-    }
-
-    /*
-     * @see com.aol.cyclops.sequence.SequenceM#batchWhile(java.util.function.Predicate, java.util.function.Supplier)
-     */
-    @Override
-    default <C extends Collection<? super U>> LazyFutureStream<C> batchWhile(
+    default <C extends Collection<? super U>> LazyFutureStream<C> groupedWhile(
             Predicate<? super U> predicate, Supplier<C> factory) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .batchWhile(predicate,factory));
+                .groupedWhile(predicate,factory));
     }
 
 
@@ -3119,18 +3093,18 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
                 .sorted(function));
     }
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#batchUntil(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.aol.cyclops.control.ReactiveSeq#batchUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super U>> LazyFutureStream<C> batchUntil(
+    default <C extends Collection<? super U>> LazyFutureStream<C> groupedUntil(
             Predicate<? super U> predicate, Supplier<C> factory) {
 
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .batchUntil(predicate,factory));
+                .groupedUntil(predicate,factory));
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#recover(java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#recover(java.util.function.Function)
      */
     @Override
     default LazyFutureStream<U> recover(Function<Throwable, ? extends U> fn) {
@@ -3139,7 +3113,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     }
 
     /*
-     * @see com.aol.cyclops.sequence.SequenceM#recover(java.lang.Class, java.util.function.Function)
+     * @see com.aol.cyclops.control.ReactiveSeq#recover(java.lang.Class, java.util.function.Function)
      */
     @Override
     default <EX extends Throwable> LazyFutureStream<U> recover(

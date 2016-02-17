@@ -453,7 +453,7 @@ public class Tutorial {
 		List<ListX<String>> collected = LazyReact
 				.sequentialCommonBuilder().reactInfinitely(() -> status)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
-				.onePer(1, TimeUnit.SECONDS).batchByTime(10, TimeUnit.SECONDS)
+				.onePer(1, TimeUnit.SECONDS).groupedByTime(10, TimeUnit.SECONDS)
 				.limit(15).block();
 		System.out.println(collected);
 	}
@@ -468,7 +468,7 @@ public class Tutorial {
 				//.limit(100)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
 				.onePer(1, TimeUnit.MICROSECONDS).peek(System.out::println)
-				.batchByTime(10, TimeUnit.MICROSECONDS).peek(System.out::println)
+				.groupedByTime(10, TimeUnit.MICROSECONDS).peek(System.out::println)
 				.limit(15).block();
 		System.out.println(collected);
 	}
@@ -593,7 +593,7 @@ public class Tutorial {
 					.map(this::parseJson)
 					.peek(i->System.out.println(++otherCount))
 					//.filter(i->false)
-					.batchByTime(1, TimeUnit.MICROSECONDS)
+					.groupedByTime(1, TimeUnit.MICROSECONDS)
 					
 					.peek(batch -> System.out.println("batched : " + batch + ":" + (++peek)))
 				//	.filter(c->!c.isEmpty())
@@ -623,7 +623,7 @@ public class Tutorial {
 				.map(this::readFileToString)
 				.map(this::parseJson)
 				//.filter(i->false)
-								.batchByTime(1, TimeUnit.MICROSECONDS)
+								.groupedByTime(1, TimeUnit.MICROSECONDS)
 				
 				.peek(batch -> System.out.println("batched : " + batch))
 				.filter(c->!c.isEmpty())
@@ -652,7 +652,7 @@ public class Tutorial {
 				.map(this::parseJson)
 				//.filter(i->false)
 				
-				.batchByTime(1, TimeUnit.MICROSECONDS)
+				.groupedByTime(1, TimeUnit.MICROSECONDS)
 				
 				.peek(batch -> System.out.println("batched : " + batch))
 				.filter(c->!c.isEmpty())
@@ -674,7 +674,7 @@ public class Tutorial {
 				.map(this::parseJson)
 				//.filter(i->false)
 				
-				.batchByTime(1, TimeUnit.MICROSECONDS)
+				.groupedByTime(1, TimeUnit.MICROSECONDS)
 				
 				.peek(batch -> System.out.println("batched : " + batch))
 				.filter(c->!c.isEmpty())
@@ -696,7 +696,7 @@ public class Tutorial {
 				.map(this::parseJson)
 				
 				.peek(next->System.out.println("Counter " +count2.incrementAndGet()))
-				.batchByTime(10, TimeUnit.MICROSECONDS)
+				.groupedByTime(10, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
 				.filter(c->!c.isEmpty())
 				

@@ -189,12 +189,15 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	CollectionX<T> dropUntil(Predicate<? super T> p);
 	CollectionX<T> dropRight(int num);
 	CollectionX<T> takeRight(int num);
+	
 	default CollectionX<T> peek(Consumer<? super T> c){
 		return (CollectionX<T>)ZippingApplicativable.super.peek(c);
 	}
 	CollectionX<ListX<T>> grouped(int groupSize);
+	
 	<K, A, D> CollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream);
 	<K> CollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier);
+	
 	<U> CollectionX<Tuple2<T, U>> zip(Iterable<U> other);
 	<U, R> CollectionX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 	<U> CollectionX<Tuple2<T, U>> zipStream(Stream<U> other);

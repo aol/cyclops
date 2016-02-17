@@ -52,7 +52,6 @@ import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.internal.stream.ReactiveStreamsLoader;
 import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
@@ -61,7 +60,6 @@ import com.aol.cyclops.react.reactivestreams.reactiveseq.SubscriberForCyclops;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
-import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
@@ -552,6 +550,215 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @return Stream with elements grouped by size
 	 */
 	ReactiveSeq<ListX<T>> grouped(int groupSize);
+	/**
+     * Create ReactiveSeq of ListX where
+     * each ListX is populated while the supplied bipredicate holds. The
+     * bipredicate recieves the ListX from the last window as well as the
+     * current value and can choose to aggregate the current value or create a
+     * new window
+     * 
+     * <pre>
+     * {@code 
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .groupedStatefullyWhile((s,i)-> s.contains(4) ? true : false)
+     *              .toList().size(),equalTo(5));
+     * }
+     * </pre>
+     * 
+     * @param predicate
+     *            Window while true
+     * @return SequenceM windowed while predicate holds
+     */
+    ReactiveSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate);
+
+	/**
+     * Batch elements by size into a List
+     * 
+     * <pre>
+     * {@code
+     * ReactiveSeq.of(1,2,3,4,5,6)
+     *              .batchBySizeAndTime(3,10,TimeUnit.SECONDS)
+     *              .toList();
+     *          
+     * //[[1,2,3],[4,5,6]] 
+     * }
+     * 
+     * @param size Max size of a batch
+     * @param time (Max) time period to build a single batch in
+     * @param t time unit for batch
+     * @return SequenceM batched by size and time
+     */
+    ReactiveSeq<ListX<T>> groupedBySizeAndTime(int size, long time, TimeUnit t);
+
+    /**
+     * Batch elements by size into a collection created by the supplied factory
+     * 
+     * <pre>
+     * {
+     *  &#064;code
+     *  List&lt;ArrayList&lt;Integer&gt;&gt; list = of(1, 2, 3, 4, 5, 6).batchBySizeAndTime(10, 1, TimeUnit.MICROSECONDS, () -&gt; new ArrayList&lt;&gt;()).toList();
+     * }
+     * </pre>
+     * 
+     * @param size
+     *            Max size of a batch
+     * @param time
+     *            (Max) time period to build a single batch in
+     * @param unit
+     *            time unit for batch
+     * @param factory
+     *            Collection factory
+     * @return SequenceM batched by size and time
+     */
+    <C extends Collection<? super T>> ReactiveSeq<C> groupedBySizeAndTime(int size, long time, TimeUnit unit, Supplier<C> factory);
+
+    /**
+     * Batch elements in a Stream by time period
+     * 
+     * <pre>
+     * {@code 
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+     * }
+     * </pre>
+     * 
+     * @param time
+     *            - time period to build a single batch in
+     * @param t
+     *            time unit for batch
+     * @return SequenceM batched into lists by time period
+     */
+    ReactiveSeq<ListX<T>> groupedByTime(long time, TimeUnit t);
+
+    /**
+     * Batch elements by time into a collection created by the supplied factory
+     * 
+     * <pre>
+     * {@code 
+     *   assertThat(ReactiveSeq.of(1,1,1,1,1,1)
+     *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
+     *                       .toList()
+     *                       .get(0)
+     *                       .size(),is(1));
+     * }
+     * </pre>
+     * 
+     * @param time
+     *            - time period to build a single batch in
+     * @param unit
+     *            time unit for batch
+     * @param factory
+     *            Collection factory
+     * @return SequenceM batched into collection types by time period
+     */
+    <C extends Collection<T>> ReactiveSeq<C> groupedByTime(long time, TimeUnit unit, Supplier<C> factory);
+
+    
+
+    /**
+     * Batch elements in a Stream by size into a collection created by the
+     * supplied factory
+     * 
+     * <pre>
+     * {@code
+     * assertThat(ReactiveSeq.of(1,1,1,1,1,1)
+     *                      .batchBySize(3,()->new TreeSet<>())
+     *                      .toList()
+     *                      .get(0)
+     *                      .size(),is(1));
+     * }
+     * 
+     * @param size batch size
+     * @param supplier Collection factory
+     * @return SequenceM batched into collection types by size
+     */
+    <C extends Collection<T>> ReactiveSeq<C> grouped(int size, Supplier<C> supplier);
+
+    
+
+    /**
+     * Create a SequenceM batched by List, where each batch is populated until
+     * the predicate holds
+     * 
+     * <pre>
+     * {@code 
+     *  assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .batchUntil(i->i%3==0)
+     *              .toList()
+     *              .size(),equalTo(2));
+     * }
+     * </pre>
+     * 
+     * @param predicate
+     *            Batch until predicate holds, then open next batch
+     * @return SequenceM batched into lists determined by the predicate supplied
+     */
+    ReactiveSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate);
+
+    /**
+     * Create a SequenceM batched by List, where each batch is populated while
+     * the predicate holds
+     * 
+     * <pre>
+     * {@code 
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .batchWhile(i->i%3!=0)
+     *              .toList().size(),equalTo(2));
+     *  
+     * }
+     * </pre>
+     * 
+     * @param predicate
+     *            Batch while predicate holds, then open next batch
+     * @return SequenceM batched into lists determined by the predicate supplied
+     */
+    ReactiveSeq<ListX<T>> groupedWhile(Predicate<? super T> predicate);
+
+    /**
+     * Create a SequenceM batched by a Collection, where each batch is populated
+     * while the predicate holds
+     * 
+     * <pre>
+     * {@code 
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .batchWhile(i->i%3!=0)
+     *              .toList()
+     *              .size(),equalTo(2));
+     * }
+     * </pre>
+     * 
+     * @param predicate
+     *            Batch while predicate holds, then open next batch
+     * @param factory
+     *            Collection factory
+     * @return SequenceM batched into collections determined by the predicate
+     *         supplied
+     */
+    <C extends Collection<? super T>> ReactiveSeq<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory);
+
+    /**
+     * Create a SequenceM batched by a Collection, where each batch is populated
+     * until the predicate holds
+     * 
+     * <pre>
+     * {@code 
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .batchUntil(i->i%3!=0)
+     *              .toList()
+     *              .size(),equalTo(2));
+     * }
+     * </pre>
+     * 
+     * 
+     * @param predicate
+     *            Batch until predicate holds, then open next batch
+     * @param factory
+     *            Collection factory
+     * @return SequenceM batched into collections determined by the predicate
+     *         supplied
+     */
+    <C extends Collection<? super T>> ReactiveSeq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory);
+
 
 	default <K, A, D> ReactiveSeq<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
 		return fromStream(JoolManipulation.super.grouped(classifier, downstream));
@@ -664,7 +871,45 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	ReactiveSeq<T> sorted(Comparator<? super T> c);
 
-	/**
+	@Override
+    default  ReactiveSeq<T> takeWhile(Predicate<? super T> p) {
+       
+        return (ReactiveSeq<T>)ExtendedTraversable.super.takeWhile(p);
+    }
+
+    @Override
+    default ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
+       
+        return (ReactiveSeq<T>)ExtendedTraversable.super.dropWhile(p);
+    }
+
+    @Override
+    default ReactiveSeq<T> takeUntil(Predicate<? super T> p) {
+        
+        return (ReactiveSeq<T>)ExtendedTraversable.super.takeUntil(p);
+    }
+
+    @Override
+    default ReactiveSeq<T> dropUntil(Predicate<? super T> p) {
+       
+        return (ReactiveSeq<T>)ExtendedTraversable.super.dropUntil(p);
+    }
+
+    @Override
+    default ReactiveSeq<T> dropRight(int num) {
+        
+        return (ReactiveSeq<T>)ExtendedTraversable.super.dropRight(num);
+    }
+
+    @Override
+    default ReactiveSeq<T> takeRight(int num) {
+        
+        return (ReactiveSeq<T>)ExtendedTraversable.super.takeRight(num);
+    }
+
+   
+
+    /**
 	 * <pre>
 	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
 	 * </pre>
@@ -2069,7 +2314,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@SafeVarargs
 	public static <T> ReactiveSeq<T> of(T... elements) {
 		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, false, 0);
-		return StreamUtils.sequenceM(StreamSupport.stream(array, false),Optional.ofNullable(array));
+		return StreamUtils.reactiveSeq(StreamSupport.stream(array, false),Optional.ofNullable(array));
 
 	}
 
@@ -2084,7 +2329,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@SafeVarargs
 	public static <T> ReactiveSeq<T> reversedOf(T... elements) {
 		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, false, 0).invert();
-		return StreamUtils.sequenceM(StreamSupport.stream(array, false),Optional.ofNullable(array));
+		return StreamUtils.reactiveSeq(StreamSupport.stream(array, false),Optional.ofNullable(array));
 		
 
 	}
@@ -2100,7 +2345,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	public static <T> ReactiveSeq<T> reversedListOf(List<T> elements) {
 		Objects.requireNonNull(elements);
 		ReversingListSpliterator list = new ReversingListSpliterator<T>(elements, false).invert();
-		return StreamUtils.sequenceM(StreamSupport.stream(list, false),Optional.ofNullable(list));
+		return StreamUtils.reactiveSeq(StreamSupport.stream(list, false),Optional.ofNullable(list));
 		
 
 	}
@@ -2117,7 +2362,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	public static ReactiveSeq<Integer> range(int start, int end) {
 		ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(start, end, false);
-		return StreamUtils.sequenceM(StreamSupport.stream(range, false),Optional.ofNullable(range));
+		return StreamUtils.reactiveSeq(StreamSupport.stream(range, false),Optional.ofNullable(range));
 
 	}
 
@@ -2133,7 +2378,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	public static ReactiveSeq<Long> rangeLong(long start, long end) {
 		ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(start, end, false);
-		return StreamUtils.sequenceM(StreamSupport.stream(range, false),Optional.ofNullable(range));
+		return StreamUtils.reactiveSeq(StreamSupport.stream(range, false),Optional.ofNullable(range));
 
 	}
 
@@ -2148,7 +2393,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 		Objects.requireNonNull(stream);
 		if (stream instanceof ReactiveSeq)
 			return (ReactiveSeq) stream;
-		return StreamUtils.sequenceM(stream,Optional.empty());
+		return StreamUtils.reactiveSeq(stream,Optional.empty());
 	}
 
 	/**
@@ -2160,7 +2405,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	public static ReactiveSeq<Integer> fromIntStream(IntStream stream) {
 		Objects.requireNonNull(stream);
-		return StreamUtils.sequenceM(stream.boxed(),Optional.empty());
+		return StreamUtils.reactiveSeq(stream.boxed(),Optional.empty());
 		
 	}
 
@@ -2173,7 +2418,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	public static ReactiveSeq<Long> fromLongStream(LongStream stream) {
 		Objects.requireNonNull(stream);
-		return StreamUtils.sequenceM(stream.boxed(),Optional.empty());
+		return StreamUtils.reactiveSeq(stream.boxed(),Optional.empty());
 	}
 
 	/**
@@ -2185,7 +2430,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	public static ReactiveSeq<Double> fromDoubleStream(DoubleStream stream) {
 		Objects.requireNonNull(stream);
-		return StreamUtils.sequenceM(stream.boxed(),Optional.empty());
+		return StreamUtils.reactiveSeq(stream.boxed(),Optional.empty());
 	}
 
 	/**
@@ -2199,7 +2444,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	public static <T> ReactiveSeq<T> fromList(List<T> list) {
 		Objects.requireNonNull(list);
 		ReversingListSpliterator array = new ReversingListSpliterator<T>(list, false);
-		return StreamUtils.sequenceM(StreamSupport.stream(array,false),Optional.ofNullable(array));
+		return StreamUtils.reactiveSeq(StreamSupport.stream(array,false),Optional.ofNullable(array));
 	}
 
 	/**
@@ -2211,7 +2456,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	public static <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable) {
 		Objects.requireNonNull(iterable);
-		return StreamUtils.sequenceM(StreamSupport.stream(iterable.spliterator(), false),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamSupport.stream(iterable.spliterator(), false),Optional.empty());
 	}
 
 	/**
@@ -2230,7 +2475,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @see Stream#iterate(Object, UnaryOperator)
 	 */
 	static <T> ReactiveSeq<T> iterate(final T seed, final UnaryOperator<T> f) {
-		return StreamUtils.sequenceM(Stream.iterate(seed, f),Optional.empty());
+		return StreamUtils.reactiveSeq(Stream.iterate(seed, f),Optional.empty());
 		
 	}
 
@@ -2238,7 +2483,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @see Stream#generate(Supplier)
 	 */
 	static <T> ReactiveSeq<T> generate(Supplier<T> s) {
-		return StreamUtils.sequenceM(Stream.generate(s),Optional.empty());
+		return StreamUtils.reactiveSeq(Stream.generate(s),Optional.empty());
 	
 	}
 
@@ -2575,122 +2820,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	ReactiveSeq<T> debounce(long time, TimeUnit t);
 
-	/**
-	 * Batch elements by size into a List
-	 * 
-	 * <pre>
-	 * {@code
-	 * ReactiveSeq.of(1,2,3,4,5,6)
-	 * 				.batchBySizeAndTime(3,10,TimeUnit.SECONDS)
-	 * 				.toList();
-	 * 			
-	 * //[[1,2,3],[4,5,6]] 
-	 * }
-	 * 
-	 * @param size Max size of a batch
-	 * @param time (Max) time period to build a single batch in
-	 * @param t time unit for batch
-	 * @return SequenceM batched by size and time
-	 */
-	ReactiveSeq<ListX<T>> batchBySizeAndTime(int size, long time, TimeUnit t);
-
-	/**
-	 * Batch elements by size into a collection created by the supplied factory
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	List&lt;ArrayList&lt;Integer&gt;&gt; list = of(1, 2, 3, 4, 5, 6).batchBySizeAndTime(10, 1, TimeUnit.MICROSECONDS, () -&gt; new ArrayList&lt;&gt;()).toList();
-	 * }
-	 * </pre>
-	 * 
-	 * @param size
-	 *            Max size of a batch
-	 * @param time
-	 *            (Max) time period to build a single batch in
-	 * @param unit
-	 *            time unit for batch
-	 * @param factory
-	 *            Collection factory
-	 * @return SequenceM batched by size and time
-	 */
-	<C extends Collection<? super T>> ReactiveSeq<C> batchBySizeAndTime(int size, long time, TimeUnit unit, Supplier<C> factory);
-
-	/**
-	 * Batch elements in a Stream by time period
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
-	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
-	 * }
-	 * </pre>
-	 * 
-	 * @param time
-	 *            - time period to build a single batch in
-	 * @param t
-	 *            time unit for batch
-	 * @return SequenceM batched into lists by time period
-	 */
-	ReactiveSeq<ListX<T>> batchByTime(long time, TimeUnit t);
-
-	/**
-	 * Batch elements by time into a collection created by the supplied factory
-	 * 
-	 * <pre>
-	 * {@code 
-	 *   assertThat(ReactiveSeq.of(1,1,1,1,1,1)
-	 *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
-	 *                       .toList()
-	 *                       .get(0)
-	 *                       .size(),is(1));
-	 * }
-	 * </pre>
-	 * 
-	 * @param time
-	 *            - time period to build a single batch in
-	 * @param unit
-	 *            time unit for batch
-	 * @param factory
-	 *            Collection factory
-	 * @return SequenceM batched into collection types by time period
-	 */
-	<C extends Collection<T>> ReactiveSeq<C> batchByTime(long time, TimeUnit unit, Supplier<C> factory);
-
-	/**
-	 * Batch elements in a Stream by size into Lists
-	 * 
-	 * <pre>
-	 * {@code 
-	 *  assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-	 *                      .batchBySize(3)
-	 *                      .collect(Collectors.toList())
-	 *                      .size(),is(2));
-	 * }
-	 * @param size of batch
-	 * @return SequenceM batched by size into Lists
-	 */
-	ReactiveSeq<ListX<T>> batchBySize(int size);
-
-	/**
-	 * Batch elements in a Stream by size into a collection created by the
-	 * supplied factory
-	 * 
-	 * <pre>
-	 * {@code
-	 * assertThat(ReactiveSeq.of(1,1,1,1,1,1)
-	 * 						.batchBySize(3,()->new TreeSet<>())
-	 * 						.toList()
-	 * 						.get(0)
-	 * 						.size(),is(1));
-	 * }
-	 * 
-	 * @param size batch size
-	 * @param supplier Collection factory
-	 * @return SequenceM batched into collection types by size
-	 */
-	<C extends Collection<T>> ReactiveSeq<C> batchBySize(int size, Supplier<C> supplier);
-
+	
 	/**
 	 * emit elements after a fixed delay
 	 * 
@@ -2728,199 +2858,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @return Sequence with a random jitter between element emission
 	 */
 	ReactiveSeq<T> jitter(long maxJitterPeriodInNanos);
-
-	/**
-	 * Create a Sequence of Streamables (replayable Streams / Sequences) where
-	 * each Streamable is populated up to a max size, or for max period of time
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-	 * 						.windowBySizeAndTime(3,10,TimeUnit.SECONDS)
-	 * 						.toList()
-	 * 						.get(0)
-	 * 						.stream()
-	 * 						.count(),is(3l));
-	 * 
-	 * }
-	 * @param maxSize of window
-	 * @param maxTime of window
-	 * @param maxTimeUnit of window
-	 * @return Windowed SequenceM
-	 */
-	ReactiveSeq<Streamable<T>> windowBySizeAndTime(int maxSize, long maxTime, TimeUnit maxTimeUnit);
-
-	/**
-	 * Create a Sequence of Streamables (replayable Streams / Sequences) where
-	 * each Streamable is populated while the supplied predicate holds. When the
-	 * predicate failsa new window/ Stremable opens
-	 * 
-	 * <pre>
-	 * {@code 
-	 * ReactiveSeq.of(1,2,3,4,5,6)
-	 * 				.windowWhile(i->i%3!=0)
-	 * 				.forEach(System.out::println);
-	 *   
-	 *  StreamableImpl(streamable=[1, 2, 3]) 
-	 *  StreamableImpl(streamable=[4, 5, 6])
-	 * }
-	 * </pre>
-	 * 
-	 * @param predicate
-	 *            Window while true
-	 * @return SequenceM windowed while predicate holds
-	 */
-	ReactiveSeq<Streamable<T>> windowWhile(Predicate<? super T> predicate);
-
-	/**
-	 * Create a Sequence of Streamables (replayable Streams / Sequences) where
-	 * each Streamable is populated until the supplied predicate holds. When the
-	 * predicate failsa new window/ Stremable opens
-	 * 
-	 * <pre>
-	 * {@code 
-	 * ReactiveSeq.of(1,2,3,4,5,6)
-	 * 				.windowUntil(i->i%3==0)
-	 * 				.forEach(System.out::println);
-	 *   
-	 *  StreamableImpl(streamable=[1, 2, 3]) 
-	 *  StreamableImpl(streamable=[4, 5, 6])
-	 * }
-	 * </pre>
-	 * 
-	 * @param predicate
-	 *            Window until true
-	 * @return SequenceM windowed until predicate holds
-	 */
-	ReactiveSeq<Streamable<T>> windowUntil(Predicate<? super T> predicate);
-
-	/**
-	 * Create SequenceM of Streamables (replayable Streams / Sequences) where
-	 * each Streamable is populated while the supplied bipredicate holds. The
-	 * bipredicate recieves the Streamable from the last window as well as the
-	 * current value and can choose to aggregate the current value or create a
-	 * new window
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-	 * 				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
-	 * 				.toList().size(),equalTo(5));
-	 * }
-	 * </pre>
-	 * 
-	 * @param predicate
-	 *            Window while true
-	 * @return SequenceM windowed while predicate holds
-	 */
-	ReactiveSeq<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<? super T>, ? super T> predicate);
-
-	/**
-	 * Create SequenceM of Streamables (replayable Streams / Sequences) where
-	 * each Streamable is populated within a specified time window
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat(ReactiveSeq.of(1,2,3,4,5, 6)
-	 * 							.map(n-> n==6? sleep(1) : n)
-	 * 							.windowByTime(10,TimeUnit.MICROSECONDS)
-	 * 							.toList()
-	 * 							.get(0).sequenceM().toList()
-	 * 							,not(hasItem(6)));
-	 * }
-	 * </pre>
-	 * 
-	 * @param time
-	 *            max time per window
-	 * @param t
-	 *            time unit per window
-	 * @return SequenceM windowed by time
-	 */
-	ReactiveSeq<Streamable<T>> windowByTime(long time, TimeUnit t);
-
-	/**
-	 * Create a SequenceM batched by List, where each batch is populated until
-	 * the predicate holds
-	 * 
-	 * <pre>
-	 * {@code 
-	 *  assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-	 * 				.batchUntil(i->i%3==0)
-	 * 				.toList()
-	 * 				.size(),equalTo(2));
-	 * }
-	 * </pre>
-	 * 
-	 * @param predicate
-	 *            Batch until predicate holds, then open next batch
-	 * @return SequenceM batched into lists determined by the predicate supplied
-	 */
-	ReactiveSeq<ListX<T>> batchUntil(Predicate<? super T> predicate);
-
-	/**
-	 * Create a SequenceM batched by List, where each batch is populated while
-	 * the predicate holds
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-	 * 				.batchWhile(i->i%3!=0)
-	 * 				.toList().size(),equalTo(2));
-	 * 	
-	 * }
-	 * </pre>
-	 * 
-	 * @param predicate
-	 *            Batch while predicate holds, then open next batch
-	 * @return SequenceM batched into lists determined by the predicate supplied
-	 */
-	ReactiveSeq<ListX<T>> batchWhile(Predicate<? super T> predicate);
-
-	/**
-	 * Create a SequenceM batched by a Collection, where each batch is populated
-	 * while the predicate holds
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-	 * 				.batchWhile(i->i%3!=0)
-	 * 				.toList()
-	 * 				.size(),equalTo(2));
-	 * }
-	 * </pre>
-	 * 
-	 * @param predicate
-	 *            Batch while predicate holds, then open next batch
-	 * @param factory
-	 *            Collection factory
-	 * @return SequenceM batched into collections determined by the predicate
-	 *         supplied
-	 */
-	<C extends Collection<? super T>> ReactiveSeq<C> batchWhile(Predicate<? super T> predicate, Supplier<C> factory);
-
-	/**
-	 * Create a SequenceM batched by a Collection, where each batch is populated
-	 * until the predicate holds
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-	 * 				.batchUntil(i->i%3!=0)
-	 * 				.toList()
-	 * 				.size(),equalTo(2));
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * @param predicate
-	 *            Batch until predicate holds, then open next batch
-	 * @param factory
-	 *            Collection factory
-	 * @return SequenceM batched into collections determined by the predicate
-	 *         supplied
-	 */
-	<C extends Collection<? super T>> ReactiveSeq<C> batchUntil(Predicate<? super T> predicate, Supplier<C> factory);
-
+	
 	/**
 	 * Recover from an exception with an alternative value
 	 * 

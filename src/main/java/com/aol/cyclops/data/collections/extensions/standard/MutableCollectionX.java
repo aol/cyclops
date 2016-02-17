@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -22,6 +23,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface MutableCollectionX<T> extends FluentCollectionX<T> {
@@ -540,6 +542,44 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	default MutableCollectionX<ReactiveSeq<T>> combinations() {
 		return fromStream(stream().combinations());
 	}
+
+    @Override
+    default <C extends Collection<T>> MutableCollectionX<C> grouped(int size, Supplier<C> supplier) {
+        
+        return fromStream(stream().grouped(size,supplier));
+    }
+
+    @Override
+    default MutableCollectionX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+        
+        return fromStream(stream().groupedUntil(predicate));
+    }
+
+    @Override
+    default MutableCollectionX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+        
+        return fromStream(stream().groupedWhile(predicate));
+    }
+
+    @Override
+    default <C extends Collection<? super T>> MutableCollectionX<C> groupedWhile(Predicate<? super T> predicate,
+            Supplier<C> factory) {
+        
+        return fromStream(stream().groupedWhile(predicate,factory));
+    }
+
+    @Override
+    default <C extends Collection<? super T>> MutableCollectionX<C> groupedUntil(Predicate<? super T> predicate,
+            Supplier<C> factory) {
+        
+        return fromStream(stream().groupedUntil(predicate,factory));
+    }
+
+    @Override
+    default MutableCollectionX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return fromStream(stream().groupedStatefullyWhile(predicate));
+    }
+    
 	
 	
 }

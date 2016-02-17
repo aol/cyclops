@@ -168,7 +168,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Stream with values repeated
 	 */
 	public final ReactiveSeq<T> cycle(int times) {
-		return StreamUtils.sequenceM(StreamUtils.cycle(times,AsStreamable.fromStream(stream)),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.cycle(times,AsStreamable.fromStream(stream)),reversable);
 	}
 	/**
 	 * Convert to a Stream with the values infinitely cycled
@@ -182,7 +182,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Stream with values repeated
 	 */
 	public final ReactiveSeq<T> cycle() {
-		return StreamUtils.sequenceM(StreamUtils.cycle(stream),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.cycle(stream),reversable);
 	}
 	/**
 	 * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
@@ -200,8 +200,8 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public final Tuple2<ReactiveSeq<T>,ReactiveSeq<T>> duplicateSequence(){
 		Tuple2<Stream<T>,Stream<T>> tuple = StreamUtils.duplicate(stream);
-		return tuple.map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
-			  	.map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
+		return tuple.map1(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())))
+			  	.map2(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())));
 	}
 	/**
 	 * Triplicates a Stream
@@ -218,9 +218,9 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	public final Tuple3<ReactiveSeq<T>,ReactiveSeq<T>,ReactiveSeq<T>> triplicate(){
 		
 		Tuple3<Stream<T>,Stream<T>,Stream<T>> tuple = StreamUtils.triplicate(stream);
-		return tuple.map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
-					.map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
-					.map3(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
+		return tuple.map1(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())))
+					.map2(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())))
+					.map3(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())));
 		
 		
 	}
@@ -242,10 +242,10 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	@SuppressWarnings("unchecked")
 	public final Tuple4<ReactiveSeq<T>,ReactiveSeq<T>,ReactiveSeq<T>,ReactiveSeq<T>> quadruplicate(){
 		Tuple4<Stream<T>,Stream<T>,Stream<T>,Stream<T>> tuple = StreamUtils.quadruplicate(stream);
-		return tuple.map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
-				  	.map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
-					.map3(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
-					.map4(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
+		return tuple.map1(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())))
+				  	.map2(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())))
+					.map3(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())))
+					.map4(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())));
 	}
 	/**
 	 * Split a Stream at it's head (similar to headAndTail)
@@ -279,8 +279,8 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public final Tuple2<ReactiveSeq<T>,ReactiveSeq<T>> splitAt(int where){
 		return StreamUtils.splitAt(stream, where)
-				   .map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
-				   .map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
+				   .map1(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())))
+				   .map2(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())));
 		
 	}
 	/**
@@ -295,8 +295,8 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public final Tuple2<ReactiveSeq<T>,ReactiveSeq<T>> splitBy(Predicate<T> splitter){
 		return StreamUtils.splitBy(stream, splitter)
-				   .map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
-				   .map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
+				   .map1(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())))
+				   .map2(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())));
 	}
 	/**
 	 * Partition a Stream into two one a per element basis, based on predicate's boolean value
@@ -311,8 +311,8 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public final Tuple2<ReactiveSeq<T>,ReactiveSeq<T>> partitionSequence(Predicate<T> splitter){
 		return StreamUtils.partition(stream, splitter)
-				 		.map1(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())))
-				 		 .map2(s->StreamUtils.sequenceM(s,reversable.map(r->r.copy())));
+				 		.map1(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())))
+				 		 .map2(s->StreamUtils.reactiveSeq(s,reversable.map(r->r.copy())));
 	}
 	
 	
@@ -337,7 +337,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Stream with reduced values repeated
 	 */
 	public final ReactiveSeq<T> cycle(Monoid<T> m, int times) {
-		return StreamUtils.sequenceM(StreamUtils.cycle(times,Streamable.of(m.reduce(stream))),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.cycle(times,Streamable.of(m.reduce(stream))),reversable);
 		
 	}
 
@@ -387,7 +387,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public final ReactiveSeq<T> cycleWhile(Predicate<? super T> predicate) {
 	
-		return StreamUtils.sequenceM(StreamUtils.cycle(stream),reversable).limitWhile(predicate);
+		return StreamUtils.reactiveSeq(StreamUtils.cycle(stream),reversable).limitWhile(predicate);
 	}
 
 	/**
@@ -407,7 +407,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Repeating Stream
 	 */
 	public final ReactiveSeq<T> cycleUntil(Predicate<? super T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.cycle(stream),reversable).limitWhile(predicate.negate());
+		return StreamUtils.reactiveSeq(StreamUtils.cycle(stream),reversable).limitWhile(predicate.negate());
 	}
 	/**
 	 * Zip 2 streams into one
@@ -490,7 +490,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public final <S, R> ReactiveSeq<R> zipSequence(ReactiveSeq<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return StreamUtils.sequenceM(StreamUtils.zipSequence(stream,second, zipper),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.zipSequence(stream,second, zipper),Optional.empty());
 		
 	}
 	/**
@@ -537,7 +537,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public final <S, R> ReactiveSeq<R> zipStream(BaseStream<? extends S,? extends BaseStream<? extends S,?>> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return StreamUtils.sequenceM(StreamUtils.zipStream(stream,second, zipper),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.zipStream(stream,second, zipper),Optional.empty());
 	}
 
 	/**
@@ -562,7 +562,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return SequenceM with sliding view
 	 */
 	public final ReactiveSeq<ListX<T>> sliding(int windowSize) {
-		return StreamUtils.sequenceM(StreamUtils.sliding(stream,windowSize),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.sliding(stream,windowSize),reversable);
 	}
 	/**
 	 *  Create a sliding view over this Sequence
@@ -586,7 +586,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return SequenceM with sliding view
 	 */
 	public final ReactiveSeq<ListX<T>> sliding(int windowSize,int increment) {
-		return StreamUtils.sequenceM(StreamUtils.sliding(stream,windowSize,increment),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.sliding(stream,windowSize,increment),reversable);
 	}
 
 	/**
@@ -609,8 +609,13 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Stream with elements grouped by size
 	 */
 	public final ReactiveSeq<ListX<T>> grouped(int groupSize) {
-		return StreamUtils.sequenceM(StreamUtils.batchBySize(stream,groupSize),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.batchBySize(stream,groupSize),reversable);
 	}
+	@Override
+    public ReactiveSeq<ListX<T>> groupedStatefullyWhile(
+            BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return StreamUtils.reactiveSeq(StreamUtils.groupedStatefullyWhile(stream, predicate), this.reversable);
+    }
 	/**
 	 * Use classifier function to group elements in this Sequence into a Map
 	 * <pre>
@@ -639,7 +644,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 *</pre>
 	 */
 	public final ReactiveSeq<T> distinct() {
-		return StreamUtils.sequenceM(stream.distinct(),reversable);
+		return StreamUtils.reactiveSeq(stream.distinct(),reversable);
 	}
 
 	/**
@@ -657,7 +662,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return
 	 */
 	public final ReactiveSeq<T> scanLeft(Monoid<T> monoid) {
-		return StreamUtils.sequenceM(StreamUtils.scanLeft(stream,monoid),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.scanLeft(stream,monoid),reversable);
 	}
 	/**
 	 * Scan left
@@ -670,7 +675,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public final <U> ReactiveSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
 		
-		return StreamUtils.sequenceM(Seq.seq(stream).scanLeft(seed, function),reversable);
+		return StreamUtils.reactiveSeq(Seq.seq(stream).scanLeft(seed, function),reversable);
 		
 	}
 	
@@ -684,7 +689,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * </pre>
 	 */
 	public final ReactiveSeq<T> scanRight(Monoid<T> monoid) {
-		return StreamUtils.sequenceM(reverse().scanLeft(monoid.zero(), (u, t) -> monoid.combiner().apply(t, u)),reversable);
+		return StreamUtils.reactiveSeq(reverse().scanLeft(monoid.zero(), (u, t) -> monoid.combiner().apply(t, u)),reversable);
 	}
 	/**
 	 * Scan right
@@ -699,7 +704,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public final<U> ReactiveSeq<U> scanRight(U identity,BiFunction<? super T, U, U>  combiner){
 		
-		return StreamUtils.sequenceM(StreamUtils.scanRight(stream,identity,combiner),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.scanRight(stream,identity,combiner),reversable);
 	}
 	
 
@@ -711,7 +716,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * 
 	 */
 	public final ReactiveSeq<T> sorted() {
-		return StreamUtils.sequenceM(stream.sorted(),reversable);
+		return StreamUtils.reactiveSeq(stream.sorted(),reversable);
 	}
 
 	/**
@@ -725,7 +730,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Sorted Monad
 	 */
 	public final ReactiveSeq<T> sorted(Comparator<? super T> c) {
-		return StreamUtils.sequenceM(stream.sorted(c),reversable);
+		return StreamUtils.reactiveSeq(stream.sorted(c),reversable);
 	}
 
 	/**
@@ -741,7 +746,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 *         skipped
 	 */
 	public final ReactiveSeq<T> skip(long num) {
-		return StreamUtils.sequenceM( stream.skip(num),reversable);
+		return StreamUtils.reactiveSeq( stream.skip(num),reversable);
 	}
 
 	/**
@@ -759,7 +764,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 *         holds
 	 */
 	public final ReactiveSeq<T> skipWhile(Predicate<? super T> p) {
-		return StreamUtils.sequenceM(StreamUtils.skipWhile(stream, p),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.skipWhile(stream, p),reversable);
 	}
 
 	/**
@@ -776,7 +781,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 *         holds
 	 */
 	public final ReactiveSeq<T> skipUntil(Predicate<? super T> p) {
-		return StreamUtils.sequenceM(StreamUtils.skipUntil(stream,p),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.skipUntil(stream,p),reversable);
 	}
 
 	/**
@@ -791,7 +796,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Monad converted to Stream with elements up to num
 	 */
 	public final ReactiveSeq<T> limit(long num) {
-		return StreamUtils.sequenceM(stream.limit(num),reversable);
+		return StreamUtils.reactiveSeq(stream.limit(num),reversable);
 	}
 
 	/**
@@ -806,7 +811,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Monad converted to Stream with limited elements
 	 */
 	public final ReactiveSeq<T> limitWhile(Predicate<? super T> p) {
-		return StreamUtils.sequenceM(StreamUtils.limitWhile(stream,p),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.limitWhile(stream,p),reversable);
 	}
 
 	/**
@@ -821,7 +826,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Monad converted to Stream with limited elements
 	 */
 	public final ReactiveSeq<T> limitUntil(Predicate<? super T> p) {
-		return StreamUtils.sequenceM(StreamUtils.limitUntil(stream,p),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.limitUntil(stream,p),reversable);
 	}
 	/**
 	 * @return does nothing - returns this
@@ -1242,7 +1247,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
 	public final <R> ReactiveSeq<R> flatMap(Function<? super T,? extends Stream<? extends R>> fn) {
-		return StreamUtils.sequenceM(stream.flatMap(fn),reversable);
+		return StreamUtils.reactiveSeq(stream.flatMap(fn),reversable);
 	}
 	/**
 	 * Allows flatMap return type to be any Monad type
@@ -1256,7 +1261,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
 	public final <R> ReactiveSeq<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapAnyM(stream,fn),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.flatMapAnyM(stream,fn),reversable);
 	}
 	/**
 	 * Convenience method & performance optimisation
@@ -1283,7 +1288,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return
 	 */
 	public final <R> ReactiveSeq<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapCollection(stream,fn),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.flatMapCollection(stream,fn),Optional.empty());
 		
 	}
 	/**
@@ -1299,7 +1304,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	*/
 	public final <R> ReactiveSeq<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapStream(stream,fn),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.flatMapStream(stream,fn),reversable);
 
 	}
 	/**
@@ -1315,7 +1320,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return
 	 */
 	public final <R> ReactiveSeq<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapOptional(stream,fn),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.flatMapOptional(stream,fn),reversable);
 	
 	}
 	/**
@@ -1334,7 +1339,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return
 	 */
 	public final <R> ReactiveSeq<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapCompletableFuture(stream,fn),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.flatMapCompletableFuture(stream,fn),reversable);
 	}
 	
 	
@@ -1357,7 +1362,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return
 	 */
 	public final  ReactiveSeq<Character> flatMapCharSequence(Function<? super T,CharSequence> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapCharSequence(stream, fn),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.flatMapCharSequence(stream, fn),reversable);
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1384,7 +1389,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return
 	 */
 	public final  ReactiveSeq<String> flatMapFile(Function<? super T,File> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapFile(stream, fn),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.flatMapFile(stream, fn),reversable);
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1406,7 +1411,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return
 	 */
 	public final  ReactiveSeq<String> flatMapURL(Function<? super T, URL> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapURL(stream, fn),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.flatMapURL(stream, fn),reversable);
 	}
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1429,10 +1434,10 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return
 	 */
 	public final ReactiveSeq<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn) {
-		return StreamUtils.sequenceM(StreamUtils.flatMapBufferedReader(stream, fn),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.flatMapBufferedReader(stream, fn),reversable);
 	}
 	public final   ReactiveSeq<T>  filter(Predicate<? super T> fn){
-		return StreamUtils.sequenceM(stream.filter(fn),reversable);
+		return StreamUtils.reactiveSeq(stream.filter(fn),reversable);
 	}
 	public void forEach(Consumer<? super T> action) {
 		stream.forEach(action);
@@ -1452,12 +1457,12 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	}
 	
 	public ReactiveSeq<T> sequential() {
-		return StreamUtils.sequenceM(stream.sequential(),reversable);
+		return StreamUtils.reactiveSeq(stream.sequential(),reversable);
 	}
 	
 	
 	public ReactiveSeq<T> unordered() {
-		return StreamUtils.sequenceM(stream.unordered(),reversable);
+		return StreamUtils.reactiveSeq(stream.unordered(),reversable);
 	}
 	
 	
@@ -1517,7 +1522,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public  ReactiveSeq<T> intersperse(T value) {
 	
-		return StreamUtils.sequenceM(stream.flatMap(t -> Stream.of(value,t)).skip(1l),reversable);
+		return StreamUtils.reactiveSeq(stream.flatMap(t -> Stream.of(value,t)).skip(1l),reversable);
 	}
 	/**
 	 * Keep only those elements in a stream that are of a given type.
@@ -1528,7 +1533,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	@SuppressWarnings("unchecked")
 	public <U> ReactiveSeq<U> ofType(Class<U> type) {
-		return StreamUtils.sequenceM(StreamUtils.ofType(stream, type),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.ofType(stream, type),reversable);
 	}
 	/**
 	 * Cast all elements in a stream to a given type, possibly throwing a
@@ -1539,7 +1544,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * 
 	 */
 	public <U> ReactiveSeq<U> cast(Class<U> type) {
-		return StreamUtils.sequenceM(StreamUtils.cast(stream, type),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.cast(stream, type),reversable);
 	}
 	/**
 	 * Lazily converts this SequenceM into a Collection. This does not trigger the Stream. E.g.
@@ -1598,7 +1603,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 			reversable.ifPresent(r->r.invert());
 			return this;
 		}
-		return StreamUtils.sequenceM(StreamUtils.reverse(stream),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.reverse(stream),reversable);
 	}
 	
 	
@@ -1614,7 +1619,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	}
 
 	public ReactiveSeq<T> shuffle() {
-		return StreamUtils.sequenceM(StreamUtils.shuffle(stream).stream(),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.shuffle(stream).stream(),reversable);
 	
 	}
 	/**
@@ -1633,7 +1638,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return SequenceM with Stream appended
 	 */
 	public ReactiveSeq<T> appendStream(Stream<T> stream) {
-		return StreamUtils.sequenceM(StreamUtils.appendStream(this.stream,stream),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.appendStream(this.stream,stream),Optional.empty());
 	}
 	/**
 	 * Prepend Stream to this SequenceM
@@ -1652,7 +1657,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public ReactiveSeq<T> prependStream(Stream<T> stream) {
 		
-		return StreamUtils.sequenceM(StreamUtils.prependStream(this.stream,stream),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.prependStream(this.stream,stream),Optional.empty());
 	}
 	/**
 	 * Append values to the end of this SequenceM
@@ -1668,7 +1673,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return SequenceM with appended values
 	 */
 	public ReactiveSeq<T> append(T... values) {
-		return StreamUtils.sequenceM(StreamUtils.append(stream, values),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.append(stream, values),Optional.empty());
 		
 	}
 	/**
@@ -1683,7 +1688,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return SequenceM with values prepended
 	 */
 	public ReactiveSeq<T> prepend(T... values) {
-		return StreamUtils.sequenceM(StreamUtils.prepend(stream, values),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.prepend(stream, values),Optional.empty());
 	}
 	/**
 	 * Insert data into a stream at given position
@@ -1700,7 +1705,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Stream with new data inserted
 	 */
 	public ReactiveSeq<T> insertAt(int pos, T... values) {
-		return StreamUtils.sequenceM(StreamUtils.insertAt(stream, pos, values),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.insertAt(stream, pos, values),Optional.empty());
 		
 	}
 	/**
@@ -1717,7 +1722,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return Stream with elements removed
 	 */
 	public ReactiveSeq<T> deleteBetween(int start,int end) {
-		return StreamUtils.sequenceM(StreamUtils.deleteBetween(stream, start, end),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.deleteBetween(stream, start, end),Optional.empty());
 	}
 	/**
 	 * Insert a Stream into the middle of this stream at the specified position
@@ -1734,7 +1739,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 */
 	public ReactiveSeq<T> insertStreamAt(int pos, Stream<T> stream) {
 		
-		return StreamUtils.sequenceM(StreamUtils.insertStreamAt(this.stream, pos,stream),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.insertStreamAt(this.stream, pos,stream),Optional.empty());
 		
 	}
 
@@ -1813,14 +1818,14 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 
 	@Override
 	public <U> ReactiveSeq<Tuple2<T, U>> zip(Seq<U> other) {
-		return StreamUtils.sequenceM(Seq.seq(stream).zip(other),reversable);
+		return StreamUtils.reactiveSeq(Seq.seq(stream).zip(other),reversable);
 	}
 
 
 	@Override
 	public <S, R> ReactiveSeq<R> zipAnyM(AnyM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return StreamUtils.sequenceM(StreamUtils.zipAnyM(stream,second,zipper),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.zipAnyM(stream,second,zipper),reversable);
 	}
 
 
@@ -1857,62 +1862,62 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 
 	@Override
 	public ReactiveSeq<T> onEmpty(T value) {
-		return StreamUtils.sequenceM(Seq.seq(stream).onEmpty(value),Optional.empty());
+		return StreamUtils.reactiveSeq(Seq.seq(stream).onEmpty(value),Optional.empty());
 	}
 
 
 	@Override
 	public ReactiveSeq<T> onEmptyGet(Supplier<T> supplier) {
-		return StreamUtils.sequenceM(Seq.seq(stream).onEmptyGet(supplier),Optional.empty());
+		return StreamUtils.reactiveSeq(Seq.seq(stream).onEmptyGet(supplier),Optional.empty());
 	}
 
 
 	@Override
 	public <X extends Throwable> ReactiveSeq<T> onEmptyThrow(Supplier<X> supplier) {
-		return StreamUtils.sequenceM(Seq.seq(stream).onEmptyThrow(supplier),Optional.empty());
+		return StreamUtils.reactiveSeq(Seq.seq(stream).onEmptyThrow(supplier),Optional.empty());
 	}
 
 
 	@Override
 	public ReactiveSeq<T> concat(Stream<T> other) {
-		return StreamUtils.sequenceM(Seq.seq(stream).concat(other),Optional.empty());
+		return StreamUtils.reactiveSeq(Seq.seq(stream).concat(other),Optional.empty());
 	}
 
 
 	@Override
 	public ReactiveSeq<T> concat(T other) {
-		return StreamUtils.sequenceM(Seq.seq(stream).concat(other),Optional.empty());
+		return StreamUtils.reactiveSeq(Seq.seq(stream).concat(other),Optional.empty());
 	}
 
 
 	@Override
 	public ReactiveSeq<T> concat(T... other) {
-		return StreamUtils.sequenceM(Seq.seq(stream).concat(other),Optional.empty());
+		return StreamUtils.reactiveSeq(Seq.seq(stream).concat(other),Optional.empty());
 	}
 
 
 	@Override
 	public <U> ReactiveSeq<T> distinct(
 			Function<? super T, ? extends U> keyExtractor) {
-		return StreamUtils.sequenceM(Seq.seq(stream).distinct(keyExtractor),reversable);
+		return StreamUtils.reactiveSeq(Seq.seq(stream).distinct(keyExtractor),reversable);
 	}
 
 
 	@Override
 	public <U, R> ReactiveSeq<R> zip(Seq<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-		return StreamUtils.sequenceM(Seq.seq(stream).zip(other, zipper),Optional.empty());
+		return StreamUtils.reactiveSeq(Seq.seq(stream).zip(other, zipper),Optional.empty());
 	}
 
 
 	@Override
 	public ReactiveSeq<T> shuffle(Random random) {
-		return StreamUtils.sequenceM(Seq.seq(stream).shuffle(random),reversable);
+		return StreamUtils.reactiveSeq(Seq.seq(stream).shuffle(random),reversable);
 	}
 
 
 	@Override
 	public ReactiveSeq<T> slice(long from, long to) {
-		return StreamUtils.sequenceM(Seq.seq(stream).slice(from,to),reversable);
+		return StreamUtils.reactiveSeq(Seq.seq(stream).slice(from,to),reversable);
 	}
 	
 
@@ -1920,38 +1925,38 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	@Override
 	public <U extends Comparable<? super U>> ReactiveSeq<T> sorted(
 			Function<? super T, ? extends U> function) {
-		return StreamUtils.sequenceM(Seq.seq(stream).sorted(function),reversable);
+		return StreamUtils.reactiveSeq(Seq.seq(stream).sorted(function),reversable);
 	}
 
 
 	@Override
 	public <U> ReactiveSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
-		return StreamUtils.sequenceM(StreamUtils.zipStream(stream, other,Tuple::tuple),Optional.empty());
+		return StreamUtils.reactiveSeq(StreamUtils.zipStream(stream, other,Tuple::tuple),Optional.empty());
 	}
 
 	@Override
 	public ReactiveSeq<T> xPer(int x, long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.xPer(stream, x,time,t),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.xPer(stream, x,time,t),reversable);
 	}
 
 	@Override
 	public ReactiveSeq<T> onePer(long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.onePer(stream,time,t),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.onePer(stream,time,t),reversable);
 	}
 
 	@Override
 	public ReactiveSeq<T> debounce(long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.debounce(stream, time,t),reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.debounce(stream, time,t),reversable);
 	}
 
 	@Override
-	public ReactiveSeq<ListX<T>> batchBySizeAndTime(int size, long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.batchBySizeAndTime(stream, size, time,t),reversable);
+	public ReactiveSeq<ListX<T>> groupedBySizeAndTime(int size, long time, TimeUnit t) {
+		return StreamUtils.reactiveSeq(StreamUtils.batchBySizeAndTime(stream, size, time,t),reversable);
 	}
 
 	@Override
-	public ReactiveSeq<ListX<T>> batchByTime(long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.batchByTime(stream, time,t),reversable);
+	public ReactiveSeq<ListX<T>> groupedByTime(long time, TimeUnit t) {
+		return StreamUtils.reactiveSeq(StreamUtils.batchByTime(stream, time,t),reversable);
 	}
 
 	@Override
@@ -1966,118 +1971,88 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 
 	@Override
 	public ReactiveSeq<T> skip(long time, TimeUnit unit) {
-		return StreamUtils.sequenceM(StreamUtils.skip(stream,time,unit),
+		return StreamUtils.reactiveSeq(StreamUtils.skip(stream,time,unit),
 				this.reversable);
 	}
 
 	@Override
 	public ReactiveSeq<T> limit(long time, TimeUnit unit) {
-		return StreamUtils.sequenceM(StreamUtils.limit(stream,time,unit),
+		return StreamUtils.reactiveSeq(StreamUtils.limit(stream,time,unit),
 				this.reversable);
 	}
 
-	@Override
-	public ReactiveSeq<ListX<T>> batchBySize(int size) {
-		return StreamUtils.sequenceM(StreamUtils.batchBySize(stream, size),this.reversable);
-	}
-
+	
 	
 
 	@Override
 	public ReactiveSeq<T> fixedDelay(long l, TimeUnit unit) {
-		return StreamUtils.sequenceM(StreamUtils.fixedDelay(stream,l,unit),
+		return StreamUtils.reactiveSeq(StreamUtils.fixedDelay(stream,l,unit),
 				this.reversable);
 	}
 
 	@Override
 	public ReactiveSeq<T> jitter(long l) {
-		return StreamUtils.sequenceM(StreamUtils.jitter(stream,l),
+		return StreamUtils.reactiveSeq(StreamUtils.jitter(stream,l),
 				this.reversable);
 	}
 
+	
 	@Override
-	public ReactiveSeq<Streamable<T>> windowBySizeAndTime(int size, long time,
-			TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.windowBySizeAndTime(stream,size,time,t), this.reversable);
+	public ReactiveSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+		return StreamUtils.reactiveSeq(StreamUtils.batchUntil(stream,predicate), this.reversable);
 	}
 
 	@Override
-	public ReactiveSeq<Streamable<T>> windowWhile(Predicate<? super T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.windowWhile(stream,predicate), this.reversable);
+	public ReactiveSeq<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+		return StreamUtils.reactiveSeq(StreamUtils.batchWhile(stream,predicate), this.reversable);
 	}
 
 	@Override
-	public ReactiveSeq<Streamable<T>> windowUntil(Predicate<? super T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.windowWhile(stream,predicate.negate()), this.reversable);
-	}
-
-	@Override
-	public ReactiveSeq<Streamable<T>> windowStatefullyWhile(
-			BiPredicate<Streamable<? super T>, ? super T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.windowStatefullyWhile(stream, predicate), this.reversable);
-	}
-
-	@Override
-	public ReactiveSeq<Streamable<T>> windowByTime(long time, TimeUnit t) {
-		return StreamUtils.sequenceM(StreamUtils.windowByTime(stream, time,t), this.reversable);
-	}
-
-	@Override
-	public ReactiveSeq<ListX<T>> batchUntil(Predicate<? super T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.batchUntil(stream,predicate), this.reversable);
-	}
-
-	@Override
-	public ReactiveSeq<ListX<T>> batchWhile(Predicate<? super T> predicate) {
-		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate), this.reversable);
-	}
-
-	@Override
-	public<C extends Collection<? super T>>  ReactiveSeq<C> batchWhile(Predicate<? super T> predicate, Supplier<C> factory) {
-		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate,factory), this.reversable);
+	public<C extends Collection<? super T>>  ReactiveSeq<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+		return StreamUtils.reactiveSeq(StreamUtils.batchWhile(stream,predicate,factory), this.reversable);
 	}
 	@Override
-	public<C extends Collection<? super T>>  ReactiveSeq<C> batchUntil(Predicate<? super T> predicate, Supplier<C> factory) {
-		return StreamUtils.sequenceM(StreamUtils.batchWhile(stream,predicate.negate(),factory), this.reversable);
+	public<C extends Collection<? super T>>  ReactiveSeq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+		return StreamUtils.reactiveSeq(StreamUtils.batchWhile(stream,predicate.negate(),factory), this.reversable);
 	}
 	@Override
-	public <C extends Collection<? super T>> ReactiveSeq<C> batchBySizeAndTime(int size,
+	public <C extends Collection<? super T>> ReactiveSeq<C> groupedBySizeAndTime(int size,
 			long time, TimeUnit unit, Supplier<C> factory) {
-		return StreamUtils.sequenceM(StreamUtils.batchBySizeAndTime(stream, size,time, unit, factory),this.reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.batchBySizeAndTime(stream, size,time, unit, factory),this.reversable);
 
 	}
 
 	@Override
-	public <C extends Collection<T>> ReactiveSeq<C> batchByTime(long time,
+	public <C extends Collection<T>> ReactiveSeq<C> groupedByTime(long time,
 			TimeUnit unit, Supplier<C> factory) {
-		return StreamUtils.sequenceM(StreamUtils.batchByTime(stream, time, unit, factory),this.reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.batchByTime(stream, time, unit, factory),this.reversable);
 	}
 	@Override
-	public <C extends Collection<T>> ReactiveSeq<C> batchBySize(int size,
+	public <C extends Collection<T>> ReactiveSeq<C> grouped(int size,
 			Supplier<C> factory) {
-		return StreamUtils.sequenceM(StreamUtils.batchBySize(stream, size,factory),this.reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.batchBySize(stream, size,factory),this.reversable);
 
 	}
 
 	@Override
 	public ReactiveSeq<T> skipLast(int num) {
-		return StreamUtils.sequenceM(StreamUtils.skipLast(stream,num),this.reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.skipLast(stream,num),this.reversable);
 	}
 
 	@Override
 	public ReactiveSeq<T> limitLast(int num) {
-		return StreamUtils.sequenceM(StreamUtils.limitLast(stream,num),this.reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.limitLast(stream,num),this.reversable);
 	}
 
 	@Override
 	public ReactiveSeq<T> recover(Function<Throwable, ? extends T> fn) {
-		return StreamUtils.sequenceM(StreamUtils.recover(stream,fn),this.reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.recover(stream,fn),this.reversable);
 	}
 
 	@Override
 	public <EX extends Throwable> ReactiveSeq<T> recover(Class<EX> exceptionClass,
 			Function<EX, ? extends T> fn) {
-		return StreamUtils.sequenceM(StreamUtils.recover(stream,exceptionClass,fn),this.reversable);
+		return StreamUtils.reactiveSeq(StreamUtils.recover(stream,exceptionClass,fn),this.reversable);
 	}
 	
 	/** 

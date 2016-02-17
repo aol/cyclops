@@ -150,7 +150,7 @@ public class LazySequentialSeqObjectPoolsTest extends BaseSequentialSeqTest {
 		for(int i=0;i<10;i++){
 			
 			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
-							.batchByTime(1,TimeUnit.MICROSECONDS)
+							.groupedByTime(1,TimeUnit.MICROSECONDS)
 							.toList()
 							.get(0)
 							,not(hasItem(6)));

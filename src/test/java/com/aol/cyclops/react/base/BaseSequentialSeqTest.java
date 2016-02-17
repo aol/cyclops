@@ -143,7 +143,7 @@ public abstract class BaseSequentialSeqTest {
 	@Test
 	public void batchBySizeAndTimeSize(){
 		
-		assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
+		assertThat(of(1,2,3,4,5,6).groupedBySizeAndTime(3,10,TimeUnit.SECONDS).toList().get(0).size(),is(3));
 	}
 	@Test
 	public void batchBySizeAndTimeTime(){
@@ -151,7 +151,7 @@ public abstract class BaseSequentialSeqTest {
 		for(int i=0;i<10;i++){
 			System.out.println(i);
 			List<ListX<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
-					.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
+					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					.toList();
 			
 			assertThat(list
@@ -164,8 +164,8 @@ public abstract class BaseSequentialSeqTest {
 	@Test
 	public void batchBySizeSet(){
 		
-		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<>()).block().get(0).size(),is(1));
-		assertThat(of(1,1,1,1,1,1).batchBySize(3,()->new TreeSet<>()).block().get(1).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block().get(1).size(),is(1));
 	}
 	@Test
 	public void batchBySizeInternalSize(){
@@ -215,16 +215,16 @@ public abstract class BaseSequentialSeqTest {
 	}
 	@Test
 	public void batchByTime(){
-		assertThat(of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
+		assertThat(of(1,2,3,4,5,6).groupedByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
 	}
 	@Test
 	public void batchByTimeSet(){
 		
-		assertThat(of(1,1,1,1,1,1).batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block().get(0).size(),is(1));
 	}
 	@Test
 	public void batchByTimeInternalSize(){
-		assertThat(of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+		assertThat(of(1,2,3,4,5,6).groupedByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 	
 	@Test

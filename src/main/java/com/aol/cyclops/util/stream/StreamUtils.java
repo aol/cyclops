@@ -925,7 +925,7 @@ public class StreamUtils{
 		return it.entrySet().stream();
 	}
 	public final static <T> FutureOperations<T> futureOperations(Stream<T> stream,Executor exec){
-		return new ReactiveSeqFutureOpterationsImpl<T>(exec,sequenceM(stream,Optional.empty()));
+		return new ReactiveSeqFutureOpterationsImpl<T>(exec,reactiveSeq(stream,Optional.empty()));
 	}
 	public final static <T> T firstValue(Stream<T> stream){
 		return stream.findAny().get();
@@ -1510,7 +1510,7 @@ public class StreamUtils{
 	}
 	
 	
-	public final static<T> ReactiveSeq<T> sequenceM(Stream<T> stream,Optional<ReversableSpliterator> rev){
+	public final static<T> ReactiveSeq<T> reactiveSeq(Stream<T> stream,Optional<ReversableSpliterator> rev){
 		if(stream instanceof ReactiveSeq)
 			return (ReactiveSeq)stream;
 		if(rev.isPresent())
@@ -1931,7 +1931,7 @@ public class StreamUtils{
 			return new BatchByTimeOperator<T,C>(stream,factory).batchByTime(time,t);
 	  }
 	  private static final Object UNSET = new Object();
-	  public final static <T> Stream<Streamable<T>> windowStatefullyWhile(Stream<T> stream,BiPredicate<Streamable<? super T>,? super T> predicate){
+	  public final static <T> Stream<ListX<T>> groupedStatefullyWhile(Stream<T> stream,BiPredicate<ListX<? super T>,? super T> predicate){
 			return new WindowStatefullyWhileOperator<>(stream).windowStatefullyWhile(predicate);
 	  }
 	  public final static <T> Stream<Streamable<T>> windowWhile(Stream<T> stream,Predicate<? super T> predicate){

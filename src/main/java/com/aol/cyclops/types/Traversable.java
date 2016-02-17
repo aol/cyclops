@@ -1,5 +1,6 @@
 package com.aol.cyclops.types;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -7,7 +8,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -286,6 +289,142 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 		return stream().sliding(windowSize, increment);
 	}
 	
+  
+
+    /**
+     * Batch elements in a Stream by size into a collection created by the
+     * supplied factory
+     * 
+     * <pre>
+     * {@code
+     * assertThat(ReactiveSeq.of(1,1,1,1,1,1)
+     *                      .batchBySize(3,()->new TreeSet<>())
+     *                      .toList()
+     *                      .get(0)
+     *                      .size(),is(1));
+     * }
+     * 
+     * @param size batch size
+     * @param supplier Collection factory
+     * @return SequenceM batched into collection types by size
+     */
+    default <C extends Collection<T>> Traversable<C> grouped(int size, Supplier<C> supplier){
+        return stream().grouped(size,supplier);
+    }
+
+    
+
+    /**
+     * Create a SequenceM batched by List, where each batch is populated until
+     * the predicate holds
+     * 
+     * <pre>
+     * {@code 
+     *  assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .batchUntil(i->i%3==0)
+     *              .toList()
+     *              .size(),equalTo(2));
+     * }
+     * </pre>
+     * 
+     * @param predicate
+     *            Batch until predicate holds, then open next batch
+     * @return SequenceM batched into lists determined by the predicate supplied
+     */
+    default Traversable<ListX<T>> groupedUntil(Predicate<? super T> predicate){
+        return stream().groupedUntil(predicate);
+    }
+    /**
+     * Create SequenceM of Streamables (replayable Streams / Sequences) where
+     * each Streamable is populated while the supplied bipredicate holds. The
+     * bipredicate recieves the Streamable from the last window as well as the
+     * current value and can choose to aggregate the current value or create a
+     * new window
+     * 
+     * <pre>
+     * {@code 
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+     *              .toList().size(),equalTo(5));
+     * }
+     * </pre>
+     * 
+     * @param predicate
+     *            Window while true
+     * @return SequenceM windowed while predicate holds
+     */
+    default Traversable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate){
+        return stream().groupedStatefullyWhile(predicate); 
+    }
+    /**
+     * Create a SequenceM batched by List, where each batch is populated while
+     * the predicate holds
+     * 
+     * <pre>
+     * {@code 
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .batchWhile(i->i%3!=0)
+     *              .toList().size(),equalTo(2));
+     *  
+     * }
+     * </pre>
+     * 
+     * @param predicate
+     *            Batch while predicate holds, then open next batch
+     * @return SequenceM batched into lists determined by the predicate supplied
+     */
+    default Traversable<ListX<T>> groupedWhile(Predicate<? super T> predicate){
+        return stream().groupedUntil(predicate);
+    }
+
+    /**
+     * Create a SequenceM batched by a Collection, where each batch is populated
+     * while the predicate holds
+     * 
+     * <pre>
+     * {@code 
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .batchWhile(i->i%3!=0)
+     *              .toList()
+     *              .size(),equalTo(2));
+     * }
+     * </pre>
+     * 
+     * @param predicate
+     *            Batch while predicate holds, then open next batch
+     * @param factory
+     *            Collection factory
+     * @return SequenceM batched into collections determined by the predicate
+     *         supplied
+     */
+    default <C extends Collection<? super T>> Traversable<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory){
+        return stream().groupedWhile(predicate,factory);
+    }
+
+    /**
+     * Create a SequenceM batched by a Collection, where each batch is populated
+     * until the predicate holds
+     * 
+     * <pre>
+     * {@code 
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .batchUntil(i->i%3!=0)
+     *              .toList()
+     *              .size(),equalTo(2));
+     * }
+     * </pre>
+     * 
+     * 
+     * @param predicate
+     *            Batch until predicate holds, then open next batch
+     * @param factory
+     *            Collection factory
+     * @return SequenceM batched into collections determined by the predicate
+     *         supplied
+     */
+    default <C extends Collection<? super T>> Traversable<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory){
+        return stream().groupedUntil(predicate,factory);
+    }
 	/**
 	 * Group elements in a Stream
 	 * 
@@ -432,7 +571,24 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	default Traversable<T> sorted(Comparator<? super T> c){
 		return stream().sorted(c);
 	}
-
+    default Traversable<T> takeWhile(Predicate<? super T> p){
+        return limitWhile(p);
+    }
+    default Traversable<T> dropWhile(Predicate<? super T> p){
+        return skipWhile(p);
+    }
+    default Traversable<T> takeUntil(Predicate<? super T> p){
+        return limitUntil(p);
+    }
+    default Traversable<T> dropUntil(Predicate<? super T> p){
+        return skipUntil(p);
+    }
+    default Traversable<T> dropRight(int num){
+        return skipLast(num);
+    }
+    default Traversable<T> takeRight(int num){
+        return limitLast(num);
+    }
 	/**
 	 * <pre>
 	 * {@code assertThat(ReactiveSeq.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }

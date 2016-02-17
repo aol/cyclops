@@ -27,7 +27,7 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.streams.SimpleTimer;
+import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.Value;
@@ -35,10 +35,10 @@ public class BatchingTest {
 	@Test
 	public void batchUntil(){
 		assertThat(of(1,2,3,4,5,6)
-				.batchUntil(i->i%3==0)
+				.groupedUntil(i->i%3==0)
 				.toList().size(),equalTo(2));
 		assertThat(Streamable.of(1,2,3,4,5,6)
-				.batchUntil(i->i%3==0)
+				.groupedUntil(i->i%3==0)
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test

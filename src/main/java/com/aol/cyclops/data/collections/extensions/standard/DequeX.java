@@ -7,6 +7,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -666,6 +667,51 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		
 		return  (DequeX<T>)MutableCollectionX.super.removeMatches(m);
 	}
+
+
+    @Override
+    default <C extends Collection<T>> DequeX<C> grouped(int size, Supplier<C> supplier) {
+        
+        return (DequeX<C>)MutableCollectionX.super.grouped(size, supplier);
+    }
+
+
+    @Override
+    default DequeX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+        
+        return (DequeX<ListX<T>>)MutableCollectionX.super.groupedUntil(predicate);
+    }
+
+
+    @Override
+    default DequeX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+        
+        return (DequeX<ListX<T>>)MutableCollectionX.super.groupedWhile(predicate);
+    }
+
+
+    @Override
+    default <C extends Collection<? super T>> DequeX<C> groupedWhile(Predicate<? super T> predicate,
+            Supplier<C> factory) {
+        
+        return (DequeX<C>)MutableCollectionX.super.groupedWhile(predicate, factory);
+    }
+
+
+    @Override
+    default <C extends Collection<? super T>> DequeX<C> groupedUntil(Predicate<? super T> predicate,
+            Supplier<C> factory) {
+        
+        return (DequeX<C>)MutableCollectionX.super.groupedUntil(predicate, factory);
+    }
+
+
+    @Override
+    default DequeX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        
+        return (DequeX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
+    }
+	
 	
 	
 }

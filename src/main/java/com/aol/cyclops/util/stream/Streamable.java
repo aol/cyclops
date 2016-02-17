@@ -2475,7 +2475,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable batched by size and time
     	 */
     	default Streamable<ListX<T>> batchBySizeAndTime(int size, long time, TimeUnit t){
-    		return fromStream(sequenceM().batchBySizeAndTime(size,time,t));
+    		return fromStream(sequenceM().groupedBySizeAndTime(size,time,t));
     	}
     	/**
     	 *  Batch elements by size into a collection created by the supplied factory 
@@ -2493,7 +2493,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable batched by size and time
     	 */
     	default <C extends Collection<T>> Streamable<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory){
-    		return fromStream(sequenceM().batchBySizeAndTime(size,time,unit,factory));
+    		return fromStream(sequenceM().groupedBySizeAndTime(size,time,unit,factory));
     	}
     	/**
     	 * Batch elements in a Stream by time period
@@ -2510,7 +2510,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable batched into lists by time period
     	 */
     	default Streamable<ListX<T>> batchByTime(long time, TimeUnit t){
-    		return fromStream(sequenceM().batchByTime(time,t));
+    		return fromStream(sequenceM().groupedByTime(time,t));
     	}
     	/**
     	 * Batch elements by time into a collection created by the supplied factory 
@@ -2531,7 +2531,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable batched into collection types by time period
     	 */
     	default <C extends Collection<T>> Streamable<C> batchByTime(long time, TimeUnit unit, Supplier<C> factory){
-    		return fromStream(sequenceM().batchByTime(time,unit,factory));
+    		return fromStream(sequenceM().groupedByTime(time,unit,factory));
     	}
     	/**
     	 * Batch elements in a Stream by size into Lists
@@ -2565,7 +2565,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable batched into collection types by size
     	 */
     	default <C extends Collection<T>>Streamable<C> batchBySize(int size, Supplier<C> supplier){
-    		return fromStream(sequenceM().batchBySize(size,supplier));
+    		return fromStream(sequenceM().grouped(size,supplier));
     	}
 
     	/**
@@ -2719,7 +2719,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable batched into lists determined by the predicate supplied
     	 */
     	default Streamable<ListX<T>> batchUntil(Predicate<T> predicate){
-    		return fromStream(sequenceM().batchUntil(predicate));
+    		return fromStream(sequenceM().groupedUntil(predicate));
     	}
     	/**
     	 * Create a Streamable batched by List, where each batch is populated while the predicate holds
@@ -2735,7 +2735,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable batched into lists determined by the predicate supplied
     	 */
     	default Streamable<ListX<T>> batchWhile(Predicate<T> predicate){
-    		return fromStream(sequenceM().batchWhile(predicate));
+    		return fromStream(sequenceM().groupedWhile(predicate));
     	}
     	/**
     	 * Create a Streamable batched by a Collection, where each batch is populated while the predicate holds
@@ -2753,7 +2753,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable batched into collections determined by the predicate supplied
     	 */
     	default <C extends Collection<T>>  Streamable<C> batchWhile(Predicate<T> predicate, Supplier<C> factory){
-    		return fromStream(sequenceM().batchWhile(predicate,factory));
+    		return fromStream(sequenceM().groupedWhile(predicate,factory));
     	}
     	/**
     	 * Create a Streamable batched by a Collection, where each batch is populated until the predicate holds
@@ -2773,7 +2773,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable batched into collections determined by the predicate supplied
     	 */
     	default <C extends Collection<T>>  Streamable<C> batchUntil(Predicate<T> predicate, Supplier<C> factory){
-    		return fromStream(sequenceM().batchUntil(predicate,factory));
+    		return fromStream(sequenceM().groupedUntil(predicate,factory));
     		
     	}
 

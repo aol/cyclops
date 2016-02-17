@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -586,7 +587,48 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
         return (SortedSetX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
     }
 	
-	
+	  @Override
+	    default <C extends Collection<T>> SortedSetX<C> grouped(int size, Supplier<C> supplier) {
+	        
+	        return (SortedSetX<C>)MutableCollectionX.super.grouped(size, supplier);
+	    }
+
+
+	    @Override
+	    default SortedSetX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+	        
+	        return (SortedSetX<ListX<T>>)MutableCollectionX.super.groupedUntil(predicate);
+	    }
+
+
+	    @Override
+	    default SortedSetX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+	        
+	        return (SortedSetX<ListX<T>>)MutableCollectionX.super.groupedWhile(predicate);
+	    }
+
+
+	    @Override
+	    default <C extends Collection<? super T>> SortedSetX<C> groupedWhile(Predicate<? super T> predicate,
+	            Supplier<C> factory) {
+	        
+	        return (SortedSetX<C>)MutableCollectionX.super.groupedWhile(predicate, factory);
+	    }
+
+
+	    @Override
+	    default <C extends Collection<? super T>> SortedSetX<C> groupedUntil(Predicate<? super T> predicate,
+	            Supplier<C> factory) {
+	        
+	        return (SortedSetX<C>)MutableCollectionX.super.groupedUntil(predicate, factory);
+	    }
+
+
+	    @Override
+	    default SortedSetX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+	        
+	        return (SortedSetX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
+	    }
 	
 	
 }

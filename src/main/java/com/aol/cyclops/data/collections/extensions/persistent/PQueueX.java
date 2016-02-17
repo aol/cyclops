@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -612,5 +613,47 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 		
 		return (PQueueX<R>)PersistentCollectionX.super.patternMatch(case1,otherwise);
 	}
+	 @Override
+	    default <C extends Collection<T>> PQueueX<C> grouped(int size, Supplier<C> supplier) {
+	        
+	        return (PQueueX<C>)PersistentCollectionX.super.grouped(size, supplier);
+	    }
+
+
+	    @Override
+	    default PQueueX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+	        
+	        return (PQueueX<ListX<T>>)PersistentCollectionX.super.groupedUntil(predicate);
+	    }
+
+
+	    @Override
+	    default PQueueX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+	        
+	        return (PQueueX<ListX<T>>)PersistentCollectionX.super.groupedStatefullyWhile(predicate);
+	    }
+
+
+	    @Override
+	    default PQueueX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+	        
+	        return (PQueueX<ListX<T>>)PersistentCollectionX.super.groupedWhile(predicate);
+	    }
+
+
+	    @Override
+	    default <C extends Collection<? super T>> PQueueX<C> groupedWhile(Predicate<? super T> predicate,
+	            Supplier<C> factory) {
+	        
+	        return (PQueueX<C>)PersistentCollectionX.super.groupedWhile(predicate, factory);
+	    }
+
+
+	    @Override
+	    default <C extends Collection<? super T>> PQueueX<C> groupedUntil(Predicate<? super T> predicate,
+	            Supplier<C> factory) {
+	        
+	        return (PQueueX<C>)PersistentCollectionX.super.groupedUntil(predicate, factory);
+	    }
 	
 }

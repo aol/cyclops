@@ -5,7 +5,9 @@ import static com.aol.cyclops.internal.Utils.firstOrNull;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -31,6 +33,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
+import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -42,7 +45,7 @@ import com.aol.cyclops.util.function.TriFunction;
 
 public interface AnyMSeq<T> extends AnyM<T>,
 									ConvertableSequence<T>,
-									Traversable<T>,
+									ExtendedTraversable<T>,
 									SequenceMCollectable<T>,
 									ZippingApplicativable<T> {
 
@@ -102,7 +105,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> cycle(int times) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.cycle(times);
+		return AnyM.fromIterable(ZippingApplicativable.super.cycle(times));
 	}
 
 	/* (non-Javadoc)
@@ -111,7 +114,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> cycle(Monoid<T> m, int times) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.cycle(m, times);
+		return AnyM.fromIterable(ZippingApplicativable.super.cycle(m, times));
 	}
 
 	/* (non-Javadoc)
@@ -120,7 +123,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> cycleWhile(Predicate<? super T> predicate) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.cycleWhile(predicate);
+		return AnyM.fromIterable(ZippingApplicativable.super.cycleWhile(predicate));
 	}
 
 	/* (non-Javadoc)
@@ -129,7 +132,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> cycleUntil(Predicate<? super T> predicate) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.cycleUntil(predicate);
+		return AnyM.fromIterable(ZippingApplicativable.super.cycleUntil(predicate));
 	}
 
 	/* (non-Javadoc)
@@ -138,7 +141,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default <U, R> AnyMSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
-		return (AnyMSeq<R>)ZippingApplicativable.super.zip(other, zipper);
+		return AnyM.fromIterable(ZippingApplicativable.super.zip(other, zipper));
 	}
 
 	/* (non-Javadoc)
@@ -147,7 +150,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default <U> AnyMSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
 		
-		return (AnyMSeq<Tuple2<T, U>>)ZippingApplicativable.super.zipStream(other);
+		return AnyM.fromIterable(ZippingApplicativable.super.zipStream(other));
 	}
 
 	/* (non-Javadoc)
@@ -156,7 +159,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default <U> AnyMSeq<Tuple2<T, U>> zip(Seq<U> other) {
 		
-		return (AnyMSeq<Tuple2<T, U>>)ZippingApplicativable.super.zip(other);
+		return AnyM.fromIterable(ZippingApplicativable.super.zip(other));
 	}
 
 	/* (non-Javadoc)
@@ -165,7 +168,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default <S, U> AnyMSeq<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
 		
-		return (AnyMSeq)ZippingApplicativable.super.zip3(second, third);
+		return AnyM.fromIterable(ZippingApplicativable.super.zip3(second, third));
 	}
 
 	/* (non-Javadoc)
@@ -175,7 +178,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	default <T2, T3, T4> AnyMSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
 			Stream<T4> fourth) {
 		
-		return ( AnyMSeq<Tuple4<T, T2, T3, T4>>)ZippingApplicativable.super.zip4(second, third, fourth);
+		return AnyM.fromIterable(ZippingApplicativable.super.zip4(second, third, fourth));
 	}
 
 	/* (non-Javadoc)
@@ -184,7 +187,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<Tuple2<T, Long>> zipWithIndex() {
 		
-		return (AnyMSeq<Tuple2<T, Long>>)ZippingApplicativable.super.zipWithIndex();
+		return AnyM.fromIterable(ZippingApplicativable.super.zipWithIndex());
 	}
 
 	/* (non-Javadoc)
@@ -193,7 +196,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<ListX<T>> sliding(int windowSize) {
 		
-		return (AnyMSeq<ListX<T>>)ZippingApplicativable.super.sliding(windowSize);
+		return AnyM.fromIterable(ZippingApplicativable.super.sliding(windowSize));
 	}
 
 	/* (non-Javadoc)
@@ -202,16 +205,109 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<ListX<T>> sliding(int windowSize, int increment) {
 		
-		return (AnyMSeq<ListX<T>>)ZippingApplicativable.super.sliding(windowSize, increment);
+		return AnyM.fromIterable(ZippingApplicativable.super.sliding(windowSize, increment));
 	}
 
-	/* (non-Javadoc)
+	@Override
+    default <C extends Collection<T>> AnyMSeq<C> grouped(int size, Supplier<C> supplier) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.grouped(size, supplier));
+    }
+    @Override
+    default AnyMSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.groupedUntil(predicate));
+    }
+    @Override
+    default AnyMSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.groupedStatefullyWhile(predicate));
+    }
+    @Override
+    default AnyMSeq<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.groupedWhile(predicate));
+    }
+    @Override
+    default <C extends Collection<? super T>> AnyMSeq<C> groupedWhile(Predicate<? super T> predicate,
+            Supplier<C> factory) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.groupedWhile(predicate, factory));
+    }
+    @Override
+    default <C extends Collection<? super T>> AnyMSeq<C> groupedUntil(Predicate<? super T> predicate,
+            Supplier<C> factory) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.groupedUntil(predicate, factory));
+    }
+    @Override
+    default AnyMSeq<ListX<T>> grouped(int groupSize) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.grouped(groupSize));
+    }
+    @Override
+    default <K, A, D> AnyMSeq<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier,
+            Collector<? super T, A, D> downstream) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.grouped(classifier, downstream));
+    }
+    @Override
+    default <K> AnyMSeq<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.grouped(classifier));
+    }
+    @Override
+    default AnyMSeq<T> takeWhile(Predicate<? super T> p) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.takeWhile(p));
+    }
+    @Override
+    default AnyMSeq<T> dropWhile(Predicate<? super T> p) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.dropWhile(p));
+    }
+    @Override
+    default AnyMSeq<T> takeUntil(Predicate<? super T> p) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.takeUntil(p));
+    }
+    @Override
+    default AnyMSeq<T> dropUntil(Predicate<? super T> p) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.dropUntil(p));
+    }
+    @Override
+    default AnyMSeq<T> dropRight(int num) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.dropRight(num));
+    }
+    @Override
+    default AnyMSeq<T> takeRight(int num) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.takeRight(num));
+    }
+    @Override
+    default AnyMSeq<T> reverse() {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.reverse());
+    }
+    @Override
+    default AnyMSeq<T> shuffle() {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.shuffle());
+    }
+    @Override
+    default AnyMSeq<T> shuffle(Random random) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.shuffle(random));
+    }
+    /* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Traversable#distinct()
 	 */
 	@Override
 	default AnyMSeq<T> distinct() {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.distinct();
+		return AnyM.fromIterable(ZippingApplicativable.super.distinct());
 	}
 
 	/* (non-Javadoc)
@@ -220,7 +316,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> scanLeft(Monoid<T> monoid) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.scanLeft(monoid);
+		return AnyM.fromIterable(ZippingApplicativable.super.scanLeft(monoid));
 	}
 
 	/* (non-Javadoc)
@@ -229,7 +325,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default <U> AnyMSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
 		
-		return (AnyMSeq<U>)ZippingApplicativable.super.scanLeft(seed, function);
+		return AnyM.fromIterable(ZippingApplicativable.super.scanLeft(seed, function));
 	}
 
 	/* (non-Javadoc)
@@ -238,7 +334,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> scanRight(Monoid<T> monoid) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.scanRight(monoid);
+		return AnyM.fromIterable(ZippingApplicativable.super.scanRight(monoid));
 	}
 
 	/* (non-Javadoc)
@@ -247,7 +343,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default <U> AnyMSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
 		
-		return (AnyMSeq<U>)ZippingApplicativable.super.scanRight(identity, combiner);
+		return AnyM.fromIterable(ZippingApplicativable.super.scanRight(identity, combiner));
 	}
 
 	/* (non-Javadoc)
@@ -256,7 +352,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> sorted() {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.sorted();
+		return AnyM.fromIterable(ZippingApplicativable.super.sorted());
 	}
 
 	/* (non-Javadoc)
@@ -265,7 +361,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> sorted(Comparator<? super T> c) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.sorted(c);
+		return AnyM.fromIterable(ZippingApplicativable.super.sorted(c));
 	}
 
 	/* (non-Javadoc)
@@ -274,7 +370,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> skip(long num) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.skip(num);
+		return AnyM.fromIterable(ZippingApplicativable.super.skip(num));
 	}
 
 	/* (non-Javadoc)
@@ -283,7 +379,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> skipWhile(Predicate<? super T> p) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.skipWhile(p);
+		return AnyM.fromIterable(ZippingApplicativable.super.skipWhile(p));
 	}
 
 	/* (non-Javadoc)
@@ -292,7 +388,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> skipUntil(Predicate<? super T> p) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.skipUntil(p);
+		return AnyM.fromIterable(ZippingApplicativable.super.skipUntil(p));
 	}
 
 	/* (non-Javadoc)
@@ -301,7 +397,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> intersperse(T value) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.intersperse(value);
+		return AnyM.fromIterable(ZippingApplicativable.super.intersperse(value));
 	}
 
 	/* (non-Javadoc)
@@ -310,7 +406,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> skipLast(int num) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.skipLast(num);
+		return AnyM.fromIterable(ZippingApplicativable.super.skipLast(num));
 	}
 
 	/* (non-Javadoc)
@@ -319,7 +415,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default AnyMSeq<T> slice(long from, long to) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.slice(from, to);
+		return AnyM.fromIterable(ZippingApplicativable.super.slice(from, to));
 	}
 
 	/* (non-Javadoc)
@@ -328,10 +424,26 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	default <U extends Comparable<? super U>> AnyMSeq<T> sorted(Function<? super T, ? extends U> function) {
 		
-		return (AnyMSeq<T>)ZippingApplicativable.super.sorted(function);
+		return AnyM.fromIterable(ZippingApplicativable.super.sorted(function));
 	}
+	
 
-	/* (non-Javadoc)
+	@Override
+    default AnyMSeq<ReactiveSeq<T>> permutations() {
+        
+        return AnyM.fromIterable(ExtendedTraversable.super.permutations());
+    }
+    @Override
+    default AnyMSeq<ReactiveSeq<T>> combinations(int size) {
+        
+        return AnyM.fromIterable(ExtendedTraversable.super.combinations(size));
+    }
+    @Override
+    default AnyMSeq<ReactiveSeq<T>> combinations() {
+        
+        return AnyM.fromIterable(ExtendedTraversable.super.combinations());
+    }
+    /* (non-Javadoc)
 	 * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
 	 */
 	@Override

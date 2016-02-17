@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -626,5 +627,46 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 		return (QueueX<T>)MutableCollectionX.super.removeMatches(m);
 	}
 	
-	
+	  @Override
+	    default <C extends Collection<T>> QueueX<C> grouped(int size, Supplier<C> supplier) {
+	        
+	        return (QueueX<C>)MutableCollectionX.super.grouped(size, supplier);
+	    }
+
+
+	    @Override
+	    default QueueX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+	        
+	        return (QueueX<ListX<T>>)MutableCollectionX.super.groupedUntil(predicate);
+	    }
+
+
+	    @Override
+	    default QueueX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+	        
+	        return (QueueX<ListX<T>>)MutableCollectionX.super.groupedWhile(predicate);
+	    }
+
+
+	    @Override
+	    default <C extends Collection<? super T>> QueueX<C> groupedWhile(Predicate<? super T> predicate,
+	            Supplier<C> factory) {
+	        
+	        return (QueueX<C>)MutableCollectionX.super.groupedWhile(predicate, factory);
+	    }
+
+
+	    @Override
+	    default <C extends Collection<? super T>> QueueX<C> groupedUntil(Predicate<? super T> predicate,
+	            Supplier<C> factory) {
+	        
+	        return (QueueX<C>)MutableCollectionX.super.groupedUntil(predicate, factory);
+	    }
+
+
+	    @Override
+	    default QueueX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+	        
+	        return (QueueX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
+	    }	
 }

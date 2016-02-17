@@ -75,7 +75,7 @@ public abstract class LazySeqTest extends BaseSeqTest {
 		//	System.out.println(i);
 			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(1000);return 6;})
 						
-							.batchByTime(10,TimeUnit.MICROSECONDS)
+							.groupedByTime(10,TimeUnit.MICROSECONDS)
 							.toList()
 							.get(0)
 							,not(hasItem(6)));

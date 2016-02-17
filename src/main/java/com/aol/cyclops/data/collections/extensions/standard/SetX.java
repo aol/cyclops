@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -585,5 +586,46 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
         return (SetX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
     }
 	
-	
+	  @Override
+	    default <C extends Collection<T>> SetX<C> grouped(int size, Supplier<C> supplier) {
+	        
+	        return (SetX<C>)MutableCollectionX.super.grouped(size, supplier);
+	    }
+
+
+	    @Override
+	    default SetX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+	        
+	        return (SetX<ListX<T>>)MutableCollectionX.super.groupedUntil(predicate);
+	    }
+
+
+	    @Override
+	    default SetX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+	        
+	        return (SetX<ListX<T>>)MutableCollectionX.super.groupedWhile(predicate);
+	    }
+
+
+	    @Override
+	    default <C extends Collection<? super T>> SetX<C> groupedWhile(Predicate<? super T> predicate,
+	            Supplier<C> factory) {
+	        
+	        return (SetX<C>)MutableCollectionX.super.groupedWhile(predicate, factory);
+	    }
+
+
+	    @Override
+	    default <C extends Collection<? super T>> SetX<C> groupedUntil(Predicate<? super T> predicate,
+	            Supplier<C> factory) {
+	        
+	        return (SetX<C>)MutableCollectionX.super.groupedUntil(predicate, factory);
+	    }
+
+
+	    @Override
+	    default SetX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+	        
+	        return (SetX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
+	    }
 }

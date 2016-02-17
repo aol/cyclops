@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -25,6 +26,7 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
@@ -525,7 +527,38 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	default PersistentCollectionX<ReactiveSeq<T>> combinations() {
 		return from(this.<ReactiveSeq<T>>monoid().mapReduce(stream().combinations()));
 	}
+    @Override
+    default <C extends Collection<T>> PersistentCollectionX<C> grouped(int size, Supplier<C> supplier) {
+        
+        return from(this.<C>monoid().mapReduce(stream().grouped(size, supplier)));
+    }
+    @Override
+    default PersistentCollectionX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+        
+        return from(this.<ListX<T>>monoid().mapReduce(stream().groupedUntil(predicate)));
+    }
+    @Override
+    default PersistentCollectionX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return from(this.<ListX<T>>monoid().mapReduce(stream().groupedStatefullyWhile(predicate)));
+    }
+    @Override
+    default PersistentCollectionX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+        return from(this.<ListX<T>>monoid().mapReduce(stream().groupedWhile(predicate)));
+    }
+    @Override
+    default <C extends Collection<? super T>> PersistentCollectionX<C> groupedWhile(Predicate<? super T> predicate,
+            Supplier<C> factory) {
+        
+        return from(this.<C>monoid().mapReduce(stream().groupedWhile(predicate,factory)));
+    }
+    @Override
+    default <C extends Collection<? super T>> PersistentCollectionX<C> groupedUntil(Predicate<? super T> predicate,
+            Supplier<C> factory) {
+        
+        return from(this.<C>monoid().mapReduce(stream().groupedUntil(predicate,factory)));
+    }
 
+    
 	
 	
 	

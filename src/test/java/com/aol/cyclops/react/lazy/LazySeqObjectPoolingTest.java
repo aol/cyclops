@@ -87,7 +87,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 			System.out.println(i);
 			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
 					
-							.batchByTime(10,TimeUnit.MICROSECONDS)
+							.groupedByTime(10,TimeUnit.MICROSECONDS)
 								.peek(System.out::println)
 							.toList()
 							.get(0)
