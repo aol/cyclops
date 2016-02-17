@@ -1591,8 +1591,8 @@ public class StreamUtils{
 	 * </pre>
 	 *
 	 */
-	public final static <T,R> Stream<R> flatMapCollection(Stream<T> stream,Function<? super T,Collection<? extends R>> fn) {
-		return stream.flatMap(fn.andThen(c->c.stream()));
+	public final static <T,R> Stream<R> flatMapIterable(Stream<T> stream,Function<? super T,Iterable<? extends R>> fn) {
+		return stream.flatMap(fn.andThen(c->stream(c)));
 		
 	}
 	/**

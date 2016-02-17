@@ -1287,8 +1287,8 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @param fn
 	 * @return
 	 */
-	public final <R> ReactiveSeq<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn) {
-		return StreamUtils.reactiveSeq(StreamUtils.flatMapCollection(stream,fn),Optional.empty());
+	public final <R> ReactiveSeq<R> flatMapIterable(Function<? super T,Iterable<? extends R>> fn) {
+		return StreamUtils.reactiveSeq(StreamUtils.flatMapIterable(stream,fn),Optional.empty());
 		
 	}
 	/**

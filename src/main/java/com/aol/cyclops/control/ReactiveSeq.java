@@ -1531,7 +1531,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @param fn
 	 * @return
 	 */
-	<R> ReactiveSeq<R> flatMapCollection(Function<? super T, Collection<? extends R>> fn);
+	<R> ReactiveSeq<R> flatMapIterable(Function<? super T, Iterable<? extends R>> fn);
 
 	/**
 	 * flatMap operation
@@ -1551,116 +1551,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	<R> ReactiveSeq<R> flatMapStream(Function<? super T, BaseStream<? extends R, ?>> fn);
 
-	/**
-	 * flatMap to optional - will result in null values being removed
-	 * 
-	 * <pre>
-	 * {@code 
-	 * 	assertThat(ReactiveSeq.of(1,2,3,null)
-	 *                      .flatMapOptional(Optional::ofNullable)
-	 * 			      			.collect(Collectors.toList()),
-	 * 			      			equalTo(Arrays.asList(1,2,3)));
-	 * }
-	 * </pre>
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	<R> ReactiveSeq<R> flatMapOptional(Function<? super T, Optional<? extends R>> fn);
 
-	/**
-	 * flatMap to CompletableFuture - will block until Future complete, although
-	 * (for non-blocking behaviour use AnyM wrapping CompletableFuture and
-	 * flatMap to Stream there)
-	 * 
-	 * <pre>
-	 *  {@code
-	 *  	assertThat(ReactiveSeq.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
-	 * 				  								.collect(Collectors.toList()),
-	 * 				  								equalTo(Arrays.asList(3,4,5)));
-	 *  }
-	 * </pre>
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	<R> ReactiveSeq<R> flatMapCompletableFuture(Function<? super T, CompletableFuture<? extends R>> fn);
-
-	/**
-	 * Perform a flatMap operation where the result will be a flattened stream
-	 * of Characters from the CharSequence returned by the supplied function.
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	List&lt;Character&gt; result = ReactiveSeq.of(&quot;input.file&quot;).flatMapCharSequence(i -&gt; &quot;hello world&quot;).toList();
-	 * 
-	 * 	assertThat(result, equalTo(Arrays.asList('h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd')));
-	 * }
-	 * </pre>
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	ReactiveSeq<Character> flatMapCharSequence(Function<? super T, CharSequence> fn);
-
-	/**
-	 * Perform a flatMap operation where the result will be a flattened stream
-	 * of Strings from the text loaded from the supplied files.
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	List&lt;String&gt; result = ReactiveSeq.of(&quot;input.file&quot;).map(getClass().getClassLoader()::getResource).peek(System.out::println).map(URL::getFile)
-	 * 			.flatMapFile(File::new).toList();
-	 * 
-	 * 	assertThat(result, equalTo(Arrays.asList(&quot;hello&quot;, &quot;world&quot;)));
-	 * 
-	 * }
-	 * 
-	 * </pre>
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	ReactiveSeq<String> flatMapFile(Function<? super T, File> fn);
-
-	/**
-	 * Perform a flatMap operation where the result will be a flattened stream
-	 * of Strings from the text loaded from the supplied URLs
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	List&lt;String&gt; result = ReactiveSeq.of(&quot;input.file&quot;).flatMapURL(getClass().getClassLoader()::getResource).toList();
-	 * 
-	 * 	assertThat(result, equalTo(Arrays.asList(&quot;hello&quot;, &quot;world&quot;)));
-	 * 
-	 * }
-	 * </pre>
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	ReactiveSeq<String> flatMapURL(Function<? super T, URL> fn);
-
-	/**
-	 * Perform a flatMap operation where the result will be a flattened stream
-	 * of Strings from the text loaded from the supplied BufferedReaders
-	 * 
-	 * <pre>
-	 * List&lt;String&gt; result = ReactiveSeq.of(&quot;input.file&quot;).map(getClass().getClassLoader()::getResourceAsStream).map(InputStreamReader::new)
-	 * 		.liftAndBindBufferedReader(BufferedReader::new).toList();
-	 * 
-	 * assertThat(result, equalTo(Arrays.asList(&quot;hello&quot;, &quot;world&quot;)));
-	 * 
-	 * </pre>
-	 * 
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	ReactiveSeq<String> flatMapBufferedReader(Function<? super T, BufferedReader> fn);
 
 	/*
 	 * (non-Javadoc)

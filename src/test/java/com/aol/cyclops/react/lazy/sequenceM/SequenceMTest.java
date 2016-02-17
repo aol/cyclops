@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -363,7 +364,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void flatMapOptional(){
-		assertThat(LazyFutureStream.of(1,2,3,null).flatMapOptional(Optional::ofNullable)
+		assertThat(LazyFutureStream.of(1,2,3,null).flatMapIterable(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

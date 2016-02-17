@@ -25,7 +25,7 @@ public class FlatMapStreamUtilsTest {
 	}
 	@Test
 	public void flatMapCollection(){
-		assertThat(StreamUtils.flatMapCollection(Stream.of(20),i->Arrays.asList(1,2,i)).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,20)));
+		assertThat(StreamUtils.flatMapIterable(Stream.of(20),i->Arrays.asList(1,2,i)).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,20)));
 
 	}
 	@Test

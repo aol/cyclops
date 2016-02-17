@@ -26,7 +26,7 @@ public class FlatMapSequenceMTest {
 	}
 	@Test
 	public void flatMapCollection(){
-	assertThat(	AnyM.fromOptional(Optional.of(20)).asSequence().flatMapCollection(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
+	assertThat(	AnyM.fromOptional(Optional.of(20)).asSequence().flatMapIterable(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
 	}
 	/**
 	@Test
@@ -47,7 +47,7 @@ public class FlatMapSequenceMTest {
 	@Test
 	public void flatMapSeqToCompletableFuture(){
 		
-		assertThat(AnyM.fromStream(Seq.of(1,2,3)).asSequence().flatMapCompletableFuture(i-> CompletableFuture.completedFuture(i+2)).toList(),equalTo(Arrays.asList(3,4,5)));
+		assertThat(AnyM.fromStream(Seq.of(1,2,3)).asSequence().flatMapAnyM(i-> AnyM.fromCompletableFuture(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
 	}
 	@Test
 	public void flatMapSeqToSequenceM(){

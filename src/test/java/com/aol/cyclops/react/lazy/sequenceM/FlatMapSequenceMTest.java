@@ -27,11 +27,11 @@ public class FlatMapSequenceMTest {
 	}
 	@Test
 	public void flatMapCollection(){
-	assertThat(	LazyFutureStream.of(20).flatMapCollection(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
+	    assertThat(	LazyFutureStream.of(20).flatMapIterable(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
 	}
 	@Test
 	public void flatMapCollectionAnyM(){
-	assertThat(	LazyFutureStream.of(20).flatMapCollection(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
+	    assertThat(	LazyFutureStream.of(20).flatMapIterable(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
 	}
 	@Test
 	public void flatMapToSeq(){

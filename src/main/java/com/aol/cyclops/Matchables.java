@@ -1,5 +1,9 @@
 package com.aol.cyclops;
 
+import static com.aol.cyclops.control.Matchable.otherwise;
+import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +36,7 @@ import com.aol.cyclops.util.ExceptionSoftener;
 
 public class Matchables {
     
-	public static<X extends Throwable> MTuple4<Class<X>,String,Throwable,MatchableIterable<StackTraceElement>> throwable(X t){
+	public static<X extends Throwable> MTuple4<Class,String,Throwable,MatchableIterable<StackTraceElement>> throwable(X t){
 		return Matchable.from(()->(Class)t.getClass(),
 							  ()->t.getMessage(),
 							  ()->t.getCause(),
@@ -64,6 +68,20 @@ public class Matchables {
 															url.openStream()))).get();
 		return new Matchable.AutoCloseableMatchableIterable<>(in,()->in.lines().iterator());	
 	}
+	/**
+	 * Pattern match on the contents of a File
+	 * <pre>
+	 * {@code 
+	 * String result = Matchables.lines(new File(file))
+                                 .on$12___()
+                                 .matches(c->c.is(when("hello","world"),then("correct")), otherwise("miss")).get();
+                                  
+       }
+       </pre>
+	 * 
+	 * @param f File to match against
+	 * @return Matcher
+	 */
 	public static Matchable.AutoCloseableMatchableIterable<String> lines(File f){
 			Stream<String> stream = ExceptionSoftener.softenSupplier(()->Files.lines(Paths.get( ((File)f).getAbsolutePath()))).get();
 		return new Matchable.AutoCloseableMatchableIterable<>(stream ,()->stream.iterator() );	

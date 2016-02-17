@@ -5,6 +5,7 @@ import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static com.aol.cyclops.control.Matchable.whenGuard;
 import static com.aol.cyclops.util.function.Predicates.__;
+import static com.aol.cyclops.util.function.Predicates.decons;
 import static com.aol.cyclops.util.function.Predicates.eq;
 import static com.aol.cyclops.util.function.Predicates.has;
 import static com.aol.cyclops.util.function.Predicates.type;
@@ -37,6 +38,17 @@ import lombok.Value;
 
 
 public class MatchableTest {
+    
+    @Test
+    public void recursiveStructuralMatching(){
+       
+      String result =  new Customer("test",new Address(10,"hello","my city"))
+                                .match()
+                                .on$_2()
+                                .matches(c->c.is(when(decons(when(10,"hello","my city"))),then("hello")), otherwise("miss")).get();
+      
+      assertThat(result,equalTo("hello"));
+    }
 
 	private String concat(String a,String b){
 		return a+","+b;
@@ -53,13 +65,7 @@ public class MatchableTest {
 	@Test
 	public void pojoTypeSafe(){
 		
-		/**
-		new Customer("test",new Address(10,"hello","my city")).match().mayMatch( 
-				
-				c->c.isWhere(t3->"ok",(String s)->s=="test",(MatchableTuple3<Integer,String,String> a)->a==null)
-				);
-		//Matchable.of(10).mayMatch(c->c.)
-		**/
+		
 		new Address(10,"hello","world").match().mayMatch(c->c.is(when(this::isValidHouse, this::isValidStreet,this::isValidCity),then("ok")))
 																	 .orElse("hello");
 			

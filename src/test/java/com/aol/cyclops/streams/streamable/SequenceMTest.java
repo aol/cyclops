@@ -354,18 +354,7 @@ public class SequenceMTest {
 
 	}
 	
-	@Test
-	public void flatMapCompletableFuture(){
-		assertThat(Streamable.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
-				  								.collect(Collectors.toList()),
-				  								equalTo(Arrays.asList(3,4,5)));
-	}
-	@Test
-	public void flatMapOptional(){
-		assertThat(Streamable.of(1,2,3,null).flatMapOptional(Optional::ofNullable)
-			      										.collect(Collectors.toList()),
-			      										equalTo(Arrays.asList(1,2,3)));
-	}
+	
 	@Test
 	public void testIntersperse() {
 		

@@ -1,8 +1,5 @@
 package com.aol.cyclops.util.stream;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -39,11 +36,11 @@ import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Traversable;
@@ -1524,8 +1521,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param fn
     	 * @return
     	 */
-    	default <R> Streamable<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn){
-    		 return fromStream(reactiveSeq().flatMapCollection(fn));
+    	default <R> Streamable<R> flatMapIterable(Function<? super T,Iterable<? extends R>> fn){
+    		 return fromStream(reactiveSeq().flatMapIterable(fn));
     	}
     	/**
     	 * flatMap operation
@@ -1545,136 +1542,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	default <R> Streamable<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn){
     		 return fromStream(reactiveSeq().flatMapStream(fn));
     	}
-    	/**
-    	 * flatMap to optional - will result in null values being removed
-    	 * <pre>
-    	 * {@code 
-    	 * 	assertThat(Streamable.of(1,2,3,null)
-    	 *                      .flatMapOptional(Optional::ofNullable)
-    			      			.collect(Collectors.toList()),
-    			      			equalTo(Arrays.asList(1,2,3)));
-    	 * }
-    	 * </pre>
-    	 * @param fn
-    	 * @return
-    	 */
-    	default  <R> Streamable<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn){
-    		 return fromStream(reactiveSeq().flatMapOptional(fn));
-    	}
-    	/**
-    	 * flatMap to CompletableFuture - will block until Future complete, although (for non-blocking behaviour use AnyM 
-    	 *       wrapping CompletableFuture and flatMap to Stream there)
-    	 *       
-    	 *  <pre>
-    	 *  {@code
-    	 *  	assertThat(Streamable.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
-    				  								.collect(Collectors.toList()),
-    				  								equalTo(Arrays.asList(3,4,5)));
-    	 *  }
-    	 *  </pre>
-    	 *       
-    	 * @param fn
-    	 * @return
-    	 */
-    	default <R> Streamable<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn){
-    		 return fromStream(reactiveSeq().flatMapCompletableFuture(fn));
-    	}
-
-    	/**
-    	 * Perform a flatMap operation where the result will be a flattened stream of Characters
-    	 * from the CharSequence returned by the supplied function.
-    	 * 
-    	 * <pre>
-    	 * {@code 
-    	 *   List<Character> result = Streamable.of("input.file")
-    									.flatMapCharSequence(i->"hello world")
-    									.toList();
-    		
-    		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
-    	 * }
-    	 * </pre>
-    	 * 
-    	 * @param fn
-    	 * @return
-    	 */
-    	default Streamable<Character> flatMapCharSequence(Function<? super T,CharSequence> fn){
-    		 return fromStream(reactiveSeq().flatMapCharSequence(fn));
-    	}	
-    	/**
-    	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
-    	 * from the text loaded from the supplied files.
-    	 * 
-    	 * <pre>
-    	 * {@code
-    	 * 
-    		List<String> result = Streamable.of("input.file")
-    								.map(getClass().getClassLoader()::getResource)
-    								.peek(System.out::println)
-    								.map(URL::getFile)
-    								.flatMapFile(File::new)
-    								.toList();
-    		
-    		assertThat(result,equalTo(Arrays.asList("hello","world")));
-    	 * 
-    	 * }
-    	 * 
-    	 * </pre>
-    	 * 
-    	 * @param fn
-    	 * @return
-    	 */
-    	default Streamable<String> flatMapFile(Function<? super T,File> fn){
-    		 return fromStream(reactiveSeq().flatMapFile(fn));
-    	}
-    	/**
-    	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
-    	 * from the text loaded from the supplied URLs 
-    	 * 
-    	 * <pre>
-    	 * {@code 
-    	 * List<String> result = Streamable.of("input.file")
-    								.flatMapURL(getClass().getClassLoader()::getResource)
-    								.toList();
-    		
-    		assertThat(result,equalTo(Arrays.asList("hello","world")));
-    	 * 
-    	 * }
-    	 * </pre>
-    	 * 
-    	 * @param fn
-    	 * @return
-    	 */
-    	default Streamable<String> flatMapURL(Function<? super T, URL> fn){
-    		 return fromStream(reactiveSeq().flatMapURL(fn));
-    	}
-    	/**
-    	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
-    	 * from the text loaded from the supplied BufferedReaders
-    	 * 
-    	 * <pre>
-    	 * List<String> result = Streamable.of("input.file")
-    								.map(getClass().getClassLoader()::getResourceAsStream)
-    								.map(InputStreamReader::new)
-    								.liftAndBindBufferedReader(BufferedReader::new)
-    								.toList();
-    		
-    		assertThat(result,equalTo(Arrays.asList("hello","world")));
-    	 * 
-    	 * </pre>
-    	 * 
-    	 * 
-    	 * @param fn
-    	 * @return
-    	 */
-    	default Streamable<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn){
-    		 return fromStream(reactiveSeq().flatMapBufferedReader(fn));
-    	}
-
-    	
-    	
-    	
-    	
-    	
+    	 	
     	/**
     	 * Returns a stream with a given value interspersed between any two values
     	 * of this stream.

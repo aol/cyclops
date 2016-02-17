@@ -1485,7 +1485,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      */
     default <R> LazyFutureStream<R> flatMapCompletableFuture(
             Function<? super U,CompletableFuture<? extends R>> flatFn) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).flatMapCompletableFuture(flatFn));
+        return fromStream(StreamUtils.flatMapCompletableFuture(toQueue().stream(getSubscription()),flatFn));
     }
     /**
      * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -2799,10 +2799,10 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @see com.aol.cyclops.control.ReactiveSeq#flatMapCollection(java.util.function.Function)
      */
     @Override
-    default <R> LazyFutureStream<R> flatMapCollection(
-            Function<? super U, Collection<? extends R>> fn) {
+    default <R> LazyFutureStream<R> flatMapIterable(
+            Function<? super U, Iterable<? extends R>> fn) {
         return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .flatMapCollection(fn));
+                .flatMapIterable(fn));
     }
 
     /*
@@ -2815,55 +2815,6 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
                 .flatMapStream(fn));
     }
 
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#flatMapOptional(java.util.function.Function)
-     */
-    @Override
-    default <R> LazyFutureStream<R> flatMapOptional(
-            Function<? super U, Optional<? extends R>> fn) {
-        return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .flatMapOptional(fn));
-    }
-
-
-
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#flatMapCharSequence(java.util.function.Function)
-     */
-    @Override
-    default LazyFutureStream<Character> flatMapCharSequence(
-            Function<? super U, CharSequence> fn) {
-        return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .flatMapCharSequence(fn));
-    }
-
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#flatMapFile(java.util.function.Function)
-     */
-    @Override
-    default LazyFutureStream<String> flatMapFile(Function<? super U, File> fn) {
-        return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .flatMapFile(fn));
-    }
-
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#flatMapURL(java.util.function.Function)
-     */
-    @Override
-    default LazyFutureStream<String> flatMapURL(Function<? super U, URL> fn) {
-        return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .flatMapURL(fn));
-    }
-
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#flatMapBufferedReader(java.util.function.Function)
-     */
-    @Override
-    default LazyFutureStream<String> flatMapBufferedReader(
-            Function<? super U, BufferedReader> fn) {
-        return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .flatMapBufferedReader(fn));
-    }
 
 
 

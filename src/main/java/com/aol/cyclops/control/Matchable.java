@@ -66,15 +66,15 @@ public interface Matchable<TYPE>{
 	}
 	
 	//when arity 1
-	public static <T1> MatchableTuple1<Predicate<? super T1>> when(T1 t1){
+	public static <T1> MTuple1<Predicate<? super T1>> when(T1 t1){
 		
 		return ()->Tuple.tuple(test -> Objects.equals(test,t1));
 	}
-	public static <T1> MatchableTuple1<Predicate<? super T1>> when(Predicate<? super T1> t1){
+	public static <T1> MTuple1<Predicate<? super T1>> when(Predicate<? super T1> t1){
 		
 		return ()->Tuple.tuple(t1);
 	}
-	public static <T1> MatchableTuple1<Predicate<? super T1>> when(Matcher<? super T1> t1){
+	public static <T1> MTuple1<Predicate<? super T1>> when(Matcher<? super T1> t1){
 		return ()->Tuple.tuple(test -> t1.matches(test));
 	}
 	//when arity 2
@@ -310,7 +310,10 @@ public interface Matchable<TYPE>{
 	public static interface MatchableIterable<TYPE> extends Matchable<TYPE>{
 		
 		 
-		 
+	    default MatchableIterable<TYPE> printOut(){
+            System.out.println(getMatchable());
+            return this;
+        }
 		
 
 		default <R> Eval<R> visitSeq(BiFunction<? super Maybe<TYPE>,? super ReactiveSeq<TYPE>,? extends R> match ){
@@ -468,6 +471,10 @@ public interface Matchable<TYPE>{
 		default T1 v1(){
 			return getMatchable().v1;
 		}
+		default MatchableTuple1<T1> printOut(){
+            System.out.println(getMatchable());
+            return this;
+        }
 		default int compareTo(MatchableTuple1<T1> other) {
 			return getMatchable().compareTo(other.getMatchable());
 		}
@@ -515,6 +522,10 @@ public interface Matchable<TYPE>{
 			
 			return getMatchable().v2;
 		}
+		default MatchableTuple2<TYPE,T1,T2> printOut(){
+            System.out.println(getMatchable());
+            return this;
+        }
 		default int compareTo(MatchableTuple2<?,T1, T2> other) {
 			return getMatchable().compareTo(other.getMatchable());
 		}
@@ -571,7 +582,7 @@ public interface Matchable<TYPE>{
 	    }
 	}
 	@FunctionalInterface
-	public static interface MatchableTuple3<TYPE,T1 extends TYPE,T2 extends TYPE,T3 extends TYPE> {
+	public static interface MatchableTuple3<TYPE,T1 extends TYPE,T2 extends TYPE,T3 extends TYPE> extends Iterable<TYPE>{
 		Tuple3<T1,T2,T3> getMatchable();
 		default T1 v1(){
 			return getMatchable().v1;
@@ -582,6 +593,10 @@ public interface Matchable<TYPE>{
 		default T3 v3(){
 			return getMatchable().v3;
 		}
+		default MatchableTuple3<TYPE,T1,T2,T3> printOut(){
+            System.out.println(getMatchable());
+            return this;
+        }
 		default int compareTo(MatchableTuple3<?,T1, T2,T3> other) {
 			
 			return getMatchable().compareTo(other.getMatchable());
@@ -668,6 +683,10 @@ public interface Matchable<TYPE>{
 		default T4 v4(){
 			return getMatchable().v4;
 		}
+		default MatchableTuple4<TYPE,T1,T2,T3 ,T4> printOut(){
+            System.out.println(getMatchable());
+            return this;
+        }
 		default int compareTo(MatchableTuple4<?,T1, T2,T3,T4> other) {
 			return getMatchable().compareTo(other.getMatchable());
 		}
@@ -794,6 +813,10 @@ public interface Matchable<TYPE>{
 		}
 		default T5 v5(){
 			return getMatchable().v5;
+		}
+		default MatchableTuple5<TYPE,T1,T2,T3 ,T4 ,T5> printOut(){
+		    System.out.println(getMatchable());
+		    return this;
 		}
 		default int compareTo(MatchableTuple5<?,T1, T2,T3,T4,T5> other) {
 			
@@ -967,8 +990,8 @@ public interface Matchable<TYPE>{
 
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue1<T,R> is(Tuple1<Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return isWhere(then,when.v1);
+		public final CheckValue1<T,R> is(MTuple1<Predicate<? super T>> when,Supplier<? extends R> then) {		
+			return isWhere(then,when.v1());
 		}
 		
 		 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -1108,8 +1131,8 @@ public interface Matchable<TYPE>{
 
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue4<T1,T2,T3,T4,R> is(Tuple4<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>> when,Supplier<? extends R> then) {		
-			return isWhere(then,when.v1,when.v2,when.v3,when.v4);
+		public final CheckValue4<T1,T2,T3,T4,R> is(MTuple4<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>> when,Supplier<? extends R> then) {		
+			return isWhere(then,when.v1(),when.v2(),when.v3(),when.v4());
 		}
 		 @SuppressWarnings({ "rawtypes", "unchecked" })
 		private final  CheckValue4<T1,T2,T3,T4,R> isWhere(Supplier<? extends R> result,Predicate<? super T1> value1,
@@ -1157,10 +1180,10 @@ public interface Matchable<TYPE>{
 
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final CheckValue5<T1,T2,T3,T4,T5,R> is(Tuple5<Predicate<? super T1>,Predicate<? super T2>,
+		public final CheckValue5<T1,T2,T3,T4,T5,R> is(MTuple5<Predicate<? super T1>,Predicate<? super T2>,
 																Predicate<? super T3>,Predicate<? super T4>,
 																Predicate<? super T5>> when,Supplier<? extends R> then) {		
-			return isWhere(then,when.v1,when.v2,when.v3,when.v4,when.v5);
+			return isWhere(then,when.v1(),when.v2(),when.v3(),when.v4(),when.v5());
 		}
 		 @SuppressWarnings({ "rawtypes", "unchecked" })
 		private final  CheckValue5<T1,T2,T3,T4,T5,R> isWhere(Supplier<? extends R> result,Predicate<? super T1> value1,

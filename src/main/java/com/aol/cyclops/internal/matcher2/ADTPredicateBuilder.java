@@ -106,7 +106,8 @@ public class ADTPredicateBuilder<T>{
 			
 			return t -> toPredicate().test(t) 
 					  	&& SeqUtils.seq(Extractors.decomposeCoerced().apply(t))
-							.zip(predicates,(a,b)->Tuple.tuple(a, b)).map(tuple -> tuple.v2.test(tuple.v1))
+							.zip(predicates,(a,b)->Tuple.tuple(a, b))
+							.map(tuple -> tuple.v2.test(tuple.v1))
 							.allMatch(v->v==true);
 		}
 		
@@ -123,7 +124,6 @@ public class ADTPredicateBuilder<T>{
 			
 			return t -> toPredicate().test(t) 
 					  	&& SeqUtils.seq(Extractors.decomposeCoerced().apply(t))
-					  	    .peek(System.out::println)
 							.zip(predicates,(a,b)->Tuple.tuple(a, b))
 							.map(tuple -> tuple.v2.test(tuple.v1))
 							.allMatch(v->v==true);
@@ -132,20 +132,7 @@ public class ADTPredicateBuilder<T>{
 		
 		
 		
-		final  public<V> Predicate<V> eq(V value){
-			Predicate p = test->SeqUtils.EMPTY==test;
-			ReactiveSeq<Predicate> predicates = ReactiveSeq.of(value)
-														   .map(nextValue->convertToPredicate(nextValue))
-														   .concat(p);
-														   
-														   
-			
-			
-			return t -> toPredicate().test(t) 
-					  	&& SeqUtils.seq(Extractors.decomposeCoerced().apply(t))
-							.zip(predicates,(a,b)->Tuple.tuple(a, b)).map(tuple -> tuple.v2.test(tuple.v1))
-							.allMatch(v->v==true);
-		}
+		
 		
 		
 		public static <T>  Predicate<T> convertToPredicateTyped(Object o){
@@ -159,7 +146,7 @@ public class ADTPredicateBuilder<T>{
 				return test -> ((Matcher)o).matches(test);
 				
 			return test -> {
-			    System.out.println("does "+ test + " = " + o);;
+			   
 			    return Objects.equals(test,o);
 			};
 		}

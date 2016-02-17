@@ -10,23 +10,24 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
 import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 public class LiftAndBindSequenceMTest {
 	@Test
 	public void testLiftAndBindFile(){
 		
 		
-		List<String> result = LazyFutureStream.of("input.file")
+		List<String> result = StreamUtils.flatMapFile(LazyFutureStream.of("input.file")
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
-								.flatMapFile(File::new)
-								.toList();
+								,File::new)
+								.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
 	}
@@ -34,9 +35,9 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindURL(){
 		
 		
-		List<String> result = LazyFutureStream.of("input.file")
-								.flatMapURL(getClass().getClassLoader()::getResource)
-								.toList();
+		List<String> result = StreamUtils.flatMapURL(LazyFutureStream.of("input.file")
+								,getClass().getClassLoader()::getResource)
+								.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
 	}
@@ -44,9 +45,9 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindString(){
 		
 		
-		List<Character> result = LazyFutureStream.of("input.file")
-									.flatMapCharSequence(i->"hello world")
-									.toList();
+		List<Character> result = StreamUtils.flatMapCharSequence(LazyFutureStream.of("input.file")
+									,i->"hello world")
+									.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
 	}
@@ -54,11 +55,11 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindBufferedReader(){
 		
 		
-		List<String> result = LazyFutureStream.of("input.file")
+		List<String> result = StreamUtils.flatMapBufferedReader(LazyFutureStream.of("input.file")
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
-								.flatMapBufferedReader(BufferedReader::new)
-								.toList();
+								,r-> new BufferedReader(r))
+								.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
 	}

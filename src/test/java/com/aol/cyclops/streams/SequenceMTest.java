@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
@@ -402,13 +403,13 @@ public class SequenceMTest {
 	
 	@Test
 	public void flatMapCompletableFuture(){
-		assertThat(ReactiveSeq.of(1,2,3).flatMapCompletableFuture(i->CompletableFuture.completedFuture(i+2))
+		assertThat(ReactiveSeq.of(1,2,3).flatMapAnyM(i->AnyM.fromCompletableFuture(CompletableFuture.completedFuture(i+2)))
 				  								.collect(Collectors.toList()),
 				  								equalTo(Arrays.asList(3,4,5)));
 	}
 	@Test
-	public void flatMapOptional(){
-		assertThat(ReactiveSeq.of(1,2,3,null).flatMapOptional(Optional::ofNullable)
+	public void flatMapMaybe(){
+		assertThat(ReactiveSeq.of(1,2,3,null).flatMapIterable(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}
