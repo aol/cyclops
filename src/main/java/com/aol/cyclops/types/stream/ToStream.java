@@ -25,7 +25,7 @@ public interface ToStream<T> extends Iterable<T>,ConvertableToReactiveSeq<T>{
 	/**
 	 * @return SequenceM from this Streamable
 	 */
-	default ReactiveSeq<T> sequenceM(){
+	default ReactiveSeq<T> reactiveSeq(){
 		return ReactiveSeq.fromStream(new FromStreamable<T>().stream(getStreamable()));
 	}
 	default Stream<T> reveresedStream(){
@@ -40,7 +40,7 @@ public interface ToStream<T> extends Iterable<T>,ConvertableToReactiveSeq<T>{
 		return SeqUtils.reverse(new FromStreamable<T>().stream(getStreamable()));
 	}
 	default boolean isEmpty(){
-		return this.sequenceM().isEmpty();
+		return this.reactiveSeq().isEmpty();
 	}
 	default Stream<T> stream(){
 		Object streamable = getStreamable();

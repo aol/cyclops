@@ -1249,7 +1249,7 @@ public class StreamUtils{
 		
 		
 	}
-	public final static<T, C extends Collection<T>> Stream<C> batchBySize(Stream<T> stream,int groupSize, Supplier<C> factory) {
+	public final static<T, C extends Collection<? super T>> Stream<C> batchBySize(Stream<T> stream,int groupSize, Supplier<C> factory) {
 		return new BatchBySizeOperator<T,C>(stream,factory).batchBySize(groupSize);
 		
 		
@@ -1927,7 +1927,7 @@ public class StreamUtils{
 	  public final static <T> Stream<ListX<T>> batchByTime(Stream<T> stream, long time, TimeUnit t){
 			return new BatchByTimeOperator<T,ListX<T>>(stream).batchByTime(time,t);
 	  }
-	  public final static  <T, C extends Collection<T>> Stream<C> batchByTime(Stream<T> stream, long time, TimeUnit t, Supplier<C> factory){
+	  public final static  <T, C extends Collection<? super T>> Stream<C> batchByTime(Stream<T> stream, long time, TimeUnit t, Supplier<C> factory){
 			return new BatchByTimeOperator<T,C>(stream,factory).batchByTime(time,t);
 	  }
 	  private static final Object UNSET = new Object();

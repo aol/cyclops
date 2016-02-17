@@ -134,11 +134,11 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 
 		
 
-		assertThat((((Traversable<Serializable>)of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),containsInAnyOrder(1, 2, 3));
+		assertThat(((of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),containsInAnyOrder(1, 2, 3));
 
-		assertThat((((Traversable<Serializable>)of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),not(containsInAnyOrder("a", "b",null)));
+		assertThat(((of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),not(containsInAnyOrder("a", "b",null)));
 
-		assertThat(((Traversable<Serializable>)of(1, "a", 2, "b", 3)
+		assertThat((of(1, "a", 2, "b", 3)
 
 				.ofType(Serializable.class)).toListX(),containsInAnyOrder(1, "a", 2, "b", 3));
 

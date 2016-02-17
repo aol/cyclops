@@ -33,11 +33,11 @@ public class WindowingTest {
 	@Test
 	public void windowWhile(){
 		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
-				.windowWhile(i->i%3!=0)
+				.groupedWhile(i->i%3!=0)
 				.toList().size(),equalTo(2));
 		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
-				.windowWhile(i->i%3!=0)
-				.toList().get(0).sequenceM().toList(),equalTo(Arrays.asList(1,2,3)));
+				.groupedWhile(i->i%3!=0)
+				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void windowUntil(){
@@ -45,23 +45,23 @@ public class WindowingTest {
 		
 		
 		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
-				.windowUntil(i->i%3==0)
+				.groupedUntil(i->i%3==0)
 				.toList().size(),equalTo(2));
 		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
-				.windowUntil(i->i%3==0)
-				.toList().get(0).sequenceM().toList(),equalTo(Arrays.asList(1,2,3)));
+				.groupedUntil(i->i%3==0)
+				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void windowUntilEmpty(){
 		assertThat(LazyFutureStream.<Integer>of()
-				.windowUntil(i->i%3==0)
+				.groupedUntil(i->i%3==0)
 				.toList().size(),equalTo(0));
 	}
 	@Test
 	public void windowStatefullyWhile(){
 		
 		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
-				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(5));
 		
 	}
@@ -69,7 +69,7 @@ public class WindowingTest {
 	public void windowStatefullyWhileEmpty(){
 		
 		assertThat(LazyFutureStream.of()
-				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(0));
 		
 	}
@@ -177,8 +177,8 @@ public class WindowingTest {
 	@Test
 	public void return1() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5));
-		assertThat(fixed.sequenceM().grouped(3).get(0).get(),equalTo(Arrays.asList(5)));
-		assertThat(fixed.sequenceM().grouped(3).count(),equalTo(1l));
+		assertThat(fixed.reactiveSeq().grouped(3).get(0).get(),equalTo(Arrays.asList(5)));
+		assertThat(fixed.reactiveSeq().grouped(3).count(),equalTo(1l));
 	}
 
 	@Test

@@ -689,7 +689,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 		return (PVectorX<R>)PersistentCollectionX.super.patternMatch(case1,otherwise);
 	}
 	 @Override
-	    default <C extends Collection<T>> PVectorX<C> grouped(int size, Supplier<C> supplier) {
+	    default <C extends Collection<? super T>> PVectorX<C> grouped(int size, Supplier<C> supplier) {
 	        
 	        return (PVectorX<C>)PersistentCollectionX.super.grouped(size, supplier);
 	    }

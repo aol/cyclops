@@ -696,7 +696,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		return (ListX<T>)MutableCollectionX.super.removeMatches(m);
 	}
 	  @Override
-	    default <C extends Collection<T>> ListX<C> grouped(int size, Supplier<C> supplier) {
+	    default <C extends Collection<? super T>> ListX<C> grouped(int size, Supplier<C> supplier) {
 	        
 	        return (ListX<C>)MutableCollectionX.super.grouped(size, supplier);
 	    }

@@ -11,7 +11,7 @@ import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.Value;
 @Value
-public class BatchByTimeOperator<T, C extends Collection<T>> {
+public class BatchByTimeOperator<T, C extends Collection<? super T>> {
 	Stream<T> stream;
 	Supplier<C> factory;
 	public BatchByTimeOperator(Stream<T> stream){

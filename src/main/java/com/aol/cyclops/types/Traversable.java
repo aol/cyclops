@@ -308,7 +308,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
      * @param supplier Collection factory
      * @return SequenceM batched into collection types by size
      */
-    default <C extends Collection<T>> Traversable<C> grouped(int size, Supplier<C> supplier){
+    default <C extends Collection<? super T>> Traversable<C> grouped(int size, Supplier<C> supplier){
         return stream().grouped(size,supplier);
     }
 

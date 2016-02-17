@@ -615,7 +615,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		return (PSetX<R>)PersistentCollectionX.super.patternMatch(case1,otherwise);
 	}
 	 @Override
-	    default <C extends Collection<T>> PSetX<C> grouped(int size, Supplier<C> supplier) {
+	    default <C extends Collection<? super T>> PSetX<C> grouped(int size, Supplier<C> supplier) {
 	        
 	        return (PSetX<C>)PersistentCollectionX.super.grouped(size, supplier);
 	    }

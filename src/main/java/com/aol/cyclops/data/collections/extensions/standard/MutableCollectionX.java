@@ -544,7 +544,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	}
 
     @Override
-    default <C extends Collection<T>> MutableCollectionX<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends Collection<? super T>> MutableCollectionX<C> grouped(int size, Supplier<C> supplier) {
         
         return fromStream(stream().grouped(size,supplier));
     }

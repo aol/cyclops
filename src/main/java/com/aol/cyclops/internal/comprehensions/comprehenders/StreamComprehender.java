@@ -58,7 +58,7 @@ public class StreamComprehender implements Comprehender<Stream> {
 				 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
 							false);
 			}else if(apply instanceof ToStream){
-				return (T)((ToStream)apply).sequenceM();
+				return (T)((ToStream)apply).reactiveSeq();
 			}
 		}
 		if(apply instanceof BaseStream){

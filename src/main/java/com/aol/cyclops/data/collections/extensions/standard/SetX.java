@@ -587,7 +587,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
     }
 	
 	  @Override
-	    default <C extends Collection<T>> SetX<C> grouped(int size, Supplier<C> supplier) {
+	    default <C extends Collection<? super  T>> SetX<C> grouped(int size, Supplier<C> supplier) {
 	        
 	        return (SetX<C>)MutableCollectionX.super.grouped(size, supplier);
 	    }

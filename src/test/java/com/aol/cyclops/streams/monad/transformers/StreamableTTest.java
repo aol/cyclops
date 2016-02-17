@@ -54,7 +54,7 @@ public class StreamableTTest {
 		List<Integer> results = optTAdd2.apply(StreamableT.of(streamOpt),StreamableT.of(future))
 										.unwrap()
 										.<Stream<Streamable<Integer>>>unwrap()
-										.flatMap(i->i.sequenceM())
+										.flatMap(i->i.reactiveSeq())
 										.collect(Collectors.toList());
 		
 		assertThat(results,equalTo(Arrays.asList(3,4,5)));

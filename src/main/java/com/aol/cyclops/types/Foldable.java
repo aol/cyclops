@@ -1,9 +1,12 @@
 package com.aol.cyclops.types;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
@@ -221,6 +224,62 @@ public interface Foldable<T> {
 	default <T> T foldRightMapToType(Reducer<T> reducer){
 		return stream().foldRightMapToType(reducer);
 	}
-	
+	/**
+     * <pre>
+     * {@code
+     *  assertEquals("123".length(),ReactiveSeq.of(1, 2, 3).join().length());
+     * }
+     * </pre>
+     * 
+     * @return Stream as concatenated String
+     */
+    default String join(){
+        
+        return stream().join();
+    }
+
+    /**
+     * <pre>
+     * {@code
+     * assertEquals("1, 2, 3".length(), ReactiveSeq.of(1, 2, 3).join(", ").length());
+     * }
+     * </pre>
+     * 
+     * @return Stream as concatenated String
+     */
+    default String join(String sep){
+        return stream().join(sep);
+    }
+
+    /**
+     * <pre>
+     * {@code 
+     * assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").length());
+     * }
+     * </pre>
+     * 
+     * @return Stream as concatenated String
+     */
+    default String join(String sep, String start, String end){
+        return stream().join(sep,start,end);
+    }
+    /**
+    default boolean xMatch(int num, Predicate<? super T> c){
+        return stream().xMatch(num, c);
+    }
+    **/
+    default void print(PrintStream str){
+        stream().print(str);
+    }
+    default void print(PrintWriter writer){
+        stream().print(writer);
+    }
+    default void printOut(){
+        stream().printOut();
+    }
+    default void printErr(){
+        stream().printErr();
+    }
+   
 
 }

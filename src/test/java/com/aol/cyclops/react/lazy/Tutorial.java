@@ -478,7 +478,7 @@ public class Tutorial {
 	public void range() {
 		List<ListX<Integer>> collected = LazyReact
 				.sequentialCommonBuilder()
-				.from(IntStream.range(0, 10)).batchBySize(5)
+				.from(IntStream.range(0, 10)).grouped(5)
 				.block();
 		System.out.println(collected);
 	}
@@ -514,7 +514,7 @@ public class Tutorial {
 				.limit(100)
 				.map(this::readFileToString)
 				.map(this::parseJson)
-				.batchBySize(10)
+				.grouped(10)
 				.onePer(1, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
 				.map(this::processOrders)

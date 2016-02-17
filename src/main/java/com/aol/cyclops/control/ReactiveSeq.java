@@ -2,6 +2,8 @@ package com.aol.cyclops.control;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Comparator;
@@ -95,6 +97,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	public <T> ReactiveSeq<T> unit(T unit);
 
+	
+	 @Override
+	    default void printOut() {
+	        
+	        JoolWindowing.super.printOut();
+	    }
 	
 	
 	@Override
@@ -651,7 +659,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
      *            Collection factory
      * @return SequenceM batched into collection types by time period
      */
-    <C extends Collection<T>> ReactiveSeq<C> groupedByTime(long time, TimeUnit unit, Supplier<C> factory);
+    <C extends Collection<? super T>> ReactiveSeq<C> groupedByTime(long time, TimeUnit unit, Supplier<C> factory);
 
     
 
@@ -672,7 +680,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
      * @param supplier Collection factory
      * @return SequenceM batched into collection types by size
      */
-    <C extends Collection<T>> ReactiveSeq<C> grouped(int size, Supplier<C> supplier);
+    <C extends Collection<? super T>> ReactiveSeq<C> grouped(int size, Supplier<C> supplier);
 
     
 
@@ -2975,7 +2983,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	default ReactiveSeq<ReactiveSeq<T>> permutations() {
 		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).permutations();
-		return streamable.map(s -> s.sequenceM()).sequenceM();
+		return streamable.map(s -> s.reactiveSeq()).reactiveSeq();
 	}
 
 	/**
@@ -3018,7 +3026,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	default ReactiveSeq<ReactiveSeq<T>> combinations(int size) {
 		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).combinations(size);
-		return streamable.map(s -> s.sequenceM()).sequenceM();
+		return streamable.map(s -> s.reactiveSeq()).reactiveSeq();
 	}
 
 	/**
@@ -3036,7 +3044,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	default ReactiveSeq<ReactiveSeq<T>> combinations() {
 		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).combinations();
-		return streamable.map(s -> s.sequenceM()).sequenceM();
+		return streamable.map(s -> s.reactiveSeq()).reactiveSeq();
 	}
 
 	/**
@@ -3669,6 +3677,26 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	default Optional<T> min(Comparator<? super T> comparator) {
 	    return StreamUtils.min(this, comparator);
 	}
+
+    @Override
+    default void printErr() {
+       
+        JoolWindowing.super.printErr();
+    }
+
+    @Override
+    default void print(PrintWriter writer) {
+       
+        JoolWindowing.super.print(writer);
+    }
+
+    @Override
+    default void print(PrintStream stream) {
+      
+        JoolWindowing.super.print(stream);
+    }
+
+   
 
 	
 	

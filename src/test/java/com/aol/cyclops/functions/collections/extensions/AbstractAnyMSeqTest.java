@@ -36,7 +36,6 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.AnyMSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -335,9 +334,8 @@ public abstract class AbstractAnyMSeqTest {
 		@Test
 		public void zip(){
 			List<Tuple2<Integer,Integer>> list =
-					of(1,2,3,4,5,6).zip(of(100,200,300,400))
+					of(1,2,3,4,5,6).zip(of(100,200,300,400).asSequence())
 													.peek(it -> System.out.println(it))
-													
 													.collect(Collectors.toList());
 			System.out.println(list);
 			
@@ -377,21 +375,6 @@ public abstract class AbstractAnyMSeqTest {
 										.scanRight(Reducers.toTotalInt()).toList(), is(asList(0, 3, 5, 6)));
 
 		}	
-
-	@Test
-	public void forEach2() {
-
-		assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), a -> b -> a + b).toList(),
-				equalTo(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 3, 4, 5, 6, 7, 8,
-						9, 10, 11, 12)));
-	}
-
-	@Test
-	public void forEach2Filter() {
-
-		assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), a -> b -> a > 2 && b < 8,
-				a -> b -> a + b).toList(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10)));
-	}
 	    
   
 	@Test
@@ -610,8 +593,8 @@ public abstract class AbstractAnyMSeqTest {
 												)
 												.toStreamable();
 		
-		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 	
 	@Test
@@ -620,8 +603,8 @@ public abstract class AbstractAnyMSeqTest {
 												.map(i->i*2)
 												.toConcurrentLazyStreamable();
 		
-		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.sequenceM().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 	/**
 	@Test
@@ -797,7 +780,7 @@ public abstract class AbstractAnyMSeqTest {
 
 	@Test
 	public void testZipDifferingLength() {
-		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d").asSequence()).toList();
 
 		assertEquals(2, list.size());
 		assertTrue(asList(1, 2).contains(list.get(0).v1));
@@ -832,7 +815,7 @@ public abstract class AbstractAnyMSeqTest {
 
 	@Test
 	public void testZipDifferingLengthStream() {
-		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d").asSequence()).toList();
 
 		assertEquals(2, list.size());
 		assertTrue(asList(1, 2).contains(list.get(0).v1));

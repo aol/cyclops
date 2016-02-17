@@ -588,7 +588,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
     }
 	
 	  @Override
-	    default <C extends Collection<T>> SortedSetX<C> grouped(int size, Supplier<C> supplier) {
+	    default <C extends Collection<? super T>> SortedSetX<C> grouped(int size, Supplier<C> supplier) {
 	        
 	        return (SortedSetX<C>)MutableCollectionX.super.grouped(size, supplier);
 	    }

@@ -704,7 +704,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 
 
     @Override
-    default <C extends Collection<T>> PBagX<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends Collection<? super T>> PBagX<C> grouped(int size, Supplier<C> supplier) {
         
         return (PBagX<C>)PersistentCollectionX.super.grouped(size, supplier);
     }

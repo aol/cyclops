@@ -739,7 +739,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		return (PStackX<R>)PersistentCollectionX.super.patternMatch(case1,otherwise);
 	}
 	 @Override
-	    default <C extends Collection<T>> PStackX<C> grouped(int size, Supplier<C> supplier) {
+	    default <C extends Collection<? super T>> PStackX<C> grouped(int size, Supplier<C> supplier) {
 	        
 	        return (PStackX<C>)PersistentCollectionX.super.grouped(size, supplier);
 	    }

@@ -628,7 +628,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	}
 	
 	  @Override
-	    default <C extends Collection<T>> QueueX<C> grouped(int size, Supplier<C> supplier) {
+	    default <C extends Collection<? super T>> QueueX<C> grouped(int size, Supplier<C> supplier) {
 	        
 	        return (QueueX<C>)MutableCollectionX.super.grouped(size, supplier);
 	    }

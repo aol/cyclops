@@ -34,6 +34,10 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.ExtendedTraversable;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.IterableCollectable;
+import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -46,7 +50,10 @@ import com.aol.cyclops.util.function.TriFunction;
 public interface AnyMSeq<T> extends AnyM<T>,
 									ConvertableSequence<T>,
 									ExtendedTraversable<T>,
+									Sequential<T>,
 									SequenceMCollectable<T>,
+									IterableCollectable<T>,
+									FilterableFunctor<T>,
 									ZippingApplicativable<T> {
 
 	
@@ -209,7 +216,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	}
 
 	@Override
-    default <C extends Collection<T>> AnyMSeq<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends Collection<? super T>> AnyMSeq<C> grouped(int size, Supplier<C> supplier) {
         
         return AnyM.fromIterable(ZippingApplicativable.super.grouped(size, supplier));
     }
@@ -431,17 +438,32 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
     default AnyMSeq<ReactiveSeq<T>> permutations() {
         
-        return AnyM.fromIterable(ExtendedTraversable.super.permutations());
+        return AnyM.fromIterable(Sequential.super.permutations());
     }
     @Override
     default AnyMSeq<ReactiveSeq<T>> combinations(int size) {
         
-        return AnyM.fromIterable(ExtendedTraversable.super.combinations(size));
+        return AnyM.fromIterable(Sequential.super.combinations(size));
     }
     @Override
     default AnyMSeq<ReactiveSeq<T>> combinations() {
         
-        return AnyM.fromIterable(ExtendedTraversable.super.combinations());
+        return AnyM.fromIterable(Sequential.super.combinations());
+    }
+    
+    
+    @Override
+    default <R> AnyMSeq<R> filterMap(Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
+       return (AnyMSeq<R>)FilterableFunctor.super.filterMap(case1);
+    }
+    @Override
+    default <U> AnyMSeq<U> ofType(Class<U> type){
+        
+        return (AnyMSeq<U>)FilterableFunctor.super.ofType(type);
+    }
+    @Override
+    default AnyMSeq<T>  filterNot(Predicate<? super T> fn){
+        return (AnyMSeq<T>)FilterableFunctor.super.filterNot(fn);
     }
     /* (non-Javadoc)
 	 * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()

@@ -125,7 +125,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 			public Object getStreamable(){
 				return values;
 			}
-			public ReactiveSeq<T> sequenceM(){
+			public ReactiveSeq<T> reactiveSeq(){
 				return ReactiveSeq.of(values);
 			}
 			
@@ -146,7 +146,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return The tail of this Streamable
 	 */
 	default Streamable<T> tail(){
-		return Streamable.fromStream(sequenceM().headAndTail().tail());
+		return Streamable.fromStream(reactiveSeq().headAndTail().tail());
 	}
 	/**
 	 * <pre>
@@ -158,7 +158,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return The head of this Streamable
 	 */
 	default T head(){
-		return sequenceM().headAndTail().head();
+		return reactiveSeq().headAndTail().head();
 	}
 	
 	/**
@@ -176,7 +176,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return New Streamable with provided Streamable appended
 	 */
 	default Streamable<T> appendAll(Streamable<T> t){
-		return Streamable.fromStream(this.sequenceM().appendStream(t.sequenceM()));
+		return Streamable.fromStream(this.reactiveSeq().appendStream(t.reactiveSeq()));
 	}
 	/**
 	 * Remove all occurances of the specified element from the SequenceM
@@ -192,7 +192,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return Filtered Stream / SequenceM
 	 */
 	default Streamable<T> remove(T t){
-		return Streamable.fromStream( sequenceM().remove(t));
+		return Streamable.fromStream( reactiveSeq().remove(t));
 	}
 	/**
 	 * Prepend given values to the start of the Stream
@@ -209,7 +209,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return Streamable with values prepended
 	 */
 	default Streamable<T> prepend(T t){
-		return Streamable.fromStream( sequenceM().prepend(t));
+		return Streamable.fromStream( reactiveSeq().prepend(t));
 	}
 	/*
 	 * Return the distinct Stream of elements
@@ -222,7 +222,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 *</pre>
 	 */
 	default Streamable<T> distinct(){
-		return Streamable.fromStream( sequenceM().distinct());
+		return Streamable.fromStream( reactiveSeq().distinct());
 	}
 	/**
 	 * Fold a Streamable Left
@@ -240,7 +240,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return Value from reduction
 	 */
 	default <U> U foldLeft(U identity, BiFunction<U, ? super T, U> function) {
-        return sequenceM().foldLeft(identity, function);
+        return reactiveSeq().foldLeft(identity, function);
     }
 	 /**
 	  * Fold a Streamable fromt the right
@@ -256,7 +256,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return Single reduced value
 	 */
 	default <U> U foldRight(U seed, BiFunction<? super T, U, U> function)  {
-        return sequenceM().foldRight(seed, function);
+        return reactiveSeq().foldRight(seed, function);
     }
 	/**
 	 * Map the values in the Streamable from one set of values / types to another
@@ -276,7 +276,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return Mapped Streamable
 	 */
 	default <R> Streamable<R> map(Function<? super T,? extends R> fn){
-		return Streamable.fromStream(sequenceM().map(fn));
+		return Streamable.fromStream(reactiveSeq().map(fn));
 	}
 	/**
 	 * Peek at each value in a Streamable as it passes through unchanged
@@ -293,46 +293,46 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return Streamable that will peek at values as they pass through
 	 */
 	default  Streamable<T> peek(Consumer<? super T> fn){
-		return Streamable.fromStream(sequenceM().peek(fn));
+		return Streamable.fromStream(reactiveSeq().peek(fn));
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#filtered(java.util.function.Predicate)
 	 */
 	default  Streamable<T> filter(Predicate<? super T> fn){
-		return Streamable.fromStream(sequenceM().filter(fn));
+		return Streamable.fromStream(reactiveSeq().filter(fn));
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#flatMap(java.util.function.Function)
 	 */
 	default <R> Streamable<R> flatMap(Function<? super T,Streamable<? extends R>> fn){
-		return Streamable.fromStream(sequenceM().flatMap(i->fn.apply(i).sequenceM()));
+		return Streamable.fromStream(reactiveSeq().flatMap(i->fn.apply(i).reactiveSeq()));
 	}
 	
 	/**
 	 * @return number of elements in this Streamable
 	 */
 	default long count(){
-		return sequenceM().count();
+		return reactiveSeq().count();
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
 	 */
     default void forEachOrdered(Consumer<? super T> action){
-    	sequenceM().forEachOrdered(action);
+    	reactiveSeq().forEachOrdered(action);
     }
 
     /* (non-Javadoc)
 	 * @see java.util.stream.Stream#toArray()
 	 */
     default Object[] toArray(){
-    	return sequenceM().toArray();
+    	return reactiveSeq().toArray();
     }
 
     /* (non-Javadoc)
 	 * @see java.util.stream.Stream#toArray(java.util.function.IntFunction)
 	 */
     default <A> A[] toArray(IntFunction<A[]> generator){
-    	return sequenceM().toArray(generator);
+    	return reactiveSeq().toArray(generator);
     }
 	/**
 	 * <pre>
@@ -350,16 +350,16 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	
 		if(getStreamable() instanceof List)
 			return ListX.fromIterable((List)getStreamable());
-		return sequenceM().toList();
+		return reactiveSeq().toList();
 	}
 	default  <R> R collect(Supplier<R> supplier,
             BiConsumer<R, ? super T> accumulator,
             BiConsumer<R, R> combiner){
-		return sequenceM().collect(supplier,accumulator,combiner);
+		return reactiveSeq().collect(supplier,accumulator,combiner);
 	}
 	default  <R, A> R collect(Collector<? super T, A, R> collector){
 		
-		return sequenceM().collect(collector);
+		return reactiveSeq().collect(collector);
 	}
 	/**
 	 * Add the contents of this Stream to the mutable collection supplied by 
@@ -378,7 +378,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 */
 	default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory){
 		
-		return sequenceM().toCollection(collectionFactory);
+		return reactiveSeq().toCollection(collectionFactory);
 	}
 	
 	/**
@@ -420,7 +420,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return Sequence between supplied indexes of original Sequence
 	 */
     default Streamable<T> subStream(int start, int end){
-    	return Streamable.fromStream(sequenceM().subStream(start,end));
+    	return Streamable.fromStream(reactiveSeq().subStream(start,end));
     }
     /**
 	 * Gets the element at index (it must be present)
@@ -436,7 +436,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return Element and Sequence
 	 */
     default T elementAt(int index){
-    	return this.sequenceM().elementAt(index).v1;
+    	return this.reactiveSeq().elementAt(index).v1;
     }
     /**
 	 * [equivalent to count]
@@ -444,7 +444,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 	 * @return size
 	 */
     default int size(){
-    	return sequenceM().size();
+    	return reactiveSeq().size();
     }
     /**
 	 * <pre>
@@ -464,7 +464,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
             return Streamable.of(Streamable.empty()); 
         } else {
             return Streamable.fromStream(IntStream.range(0, size()).boxed().
-                <Streamable<T>> flatMap(i -> subStream(i+1, size()).combinations( size - 1).map(t -> t.prepend(elementAt(i))).sequenceM()));
+                <Streamable<T>> flatMap(i -> subStream(i+1, size()).combinations( size - 1).map(t -> t.prepend(elementAt(i))).reactiveSeq()));
         }
     }
     /**
@@ -502,7 +502,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Flattened / joined one level
     	 */
     	default <T1> Streamable<T1> flatten(){
-    		return Streamable.fromStream(sequenceM().flatten());
+    		return Streamable.fromStream(reactiveSeq().flatten());
     	}
     	
     	/**
@@ -519,7 +519,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default Optional<ListX<T>> toOptional(){
-    		return sequenceM().toOptional();
+    		return reactiveSeq().toOptional();
     	}
     	/**
     	 * <pre>
@@ -532,7 +532,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default CompletableFuture<ListX<T>> toCompletableFuture(){
-    		return sequenceM().toCompletableFuture();
+    		return reactiveSeq().toCompletableFuture();
     	}
     	
     	/**
@@ -553,7 +553,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable with values repeated
     	 */
     	 default Streamable<T> cycle(int times){
-    		 return Streamable.fromStream(sequenceM().cycle(times));
+    		 return Streamable.fromStream(reactiveSeq().cycle(times));
     	 }
     	/**
     	 * Convert to a Stream with the values infinitely cycled
@@ -567,7 +567,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Stream with values repeated
     	 */
     	default Streamable<T> cycle(){
-    		 return Streamable.fromStream(sequenceM().cycle());
+    		 return Streamable.fromStream(reactiveSeq().cycle());
     	}
     	/**
     	 * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
@@ -608,7 +608,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	default Tuple2<Streamable<T>,Streamable<T>> splitAt(int where){
     		
-    		return sequenceM().splitAt(where).map1(s->fromStream(s)).map2(s->fromStream(s));
+    		return reactiveSeq().splitAt(where).map1(s->fromStream(s)).map2(s->fromStream(s));
     	}
     	/**
     	 * Split this Streamable after the first element (if present)
@@ -625,7 +625,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Split Streamable
     	 */
     	default Tuple2<Optional<T>, Streamable<T>> splitAtHead() {
-            return sequenceM().splitAtHead().map2(s->fromStream(s));
+            return reactiveSeq().splitAtHead().map2(s->fromStream(s));
         }
     	/**
     	 * Split stream at point where predicate no longer holds
@@ -638,7 +638,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	default Tuple2<Streamable<T>,Streamable<T>> splitBy(Predicate<T> splitter){
-    		return sequenceM().splitBy(splitter).map1(s->fromStream(s)).map2(s->fromStream(s));
+    		return reactiveSeq().splitBy(splitter).map1(s->fromStream(s)).map2(s->fromStream(s));
     	}
     	/**
     	 * Partition a Stream into two one a per element basis, based on predicate's boolean value
@@ -652,7 +652,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	default Tuple2<Streamable<T>,Streamable<T>> partition(Predicate<T> splitter){
-    		return sequenceM().partitionSequence(splitter).map1(s->fromStream(s)).map2(s->fromStream(s));
+    		return reactiveSeq().partitionSequence(splitter).map1(s->fromStream(s)).map2(s->fromStream(s));
     	}
     	
     	
@@ -677,7 +677,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Stream with reduced values repeated
     	 */
     	default Streamable<T> cycle(Monoid<T> m, int times){
-    		return fromStream(sequenceM().cycle(m,times));
+    		return fromStream(reactiveSeq().cycle(m,times));
     	}
 
     	
@@ -699,7 +699,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Repeating Stream
     	 */
     	default Streamable<T> cycleWhile(Predicate<? super T> predicate){
-    		return Streamable.fromStream(sequenceM().cycleWhile(predicate));
+    		return Streamable.fromStream(reactiveSeq().cycleWhile(predicate));
     	}
 
     	/**
@@ -720,7 +720,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Repeating Stream
     	 */
     	default Streamable<T> cycleUntil(Predicate<? super T> predicate){
-    		return Streamable.fromStream(sequenceM().cycleUntil(predicate));
+    		return Streamable.fromStream(reactiveSeq().cycleUntil(predicate));
     	}
     	
     	/**
@@ -735,10 +735,10 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	default <U> Streamable<Tuple2<T, U>> zip(Streamable<U> other){
-    		return fromStream(sequenceM().zip(other.sequenceM()));
+    		return fromStream(reactiveSeq().zip(other.reactiveSeq()));
     	}
     	default <U,R> Streamable<R> zip(Streamable<U> other,BiFunction<T, U, R> zipper){
-    		return fromStream(sequenceM().zip(other.sequenceM(), zipper));
+    		return fromStream(reactiveSeq().zip(other.reactiveSeq(), zipper));
     	}
     	/**
     	 * zip 3 Streams into one
@@ -754,7 +754,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 *</pre>
     	 */
     	default <S,U> Streamable<Tuple3<T,S,U>> zip3(Streamable<? extends S> second,Streamable<? extends U> third){
-    		return fromStream(sequenceM().zip3(second.sequenceM(),third.sequenceM()));
+    		return fromStream(reactiveSeq().zip3(second.reactiveSeq(),third.reactiveSeq()));
     	}
     	/**
     	 * zip 4 Streams into 1
@@ -770,7 +770,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	 default <T2,T3,T4> Streamable<Tuple4<T,T2,T3,T4>> zip4(Streamable<T2> second,Streamable<T3> third,Streamable<T4> fourth){
-    		 return fromStream(sequenceM().zip4(second.sequenceM(),third.sequenceM(),fourth.sequenceM()));
+    		 return fromStream(reactiveSeq().zip4(second.reactiveSeq(),third.reactiveSeq(),fourth.reactiveSeq()));
     	 }
     	/** 
     	 * Add an index to the current Stream
@@ -782,7 +782,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	default Streamable<Tuple2<T,Long>> zipWithIndex(){
-    		return fromStream(sequenceM().zipWithIndex());
+    		return fromStream(reactiveSeq().zipWithIndex());
     	}
     	/**
     	 * Generic zip function. E.g. Zipping a Stream and an Optional
@@ -804,7 +804,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	default <S, R> Streamable<R> zipStreamable(Streamable<? extends S> second,
     			BiFunction<? super T, ? super S, ? extends R> zipper) {
-    		return fromStream(sequenceM().zipSequence(second.sequenceM(), zipper));
+    		return fromStream(reactiveSeq().zipSequence(second.reactiveSeq(), zipper));
     	}
     	/**
     	 * Zip this Streamable against any monad type.
@@ -826,7 +826,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	default <S, R> Streamable<R> zipAnyM(AnyM<? extends S> second,
     			BiFunction<? super T, ? super S, ? extends R> zipper){
-    		return fromStream(sequenceM().zipAnyM(second, zipper));
+    		return fromStream(reactiveSeq().zipAnyM(second, zipper));
     	}
 
     	/**
@@ -850,7 +850,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	 default <S, R> Streamable<R> zipStream(BaseStream<? extends S,? extends BaseStream<? extends S,?>> second,
     			BiFunction<? super T, ? super S, ? extends R> zipper){
-    		 return fromStream(sequenceM().zipStream(second,zipper));
+    		 return fromStream(reactiveSeq().zipStream(second,zipper));
     	 }
 
     	/**
@@ -875,7 +875,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable with sliding view
     	 */
     	default Streamable<ListX<T>> sliding(int windowSize){
-    		return fromStream(sequenceM().sliding(windowSize));
+    		return fromStream(reactiveSeq().sliding(windowSize));
     	}
     	/**
     	 *  Create a sliding view over this Sequence
@@ -899,7 +899,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable with sliding view
     	 */
     	default Streamable<ListX<T>> sliding(int windowSize,int increment){
-    		return fromStream(sequenceM().sliding(windowSize,increment));
+    		return fromStream(reactiveSeq().sliding(windowSize,increment));
     	}
 
     	/**
@@ -922,7 +922,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Stream with elements grouped by size
     	 */
     	default Streamable<ListX<T>> grouped(int groupSize){
-    		return fromStream(sequenceM().grouped(groupSize));
+    		return fromStream(reactiveSeq().grouped(groupSize));
     	}
     	/**
     	 * Use classifier function to group elements in this Sequence into a Map
@@ -938,7 +938,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier){
-    		return sequenceM().groupBy(classifier);
+    		return reactiveSeq().groupBy(classifier);
     	}
 
     
@@ -959,7 +959,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default Streamable<T> scanLeft(Monoid<T> monoid){
-    		return fromStream(sequenceM().scanLeft(monoid));	
+    		return fromStream(reactiveSeq().scanLeft(monoid));	
     	}
     	/**
     	 * Scan left
@@ -971,7 +971,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	default <U> Streamable<U> scanLeft(U identity, BiFunction<U, ? super T, U> function){
-    		return fromStream(sequenceM().scanLeft(identity,function));		
+    		return fromStream(reactiveSeq().scanLeft(identity,function));		
     	}
     	
     	/**
@@ -984,7 +984,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	default Streamable<T> scanRight(Monoid<T> monoid){
-    		return fromStream(sequenceM().scanRight(monoid));		
+    		return fromStream(reactiveSeq().scanRight(monoid));		
     	}
     	/**
     	 * Scan right
@@ -998,7 +998,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	default <U> Streamable<U> scanRight(U identity,BiFunction<? super T, U, U>  combiner){
-    		return fromStream(sequenceM().scanRight(identity,combiner));			
+    		return fromStream(reactiveSeq().scanRight(identity,combiner));			
     	}
     	
 
@@ -1010,7 +1010,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	 default Streamable<T> sorted(){
-    		 return fromStream(sequenceM().sorted());		
+    		 return fromStream(reactiveSeq().sorted());		
     	 }
 
     	/**
@@ -1024,7 +1024,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Sorted Monad
     	 */
     	default Streamable<T> sorted(Comparator<? super T> c){
-    		return fromStream(sequenceM().sorted(c));			
+    		return fromStream(reactiveSeq().sorted(c));			
     	}
 
     	/**
@@ -1040,7 +1040,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 *         skipped
     	 */
     	default Streamable<T> skip(long num){
-    		return fromStream(sequenceM().skip(num));		
+    		return fromStream(reactiveSeq().skip(num));		
     	}
     	/**
     	 * 
@@ -1057,7 +1057,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 *         holds
     	 */
     	 default Streamable<T> skipWhile(Predicate<? super T> p){
-    		 return fromStream(sequenceM().skipWhile(p));		
+    		 return fromStream(reactiveSeq().skipWhile(p));		
     	 }
 
     	/**
@@ -1074,7 +1074,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 *         holds
     	 */
     	default Streamable<T> skipUntil(Predicate<? super T> p){
-    		return fromStream(sequenceM().skipUntil(p));		
+    		return fromStream(reactiveSeq().skipUntil(p));		
     	}
 
     	/**
@@ -1089,7 +1089,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Monad converted to Stream with elements up to num
     	 */
     	default Streamable<T> limit(long num){
-    		return fromStream(sequenceM().limit(num));		
+    		return fromStream(reactiveSeq().limit(num));		
     	}
 
     	/**
@@ -1104,7 +1104,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Monad converted to Stream with limited elements
     	 */
     	default Streamable<T> limitWhile(Predicate<? super T> p){
-    		return fromStream(sequenceM().limitWhile(p));		
+    		return fromStream(reactiveSeq().limitWhile(p));		
     	}
     	/**
     	 * 
@@ -1118,7 +1118,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Monad converted to Stream with limited elements
     	 */
     	default Streamable<T> limitUntil(Predicate<? super T> p){
-    		return fromStream(sequenceM().limitUntil(p));		
+    		return fromStream(reactiveSeq().limitUntil(p));		
     	
     	}
     	/**
@@ -1131,7 +1131,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param c Predicate to check if all match
     	 */
     	default boolean  allMatch(Predicate<? super T> c){
-    		return sequenceM().allMatch(c);
+    		return reactiveSeq().allMatch(c);
     	}
     	/**
     	 * True if a single element matches when Monad converted to a Stream
@@ -1143,7 +1143,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param c Predicate to check if any match
     	 */
     	default boolean  anyMatch(Predicate<? super T> c){
-    		return sequenceM().anyMatch(c);
+    		return reactiveSeq().anyMatch(c);
     	}
     	/**
     	 * Check that there are specified number of matches of predicate in the Stream
@@ -1156,7 +1156,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	default boolean xMatch(int num, Predicate<? super T> c){
-    		return sequenceM().xMatch(num,c);
+    		return reactiveSeq().xMatch(num,c);
     	}
     	/* 
     	 * <pre>
@@ -1167,7 +1167,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	default boolean  noneMatch(Predicate<? super T> c){
-    		return sequenceM().noneMatch(c);
+    		return reactiveSeq().noneMatch(c);
     	}
     	/**
     	 * <pre>
@@ -1179,7 +1179,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Stream as concatenated String
     	 */
     	 default String join(){
-    		 return sequenceM().join();
+    		 return reactiveSeq().join();
     	 }
     	/**
     	 * <pre>
@@ -1190,7 +1190,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Stream as concatenated String
     	 */
     	default String join(String sep){
-    		return sequenceM().join(sep);
+    		return reactiveSeq().join(sep);
     	}
     	/**
     	 * <pre>
@@ -1201,7 +1201,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 *  @return Stream as concatenated String
     	 */
     	default String join(String sep,String start, String end){
-    		return sequenceM().join(sep,start,end);
+    		return reactiveSeq().join(sep,start,end);
     	}
     	
     	
@@ -1210,27 +1210,27 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	default <C extends Comparable<? super C>> Optional<T> minBy(Function<? super T,? extends C> f){
-    		return sequenceM().minBy(f);
+    		return reactiveSeq().minBy(f);
     	}
     	/* (non-Javadoc)
     	 * @see java.util.stream.Stream#min(java.util.Comparator)
     	 */
     	default Optional<T> min(Comparator<? super T> comparator){
-    		return sequenceM().min(comparator);
+    		return reactiveSeq().min(comparator);
     	}
     	/**
     	 * Extract the maximum as determined by the supplied function
     	 * 
     	 */
     	default <C extends Comparable<? super C>> Optional<T> maxBy(Function<? super T,? extends C> f){
-    		return sequenceM().maxBy(f);
+    		return reactiveSeq().maxBy(f);
     	}
     		
     	/* (non-Javadoc)
     	 * @see java.util.stream.Stream#max(java.util.Comparator)
     	 */
     	 default Optional<T> max(Comparator<? super T> comparator){
-    		 return sequenceM().max(comparator);
+    		 return reactiveSeq().max(comparator);
     	 }	
     	
     	
@@ -1250,7 +1250,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	default Optional<T>  findFirst(){
-    		return sequenceM().findFirst();
+    		return reactiveSeq().findFirst();
     	}
     	/**
     	 * @return first matching element,  but order is not guaranteed
@@ -1266,7 +1266,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * (non-deterministic) 
     	 */
     	 default Optional<T>  findAny(){
-    		 return sequenceM().findAny();
+    		 return reactiveSeq().findAny();
     	 }
     	
     	/**
@@ -1284,7 +1284,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Reduce result
     	 */
     	default <R> R mapReduce(Reducer<R> reducer){
-    		return sequenceM().mapReduce(reducer);
+    		return reactiveSeq().mapReduce(reducer);
     	}
     	/**
     	 *  Attempt to map this Monad to the same type as the supplied Monoid, using supplied function
@@ -1316,7 +1316,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Reduce result
     	 */
     	default <R> R mapReduce(Function<? super T,? extends R> mapper, Monoid<R> reducer){
-    		return sequenceM().mapReduce(mapper,reducer);
+    		return reactiveSeq().mapReduce(mapper,reducer);
     	}
     	
 
@@ -1333,7 +1333,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return reduced values
     	 */
     	default T reduce(Monoid<T> reducer){
-    		 return sequenceM().reduce(reducer);
+    		 return reactiveSeq().reduce(reducer);
     	}
     	/* 
     	 * <pre>
@@ -1344,13 +1344,13 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	default  Optional<T> reduce(BinaryOperator<T> accumulator){
-    		 return sequenceM().reduce(accumulator);
+    		 return reactiveSeq().reduce(accumulator);
     	}
     	 /* (non-Javadoc)
     	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
     	 */
     	default T reduce(T identity, BinaryOperator<T> accumulator){
-    		 return sequenceM().reduce(identity,accumulator);
+    		 return reactiveSeq().reduce(identity,accumulator);
     	}
     	 /* (non-Javadoc)
     	 * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
@@ -1358,7 +1358,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	default <U> U reduce(U identity,
                  BiFunction<U, ? super T, U> accumulator,
                  BinaryOperator<U> combiner){
-    		 return sequenceM().reduce(identity,accumulator,combiner);
+    		 return reactiveSeq().reduce(identity,accumulator,combiner);
     	}
     	/**
          * Reduce with multiple reducers in parallel
@@ -1383,7 +1383,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	 default ListX<T> reduce(Stream<? extends Monoid<T>> reducers){
-    		 return sequenceM().reduce(reducers);
+    		 return reactiveSeq().reduce(reducers);
     	 }
     	/**
          * Reduce with multiple reducers in parallel
@@ -1406,7 +1406,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	 default ListX<T> reduce(Iterable<? extends Monoid<T>> reducers){
-    		 return sequenceM().reduce(reducers);
+    		 return reactiveSeq().reduce(reducers);
     	 }
     	
     	
@@ -1423,7 +1423,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Reduced result
     	 */
     	 default T foldRight(Monoid<T> reducer){
-    		 return sequenceM().foldRight(reducer);
+    		 return reactiveSeq().foldRight(reducer);
     	 }
     	/**
     	 * Immutable reduction from right to left
@@ -1438,7 +1438,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default  T foldRight(T identity,  BinaryOperator<T> accumulator){
-    		 return sequenceM().foldRight(identity,accumulator);
+    		 return reactiveSeq().foldRight(identity,accumulator);
     	}	
     	/**
     	 *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
@@ -1456,7 +1456,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Reduce result
     	 */
     	default <T> T foldRightMapToType(Reducer<T> reducer){
-    		 return sequenceM().foldRightMapToType(reducer);
+    		 return reactiveSeq().foldRightMapToType(reducer);
     	}
     	
     	
@@ -1473,7 +1473,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return True if Monad starts with Iterable sequence of data
     	 */
     	default boolean startsWith(Iterable<T> iterable){
-    		 return sequenceM().startsWith(iterable);
+    		 return reactiveSeq().startsWith(iterable);
     	}	
     	/**
     	 * 	<pre>{@code assertTrue(Streamable.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
@@ -1482,7 +1482,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return True if Monad starts with Iterators sequence of data
     	 */
     	default boolean startsWith(Iterator<T> iterator){
-    		 return sequenceM().startsWith(iterator);
+    		 return reactiveSeq().startsWith(iterator);
     	}
     	
     	/**
@@ -1506,7 +1506,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	default <R> Streamable<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn){
   
-    		 return fromStream(sequenceM().flatMapAnyM(fn));
+    		 return fromStream(reactiveSeq().flatMapAnyM(fn));
     	}
     	/**
     	 * FlatMap where the result is a Collection, flattens the resultant collections into the
@@ -1525,7 +1525,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default <R> Streamable<R> flatMapCollection(Function<? super T,Collection<? extends R>> fn){
-    		 return fromStream(sequenceM().flatMapCollection(fn));
+    		 return fromStream(reactiveSeq().flatMapCollection(fn));
     	}
     	/**
     	 * flatMap operation
@@ -1543,7 +1543,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return new stage in Sequence with flatMap operation to be lazily applied
     	*/
     	default <R> Streamable<R> flatMapStream(Function<? super T,BaseStream<? extends R,?>> fn){
-    		 return fromStream(sequenceM().flatMapStream(fn));
+    		 return fromStream(reactiveSeq().flatMapStream(fn));
     	}
     	/**
     	 * flatMap to optional - will result in null values being removed
@@ -1559,7 +1559,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default  <R> Streamable<R> flatMapOptional(Function<? super T,Optional<? extends R>> fn){
-    		 return fromStream(sequenceM().flatMapOptional(fn));
+    		 return fromStream(reactiveSeq().flatMapOptional(fn));
     	}
     	/**
     	 * flatMap to CompletableFuture - will block until Future complete, although (for non-blocking behaviour use AnyM 
@@ -1577,7 +1577,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default <R> Streamable<R> flatMapCompletableFuture(Function<? super T,CompletableFuture<? extends R>> fn){
-    		 return fromStream(sequenceM().flatMapCompletableFuture(fn));
+    		 return fromStream(reactiveSeq().flatMapCompletableFuture(fn));
     	}
 
     	/**
@@ -1598,7 +1598,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default Streamable<Character> flatMapCharSequence(Function<? super T,CharSequence> fn){
-    		 return fromStream(sequenceM().flatMapCharSequence(fn));
+    		 return fromStream(reactiveSeq().flatMapCharSequence(fn));
     	}	
     	/**
     	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1624,7 +1624,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default Streamable<String> flatMapFile(Function<? super T,File> fn){
-    		 return fromStream(sequenceM().flatMapFile(fn));
+    		 return fromStream(reactiveSeq().flatMapFile(fn));
     	}
     	/**
     	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1645,7 +1645,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default Streamable<String> flatMapURL(Function<? super T, URL> fn){
-    		 return fromStream(sequenceM().flatMapURL(fn));
+    		 return fromStream(reactiveSeq().flatMapURL(fn));
     	}
     	/**
     	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1667,7 +1667,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default Streamable<String> flatMapBufferedReader(Function<? super T,BufferedReader> fn){
-    		 return fromStream(sequenceM().flatMapBufferedReader(fn));
+    		 return fromStream(reactiveSeq().flatMapBufferedReader(fn));
     	}
 
     	
@@ -1684,7 +1684,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	default  Streamable<T> intersperse(T value){
-    		 return fromStream(sequenceM().intersperse(value));
+    		 return fromStream(reactiveSeq().intersperse(value));
     	}
     	/**
     	 * Keep only those elements in a stream that are of a given type.
@@ -1695,7 +1695,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	@SuppressWarnings("unchecked")
     	default <U> Streamable<U> ofType(Class<U> type){
-    		return fromStream(sequenceM().ofType(type));
+    		return fromStream(reactiveSeq().ofType(type));
     	}
     	
     	/**
@@ -1707,7 +1707,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	default <U> Streamable<U> cast(Class<U> type){
-    		return fromStream(sequenceM().cast(type));
+    		return fromStream(reactiveSeq().cast(type));
     	}
     	
     	/**
@@ -1727,7 +1727,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default CollectionX<T> toLazyCollection(){
-    		return sequenceM().toLazyCollection();
+    		return reactiveSeq().toLazyCollection();
     	}
     	/**
     	 * Lazily converts this Streamable into a Collection. This does not trigger the Stream. E.g.
@@ -1746,7 +1746,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	 default CollectionX<T> toConcurrentLazyCollection(){
-    		 return sequenceM().toConcurrentLazyCollection();
+    		 return reactiveSeq().toConcurrentLazyCollection();
     	 }
     	
     	
@@ -1768,7 +1768,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	default Streamable<T> reverse(){
-    		return fromStream(sequenceM().reverse());
+    		return fromStream(reactiveSeq().reverse());
     	}
     	
     	
@@ -1777,7 +1777,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @see org.jooq.lambda.Seq#shuffle()
     	 */
     	default Streamable<T> shuffle(){
-    		return fromStream(sequenceM().shuffle());
+    		return fromStream(reactiveSeq().shuffle());
     	}
     	/**
     	 * Append Stream to this Streamable
@@ -1797,7 +1797,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable with Stream appended
     	 */
     	default Streamable<T> appendStreamable(Streamable<T> stream){
-    		return fromStream(sequenceM().appendStream(stream.sequenceM()));
+    		return fromStream(reactiveSeq().appendStream(stream.reactiveSeq()));
     	}
     	/**
     	 * Prepend Stream to this Streamable
@@ -1818,7 +1818,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable with Stream prepended
     	 */
     	default Streamable<T> prependStreamable(Streamable<T> stream){
-    		return fromStream(sequenceM().prependStream(stream.sequenceM()));
+    		return fromStream(reactiveSeq().prependStream(stream.reactiveSeq()));
     	}
     	/**
     	 * Append values to the end of this Streamable
@@ -1836,7 +1836,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable with appended values
     	 */
     	default Streamable<T> append(T... values){
-    		return fromStream(sequenceM().append(values));
+    		return fromStream(reactiveSeq().append(values));
     	}
     	/**
     	 * Prepend given values to the start of the Stream
@@ -1853,7 +1853,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable with values prepended
     	 */
     	 default Streamable<T> prepend(T... values){
-    		 return fromStream(sequenceM().prepend(values));
+    		 return fromStream(reactiveSeq().prepend(values));
     	 }
     	/**
     	 * Insert data into a stream at given position
@@ -1873,7 +1873,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Stream with new data inserted
     	 */
     	default Streamable<T> insertAt(int pos, T... values){
-    		return fromStream(sequenceM().insertAt(pos,values));
+    		return fromStream(reactiveSeq().insertAt(pos,values));
     	}
     	/**
     	 * Delete elements between given indexes in a Stream
@@ -1892,7 +1892,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Stream with elements removed
     	 */
     	default Streamable<T> deleteBetween(int start,int end){
-    		return fromStream(sequenceM().deleteBetween(start,end));
+    		return fromStream(reactiveSeq().deleteBetween(start,end));
     	}
     	/**
     	 * Insert a Stream into the middle of this stream at the specified position
@@ -1911,7 +1911,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return newly conjoined Streamable
     	 */
     	default Streamable<T> insertStreamableAt(int pos, Streamable<T> stream){
-    		return fromStream(sequenceM().insertStreamAt(pos,stream.sequenceM()));
+    		return fromStream(reactiveSeq().insertStreamAt(pos,stream.reactiveSeq()));
     	}
     	
     	/**
@@ -1921,7 +1921,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Async Future Terminal Operations
     	 */
     	default FutureOperations<T> futureOperations(Executor exec){
-    		return sequenceM().futureOperations(exec);
+    		return reactiveSeq().futureOperations(exec);
     	}
     	
     	/**
@@ -1936,7 +1936,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return true if Streamable ends with values in the supplied iterable
     	 */
     	default boolean endsWith(Iterable<T> iterable){
-    		return sequenceM().endsWith(iterable);
+    		return reactiveSeq().endsWith(iterable);
     	}
     	/**
     	 * <pre>
@@ -1950,7 +1950,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return true if Streamable endswith values in the supplied Stream
     	 */
     	default boolean endsWith(Streamable<T> stream){
-    		return sequenceM().endsWith(stream);
+    		return reactiveSeq().endsWith(stream);
     	}	
     	/**
     	 * Skip all elements until specified time period has passed
@@ -1972,7 +1972,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable that skips all elements until time period has elapsed
     	 */
     	default Streamable<T> skip(long time, final TimeUnit unit){
-    		return fromStream(sequenceM().skip(time,unit));
+    		return fromStream(reactiveSeq().skip(time,unit));
     	}
     	/**
     	 * Return all elements until specified time period has elapsed
@@ -1992,7 +1992,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable that returns all elements until time period has elapsed
     	 */
     	default Streamable<T> limit(long time, final TimeUnit unit){
-    		return fromStream(sequenceM().limit(time,unit));
+    		return fromStream(reactiveSeq().limit(time,unit));
     	}
     	/**
     	 * assertThat(Streamable.of(1,2,3,4,5)
@@ -2003,7 +2003,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default Streamable<T> skipLast(int num){
-    		return fromStream(sequenceM().skipLast(num));
+    		return fromStream(reactiveSeq().skipLast(num));
     	}
     	/**
     	 * Limit results to the last x elements in a Streamable
@@ -2019,7 +2019,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable limited to last num elements
     	 */
     	default Streamable<T> limitLast(int num){
-    		return fromStream(sequenceM().limitLast(num));
+    		return fromStream(reactiveSeq().limitLast(num));
     	}
 
     	/**
@@ -2041,7 +2041,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return a Connectable HotStream
     	 */
     	default HotStream<T> hotStream(Executor e){
-    		return sequenceM().hotStream(e);
+    		return reactiveSeq().hotStream(e);
     	}
     	
     	/**
@@ -2056,7 +2056,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return first value in this Stream
     	 */
     	default T firstValue(){
-    		return sequenceM().firstValue();
+    		return reactiveSeq().firstValue();
     	}	
     	
     	/**
@@ -2069,7 +2069,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return a single value or an exception if 0/1 values in this Stream
     	 */
     	default T single(){
-    		return sequenceM().single();
+    		return reactiveSeq().single();
     		
     	}
 
@@ -2084,7 +2084,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return elementAt index
     	 */
     	default Optional<T> get(long index){
-    		return sequenceM().get(index);
+    		return reactiveSeq().get(index);
     	}
     	/**
     	 * Gets the element at index, and returns a Tuple containing the element (it must be present)
@@ -2101,7 +2101,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Element and Sequence
     	 */
     	default Tuple2<T,Streamable<T>> elementAt(long index){
-    		return sequenceM().elementAt(index).map2(s->fromStream(s));
+    		return reactiveSeq().elementAt(index).map2(s->fromStream(s));
     	}
     	
     	/**
@@ -2116,7 +2116,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Sequence that adds the time between elements in millis to each element
     	 */
     	default Streamable<Tuple2<T,Long>> elapsed(){
-    		return fromStream(sequenceM().elapsed());
+    		return fromStream(reactiveSeq().elapsed());
     	}
     	/**
     	 * <pre>
@@ -2132,7 +2132,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Sequence that adds a timestamp to each element
     	 */
     	default Streamable<Tuple2<T,Long>> timestamp(){
-    		return fromStream(sequenceM().timestamp());
+    		return fromStream(reactiveSeq().timestamp());
     	}
     	
 
@@ -2251,7 +2251,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	public static <T,U> Tuple2<Streamable<T>,Streamable<U>> unzip(Streamable<Tuple2<T,U>> sequence){
-    		return ReactiveSeq.unzip(sequence.sequenceM()).map1(s->fromStream(s)).map2(s->fromStream(s));
+    		return ReactiveSeq.unzip(sequence.reactiveSeq()).map1(s->fromStream(s)).map2(s->fromStream(s));
     	}
     	/**
     	 * Unzip a zipped Stream into 3
@@ -2263,7 +2263,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	public static <T1,T2,T3> Tuple3<Streamable<T1>,Streamable<T2>,Streamable<T3>> unzip3(Streamable<Tuple3<T1,T2,T3>> sequence){
-    		return ReactiveSeq.unzip3(sequence.sequenceM()).map1(s->fromStream(s)).map2(s->fromStream(s)).map3(s->fromStream(s));
+    		return ReactiveSeq.unzip3(sequence.reactiveSeq()).map1(s->fromStream(s)).map2(s->fromStream(s)).map3(s->fromStream(s));
     	}
     	/**
     	 * Unzip a zipped Stream into 4
@@ -2277,7 +2277,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * </pre>
     	 */
     	public static <T1,T2,T3,T4> Tuple4<Streamable<T1>,Streamable<T2>,Streamable<T3>,Streamable<T4>> unzip4(Streamable<Tuple4<T1,T2,T3,T4>> sequence){
-    		return ReactiveSeq.unzip4(sequence.sequenceM()).map1(s->fromStream(s)).map2(s->fromStream(s)).map3(s->fromStream(s)).map4(s->fromStream(s));
+    		return ReactiveSeq.unzip4(sequence.reactiveSeq()).map1(s->fromStream(s)).map2(s->fromStream(s)).map3(s->fromStream(s)).map4(s->fromStream(s));
     	}
     	
     	
@@ -2285,7 +2285,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
     	 */
     	default <U> Streamable<Tuple2<T, U>> crossJoin(Streamable<U> other){
-    		return fromStream(sequenceM().crossJoin(other.sequenceM()));
+    		return fromStream(reactiveSeq().crossJoin(other.reactiveSeq()));
     	}
 
     	/* (non-Javadoc)
@@ -2293,7 +2293,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	default <U> Streamable<Tuple2<T, U>> innerJoin(Streamable<U> other,
     			BiPredicate<T, U> predicate){
-    		return fromStream(sequenceM().innerJoin(other.sequenceM(),predicate));
+    		return fromStream(reactiveSeq().innerJoin(other.reactiveSeq(),predicate));
     	}
 
     	/* (non-Javadoc)
@@ -2302,7 +2302,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	default <U> Streamable<Tuple2<T, U>> leftOuterJoin(Streamable<U> other,
     			BiPredicate<T, U> predicate)
     		{
-    		return fromStream(sequenceM().leftOuterJoin(other.sequenceM(),predicate));
+    		return fromStream(reactiveSeq().leftOuterJoin(other.reactiveSeq(),predicate));
     			
     	    
     	}
@@ -2312,7 +2312,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 */
     	default <U> Streamable<Tuple2<T, U>> rightOuterJoin(Streamable<U> other,
     			BiPredicate<T, U> predicate){
-    		return fromStream(sequenceM().rightOuterJoin(other.sequenceM(),predicate));
+    		return fromStream(reactiveSeq().rightOuterJoin(other.reactiveSeq(),predicate));
     	}
     	/** If this Streamable is empty replace it with a another Stream
     	 * 
@@ -2328,43 +2328,43 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable that will switch to an alternative Stream if empty
     	 */
     	default Streamable<T> onEmptySwitch(Supplier<Streamable<T>> switchTo){
-    		return fromStream(sequenceM().onEmptySwitch(()->switchTo.get().sequenceM()));
+    		return fromStream(reactiveSeq().onEmptySwitch(()->switchTo.get().reactiveSeq()));
     	}
     	
     	default Streamable<T> onEmpty(T value){
-    		return fromStream(sequenceM().onEmpty(value));
+    		return fromStream(reactiveSeq().onEmpty(value));
     	}
 
     	
     	default Streamable<T> onEmptyGet(Supplier<T> supplier){
-    		return fromStream(sequenceM().onEmptyGet(supplier));
+    		return fromStream(reactiveSeq().onEmptyGet(supplier));
     	}
 
     	
     	default <X extends Throwable> Streamable<T> onEmptyThrow(Supplier<X> supplier){
-    		return fromStream(sequenceM().onEmptyThrow(supplier));
+    		return fromStream(reactiveSeq().onEmptyThrow(supplier));
     	}
 
     	
     	default Streamable<T> concat(Streamable<T> other){
-    		return fromStream(sequenceM().concat(other.sequenceM()));
+    		return fromStream(reactiveSeq().concat(other.reactiveSeq()));
     	}
 
     	
     	default Streamable<T> concat(T other){
-    		return fromStream(sequenceM().concat(other));
+    		return fromStream(reactiveSeq().concat(other));
     	}
 
     	
     	
     	default Streamable<T> concat(T... other){
-    		return fromStream(sequenceM().concat(other));
+    		return fromStream(reactiveSeq().concat(other));
     	}
 
     	
     	
     	default <U> Streamable<T> distinct(Function<? super T, ? extends U> keyExtractor){
-    		return fromStream(sequenceM().distinct(keyExtractor));
+    		return fromStream(reactiveSeq().distinct(keyExtractor));
     	}
 
     	
@@ -2372,7 +2372,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 
     	
     	default Streamable<T> shuffle(Random random){
-    		return fromStream(sequenceM().shuffle(random));
+    		return fromStream(reactiveSeq().shuffle(random));
         	
     	
     	}
@@ -2380,7 +2380,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	
     	
     	default Streamable<T> slice(long from, long to){
-    		return fromStream(sequenceM().slice(from,to));
+    		return fromStream(reactiveSeq().slice(from,to));
     	
     	}
 
@@ -2388,7 +2388,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	
     	default <U extends Comparable<? super U>> Streamable<T> sorted(
     			Function<? super T, ? extends U> function){
-    		return fromStream(sequenceM().sorted(function));
+    		return fromStream(reactiveSeq().sorted(function));
     	
     	}
 
@@ -2410,7 +2410,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable that emits x elements per time period
     	 */
     	default Streamable<T> xPer(int x, long time, TimeUnit t){
-    		return fromStream(sequenceM().xPer(x,time,t));
+    		return fromStream(reactiveSeq().xPer(x,time,t));
     	
     	}
 
@@ -2433,7 +2433,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable that emits 1 element per time period
     	 */
     	default Streamable<T> onePer(long time, TimeUnit t){
-    		return fromStream(sequenceM().onePer(time,t));
+    		return fromStream(reactiveSeq().onePer(time,t));
     	
     	}
 
@@ -2454,7 +2454,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return
     	 */
     	default Streamable<T> debounce(long time, TimeUnit t){
-    		return fromStream(sequenceM().debounce(time,t));
+    		return fromStream(reactiveSeq().debounce(time,t));
     	}
 
     	/**
@@ -2474,8 +2474,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param t time unit for batch
     	 * @return Streamable batched by size and time
     	 */
-    	default Streamable<ListX<T>> batchBySizeAndTime(int size, long time, TimeUnit t){
-    		return fromStream(sequenceM().groupedBySizeAndTime(size,time,t));
+    	default Streamable<ListX<T>> groupedBySizeAndTime(int size, long time, TimeUnit t){
+    		return fromStream(reactiveSeq().groupedBySizeAndTime(size,time,t));
     	}
     	/**
     	 *  Batch elements by size into a collection created by the supplied factory 
@@ -2492,8 +2492,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param factory Collection factory
     	 * @return Streamable batched by size and time
     	 */
-    	default <C extends Collection<T>> Streamable<C> batchBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory){
-    		return fromStream(sequenceM().groupedBySizeAndTime(size,time,unit,factory));
+    	default <C extends Collection<? super T>> Streamable<C> groupedBySizeAndTime(int size,long time, TimeUnit unit, Supplier<C> factory){
+    		return fromStream(reactiveSeq().groupedBySizeAndTime(size,time,unit,factory));
     	}
     	/**
     	 * Batch elements in a Stream by time period
@@ -2509,8 +2509,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param t  time unit for batch
     	 * @return Streamable batched into lists by time period
     	 */
-    	default Streamable<ListX<T>> batchByTime(long time, TimeUnit t){
-    		return fromStream(sequenceM().groupedByTime(time,t));
+    	default Streamable<ListX<T>> groupedByTime(long time, TimeUnit t){
+    		return fromStream(reactiveSeq().groupedByTime(time,t));
     	}
     	/**
     	 * Batch elements by time into a collection created by the supplied factory 
@@ -2530,25 +2530,10 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param factory Collection factory
     	 * @return Streamable batched into collection types by time period
     	 */
-    	default <C extends Collection<T>> Streamable<C> batchByTime(long time, TimeUnit unit, Supplier<C> factory){
-    		return fromStream(sequenceM().groupedByTime(time,unit,factory));
+    	default <C extends Collection<? super T>> Streamable<C> groupedByTime(long time, TimeUnit unit, Supplier<C> factory){
+    		return fromStream(reactiveSeq().groupedByTime(time,unit,factory));
     	}
-    	/**
-    	 * Batch elements in a Stream by size into Lists
-    	 * 
-    	 * <pre>
-    	 * {@code 
-    	 *  assertThat(Streamable.of(1,2,3,4,5,6)
-    	 *                      .batchBySize(3)
-    	 *                      .collect(Collectors.toList())
-    	 *                      .size(),is(2));
-    	 * }
-    	 * @param size of batch
-    	 * @return Streamable batched by size into Lists
-    	 */
-    	default Streamable<ListX<T>> batchBySize(int size){
-    		return fromStream(sequenceM().batchBySize(size));
-    	}
+    	
     	/**
     	 * Batch elements in a Stream by size into a collection created by the supplied factory 
     	 * <pre>
@@ -2564,8 +2549,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param supplier Collection factory
     	 * @return Streamable batched into collection types by size
     	 */
-    	default <C extends Collection<T>>Streamable<C> batchBySize(int size, Supplier<C> supplier){
-    		return fromStream(sequenceM().grouped(size,supplier));
+    	default <C extends Collection<? super T>>Streamable<C> grouped(int size, Supplier<C> supplier){
+    		return fromStream(reactiveSeq().grouped(size,supplier));
     	}
 
     	/**
@@ -2585,7 +2570,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable that emits each element after a fixed delay
     	 */
     	default Streamable<T> fixedDelay(long l, TimeUnit unit){
-    		return fromStream(sequenceM().fixedDelay(l,unit));
+    		return fromStream(reactiveSeq().fixedDelay(l,unit));
     	}
 
     	/**
@@ -2604,107 +2589,10 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Sequence with a random jitter between element emission
     	 */
     	default Streamable<T> jitter(long maxJitterPeriodInNanos){
-    		return fromStream(sequenceM().jitter(maxJitterPeriodInNanos));
+    		return fromStream(reactiveSeq().jitter(maxJitterPeriodInNanos));
     	}
-    	/**
-    	 * Create a Sequence of Streamables (replayable Streams / Sequences) where each Streamable is populated up to a max size,
-    	 * or for max period of time
-    	 * <pre>
-    	 * {@code 
-    	 * assertThat(Streamable.of(1,2,3,4,5,6)
-    						.windowBySizeAndTime(3,10,TimeUnit.SECONDS)
-    						.toList()
-    						.get(0)
-    						.stream()
-    						.count(),is(3l));
-    	 * 
-    	 * }
-    	 * @param maxSize of window
-    	 * @param maxTime of window
-    	 * @param maxTimeUnit of window
-    	 * @return Windowed Streamable
-    	 */
-    	default Streamable<Streamable<T>> windowBySizeAndTime(int maxSize, long maxTime, TimeUnit maxTimeUnit){
-    		return fromStream(sequenceM().windowBySizeAndTime(maxSize,maxTime,maxTimeUnit));
-    	}
-    	/**
-    	 * Create a Sequence of Streamables (replayable Streams / Sequences) where each Streamable is populated 
-    	 * while the supplied predicate holds. When the predicate failsa new window/ Stremable opens
-    	 * <pre>
-    	 * {@code 
-    	 * Streamable.of(1,2,3,4,5,6)
-    				.windowWhile(i->i%3!=0)
-    				.forEach(System.out::println);
-    	 *   
-    	 *  StreamableImpl(streamable=[1, 2, 3]) 
-    	 *  StreamableImpl(streamable=[4, 5, 6])
-    	 * }
-    	 * </pre>
-    	 * @param predicate Window while true
-    	 * @return Streamable windowed while predicate holds
-    	 */
-    	default Streamable<Streamable<T>> windowWhile(Predicate<T> predicate){
-    		return fromStream(sequenceM().windowWhile(predicate));
-    	}
-    	/**
-    	 * Create a Sequence of Streamables (replayable Streams / Sequences) where each Streamable is populated 
-    	 * until the supplied predicate holds. When the predicate failsa new window/ Stremable opens
-    	 * <pre>
-    	 * {@code 
-    	 * Streamable.of(1,2,3,4,5,6)
-    				.windowUntil(i->i%3==0)
-    				.forEach(System.out::println);
-    	 *   
-    	 *  StreamableImpl(streamable=[1, 2, 3]) 
-    	 *  StreamableImpl(streamable=[4, 5, 6])
-    	 * }
-    	 * </pre>
-    	 * @param predicate Window until true
-    	 * @return Streamable windowed until predicate holds
-    	 */
-    	default Streamable<Streamable<T>> windowUntil(Predicate<T> predicate){
-    		return fromStream(sequenceM().windowUntil(predicate));
-    	}
-    	/**
-    	 * Create Streamable of Streamables  (replayable Streams / Sequences) where each Streamable is populated 
-    	 * while the supplied bipredicate holds. The bipredicate recieves the Streamable from the last window as
-    	 * well as the current value and can choose to aggregate the current value or create  a new window
-    	 * 
-    	 * <pre>
-    	 * {@code 
-    	 * assertThat(Streamable.of(1,2,3,4,5,6)
-    				.windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
-    				.toList().size(),equalTo(5));
-    	 * }
-    	 * </pre>
-    	 * 
-    	 * @param predicate Window while true
-    	 * @return Streamable windowed while predicate holds
-    	 */
-    	default Streamable<Streamable<T>> windowStatefullyWhile(BiPredicate<Streamable<? super T>,? super T> predicate){
-    		return fromStream(sequenceM().windowStatefullyWhile(predicate));
-    	}
-    	/**
-    	 * Create Streamable of Streamables  (replayable Streams / Sequences) where each Streamable is populated
-    	 * within a specified time window
-    	 * 
-    	 * <pre>
-    	 * {@code 
-    	 * assertThat(Streamable.of(1,2,3,4,5, 6)
-    							.map(n-> n==6? sleep(1) : n)
-    							.windowByTime(10,TimeUnit.MICROSECONDS)
-    							.toList()
-    							.get(0).sequenceM().toList()
-    							,not(hasItem(6)));
-    	 * }
-    	 * </pre>
-    	 * @param time max time per window 
-    	 * @param t time unit per window
-    	 * @return Streamable windowed by time
-    	 */
-    	default Streamable<Streamable<T>> windowByTime(long time, TimeUnit t){
-    		return fromStream(sequenceM().windowByTime(time,t));
-    	}
+    	
+    	
     	/**
     	 * Create a Streamable batched by List, where each batch is populated until the predicate holds
     	 * <pre>
@@ -2718,8 +2606,9 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param predicate Batch until predicate holds, then open next batch
     	 * @return Streamable batched into lists determined by the predicate supplied
     	 */
-    	default Streamable<ListX<T>> batchUntil(Predicate<T> predicate){
-    		return fromStream(sequenceM().groupedUntil(predicate));
+    	
+    	default Streamable<ListX<T>> groupedUntil(Predicate<? super T> predicate){
+    		return fromStream(reactiveSeq().groupedUntil(predicate));
     	}
     	/**
     	 * Create a Streamable batched by List, where each batch is populated while the predicate holds
@@ -2734,8 +2623,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param predicate Batch while predicate holds, then open next batch
     	 * @return Streamable batched into lists determined by the predicate supplied
     	 */
-    	default Streamable<ListX<T>> batchWhile(Predicate<T> predicate){
-    		return fromStream(sequenceM().groupedWhile(predicate));
+    	default Streamable<ListX<T>> groupedWhile(Predicate<? super T> predicate){
+    		return fromStream(reactiveSeq().groupedWhile(predicate));
     	}
     	/**
     	 * Create a Streamable batched by a Collection, where each batch is populated while the predicate holds
@@ -2752,8 +2641,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param factory Collection factory
     	 * @return Streamable batched into collections determined by the predicate supplied
     	 */
-    	default <C extends Collection<T>>  Streamable<C> batchWhile(Predicate<T> predicate, Supplier<C> factory){
-    		return fromStream(sequenceM().groupedWhile(predicate,factory));
+    	default <C extends Collection<? super T>>  Streamable<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory){
+    		return fromStream(reactiveSeq().groupedWhile(predicate,factory));
     	}
     	/**
     	 * Create a Streamable batched by a Collection, where each batch is populated until the predicate holds
@@ -2772,8 +2661,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param factory Collection factory
     	 * @return Streamable batched into collections determined by the predicate supplied
     	 */
-    	default <C extends Collection<T>>  Streamable<C> batchUntil(Predicate<T> predicate, Supplier<C> factory){
-    		return fromStream(sequenceM().groupedUntil(predicate,factory));
+    	default <C extends Collection<? super T>>  Streamable<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory){
+    		return fromStream(reactiveSeq().groupedUntil(predicate,factory));
     		
     	}
 
@@ -2791,8 +2680,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param fn Function that accepts a Throwable and returns an alternative value
     	 * @return Streamable that can recover from an Exception
     	 */
-    	default Streamable<T> recover(final Function<Throwable, T> fn){
-    		return fromStream(sequenceM().recover(fn));
+    	default Streamable<T> recover(final Function<Throwable, ? extends T> fn){
+    		return fromStream(reactiveSeq().recover(fn));
     	}
     	/**
     	 * Recover from a particular exception type
@@ -2813,7 +2702,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return Streamable that can recover from a particular exception
     	 */
     	default <EX extends Throwable> Streamable<T> recover(Class<EX> exceptionClass, final Function<EX, T> fn){
-    		return fromStream(sequenceM().recover(exceptionClass,fn));
+    		return fromStream(reactiveSeq().recover(exceptionClass,fn));
     	
     	}
     	
@@ -2841,7 +2730,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * 
     	 */
     	default <R> Streamable<R> retry(Function<T,R> fn){
-    		return fromStream(sequenceM().retry(fn));
+    		return fromStream(reactiveSeq().retry(fn));
     	}
     	
     
@@ -2876,7 +2765,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
 
 		@Override
 		default ReactiveSeq<T> stream() {
-			return ToStream.super.sequenceM();
+			return ToStream.super.reactiveSeq();
 		}
 
 		@Override

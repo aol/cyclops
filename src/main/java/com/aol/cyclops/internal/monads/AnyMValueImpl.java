@@ -52,7 +52,7 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
 	}
 
 	@Override
-	public ReactiveSeq<T> sequenceM() {
+	public ReactiveSeq<T> reactiveSeq() {
 		return stream();
 	}
 

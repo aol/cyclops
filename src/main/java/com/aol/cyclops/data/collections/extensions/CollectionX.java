@@ -31,6 +31,7 @@ import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFunctor;
+import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -41,6 +42,7 @@ import com.aol.cyclops.types.stream.future.FutureOperations;
 public interface CollectionX<T> extends ExtendedTraversable<T>,
 										IterableCollectable<T>,
 										Iterable<T>,
+										Sequential<T>,
 										IterableFunctor<T>, 
 										Foldable<T>,
 										IterableFilterable<T>,
@@ -209,70 +211,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	CollectionX<T> scanRight(Monoid<T> monoid);
 	<U> CollectionX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner);
 
-	/**
-	 * <pre>
-	 * {@code
-	 *  assertEquals("123".length(),ReactiveSeq.of(1, 2, 3).join().length());
-	 * }
-	 * </pre>
-	 * 
-	 * @return Stream as concatenated String
-	 */
-	default String join(){
-		
-		return stream().join();
-	}
-
-	/**
-	 * <pre>
-	 * {@code
-	 * assertEquals("1, 2, 3".length(), ReactiveSeq.of(1, 2, 3).join(", ").length());
-	 * }
-	 * </pre>
-	 * 
-	 * @return Stream as concatenated String
-	 */
-	default String join(String sep){
-		return stream().join(sep);
-	}
-
-	/**
-	 * <pre>
-	 * {@code 
-	 * assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").length());
-	 * }
-	 * </pre>
-	 * 
-	 * @return Stream as concatenated String
-	 */
-	default String join(String sep, String start, String end){
-		return stream().join(sep,start,end);
-	}
-	default boolean xMatch(int num, Predicate<? super T> c){
-		return stream().xMatch(num, c);
-	}
-	default void print(PrintStream str){
-		stream().print(str);
-	}
-	default void print(PrintWriter writer){
-		stream().print(writer);
-	}
-	default void printOut(){
-		stream().printOut();
-	}
-	default void printErr(){
-		stream().printErr();
-	}
-	/**
-	 * Access asynchronous terminal operations (each returns a Future)
-	 * 
-	 * @param exec
-	 *            Executor to use for Stream execution
-	 * @return Async Future Terminal Operations
-	 */
-	default FutureOperations<T> futureOperations(Executor exec){
-		return stream().futureOperations(exec);
-	}
+	
 	 /**
 	  * Performs a map operation that can call a recursive method without running out of stack space
 	  * <pre>
@@ -467,75 +406,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 */
 	<U extends Comparable<? super U>> CollectionX<T> sorted(Function<? super T, ? extends U> function);
 
-	/**
-	 * emit x elements per time period
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	SimpleTimer timer = new SimpleTimer();
-	 * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).xPer(6, 100000000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
-	 * 
-	 * }
-	 * </pre>
-	 * 
-	 * @param x
-	 *            number of elements to emit
-	 * @param time
-	 *            period
-	 * @param t
-	 *            Time unit
-	 * @return SequenceM that emits x elements per time period
-	 */
-	default ReactiveSeq<T> xPer(int x, long time, TimeUnit t){
-		return stream().xPer(x, time, t);
-	}
-
-	/**
-	 * emit one element per time period
-	 * 
-	 * <pre>
-	 * {@code 
-	 * SequenceM.iterate("", last -> "next")
-	 * 				.limit(100)
-	 * 				.batchBySize(10)
-	 * 				.onePer(1, TimeUnit.MICROSECONDS)
-	 * 				.peek(batch -> System.out.println("batched : " + batch))
-	 * 				.flatMap(Collection::stream)
-	 * 				.peek(individual -> System.out.println("Flattened : "
-	 * 						+ individual))
-	 * 				.forEach(a->{});
-	 * }
-	 * @param time period
-	 * @param t Time unit
-	 * @return SequenceM that emits 1 element per time period
-	 */
-	default ReactiveSeq<T> onePer(long time, TimeUnit t){
-		return stream().onePer(time, t);
-	}
-
-
-	/**
-	 * emit elements after a fixed delay
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	SimpleTimer timer = new SimpleTimer();
-	 * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).fixedDelay(10000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
-	 * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(60000l));
-	 * }
-	 * </pre>
-	 * 
-	 * @param l
-	 *            time length in nanos of the delay
-	 * @param unit
-	 *            for the delay
-	 * @return SequenceM that emits each element after a fixed delay
-	 */
-	default ReactiveSeq<T> fixedDelay(long l, TimeUnit unit){
-		return stream().fixedDelay(l, unit);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
 	 */

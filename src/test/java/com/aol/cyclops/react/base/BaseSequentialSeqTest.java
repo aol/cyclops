@@ -137,8 +137,8 @@ public abstract class BaseSequentialSeqTest {
 	
 	@Test
 	public void batchBySize(){
-		System.out.println(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()));
-		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).size(),is(2));
+		System.out.println(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));
+		assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).size(),is(2));
 	}
 	@Test
 	public void batchBySizeAndTimeSize(){
@@ -169,7 +169,7 @@ public abstract class BaseSequentialSeqTest {
 	}
 	@Test
 	public void batchBySizeInternalSize(){
-		assertThat(of(1,2,3,4,5,6).batchBySize(3).collect(Collectors.toList()).get(0).size(),is(3));
+		assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).get(0).size(),is(3));
 	}
 	@Test
 	public void fixedDelay(){

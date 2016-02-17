@@ -528,7 +528,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		return from(this.<ReactiveSeq<T>>monoid().mapReduce(stream().combinations()));
 	}
     @Override
-    default <C extends Collection<T>> PersistentCollectionX<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends Collection<? super T>> PersistentCollectionX<C> grouped(int size, Supplier<C> supplier) {
         
         return from(this.<C>monoid().mapReduce(stream().grouped(size, supplier)));
     }

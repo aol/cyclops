@@ -614,7 +614,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 		return (PQueueX<R>)PersistentCollectionX.super.patternMatch(case1,otherwise);
 	}
 	 @Override
-	    default <C extends Collection<T>> PQueueX<C> grouped(int size, Supplier<C> supplier) {
+	    default <C extends Collection<? super T>> PQueueX<C> grouped(int size, Supplier<C> supplier) {
 	        
 	        return (PQueueX<C>)PersistentCollectionX.super.grouped(size, supplier);
 	    }

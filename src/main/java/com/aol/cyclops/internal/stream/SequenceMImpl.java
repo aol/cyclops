@@ -2023,12 +2023,12 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	}
 
 	@Override
-	public <C extends Collection<T>> ReactiveSeq<C> groupedByTime(long time,
+	public <C extends Collection<? super T>> ReactiveSeq<C> groupedByTime(long time,
 			TimeUnit unit, Supplier<C> factory) {
 		return StreamUtils.reactiveSeq(StreamUtils.batchByTime(stream, time, unit, factory),this.reversable);
 	}
 	@Override
-	public <C extends Collection<T>> ReactiveSeq<C> grouped(int size,
+	public <C extends Collection<? super T>> ReactiveSeq<C> grouped(int size,
 			Supplier<C> factory) {
 		return StreamUtils.reactiveSeq(StreamUtils.batchBySize(stream, size,factory),this.reversable);
 

@@ -670,7 +670,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 
 
     @Override
-    default <C extends Collection<T>> DequeX<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends Collection<? super T>> DequeX<C> grouped(int size, Supplier<C> supplier) {
         
         return (DequeX<C>)MutableCollectionX.super.grouped(size, supplier);
     }

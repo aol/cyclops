@@ -1066,7 +1066,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      *            Create the batch holding collection
      * @return Stream of Collections
      */
-    default <C extends Collection<U>> LazyFutureStream<C> grouped(int size,
+    default <C extends Collection<? super U>> LazyFutureStream<C> grouped(int size,
             Supplier<C> supplier) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).grouped(size,supplier));
 
@@ -1236,7 +1236,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      *            Instantiates the collections used in the batching
      * @return Stream of collections
      */
-    default  <C extends Collection<U>> LazyFutureStream<C> groupedByTime(long time,
+    default  <C extends Collection<? super U>> LazyFutureStream<C> groupedByTime(long time,
             TimeUnit unit, Supplier<C> factory) {
         Queue queue = toQueue();
         Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit, this.getSubscription(),queue,(Supplier)factory);

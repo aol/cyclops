@@ -616,7 +616,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 		return (POrderedSetX<R>)PersistentCollectionX.super.patternMatch(case1,otherwise);
 	}
 	 @Override
-	    default <C extends Collection<T>> POrderedSetX<C> grouped(int size, Supplier<C> supplier) {
+	    default <C extends Collection<? super T>> POrderedSetX<C> grouped(int size, Supplier<C> supplier) {
 	        
 	        return (POrderedSetX<C>)PersistentCollectionX.super.grouped(size, supplier);
 	    }
