@@ -56,7 +56,7 @@ public class BaseAnyMImpl<T> implements AnyM<T>{
 	 */
 	@Override
 	public final <R, A> R collect(Collector<? super T, A, R> collector){
-		Object o = monad;
+		Object o = this.unwrap();
 		if(o instanceof Stream){
 			return (R)((Stream)o).collect(collector);
 		}

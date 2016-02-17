@@ -7,9 +7,9 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqTestsWithNulls;
+import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-public class ListXTest extends AbstractAnyMSeqTestsWithNulls{
+public class ListXTest extends AbstractAnyMSeqOrderedDependentTest{
 
 	@Override
 	public <T> AnyMSeq<T> of(T... values) {

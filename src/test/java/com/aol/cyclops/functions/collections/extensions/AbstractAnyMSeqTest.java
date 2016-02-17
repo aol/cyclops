@@ -337,7 +337,7 @@ public abstract class AbstractAnyMSeqTest {
 					of(1,2,3,4,5,6).zip(of(100,200,300,400).asSequence())
 													.peek(it -> System.out.println(it))
 													.collect(Collectors.toList());
-			System.out.println(list);
+			System.out.println("list = " +list);
 			
 			List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
 			
@@ -665,7 +665,8 @@ public abstract class AbstractAnyMSeqTest {
 
 	@Test(expected=ClassCastException.class)
 	public void testCastPast() {
-		of(1, "a", 2, "b", 3).cast(Date.class).map(d -> d.getTime());
+		of(1, "a", 2, "b", 3).cast(Date.class).map(d -> d.getTime())
+		        .toList();
 	
 
 

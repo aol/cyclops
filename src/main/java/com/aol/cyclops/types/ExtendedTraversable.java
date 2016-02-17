@@ -36,7 +36,7 @@ public interface ExtendedTraversable<T> extends Traversable<T>,Foldable<T>, Iter
 	 *         size
 	 */
 	 default ExtendedTraversable<ReactiveSeq<T>> combinations(int size){
-		 return stream().combinations();
+		 return stream().combinations(size);
 	 }
 
 	/**
