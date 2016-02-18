@@ -110,7 +110,7 @@ public class PrimedHotStreamTest {
 		try{
 			s.pause();
 			s.unpause();
-			LockSupport.parkNanos(1000l);
+			LockSupport.parkNanos(1000000000l);
 			s.pause();
 			assertTrue(value!=oldValue);
 			s.unpause();

@@ -3,13 +3,10 @@ package com.aol.cyclops.util.function;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import org.hamcrest.Matcher;
-import org.jooq.lambda.tuple.Tuple1;
 
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Matchable.MTuple1;
 import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
@@ -20,10 +17,11 @@ import com.aol.cyclops.control.Matchable.MatchableTuple2;
 import com.aol.cyclops.control.Matchable.MatchableTuple3;
 import com.aol.cyclops.control.Matchable.MatchableTuple4;
 import com.aol.cyclops.control.Matchable.MatchableTuple5;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
+import com.aol.cyclops.types.Value;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 
@@ -31,6 +29,10 @@ import lombok.NoArgsConstructor;
  * 
  * Some useful Predicates
  * 
+ * @author johnmcclean
+ *
+ */
+/**
  * @author johnmcclean
  *
  */
@@ -216,10 +218,29 @@ public class Predicates {
 		return (Predicate<V>)new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(Object.class).isMatch(values);
 	}
 	
+	/**
+	 * Check for universal equality (Object#equals)
+	 * @param value
+	 * @return
+	 */
 	public	static<V> Predicate<V> eq(V value){
-	//	return new ADTPredicateBuilder<Object>(Object.class).eq(value);
+	
 	    return test->Objects.equals(test, value);
 	}
+	/**
+	 * test for equivalence
+	 *  null eqv to absent, embedded value equivalency, non-values converted to values before testing
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public static<V> Predicate<V> eqv(Value<? super V> value){
+	    
+        return test-> test == null ? (value== null ?  true : !value.toMaybe().isPresent()) :
+          ( test instanceof Value ? ((Value)test).toMaybe().equals(value.toMaybe()) :
+                                    Maybe.ofNullable(test).equals(value.toMaybe()));
+        
+    }
 
 	public static <T1> Predicate<? super T1> not(Predicate<? super T1> p){
 		return p.negate();
