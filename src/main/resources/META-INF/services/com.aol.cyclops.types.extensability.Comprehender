@@ -11,4 +11,4 @@ com.aol.cyclops.internal.comprehensions.comprehenders.SetComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.MaybeComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.XorComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.IorComprehender
-#com.aol.cyclops.internal.comprehensions.comprehenders.SimpleReactStreamComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.SimpleReactStreamComprehender
