@@ -798,8 +798,8 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * @param iterable
 	 * @return True if Monad starts with Iterable sequence of data
 	 */
-	default boolean startsWith(Iterable<T> iterable){
-		return stream().startsWith(iterable);
+	default boolean startsWithIterable(Iterable<T> iterable){
+		return stream().startsWithIterable(iterable);
 	}
 
 	/**
@@ -824,8 +824,8 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * @param iterable Values to check
 	 * @return true if SequenceM ends with values in the supplied iterable
 	 */
-	default boolean endsWith(Iterable<T> iterable){
-		return stream().endsWith(iterable);
+	default boolean endsWithIterable(Iterable<T> iterable){
+		return stream().endsWithIterable(iterable);
 	}
 
 	/**

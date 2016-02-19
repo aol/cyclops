@@ -1,5 +1,7 @@
 package com.aol.cyclops.control;
 
+import static org.junit.Assert.assertThat;
+
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -9,6 +11,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
@@ -32,7 +35,26 @@ import lombok.EqualsAndHashCode;
  *      Xor.primary("hello").map(v->v+" world") 
  *      //Xor.primary["hello world"]
  *  }
+ *  </pre>
  *  
+ *   Values can be accumulated via 
+ *  <pre>
+ *  {@code 
+ *  Xor.accumulateSecondary(ListX.of(Xor.secondary("failed1"),
+                                                    Xor.secondary("failed2"),
+                                                    Xor.primary("success")),
+                                                    Semigroups.stringConcat)
+ *  
+ *  //failed1failed2
+ *  
+ *   Xor<String,String> fail1 = Xor.secondary("failed1");
+     fail1.swap().ap((a,b)->a+b)
+                 .ap(Xor.secondary("failed2").swap())
+                 .ap(Xor.<String,String>primary("success").swap())
+ *  
+ *  //failed1failed2
+ *  }
+ *  </pre>
  * 
  * @author johnmcclean
  *

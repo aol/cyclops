@@ -1,11 +1,13 @@
 package com.aol.cyclops.util.function;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
+import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple1;
@@ -277,6 +279,36 @@ public class Predicates {
 	public static <T1> Predicate<? super T1> nullValue(){
 		return test -> test==null;
 	}
+	public static <T1> Predicate<Collection<? super T1>> hasItems(Collection<T1> items){
+        return test -> ReactiveSeq.fromIterable(items)
+                                  .map(i->test.contains(i))
+                                  .allMatch(v->v);
+    }
+	public static <T1> Predicate<Collection<? super T1>> hasItems(Stream<T1> items){
+        return test -> items
+                             .map(i->test.contains(i))
+                             .allMatch(v->v);
+    }
+	@SafeVarargs
+	public static <T1> Predicate<Collection<? super T1>> hasItems(T1...items){
+	    return test -> ReactiveSeq.of(items)
+	                         .map(i->test.contains(i))
+	                         .allMatch(v->v);
+	}
+	@SafeVarargs
+	public static <T1> Predicate<Iterable<? super T1>> startsWith(T1...items){
+        return test -> ReactiveSeq.fromIterable(test)
+                             .startsWithIterable(ReactiveSeq.of(items));
+       
+    }
+	@SafeVarargs
+	public static <T1> Predicate<Iterable<? super T1>> endsWith(T1...items){
+	   
+        return test -> ReactiveSeq.fromIterable(test)
+                                  .endsWithIterable(ReactiveSeq.of(items));
+       
+    }
+	
 	public static <T1> Predicate<? super T1> instanceOf(Class<T1> clazz){
 		return test -> clazz.isAssignableFrom(test.getClass());
 	}

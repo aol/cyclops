@@ -35,7 +35,7 @@ import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.types.stream.SequenceMCollectable;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 
 //pattern match, for comprehensions
@@ -49,7 +49,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 										ZippingApplicativable<T>,
 										Unit<T>,
 										Collection<T>,
-										SequenceMCollectable<T>{
+										CyclopsCollectable<T>{
 	
 	static <T> CollectionX<T> fromCollection(Collection<T> col){
 		return new CollectionXImpl(col);
@@ -62,7 +62,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 		return ReactiveSeq.fromIterable(this);
 	}
 	@Override
-	default SequenceMCollectable<T> collectable(){
+	default CyclopsCollectable<T> collectable(){
 		return stream();
 	}
 	

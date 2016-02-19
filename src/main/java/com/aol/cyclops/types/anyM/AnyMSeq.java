@@ -42,7 +42,7 @@ import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.types.stream.SequenceMCollectable;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
@@ -51,7 +51,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 									ConvertableSequence<T>,
 									ExtendedTraversable<T>,
 									Sequential<T>,
-									SequenceMCollectable<T>,
+									CyclopsCollectable<T>,
 									IterableCollectable<T>,
 									FilterableFunctor<T>,
 									ZippingApplicativable<T> {

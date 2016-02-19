@@ -34,7 +34,7 @@ public class SequenceMTest {
 	@Test
 	public void startsWith(){
 		assertTrue(LazyFutureStream.of(1,2,3,4)
-						.startsWith(Arrays.asList(1,2,3)));
+						.startsWithIterable(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void startsWithIterator(){
@@ -196,32 +196,32 @@ public class SequenceMTest {
 	@Test
 	public void endsWith(){
 		assertTrue(LazyFutureStream.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList(5,6)));
+				.endsWithIterable(Arrays.asList(5,6)));
 	}
 	@Test
 	public void endsWithFalse(){
 		assertFalse(LazyFutureStream.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList(5,6,7)));
+				.endsWithIterable(Arrays.asList(5,6,7)));
 	}
 	@Test
 	public void endsWithToLong(){
 		assertFalse(LazyFutureStream.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList(0,1,2,3,4,5,6)));
+				.endsWithIterable(Arrays.asList(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmpty(){
 		assertTrue(LazyFutureStream.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList()));
+				.endsWithIterable(Arrays.asList()));
 	}
 	@Test
 	public void endsWithWhenEmpty(){
 		assertFalse(LazyFutureStream.of()
-				.endsWith(Arrays.asList(1,2,3,4,5,6)));
+				.endsWithIterable(Arrays.asList(1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithBothEmpty(){
 		assertTrue(ReactiveSeq.<Integer>of()
-				.endsWith(Arrays.asList()));
+				.endsWithIterable(Arrays.asList()));
 	}
 	@Test
 	public void endsWithStream(){

@@ -460,7 +460,7 @@ public class AnyMTest {
 	public void startsWith(){
 		assertTrue(ofMonad(Stream.of(1,2,3,4))
 						.asSequence()
-						.startsWith(Arrays.asList(1,2,3)));
+						.startsWithIterable(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void startsWithIterator(){

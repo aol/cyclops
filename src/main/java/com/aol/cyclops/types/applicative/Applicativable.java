@@ -3,13 +3,31 @@ package com.aol.cyclops.types.applicative;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.Semigroups;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
+import lombok.AllArgsConstructor;
+import lombok.experimental.Wither;
+
+/**
+ * @author johnmcclean
+ *
+ * Interface for applicative-like behavior. Allows the application of functions within a wrapped context, support both 
+ * abscence / error short-circuiting and error accumulation
+ * 
+ * <pre>{@code ap(BiFunction<T,T,T>)}</pre> and <pre>{@code ap(Semigroup<T>}</pre> for accumulation despite absence
+ * ap<NUM> for absence short-circuiting
+ *
+ * @param <T>
+ */
 public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
 
 	
@@ -19,10 +37,57 @@ public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
 		}
 	}
 	
-	default <R> Applicativable<R> ap1(Function<? super T,? extends R> fn){
-		return Applicatives.<T,R>applicatives(this,this).applicative(fn).ap(this);
-		
-	}
+	
+
+    @AllArgsConstructor
+    public static class SemigroupApplyer<T> {
+        BiFunction<T, T, T> combiner;
+        @Wither
+        ConvertableFunctor<T> functor;
+
+        public SemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
+            return fn.toMaybe().isPresent() ? withFunctor(functor.map(v1 -> combiner.apply(v1, fn.get()))) : this;
+        }
+
+        public Value<T> convertable() {
+            return functor;
+        }
+    }
+	    
+	    
+	    /**
+	     * Apply the provided function to combine multiple different Applicatives, wrapping the same type.
+	     * 
+	  
+	     * We can combine Applicative types together without unwrapping the values.
+	     * 
+	     * <pre>
+	     * Xor<String,String> fail1 = Xor.secondary("failed1");
+            
+            fail1.swap().ap(Semigroups.stringConcat)
+                        .ap(Xor.secondary("failed2").swap())
+                        .ap(Xor.<String,String>primary("success").swap()
+                                    .
+                                    
+            // [failed1failed2]
+	     *  }
+	     *  </pre>
+	     * 
+	     * @param fn
+	     * @return
+	     */
+	    default  SemigroupApplyer<T> ap(BiFunction<T,T,T> fn){
+	        return  new SemigroupApplyer<T>(fn, this);
+	    }
+	    default  SemigroupApplyer<T> ap(Semigroup<T> fn){
+	        return  new SemigroupApplyer<>(fn.combiner(), this);
+	    }
+	    
+	    default <R> Applicativable<R> ap1(Function<? super T,? extends R> fn){
+	        return Applicatives.<T,R>applicatives(this,this).applicative(fn).ap(this);
+	        
+	    }    
+	    
 	/**
 	 * Apply the provided function to two different Applicatives. e.g. given a method add
 	 * 

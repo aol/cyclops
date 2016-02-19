@@ -28,7 +28,7 @@ import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
-import com.aol.cyclops.types.stream.SequenceMCollectable;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 
@@ -38,7 +38,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 												IterableFilterable<Tuple2<K, V>>,
 												ExtendedTraversable<Tuple2<K, V>>, 
 												Foldable<Tuple2<K,V>>,
-												SequenceMCollectable<Tuple2<K,V>>,
+												CyclopsCollectable<Tuple2<K,V>>,
 												IterableCollectable<Tuple2<K,V>>{
 
 	static <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> defaultCollector(){
@@ -129,27 +129,27 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 
 	@Override
 	default boolean allMatch(Predicate<? super Tuple2<K, V>> c) {
-		return SequenceMCollectable.super.allMatch(c);
+		return CyclopsCollectable.super.allMatch(c);
 	}
 
 	@Override
 	default boolean anyMatch(Predicate<? super Tuple2<K, V>> c) {
-		return SequenceMCollectable.super.anyMatch(c);
+		return CyclopsCollectable.super.anyMatch(c);
 	}
 
 	@Override
 	default boolean noneMatch(Predicate<? super Tuple2<K, V>> c) {
-		return SequenceMCollectable.super.noneMatch(c);
+		return CyclopsCollectable.super.noneMatch(c);
 	}
 
 	@Override
 	default Optional<Tuple2<K, V>> max(Comparator<? super Tuple2<K, V>> comparator) {
-		return SequenceMCollectable.super.max(comparator);
+		return CyclopsCollectable.super.max(comparator);
 	}
 
 	@Override
 	default Optional<Tuple2<K, V>> min(Comparator<? super Tuple2<K, V>> comparator) {
-		return SequenceMCollectable.super.min(comparator);
+		return CyclopsCollectable.super.min(comparator);
 	}
 	@Override
 	default MapX<K,V> plus(K key, V value){

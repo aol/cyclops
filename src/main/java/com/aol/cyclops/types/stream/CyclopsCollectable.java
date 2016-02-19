@@ -2,7 +2,6 @@ package com.aol.cyclops.types.stream;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,19 +13,13 @@ import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.util.stream.Streamable;
 
 
-
-public interface SequenceMCollectable<T> extends Collectable<T> {
+public interface CyclopsCollectable<T> extends Collectable<T> {
 	
 
 	

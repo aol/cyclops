@@ -2741,9 +2741,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @see com.aol.cyclops.control.ReactiveSeq#startsWith(java.lang.Iterable)
      */
     @Override
-    default boolean startsWith(Iterable<U> iterable) {
+    default boolean startsWithIterable(Iterable<U> iterable) {
         return  ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .startsWith(iterable);
+                .startsWithIterable(iterable);
     }
 
     /*
@@ -2759,8 +2759,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @see com.aol.cyclops.control.ReactiveSeq#endsWith(java.lang.Iterable)
      */
     @Override
-    default boolean endsWith(Iterable<U> iterable) {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription())).endsWith(iterable);
+    default boolean endsWithIterable(Iterable<U> iterable) {
+        return ReactiveSeq.fromStream(toQueue().stream(getSubscription())).endsWithIterable(iterable);
     }
 
     /*

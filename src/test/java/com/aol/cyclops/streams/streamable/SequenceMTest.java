@@ -212,32 +212,32 @@ public class SequenceMTest {
 	@Test
 	public void endsWith(){
 		assertTrue(Streamable.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList(5,6)));
+				.endsWithIterable(Arrays.asList(5,6)));
 	}
 	@Test
 	public void endsWithFalse(){
 		assertFalse(Streamable.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList(5,6,7)));
+				.endsWithIterable(Arrays.asList(5,6,7)));
 	}
 	@Test
 	public void endsWithToLong(){
 		assertFalse(Streamable.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList(0,1,2,3,4,5,6)));
+				.endsWithIterable(Arrays.asList(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmpty(){
 		assertTrue(Streamable.of(1,2,3,4,5,6)
-				.endsWith(Arrays.asList()));
+				.endsWithIterable(Arrays.asList()));
 	}
 	@Test
 	public void endsWithWhenEmpty(){
 		assertFalse(Streamable.of()
-				.endsWith(Arrays.asList(1,2,3,4,5,6)));
+				.endsWithIterable(Arrays.asList(1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithBothEmpty(){
 		assertTrue(ReactiveSeq.<Integer>of()
-				.endsWith(Arrays.asList()));
+				.endsWithIterable(Arrays.asList()));
 	}
 	@Test
 	public void endsWithStream(){

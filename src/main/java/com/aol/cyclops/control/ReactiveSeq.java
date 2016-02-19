@@ -72,7 +72,7 @@ import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.JoolManipulation;
 import com.aol.cyclops.types.stream.JoolWindowing;
 import com.aol.cyclops.types.stream.PausableHotStream;
-import com.aol.cyclops.types.stream.SequenceMCollectable;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.CyclopsSubscriber;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
@@ -83,7 +83,7 @@ import com.aol.cyclops.util.stream.reactivestreams.SubscriberForCyclops;
 
 
 public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,FilterableFunctor<T>, ExtendedTraversable<T>,
-												Foldable<T>,SequenceMCollectable<T>,
+												Foldable<T>,CyclopsCollectable<T>,
 												JoolWindowing<T>, 
 												JoolManipulation<T>,
 												Seq<T>,  Iterable<T>, Publisher<T>,
@@ -1448,7 +1448,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @param iterable
 	 * @return True if Monad starts with Iterable sequence of data
 	 */
-	boolean startsWith(Iterable<T> iterable);
+	boolean startsWithIterable(Iterable<T> iterable);
 
 	/**
 	 * <pre>
@@ -1841,7 +1841,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @param iterable Values to check
 	 * @return true if SequenceM ends with values in the supplied iterable
 	 */
-	boolean endsWith(Iterable<T> iterable);
+	boolean endsWithIterable(Iterable<T> iterable);
 
 	/**
 	 * <pre>
@@ -3169,10 +3169,10 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 
 	@Override
 	default long count() {
-		return SequenceMCollectable.super.count();
+		return CyclopsCollectable.super.count();
 	}
 	default <R, A> R collect(Collector<? super T, A, R> collector) {
-		return SequenceMCollectable.super.collect(collector);
+		return CyclopsCollectable.super.collect(collector);
 	}
 	@Override
 	default Collectable<T> collectable() {
@@ -3192,7 +3192,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default long count(Predicate<? super T> predicate) {
 		
-		return SequenceMCollectable.super.count(predicate);
+		return CyclopsCollectable.super.count(predicate);
 	}
 
 	/* (non-Javadoc)
@@ -3201,7 +3201,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default long countDistinct(Predicate<? super T> predicate) {
 		
-		return SequenceMCollectable.super.countDistinct(predicate);
+		return CyclopsCollectable.super.countDistinct(predicate);
 	}
 
 	/* (non-Javadoc)
@@ -3210,7 +3210,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U> long countDistinctBy(Function<? super T, ? extends U> function, Predicate<? super U> predicate) {
 		
-		return SequenceMCollectable.super.countDistinctBy(function, predicate);
+		return CyclopsCollectable.super.countDistinctBy(function, predicate);
 	}
 
 	/* (non-Javadoc)
@@ -3219,7 +3219,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default long countDistinct() {
 		
-		return SequenceMCollectable.super.countDistinct();
+		return CyclopsCollectable.super.countDistinct();
 	}
 
 	/* (non-Javadoc)
@@ -3228,7 +3228,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U> long countDistinctBy(Function<? super T, ? extends U> function) {
 		
-		return SequenceMCollectable.super.countDistinctBy(function);
+		return CyclopsCollectable.super.countDistinctBy(function);
 	}
 
 	/* (non-Javadoc)
@@ -3237,7 +3237,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default Optional<T> mode() {
 		
-		return SequenceMCollectable.super.mode();
+		return CyclopsCollectable.super.mode();
 	}
 
 	/* (non-Javadoc)
@@ -3246,7 +3246,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default Optional<T> sum() {
 		
-		return SequenceMCollectable.super.sum();
+		return CyclopsCollectable.super.sum();
 	}
 
 	/* (non-Javadoc)
@@ -3255,7 +3255,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U> Optional<U> sum(Function<? super T, ? extends U> function) {
 		
-		return SequenceMCollectable.super.sum(function);
+		return CyclopsCollectable.super.sum(function);
 	}
 
 	/* (non-Javadoc)
@@ -3264,7 +3264,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default int sumInt(ToIntFunction<? super T> function) {
 		
-		return SequenceMCollectable.super.sumInt(function);
+		return CyclopsCollectable.super.sumInt(function);
 	}
 
 	/* (non-Javadoc)
@@ -3273,7 +3273,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default long sumLong(ToLongFunction<? super T> function) {
 		
-		return SequenceMCollectable.super.sumLong(function);
+		return CyclopsCollectable.super.sumLong(function);
 	}
 
 	/* (non-Javadoc)
@@ -3282,7 +3282,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default double sumDouble(ToDoubleFunction<? super T> function) {
 		
-		return SequenceMCollectable.super.sumDouble(function);
+		return CyclopsCollectable.super.sumDouble(function);
 	}
 
 	/* (non-Javadoc)
@@ -3291,7 +3291,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default Optional<T> avg() {
 		
-		return SequenceMCollectable.super.avg();
+		return CyclopsCollectable.super.avg();
 	}
 
 	/* (non-Javadoc)
@@ -3300,7 +3300,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U> Optional<U> avg(Function<? super T, ? extends U> function) {
 		
-		return SequenceMCollectable.super.avg(function);
+		return CyclopsCollectable.super.avg(function);
 	}
 
 	/* (non-Javadoc)
@@ -3309,7 +3309,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default double avgInt(ToIntFunction<? super T> function) {
 		
-		return SequenceMCollectable.super.avgInt(function);
+		return CyclopsCollectable.super.avgInt(function);
 	}
 
 	/* (non-Javadoc)
@@ -3318,7 +3318,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default double avgLong(ToLongFunction<? super T> function) {
 		
-		return SequenceMCollectable.super.avgLong(function);
+		return CyclopsCollectable.super.avgLong(function);
 	}
 
 	/* (non-Javadoc)
@@ -3327,7 +3327,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default double avgDouble(ToDoubleFunction<? super T> function) {
 		
-		return SequenceMCollectable.super.avgDouble(function);
+		return CyclopsCollectable.super.avgDouble(function);
 	}
 
 	/* (non-Javadoc)
@@ -3336,7 +3336,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default Optional<T> min() {
 		
-		return SequenceMCollectable.super.min();
+		return CyclopsCollectable.super.min();
 	}
 
 	/* (non-Javadoc)
@@ -3345,7 +3345,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U extends Comparable<? super U>> Optional<U> min(Function<? super T, ? extends U> function) {
 		
-		return SequenceMCollectable.super.min(function);
+		return CyclopsCollectable.super.min(function);
 	}
 
 	/* (non-Javadoc)
@@ -3354,7 +3354,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U> Optional<U> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
 		
-		return SequenceMCollectable.super.min(function, comparator);
+		return CyclopsCollectable.super.min(function, comparator);
 	}
 
 	/* (non-Javadoc)
@@ -3363,7 +3363,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function) {
 		
-		return SequenceMCollectable.super.minBy(function);
+		return CyclopsCollectable.super.minBy(function);
 	}
 
 	/* (non-Javadoc)
@@ -3372,7 +3372,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U> Optional<T> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
 		
-		return SequenceMCollectable.super.minBy(function, comparator);
+		return CyclopsCollectable.super.minBy(function, comparator);
 	}
 
 	/* (non-Javadoc)
@@ -3381,7 +3381,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default Optional<T> max() {
 		
-		return SequenceMCollectable.super.max();
+		return CyclopsCollectable.super.max();
 	}
 
 	/* (non-Javadoc)
@@ -3390,7 +3390,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U extends Comparable<? super U>> Optional<U> max(Function<? super T, ? extends U> function) {
 		
-		return SequenceMCollectable.super.max(function);
+		return CyclopsCollectable.super.max(function);
 	}
 
 	/* (non-Javadoc)
@@ -3399,7 +3399,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U> Optional<U> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
 		
-		return SequenceMCollectable.super.max(function, comparator);
+		return CyclopsCollectable.super.max(function, comparator);
 	}
 
 	/* (non-Javadoc)
@@ -3408,7 +3408,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> maxBy(Function<? super T, ? extends U> function) {
 		
-		return SequenceMCollectable.super.maxBy(function);
+		return CyclopsCollectable.super.maxBy(function);
 	}
 
 	/* (non-Javadoc)
@@ -3417,7 +3417,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U> Optional<T> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
 		
-		return SequenceMCollectable.super.maxBy(function, comparator);
+		return CyclopsCollectable.super.maxBy(function, comparator);
 	}
 
 	/* (non-Javadoc)
@@ -3426,7 +3426,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default Optional<T> median() {
 		
-		return SequenceMCollectable.super.median();
+		return CyclopsCollectable.super.median();
 	}
 
 	/* (non-Javadoc)
@@ -3435,7 +3435,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default Optional<T> median(Comparator<? super T> comparator) {
 		
-		return SequenceMCollectable.super.median(comparator);
+		return CyclopsCollectable.super.median(comparator);
 	}
 
 	/* (non-Javadoc)
@@ -3444,7 +3444,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> medianBy(Function<? super T, ? extends U> function) {
 		
-		return SequenceMCollectable.super.medianBy(function);
+		return CyclopsCollectable.super.medianBy(function);
 	}
 
 	/* (non-Javadoc)
@@ -3453,7 +3453,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <U> Optional<T> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
 		
-		return SequenceMCollectable.super.medianBy(function, comparator);
+		return CyclopsCollectable.super.medianBy(function, comparator);
 	}
 
 	/* (non-Javadoc)
@@ -3462,7 +3462,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default Optional<T> percentile(double percentile) {
 		
-		return SequenceMCollectable.super.percentile(percentile);
+		return CyclopsCollectable.super.percentile(percentile);
 	}
 
 	/* (non-Javadoc)
@@ -3471,7 +3471,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default Optional<T> percentile(double percentile, Comparator<? super T> comparator) {
 		
-		return SequenceMCollectable.super.percentile(percentile, comparator);
+		return CyclopsCollectable.super.percentile(percentile, comparator);
 	}
 
 	/* (non-Javadoc)
@@ -3481,7 +3481,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	default <U extends Comparable<? super U>> Optional<T> percentileBy(double percentile,
 			Function<? super T, ? extends U> function) {
 		
-		return SequenceMCollectable.super.percentileBy(percentile, function);
+		return CyclopsCollectable.super.percentileBy(percentile, function);
 	}
 
 	/* (non-Javadoc)
@@ -3491,7 +3491,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	default <U> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function,
 			Comparator<? super U> comparator) {
 		
-		return SequenceMCollectable.super.percentileBy(percentile, function, comparator);
+		return CyclopsCollectable.super.percentileBy(percentile, function, comparator);
 	}
 
 	/* (non-Javadoc)
@@ -3500,7 +3500,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default boolean allMatch(Matcher<? super T> m) {
 		
-		return SequenceMCollectable.super.allMatch(m);
+		return CyclopsCollectable.super.allMatch(m);
 	}
 
 	/* (non-Javadoc)
@@ -3508,7 +3508,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	@Override
 	default boolean noneMatch(Matcher<? super T> m) {
-		return SequenceMCollectable.super.noneMatch(m);
+		return CyclopsCollectable.super.noneMatch(m);
 	}
 
 	/* (non-Javadoc)
@@ -3517,7 +3517,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <L extends List<T>> L toList(Supplier<L> factory) {
 		
-		return SequenceMCollectable.super.toList(factory);
+		return CyclopsCollectable.super.toList(factory);
 	}
 
 	/* (non-Javadoc)
@@ -3526,7 +3526,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default <S extends Set<T>> S toSet(Supplier<S> factory) {
 		
-		return SequenceMCollectable.super.toSet(factory);
+		return CyclopsCollectable.super.toSet(factory);
 	}
 
 	/* (non-Javadoc)
@@ -3536,7 +3536,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	default <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper,
 			Function<? super T, ? extends V> valueMapper) {
 		
-		return SequenceMCollectable.super.toMap(keyMapper, valueMapper);
+		return CyclopsCollectable.super.toMap(keyMapper, valueMapper);
 	}
 
 	/* (non-Javadoc)
@@ -3545,7 +3545,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default String toString(CharSequence delimiter) {
 		
-		return SequenceMCollectable.super.toString(delimiter);
+		return CyclopsCollectable.super.toString(delimiter);
 	}
 
 	/* (non-Javadoc)
@@ -3554,7 +3554,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	default String toString(CharSequence delimiter, CharSequence prefix, CharSequence suffix) {
 		
-		return SequenceMCollectable.super.toString(delimiter, prefix, suffix);
+		return CyclopsCollectable.super.toString(delimiter, prefix, suffix);
 	}
 
 	@Override

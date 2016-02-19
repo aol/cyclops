@@ -9,26 +9,28 @@ import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
-public class SimpleReactStreamComprehender {//implements Comprehender<SimpleReactStream> {
-/**
+public class SimpleReactStreamComprehender implements Comprehender {
+
 	public static int priority = 4;
 	@Override
 	public int priority(){
 		return priority;
 	}
 	@Override
-	public Object filter(SimpleReactStream t, Predicate p) {
-		return t.filter(p);
+	public Object filter(Object t, Predicate p) {
+		return ((SimpleReactStream)t).filter(p);
 	}
 
 	@Override
-	public Object map(SimpleReactStream t, Function fn) {
-		return t.then(fn);
+	public Object map(Object t, Function fn) {
+		return ((SimpleReactStream)t).then(fn);
 	}
 
 	@Override
-	public SimpleReactStream flatMap(SimpleReactStream t, Function fn) {
-		return  SimpleReactStream.bind(t,input -> unwrapOtherMonadTypes(this,fn.apply(input)));
+	public SimpleReactStream flatMap(Object in, Function fn) {
+	    SimpleReactStream t = ((SimpleReactStream)in);
+
+		return  SimpleReactStream.bind(t,input -> ( SimpleReactStream)unwrapOtherMonadTypes(t,this,fn.apply(input)));
 	}
 
 	@Override
@@ -48,20 +50,19 @@ public class SimpleReactStreamComprehender {//implements Comprehender<SimpleReac
 	public Object resolveForCrossTypeFlatMap(Comprehender comp,SimpleReactStream apply){
 		return comp.of(apply.block());
 	}
-	static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
+	static SimpleReactStream unwrapOtherMonadTypes(SimpleReactStream t,Comprehender<SimpleReactStream> comp,Object apply){
 		
 		
 		
 		if(apply instanceof Collection){
-			return (T)((Collection)apply).stream();
+			return t.fromStream(((Collection)apply).stream());
 		}
 		if(apply instanceof Iterable){
-			 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
-						false);
+			 return t.fromStream(StreamSupport.stream(((Iterable)apply).spliterator(),
+						false));
 		}
 		
 		return Comprehender.unwrapOtherMonadTypes(comp,apply);
 		
 	}
-**/
 }

@@ -48,7 +48,7 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.types.stream.SequenceMCollectable;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 
@@ -60,7 +60,7 @@ import com.aol.cyclops.types.stream.future.FutureOperations;
  *
  * @param <T> Data type for Stream
  */
-public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>, 
+public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>, 
 											ConvertableSequence<T>, 
 											Functor<T>,
 											Filterable<T>,
@@ -1469,8 +1469,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param iterable
     	 * @return True if Monad starts with Iterable sequence of data
     	 */
-    	default boolean startsWith(Iterable<T> iterable){
-    		 return reactiveSeq().startsWith(iterable);
+    	default boolean startsWithIterable(Iterable<T> iterable){
+    		 return reactiveSeq().startsWithIterable(iterable);
     	}	
     	/**
     	 * 	<pre>{@code assertTrue(Streamable.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
@@ -1803,8 +1803,8 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @param iterable Values to check 
     	 * @return true if Streamable ends with values in the supplied iterable
     	 */
-    	default boolean endsWith(Iterable<T> iterable){
-    		return reactiveSeq().endsWith(iterable);
+    	default boolean endsWithIterable(Iterable<T> iterable){
+    		return reactiveSeq().endsWithIterable(iterable);
     	}
     	/**
     	 * <pre>
@@ -1818,7 +1818,7 @@ public interface Streamable<T> extends ToStream<T>, SequenceMCollectable<T>,
     	 * @return true if Streamable endswith values in the supplied Stream
     	 */
     	default boolean endsWith(Streamable<T> stream){
-    		return reactiveSeq().endsWith(stream);
+    		return reactiveSeq().endsWithIterable(stream);
     	}	
     	/**
     	 * Skip all elements until specified time period has passed

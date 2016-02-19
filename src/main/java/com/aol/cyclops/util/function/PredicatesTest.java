@@ -1,5 +1,6 @@
 package com.aol.cyclops.util.function;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,6 +40,26 @@ public class PredicatesTest {
     public void testEqvNull() {
         assertTrue(eqv(null).test(null));
         
+    }
+    @Test
+    public void hasItems(){
+        assertTrue(Predicates.hasItems(Arrays.asList(1,2,3)).test(Arrays.asList(10,1,23,2,3,4,5,6)));
+    }
+    @Test
+    public void startsWith(){
+        assertFalse(Predicates.startsWith(1,2,3).test(Arrays.asList(10,1,23,2,3,4,5,6)));
+    }
+    @Test
+    public void endsWith(){
+        assertFalse(Predicates.startsWith(1,2,3).test(Arrays.asList(10,1,23,2,3,4,5,6)));
+    }
+    @Test
+    public void startsWithTrue(){
+        assertTrue(Predicates.startsWith(1,2,3).test(Arrays.asList(1,2,3,10,1,23,2,3,4,5,6)));
+    }
+    @Test
+    public void endsWithTrue(){
+        assertTrue(Predicates.endsWith(1,2,3).test(Arrays.asList(10,1,23,2,3,4,5,6,1,2,3)));
     }
 
 }

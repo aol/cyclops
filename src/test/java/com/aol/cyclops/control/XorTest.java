@@ -26,5 +26,17 @@ public class XorTest {
 													Semigroups.stringConcat).get(),equalTo("failed1failed2"));
 		
 	}
+	@Test
+	public void accumulate(){
+	    Xor<String,String> fail1 = Xor.secondary("failed1");
+	    assertThat(fail1.swap().ap(Semigroups.stringConcat).ap(Xor.secondary("failed2").swap()).ap(Xor.<String,String>primary("success").swap())
+	                                .convertable().get(),equalTo("failed1failed2"));
+	}
+	@Test
+    public void accumulate2(){
+        Xor<String,String> fail1 = Xor.secondary("failed1");
+        assertThat(fail1.swap().ap((a,b)->a+b).ap(Xor.secondary("failed2").swap()).ap(Xor.<String,String>primary("success").swap())
+                                    .convertable().get(),equalTo("failed1failed2"));
+    }
 
 }

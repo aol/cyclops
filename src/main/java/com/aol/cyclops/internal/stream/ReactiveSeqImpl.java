@@ -63,11 +63,11 @@ import com.aol.cyclops.util.stream.AsStreamable;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
-public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>{
+public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>{
 	private final Stream<T> stream;
 	private final Optional<ReversableSpliterator> reversable;
 	
-	public SequenceMImpl(Stream<T> stream){
+	public ReactiveSeqImpl(Stream<T> stream){
 		
 		this.stream = Seq.seq(stream);
 		this.reversable = Optional.empty();
@@ -75,7 +75,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 		
 	}
 	
-	public SequenceMImpl(Stream<T> stream,ReversableSpliterator rev){
+	public ReactiveSeqImpl(Stream<T> stream,ReversableSpliterator rev){
 		this.stream = Seq.seq(stream);
 		this.reversable = Optional.of(rev);
 		
@@ -366,7 +366,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @return
 	 */
 	public final <R> ReactiveSeq<R> cycle(Class<R> monadC, int times) {
-		return (SequenceMImpl)cycle(times).map(r -> new ComprehenderSelector().selectComprehender(monadC).of(r));	
+		return (ReactiveSeqImpl)cycle(times).map(r -> new ComprehenderSelector().selectComprehender(monadC).of(r));	
 	}
 
 	/**
@@ -1202,7 +1202,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @param iterable
 	 * @return True if Monad starts with Iterable sequence of data
 	 */
-	public final boolean startsWith(Iterable<T> iterable){
+	public final boolean startsWithIterable(Iterable<T> iterable){
 		return StreamUtils.startsWith(stream,iterable);
 		
 	}
@@ -1227,13 +1227,13 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 	 * @see java.util.stream.Stream#map(java.util.function.Function)
 	 */
 	public final  <R> ReactiveSeq<R> map(Function<? super T,? extends R> fn){
-		return new SequenceMImpl(stream.map(fn));
+		return new ReactiveSeqImpl(stream.map(fn));
 	}
 	/* (non-Javadoc)
 	 * @see java.util.stream.Stream#peek(java.util.function.Consumer)
 	 */
 	public final   ReactiveSeq<T>  peek(Consumer<? super T> c) {
-		return new SequenceMImpl(stream.peek(c));
+		return new ReactiveSeqImpl(stream.peek(c));
 	}
 	/**
 	 * flatMap operation
@@ -1750,7 +1750,7 @@ public class SequenceMImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>
 
 
 	@Override
-	public boolean endsWith(Iterable<T> iterable) {
+	public boolean endsWithIterable(Iterable<T> iterable) {
 		return StreamUtils.endsWith(stream, iterable);
 	}
 

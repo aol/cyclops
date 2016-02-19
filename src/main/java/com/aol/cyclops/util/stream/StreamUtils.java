@@ -54,7 +54,7 @@ import com.aol.cyclops.internal.stream.FutureStreamUtils;
 import com.aol.cyclops.internal.stream.PausableHotStreamImpl;
 import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
 import com.aol.cyclops.internal.stream.ReversedIterator;
-import com.aol.cyclops.internal.stream.SequenceMImpl;
+import com.aol.cyclops.internal.stream.ReactiveSeqImpl;
 import com.aol.cyclops.internal.stream.operators.BatchBySizeOperator;
 import com.aol.cyclops.internal.stream.operators.BatchByTimeAndSizeOperator;
 import com.aol.cyclops.internal.stream.operators.BatchByTimeOperator;
@@ -1514,8 +1514,8 @@ public class StreamUtils{
 		if(stream instanceof ReactiveSeq)
 			return (ReactiveSeq)stream;
 		if(rev.isPresent())
-			return new SequenceMImpl<T>(stream,rev.get());
-		return new SequenceMImpl<T>(stream);
+			return new ReactiveSeqImpl<T>(stream,rev.get());
+		return new ReactiveSeqImpl<T>(stream);
 	}
 	
 	

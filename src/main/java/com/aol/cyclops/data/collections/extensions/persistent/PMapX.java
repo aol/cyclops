@@ -23,7 +23,7 @@ import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
-import com.aol.cyclops.types.stream.SequenceMCollectable;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 public interface PMapX<K, V> extends PMap<K, V>, 
 									 FluentMapX<K,V>,
@@ -32,7 +32,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 									 IterableFilterable<Tuple2<K, V>>,				
 									 ExtendedTraversable<Tuple2<K, V>>, 
 									 Foldable<Tuple2<K,V>>,
-									 SequenceMCollectable<Tuple2<K,V>>,
+									 CyclopsCollectable<Tuple2<K,V>>,
 									 IterableCollectable<Tuple2<K,V>>{
 
 	public static<K,V> PMapX<K,V> empty(){
