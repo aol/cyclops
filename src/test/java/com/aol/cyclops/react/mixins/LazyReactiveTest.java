@@ -14,11 +14,12 @@ import lombok.Getter;
 
 import org.junit.Test;
 
-import com.aol.cyclops.react.async.Adapter;
-import com.aol.cyclops.react.async.Queue;
+import com.aol.cyclops.data.async.Adapter;
+import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.react.async.pipes.Pipes;
 import com.aol.cyclops.react.async.pipes.PipesToLazyStreams;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.mixins.LazyReactive;
 public class LazyReactiveTest {
 	
 

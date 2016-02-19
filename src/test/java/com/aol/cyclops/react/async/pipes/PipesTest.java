@@ -10,9 +10,9 @@ import java.util.concurrent.ForkJoinPool;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.react.async.Queue;
-import com.aol.cyclops.react.reactivestreams.JDKReactiveStreamsSubscriber;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.data.async.Queue;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsSubscriber;
 
 import static org.hamcrest.Matchers.*;
 public class PipesTest {

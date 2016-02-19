@@ -17,9 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.pcollections.ConsPStack;
 
-import com.aol.cyclops.react.exceptions.ThrowsSoftened;
-import com.aol.cyclops.react.stream.Status;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.react.Status;
 import com.aol.cyclops.util.SimpleTimer;
+import com.aol.cyclops.util.ThrowsSoftened;
 
 
 @AllArgsConstructor
@@ -40,17 +41,17 @@ public class Blocker<U> {
 
 	@SuppressWarnings("unchecked")
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public List<U> block(final Predicate<Status> breakout) {
+	public ListX<U> block(final Predicate<Status> breakout) {
 
 		if(lastActive.size()==0)
-			return Arrays.asList();
+			return ListX.empty();
 		lastActive.forEach(f -> f.whenComplete((result, ex) -> {
 			testBreakoutConditionsBeforeUnblockingCurrentThread(breakout,
 					result, (Throwable)ex);
 		}));
 
 		
-		return promise.join();
+		return ListX.fromIterable(promise.join());
 		
 		
 	}

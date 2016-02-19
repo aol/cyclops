@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.react.async.future.FastFuture;
+import com.aol.cyclops.internal.react.async.future.FastFuture;
 
 public class EmptyCollectorTest {
 

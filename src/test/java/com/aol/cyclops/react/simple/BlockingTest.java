@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.react.stream.traits.SimpleReactStream;
+import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
 public class BlockingTest {
 
@@ -246,7 +246,7 @@ public class BlockingTest {
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.then( it -> sleep(it))
-		.last();
+		.block().takeRight(1).get(0);
 
 		assertThat(result,is(500));
 	}
@@ -258,7 +258,7 @@ public class BlockingTest {
 		.then( it -> it*100)
 		.then( it -> sleep(it));
 		
-		int result = stage.first();
+		int result = stage.block().firstValue();
 
 		assertThat(result,is(100));
 		
@@ -276,7 +276,7 @@ public class BlockingTest {
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), it -> {
 			assertThat (it,is( Set.class));
 			return it;
-		}).first();
+		}).block().firstValue();
 
 		assertThat(result.size(),is(4));
 	}
@@ -289,7 +289,7 @@ public class BlockingTest {
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), it -> {
 			assertThat (it,is( Set.class));
 			return it;
-		}).last();
+		}).block().takeRight(1).get(0);
 
 		assertThat(result.size(),is(4));
 	}

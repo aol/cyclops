@@ -5,6 +5,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import com.aol.cyclops.react.Status;
+
 public class StatusTest {
 
     @Test

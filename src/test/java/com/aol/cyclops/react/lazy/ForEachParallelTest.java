@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import com.aol.cyclops.react.base.BaseSequentialSQLTest.X;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class ForEachParallelTest {
 

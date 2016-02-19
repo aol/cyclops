@@ -1,11 +1,11 @@
 package com.aol.cyclops.react.lazy;
 
-import static com.aol.cyclops.react.stream.traits.LazyFutureStream.parallel;
+import static com.aol.cyclops.types.futurestream.LazyFutureStream.parallel;
 
 import java.util.function.Supplier;
 
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazySeqNoAutoOptimizeTest extends LazySeqTest {
 	@Override

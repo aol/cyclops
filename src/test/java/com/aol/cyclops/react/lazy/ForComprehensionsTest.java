@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Do;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class ForComprehensionsTest {
 

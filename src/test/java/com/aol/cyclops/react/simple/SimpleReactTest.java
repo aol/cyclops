@@ -34,9 +34,8 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.react.extractors.Extractors;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
-import com.aol.cyclops.react.stream.traits.BaseSimpleReactStream;
+import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 
 public class SimpleReactTest {
@@ -48,7 +47,7 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void streamOfOne(){
-		Integer value = BaseSimpleReactStream.of(1).first();
+		Integer value = BaseSimpleReactStream.of(1).block().firstValue();
 		assertThat(value,is(1));
 	}
 	@Test
@@ -101,7 +100,7 @@ public class SimpleReactTest {
 		String res = new SimpleReact().react(()->"hello")
 										.doOnEach(it->{ found[0]=it;return "world";})
 										.then(it->it+"!")
-										.first();
+										.block().firstValue();
 		assertThat(found[0],is("hello"));
 		assertThat(res,is("hello!"));
 	}
@@ -221,7 +220,7 @@ public class SimpleReactTest {
 			assertThat (it,instanceOf( Set.class));
 			return it;
 		}).capture(e -> e.printStackTrace())
-		.blockAndExtract(Extractors.last(), status -> false);
+		.block(status -> false).takeRight(1).get(0);
 
 		assertThat(result.size(),is(4));
 	}

@@ -1,7 +1,8 @@
 package com.aol.cyclops.react.simple;
 
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -18,7 +19,6 @@ import org.pcollections.HashPMap;
 import org.pcollections.HashTreePMap;
 
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.react.extractors.Extractors;
 
 
 public class AllOfTest {
@@ -61,7 +61,7 @@ public class AllOfTest {
 				System.out.println(it))
 				.allOf((List<String> data) -> {
 					System.out.println(data);
-						return data; }).first();
+						return data; }).block().firstValue();
 		
 		assertThat(result.size(),is(2));
 	}
@@ -77,7 +77,7 @@ public class AllOfTest {
 				System.out.println(it))
 				.allOf((List<String> data) -> {
 					System.out.println(data);
-						return data; }).first();
+						return data; }).block().firstValue();
 		
 		assertThat(result.size(),is(3));
 	}
@@ -94,7 +94,7 @@ public class AllOfTest {
 				System.out.println(it))
 				.allOf((List<String> data) -> {
 					System.out.println(data);
-						return data; }).first();
+						return data; }).block().firstValue();
 		
 		assertThat(result.size(),is(2));
 		assertThat(result,hasItem("hello"));
@@ -127,13 +127,13 @@ public class AllOfTest {
 	@Test
 	public void testAllOfToSet() throws InterruptedException, ExecutionException {
 
-		Set<Integer> result = new SimpleReact()
+		Set<Integer> result = (Set<Integer>)new SimpleReact()
 		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.allOf(Collectors.toSet(), it -> {
 			assertThat (it,instanceOf( Set.class));
 			return it;
-		}).blockAndExtract(Extractors.first());
+		}).block().firstValue();
 
 		assertThat(result.size(),is(4));
 	}
@@ -186,7 +186,7 @@ public class AllOfTest {
 				.<Integer,List<Integer>>allOf(it -> {
 					
 					return it.parallelStream().skip(1).limit(3).collect(Collectors.toList());
-				}).first();
+				}).block().firstValue();
 
 	
 		assertThat(result.size(), is(3));

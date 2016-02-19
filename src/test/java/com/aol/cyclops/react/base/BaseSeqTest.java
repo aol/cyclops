@@ -38,9 +38,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
+import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.react.async.Queue;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.SimpleTimer;
 
 import static java.util.Comparator.comparing;

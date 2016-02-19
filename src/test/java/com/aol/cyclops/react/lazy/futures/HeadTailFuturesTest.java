@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
 public class HeadTailFuturesTest {

@@ -5,9 +5,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.react.stream.traits.BaseSimpleReactStream;
-import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
+import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
 public class SimpleReactStreamComprehender {//implements Comprehender<SimpleReactStream> {
 /**

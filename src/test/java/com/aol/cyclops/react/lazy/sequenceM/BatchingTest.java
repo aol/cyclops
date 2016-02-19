@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.lazy.sequenceM;
 
-import static com.aol.cyclops.react.stream.traits.LazyFutureStream.of;
+import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.stream.Streamable;
 

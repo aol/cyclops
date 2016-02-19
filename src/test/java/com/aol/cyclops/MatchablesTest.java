@@ -149,12 +149,16 @@ public class MatchablesTest {
       assertThat(result,equalTo("correct"));
     }
 	@Test
-    public void wordsPredicates(){
+    public void wordsPredicates() throws MalformedURLException{
       String result =   Matchables.words("hello world")
                                   .matches(c->c.has(when("hello","world"), then("correct")), otherwise("miss"))
                                   .get();
       
       assertThat(result,equalTo("correct"));
+      
+      Matchables.url(new URL("http://www.aol.com/path?q=hello"))
+                .on$12_45()
+                .matches(c->c.is(when(eq("http"),in("www.aol.com","aol.com"),any(),not(eq("q=hello!"))), then("correct")),otherwise("miss"));
     }
 
 }

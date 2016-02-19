@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 
 public class ReductionTest {

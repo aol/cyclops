@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazyTest {
 	@Test

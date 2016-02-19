@@ -1,7 +1,7 @@
 package com.aol.cyclops.react.async.pipes;
 
 import static com.aol.cyclops.react.async.pipes.Pipes.registered;
-import static com.aol.cyclops.react.stream.traits.LazyFutureStream.lazyFutureStream;
+import static com.aol.cyclops.types.futurestream.LazyFutureStream.lazyFutureStream;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,10 +12,10 @@ import java.util.stream.Stream;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.react.async.Adapter;
-import com.aol.cyclops.react.reactivestreams.JDKReactiveStreamsSubscriber;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.data.async.Adapter;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsSubscriber;
 
 /**
  * Store for Pipes for cross-thread communication

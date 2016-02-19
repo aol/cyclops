@@ -10,8 +10,8 @@ import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.react.reactivestreams.JDKReactiveStreamsPublisher;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsPublisher;
 @Test
 public class TckAsynchronousPublisherTest extends PublisherVerification<Long>{
 

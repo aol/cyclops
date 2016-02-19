@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.lazy.futures;
 
-import static com.aol.cyclops.react.stream.traits.LazyFutureStream.of;
+import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class ConcatTest {
 	@Test

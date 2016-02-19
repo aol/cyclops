@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.react.async.Queue.ClosedQueueException;
+import com.aol.cyclops.data.async.Queue.ClosedQueueException;
 
 public class OnFailTest {
 

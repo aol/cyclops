@@ -7,11 +7,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.aol.cyclops.internal.react.async.future.FastFuture;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
-
-import com.aol.cyclops.react.async.future.FastFuture;
 /**
  * A collector that periodically joins active completablefutures
  * but does not store the results

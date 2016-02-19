@@ -12,10 +12,10 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.stream.MissingValue;
-import com.aol.cyclops.react.stream.lazy.ParallelReductionConfig;
-import com.aol.cyclops.react.stream.traits.BlockingStream;
+import com.aol.cyclops.internal.react.async.future.FastFuture;
+import com.aol.cyclops.internal.react.stream.MissingValue;
+import com.aol.cyclops.react.ParallelReductionConfig;
+import com.aol.cyclops.types.futurestream.BlockingStream;
 
 /**
  * Perform incremental (optionally parallel) reduction on a stream

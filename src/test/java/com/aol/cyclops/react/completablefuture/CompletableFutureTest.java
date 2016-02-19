@@ -15,7 +15,7 @@ import java.util.concurrent.ForkJoinPool;
 import org.junit.Test;
 
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.react.stream.traits.BaseSimpleReactStream;
+import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
 
 public class CompletableFutureTest {
 	@Test

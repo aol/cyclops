@@ -25,9 +25,9 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.base.BaseSequentialSeqTest;
-import com.aol.cyclops.react.stream.ThreadPools;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazySequentialSeqObjectPoolsTest extends BaseSequentialSeqTest {
 

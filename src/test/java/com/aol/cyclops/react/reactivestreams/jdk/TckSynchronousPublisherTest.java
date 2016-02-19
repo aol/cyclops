@@ -8,7 +8,7 @@ import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-import com.aol.cyclops.react.reactivestreams.JDKReactiveStreamsPublisher;
+import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsPublisher;
 @Test
 public class TckSynchronousPublisherTest extends PublisherVerification<Long>{
 

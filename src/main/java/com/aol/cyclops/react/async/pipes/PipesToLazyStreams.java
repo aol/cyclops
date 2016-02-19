@@ -2,9 +2,9 @@ package com.aol.cyclops.react.async.pipes;
 
 import static com.aol.cyclops.react.async.pipes.Pipes.registered;
 
-import com.aol.cyclops.react.async.Adapter;
+import com.aol.cyclops.data.async.Adapter;
 import com.aol.cyclops.react.async.subscription.Subscription;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class PipesToLazyStreams {
 	/**

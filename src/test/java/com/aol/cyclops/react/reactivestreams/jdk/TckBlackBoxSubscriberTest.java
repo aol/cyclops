@@ -5,7 +5,7 @@ import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-import com.aol.cyclops.react.reactivestreams.JDKReactiveStreamsSubscriber;
+import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsSubscriber;
 
 @Test
 public class TckBlackBoxSubscriberTest extends SubscriberBlackboxVerification<Long>{

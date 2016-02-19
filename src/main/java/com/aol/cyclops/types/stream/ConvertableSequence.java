@@ -33,9 +33,9 @@ import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
-import com.aol.cyclops.react.stream.traits.SimpleReactStream;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.SimpleReactStream;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 

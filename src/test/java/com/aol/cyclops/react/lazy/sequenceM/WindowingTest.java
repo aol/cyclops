@@ -1,7 +1,7 @@
 package com.aol.cyclops.react.lazy.sequenceM;
 
 
-import static com.aol.cyclops.react.stream.traits.LazyFutureStream.of;
+import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.stream.Streamable;
 
 public class WindowingTest {

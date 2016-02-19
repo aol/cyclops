@@ -11,7 +11,7 @@ import org.jooq.lambda.Seq;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 public class FlatMapSequenceMTest {
 
 	@Test

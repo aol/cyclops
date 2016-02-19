@@ -1,7 +1,8 @@
 package com.aol.cyclops.react.simple;
 
 import static com.nurkiewicz.asyncretry.backoff.FixedIntervalBackoff.DEFAULT_PERIOD_MILLIS;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
@@ -26,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.react.exceptions.SimpleReactFailedStageException;
+import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
@@ -69,7 +70,7 @@ public class RetryTest {
 	
 		String result = new SimpleReact().react(() -> 1, () -> 2, () -> 3)
 				.withRetrier(executor).retry(serviceMock)
-				.first();
+				.block().firstValue();
 
 		assertThat(result, is("42"));
 	}
@@ -90,7 +91,7 @@ public class RetryTest {
 
 		
 		String result = new SimpleReact().react(() -> 1).withRetrier(executor)
-				.retry(serviceMock).first();
+				.retry(serviceMock).block().firstValue();
 
 	
 

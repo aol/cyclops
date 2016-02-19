@@ -14,8 +14,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.internal.react.async.future.FastFuture;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class BatchingCollectorTest {
 

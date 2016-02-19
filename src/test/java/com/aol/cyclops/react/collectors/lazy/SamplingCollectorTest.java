@@ -13,8 +13,8 @@ import lombok.AllArgsConstructor;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.stream.traits.ConfigurableStream;
+import com.aol.cyclops.internal.react.async.future.FastFuture;
+import com.aol.cyclops.types.futurestream.ConfigurableStream;
 
 public class SamplingCollectorTest {
 

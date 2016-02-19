@@ -7,7 +7,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.react.stream.ReactBuilder;
+import com.aol.cyclops.internal.react.stream.ReactBuilder;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 /**

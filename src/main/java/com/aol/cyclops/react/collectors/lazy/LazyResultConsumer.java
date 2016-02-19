@@ -5,8 +5,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.stream.traits.ConfigurableStream;
+import com.aol.cyclops.internal.react.async.future.FastFuture;
+import com.aol.cyclops.types.futurestream.ConfigurableStream;
 
 /**
  * Interface that defines the rules for Collecting results from Infinite SimpleReact Streams

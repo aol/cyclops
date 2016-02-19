@@ -21,7 +21,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.react.stream.traits.SimpleReactStream;
+import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
 public class GeneratorTest {
 	volatile int  count;

@@ -8,8 +8,7 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public abstract class BaseSequentialSQLTest {
 	abstract protected  <U> LazyFutureStream<U> of(U... array);

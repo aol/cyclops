@@ -58,7 +58,6 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
-import com.aol.cyclops.react.reactivestreams.reactiveseq.SubscriberForCyclops;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
@@ -80,6 +79,7 @@ import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
+import com.aol.cyclops.util.stream.reactivestreams.SubscriberForCyclops;
 
 
 public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,FilterableFunctor<T>, ExtendedTraversable<T>,

@@ -1,7 +1,7 @@
 package com.aol.cyclops.react.lazy.sequenceM;
 
 
-import static com.aol.cyclops.react.stream.traits.LazyFutureStream.of;
+import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

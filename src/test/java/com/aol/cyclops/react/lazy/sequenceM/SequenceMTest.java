@@ -26,7 +26,7 @@ import org.junit.Test;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 

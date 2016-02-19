@@ -12,9 +12,9 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Do;
-import com.aol.cyclops.react.stream.traits.BaseSimpleReactStream;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
-import com.aol.cyclops.react.stream.traits.SimpleReactStream;
+import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
 public class DoTest {
 

@@ -16,7 +16,7 @@ import lombok.Setter;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.react.async.Queue;
+import com.aol.cyclops.data.async.Queue;
 
 @Getter
 @Setter

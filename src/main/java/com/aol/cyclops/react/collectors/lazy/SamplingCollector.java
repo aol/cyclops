@@ -8,8 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.stream.traits.ConfigurableStream;
+import com.aol.cyclops.internal.react.async.future.FastFuture;
+import com.aol.cyclops.types.futurestream.ConfigurableStream;
 
 /**
  * 

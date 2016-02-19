@@ -3,24 +3,20 @@ package com.aol.cyclops.react.simple;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+
+import org.junit.Test;
+
+import com.aol.cyclops.control.SimpleReact;
+import com.aol.cyclops.util.SimpleTimer;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
-
-import org.junit.Test;
-
-import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.react.extractors.Extractors;
-import com.aol.cyclops.util.SimpleTimer;
 
 
 
@@ -44,7 +40,7 @@ public class AlgorithmCompareTest {
 				() -> Result.builder().name("approach2").result(retrieval(linkedList)).build())
 		.then(it -> it.withTime(timer.getElapsedNanoseconds()))
 		.filter(it -> it.getResult()==1000)
-		.blockAndExtract(Extractors.first());
+		.block().firstValue();
 
 		
 		assertThat(result.getName(),is("approach1"));
@@ -68,7 +64,8 @@ public class AlgorithmCompareTest {
 				() -> Result.builder().name("approach2 : linkedList").result(retrieval(linkedList)).build())
 		.then(it -> it.withTime(timer.getElapsedNanoseconds()))
 		.filter(it -> it.getResult()==1000)
-		.first();
+		.block()
+		.firstValue();
 
 		
 		assertThat(result.getName(),is("approach1 : arrayList"));

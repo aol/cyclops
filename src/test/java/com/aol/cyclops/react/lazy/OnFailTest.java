@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.react.async.Queue.ClosedQueueException;
+import com.aol.cyclops.data.async.Queue.ClosedQueueException;
 
 public class OnFailTest {
 

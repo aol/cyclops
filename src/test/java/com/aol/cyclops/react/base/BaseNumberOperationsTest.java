@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 public abstract class BaseNumberOperationsTest {
 	abstract protected <U> LazyFutureStream<U> of(U... array);
 	abstract protected <U> LazyFutureStream<U> ofThread(U... array);

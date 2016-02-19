@@ -1,7 +1,7 @@
 package com.aol.cyclops.react.lazy.sequenceM;
 
 
-import static com.aol.cyclops.react.stream.traits.LazyFutureStream.of;
+import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class ZippingTest {
 	LazyFutureStream<Integer> empty;

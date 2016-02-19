@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.react.async.Queue;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.data.async.Queue;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazyPipesTest {
 	@Before

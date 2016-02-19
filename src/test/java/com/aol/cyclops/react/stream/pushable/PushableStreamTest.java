@@ -17,10 +17,15 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
-import com.aol.cyclops.react.async.Queue;
-import com.aol.cyclops.react.async.Signal;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.data.async.Queue;
+import com.aol.cyclops.data.async.Signal;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.util.stream.pushable.MultiplePushableStreamsBuilder;
+import com.aol.cyclops.util.stream.pushable.PushableLazyFutureStream;
+import com.aol.cyclops.util.stream.pushable.PushableSeq;
+import com.aol.cyclops.util.stream.pushable.PushableStream;
+import com.aol.cyclops.util.stream.pushable.PushableStreamBuilder;
 
 
 public class PushableStreamTest {

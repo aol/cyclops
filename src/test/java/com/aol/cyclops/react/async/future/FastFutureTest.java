@@ -17,6 +17,10 @@ import java.util.concurrent.CountDownLatch;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.internal.react.async.future.FastFuture;
+import com.aol.cyclops.internal.react.async.future.FinalPipeline;
+import com.aol.cyclops.internal.react.async.future.PipelineBuilder;
+
 public class FastFutureTest {
 	private static final int TIMES = 10_000;
 	PipelineBuilder future;

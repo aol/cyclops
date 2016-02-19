@@ -25,7 +25,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops.react.base.BaseSequentialSeqTest;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 

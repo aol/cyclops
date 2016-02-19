@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.lazy;
 
-import static com.aol.cyclops.react.stream.traits.LazyFutureStream.parallel;
+import static com.aol.cyclops.types.futurestream.LazyFutureStream.parallel;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -27,12 +27,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.react.async.Queue;
-import com.aol.cyclops.react.async.Signal;
-import com.aol.cyclops.react.async.factories.QueueFactories;
+import com.aol.cyclops.data.async.Queue;
+import com.aol.cyclops.data.async.QueueFactories;
+import com.aol.cyclops.data.async.Signal;
+import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.base.BaseSeqTest;
-import com.aol.cyclops.react.stream.ThreadPools;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazySeqAgronaTest extends BaseSeqTest {
 	

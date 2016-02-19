@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class AccessTest {
 	@Test

@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
 public class LFSTest {

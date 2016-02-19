@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class SkipTest {
 	@Test

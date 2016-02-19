@@ -23,13 +23,13 @@ import org.pcollections.HashTreePMap;
 
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.SimpleReact;
+import com.aol.cyclops.data.async.Queue;
+import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.react.async.Queue;
-import com.aol.cyclops.react.async.factories.QueueFactories;
-import com.aol.cyclops.react.exceptions.SimpleReactFailedStageException;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
-import com.aol.cyclops.react.stream.traits.SimpleReactStream;
+import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.SimpleReactStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
 import lombok.AllArgsConstructor;
@@ -488,7 +488,7 @@ public class Tutorial {
 	public void executeRestCallInPool() {
 		boolean success = SequentialElasticPools.lazyReact.react(er -> er
 				.react(() -> restGet()).map(Tutorial::transformData)
-				.then(Tutorial::saveToDb).first());
+				.then(Tutorial::saveToDb).block().firstValue());
 	}
 
 	private static boolean saveToDb(Object o) {

@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsPublisher;
-import com.aol.cyclops.react.reactivestreams.JDKReactiveStreamsPublisher;
+import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsPublisher;
 
 public class MockPublisher<T> implements ReactiveStreamsPublisher<T> {
 

@@ -1,13 +1,13 @@
 package com.aol.cyclops.react.lazy;
 
-import static com.aol.cyclops.react.stream.traits.LazyFutureStream.of;
-
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
+
+import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 public class DuplicationTest {

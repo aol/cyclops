@@ -17,15 +17,15 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.react.async.RetryBuilder;
+import com.aol.cyclops.internal.react.LazyFutureStreamImpl;
+import com.aol.cyclops.internal.react.stream.InfiniteClosingSpliterator;
+import com.aol.cyclops.internal.react.stream.InfiniteClosingSpliteratorFromIterator;
+import com.aol.cyclops.internal.react.stream.ReactBuilder;
+import com.aol.cyclops.react.RetryBuilder;
+import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.async.subscription.Subscription;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
-import com.aol.cyclops.react.stream.InfiniteClosingSpliterator;
-import com.aol.cyclops.react.stream.InfiniteClosingSpliteratorFromIterator;
-import com.aol.cyclops.react.stream.ReactBuilder;
-import com.aol.cyclops.react.stream.ThreadPools;
-import com.aol.cyclops.react.stream.lazy.LazyFutureStreamImpl;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.function.Cacheable;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -537,7 +537,7 @@ public class LazyReact implements ReactBuilder {
 	 * 
 	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
 	 * 
-	 * @see com.aol.cyclops.react.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
+	 * @see com.aol.cyclops.data.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
 	 * 
 	 * @param s Supplier to generate the infinite flow
 	 * @return Next stage in the flow
@@ -558,7 +558,7 @@ public class LazyReact implements ReactBuilder {
 	 * 
 	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
 	 * 
-	 * @see com.aol.cyclops.react.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
+	 * @see com.aol.cyclops.data.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
 	 * 
 	 * @param s Supplier to generate the infinite flow
 	 * @return Next stage in the flow

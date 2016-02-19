@@ -12,8 +12,8 @@ import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
-import com.aol.cyclops.react.async.future.FastFuture;
-import com.aol.cyclops.react.stream.traits.BlockingStream;
+import com.aol.cyclops.internal.react.async.future.FastFuture;
+import com.aol.cyclops.types.futurestream.BlockingStream;
 
 /**
  * This class allows a Batch of completable futures to be processed before collecting their results, to increase

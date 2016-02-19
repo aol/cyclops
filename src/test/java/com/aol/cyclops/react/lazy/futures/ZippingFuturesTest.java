@@ -2,7 +2,7 @@
 package com.aol.cyclops.react.lazy.futures;
 
 
-import static com.aol.cyclops.react.stream.traits.LazyFutureStream.of;
+import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -21,7 +21,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class ZippingFuturesTest {
 	LazyFutureStream<Integer> empty;

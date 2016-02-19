@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 
 
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.react.stream.traits.LazyFutureStream;
-import com.aol.cyclops.react.stream.traits.future.operators.LazyFutureStreamUtils;
+import com.aol.cyclops.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.reactive.ReactiveTask;
 
 public class LazyFutureStreamFutureOpterationsImpl<T> extends BaseFutureOperationsImpl<T>{
