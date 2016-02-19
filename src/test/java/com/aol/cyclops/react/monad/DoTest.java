@@ -76,11 +76,11 @@ public class DoTest {
 	}
 	@Test
 	public void doTestSimpleOptionalEmptyStream(){
-		Optional<List<Integer>> result = Do.add(lookup("1"))
+		Optional<SimpleReactStream<Integer>> result = Do.add(lookup("1"))
 												.add(anyM(BaseSimpleReactStream.<Integer>of()))
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
-		assertThat(result.get().size(),equalTo(0));
+		assertThat(result.get().block().size(),equalTo(0));
 	}
 	
 	private Optional<Integer> lookup(String key){

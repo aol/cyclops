@@ -2,7 +2,7 @@
 
 == Working with Lambdas
 
-Cyclops provides a number of classes that makes working with Java 8 lambda expressions a little easier, they are listed below.
+cyclops-react provides a number of classes that makes working with Java 8 lambda expressions a little easier, they are listed below.
 
 
 .Lambda Helper Classes
@@ -20,11 +20,11 @@ Cyclops provides a number of classes that makes working with Java 8 lambda expre
 
 === FluentFunctions
 
-Since cyclops 7.3.0
+Since cyclops-react 7.3.0
 
 ==== Overview
 
-Cyclops provides a wide array of static utilities for manipulating functions & method references and FluentFunctions brings it together in a nice easy to use API. 
+cyclops-react provides a wide array of static utilities for manipulating functions & method references and FluentFunctions brings it together in a nice easy to use API. 
 
 ==== Features include
 
@@ -77,7 +77,7 @@ And the output will look something like this (thanks to the println operator).
 ----
 (fluent-function-Parameter[hello])
 java.io.IOException
-    at com.aol.cyclops.functions.fluent.FunctionsTest.exceptionalFirstTime(FunctionsTest.java:95)
+    at com.aol.cyclops-react.functions.fluent.FunctionsTest.exceptionalFirstTime(FunctionsTest.java:95)
    ...
 (fluent-function-Parameter[hello])
 (fluent-function-Result[hello world])
@@ -274,7 +274,7 @@ And our output looks like this (we add two to the input of ten).
 
 ====== Pattern Matching
 
-We can also use cyclops Pattern Matching to implement conditional logic after function execution.
+We can also use cyclops-react Pattern Matching to implement conditional logic after function execution.
 
 .Pattern Matching example
 ====
@@ -319,7 +319,7 @@ FluentFunctions.of(this::gen)
                .forEach(System.out::println);
 ----
 
-In the example above the call to generate results in a SequenceM, a powerful JDK 8 Stream extension that forms part of cyclops. We use the onePer operator to limit the number of emissions by this Stream to one per second.
+In the example above the call to generate results in a SequenceM, a powerful JDK 8 Stream extension that forms part of cyclops-react. We use the onePer operator to limit the number of emissions by this Stream to one per second.
 
 The output from our Stream will look something like this.
 [source,java]
@@ -400,25 +400,25 @@ FluentFunctions.of(this::addOne)
 ==== Overview
 
 Java lambda expressions can access local variables, but the Java
-compiler will enforce an *effectively final* rule. cyclops-closures
-makes capturing variables in a mutable form a little simpler. http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/Mutable.html[Mutable]
+compiler will enforce an *effectively final* rule. cyclops-react-closures
+makes capturing variables in a mutable form a little simpler. http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/Mutable.html[Mutable]
 provides a wrapper over a mutable variable, it implements
-http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/Convertable.html[Convertable]
+http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/Convertable.html[Convertable]
 which allows the value to be converted into various forms (such as a
 thread-safe AtomicReference, Optional, Stream, CompletableFuture etc).
 
 
 ==== Available Mutable classes 
 
-* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/Mutable.html[Mutable]
-* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableInt.html[MutableInt]
-* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableDouble.html[MutableDouble]
-* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableLong.html[MutableLong]
-* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableFloat.html[MutableFloat]
-* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableShort.html[MutableShort]
-* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableByte.html[MutableByte]
-* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableChar.html[MutableChar]
-* http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/mutable/MutableBoolean.html[MutableBoolean]
+* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/Mutable.html[Mutable]
+* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableInt.html[MutableInt]
+* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableDouble.html[MutableDouble]
+* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableLong.html[MutableLong]
+* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableFloat.html[MutableFloat]
+* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableShort.html[MutableShort]
+* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableByte.html[MutableByte]
+* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableChar.html[MutableChar]
+* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableBoolean.html[MutableBoolean]
 
 ==== Mutable local variables
 
@@ -506,9 +506,9 @@ ext.set("hello");
 ----
 
 ====
-==== Usages of mutable in Cyclops
+==== Usages of mutable in cyclops-react
 
-Mutable is used inside Cyclops for-comprehensions simplify the handling of an immutable (persisent) datastructure that needs to be mutated.
+Mutable is used inside cyclops-react for-comprehensions simplify the handling of an immutable (persisent) datastructure that needs to be mutated.
 
 .Mutable is used to store the current variables in a for-comprehension
 ====
@@ -527,10 +527,10 @@ build(ComprehensionData c, Function f) {
 === LazyImmutable
 
 
-A set-once wrapper over an AtomicReference. Unlike the MutableXXX classes LazyImmutable is designed for sharing across threads where the first thread to attempt can write to the reference, and subsequent threads can read only. http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/immutable/LazyImmutable.html[LazyMutable]
+A set-once wrapper over an AtomicReference. Unlike the MutableXXX classes LazyImmutable is designed for sharing across threads where the first thread to attempt can write to the reference, and subsequent threads can read only. http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/immutable/LazyImmutable.html[LazyMutable]
 provides a thread-safe wrapper over a variable that can be set once, it
 implements
-http://static.javadoc.io/com.aol.cyclops/cyclops-closures/7.1.0/com/aol/cyclops/closures/Convertable.html[Convertable]
+http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/Convertable.html[Convertable]
 which allows the value to be converted into various forms (such as a
 thread-safe AtomicReference, Optional, Stream, CompletableFuture etc).
 
@@ -542,7 +542,7 @@ attempts are ignored.
 
 ==== Usage
 
-We use LazyImmutable inside of cyclops itself to implement Memoization (lambda caching) support. We do this by taking advantage of lazy evaluation support inside LazyImutable. The example below shows how it is used.
+We use LazyImmutable inside of cyclops-react itself to implement Memoization (lambda caching) support. We do this by taking advantage of lazy evaluation support inside LazyImutable. The example below shows how it is used.
 
 
 .Create a memoizing (caching) Supplier that can be shared across threads.
@@ -641,7 +641,7 @@ Stream.generate(()->nextTask())
 
 ==== Overview
 
-With Cyclops ExceptionSoftener, there is no need to declare CheckedExceptions, or even to wrap them inside RuntimeException. The ExceptionSoftener converts CheckedExceptions into UncheckedExceptions _without_ changing the Exception type. That is, your
+With cyclops-react ExceptionSoftener, there is no need to declare CheckedExceptions, or even to wrap them inside RuntimeException. The ExceptionSoftener converts CheckedExceptions into UncheckedExceptions _without_ changing the Exception type. That is, your
 function or method can still throw IOException, it just no longer needs
 to declare it.
 
@@ -747,9 +747,9 @@ private String get() throws IOException{
 ```
 ==== 
 
-ExceptionSoftener is used extensively within Cyclops and simple-react. 
+ExceptionSoftener is used extensively within cyclops-react and simple-react. 
 
-.Soften in a retry Function from Cyclops
+.Soften in a retry Function from cyclops-react
 ==== 
 
 This example comes from cycops-streams, by using SoftenRunnable we can use Thread.sleep without having to declare a throws / try & catch block for InteruptedException. Any exception caught from catching the users supplied function can also be thrown upwards.
@@ -777,7 +777,7 @@ Function<T,R> retry = t-> {
 ==== 
 === Memoization
 
-Memoisation allows us to transparently cache the result of function calls. With https://github.com/aol/cyclops[Cyclops] we can memoise any JDK 8 Function via http://www.javadoc.io/doc/com.aol.cyclops/cyclops-functions/5.0.0[Memoise.memoiseFunction] (and by extension -- via method references, we can also memoise most Java methods too!). For example
+Memoisation allows us to transparently cache the result of function calls. With https://github.com/aol/cyclops-react[cyclops-react] we can memoise any JDK 8 Function via http://www.javadoc.io/doc/com.aol.cyclops-react/cyclops-react-functions/5.0.0[Memoise.memoiseFunction] (and by extension -- via method references, we can also memoise most Java methods too!). For example
 
 .Memoize a simple addition function
 ==== 
@@ -819,11 +819,11 @@ assertThat(s.apply(1),equalTo(3));
 #### Memoizing method calls
 
 
-com.aol.cyclops.functions.Memoize contains a number of methods for memoising JDK 8 Functional interfaces. Supplier, Callable, Function, BiFunction and Predicates. Cyclops Memoize class makes it simple to cache the result of method
+com.aol.cyclops-react.functions.Memoize contains a number of methods for memoising JDK 8 Functional interfaces. Supplier, Callable, Function, BiFunction and Predicates. cyclops-react Memoize class makes it simple to cache the result of method
 calls.
 
 See also
-https://github.com/aol/cyclops/wiki/Memoisation,-Currying,-Uncurrying-and-Type-Inferencing[Memoisation,-Currying,-Uncurrying-and-Type-Inferencing]
+https://github.com/aol/cyclops-react/wiki/Memoisation,-Currying,-Uncurrying-and-Type-Inferencing[Memoisation,-Currying,-Uncurrying-and-Type-Inferencing]
 
 .Memoize a method with four parameters
 ==== 
@@ -876,7 +876,7 @@ Always check IDE Compatibility with any Lombok operators you use. Lombok is an a
 ====
 .Memoize a supplier
 ==== 
-Cyclops supports Memoization for a large range of Java Functional Interfaces, in this example we memoize a supplier.
+cyclops-react supports Memoization for a large range of Java Functional Interfaces, in this example we memoize a supplier.
 ```java
 Supplier<Integer> s = memoiseSupplier(()->++called);
 assertThat(s.get(),equalTo(1));
@@ -885,7 +885,7 @@ assertThat(s.get(),equalTo(1));
 ==== 
 #### Memoization in Microserver
 
-https://github.com/aol/micro-server[Microserver] uses Cyclops memoization to ensure that plugins are only ever loaded once.
+https://github.com/aol/micro-server[Microserver] uses cyclops-react memoization to ensure that plugins are only ever loaded once.
 
 .Ensure plugins are loaded once in Microserver
 ==== 
@@ -905,16 +905,16 @@ public class PluginLoader {
 ----
 ==== 
 
-#### Referential Transparency & Cyclops Memoization
+#### Referential Transparency & cyclops-react Memoization
 
 [NOTE]
 ====
 Referential Transparency is an academic term that means that for any given input a function will always return the same output - in any context, and will not affect state outside of the function. In other words a call to the function can be replaced with the value it returns.
 ====
 
-Cyclops offers two forms of Memoization, one of which is suitable for referentially transparent (or pure) functions, and the other which may be appropriate with impure functions (those for which a given input may not always map to the same output).
+cyclops-react offers two forms of Memoization, one of which is suitable for referentially transparent (or pure) functions, and the other which may be appropriate with impure functions (those for which a given input may not always map to the same output).
 
-To support that later, impure type of function, cyclops supports Memoization with pluggable caches. Java is not a functionally pure language and we feel supporting this type of caching is useful for Java developers.
+To support that later, impure type of function, cyclops-react supports Memoization with pluggable caches. Java is not a functionally pure language and we feel supporting this type of caching is useful for Java developers.
  
 
 
@@ -922,7 +922,7 @@ To support that later, impure type of function, cyclops supports Memoization wit
 
 By default a Memoized lambda or method reference will cache the return value inside the instance until it is cleared by the garbage collector. 
 
-https://github.com/aol/simple-react[simple-react] supports auto-memoization of functions within a Stream, and this is implemented via cyclops-memoization.
+https://github.com/aol/simple-react[simple-react] supports auto-memoization of functions within a Stream, and this is implemented via cyclops-react-memoization.
 
 .Configure auto-memoization in simple-react with a ConurrentHashMap
 ==== 
@@ -1032,11 +1032,11 @@ a -> b -> c -> b + a + c;
 
 Where the arrow syntax is simply the lambda expression arrow. Here we are defining a lambda, that accepts an Integer and returns another lambda (that in turn accepts and returns a String).
 
-The Cyclops Lambda class can help with creating curried functions (although types still have to be specified).
+The cyclops-react Lambda class can help with creating curried functions (although types still have to be specified).
 
 ===== Using Currying to show nesting
 
-Another place in Cyclops where Currying shows up, is inside For Comprehensions -- where the Curried syntax is chosen specifically to show nesting levels. E.g.
+Another place in cyclops-react where Currying shows up, is inside For Comprehensions -- where the Curried syntax is chosen specifically to show nesting levels. E.g.
 
 .Currying to show nesting
 ==== 
@@ -1049,16 +1049,16 @@ In this example we can show the levels of nesting via currying
 person -> car -> insurance -> { }
 ----
 
-TIP: Currying can be very useful in conjunction with Cyclops for-comprehensions and existing methods, use the appropriate Curry method to create a curried reference to fit the yield or filter opertors!
+TIP: Currying can be very useful in conjunction with cyclops-react for-comprehensions and existing methods, use the appropriate Curry method to create a curried reference to fit the yield or filter opertors!
 
 ==== 
 
-Cyclops can convert any function (with up to 8 inputs) or method reference into a chain of one method functions (Currying). This technique is a useful (and more safe) alternative to Closures. The Curried function can be created and values explicitly passed in rather than captured by the compiler (where-upon they may change).
+cyclops-react can convert any function (with up to 8 inputs) or method reference into a chain of one method functions (Currying). This technique is a useful (and more safe) alternative to Closures. The Curried function can be created and values explicitly passed in rather than captured by the compiler (where-upon they may change).
 
 .Currying method references
 ==== 
 ```java
-import static com.aol.cyclops.functions.Curry.*;
+import static com.aol.cyclops-react.functions.Curry.*;
 
 curry2(this::mult).apply(3).apply(2);
 //6
@@ -1097,8 +1097,8 @@ CurryConsumer.curry4( (Integer a, Integer b, Integer c,Integer d) -> value = a+b
 
 Uncurrying is the process of converting a chain of single-parameter functions into a single multi-parameter function (i.e. it is the reverse of Currying).
 
-com.aol.cyclops.functions.Uncurry has methods to uncurry nested curried Functions of up to 8 levels deep.
-com.aol.cyclops.functions.UncurryConsumer does the same thing for curried Consumers up to 5 levels deep. 
+com.aol.cyclops-react.functions.Uncurry has methods to uncurry nested curried Functions of up to 8 levels deep.
+com.aol.cyclops-react.functions.UncurryConsumer does the same thing for curried Consumers up to 5 levels deep. 
 
 
 
@@ -1123,7 +1123,7 @@ Uncurry.uncurry4((Integer a)->(Integer b)->(Integer c)->(Integer d)->a+b+c+d)
 
 
 
-com.aol.cyclops.functions.CurryConsumer provides methods to curry Consumers of up to 8 parameters.
+com.aol.cyclops-react.functions.CurryConsumer provides methods to curry Consumers of up to 8 parameters.
 
 .Example Uncurrying a consumer to a consumer that takes 4 parameters
 ====
@@ -1165,7 +1165,7 @@ assertThat(concatStrings.apply(“!!!”), equalTo(“Hello World!!!”));
 ====
 
 === Type inferencing
-The class com.aol.cyclops.lambda.utils.Lambda provides static helper methods for defining curried Lambda expressions of up to 8 nested Functions. 
+The class com.aol.cyclops-react.lambda.utils.Lambda provides static helper methods for defining curried Lambda expressions of up to 8 nested Functions. 
 
 [TIP]
 ====
@@ -1175,7 +1175,7 @@ This is useful for creating anonymous functions where Java's type inferencing wo
 .Anonymous function example
 ====
 ```java
-import static com.aol.cyclops.functions.Lambda.*;
+import static com.aol.cyclops-react.functions.Lambda.*;
 
 Mutable myInt = Mutable.of(0);
 
