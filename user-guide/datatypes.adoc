@@ -1,0 +1,19 @@
+# Data types in cyclops-react
+
+1. Eval : Eval represents a compuations, and can either be immediate (Eval.now), deffered (Eval.always), or deffered and cached (Eval.later).
+1. Maybe : Maybe is a more powerful version of Optional, most operations except for filter and flatMap are lazy.
+1. Xor : eXclusive Or can hold one of two values, by default we bias it to one particular type (it will behave similarly to a Maybe of that type), but we can swap the primary (active) and secondary (hidden) types. Xor can be used to accumulate validation failures via Xor.sequence or Xor.ap
+1. Validator is an active lazy Validator that can be used to validate input and produce either Validation results and / or sequencable Xors
+1. Ior : an Inclusive Or can either hold one of two values or both. They can be sequenced in a similar manner to Xors.
+1. Matchable : is a type that supports recursive structural pattern matching and pattern matching via guards
+1. Try : offers Java friendly functional exceptional handling
+1. FutureW : wraps CompletableFuture to provide a more powerful extended API
+1. Trampoline : is a simple implementation of the 'Trampoline' pattern which converts recusrive method calls to iterative ones
+1. Reader : Reader is a lazy execution pattern for dependency injection
+1. Do : Do is a builder for advanced for-comprehensions over JDK and cyclops types
+1. FeatureToggle : is a type that allows features to be enabled or disabled (for CI/CD pipelines in a simple modern, more functional manner)
+1. FluentFunctions : is a class for manipulating method references and functions
+1. AnyM is a wrapper for Any Monad type (i.e. Stream, Optional, CompletableFuture and many of the types here - Eval, Maybe, Reader, Xor, Ior, Try, FutureW), to subclasses AnyMSeq and AnyMValue are provided
+1. ReactiveSeq is an extension to jOOλ Seq that implements the reactive-streams api adds in asyncrhonous and lazy stream execution
+1. SimpleReact : is a builder for SimpleReact FutureStreams
+1. LazyReact : is a builder for more advanced LazyFutureStreams

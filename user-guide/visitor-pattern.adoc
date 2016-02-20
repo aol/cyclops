@@ -1,0 +1,59 @@
+# The Visitor Pattern in cyclops-react
+
+All cyclops-react data-types have a visit method that implements the visitor pattern for that type. This allows users to deconstruct and visit the contents of an Object. It's a rough equivalent of many types of structural pattern matching in Scala.
+
+.scala to Java example
+====
+We can convert the Scala pattern matching example below into concise simple Java using cyclops-react and the visitor pattern
+
+[source,scala]
+----
+def listToString(list: List[String]): String = list match {
+    case s :: rest => s + " " + listToString(rest)
+    case Nil => ""
+}
+----
+
+[source,java]
+----
+
+public String listToString(ListX<String> list) {
+    return list.visit((s,rest)-> s.visit(x->x+" "+listToString(rest)),""));
+}
+
+----
+====
+
+# The Visitor Pattern for POJOs
+
+The Matchable interface allows users to implement the visitor pattern for POJOs with one line of code
+
+.visitor pattern for POJOs
+====
+[source,java]
+----
+String v =new Address(10,"my street","my city")
+                .match()
+                .on$12_()
+                .visit((house,street)-> validateHouse(house) + ":"+validateStreet(street));
+----
+
+The on$ method allows to visit only those fields (in a 1-based index order) that we are interested in.
+
+We do this by adding the following line to address (we could also implement this as a static method).
+
+
+[source,java]
+----
+@AllArgsConstructor
+public class Address{
+	int house;
+	String street;
+	String city;
+		
+    public MTuple3<Integer,String,String> match(){
+		return Matchable.from(()->house,()->street,()->city);
+	}
+}
+----	
+====

@@ -8,6 +8,8 @@ import static com.aol.cyclops.util.function.Predicates.__;
 import static com.aol.cyclops.util.function.Predicates.decons;
 import static com.aol.cyclops.util.function.Predicates.eq;
 import static com.aol.cyclops.util.function.Predicates.has;
+import static com.aol.cyclops.util.function.Predicates.in;
+import static com.aol.cyclops.util.function.Predicates.not;
 import static com.aol.cyclops.util.function.Predicates.type;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,6 +22,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;
@@ -243,8 +246,7 @@ public class MatchableTest {
 	}
 	@Test 
 	public void optionalMatch(){
-		Eval<Integer> result2 = Matchable.of(Optional.of(1)).matches(c->c.is(when(Predicates.not(Predicates.in(2,3,4)),Predicates.in(4,5,6)),then(3)),otherwise(2));
-		
+		Eval<Integer> result2 = Matchable.of(Optional.of(1)).matches(c->c.is(when(not(in(2,3,4)),in(4,5,6)),then(3)),otherwise(2));
 		assertThat(result2,equalTo(Eval.now(2)));
 	}
 	@Test 

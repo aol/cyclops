@@ -1,0 +1,214 @@
+# Pattern Matching
+
+cyclops-react supports both structural pattern matching and pattern matching via guards.
+
+The entry point into pattern matching is the Matchable interface, you can either have your classes implement this interface, or coerce them to Matchable by Matchable.of(myObject);
+
+
+# is / has
+
+cyclops-react pattern matching uses the is /has methods to denote individual cases.
+
+* is : indicates exact matching
+* has : indicates that the supplied values must be present in order
+
+* is(when(1,2,3),then("match")) : must have values 1,2,3 only in that order
+* has(when(1,2,3),then("match")) : must have values 1,2,3 in that order, but may also have additional values
+
+# when / then / otherwise syntax 
+
+.when / then / otherwise example
+====
+We can provide either Predicates / Hamcrest Matchers or values in a type safe manner using Matchable and the cyclops-react when / then / otherwise syntax
+
+[source,java]
+----
+import static com.aol.cyclops.control.Matchable.otherwise;
+import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
+
+String m = Matchable.of(Optional.of(3))
+                    .matches(     
+                         c->c.is(when(3),then("three")),otherwise("not three")
+                        )
+         
+
+Maybe.of(3)
+	 .matches(
+			   o-> o.isEmpty(then("hello"))
+		            .is(when(1),then("2"))
+		            .is(when(2),then("3"))
+		            .is(when(3), then(4)),otherwise("boo!")
+			 )
+//Eval.now("4")
+
+----
+====
+
+# Compositional Predicates
+
+Predicates for matching can be composed, in a manner similar to Hamcrest Matchers which are also supported.
+
+.composing matches with Predicates
+====
+[source,java]
+----
+
+import static com.aol.cyclops.util.function.Predicates.in;
+import static com.aol.cyclops.util.function.Predicates.not;
+
+Matchable.of(Optional.of(1))
+         .matches(c->c.is(when(not(in(2,3,4)),in(4,5,6)),then(3)),otherwise(2));
+
+//Eval[2]
+
+----
+====
+Compositional Predicates can also be used to filter data within a Stream
+
+.composing Stream filters
+====
+[source,java]
+----
+
+Stream.of(1,2,3).filter(not(in(2,3,4)))
+
+//Stream[1]
+----
+====
+
+# Composition via Matchers
+
+We can write nearly identical code with Hamcrest Matchers.
+
+.composing matches with Predicates
+====
+[source,java]
+----
+ Matchable.of(Optional.of(1))
+          .matches(c->
+                 c.is(when(Matchers.not(Matchers.isOneOf(2,3,4)),Matchers.isOneOf(4,5,6)),
+                      then(3)),
+                      otherwise(2));
+
+//Eval[2]
+----
+====
+
+# Recursive matching of datatypes
+
+cyclops-react supports recursive matching both structurally and via guards.
+
+## Guard based Recursive Matching
+
+We can deconstruct any Java object via guards, the Predicates.type method allows a Java Object to be deconstructed if it matches the supplied type.
+
+.recursive matching via guards
+====
+[source,java]
+----
+import static com.aol.cyclops.util.function.Predicates.__;
+import static com.aol.cyclops.util.function.Predicates.type;
+
+Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null)))
+			.matches(c->c.is(whenGuard(1,__,type(NestedCase.class).hasGuard(3,4,__)),then("2")),otherwise("-1"));
+                                
+                                
+----
+
+
+In this example NestedCase need only be a simple Java POJO
+
+[source,java]
+----
+@Value
+static class NestedCase implements MatchSelf<MyCase>, Decomposable{
+	int a;
+	int b;
+	NestedCase c;
+}
+----
+====
+
+## Structural Recursive Matching
+
+Predicates.decons allows structural recursive matching
+
+.recursive structural matching
+====
+[source,java]
+----
+new Customer("test",new Address(10,"hello","my city"))
+                        .match()
+                        .on$_2()
+                        .matches(c->c.is(when(decons(when(10,"hello","my city"))),then("hello")), 
+                                    otherwise("miss")).get();
+                                
+                                
+----
+
+In this example we should provide a match() method for Customer and Address, this method can be a simple one liner, implemented either as a static method or as an instance method.
+
+[source,java]
+----
+
+@AllArgsConstructor
+static class Customer{
+	String name;
+	Address address;
+	public MTuple2<String,MTuple3<Integer,String,String>> match(){
+		return Matchable.from(()->name,()->Maybe.ofNullable(address).map(a->a.match()).orElseGet(()->null));
+	}
+}
+@AllArgsConstructor
+static class Address{
+	int house;
+	String street;
+	String city;
+		
+	public MTuple3<Integer,String,String> match(){
+		return Matchable.from(()->house,()->street,()->city);
+	}
+}
+----
+
+====
+
+
+
+
+# Structural Matching on JDK classes
+
+The Matchables class provides a range of handy static methods for strutucal pattern matching onJDK classes
+
+.pattern matching on a URL
+====
+[source,java]
+----
+Matchables.url(new URL("http://www.aol.com/path?q=hello"))
+          .on$12_45()
+          .matches(c->c.is(when(eq("http"),in("www.aol.com","aol.com"),any(),not(eq("q=hello!"))), then("correct")),otherwise("miss"));
+       
+//Eval.now("correct")
+----
+====
+
+.pattern matching on the contents of a URL
+====
+[source,java]
+----
+
+URL url =  ReactiveSeq.of("input.file")
+	                       .map(getClass().getClassLoader()::getResource)
+	                       .single();
+String result = null;	   
+try(MatchableIterable<String> it = Matchables.lines(url)){
+
+	     result = it.on$12___()
+	                .matches(c->c.is(when("hello","world2"),then("incorrect"))
+	                              .is(when("hello","world"),then("correct")), otherwise("miss"))        
+} 
+//"correct"
+----
+====
+====
