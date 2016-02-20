@@ -230,8 +230,8 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>, Filterable<T
 		
 	}
 	public static class Always<T> implements Eval<T>{
-		private final Function<?,? extends T> s;
-		Always(Function <?,? extends T> s){
+		private final Function<Object,? extends T> s;
+		Always(Function <Object,? extends T> s){
 			this.s = s;
 		}
 		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){

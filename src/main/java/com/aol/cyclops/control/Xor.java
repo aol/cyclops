@@ -1,7 +1,5 @@
 package com.aol.cyclops.control;
 
-import static org.junit.Assert.assertThat;
-
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -11,7 +9,6 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;

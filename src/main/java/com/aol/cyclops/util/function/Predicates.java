@@ -110,7 +110,7 @@ public class Predicates {
         return new PredicateBuilder1<T1>(when);
     }	
     @NoArgsConstructor
-    public static class PredicateBuilder2<T1,T2> implements Predicate<Matchable.MatchableTuple2<?,T1,T2>>{
+    public static class PredicateBuilder2<T1,T2> implements Predicate<Matchable.MatchableTuple2<Object,T1,T2>>{
         Predicate predicate;
         public PredicateBuilder2(MTuple2<Predicate<? super T1>,Predicate<? super T2>> when) {   
             predicate = new ADTPredicateBuilder<>(Matchable.MatchableTuple2.class).isGuard(when.v1(),when.v2());
@@ -118,7 +118,7 @@ public class Predicates {
         }
 
         @Override
-        public boolean test(MatchableTuple2<?,T1,T2> t) {
+        public boolean test(MatchableTuple2<Object,T1,T2> t) {
           return predicate.test(t);
         }
     }
@@ -127,7 +127,7 @@ public class Predicates {
         return new PredicateBuilder2<T1,T2>(when);
     }
     @NoArgsConstructor
-    public static class PredicateBuilder3<T1,T2,T3> implements Predicate<Matchable.MatchableTuple3<?,T1,T2,T3>>{
+    public static class PredicateBuilder3<T1,T2,T3> implements Predicate<Matchable.MatchableTuple3<Object,T1,T2,T3>>{
         Predicate predicate;
         public PredicateBuilder3(MTuple3<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>> when) {   
             predicate = new ADTPredicateBuilder<>(Matchable.MatchableTuple3.class).isGuard(when.v1(),when.v2(),when.v3());
@@ -135,7 +135,7 @@ public class Predicates {
         }
 
         @Override
-        public boolean test(MatchableTuple3<?,T1,T2,T3> t) {
+        public boolean test(MatchableTuple3<Object,T1,T2,T3> t) {
           return predicate.test(t);
         }
     }
@@ -144,7 +144,7 @@ public class Predicates {
         return new PredicateBuilder3<T1,T2,T3>(when);
     }
     @NoArgsConstructor
-    public static class PredicateBuilder4<T1,T2,T3,T4> implements Predicate<Matchable.MatchableTuple4<?,T1,T2,T3,T4>>{
+    public static class PredicateBuilder4<T1,T2,T3,T4> implements Predicate<Matchable.MatchableTuple4<Object,T1,T2,T3,T4>>{
         Predicate predicate;
         public PredicateBuilder4(MTuple4<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>> when) {   
             predicate = new ADTPredicateBuilder<>(Matchable.MatchableTuple4.class).isGuard(when.v1(),when.v2(),when.v3(),when.v4());
@@ -152,7 +152,7 @@ public class Predicates {
         }
 
         @Override
-        public boolean test(MatchableTuple4<?,T1,T2,T3,T4> t) {
+        public boolean test(MatchableTuple4<Object,T1,T2,T3,T4> t) {
           return predicate.test(t);
         }
     }
@@ -161,7 +161,7 @@ public class Predicates {
         return new PredicateBuilder4<T1,T2,T3,T4>(when);
     }
     @NoArgsConstructor
-    public static class PredicateBuilder5<T1,T2,T3,T4,T5> implements Predicate<Matchable.MatchableTuple5<?,T1,T2,T3,T4,T5>>{
+    public static class PredicateBuilder5<T1,T2,T3,T4,T5> implements Predicate<Matchable.MatchableTuple5<Object,T1,T2,T3,T4,T5>>{
         Predicate predicate;
         public PredicateBuilder5(MTuple5<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>,Predicate<? super T5>> when) {   
             predicate = new ADTPredicateBuilder<>(Matchable.MatchableTuple5.class).isGuard(when.v1(),when.v2(),when.v3(),when.v4());
@@ -169,7 +169,7 @@ public class Predicates {
         }
 
         @Override
-        public boolean test(MatchableTuple5<?,T1,T2,T3,T4,T5> t) {
+        public boolean test(MatchableTuple5<Object,T1,T2,T3,T4,T5> t) {
           return predicate.test(t);
         }
     }

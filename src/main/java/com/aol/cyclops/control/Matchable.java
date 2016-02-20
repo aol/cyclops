@@ -526,7 +526,8 @@ public interface Matchable<TYPE>{
             System.out.println(getMatchable());
             return this;
         }
-		default int compareTo(MatchableTuple2<?,T1, T2> other) {
+		
+		default int compareTo(MatchableTuple2<Object,T1, T2> other) {
 			return getMatchable().compareTo(other.getMatchable());
 		}
 		
@@ -597,7 +598,7 @@ public interface Matchable<TYPE>{
             System.out.println(getMatchable());
             return this;
         }
-		default int compareTo(MatchableTuple3<?,T1, T2,T3> other) {
+		default int compareTo(MatchableTuple3<Object,T1, T2,T3> other) {
 			
 			return getMatchable().compareTo(other.getMatchable());
 		}
@@ -687,7 +688,7 @@ public interface Matchable<TYPE>{
             System.out.println(getMatchable());
             return this;
         }
-		default int compareTo(MatchableTuple4<?,T1, T2,T3,T4> other) {
+		default int compareTo(MatchableTuple4<Object,T1, T2,T3,T4> other) {
 			return getMatchable().compareTo(other.getMatchable());
 		}
 		
@@ -818,7 +819,7 @@ public interface Matchable<TYPE>{
 		    System.out.println(getMatchable());
 		    return this;
 		}
-		default int compareTo(MatchableTuple5<?,T1, T2,T3,T4,T5> other) {
+		default int compareTo(MatchableTuple5<Object,T1, T2,T3,T4,T5> other) {
 			
 			return getMatchable().compareTo(other.getMatchable());
 		}
