@@ -26,6 +26,7 @@ import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.function.Cacheable;
 import com.aol.cyclops.util.function.Curry;
+import com.aol.cyclops.util.function.CurryVariance;
 import com.aol.cyclops.util.function.Memoize;
 import com.aol.cyclops.util.function.PartialApplicator;
 import com.aol.cyclops.util.function.QuadConsumer;
@@ -633,7 +634,7 @@ public class FluentFunctions {
 			return new FluentSupplier<>(PartialApplicator.partial2(param1,param2,fn));
 		}
 		public FluentFunction<T1,Function<T2,R>> curry(){
-			return new FluentFunction<>(Curry.curry2(fn));
+			return new FluentFunction(CurryVariance.curry2(fn));
 		}
 		public FluentBiFunction<T1,T2,R> memoize(){
 			return withFn(Memoize.memoizeBiFunction(fn));
