@@ -28,7 +28,7 @@ apply plugin: 'jacoco'
 apply from: custom('jacoco-version')
 
 sourceCompatibility = 1.8
-version = '0.99.7.1'
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'simple-react', 'Implementation-Version': version
@@ -54,8 +54,8 @@ dependencies {
    
 	
 	
-	compile 'com.nurkiewicz.asyncretry:asyncretry:0.0.7'
-	compile 'org.pcollections:pcollections:2.1.2'
+	compile 'com.nurkiewicz.asyncretry:asyncretry:'+asyncRetryVersion
+	compile 'org.pcollections:pcollections:'+pCollectionsVersion
 	compile "org.jooq:jool:${joolVersion}"
 	compile 'uk.co.real-logic:Agrona:'+agronaVersion
 	compile 'org.reactivestreams:reactive-streams:'+reactiveStreamsVersion
@@ -91,12 +91,12 @@ test {
 modifyPom {
 	project {
 		name 'simple-react'
-		description 'Simple Fluent Api for Functional Reactive Programming with Java 8'
+		description 'Platform for Functional Reactive Programming with Java 8'
 		url 'https://github.com/aol/simple-react'
 		inceptionYear '2015'
 
 		groupId 'com.aol.simplereact'
-		artifactId 'simple-react'
+		artifactId 'cyclops-react'
 		version "$version"
 		
 		scm {
