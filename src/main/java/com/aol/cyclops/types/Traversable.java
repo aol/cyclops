@@ -51,7 +51,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 			 .dropRight(5)
 			 .plus(10)
 			 .visit((x,xs) ->
-				 xs.join(x.when(some->some>2?"hello":"world",()->"NIL"))
+				 xs.join(x.>2?"hello":"world")),()->"NIL"
 			 );
 	 * 
 	 * }
@@ -63,11 +63,21 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * @param match
 	 * @return
 	 */
-	default <R> R visit(BiFunction<? super Maybe<T>,? super ReactiveSeq<T>,? extends R> match ){
+	default <R> R visit(BiFunction<? super T,? super ReactiveSeq<T>,? extends R> match, Supplier<? extends R> ifEmpty){
 		
 		HeadAndTail<T> ht = this.headAndTail();
-		return match.apply(ht.headMaybe(),ht.tail());
+		if(ht.isHeadPresent())
+		    return match.apply(ht.head(),ht.tail());
+		return ifEmpty.get();
+		
 	}
+	default <R> R visit(BiFunction<? super Maybe<T>,? super ReactiveSeq<T>,? extends R> match){
+        HeadAndTail<T> ht = this.headAndTail();
+       return match.apply(ht.headMaybe(),ht.tail());
+        
+    }
+	
+	
 	
 	
 	/**
