@@ -160,6 +160,7 @@ public interface Foldable<T> {
 	 * 		assertThat(result,equalTo(Arrays.asList(10,24)));
 	 * 
 	 * }
+	 * </pre>
 	 * 
 	 * @param reducers
 	 * @return
@@ -263,11 +264,7 @@ public interface Foldable<T> {
     default String join(String sep, String start, String end){
         return stream().join(sep,start,end);
     }
-    /**
-    default boolean xMatch(int num, Predicate<? super T> c){
-        return stream().xMatch(num, c);
-    }
-    **/
+    
     default void print(PrintStream str){
         stream().print(str);
     }

@@ -23,8 +23,8 @@ import lombok.experimental.Wither;
  * Interface for applicative-like behavior. Allows the application of functions within a wrapped context, support both 
  * abscence / error short-circuiting and error accumulation
  * 
- * <pre>{@code ap(BiFunction<T,T,T>)}</pre> and <pre>{@code ap(Semigroup<T>}</pre> for accumulation despite absence
- * ap<NUM> for absence short-circuiting
+ * <pre> {@code ap(BiFunction<T,T,T>)}</pre> and <pre>{@code ap(Semigroup<T>}</pre> for accumulation despite absence
+ * use ap1..5 for absence short-circuiting
  *
  * @param <T>
  */
@@ -62,7 +62,8 @@ public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
 	     * We can combine Applicative types together without unwrapping the values.
 	     * 
 	     * <pre>
-	     * Xor<String,String> fail1 = Xor.secondary("failed1");
+	     * {@code
+	     *   Xor<String,String> fail1 = Xor.secondary("failed1");
             
             fail1.swap().ap(Semigroups.stringConcat)
                         .ap(Xor.secondary("failed2").swap())
@@ -98,6 +99,7 @@ public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
 	 * 	}
 	 * 
 	 * }
+	 * </pre>
 	 * We can add two Applicative types together without unwrapping the values
 	 * 
 	 * <pre>
@@ -123,25 +125,6 @@ public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
 	default <T2,T3,T4,T5,R> Applicative4<T2,T3,T4,T5,R, ?> ap5( QuintFunction<? super T,? super T2,? super T3,? super T4,? super T5,? extends R> fn){
 		return  Applicatives.<T,R>applicatives(this,this).applicative5(fn);
 	}
-	/**
-	default <R> Functor<R> ap1( Applicative<T,R, ?> ap){
-		return ap.ap(this);
-	}
-	**/
 	
-	/**
-	default <T2,R> Applicative<T2,R, ?> ap2( Applicative2<T,T2,R, ?> ap2){
-		return ap2.ap(this);
-	}
-	default <T2,T3,R> Applicative2<T2,T3,R, ?> ap3( Applicative3<T,T2,T3,R, ?> ap3){
-		return ap3.ap(this);
-	}
-	default <T2,T3,T4,R> Applicative3<T2,T3,T4,R, ?> ap4( Applicative4<T,T2,T3,T4,R, ?> ap4){
-		return ap4.ap(this);
-	}
-	default <T2,T3,T4,T5,R> Applicative4<T2,T3,T4,T5,R, ?> ap4( Applicative5<T,T2,T3,T4,T5,R, ?> ap5){
-		return ap5.ap(this);
-	}
-	**/
 	
 }

@@ -16,7 +16,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
 	 * 
 	 * <pre>
-	 * @{code
+	 * {@code
 	 *     ReactiveTask next = ReactiveSeq.of(1,2,3,4)
 	 *                                  .futureOperations(exec)
 	 *          					    .forEachX(2,System.out::println)
@@ -49,7 +49,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
 	 * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
 	 * <pre>
-	 * @{code
+	 * {@code
 	 *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
 	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
@@ -77,7 +77,6 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * @param numberOfElements To consume from the Stream at this time
 	 * @param consumer To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
-	 * @param onComplete To run after an onComplete event
 	 * @return ReactiveTask so that further processing can be continued or cancelled.
 	 */
 	<X extends Throwable> ReactiveTask forEachXWithError(long numberOfElements,Consumer<? super T> consumer,Consumer<? super Throwable> consumerError);
@@ -87,7 +86,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * when the entire Stream has been processed an onComplete event will be recieved.
 	 * 
 	 * <pre>
-	 * @{code
+	 * {@code
 	 *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
 	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
@@ -122,7 +121,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	/**
 	 *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
 	 * <pre>
-	 * @{code
+	 * {@code
 	 *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
 	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
@@ -141,7 +140,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 *     
 	 * }
 	 * </pre>	 
-	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerElement To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
 	 * @return ReactiveTask so that further processing can be continued or cancelled.
 	 */
@@ -153,7 +152,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 * when the entire Stream has been processed an onComplete event will be recieved.
 	 * 
 	 * <pre>
-	 * @{code
+	 * {@code
 	 *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
 	 *                                  .futureOperations(exec)
 	 *                                  .map(Supplier::get)
@@ -172,7 +171,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
 	 *     
 	 * }
 	 * </pre>	
-	 * @param consumer To accept incoming elements from the Stream
+	 * @param consumerElement To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
 	 * @param onComplete To run after an onComplete event
 	 * @return ReactiveTask so that further processing can be continued or cancelled.

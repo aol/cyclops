@@ -252,7 +252,7 @@ public class Predicates {
         
     }
 
-	public static <T1> Predicate<? super T1> not(Predicate<? super T1> p){
+	public static <T1> Predicate<T1> not(Predicate<T1> p){
 		return p.negate();
 	}
 	

@@ -65,6 +65,7 @@ public interface Functor<T> {
 				 
 	  * completes successfully
 	  * }
+	  * </pre>
 	  * 
 	 * @param mapper
 	 * @return
@@ -88,8 +89,8 @@ public interface Functor<T> {
      * </pre>
      *
      *
-     * @param defaultValue Value if supplied case doesn't match
      * @param case1 Function to generate a case (or chain of cases as a single case)
+     * @param otherwise Value if supplied case doesn't match
      * @return CollectionX where elements are transformed by pattern matching
      */
     default <R> Functor<R> patternMatch(Function<CheckValues<T,R>,CheckValues<T,R>> case1,Supplier<? extends R> otherwise){

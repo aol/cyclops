@@ -37,6 +37,7 @@ import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 
@@ -420,6 +421,7 @@ public class MatchableTest {
 	}
 	
 	@Value
+	@EqualsAndHashCode(callSuper=false)
 	static class Child extends Parent{
 		int nextVal;
 		public Child(int val,int nextVal) { super(val); this.nextVal = nextVal;}

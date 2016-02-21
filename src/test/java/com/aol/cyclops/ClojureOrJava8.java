@@ -2,12 +2,12 @@ package com.aol.cyclops;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 import lombok.AllArgsConstructor;
