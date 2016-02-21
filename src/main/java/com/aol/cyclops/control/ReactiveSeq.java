@@ -1195,7 +1195,6 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * @return
 	 */
 	default <R> ReactiveSeq<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper){
-		
 		 return  map(in-> mapper.apply(in).result());
 	 }
 

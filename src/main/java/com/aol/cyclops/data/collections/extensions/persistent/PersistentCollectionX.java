@@ -62,7 +62,6 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		Iterator<T> it = iterator();
 		while(it.hasNext()){
 			T next = it.next();
-		//	System.out.println(next);
 			mapped = mapped.plusInOrder(mapper.apply(next));
 		}
 		return unit(mapped);
