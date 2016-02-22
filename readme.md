@@ -40,7 +40,7 @@ Used in Aol to build robust, performant & scalable asynchronous systems : featur
 
 # Documentation
 
-* [user-guide : work in progress](https://github.com/aol/simple-react/user-guide)
+* [user-guide : work in progress](https://github.com/aol/cyclops-react/tree/master/user-guide)
 * [simple-react wiki](https://github.com/aol/simple-react/wiki)
 * [cyclops wiki](https://github.com/aol/cyclops/wiki)
 * [javadoc](http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/)
