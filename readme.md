@@ -20,7 +20,7 @@ compile 'com.aol.simplereact:cyclops-react:x.y.z'
     <artifactId>cyclops-react</artifactId>
     <version>x.y.z</version>
 </dependency>
-
+```
 # Features
 
 Used in Aol to build robust, performant & scaleable asynchronous systems features include
