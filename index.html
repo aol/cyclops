@@ -1,213 +1,133 @@
 <!doctype html>
-<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
-<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>cyclops-react by aol</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
-  <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="javascripts/script.js"></script>
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/aol/cyclops-react">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/aol/cyclops-react/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/aol/cyclops-react/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
 
-  <title>simple-react</title>
-  <meta name="description" content="Advanced asynchronous Streams &amp; Data Structures for Java 8">
+    <div class="wrapper">
 
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
-</head>
-
-<body>
-
-  <div class="wrapper">
-    <header>
-      <h1 class="title">simple-react</h1>
-    </header>
-    <div id="container">
-      <p class="tagline">Advanced asynchronous Streams &amp; Data Structures for Java 8</p>
-      <div id="main" role="main">
-        <div class="download-bar">
-        <div class="inner">
-          <a href="https://github.com/aol/simple-react/tarball/master" class="download-button tar"><span>Download</span></a>
-          <a href="https://github.com/aol/simple-react/zipball/master" class="download-button zip"><span>Download</span></a>
-          <a href="https://github.com/aol/simple-react" class="code">View simple-react on GitHub</a>
+      <section>
+        <div id="title">
+          <h1>cyclops-react</h1>
+          <p>Async Future &amp; Functional based programming via JDK extensions for Java 8.</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/aol">aol</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
         </div>
-        <span class="blc"></span><span class="trc"></span>
-        </div>
-        <article class="markdown-body">
-          <h1>
-<a id="simplereact--powerful-future-streams--async-data-structures-for-java-8" class="anchor" href="#simplereact--powerful-future-streams--async-data-structures-for-java-8" aria-hidden="true"><span class="octicon octicon-link"></span></a>SimpleReact : Powerful Future Streams &amp; Async Data Structures for Java 8</h1>
 
-<p>SimpleReact is a Java 8 concurrent Streaming library. We provide three Stream types, and three asynchronous data structures.</p>
+        <p><img width="820" alt="screen shot 2016-02-22 at 8 44 42 pm" src="https://cloud.githubusercontent.com/assets/9964792/13232030/306b0d50-d9a5-11e5-9706-d44d7731790d.png"></p>
 
-<h2>
-<a id="streams" class="anchor" href="#streams" aria-hidden="true"><span class="octicon octicon-link"></span></a>Streams</h2>
+<p>Future &amp; functional based programming via JDK compatible extensions for Java 8 and above.</p>
 
-<pre><code>  List&lt;String&gt; results = LazyFutureStream.sequentialBuilder()
-                      .react(()-&gt;”new event1",()-&gt;”new event2")
-                      .retry(this::unreliable)
-                      .onFail(e-&gt;”default”)
-                      .peek(System.out::println)
-                      .capture(Throwable::printStackTrace)
-                      .block();
-</code></pre>
+<h1>
+<a id="getting-cyclops-react" class="anchor" href="#getting-cyclops-react" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting cyclops-react</h1>
 
 <ul>
-<li><p><a href="https://github.com/aol/simple-react/wiki/LazyFutureStream">LazyFutureStream</a> : Provides a Lazy JDK 8 Stream of CompletableFutures (and Seq, and SimpleReact API methods). Can be used for constant proccessing (e.g. of data coming in off a SimpleReact asynchronous queue), automatically manages the number of active CompletableFuture chains.</p></li>
-<li><p>SimpleReactStream : this provides <a href="https://github.com/aol/simple-react#simplereactstream--a-simple-fluent-api-for-functional-reactive-programming-with-java-8">a simple, focused API for Streaming Futures</a> based on the Promises / A++ spec.</p></li>
-<li><p><a href="https://github.com/aol/simple-react/wiki/EagerFutureStream">EagerFutureStream</a> : An easy to use JDK 8 Stream of CompletableFutures, with all of the SimpleReact API methods, and scala-like <a href="http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.5/org/jooq/lambda/Seq.html">jOOλ Seq</a> methods too. EagerFutureStream kicks of future tasks eagerly (for all elements) and can be run in either parallel or sequential (free-threaded) modes. Useful for handling small to medium datasets that require blocking I/O steps.</p></li>
+<li><a href="https://maven-badges.herokuapp.com/maven-central/com.aol.simple-react/cyclops-react"><img src="https://maven-badges.herokuapp.com/maven-central/com.aol.simplereact/cyclops-react/badge.svg" alt="Maven Central : cyclops-react"></a></li>
 </ul>
 
 <h2>
-<a id="asynchronous-datastructures" class="anchor" href="#asynchronous-datastructures" aria-hidden="true"><span class="octicon octicon-link"></span></a>Asynchronous datastructures</h2>
+<a id="gradle" class="anchor" href="#gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Gradle</h2>
 
-<ul>
-<li><p>Queue : async queue that can be used to join producing and consuming streams. Multiple consuming streams (if connected) compete for messages on the queue.</p></li>
-<li><p>Topic : async topic that can be used to join producing and consuming streams. Multiple consuming streams (if connected) recieve each message on the topic.</p></li>
-<li><p>Signal : async signal that can stream changes, backed by either a Topic or a Queue.</p></li>
-</ul>
+<p>where x.y.z represents the latest version</p>
+
+<p>compile 'com.aol.simplereact:cyclops-react:x.y.z'</p>
 
 <h2>
-<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
+<a id="maven" class="anchor" href="#maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Maven</h2>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
+    &lt;<span class="pl-ent">groupId</span>&gt;com.aol.simplereact&lt;/<span class="pl-ent">groupId</span>&gt;
+    &lt;<span class="pl-ent">artifactId</span>&gt;cyclops-react&lt;/<span class="pl-ent">artifactId</span>&gt;
+    &lt;<span class="pl-ent">version</span>&gt;x.y.z&lt;/<span class="pl-ent">version</span>&gt;
+&lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
+
+<h1>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h1>
+
+<p>Used in Aol to build robust, performant &amp; scaleable asynchronous systems features include</p>
+
+<ul>
+<li>Compatible, extensions to JDK interfaces (Collections &amp; Streams)</li>
+<li>Built with <a href="https://github.com/jOOQ/jOOL">https://github.com/jOOQ/jOOL</a>
+</li>
+<li>Extensions for efficient JDK compatible persistent collections (<a href="http://pcollections.org/">pCollections</a>)</li>
+<li>FutureStreams for managing aggregates for Future Tasks (e.g. for multi-threaded execution of large numbers of I/O tasks)</li>
+<li>Single-threaded asynchronous streaming</li>
+<li>Scheduling of data emission</li>
+<li>Powerful extended type hierarchy for aggregrations (Collections &amp; Streams) and single values</li>
+<li>Powerful functional-style control structures, implemented in Java friendly manner (Maybe, Eval, FutureW, Xor, Ior, Try, AnyM, structural &amp; guard based pattern matching, for-comprehensions)</li>
+<li>Execute functions between wrapped values (Optional / CompletableFutre etc) without tedious unwrapping (Java friendly Applicative support).</li>
+<li><p>Java friendly abstractions for wrapping any Monad type (Stream, CompletableFuture, Optional, cyclops-react types and types from other Java projects too)</p></li>
+<li><p>Integration with other projects via cyclops-integration modules.</p></li>
+</ul>
+
+<h1>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation</h1>
+
+<ul>
+<li><a href="https://github.com/aol/simple-react/user-guide">user-guide : work in progress</a></li>
+<li><a href="https://github.com/aol/simple-react/wiki">simple-react wiki</a></li>
+<li><a href="https://github.com/aol/cyclops/wiki">cyclops wiki</a></li>
+<li><a href="http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/">javadoc</a></li>
+</ul>
+
+<h1>
+<a id="articles" class="anchor" href="#articles" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Articles</h1>
 
 <ul>
 <li><a href="https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-the-tutorial-3634f512eeb1">Reactive programming with Java 8 and simple-react: The Tutorial</a></li>
-<li><a href="https://github.com/aol/simple-react/wiki">wiki</a></li>
-<li><a href="http://www.javadoc.io/doc/com.aol.simplereact/simple-react/0.85">Javadoc</a></li>
+<li><a href="https://medium.com/@johnmcclean/extending-jdk-8-collections-8ae8d43dd75e#.tn7ctbaks">JDK Collection eXtensions</a></li>
+<li><a href="https://medium.com/@johnmcclean/can-we-make-working-with-functions-easier-in-java-8-81ed9d1050f2#.apum92khr">Awesome Fluent Functions</a></li>
 <li><a href="https://medium.com/search?q=simplereact">Articles on medium</a></li>
-<li><a href="https://github.com/aol/simple-react">simple-react Github</a></li>
+<li><a href="https://medium.com/@johnmcclean/introducing-the-cyclops-monad-api-a7a6b7967f4d">Introducting the Cyclops Monad API</a></li>
+<li><a href="http://rdafbn.blogspot.com/2015/06/java-8-easier-with-cyclops-try.html">Easier Try with Cyclops</a></li>
+<li><a href="https://medium.com/@johnmcclean/4-flavours-of-java-8-functions-6cafbcf5bb4f">4 flavors of Java 8 Functions</a></li>
+<li><a href="http://rdafbn.blogspot.com/2015/06/memoize-functions-in-java-8.html">Memoise Functions in Java 8</a></li>
+<li><a href="http://rdafbn.blogspot.com/2015/06/startegy-pattern-in-java-8.html">Strategy Pattern in Java 8 </a></li>
+<li><a href="https://medium.com/@johnmcclean/pattern-matching-in-cyclops-for-java-8-21a4912bfe4d">Pattern Matching in Java 8</a></li>
+<li><a href="https://medium.com/@johnmcclean/feature-toggling-with-cyclops-a29d1eead62c">Functional Feature Toggling</a></li>
+<li><a href="https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75">Dependency injection using the Reader Monad in Java8</a></li>
+<li><a href="https://medium.com/@johnmcclean/how-to-schedule-emission-from-a-stream-in-java-aa2dafda7c07#.pi12so6zn">Scheduling a Stream</a></li>
+<li><a href="https://medium.com/@johnmcclean/neophytes-guide-to-java-8-welcome-to-the-future-83f432ce82a9#.jb5s9qop8">Neophytes guide to Java 8 : Welcome to the Future</a></li>
+<li><a href="http://sebastian-millies.blogspot.de/2015/11/deterministic-and-non-deterministic.html">Deterministic and Non-Deterministic Finite State Machines with Cyclops</a></li>
 </ul>
 
-<h1>
-<a id="operators" class="anchor" href="#operators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Operators</h1>
-
-<ul>
-<li>retry</li>
-<li>onFail</li>
-<li>capture</li>
-<li>then</li>
-<li>combineLatest</li>
-<li>withLatest</li>
-<li>firstOf</li>
-<li>anyOf</li>
-<li>allOf</li>
-<li>merge</li>
-<li>with</li>
-<li>shard</li>
-<li>xPer</li>
-<li>onePer</li>
-<li>batchByTime</li>
-<li>batchBySize</li>
-<li>skipUntil(Stream)</li>
-<li>takeUntil(Stream)</li>
-<li>jitter</li>
-<li>fixedDelay</li>
-<li>cancel</li>
-<li>limitFutures</li>
-<li>skipFutures</li>
-<li>sliceFutures</li>
-<li>partitionFutures</li>
-<li>splitAtFutures</li>
-<li>zipFutures</li>
-<li>zipFuturesWithIndex</li>
-<li>thenSync</li>
-<li>peekSync</li>
-<li>filterSync</li>
-<li>doOnEach</li>
-<li>doOnEachSync</li>
-<li>control</li>
-<li>batch</li>
-<li>chunkSinceLastRead</li>
-<li>chunkSinceLastReadIterator</li>
-<li>block</li>
-<li><p>run</p></li>
-<li><p>react</p></li>
-<li><p>reactInfinetely</p></li>
-<li><p>async</p></li>
-<li>sync</li>
-<li>zip</li>
-<li>zipWithIndex</li>
-<li>skipWhile</li>
-<li>skipUntil</li>
-<li>limitWhile</li>
-<li>limitUntil</li>
-<li>shuffle</li>
-<li>reverse</li>
-<li>intersperse</li>
-<li>slice</li>
-<li>splitAt</li>
-<li>ofType</li>
-<li>cast</li>
-<li>cycle</li>
-<li>unzip</li>
-<li>scanLeft</li>
-<li>scanRight</li>
-<li>duplicate</li>
-<li>partition</li>
-<li>distinct</li>
-<li>toList</li>
-<li>toSet</li>
-<li>toMap</li>
-<li>minBy</li>
-<li>maxBy</li>
-<li>groupBy</li>
-<li>join</li>
-<li>foldLeft</li>
-<li>foldRight</li>
-<li>unfold</li>
-<li>unzip</li>
-<li>filter</li>
-<li>map</li>
-<li>flatMap</li>
-<li>peek</li>
-<li>limit</li>
-<li>skip</li>
-<li>mapToInt (etc)</li>
-<li>sorted</li>
-<li>distinct</li>
-<li>collect</li>
-<li>forEach</li>
-<li>reduce</li>
-<li>findFirst</li>
-<li>findAny</li>
-<li>anyMatch</li>
-<li>allMatch</li>
-<li>min</li>
-<li>max</li>
-<li>count</li>
-<li>of</li>
-<li>iterate</li>
-<li>generate</li>
-<li>concat</li>
-</ul>
+<p><a href="https://github.com/aol/simple-react/wiki/1.-simple-react-overview">Old simple-react landing page</a></p>
 
 <h1>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h1>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h1>
 
-<p>Simple React is licensed under the Apache 2.0 license.      </p>
+<p>cyclops-react is licensed under the Apache 2.0 license.     </p>
 
 <p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
-        </article>
-      </div>
+      </section>
+
     </div>
-    <footer>
-      <div class="owner">
-      <p><a href="https://github.com/aol" class="avatar"><img src="https://avatars2.githubusercontent.com/u/855409?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/aol">aol</a> maintains <a href="https://github.com/aol/simple-react">simple-react</a></p>
-
-
-      </div>
-      <div class="creds">
-        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
-      </div>
-    </footer>
-  </div>
-  <div class="current-section">
-    <a href="#top">Scroll to top</a>
-    <a href="https://github.com/aol/simple-react/tarball/master" class="tar">tar</a><a href="https://github.com/aol/simple-react/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
-    <p class="name"></p>
-  </div>
-
-  
-</body>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
 </html>
