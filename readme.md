@@ -26,7 +26,7 @@ compile 'com.aol.simplereact:cyclops-react:x.y.z'
 Used in Aol to build robust, performant & scalable asynchronous systems : features include
 
 * Compatible extensions to JDK interfaces (Collections, Streams, Functions)
-* Built with [jOOλ](https://github.com/jOOQ/jOOL), [Agrona](https://github.com/real-logic/Agrona) and ([pCollections](http://pcollections.org/))
+* Built with [jOOλ](https://github.com/jOOQ/jOOL), [Agrona](https://github.com/real-logic/Agrona) and [pCollections](http://pcollections.org/)
 * Extensions for efficient JDK compatible persistent collections ([pCollections](http://pcollections.org/))
 * FutureStreams for managing aggregates for Future Tasks (e.g. for multi-threaded execution of large numbers of I/O tasks)
 * Single-threaded asynchronous streaming
