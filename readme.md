@@ -22,8 +22,7 @@ compile 'com.aol.simplereact:cyclops-react:x.y.z'
 </dependency>
 ```
 
-
-![cyclops-react-3](https://cloud.githubusercontent.com/assets/9964792/13360637/11374ca4-dcb2-11e5-8008-e92b15015f8d.png)
+![cyclops-react-4](https://cloud.githubusercontent.com/assets/9964792/13360783/b7aff73e-dcb2-11e5-874f-bd1b5586ef53.png)
 
 # Features
 
