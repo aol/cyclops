@@ -21,6 +21,10 @@ compile 'com.aol.simplereact:cyclops-react:x.y.z'
     <version>x.y.z</version>
 </dependency>
 ```
+
+
+![cyclops-react-3](https://cloud.githubusercontent.com/assets/9964792/13360637/11374ca4-dcb2-11e5-8008-e92b15015f8d.png)
+
 # Features
 
 Used in Aol to build robust, performant & scalable asynchronous systems : features include
