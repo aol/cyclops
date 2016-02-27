@@ -346,7 +346,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	}
 	@Override
 	public  boolean noneMatch(Predicate<? super U> c) {
-		return StreamUtils.noneMatch(this,c);
+		return !anyMatch(c);
 	}
 	@Override
 	public final   String join(){

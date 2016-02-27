@@ -83,6 +83,18 @@ public class Queue<T> implements Adapter<T> {
 	public Queue() {
 		this(new LinkedBlockingQueue<>());
 	}
+	public Queue(QueueFactory<T> factory) {
+       Queue<T> q = factory.build();
+       this.queue = q.queue;
+       timeout = q.timeout;
+       timeUnit = q.timeUnit;
+       maxPoisonPills = q.maxPoisonPills;
+       offerTimeout= q.offerTimeout;
+       offerTimeUnit = q.offerTimeUnit;
+       
+       this.consumerWait=q.consumerWait;
+       this.producerWait=q.producerWait;
+    }
 	
 	Queue(BlockingQueue<T> queue,WaitStrategy<T> consumer,WaitStrategy<T> producer) {
 		this.queue = queue;

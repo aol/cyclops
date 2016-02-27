@@ -79,10 +79,10 @@ import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
+import com.aol.cyclops.types.stream.reactive.FutureStreamAsyncPublisher;
+import com.aol.cyclops.types.stream.reactive.FutureStreamSynchronousPublisher;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
-import com.aol.cyclops.util.stream.reactivestreams.FutureStreamAsyncPublisher;
-import com.aol.cyclops.util.stream.reactivestreams.FutureStreamSynchronousPublisher;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 

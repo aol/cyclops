@@ -2,16 +2,15 @@ package com.aol.cyclops.react.reactivestreams.jdk;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.SubscriberWhiteboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsSubscriber;
+import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 
 @Test
-public class TckWhiteBoxSubscriberTest extends SubscriberWhiteboxVerification<Long>{
-	public TckWhiteBoxSubscriberTest() {
+public class SeqSubscriberTckWhiteBoxSubscriberTest extends SubscriberWhiteboxVerification<Long>{
+	public SeqSubscriberTckWhiteBoxSubscriberTest() {
         super(new TestEnvironment(300L));
     }
 
@@ -26,7 +25,7 @@ public class TckWhiteBoxSubscriberTest extends SubscriberWhiteboxVerification<Lo
 	public Subscriber<Long> createSubscriber(
 			org.reactivestreams.tck.SubscriberWhiteboxVerification.WhiteboxSubscriberProbe<Long> probe) {
 		
-		 return new  JDKReactiveStreamsSubscriber<Long>() {
+		 return new  SeqSubscriber<Long>() {
 	            @Override
 	            public void onSubscribe(final Subscription rsSubscription) {
 	               probe.registerOnSubscribe(new SubscriberPuppet() {

@@ -1,4 +1,4 @@
-package com.aol.cyclops.util.stream.reactivestreams;
+package com.aol.cyclops.types.stream.reactive;
 
 import java.util.ArrayList;
 import java.util.Iterator;

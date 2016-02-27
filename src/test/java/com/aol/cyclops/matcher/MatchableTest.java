@@ -9,16 +9,15 @@ import static com.aol.cyclops.util.function.Predicates.decons;
 import static com.aol.cyclops.util.function.Predicates.eq;
 import static com.aol.cyclops.util.function.Predicates.has;
 import static com.aol.cyclops.util.function.Predicates.in;
+import static com.aol.cyclops.util.function.Predicates.lessThan;
 import static com.aol.cyclops.util.function.Predicates.not;
 import static com.aol.cyclops.util.function.Predicates.type;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -31,6 +30,7 @@ import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
 import com.aol.cyclops.control.Matchable.MatchSelf;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.util.function.Predicates;
@@ -40,11 +40,35 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
-
 public class MatchableTest {
-    
+    private String doA(){
+        return "hello";
+    }
+    private String doB(){
+        return "world";
+    }
+    static class A{}
+    static class B{}
+    @Test
+    public void matchTypeAB(){
+        
+       
+            Object o = new A();
+            assertThat(Matchable.of(o)
+                     .matches(c->c.is(when(Predicates.type(A.class).anyValues()), then(this::doA))
+                                  .is(when(Predicates.type(B.class).anyValues()),then(this::doB))
+                                , otherwise("missing")),equalTo(Eval.now("hello")));
+            
+            assertThat( Matchable.of(o)
+                     .matches(c->c.is(when(instanceOf(A.class)), then(this::doA))
+                                  .is(when(instanceOf(B.class)), then(this::doB))
+                                  ,otherwise("missing")),equalTo(Eval.now("hello")));
+                    
+    }
     @Test
     public void recursiveStructuralMatching(){
+       
+        
        
       String result =  new Customer("test",new Address(10,"hello","my city"))
                                 .match()
@@ -160,7 +184,7 @@ public class MatchableTest {
 							   			 , ()->"no address configured");
 		
 		assertThat(v,equalTo("valid house,valid street"));
-							   	
+		
 	}
 	@AllArgsConstructor
 	static class Address{
@@ -304,6 +328,10 @@ public class MatchableTest {
 	}
 	@Test
 	public void emptyOptionalMultiple4(){
+	    Matchable.of(Optional.of(3)).matches(o-> o.isEmpty(then("none"))
+                .is(when(1),then("one"))
+                .is(when(2),then("two"))
+                .is(when(lessThan(0)), then("negative")),otherwise("many"));
 		assertThat(Matchable.of(Optional.of(3))
 							 .matches(
 				            		o-> o.isEmpty(then("hello"))

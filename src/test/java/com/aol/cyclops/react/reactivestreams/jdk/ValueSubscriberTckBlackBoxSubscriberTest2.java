@@ -1,21 +1,21 @@
-package com.aol.cyclops.util.stream.reactivestreams;
+package com.aol.cyclops.react.reactivestreams.jdk;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 
 @Test
-public class TckBlackBoxSubscriberTest extends SubscriberBlackboxVerification<Long>{
-	public TckBlackBoxSubscriberTest() {
+public class ValueSubscriberTckBlackBoxSubscriberTest2 extends SubscriberBlackboxVerification<Long>{
+	public ValueSubscriberTckBlackBoxSubscriberTest2() {
         super(new TestEnvironment(300L));
     }
 
 	@Override
 	public Subscriber<Long> createSubscriber() {
-		return new QueueBasedSubscriber();
+		return ValueSubscriber.subscriber();
 		
 	}
 

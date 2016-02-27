@@ -9,6 +9,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Eval;
@@ -36,12 +40,60 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 
 import lombok.AllArgsConstructor;
 
-public interface Value<T> extends Supplier<T>, Foldable<T>, Matchable<T>, Convertable<T> {
+public interface Value<T> extends Supplier<T>, 
+                                  Foldable<T>, 
+                                  Matchable<T>, 
+                                  Convertable<T>,
+                                  Publisher<T>{
 
-	 public static <T> Value<T> of(Supplier<T> supplier){
+
+    default ValueSubscriber<T> newSubscriber(){
+        return ValueSubscriber.subscriber();
+    }
+	@Override
+    default void subscribe(Subscriber<? super T> sub) {
+	     sub.onSubscribe(new Subscription(){
+	            
+             volatile boolean running = true;
+             
+             @Override
+             public void request(long n) {
+                 if(!running)
+                     return;
+                 if(n<1){
+                     sub.onError(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                 }
+                try {
+
+                    sub.onNext(get());
+
+                } catch (Throwable t) {
+                    sub.onError(t);
+
+                }
+                try {
+                    sub.onComplete();
+
+                } finally {
+                    running = false;
+
+                }
+                 
+             }
+             @Override
+             public void cancel() {
+                 running = false;
+                 
+             }
+             
+         });
+        
+    }
+    public static <T> Value<T> of(Supplier<T> supplier){
 		 return new ValueImpl<T>(supplier);
 	 }
 	 @AllArgsConstructor

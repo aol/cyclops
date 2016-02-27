@@ -4,11 +4,15 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.cyclops.data.collections.HashMaps;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,33 +25,48 @@ public class ClojureOrJava8 {
         int age;
     }
     
-    @Test
-    public void cyclopsJava8(){
+    
+    public MapX<Integer, List<Person>> cyclopsJava8(ListX<Person> people){
         
-        ListX.of(new Person(10))
-             .groupBy(Person::getAge);
+      return people.groupBy(Person::getAge);
         
             
     }
-    @Test
-    public void plainJava8(){
-        
-        Arrays.asList(new Person(10))
-              .stream()
-              .collect(Collectors.groupingBy(Person::getAge));
-        
-        
+    
+    public Map<Integer, List<Person>> plainJava8(List<Person> people){
+        return people.stream()
+              .collect(Collectors.groupingBy(Person::getAge));   
     }
     
+    
+    public void transformMap(){
+        
+       MapX<String,String> x = MapX.fromMap(HashMaps.of("hello","1"));
+       
+       MapX<String,Integer> y = x.map(Integer::parseInt);
+       
+       MapX<String,Integer> y2 = MapX.fromMap(HashMaps.of("hello","1"))
+                                    .map(Integer::parseInt);
+        
+    }
+    public void transformMapJava8(){
+        
+        Map<String,String> x = HashMaps.of("hello","1");
+        
+        Map<String,Integer> y = x.entrySet()
+                                 .stream()
+                                 .collect(Collectors.toMap(e->e.getKey(), e->Integer.parseInt(e.getValue())));
+         
+     }
     @Test
     public void listToString(){
         assertThat(listToString(ListX.of("a","b","c")),equalTo("a b c "));
     }
     
-    public String listToString(ListX<String> seq){
+    public String listToString(ListX<String> list){
         
-        return seq.visit(((x,xs)->x+" "+listToString(xs.toListX())),()->"");
-        
+        return list.visit(((x,xs)->x+" "+listToString(xs.toListX())),()->"");
+    
     }
     
 }

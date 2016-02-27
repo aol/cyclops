@@ -1,8 +1,5 @@
 package com.aol.cyclops.react.async.pipes;
 
-import static com.aol.cyclops.react.async.pipes.Pipes.registered;
-import static com.aol.cyclops.types.futurestream.LazyFutureStream.lazyFutureStream;
-
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -15,7 +12,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.data.async.Adapter;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsSubscriber;
+import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 
 /**
  * Store for Pipes for cross-thread communication
@@ -98,9 +95,9 @@ public class Pipes {
 	 * @param publisher Reactive Streams publisher  to push data onto this pipe
 	 */
 	public static<T> void publishTo(Object key,Publisher<T> publisher){
-		JDKReactiveStreamsSubscriber<T> sub = new JDKReactiveStreamsSubscriber<>();
+		SeqSubscriber<T> sub = SeqSubscriber.subscriber();
 		publisher.subscribe(sub);
-		registered.get(key).fromStream((Stream)sub.getStream());
+		registered.get(key).fromStream((Stream)sub.stream());
 	}
 	/**
 	 * @param key for registered simple-react async.Adapter

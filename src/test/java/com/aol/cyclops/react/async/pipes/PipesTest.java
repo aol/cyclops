@@ -1,8 +1,9 @@
 package com.aol.cyclops.react.async.pipes;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
@@ -12,9 +13,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsSubscriber;
-
-import static org.hamcrest.Matchers.*;
+import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 public class PipesTest {
 	@Before
 	public void setup() {
@@ -42,23 +41,23 @@ public class PipesTest {
 	}
 	@Test
 	public void publisherTest(){
-		JDKReactiveStreamsSubscriber subscriber = new JDKReactiveStreamsSubscriber ();
+		SeqSubscriber subscriber = SeqSubscriber.subscriber();
 		Queue queue = new Queue();
 		Pipes.register("hello", queue);
 		Pipes.publisher("hello",ForkJoinPool.commonPool()).get().subscribe(subscriber);
 		queue.offer("world");
 		queue.close();
-		assertThat(subscriber.getStream().findAny().get(),equalTo("world"));
+		assertThat(subscriber.stream().findAny().get(),equalTo("world"));
 	}
 	@Test
 	public void subscribeTo(){
-		JDKReactiveStreamsSubscriber subscriber = new JDKReactiveStreamsSubscriber ();
+	    SeqSubscriber subscriber = SeqSubscriber.subscriber();
 		Queue queue = new Queue();
 		Pipes.register("hello", queue);
 		Pipes.subscribeTo("hello",subscriber,ForkJoinPool.commonPool());
 		queue.offer("world");
 		queue.close();
-		assertThat(subscriber.getStream().findAny().get(),equalTo("world"));
+		assertThat(subscriber.stream().findAny().get(),equalTo("world"));
 	}
 	@Test
 	public void publishTo() throws InterruptedException{

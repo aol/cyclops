@@ -23,6 +23,8 @@ import org.jooq.lambda.function.Function5;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
@@ -54,9 +56,14 @@ public interface AnyMSeq<T> extends AnyM<T>,
 									CyclopsCollectable<T>,
 									IterableCollectable<T>,
 									FilterableFunctor<T>,
-									ZippingApplicativable<T> {
+									ZippingApplicativable<T>,
+									Publisher<T>{
 
 	
+    @Override
+    default void subscribe(Subscriber<? super T> sub) {
+        this.stream().subscribe(sub);
+    }
 	@Override
 	<R, A> R collect(Collector<? super T, A, R> collector);
 	/* (non-Javadoc)

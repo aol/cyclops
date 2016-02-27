@@ -5,17 +5,17 @@ import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsSubscriber;
+import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 
 @Test
-public class TckBlackBoxSubscriberTest extends SubscriberBlackboxVerification<Long>{
-	public TckBlackBoxSubscriberTest() {
+public class SeqSubscriberTckBlackBoxSubscriberTest extends SubscriberBlackboxVerification<Long>{
+	public SeqSubscriberTckBlackBoxSubscriberTest() {
         super(new TestEnvironment(300L));
     }
 
 	@Override
 	public Subscriber<Long> createSubscriber() {
-		return new JDKReactiveStreamsSubscriber();
+		return SeqSubscriber.subscriber();
 		
 	}
 

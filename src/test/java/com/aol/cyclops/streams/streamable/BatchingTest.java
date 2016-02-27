@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -266,7 +267,7 @@ public class BatchingTest {
 		System.out.println(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).size(),is(2));
 	}
-	@Test
+	@Test 
 	public void batchBySizeAndTimeSizeCollection(){
 		
 		assertThat(of(1,2,3,4,5,6)
@@ -298,7 +299,7 @@ public class BatchingTest {
 						.toList()
 						.size(),is(0));
 	}
-	@Test
+	@Test @Ignore
 	public void batchBySizeAndTimeTime(){
 		
 		for(int i=0;i<10;i++){
@@ -312,7 +313,7 @@ public class BatchingTest {
 							,not(hasItem(6)));
 		}
 	}
-	@Test
+	@Test @Ignore
 	public void batchBySizeAndTimeTimeCollection(){
 		
 		for(int i=0;i<10;i++){

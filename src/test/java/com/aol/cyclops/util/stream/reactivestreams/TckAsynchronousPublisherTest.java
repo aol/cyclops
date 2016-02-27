@@ -1,6 +1,8 @@
 package com.aol.cyclops.util.stream.reactivestreams;
 
 
+import java.util.concurrent.Executors;
+
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
@@ -18,7 +20,8 @@ public class TckAsynchronousPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return new LazyReact().reactInfinitely(()->100l).limit(elements);
+		return new LazyReact().withPublisherExecutor(Executors.newFixedThreadPool(1))
+		                     .reactInfinitely(()->100l).limit(elements);
 		
 	}
 
