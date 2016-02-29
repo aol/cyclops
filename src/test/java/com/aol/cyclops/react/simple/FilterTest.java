@@ -20,7 +20,7 @@ public class FilterTest {
 		 int expected = Arrays.asList("*1","*2","*3").stream().filter(it -> it.startsWith("*"))
 		 .collect(Collectors.toList()).size();
 		List<String> result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> "*" + it)
 				.filter(it -> it.startsWith("*"))
 				.block();
@@ -34,7 +34,7 @@ public class FilterTest {
 		 int expected = Arrays.asList("*1","*2","*3").stream().filter(it -> !it.startsWith("*"))
 		 .collect(Collectors.toList()).size();
 		List<String> result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> "*" + it)
 				.filter(it -> !it.startsWith("*"))
 				.block();
@@ -47,7 +47,7 @@ public class FilterTest {
 			ExecutionException {
 		 
 		List<String> result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> "*" + it)
 				.filter(it -> it.startsWith("*"))
 				.block();
@@ -59,7 +59,7 @@ public class FilterTest {
 	public void testNegativeFilter() throws InterruptedException,
 			ExecutionException {
 		List<String> result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> "*" + it)
 				.filter(it -> !it.startsWith("*"))
 				.block();
@@ -73,7 +73,7 @@ public class FilterTest {
 			ExecutionException {
 		 
 		List<String> result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.filter(it -> 1!=it)
 				.peek(it -> System.out.println(it))
 				.<String>then(it -> "*" + it)
@@ -89,7 +89,7 @@ public class FilterTest {
 			ExecutionException {
 		 
 		List<String> result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.filter(it -> 1!=it)
 				.<String>then(it -> "*" + it)
 				.capture( e -> fail("No exception should be captured"))

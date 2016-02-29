@@ -25,7 +25,7 @@ public class ResultCollectionTest {
 
 		
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();
@@ -37,7 +37,7 @@ public class ResultCollectionTest {
 	public void testBlockToSet() throws InterruptedException, ExecutionException {
 
 		Set<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 1, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 1, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				
@@ -50,7 +50,7 @@ public class ResultCollectionTest {
 	public void testBreakout() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -67,7 +67,7 @@ public class ResultCollectionTest {
 	public void testBreakoutToSet() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
 		Set<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -87,7 +87,7 @@ public class ResultCollectionTest {
 			ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<String>then(it -> {
 
@@ -106,7 +106,7 @@ public class ResultCollectionTest {
 			ExecutionException {
 		count =0;
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<String>then(it -> {
 
@@ -125,7 +125,7 @@ public class ResultCollectionTest {
 			ExecutionException {
 		count =0;
 		List<Integer> results = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if(it==100)
@@ -145,7 +145,7 @@ public class ResultCollectionTest {
 			ExecutionException {
 		count =0;
 		List<Integer> results = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					sleep(it);
@@ -164,7 +164,7 @@ public class ResultCollectionTest {
 			ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)

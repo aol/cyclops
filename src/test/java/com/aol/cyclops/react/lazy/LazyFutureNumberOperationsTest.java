@@ -18,7 +18,7 @@ public class LazyFutureNumberOperationsTest extends BaseNumberOperationsTest{
 	
 	@Override
 	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
-		return LazyReact.parallelBuilder().react(array);
+		return LazyReact.parallelBuilder().ofAsync(array);
 		
 	}
 	  

@@ -42,7 +42,7 @@ public class ParallelTest {
 	public void runThread(){
 		CompletableFuture cf = new CompletableFuture();
 			LazyFutureStream s = LazyReact.sequentialBuilder().withMaxActive(MaxActive.IO).async()
-				.reactInfinitely(()->1).limit(1_000_000);
+				.generateAsync(()->1).limit(1_000_000);
 				
 				for (int x = 0; x < 60; x++) {
 					s = s.then(Function.identity());

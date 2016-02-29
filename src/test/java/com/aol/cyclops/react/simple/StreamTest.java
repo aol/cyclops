@@ -24,7 +24,7 @@ public class StreamTest {
 		
 		List<String> strings = new SimpleReact()
 								.<String>fromStream(new SimpleReact()
-												.<Integer> react(() -> 1, () -> 2, () -> 3)
+												.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 												.with(it -> "*" + it).stream())
 								.then(it ->  it + "*")
 								.block();
@@ -40,7 +40,7 @@ public class StreamTest {
 			ExecutionException {
 		
 		Stream<CompletableFuture<String>> stream = new SimpleReact()
-													.<Integer> react(() -> 1, () -> 2, () -> 3)
+													.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 													.then(it -> "*" + it).streamCompletableFutures();
 
 		List<String> strings = new SimpleReact()

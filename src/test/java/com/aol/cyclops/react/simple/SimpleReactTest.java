@@ -97,7 +97,7 @@ public class SimpleReactTest {
 	@Test
 	public void doOnEach(){
 		String[] found = {""};
-		String res = new SimpleReact().react(()->"hello")
+		String res = new SimpleReact().ofAsync(()->"hello")
 										.doOnEach(it->{ found[0]=it;return "world";})
 										.then(it->it+"!")
 										.block().firstValue();
@@ -136,7 +136,7 @@ public class SimpleReactTest {
 	public void testReact() throws InterruptedException, ExecutionException {
 
 		List<CompletableFuture<Integer>> futures = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.with(it -> it * 100);
 
 		assertThat(futures.get(0).get(), is(greaterThan(99)));
@@ -149,7 +149,7 @@ public class SimpleReactTest {
 	public void testReactList() throws InterruptedException, ExecutionException {
 
 		List<CompletableFuture<Integer>> futures = new SimpleReact()
-				.<Integer> reactCollection(Arrays.asList(() -> 1, () -> 2, () -> 3))
+				.<Integer> fromIterableAsync(Arrays.asList(() -> 1, () -> 2, () -> 3))
 				.with(it -> it * 100);
 
 		assertThat(futures.get(0).get(), is(greaterThan(99)));
@@ -162,7 +162,7 @@ public class SimpleReactTest {
 		
 		
 		 Set<Long> threads = new SimpleReact(new ForkJoinPool(10))
-				.<Integer> react(() -> 1, () -> 2, () -> 3,() -> 3,() -> 3,() -> 3,() -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3,() -> 3,() -> 3,() -> 3,() -> 3)
 				.peek(it -> sleep(50l))
 				.then(it -> Thread.currentThread().getId())
 				.block(Collectors.toSet());
@@ -184,7 +184,7 @@ public class SimpleReactTest {
 	public void testReactString() throws InterruptedException,
 			ExecutionException {
 		List<CompletableFuture<String>> futures = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.with(it -> "*" + it);
 
 		System.out.println(futures.get(0).get());
@@ -198,7 +198,7 @@ public class SimpleReactTest {
 	public void testReactChain() throws InterruptedException,
 			ExecutionException {
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100).then((it) -> "*" + it)
 				.block(status -> status.getCompleted() > 1);
 
@@ -213,7 +213,7 @@ public class SimpleReactTest {
 	public void testGenericExtract() throws InterruptedException, ExecutionException {
 
 		Set<Integer> result = new SimpleReact()
-		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.<Integer> ofAsync(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), (Set<Integer> it) -> {
 			
@@ -232,7 +232,7 @@ public class SimpleReactTest {
 	public void testOnFail() throws InterruptedException, ExecutionException {
 
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100).then((it) -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
@@ -255,7 +255,7 @@ public class SimpleReactTest {
 	public void testOnFailFirst() throws InterruptedException,
 			ExecutionException {
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1,() -> 2,(Supplier<Integer>) () -> {
+				.<Integer> ofAsync(() -> 1,() -> 2,(Supplier<Integer>) () -> {
 					throw new RuntimeException("boo!");
 				}).onFail(e -> 1).then((it) -> "*" + it).block();
 
@@ -275,7 +275,7 @@ public class SimpleReactTest {
 			ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100).then((it) -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
@@ -300,7 +300,7 @@ public class SimpleReactTest {
 	public void testCapture() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100).then(it -> {
 					if (it == 100)
 						throw new RuntimeException("boo!");
@@ -332,7 +332,7 @@ public class SimpleReactTest {
 	
 	@Test
 	public void testLargeChain(){
-		BaseSimpleReactStream builder= new SimpleReact().react(() -> "Hello", () -> "World"); 
+		BaseSimpleReactStream builder= new SimpleReact().ofAsync(() -> "Hello", () -> "World"); 
 		 for(int i =0;i<1000;i++){
 			 builder = builder.then( input -> input + " " + counter++);
 		 }
@@ -341,7 +341,7 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void testSeparatedChains(){
-		 BaseSimpleReactStream<String> orgBuilder= new SimpleReact().react(() -> "Hello", () -> "World");//.split(2); 
+		 BaseSimpleReactStream<String> orgBuilder= new SimpleReact().ofAsync(() -> "Hello", () -> "World");//.split(2); 
 		 BaseSimpleReactStream builder = orgBuilder;
 		 for(int i =0;i<1000;i++){
 			 builder = builder.then( input -> input + " " + counter++);
@@ -355,7 +355,7 @@ public class SimpleReactTest {
 	@Test
 	public void testReactMixedTypes(){
 		List list = new ArrayList();
-		List<Object> result = new SimpleReact().react(() -> "Hello",()-> list).block();
+		List<Object> result = new SimpleReact().ofAsync(() -> "Hello",()-> list).block();
 		assertThat(result.size(),is(2));
 		assertThat(result,hasItem("Hello"));
 		assertThat(result,hasItem(list));
@@ -368,7 +368,7 @@ public class SimpleReactTest {
 		responses.put("Hello", (byte) 4);
 		responses.put(list,true);
 		
-		List<Object> result = new SimpleReact().react(() -> "Hello",()-> list).then( it -> responses.get(it)).block();
+		List<Object> result = new SimpleReact().ofAsync(() -> "Hello",()-> list).then( it -> responses.get(it)).block();
 		assertThat(result.size(),is(2));
 		
 		assertThat(result,hasItem((byte)4));
@@ -378,27 +378,27 @@ public class SimpleReactTest {
 	
 	@Test
 	public void testReactPrimitive(){
-		List<Boolean> result = new SimpleReact().react(() -> true,()->true).block();
+		List<Boolean> result = new SimpleReact().ofAsync(() -> true,()->true).block();
 		assertThat(result.size(),is(2));
 		assertThat(result.get(0),is(true));
 	
 	}
 	@Test
 	public void testThenPrimitive(){
-		List<Boolean> result = new SimpleReact().react(() -> 1,()-> 1).then(it -> true).block();
+		List<Boolean> result = new SimpleReact().ofAsync(() -> 1,()-> 1).then(it -> true).block();
 		assertThat(result.size(),is(2));
 		assertThat(result.get(0),is(true));
 	
 	}
 	@Test
 	public void testReactNull(){
-		List<String> result = new SimpleReact().react(() -> null,()-> "Hello").block();
+		List<String> result = new SimpleReact().ofAsync(() -> null,()-> "Hello").block();
 		assertThat(result.size(),is(2));
 	
 	}
 	@Test
 	public void testThenNull(){
-		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> (String)null).block();
+		List<String> result = new SimpleReact().ofAsync(() -> "World",()-> "Hello").then( in -> (String)null).block();
 		assertThat(result.size(),is(2));
 		assertThat(result.get(0),is(nullValue()));
 	
@@ -406,7 +406,7 @@ public class SimpleReactTest {
 	@Test
 	public void testReactExceptionRecovery(){
 		List<String> result = new SimpleReact()
-									.react(() -> {throw new RuntimeException();},()-> "Hello")
+									.ofAsync(() -> {throw new RuntimeException();},()-> "Hello")
 									.onFail( e ->{ System.out.println(e);return "World";})
 									.block();
 		
@@ -422,7 +422,7 @@ public class SimpleReactTest {
 			return null;
 		}).when(executor).execute(any(Runnable.class));
 		
-		new SimpleReact(executor).react(() -> "Hello", () -> "World").block();
+		new SimpleReact(executor).ofAsync(() -> "Hello", () -> "World").block();
 		verify(executor, times(2)).execute(any(Runnable.class));
 	}
 	
@@ -431,7 +431,7 @@ public class SimpleReactTest {
         final AtomicBoolean isRunning = new AtomicBoolean(true);
         final CountDownLatch startBarier = new CountDownLatch(1);
 
-        final BaseSimpleReactStream<Integer> stage = new SimpleReact().<Integer>react(
+        final BaseSimpleReactStream<Integer> stage = new SimpleReact().<Integer>ofAsync(
                 () -> 1,
                 () -> 2,
                 () -> 3

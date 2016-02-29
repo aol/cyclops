@@ -23,7 +23,7 @@ public class TakeSkipSliceTest {
 	@Test
 	public void skipUntil() {
 		SimpleReactStream<Boolean> stoppingStream = SimpleReact
-				.sequentialCommonBuilder().react(() -> 1000)
+				.sequentialCommonBuilder().ofAsync(() -> 1000)
 				.then(this::sleep)
 				.peek(System.out::println);
 		System.out.println(SimpleReact.sequentialCommonBuilder()

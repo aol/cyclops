@@ -36,7 +36,7 @@ public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 
 	@Override
 	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
-		return LazyReact.sequentialBuilder().react(array).boundedWaitFree(1000);
+		return LazyReact.sequentialBuilder().ofAsync(array).boundedWaitFree(1000);
 	}
 
 	@Test

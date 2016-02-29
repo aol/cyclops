@@ -21,7 +21,7 @@ public class TckAsynchronousPublisherTest extends PublisherVerification<Long>{
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
 		return new LazyReact().withPublisherExecutor(Executors.newFixedThreadPool(1))
-		                     .reactInfinitely(()->100l).limit(elements);
+		                     .generateAsync(()->100l).limit(elements);
 		
 	}
 

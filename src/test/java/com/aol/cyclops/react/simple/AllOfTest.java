@@ -27,7 +27,7 @@ public class AllOfTest {
 	public void allOf(){
 		List<HashPMap<String, List<Integer>>> result =
 		
-				SimpleReact.sequentialBuilder().react(()->1,()->2,()->3)
+				SimpleReact.sequentialBuilder().ofAsync(()->1,()->2,()->3)
 		 									 .then(it->it+100)
 		 									 .peek(System.out::println)
 		 									 .allOf((List<Integer> c)-> { System.out.println(c);return HashTreePMap.singleton("numbers",c);})
@@ -39,7 +39,7 @@ public class AllOfTest {
 	
 	@Test
 	public void testAllOfFailure(){
-		new SimpleReact().react(()-> { throw new RuntimeException();},()->"hello",()->"world")
+		new SimpleReact().ofAsync(()-> { throw new RuntimeException();},()->"hello",()->"world")
 				//.onFail(it -> it.getMessage())
 				.capture(e -> 
 				  e.printStackTrace())
@@ -128,7 +128,7 @@ public class AllOfTest {
 	public void testAllOfToSet() throws InterruptedException, ExecutionException {
 
 		Set<Integer> result = (Set<Integer>)new SimpleReact()
-		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.<Integer> ofAsync(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.allOf(Collectors.toSet(), it -> {
 			assertThat (it,instanceOf( Set.class));
@@ -145,7 +145,7 @@ public class AllOfTest {
 			ExecutionException {
 
 		Integer result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer> then(it -> {
 					return it * 200;
 				})
@@ -172,7 +172,7 @@ public class AllOfTest {
 			ExecutionException {
 
 		List<Integer> result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer> then(it -> {
 					return it * 200;
 				})
@@ -197,7 +197,7 @@ public class AllOfTest {
 			ExecutionException {
 		Set<String> threadGroup = Collections.synchronizedSet(new TreeSet());
 		Integer result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3, () -> 5)
 				.<Integer> then(it -> {
 					threadGroup.add(Thread.currentThread().getThreadGroup().getName());
 					return it * 200;
@@ -225,7 +225,7 @@ public class AllOfTest {
 
 		boolean blocked[] = { false };
 
-		new SimpleReact().<Integer> react(() -> 1)
+		new SimpleReact().<Integer> ofAsync(() -> 1)
 
 		.then(it -> {
 			try {

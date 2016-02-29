@@ -3321,7 +3321,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @see Stream#of(Object)
      */
     static <T> LazyFutureStream<T> react(Supplier<T> value) {
-        return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false).react(value);
+        return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false).ofAsync(value);
     }
 
     /**
@@ -3331,7 +3331,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      */
     @SafeVarargs
     static <T> LazyFutureStream<T> react(Supplier<T>... values) {
-        return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false).react(values);
+        return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false).ofAsync(values);
     }
     /**
      * Create a sequential synchronous stream that runs on the current thread

@@ -127,7 +127,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 		LazyFutureStream<Integer> s;
 		
 		Queue q = new Queue();
-		LazyReact.parallelBuilder().reactInfinitely(() -> sleep(100))
+		LazyReact.parallelBuilder().generateAsync(() -> sleep(100))
 				.then(it -> q.add("100")).runThread(new Thread());
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
@@ -140,7 +140,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	@Test 
 	public void testBackPressureWhenZippingUnevenStreams2() {
 
-		Queue fast = LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).reactInfinitely(() -> "100")
+		Queue fast = LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).generateAsync(() -> "100")
 				.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue();
 
 		new Thread(() -> {
@@ -219,7 +219,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	}
 	@Override
 	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
-		return LazyReact.parallelBuilder().react(array);
+		return LazyReact.parallelBuilder().ofAsync(array);
 		
 	}
 	protected Object sleep(int i) {

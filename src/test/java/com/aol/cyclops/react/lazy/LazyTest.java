@@ -13,6 +13,7 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
@@ -114,7 +115,7 @@ public class LazyTest {
 		
 		
 		assertThat(LazyReact.parallelCommonBuilder()
-						.react(()->slow(),()->1,()->2)
+						.ofAsync(()->slow(),()->1,()->2)
 						.peek(System.out::println)
 						.convertToSimpleReact()
 						.allOf(list->list)
@@ -129,7 +130,7 @@ public class LazyTest {
 		
 		
 		assertThat(LazyReact.parallelCommonBuilder()
-						.react(()->slow(),()->1,()->2)
+						.ofAsync(()->slow(),()->1,()->2)
 						.peek(System.out::println)
 						.zipWithIndex()
 						.convertToSimpleReact()
@@ -144,7 +145,7 @@ public class LazyTest {
 	@Test
 	public void zipWithIndexApi(){
 		LazyReact.parallelCommonBuilder()
-		.react(() -> 2, () -> 1, () -> 2)
+		.ofAsync(() -> 2, () -> 1, () -> 2)
 		
 		.zipWithIndex()
 		.peek(System.out::println)
@@ -168,9 +169,27 @@ public class LazyTest {
 				.block().size());
 	}
 
-	
+	@Test
+	public void iterateTest(){
+	    assertThat( new LazyReact().iterate(1, i->i+1)
+                .limit(5)
+                .reduce(Semigroups.intSum).get(),equalTo(15));
+	}
 
-	
+	@Test
+	public void generateTest(){
+	   assertThat( new LazyReact().generate(()->"hello")
+	                   .limit(5)
+	                   .reduce(Semigroups.stringConcat).get(),equalTo("hellohellohellohellohello"));
+	    
+	}
+	@Test
+    public void generateAsyncTest(){
+       assertThat( new LazyReact().generateAsync(()->"hello")
+                       .limit(5)
+                       .reduce(Semigroups.stringConcat).get(),equalTo("hellohellohellohellohello"));
+        
+    }
 
 	private boolean sleep(int i) {
 
@@ -186,18 +205,18 @@ public class LazyTest {
 
 	@Test
 	public void lazyReactStream() {
-		assertThat(LazyReact.sequentialBuilder().react(() -> 1).map(list -> 1 + 2)
+		assertThat(LazyReact.sequentialBuilder().ofAsync(() -> 1).map(list -> 1 + 2)
 				.block(),equalTo(Arrays.asList(3)));
 	}
 	@Test
 	public void lazyReactParAndConc() {
-		assertThat(new LazyReact(2,2).react(() -> 1).map(list -> 1 + 2)
+		assertThat(new LazyReact(2,2).ofAsync(() -> 1).map(list -> 1 + 2)
 				.block(),equalTo(Arrays.asList(3)));
 	}
 
 	@Test
 	public void lazyParallel() {
-		assertThat(LazyReact.parallelBuilder().react(() -> 1).map(list -> 1 + 2)
+		assertThat(LazyReact.parallelBuilder().ofAsync(() -> 1).map(list -> 1 + 2)
 				.block(),equalTo(Arrays.asList(3)));
 	}
 

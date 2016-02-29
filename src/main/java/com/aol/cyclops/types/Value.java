@@ -227,19 +227,19 @@ public interface Value<T> extends Supplier<T>,
 	 }
 
 	default LazyFutureStream<T> toFutureStream(LazyReact reactor) {
-		return reactor.react(this);
+		return reactor.ofAsync(this);
 	}
 
 	default LazyFutureStream<T> toFutureStream() {
-		return new LazyReact().react(this);
+		return new LazyReact().ofAsync(this);
 	}
 
 	default SimpleReactStream<T> toSimpleReact(SimpleReact reactor) {
-		return reactor.react(this);
+		return reactor.ofAsync(this);
 	}
 
 	default SimpleReactStream<T> toSimpleReact() {
-		return new SimpleReact().react(this);
+		return new SimpleReact().ofAsync(this);
 	}
 	
 }

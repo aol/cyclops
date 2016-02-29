@@ -25,7 +25,7 @@ public class OnFailTest {
 	}
 	@Test
 	public void chained(){
-		new SimpleReact().react(()->1,()->2)
+		new SimpleReact().ofAsync(()->1,()->2)
 			.then(this::throwException)
 			.onFail(IOException.class, e-> shouldNeverBeCalled.incrementAndGet())
 			.onFail(RuntimeException.class, e-> shouldBeCalled.incrementAndGet())
@@ -39,7 +39,7 @@ public class OnFailTest {
 	}
 	@Test
 	public void chained2(){
-		new SimpleReact().react(()->1,()->2)
+		new SimpleReact().ofAsync(()->1,()->2)
 			.then(this::throwException)
 			.then(i->i+2)
 			.onFail(IOException.class, e-> shouldNeverBeCalled.incrementAndGet())

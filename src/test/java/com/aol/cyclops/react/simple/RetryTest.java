@@ -68,7 +68,7 @@ public class RetryTest {
 				"42");
 
 	
-		String result = new SimpleReact().react(() -> 1, () -> 2, () -> 3)
+		String result = new SimpleReact().ofAsync(() -> 1, () -> 2, () -> 3)
 				.withRetrier(executor).retry(serviceMock)
 				.block().firstValue();
 
@@ -90,7 +90,7 @@ public class RetryTest {
 				"42");
 
 		
-		String result = new SimpleReact().react(() -> 1).withRetrier(executor)
+		String result = new SimpleReact().ofAsync(() -> 1).withRetrier(executor)
 				.retry(serviceMock).block().firstValue();
 
 	
@@ -115,7 +115,7 @@ public class RetryTest {
 				new RuntimeException("DONT PANIC"));
 
 		
-		List<String> result = new SimpleReact().react(() -> 1)
+		List<String> result = new SimpleReact().ofAsync(() -> 1)
 				.withRetrier(executor).capture(e -> error = e)
 				.retry(serviceMock).block();
 
@@ -133,7 +133,7 @@ public class RetryTest {
 		given(serviceMock.apply(anyInt())).willThrow(new AbortRetryException());
 
 		
-		List<String> result = new SimpleReact().react(() -> 1)
+		List<String> result = new SimpleReact().ofAsync(() -> 1)
 				.withRetrier(executor)
 				.capture(e -> error = e)
 				.retry(serviceMock).block();
@@ -155,7 +155,7 @@ public class RetryTest {
 				new IllegalArgumentException("DONT PANIC"));
 
 		
-		List<String> result = new SimpleReact().react(() -> 1)
+		List<String> result = new SimpleReact().ofAsync(() -> 1)
 				.withRetrier(executor).capture(e -> error = e)
 				.retry(serviceMock).block();
 		

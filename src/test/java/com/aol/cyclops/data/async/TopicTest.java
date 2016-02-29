@@ -62,7 +62,7 @@ public class TopicTest {
 		//read from the topic concurrently in 2 threads
 		
 		BaseSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
-			.react(()->parallel()
+			.ofAsync(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
 				.block(),
@@ -102,8 +102,8 @@ public class TopicTest {
 		Stream<Integer> stream1 = topic.stream();
 		Stream<Integer> stream2 = topic.stream();
 		
-		new SimpleReact().react(()-> topic.fromStream(Stream.generate(()->count++)));
-		new SimpleReact().react(()-> topic.fromStream(Stream.generate(()->count1++)));
+		new SimpleReact().ofAsync(()-> topic.fromStream(Stream.generate(()->count++)));
+		new SimpleReact().ofAsync(()-> topic.fromStream(Stream.generate(()->count1++)));
 
 		
 		
@@ -149,7 +149,7 @@ public class TopicTest {
 		Topic<Integer> topic = new Topic<>();
 		
 		BaseSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
-			.react(()->parallel()
+			.ofAsync(()->parallel()
 				.fromStream(topic.streamCompletableFutures())
 				.then(it -> it + "*")
 				.block(Collectors.toList() ),
@@ -165,8 +165,8 @@ public class TopicTest {
 		 
 		    sleep(50);//make sure streams are set up
 			
-		    new SimpleReact(new ForkJoinPool(1)).react(()-> topic.fromStream(Stream.generate(()->count++)));
-			new SimpleReact(new ForkJoinPool(1)).react(()-> topic.fromStream(Stream.generate(()->count1++)));
+		    new SimpleReact(new ForkJoinPool(1)).ofAsync(()-> topic.fromStream(Stream.generate(()->count++)));
+			new SimpleReact(new ForkJoinPool(1)).ofAsync(()-> topic.fromStream(Stream.generate(()->count1++)));
 			
 			sleep(40); //wait until Topic has been read from
 			System.out.println("Closing!");
@@ -194,7 +194,7 @@ public class TopicTest {
 		Topic<Integer> topic = new Topic<>();
 		
 		BaseSimpleReactStream<Collection<String>> stage = new SimpleReact(new ForkJoinPool(2))
-			.react(()->parallel()
+			.ofAsync(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
 				.block(Collectors.toList() ),

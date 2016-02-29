@@ -19,7 +19,7 @@ public class AnyOfTest {
 
 	@Test
 	public void testAnyOfFailure(){
-		new SimpleReact().react(()-> { throw new RuntimeException();},()->"hello",()->"world")
+		new SimpleReact().ofAsync(()-> { throw new RuntimeException();},()->"hello",()->"world")
 				//.onFail(it -> it.getMessage())
 				.capture(e -> 
 				  e.printStackTrace())
@@ -148,7 +148,7 @@ public class AnyOfTest {
 
 		boolean blocked[] = { false };
 
-		new SimpleReact().<Integer> react(() -> 1)
+		new SimpleReact().<Integer> ofAsync(() -> 1)
 
 		.then(it -> {
 			try {

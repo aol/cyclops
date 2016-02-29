@@ -45,7 +45,7 @@ public class QueueTest {
 		
 		
 		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>(2));
-		new SimpleReact().react(() -> {
+		new SimpleReact().ofAsync(() -> {
 			q.offer(1);
 			return found.getAndAdd(1);
 		}, () -> {
@@ -73,7 +73,7 @@ public class QueueTest {
 	@Test
 	public void backPressureJDKTest() {
 		Queue<String> q = new Queue<>(new LinkedBlockingQueue<>(2));
-		new SimpleReact().react(() -> {
+		new SimpleReact().ofAsync(() -> {
 			Stream.of("1", "2", "3", "4").forEach(it -> {
 				q.offer(it);
 				found.getAndAdd(1);
@@ -96,7 +96,7 @@ public class QueueTest {
 	public void backPressureTimeoutTestVeryLow() {
 		Queue<Integer> q = new Queue<Integer>(new LinkedBlockingQueue<>(2))
 				.withOfferTimeout(1).withOfferTimeUnit(TimeUnit.MICROSECONDS);
-		Set<Boolean> results = new SimpleReact().react(
+		Set<Boolean> results = new SimpleReact().ofAsync(
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
@@ -114,7 +114,7 @@ public class QueueTest {
 	public void backPressureTimeoutTestVeryHigh() {
 		Queue<Integer> q = new Queue<Integer>(new LinkedBlockingQueue<>(2))
 				.withOfferTimeout(1).withOfferTimeUnit(TimeUnit.DAYS);
-		BaseSimpleReactStream<Boolean> s = new SimpleReact().react(
+		BaseSimpleReactStream<Boolean> s = new SimpleReact().ofAsync(
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
 				() -> offerAndIncrementFound(q),
@@ -145,7 +145,7 @@ public class QueueTest {
 		for(int i=0;i<1000;i++){
 			found.set(0);
 			Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>(2));
-			new SimpleReact().react(() -> {
+			new SimpleReact().ofAsync(() -> {
 				q.add(1);
 				return found.getAndAdd(1);
 			}, () -> {
@@ -214,9 +214,9 @@ public class QueueTest {
 		count1 = 100000;
 
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
-		LazyReact.parallelBuilder().reactInfinitely(() -> count++)
+		LazyReact.parallelBuilder().generateAsync(() -> count++)
 				.then(it -> q.offer(it)).runThread(new Thread());
-		LazyReact.parallelBuilder().reactInfinitely(() -> count1++)
+		LazyReact.parallelBuilder().generateAsync(() -> count1++)
 				.then(it -> q.offer(it)).runThread(new Thread());
 
 		List<Integer> result = q.stream().limit(1000)
@@ -253,9 +253,9 @@ public class QueueTest {
 
 		Queue<Integer> q = new Queue(new LinkedBlockingQueue());
 
-		new SimpleReact().react(() -> q.fromStream(Stream
+		new SimpleReact().ofAsync(() -> q.fromStream(Stream
 				.generate(() -> count++)));
-		new SimpleReact().react(() -> q.fromStream(Stream
+		new SimpleReact().ofAsync(() -> q.fromStream(Stream
 				.generate(() -> count1++)));
 
 		List<Integer> result = q.stream().limit(1000)
@@ -272,7 +272,7 @@ public class QueueTest {
 		try {
 			Queue q = new Queue<>(new LinkedBlockingQueue<>());
 
-			new SimpleReact().react(() -> q.offer(1), () -> q.offer(2), () -> {
+			new SimpleReact().ofAsync(() -> q.offer(1), () -> q.offer(2), () -> {
 				sleep(50);
 				return q.offer(4);
 			}, () -> {
@@ -298,7 +298,7 @@ public class QueueTest {
 		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<Integer>())
 				.withTimeout(1).withTimeUnit(TimeUnit.MILLISECONDS);
 
-		new SimpleReact().react(() -> q.offer(1), () -> q.offer(2), () -> {
+		new SimpleReact().ofAsync(() -> q.offer(1), () -> q.offer(2), () -> {
 			sleep(500);
 			return q.offer(4);
 		}, () -> q.offer(5));
@@ -318,7 +318,7 @@ public class QueueTest {
 		try {
 			Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>());
 
-			new SimpleReact().react(() -> q.offer(1), () -> q.offer(2), () -> {
+			new SimpleReact().ofAsync(() -> q.offer(1), () -> q.offer(2), () -> {
 				sleep(200);
 				return q.offer(4);
 			}, () -> {

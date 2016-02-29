@@ -24,7 +24,7 @@ public class BlockingTest {
 			ExecutionException {
 
 		Integer result = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 200)
 				.block()
 				.parallelStream()
@@ -37,21 +37,21 @@ public class BlockingTest {
 
 	@Test
 	public void testTypeInferencingCapture(){
-		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> "hello")
+		List<String> result = new SimpleReact().ofAsync(() -> "World",()-> "Hello").then( in -> "hello")
 				.capture(e -> e.printStackTrace()).block();
 		assertThat(result.size(),is(2));
 	
 	}
 	@Test
 	public void testTypeInferencingThen(){
-		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> "hello")
+		List<String> result = new SimpleReact().ofAsync(() -> "World",()-> "Hello").then( in -> "hello")
 				.block();
 		assertThat(result.size(),is(2));
 	
 	}
 	@Test
 	public void testTypeInferencingThenPredicate(){
-		List<String> result = new SimpleReact().react(() -> "World",()-> "Hello").then( in -> "hello")
+		List<String> result = new SimpleReact().ofAsync(() -> "World",()-> "Hello").then( in -> "hello")
 				.block(state -> state.getCompleted()>3);
 		assertThat(result.size(),is(2));
 	
@@ -63,7 +63,7 @@ public class BlockingTest {
 	public void testBlock() throws InterruptedException, ExecutionException {
 
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();
@@ -76,7 +76,7 @@ public class BlockingTest {
 	public void testBlockToSet() throws InterruptedException, ExecutionException {
 
 		Set<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 1, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 1, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block(Collectors.toSet());
@@ -89,7 +89,7 @@ public class BlockingTest {
 	public void testBreakout() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -108,7 +108,7 @@ public class BlockingTest {
 	public void testBreakoutToSet() throws InterruptedException, ExecutionException {
 		Throwable[] error = { null };
 		Set<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -129,7 +129,7 @@ public class BlockingTest {
 			ExecutionException {
 		Throwable[] error = { null };
 		List<Integer> results = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<Integer>then(it -> {
 
@@ -148,7 +148,7 @@ public class BlockingTest {
 			ExecutionException {
 		count =0;
 		List<Integer> results = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<Integer>then(it -> {
 
@@ -165,7 +165,7 @@ public class BlockingTest {
 			ExecutionException {
 		count =0;
 		List<Integer> results = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if(it==100)
@@ -185,7 +185,7 @@ public class BlockingTest {
 			ExecutionException {
 		count =0;
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if(it==100)
@@ -206,7 +206,7 @@ public class BlockingTest {
 			ExecutionException {
 			count =0;
 			List<Integer> result = new SimpleReact()
-					.<Integer> react(() -> 1, () -> 2, () -> 3)
+					.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 					.then(it -> it * 100)
 					.then(it -> {
 						sleep(it);
@@ -225,7 +225,7 @@ public class BlockingTest {
 			ExecutionException {
 		Throwable[] error = { null };
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> {
 					if (it == 100)
@@ -243,7 +243,7 @@ public class BlockingTest {
 	public void testLast() throws InterruptedException, ExecutionException {
 
 		Integer result = new SimpleReact()
-		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.<Integer> ofAsync(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.then( it -> sleep(it))
 		.block().takeRight(1).get(0);
@@ -254,7 +254,7 @@ public class BlockingTest {
 	public void testFirstSimple() throws InterruptedException, ExecutionException {
 
 		SimpleReactStream<Integer> stage = new SimpleReact()
-		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.<Integer> ofAsync(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.then( it -> sleep(it));
 		
@@ -271,7 +271,7 @@ public class BlockingTest {
 	public void testFirstAllOf() throws InterruptedException, ExecutionException {
 
 		Set<Integer> result = new SimpleReact()
-		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.<Integer> ofAsync(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), it -> {
 			assertThat (it,is( Set.class));
@@ -284,7 +284,7 @@ public class BlockingTest {
 	public void testLastAllOf() throws InterruptedException, ExecutionException {
 
 		Set<Integer> result = new SimpleReact()
-		.<Integer> react(() -> 1, () -> 2, () -> 3, () -> 5)
+		.<Integer> ofAsync(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), it -> {
 			assertThat (it,is( Set.class));

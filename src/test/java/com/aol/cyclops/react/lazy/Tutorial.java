@@ -35,15 +35,48 @@ import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.val;
 
 
 public class Tutorial {
 
+    @Test
+    public void IO(){
+        
+        //stream builder with 50 threads and 50 active futures
+        LazyReact react = new LazyReact(50,50)
+                                .autoOptimizeOn(); //cache processing results
+        
+        
+        react.generateAsync(this::loadNext)
+             .takeWhile(this::isActive)
+             .map(this::process)
+             .peek(this::save)
+             .run(); //run async
+    }
+    
+    @Test
+    public void scheduled(){
+        
+        
+    }
+    public void save(int data){
+        
+    }
+    public int process(String data){
+        return 10;
+    }
+    public boolean isActive(String value){
+        return true;
+    }
+    public String loadNext(){
+        return "hello";
+    }
 	@SuppressWarnings("unchecked")
 	@Test
 	public void zipByResults() {
 
-		LazyFutureStream<String> a = LazyReact.parallelCommonBuilder().react(
+		LazyFutureStream<String> a = LazyReact.parallelCommonBuilder().ofAsync(
 				() -> slowest(), () -> fast(), () -> slow());
 		LazyFutureStream<Integer> b = LazyReact.sequentialCommonBuilder().of(
 				1, 2, 3, 4, 5, 6);
@@ -59,7 +92,7 @@ public class Tutorial {
 	public void zipWithIndex() {
 
 		LazyReact.sequentialCommonBuilder()
-				.react(() -> slowest(), () -> fast(), () -> slow())
+				.ofAsync(() -> slowest(), () -> fast(), () -> slow())
 				.zipWithIndex().forEach(System.out::println);
 
 	}
@@ -69,7 +102,7 @@ public class Tutorial {
 	public void zipFuturesWithIndex() {
 
 		LazyReact.parallelCommonBuilder()
-				.react(() -> slowest(), () -> fast(), () -> slow())
+				.ofAsync(() -> slowest(), () -> fast(), () -> slow())
 				.zipWithIndex().forEach(System.out::println);
 
 	}
@@ -79,7 +112,7 @@ public class Tutorial {
 	public void combineLatest() {
 		SimpleReact
 				.parallelCommonBuilder()
-				.react(() -> slowest(), () -> fast(), () -> slow())
+				.ofAsync(() -> slowest(), () -> fast(), () -> slow())
 				.combineLatest(
 						SimpleReact.sequentialCommonBuilder().of(1, 2, 3, 4, 5,
 								6)).forEach(System.out::println);
@@ -90,7 +123,7 @@ public class Tutorial {
 	public void withLatest() {
 		SimpleReact
 				.sequentialBuilder()
-				.react(() -> slowest(), () -> fast(), () -> slow())
+				.ofAsync(() -> slowest(), () -> fast(), () -> slow())
 				.withLatest(
 						SimpleReact.sequentialCommonBuilder().of(1, 2, 3, 4, 5,
 								6)).forEach(System.out::println);
@@ -101,11 +134,11 @@ public class Tutorial {
 	public void zipByFutures() {
 
 		LazyReact.parallelCommonBuilder()
-				.react(() -> slowest(), () -> fast(), () -> slow())
+				.ofAsync(() -> slowest(), () -> fast(), () -> slow())
 				.flatMap(it -> it.chars().boxed()).forEach(System.out::println);
 
 		LazyFutureStream<String> a = LazyReact.parallelCommonBuilder()
-				.react(() -> slowest(), () -> fast(), () -> slow());
+				.ofAsync(() -> slowest(), () -> fast(), () -> slow());
 		LazyFutureStream<Integer> b = LazyReact.sequentialCommonBuilder()
 				.of(1, 2, 3, 4, 5, 6);
 
@@ -138,7 +171,7 @@ public class Tutorial {
 
 		List<String> results = LazyReact.sequentialCommonBuilder()
 				.withRetrier(retrier)
-				.react(() -> "new event1", () -> "new event2")
+				.ofAsync(() -> "new event1", () -> "new event2")
 				.retry(this::unreliable).onFail(e -> "default")
 				.peek(System.out::println).capture(Throwable::printStackTrace)
 				.block();
@@ -161,7 +194,7 @@ public class Tutorial {
 		shards.put(2, new Queue<>());
 
 		Map<Integer, LazyFutureStream<User>> sharded = LazyReact
-				.sequentialCommonBuilder().react(() -> loadUserData())
+				.sequentialCommonBuilder().ofAsync(() -> loadUserData())
 				.flatMap(Collection::stream)
 				.shard(shards, user -> user.getUserId() % 3);
 
@@ -179,15 +212,15 @@ public class Tutorial {
 	public void firstOf(){
 		
 		SimpleReactStream<String> stream1 =SimpleReact.sequentialCommonBuilder()
-													.react(() -> loadFromDb())
+													.ofAsync(() -> loadFromDb())
 													.then(this::convertToStandardFormat);
 
 		SimpleReactStream<String> stream2 = SimpleReact.sequentialCommonBuilder()
-													.react(() -> loadFromService1())
+													.ofAsync(() -> loadFromService1())
 													.then(this::convertToStandardFormat);
 
 		SimpleReactStream<String> stream3 = SimpleReact.sequentialCommonBuilder()
-													.react(() -> loadFromService2())
+													.ofAsync(() -> loadFromService2())
 													.then(this::convertToStandardFormat);
 
 		SimpleReactStream.firstOf(stream1, stream2, stream3)
@@ -204,7 +237,7 @@ public class Tutorial {
 		
 
 
-		LazyReact.parallelCommonBuilder().react(() -> loadFromDb(),() -> loadFromService1(),
+		LazyReact.parallelCommonBuilder().ofAsync(() -> loadFromDb(),() -> loadFromService1(),
 														() -> loadFromService2())
 						.map(this::convertToStandardFormat)
 						.peek(System.out::println)
@@ -236,7 +269,7 @@ public class Tutorial {
 
 	@Test
 	public void allOf(){
-		 SimpleReact.sequentialCommonBuilder().react(()->1,()->2,()->3)
+		 SimpleReact.sequentialCommonBuilder().ofAsync(()->1,()->2,()->3)
 		 									 .then(it->it+100)
 		 									 .peek(System.out::println)
 		 									 .allOf(c-> HashTreePMap.singleton("numbers",c))
@@ -262,7 +295,7 @@ public class Tutorial {
 	public void filterMapReduceFlatMap() {
 		int totalVisits = 
 				LazyReact.sequentialCommonBuilder()
-											.react(() -> loadUserData())
+											.ofAsync(() -> loadUserData())
 											.flatMap(Collection::stream)
 											.filter(User::hasPurchased)
 											.peek(System.out::println)
@@ -296,7 +329,7 @@ public class Tutorial {
 	public void gettingStarted() {
 
 		List<String> results = new SimpleReact()
-				.react(() -> readData("data1"), () -> readData("data2"))
+				.ofAsync(() -> readData("data1"), () -> readData("data2"))
 				.onFail(RuntimeException.class, this::loadFromDb)
 				.peek(System.out::println).then(this::processData).block();
 
@@ -322,7 +355,7 @@ public class Tutorial {
 	@Test
 	public void skipUntil() {
 		SimpleReactStream<Boolean> stoppingStream = SimpleReact
-				.sequentialCommonBuilder().react(() -> 1000).then(this::sleep)
+				.sequentialCommonBuilder().ofAsync(() -> 1000).then(this::sleep)
 				.peek(System.out::println);
 		System.out.println(SimpleReact.sequentialCommonBuilder()
 				.from(IntStream.range(0, 1000000))
@@ -403,7 +436,7 @@ public class Tutorial {
 	@Test
 	public void debounce() {
 		LazyReact.sequentialCommonBuilder()
-				.iterateInfinitely(0, it -> it + 1)
+				.iterate(0, it -> it + 1)
 				.limit(100)
 				.debounce(100, TimeUnit.MILLISECONDS).peek(System.out::println)
 				.runOnCurrent();
@@ -413,7 +446,7 @@ public class Tutorial {
 	public void onePerSecond() {
 
 		LazyReact.sequentialCommonBuilder()
-				.iterateInfinitely(0, it -> it + 1)
+				.iterate(0, it -> it + 1)
 				.limit(100)
 				.onePer(1, TimeUnit.MICROSECONDS)
 				.map(seconds -> readStatus()).retry(this::saveStatus)
@@ -451,7 +484,7 @@ public class Tutorial {
 	@Ignore
 	public void onePerSecondAndBatch() {
 		List<ListX<String>> collected = LazyReact
-				.sequentialCommonBuilder().reactInfinitely(() -> status)
+				.sequentialCommonBuilder().generateAsync(() -> status)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
 				.onePer(1, TimeUnit.SECONDS).groupedByTime(10, TimeUnit.SECONDS)
 				.limit(15).block();
@@ -464,7 +497,7 @@ public class Tutorial {
 	@Test @Ignore
 	public void secondsTimeInterval() {
 		List<ListX<Integer>> collected = LazyReact
-				.sequentialCommonBuilder().iterateInfinitely(0, it -> it + 1)
+				.sequentialCommonBuilder().iterate(0, it -> it + 1)
 				//.limit(100)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
 				.onePer(1, TimeUnit.MICROSECONDS).peek(System.out::println)
@@ -487,7 +520,7 @@ public class Tutorial {
 	@Ignore
 	public void executeRestCallInPool() {
 		boolean success = SequentialElasticPools.lazyReact.react(er -> er
-				.react(() -> restGet()).map(Tutorial::transformData)
+				.ofAsync(() -> restGet()).map(Tutorial::transformData)
 				.then(Tutorial::saveToDb).block().firstValue());
 	}
 
@@ -510,7 +543,7 @@ public class Tutorial {
 
 		LazyReact
 				.parallelCommonBuilder()
-				.iterateInfinitely("", last -> nextFile())
+				.iterate("", last -> nextFile())
 				.limit(100)
 				.map(this::readFileToString)
 				.map(this::parseJson)
@@ -536,7 +569,7 @@ public class Tutorial {
 	
 		LazyReact
 				.parallelCommonBuilder()
-					.iterateInfinitely("", last -> nextFile())
+					.iterate("", last -> nextFile())
 					.limit(100)
 					.map(d->Arrays.asList())
 					.filter(i-> !i.isEmpty())
@@ -586,7 +619,7 @@ public class Tutorial {
 			List<Collection<Map>> result = new ArrayList<>();
 					LazyReact
 					.parallelCommonBuilder()
-					.iterateInfinitely("", last -> nextFile())
+					.iterate("", last -> nextFile())
 					.limit(1000)
 					
 					.map(this::readFileToString)
@@ -645,7 +678,7 @@ public class Tutorial {
 		count2=new AtomicInteger(0);
 		LazyReact
 				.parallelCommonBuilder()
-				.iterateInfinitely("", last -> nextFile())
+				.iterate("", last -> nextFile())
 				.limit(100)
 				
 				.map(this::readFileToString)
@@ -689,7 +722,7 @@ public class Tutorial {
 
 		LazyReact
 				.parallelCommonBuilder()
-				.iterateInfinitely("", last -> nextFile())
+				.iterate("", last -> nextFile())
 				.limit(100)
 				
 				.map(this::readFileToString)
@@ -715,7 +748,7 @@ public class Tutorial {
 
 		LazyReact
 				.parallelCommonBuilder()
-				.iterateInfinitely("", last -> nextFile())
+				.iterate("", last -> nextFile())
 				.limit(100)
 				.map(this::readFileToString)
 				.map(this::parseJson)

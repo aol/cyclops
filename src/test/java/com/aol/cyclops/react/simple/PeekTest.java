@@ -19,7 +19,7 @@ public class PeekTest {
 			ExecutionException {
 		Queue<String> peeked = new  ConcurrentLinkedQueue<String>();
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<String>then(it -> "*" + it)
 				.peek((String it) -> peeked.add(it))
@@ -37,7 +37,7 @@ public class PeekTest {
 			ExecutionException {
 		Queue<Integer> peeked = new  ConcurrentLinkedQueue<Integer>();
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.peek(it -> peeked.add(it))
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
@@ -53,7 +53,7 @@ public class PeekTest {
 			ExecutionException {
 		Queue<Integer> peeked = new  ConcurrentLinkedQueue<Integer>();
 		List<String> strings = new SimpleReact()
-				.<Integer> react(() -> 1, () -> 2, () -> 3)
+				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.peek(it -> peeked.add(it))
 				.peek(it -> peeked.add(it))
 				.then(it -> it * 100)

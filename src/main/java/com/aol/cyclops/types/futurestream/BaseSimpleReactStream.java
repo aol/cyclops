@@ -510,7 +510,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 * 
 	 */
 	static <T> SimpleReactStream<T> react(Supplier<T> value) {
-		return   new SimpleReact(ThreadPools.getStandard(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).react(value);
+		return   new SimpleReact(ThreadPools.getStandard(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).ofAsync(value);
 	}
 	/**
 	 * Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
@@ -519,7 +519,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 */
 	@SafeVarargs
 	static <T> SimpleReactStream<T> react(Supplier<T>... values) {
-		return   new SimpleReact(ThreadPools.getStandard(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).react(values);
+		return   new SimpleReact(ThreadPools.getStandard(),new AsyncRetryExecutor(ThreadPools.getSequentialRetry()),false).ofAsync(values);
 	}
 	
 	/**
