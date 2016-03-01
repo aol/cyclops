@@ -181,12 +181,12 @@ public class LazyTest {
 	}
 	@Test
     public void iterateTest2(){
+	    LazyReact react = new LazyReact(1,1);
         for(int x=0;x<5000;x++)
 	    {
-            assertThat( new LazyReact(1,1)
+            assertThat( react
                             .iterate(1, i->i+1)
                             .limit(5)
-                            .peek(System.out::println)
                             .reduce(Semigroups.intSum).get(),equalTo(15));
         }
     }
