@@ -1,12 +1,13 @@
 package com.aol.cyclops.react.async.vertx;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.jooq.lambda.tuple.Tuple.tuple;
-import  org.jooq.lambda.tuple.Tuple3;
+import static org.junit.Assert.*;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.jooq.lambda.tuple.Tuple;
+import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
@@ -14,13 +15,13 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.QueueFactories;
+import com.aol.cyclops.data.async.wait.WaitStrategy;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
+
 
 public class VertxTest {
 	@Test
@@ -30,16 +31,19 @@ public class VertxTest {
 		LazyReact react = new LazyReact(c->vertx.runOnContext(v -> c.run()));
 		int number = react.of(1, 2, 3).map(i -> i + 1).reduce((a,b) -> a + b).orElse(Integer.MIN_VALUE);
 		System.out.println("sum = " + number); // 2 + 3 + 4 = 9
+		
+		assertThat(number,equalTo(9));
 	}
-	@Test
+	@Test @Ignore
 	public void httpServer(){
 	    Vertx vertx = Vertx.factory.vertx();
 	    CompletableFuture<HttpServer> server =new CompletableFuture<>();
 	   
 
 	                     
-	    Queue<HttpServerRequest> reqs = QueueFactories.<HttpServerRequest>boundedNonBlockingQueue(1000)
-	                                                            .build();
+	    Queue<HttpServerRequest> reqs = QueueFactories.<HttpServerRequest>boundedNonBlockingQueue(1000, 
+	                                                        WaitStrategy.spinWait())
+	                                                        .build();
 	    
 	                
 	    vertx.createHttpServer(new HttpServerOptions().
@@ -59,10 +63,12 @@ public class VertxTest {
 	    LazyReact react = new LazyReact(c->vertx.runOnContext(v -> c.run()));
 	    
 	    react.from(reqs.stream())
-	         .peek(System.out::println)
+	         .filter(req->req.getParam("num")!=null)
+	         .peek(i->System.out.println("grouping " + i))
 	         .grouped(2)
 	         .map(list-> tuple(list.get(0).response(),list.get(1).response(),getParam(list.get(0)),getParam(list.get(1))))
-	         .peek(t->t.v1.end("adding "+t.v3+t.v4))
+	         .peek(i->System.out.println("peeking + "+i))
+	         .peek(t->t.v1.end("adding "+(t.v3+t.v4)))
 	         .peek(t->t.v2.end("multiplying "+t.v3*t.v4))
 	         .run();
 	      
@@ -87,7 +93,7 @@ public class VertxTest {
 	
 	
 	
-	@Test
+	@Test @Ignore
     public void downloadUrls(){
 	    
 	    //cyclops-react async.Queues

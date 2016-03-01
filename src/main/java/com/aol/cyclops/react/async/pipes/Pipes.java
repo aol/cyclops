@@ -12,6 +12,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.data.async.Adapter;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 
 /**
@@ -56,8 +57,6 @@ public class Pipes {
 		
 	}
 	
-	
-
 	public static void clear() {
 		 registered.clear();
 		
@@ -71,7 +70,7 @@ public class Pipes {
 		if(!registered.containsKey(key))
 			return Optional.empty();
 		return Optional.of(LazyFutureStream.lazyFutureStream(((Adapter)registered.get(key)).stream()).async()
-				.withPublisherExecutor(publishWith));
+		            .withPublisherExecutor(publishWith));
 	}
 	/**
 	 * @param key for registered simple-react async.Adapter
@@ -95,8 +94,8 @@ public class Pipes {
 	 * @param publisher Reactive Streams publisher  to push data onto this pipe
 	 */
 	public static<T> void publishTo(Object key,Publisher<T> publisher){
-		SeqSubscriber<T> sub = SeqSubscriber.subscriber();
-		publisher.subscribe(sub);
+	    SeqSubscriber<T> sub = SeqSubscriber.subscriber();
+        publisher.subscribe(sub);
 		registered.get(key).fromStream((Stream)sub.stream());
 	}
 	/**

@@ -35,7 +35,7 @@ public class SeqSubscriber<T> implements Subscriber<T>,
         
         
         private final Object UNSET = new Object();
-        private final AtomicReference lastValue = new AtomicReference(null);
+        private final AtomicReference lastValue = new AtomicReference(UNSET);
         private final AtomicReference lastError = new AtomicReference(UNSET);
         private final Runnable onComplete;
         private volatile boolean complete = false;
@@ -80,6 +80,7 @@ public class SeqSubscriber<T> implements Subscriber<T>,
         @Override
         public void onError(Throwable t) {
             Objects.requireNonNull(t);
+            System.out.println("Setting error "  +t);
             lastError.set(t);
         }
 
@@ -90,7 +91,7 @@ public class SeqSubscriber<T> implements Subscriber<T>,
             
         }
         public T get(){
-            requestOne.run();
+            
             while(lastValue.get()==UNSET && lastError.get()==UNSET)
                 LockSupport.parkNanos(1000000l);
             if(lastError.get()!=UNSET){
@@ -100,6 +101,7 @@ public class SeqSubscriber<T> implements Subscriber<T>,
             }
             T result = (T)lastValue.get();
             reset();
+            requestOne.run();
             return result;
             
         }

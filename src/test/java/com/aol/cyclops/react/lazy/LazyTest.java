@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazyTest {
@@ -171,10 +172,24 @@ public class LazyTest {
 
 	@Test
 	public void iterateTest(){
-	    assertThat( new LazyReact().iterate(1, i->i+1)
-                .limit(5)
-                .reduce(Semigroups.intSum).get(),equalTo(15));
+	    
+    	    assertThat(new LazyReact().iterate(1, i->i+1)
+                    .limit(5)
+                    .peek(System.out::println)
+                    .toListX().size(),equalTo(5));
+	    
 	}
+	@Test
+    public void iterateTest2(){
+        for(int x=0;x<5000;x++)
+	    {
+            assertThat( new LazyReact(1,1)
+                            .iterate(1, i->i+1)
+                            .limit(5)
+                            .peek(System.out::println)
+                            .reduce(Semigroups.intSum).get(),equalTo(15));
+        }
+    }
 
 	@Test
 	public void generateTest(){

@@ -121,7 +121,7 @@ public class AutoclosingTest {
 			close = new AtomicInteger();
 			added = new AtomicInteger();
 			//subscription fills from outside in (right to left), need to store open / closed for each queue
-			List<Tuple2<List<List<String>>, Integer>> results = new LazyReact().generateAsync(()->nextValues()).withQueueFactory(()-> eventQueue())
+			List<Tuple2<List<List<String>>, Integer>> results = new LazyReact().generate(()->nextValues()).withQueueFactory(()-> eventQueue())
 														  .zip(LazyFutureStream.parallel(1,2,3))
 														  .collect(Collectors.toList());
 			System.out.println("finished");

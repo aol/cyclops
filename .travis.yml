@@ -2,3 +2,6 @@ language: java
 install: gradle clean build
 jdk:
   - oraclejdk8
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install --only-upgrade -y oracle-java8-installer

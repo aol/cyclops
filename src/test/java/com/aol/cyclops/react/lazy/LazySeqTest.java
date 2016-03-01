@@ -73,7 +73,7 @@ public abstract class LazySeqTest extends BaseSeqTest {
 		{
 			
 		//	System.out.println(i);
-			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(1000);return 6;})
+			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(2000);return 6;})
 						
 							.groupedByTime(10,TimeUnit.MICROSECONDS)
 							.toList()
@@ -166,7 +166,7 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	@Test
 	public void zipFastSlow() {
 		Queue q = new Queue();
-		LazyReact.parallelBuilder().generateAsync(() -> sleep(100))
+		LazyReact.parallelBuilder().generate(() -> sleep(100))
 				.then(it -> q.add("100")).runThread(new Thread());
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))

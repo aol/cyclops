@@ -1,16 +1,14 @@
 package com.aol.cyclops.internal.stream.operators;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import lombok.Value;
-
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.util.stream.StreamUtils;
+
+import lombok.Value;
 @Value
 public class BatchBySizeOperator<T, C extends Collection<? super T>> {
 
@@ -18,7 +16,7 @@ public class BatchBySizeOperator<T, C extends Collection<? super T>> {
 	Supplier<C> factory;
 	public BatchBySizeOperator(Stream<T> stream){
 		this.stream = stream;
-		factory = ()-> (C)new ListXImpl();
+		factory = ()-> (C)new ListXImpl<>();
 	}
 	public BatchBySizeOperator(Stream<T> stream2, Supplier<C> factory2) {
 		this.stream=stream2;

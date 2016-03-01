@@ -534,14 +534,16 @@ public class LazyReact implements ReactBuilder {
 	private static final Object NONE = new Object();
 	/**
 	 * Iterate infinitely using the supplied seed and function
+	 * Iteration is synchronized to support multiple threads using the same iterator.
 	 * 
+	 * @see LazyFutureStream#iterate for an alternative which does not synchronize iteration
 	 * @param seed Initial value
 	 * @param f Function that performs the iteration
 	 * @return Next stage in the flow / stream
 	 */
 	public <U> LazyFutureStream<U> iterate(final U seed, final UnaryOperator<U> f){
 		
-		Subscription sub = new Subscription();
+		 Subscription sub = new Subscription();
 		 final Supplier<U> supplier = new Supplier<U> () {
 	            @SuppressWarnings("unchecked")
 	            U t = (U) NONE;

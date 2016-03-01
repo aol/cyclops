@@ -211,7 +211,7 @@ public class Queue<T> implements Adapter<T> {
 	 *            Input data from provided Stream
 	 */
 	public boolean fromStream(Stream<T> stream) {
-		stream.collect(Collectors.toCollection(() -> queue));
+		stream.peek(System.out::println).collect(Collectors.toCollection(() -> queue));
 		return true;
 	}
 	private T ensureOpen(final long timeout, TimeUnit timeUnit) {

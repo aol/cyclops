@@ -83,8 +83,9 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	
 	@Test
 	public void batchByTime2(){
-		for(int i=0;i<5;i++){
-			System.out.println(i);
+		for(int i=0;i<5;i++)
+	    {
+		    System.out.println(i);
 			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
 					
 							.groupedByTime(10,TimeUnit.MICROSECONDS)
@@ -178,7 +179,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Test
 	public void zipFastSlow() {
 		Queue q = new Queue();
-		LazyReact.parallelBuilder().generateAsync(() -> sleep(100))
+		LazyReact.parallelBuilder().generate(() -> sleep(100))
 				.then(it -> q.add("100")).runThread(new Thread());
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
@@ -189,13 +190,13 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	
 	@Test
 	public void reactInfinitely(){
-		 assertThat(LazyReact.sequentialBuilder().generateAsync(() -> "100")
+		 assertThat(LazyReact.sequentialBuilder().generate(() -> "100")
 		 	.limit(100)
 		 	.toList().size(),equalTo(100));
 	}
 	@Test 
 	public void streamFromQueue() {
-		assertThat( LazyReact.sequentialBuilder().generateAsync(() -> "100")
+		assertThat( LazyReact.sequentialBuilder().generate(() -> "100")
 			.limit(100)
 			.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue()
 			.stream().collect(Collectors.toList()).size(),equalTo(100));
