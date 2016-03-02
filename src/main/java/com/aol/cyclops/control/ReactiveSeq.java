@@ -861,6 +861,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 */
 	ReactiveSeq<T> sorted();
 
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+	 */
+	default ReactiveSeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+	   return fromStream(StreamUtils.combine(this, predicate, op));
+	}
 	/**
 	 * <pre>
 	 * {@code 

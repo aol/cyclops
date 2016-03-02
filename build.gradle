@@ -90,7 +90,7 @@ sourceSets {
 }
 
 test {
-        forkEvery = 100
+        forkEvery = 10
         /**
         testLogging {
             // set options for log level LIFECYCLE

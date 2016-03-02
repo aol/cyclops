@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -32,6 +34,7 @@ import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -199,7 +202,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	
 	<K, A, D> CollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream);
 	<K> CollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier);
-	
+	CollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op);
 	<U> CollectionX<Tuple2<T, U>> zip(Iterable<U> other);
 	<U, R> CollectionX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 	<U> CollectionX<Tuple2<T, U>> zipStream(Stream<U> other);

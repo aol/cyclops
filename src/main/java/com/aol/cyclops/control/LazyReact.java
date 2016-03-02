@@ -124,6 +124,19 @@ public class LazyReact implements ReactBuilder {
 		this.autoMemoize =false;
 		this.memoizeCache=null;
 	}
+	public LazyReact(int maxActive,Executor executor) {
+        
+        this.executor = executor;
+        this.retrier = null;
+        this.async = true;
+        this.maxActive = MaxActive.IO;
+        this.publisherExecutor=null;
+        this.streamOfFutures=false;
+        this.poolingActive=false;
+        this.autoOptimize=true;
+        this.autoMemoize =false;
+        this.memoizeCache=null;
+    }
 	
 	/**
 	 * LazyReact builder with a new TaskExecutor with threads determined by threadPoolSize

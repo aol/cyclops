@@ -22,8 +22,10 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Test;
 
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -34,7 +36,13 @@ import lombok.EqualsAndHashCode;
 
 public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMSeqTest {
 	
-	
+    @Test
+    public void combine(){
+        assertThat(of(1,1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX(),equalTo(ListX.of(4,3))); 
+                   
+    }
 	@Test
 	public void zip3(){
 		List<Tuple3<Integer,Integer,Character>> list =

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -98,7 +99,26 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	default POrderedSet<T> toPOrderedSet(){
 		return this;
 	}
-	
+	  /**
+     * Combine two adjacent elements in a POrderedSetX using the supplied BinaryOperator
+     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * with it's neighbor
+     * <pre>
+     * {@code 
+     *  POrderedSetX.of(1,1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX()
+                   
+     *  //ListX(3,4) 
+     * }</pre>
+     * 
+     * @param predicate Test to see if two neighbors should be joined
+     * @param op Reducer to combine neighbors
+     * @return Combined / Partially Reduced POrderedSetX
+     */
+    default POrderedSetX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+        return (POrderedSetX<T>)PersistentCollectionX.super.combine(predicate,op);
+    }
 	default <X> POrderedSetX<X> from(Collection<X> col){
 		return fromCollection(col);
 	}

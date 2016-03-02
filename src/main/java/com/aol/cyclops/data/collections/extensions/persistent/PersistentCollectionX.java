@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -539,6 +540,13 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
     @Override
     default PersistentCollectionX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
         return from(this.<ListX<T>>monoid().mapReduce(stream().groupedStatefullyWhile(predicate)));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     */
+    @Override
+    default PersistentCollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+        return from(this.<T>monoid().mapReduce(stream().combine(predicate,op)));
     }
     @Override
     default PersistentCollectionX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {

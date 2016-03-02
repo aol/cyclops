@@ -9,6 +9,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -67,6 +68,26 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	default SortedSetX<T> toSortedSetX() {
 		return this;
 	}
+	/**
+     * Combine two adjacent elements in a SortedSetX using the supplied BinaryOperator
+     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * with it's neighbor
+     * <pre>
+     * {@code 
+     *  SortedSetX.of(1,1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX()
+                   
+     *  //ListX(3,4) 
+     * }</pre>
+     * 
+     * @param predicate Test to see if two neighbors should be joined
+     * @param op Reducer to combine neighbors
+     * @return Combined / Partially Reduced SortedSetX
+     */
+    default SortedSetX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+        return (SortedSetX<T>)MutableCollectionX.super.combine(predicate,op);
+    }
 	
 	@Override
 	default <R> SortedSetX<R> ap1( ZippingApplicative<T,R, ?> ap){

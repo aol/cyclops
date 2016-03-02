@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -74,7 +75,27 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	default <X> DequeX<X> fromStream(Stream<X> stream){
 		return new DequeXImpl<>(stream.collect(getCollector()),getCollector());
 	}
-	
+
+    /**
+     * Combine two adjacent elements in a DequeX using the supplied BinaryOperator
+     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * with it's neighbor
+     * <pre>
+     * {@code 
+     *  DequeX.of(1,1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX()
+                   
+     *  //ListX(3,4) 
+     * }</pre>
+     * 
+     * @param predicate Test to see if two neighbors should be joined
+     * @param op Reducer to combine neighbors
+     * @return Combined / Partially Reduced DequeX
+     */
+	default DequeX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+        return (DequeX<T>)MutableCollectionX.super.combine(predicate,op);
+    }
 	
 	@Override
 	default<R> DequeX<R> unit(Collection<R> col){

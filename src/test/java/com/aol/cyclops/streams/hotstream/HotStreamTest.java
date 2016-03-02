@@ -15,7 +15,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.PausableHotStream;
 
 public class HotStreamTest {
-	static final Executor exec = Executors.newFixedThreadPool(4);
+	static final Executor exec = Executors.newFixedThreadPool(5);
 	volatile Object value;
 	
 	@Test
@@ -97,12 +97,14 @@ public class HotStreamTest {
 		latch.await();
 		assertTrue(value!=null);
 	}
+	volatile boolean active;
 	@Test
 	public void hotStreamConnectPausableConnect() throws InterruptedException{
 		value= null;
+		active=true;
 		CountDownLatch latch = new CountDownLatch(1);
 		PausableHotStream s = ReactiveSeq.range(0,Integer.MAX_VALUE)
-				.limit(100000)
+		        .limitWhile(i->active)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.pausableHotStream(exec);
@@ -115,10 +117,11 @@ public class HotStreamTest {
 		
 		s.pause();
 		s.unpause();
-		LockSupport.parkNanos(100000l);
+
+		while(value==null)
+		    Thread.sleep(1000);
 		s.pause();
-		System.out.println(value);
-		assertTrue(value!=oldValue);
+		assertTrue("value= " +  value,value!=oldValue);
 		s.unpause();
 		latch.await();
 		assertTrue(value!=null);

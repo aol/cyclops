@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -29,40 +30,55 @@ import com.aol.cyclops.util.stream.StreamUtils;
 public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	
 	<X> MutableCollectionX<X> fromStream(Stream<X> stream);
-	
+	@Override
+	default MutableCollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+	    return fromStream(stream().combine(predicate, op)); 
+	}
+	@Override
 	default MutableCollectionX<T> reverse(){
 		return fromStream(stream().reverse()); 
 	}
+	@Override
 	default MutableCollectionX<T> filter(Predicate<? super T> pred){
 		return fromStream(stream().filter(pred));
 	}
+	@Override
 	default <R> CollectionX<R> map(Function<? super T, ? extends R> mapper){
 		return fromStream(stream().map(mapper));
 	}
+	@Override
 	default <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper){
 		return fromStream(stream().flatMap(mapper.andThen(StreamUtils::stream)));
 	}
+	@Override
 	default MutableCollectionX<T> limit(long num){
 		return fromStream(stream().limit(num));
 	}
+	@Override
 	default MutableCollectionX<T> skip(long num){
 		return fromStream(stream().skip(num));
 	}
+	@Override
 	default MutableCollectionX<T> takeRight(int num){
 		return fromStream(stream().limitLast(num));
 	}
+	@Override
 	default MutableCollectionX<T> dropRight(int num){
 		return fromStream(stream().skipLast(num));
 	}
+	@Override
 	default MutableCollectionX<T> takeWhile(Predicate<? super T> p){
 		return fromStream(stream().limitWhile(p));
 	}
+	@Override
 	default MutableCollectionX<T> dropWhile(Predicate<? super T> p){
 		return fromStream(stream().skipWhile(p));
 	}
+	@Override
 	default MutableCollectionX<T> takeUntil(Predicate<? super T> p){
 		return fromStream(stream().limitUntil(p));
 	}
+	@Override
 	default MutableCollectionX<T> dropUntil(Predicate<? super T> p){
 		return fromStream(stream().skipUntil(p));
 	}
