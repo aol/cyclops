@@ -73,11 +73,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	public static<T> PBagX<T> fromStream(Stream<T> stream){
 		return new PBagXImpl<>((PBag<T>)PBags.toPBag().mapReduce(stream));
 	}
-	@Override
-	default <R> PBagX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (PBagX<R>)(PBagX<T>)PersistentCollectionX.super.ap1(ap);
-	}
+	
 	  /**
      * Combine two adjacent elements in a PBagX using the supplied BinaryOperator
      * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

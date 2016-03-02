@@ -147,11 +147,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	default PStackX<T> toPStackX() {
 		return this;
 	}
-	@Override
-	default <R> PStackX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (PStackX<R>)PersistentCollectionX.super.ap1(ap);
-	}
+	
 	  /**
      * Combine two adjacent elements in a PStackX using the supplied BinaryOperator
      * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

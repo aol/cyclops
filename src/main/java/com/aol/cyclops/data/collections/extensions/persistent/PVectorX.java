@@ -156,11 +156,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
     default PVectorX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
         return (PVectorX<T>)PersistentCollectionX.super.combine(predicate,op);
     }
-	@Override
-	default <R> PVectorX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (PVectorX<R>)PersistentCollectionX.super.ap1(ap);
-	}
+	
 	default PVector<T> toPVector(){
 		return this;
 	}

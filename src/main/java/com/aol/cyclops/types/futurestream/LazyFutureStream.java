@@ -68,10 +68,7 @@ import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops.internal.stream.LazyFutureStreamFutureOpterationsImpl;
-import com.aol.cyclops.internal.stream.operators.futurestream.BatchBySize;
-import com.aol.cyclops.internal.stream.operators.futurestream.BatchByTime;
 import com.aol.cyclops.internal.stream.operators.futurestream.BatchByTimeAndSize;
-import com.aol.cyclops.internal.stream.operators.futurestream.SlidingWindow;
 import com.aol.cyclops.react.ParallelReductionConfig;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
@@ -79,6 +76,8 @@ import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
+import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
+import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.FutureStreamAsyncPublisher;
@@ -106,6 +105,18 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
      LazyFutureStream<U> withPublisherExecutor(Executor ex);
 
+     @Override 
+     default <R> ApplyingZippingApplicativeBuilder<U,R,ZippingApplicativable<R>> applicatives(){
+         Streamable<U> streamable = toStreamable();
+             return new ApplyingZippingApplicativeBuilder<U,R,ZippingApplicativable<R>> (streamable,streamable);
+     }
+     @Override
+     default <R> ZippingApplicativable<R> ap1(Function<? super U,? extends R> fn){
+         val dup = this.duplicateSequence();
+         Streamable<U> streamable = dup.v1.toStreamable();
+         return new ApplyingZippingApplicativeBuilder<U, R, ZippingApplicativable<R>>(streamable,streamable).applicative(fn).ap(dup.v2);
+         
+     }
      
      @Override
  	default <R>  LazyFutureStream<R> filterMap(Function<CheckValues<U, R>, CheckValues<U, R>> case1) {

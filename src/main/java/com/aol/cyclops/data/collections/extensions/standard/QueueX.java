@@ -78,11 +78,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	default <X> QueueX<X> fromStream(Stream<X> stream){
 		return new QueueXImpl<>(stream.collect(getCollector()),getCollector());
 	}
-	@Override
-	default <R> QueueX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (QueueX<R>)MutableCollectionX.super.ap1(ap);
-	}
+	
 	/**
      * Combine two adjacent elements in a QueueX using the supplied BinaryOperator
      * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

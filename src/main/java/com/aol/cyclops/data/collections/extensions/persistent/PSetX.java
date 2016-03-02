@@ -69,11 +69,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	default PSetX<T> toPSetX() {
 		return this;
 	}
-	@Override
-	default <R> PSetX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (PSetX<R>)PersistentCollectionX.super.ap1(ap);
-	}
+	
 	  /**
      * Combine two adjacent elements in a PSetX using the supplied BinaryOperator
      * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

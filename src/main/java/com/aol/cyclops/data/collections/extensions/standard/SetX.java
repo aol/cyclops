@@ -90,11 +90,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	default SetX<T> toSetX() {
 		return this;
 	}
-	@Override
-	default <R> SetX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (SetX<R>)MutableCollectionX.super.ap1(ap);
-	}
+	
 	@Override
 	default ReactiveSeq<T> stream(){
 		

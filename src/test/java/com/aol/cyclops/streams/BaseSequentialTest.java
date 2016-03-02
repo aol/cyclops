@@ -43,6 +43,64 @@ public class BaseSequentialTest {
 	Integer value2() {
 		return 5;
 	}
+	
+	@Test
+    public void zap1(){
+	    
+        assertThat(of(1,2,3).ap1(this::addOne)
+                  .toListX(),equalTo(Arrays.asList(2,3,4)));
+        
+    }
+    @Test
+    public void zap2(){
+        assertThat(of(1,2,3).ap2(this::add)
+                  .ap(of(3,4,5))
+                  .toListX(),equalTo(Arrays.asList(4,6,8)));
+        
+    }
+    @Test
+    public void zap3(){
+        assertThat(of("a","b","c")
+                  .ap3(this::concat)
+                  .ap(of("1","2","3"))
+                  .ap(of(".","?","!"))
+                  .toListX(),equalTo(Arrays.asList("a1.","b2?","c3!")));
+    }
+    @Test
+    public void zap4(){
+        assertThat(of("a","b","c")
+                  .ap4(this::concat4)
+                  .ap(of("1","2","3"))
+                  .ap(of(".","?","!"))
+                  .ap(of("R","R","R"))
+                  .toListX(),equalTo(Arrays.asList("a1.R","b2?R","c3!R")));
+    }
+    @Test
+    public void zap5(){
+        assertThat(of("a","b","c")
+                  .ap5(this::concat5)
+                  .ap(of("1","2","3"))
+                  .ap(of(".","?","!"))
+                  .ap(of("R","R","R"))
+                  .ap(of("Z","Z","Z"))
+                  .toListX(),equalTo(Arrays.asList("a1.RZ","b2?RZ","c3!RZ")));
+    }
+        
+    private int addOne(Integer i){
+        return i+1;
+    }
+    private int add(Integer a, Integer b){
+        return a+b;
+    }
+    private String concat(String a, String b, String c){
+        return a+b+c;
+    }
+    private String concat4(String a, String b, String c,String d){
+        return a+b+c+d;
+    }
+    private String concat5(String a, String b, String c,String d,String e){
+        return a+b+c+d+e;
+    }
 		@Test
 		public void groupedFunction(){
 		    assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").count(),equalTo((2L)));

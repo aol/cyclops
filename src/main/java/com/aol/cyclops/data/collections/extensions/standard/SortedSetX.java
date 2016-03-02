@@ -89,11 +89,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
         return (SortedSetX<T>)MutableCollectionX.super.combine(predicate,op);
     }
 	
-	@Override
-	default <R> SortedSetX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (SortedSetX<R>)MutableCollectionX.super.ap1(ap);
-	}
+	
 	@Override
 	default <R> SortedSetX<R> unit(R value){
 		return singleton(value);

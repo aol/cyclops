@@ -88,11 +88,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>{
 	default PQueueX<T> toPQueueX() {
 		return this;
 	}
-	@Override
-	default <R> PQueueX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (PQueueX<R>)PersistentCollectionX.super.ap1(ap);
-	}
+	
 	@Override
 	default<R> PQueueX<R> unit(Collection<R> col){
 		return fromCollection(col);

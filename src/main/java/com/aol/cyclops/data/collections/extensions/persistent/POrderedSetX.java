@@ -70,11 +70,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	default POrderedSetX<T> toPOrderedSetX() {
 		return this;
 	}
-	@Override
-	default <R> POrderedSetX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (POrderedSetX<R>)PersistentCollectionX.super.ap1(ap);
-	}
+	
 	@Override
 	default<R> POrderedSetX<R> unit(Collection<R> col){
 		return fromCollection(col);

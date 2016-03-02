@@ -31,9 +31,7 @@ public interface ZippingApplicativable<T> extends IterableFunctor<T>,Unit<T>{
 	default <T2,T3,T4,T5,R> ZippingApplicative4<T2,T3,T4,T5,R, ?> ap5( QuintFunction<? super T,? super T2,? super T3,? super T4,? super T5,? extends R> fn){
 		return this.<R>applicatives().applicative5(fn);
 	}
-	default <R> IterableFunctor<R> ap1( ZippingApplicative<T,R, ?> ap){
-		return ap.ap(this);
-	}
+	
 	
 	
 }

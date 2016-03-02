@@ -45,11 +45,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		return this;
 	}
 
-	@Override
-	default <R> ListX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (ListX<R>)MutableCollectionX.super.ap1(ap);
-	}
+	
 	
 	static <T> Collector<T,?,List<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new ArrayList<>());

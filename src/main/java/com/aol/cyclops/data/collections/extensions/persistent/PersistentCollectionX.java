@@ -168,7 +168,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		return from(this.<ListX<T>>monoid().mapReduce(stream().grouped(groupSize).map(ListX::fromIterable)));
 	}
 	default <K, A, D> PersistentCollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
-		return from(this.<Tuple2<K, D>>monoid().mapReduce(stream().grouped(classifier)));
+		return from(this.<Tuple2<K, D>>monoid().mapReduce(stream().grouped(classifier,downstream)));
 	}
 	default <K> PersistentCollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return from(this.<Tuple2<K, Seq<T>>>monoid().mapReduce(stream().grouped(classifier)));
