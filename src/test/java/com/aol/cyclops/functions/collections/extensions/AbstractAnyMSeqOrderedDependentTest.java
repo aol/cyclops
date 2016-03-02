@@ -165,7 +165,20 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 											  .toListX();
 		assertThat(result,equalTo(Arrays.asList("one","two")));
 	}
-	
+	@Test
+    public void groupedFunction(){
+        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").count(),equalTo((2L)));
+        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").filter(t->t.v1.equals("a"))
+                        .map(t->t.v2).map(s->s.toList()).single(),
+                            equalTo((Arrays.asList(1,2))));
+    }
+	@Test
+    public void groupedFunctionCollector(){
+        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",Collectors.toList()).count(),equalTo((2L)));
+        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",Collectors.toList()).filter(t->t.v1.equals("a"))
+                .map(t->t.v2).single(),
+                    equalTo((Arrays.asList(1,2))));
+    }
 	private int addOne(Integer i){
 		return i+1;
 	}
