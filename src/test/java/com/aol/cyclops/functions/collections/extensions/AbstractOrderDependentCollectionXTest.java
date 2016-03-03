@@ -41,6 +41,10 @@ import lombok.EqualsAndHashCode;
 
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {
     @Test
+    public void sortedComparator() {
+        assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),is(Arrays.asList(5,4,3,2,1)));
+    }
+    @Test
     public void takeRight(){
         assertThat(of(1,2,3).takeRight(1).toList(),hasItems(3));
     }

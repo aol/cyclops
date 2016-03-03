@@ -3,6 +3,7 @@ package com.aol.cyclops.data.collections.extensions;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -213,7 +214,27 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	<U> CollectionX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function);
 	CollectionX<T> scanRight(Monoid<T> monoid);
 	<U> CollectionX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner);
+	/*
+     * Return the distinct Stream of elements
+     * 
+     * <pre> {@code List<Integer> list = ReactiveSeq.of(1,2,2,2,5,6) .distinct()
+     * .collect(Collectors.toList()); }</pre>
+     */
+    CollectionX<T> distinct();
+    CollectionX<T> sorted();
+    CollectionX<T> removeAll(Stream<T> stream);
+    CollectionX<T> removeAll(Iterable<T> it);
+    CollectionX<T> removeAll(Seq<T> seq);
+    CollectionX<T> removeAll(T... values);
+    CollectionX<T> retainAll(Iterable<T> it);
+    CollectionX<T> retainAll(Seq<T> seq);
+    CollectionX<T> retainAll(Stream<T> stream);
+    CollectionX<T> retainAll(T... values);
 
+    CollectionX<T> filterNot(Predicate<? super T> fn);
+
+    CollectionX<T> notNull();
+   
 	
 	 /**
 	  * Performs a map operation that can call a recursive method without running out of stack space
@@ -408,7 +429,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
 	 */
 	<U extends Comparable<? super U>> CollectionX<T> sorted(Function<? super T, ? extends U> function);
-
+	CollectionX<T> sorted(Comparator<? super T> c);
 	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()

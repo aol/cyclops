@@ -100,11 +100,13 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
                                             ReactiveSeq<U>,
                                             LazyToQueue<U>,
                                             ConfigurableStream<U,FastFuture<U>>,
-                                        FutureStreamAsyncPublisher<U>,
-                                        FutureStreamSynchronousPublisher<U> {
+                                            FutureStreamAsyncPublisher<U>,
+                                            FutureStreamSynchronousPublisher<U> {
 
      LazyFutureStream<U> withPublisherExecutor(Executor ex);
-
+     default <R> R  foldRight(R identity, BiFunction<? super U, R,R> accumulator){
+         return ReactiveSeq.super.foldRight(identity,accumulator);
+     }
      @Override 
      default <R> ApplyingZippingApplicativeBuilder<U,R,ZippingApplicativable<R>> applicatives(){
          Streamable<U> streamable = toStreamable();
@@ -118,11 +120,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
          
      }
      
-     @Override
- 	default <R>  LazyFutureStream<R> filterMap(Function<CheckValues<U, R>, CheckValues<U, R>> case1) {
- 		
- 		return (LazyFutureStream<R>)ReactiveSeq.super.filterMap(case1);
- 	}
+     
     /**
      * <pre>
      * {@code

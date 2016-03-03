@@ -9,6 +9,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -106,6 +108,9 @@ public interface Foldable<T> {
 	default T reduce(T identity, BinaryOperator<T> accumulator){
 		return stream().reduce(identity, accumulator);
 	}
+	default <U> U reduce(U identity, BiFunction<U, ? super T,U> accumulator){
+        return ((Seq<T>)stream()).foldLeft(identity,accumulator);
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -204,6 +209,9 @@ public interface Foldable<T> {
 	default T foldRight(T identity, BinaryOperator<T> accumulator){
 		return stream().foldRight(identity,accumulator);
 	}
+	default <U> U foldRight(U identity, BiFunction<? super T, U,U> accumulator){
+        return ((Seq<T>)stream()).foldRight(identity,accumulator);
+    }
 
 	/**
 	 * Attempt to map this Monad to the same type as the supplied Monoid (using

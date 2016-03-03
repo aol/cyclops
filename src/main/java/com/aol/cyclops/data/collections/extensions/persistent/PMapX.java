@@ -232,22 +232,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 		
 		return (PMapX<K, V>)IterableFilterable.super.retainAll(values);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default PMapX<K, V> retainMatches(Matcher<Tuple2<K, V>> m) {
-		
-		return (PMapX<K, V>)IterableFilterable.super.retainMatches(m);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default PMapX<K, V> removeMatches(Matcher<Tuple2<K, V>> m) {
 	
-		return (PMapX<K, V>)IterableFilterable.super.removeMatches(m);
-	}
 
 	
 

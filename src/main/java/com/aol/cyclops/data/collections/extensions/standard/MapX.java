@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
@@ -260,6 +261,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 		
 		return (MapX<K, V>)IterableFilterable.super.retainAll(stream);
 	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
 	 */
@@ -268,22 +270,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 		
 		return (MapX<K, V>)IterableFilterable.super.retainAll(values);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default MapX<K, V> retainMatches(Matcher<Tuple2<K, V>> m) {
-		
-		return (MapX<K, V>)IterableFilterable.super.retainMatches(m);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default MapX<K, V> removeMatches(Matcher<Tuple2<K, V>> m) {
 	
-		return (MapX<K, V>)IterableFilterable.super.removeMatches(m);
-	}
 	
 
 }

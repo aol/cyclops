@@ -694,23 +694,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		return (ListX<T>)MutableCollectionX.super.retainAll(values);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default ListX<T> retainMatches(Matcher<T> m) {
-		
-		return (ListX<T>)MutableCollectionX.super.retainMatches(m);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default ListX<T> removeMatches(Matcher<T> m) {
-		
-		return (ListX<T>)MutableCollectionX.super.removeMatches(m);
-	}
+	
 	  @Override
 	    default <C extends Collection<? super T>> ListX<C> grouped(int size, Supplier<C> supplier) {
 	        
@@ -752,6 +736,19 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 	    default ListX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
 	        
 	        return (ListX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
+	    }
+	    
+	    @Override
+	    default ListX<T> removeAll(Seq<T> stream) {
+	       
+	        return (ListX<T>)MutableCollectionX.super.removeAll(stream);
+	    }
+
+
+	    @Override
+	    default ListX<T> retainAll(Seq<T> stream) {
+	       
+	        return (ListX<T>)MutableCollectionX.super.retainAll(stream);
 	    }
 	
 	

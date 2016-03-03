@@ -91,7 +91,7 @@ sourceSets {
 jacocoTestReport {
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: 'com/aol/cyclops/util/stream/scheduling/cron/**')
+            fileTree(dir: it, exclude: ['com/aol/cyclops/util/stream/scheduling/cron/**','com/aol/cyclops/internal/comprehensions/donotation/**'])
         })
     }
 }

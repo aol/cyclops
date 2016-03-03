@@ -32,10 +32,5 @@ public interface IterableFilterable<T> extends Filterable<T> {
 	default  Filterable<T> retainAll(T... values){
 		return retainAll(Stream.of(values));
 	}
-	default Filterable<T> retainMatches(Matcher<T> m){
-		return filter(t->m.matches(t));
-	}
-	default Filterable<T> removeMatches(Matcher<T> m){
-		return filter(t->!m.matches(t));
-	}
+	
 }

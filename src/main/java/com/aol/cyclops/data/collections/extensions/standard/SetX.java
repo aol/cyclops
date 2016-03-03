@@ -569,22 +569,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 		
 		return (SetX<T>)MutableCollectionX.super.retainAll(values);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default SetX<T> retainMatches(Matcher<T> m) {
-		
-		return (SetX<T>)MutableCollectionX.super.retainMatches(m);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default SetX<T> removeMatches(Matcher<T> m) {
-		
-		return (SetX<T>)MutableCollectionX.super.removeMatches(m);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cast(java.lang.Class)
 	 */
@@ -645,4 +630,17 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	        
 	        return (SetX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
 	    }
+	    @Override
+	    default SetX<T> removeAll(Seq<T> stream) {
+	       
+	        return (SetX<T>)MutableCollectionX.super.removeAll(stream);
+	    }
+
+
+	    @Override
+	    default SetX<T> retainAll(Seq<T> stream) {
+	       
+	        return (SetX<T>)MutableCollectionX.super.retainAll(stream);
+	    }
+	    
 }

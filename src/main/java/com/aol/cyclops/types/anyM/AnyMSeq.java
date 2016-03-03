@@ -474,10 +474,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     }
     
     
-    @Override
-    default <R> AnyMSeq<R> filterMap(Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
-       return (AnyMSeq<R>)FilterableFunctor.super.filterMap(case1);
-    }
+   
     @Override
     default <U> AnyMSeq<U> ofType(Class<U> type){
         

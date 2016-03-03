@@ -570,22 +570,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 		
 		return (SortedSetX<T>)MutableCollectionX.super.retainAll(values);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default SortedSetX<T> retainMatches(Matcher<T> m) {
-		
-		return (SortedSetX<T>)MutableCollectionX.super.retainMatches(m);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default SortedSetX<T> removeMatches(Matcher<T> m) {
-		
-		return (SortedSetX<T>)MutableCollectionX.super.removeMatches(m);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cast(java.lang.Class)
 	 */
@@ -646,6 +631,17 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	        
 	        return (SortedSetX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
 	    }
-	
+	    @Override
+	    default SortedSetX<T> removeAll(Seq<T> stream) {
+	       
+	        return (SortedSetX<T>)MutableCollectionX.super.removeAll(stream);
+	    }
+
+
+	    @Override
+	    default SortedSetX<T> retainAll(Seq<T> stream) {
+	       
+	        return (SortedSetX<T>)MutableCollectionX.super.retainAll(stream);
+	    }
 	
 }

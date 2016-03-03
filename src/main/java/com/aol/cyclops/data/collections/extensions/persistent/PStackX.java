@@ -721,22 +721,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		
 		return (PStackX<T>)PersistentCollectionX.super.retainAll(values);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default PStackX<T> retainMatches(Matcher<T> m) {
-		
-		return (PStackX<T>)PersistentCollectionX.super.retainMatches(m);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default PStackX<T> removeMatches(Matcher<T> m) {
-		
-		return (PStackX<T>)PersistentCollectionX.super.removeMatches(m);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
 	 */
@@ -797,5 +782,17 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	        
 	        return (PStackX<C>)PersistentCollectionX.super.groupedUntil(predicate, factory);
 	    }
-		
+	    @Override
+	    default PStackX<T> removeAll(Seq<T> stream) {
+	       
+	        return (PStackX<T>)PersistentCollectionX.super.removeAll(stream);
+	    }
+
+
+	    @Override
+	    default PStackX<T> retainAll(Seq<T> stream) {
+	       
+	        return (PStackX<T>)PersistentCollectionX.super.retainAll(stream);
+	    }
+	    
 }
