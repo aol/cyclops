@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.Spliterator;
+import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
@@ -1773,37 +1774,51 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 		sub.onSubscribe(new Subscription(){
 			
 				volatile boolean running = true;
-				
+				boolean active = false;
+				final Stack<Long> requests = new Stack<Long>();
 				@Override
 				public void request(long n) {
-					
-					for(int i=0;i<n && running;i++){
-						boolean progressing = false;
-						boolean progressed = false;
-						try{
-							
-							if(it.hasNext()){
-								progressing= true;
-								sub.onNext(it.next());
-								progressed=true;
-							}
-							else{
-								try{
-									sub.onComplete();
-									
-								}finally{
-									running=false;
-									break;
-								}
-							}
-						}catch(Throwable t){
-							sub.onError(t);
-							if(progressing && !progressed)
-								break;
-							
-						}
-						
-					}
+				    if(!running)
+				        return;
+				    if(n<1){
+	                     sub.onError(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+	                 }
+				    requests.push(n);
+				    if(active)
+				        return;
+				    active=true;//assume single thread calls to request
+				    while(requests.size()>0){
+				        
+				        long num = requests.pop();
+    					for(int i=0;i<num && running;i++){
+    						boolean progressing = false;
+    						boolean progressed = false;
+    						try{
+    							
+    							if(it.hasNext()){
+    								progressing= true;
+    								sub.onNext(it.next());
+    								progressed=true;
+    							}
+    							else{
+    								try{
+    									sub.onComplete();
+    									
+    								}finally{
+    									running=false;
+    									break;
+    								}
+    							}
+    						}catch(Throwable t){
+    							sub.onError(t);
+    							if(progressing && !progressed)
+    								break;
+    							
+    						}
+    						
+    					}
+				    }
+				    active=false;
 				}
 				@Override
 				public void cancel() {

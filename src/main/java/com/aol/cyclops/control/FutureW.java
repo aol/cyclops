@@ -40,7 +40,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 		return sequence(fts).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
 
-	//public static 
+	
 	private final CompletableFuture<T> future;
 
 	@Override

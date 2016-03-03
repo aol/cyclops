@@ -31,6 +31,7 @@ import com.aol.cyclops.util.function.Memoize;
  */
 public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>, Filterable<T>, Applicativable<T>{
 
+    
 	public static<T> Eval<T> now(T value){
 		return new Now<T>(value);
 	}

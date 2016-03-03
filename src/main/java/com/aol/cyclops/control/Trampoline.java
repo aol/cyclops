@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.Convertable;
+import com.aol.cyclops.types.Value;
 
 /**
  * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl 
@@ -16,7 +17,7 @@ import com.aol.cyclops.types.Convertable;
  * @param <T> Return type
  */
 @FunctionalInterface
-public interface Trampoline<T> extends Supplier<T>, Convertable<T>{
+public interface Trampoline<T> extends Supplier<T>, Value<T>{
 
 	/**
 	 * @return next stage in Trampolining

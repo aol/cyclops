@@ -3,6 +3,7 @@ package com.aol.cyclops.util.function;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -72,6 +73,20 @@ public class Memoize {
 			
 		});
 	}
+	public static Runnable memoizeRunnable(Runnable r){
+        AtomicReference<Boolean> isSet = new AtomicReference<>(false);
+        Object lock = new Object();
+        return () -> {
+            if(isSet.get())
+                return;
+            synchronized(lock){
+                if(isSet.get())
+                    return;
+                isSet.compareAndSet(false, true);
+                r.run();
+            }
+        };
+    }
 	
 	/**
 	 * Convert a Function into one that caches it's result

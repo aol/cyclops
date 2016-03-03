@@ -1,14 +1,12 @@
 package com.aol.cyclops.react.reactivestreams.jdk;
 
 
-import java.util.stream.Stream;
-
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-import com.aol.cyclops.util.stream.reactivestreams.JDKReactiveStreamsPublisher;
+import com.aol.cyclops.control.ReactiveSeq;
 @Test
 public class TckSynchronousPublisherTest extends PublisherVerification<Long>{
 
@@ -19,7 +17,7 @@ public class TckSynchronousPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return JDKReactiveStreamsPublisher.ofSync(Stream.iterate(0l, i->i+1l).limit(elements));
+		return ReactiveSeq.iterate(0l, i->i+1l).limit(elements);
 		
 	}
 

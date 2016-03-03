@@ -1,10 +1,7 @@
 package com.aol.cyclops.control;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -14,7 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -67,19 +63,18 @@ import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.types.stream.ConvertableSequence;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.JoolManipulation;
 import com.aol.cyclops.types.stream.JoolWindowing;
 import com.aol.cyclops.types.stream.PausableHotStream;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.future.FutureOperations;
-import com.aol.cyclops.types.stream.reactive.CyclopsSubscriber;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
+import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
-import com.aol.cyclops.util.stream.reactivestreams.SubscriberForCyclops;
 
 
 public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,FilterableFunctor<T>, ExtendedTraversable<T>,
@@ -2180,9 +2175,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * <pre>
 	 * {@code
-	 * CyclopsSubscriber<Integer> sub = SequenceM.subscriber();
+	 *     SeqSubscriber<Integer> sub = SequenceM.subscriber();
 	 * 		ReactiveSeq.of(1,2,3).subscribe(sub);
-	 * 		sub.sequenceM().forEach(System.out::println);
+	 * 		sub.stream().forEach(System.out::println);
 	 * 		
 	 * 		  1 
 	 * 		  2
@@ -2193,8 +2188,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	 * 
 	 * @return A reactive-streams Subscriber
 	 */
-	public static <T> CyclopsSubscriber<T> subscriber() {
-		return new SubscriberForCyclops<T>().subscribe();
+	public static <T> SeqSubscriber<T> subscriber() {
+		return SeqSubscriber.subscriber();
 	}
 
 	public static <T> ReactiveSeq<T> empty(){

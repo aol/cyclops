@@ -4,20 +4,63 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Do;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Do;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 import lombok.val;
 public class DoListsTest {
 	
-	@Test
+    @Test
+    public void forComprehension(){
+        
+        List<Integer> deals = Arrays.asList(1,2,3,null,4);
+        List<Integer> costPerUnit = Arrays.asList(10,20,30,40,50);
+        List<Integer> results = new ArrayList<>();
+        for(int i=0;i<deals.size();i++){
+            if(deals.get(i)!=null){
+                List<Integer> additionalBreakdown = loadBreakdown(deals.get(i));
+                for(int j=0;j<additionalBreakdown.size();j++){
+                    for(int k=0;k<costPerUnit.size();k++){
+                        results.add(deals.get(i)*costPerUnit.get(k) + additionalBreakdown.get(j));
+                    } 
+                }
+            }
+            
+        }
+        
+        
+    }
+    
+    private int calculateTotal(int _,int i, int j, int k){
+        return i*k + j;
+        
+    }
+    @Test
+    public void forComprehensionImpl(){
+        
+        ListX<Integer> list = Do.add(Arrays.asList(1,2,3,null,4))
+                               .withOptional(Optional::ofNullable)
+                               .withCollection(i->j-> loadBreakdown(j))
+                               .add(Arrays.asList(10,20,30,40,50))
+                               .yield(this::calculateTotal)
+                               .toListX();
+       
+    }
+	private List<Integer> loadBreakdown(Integer integer) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Test
 	public void optionalListMultiReturn(){
 		AnyM<Integer> anyM = Do.add(Optional.of(1))
 									 .withStream(i->Stream.of(i,2))
