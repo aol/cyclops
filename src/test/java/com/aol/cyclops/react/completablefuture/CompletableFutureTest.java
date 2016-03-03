@@ -34,7 +34,7 @@ public class CompletableFutureTest {
 
 		convertedToStrings.streamCompletableFutures().forEach(f -> assertFalse(f.isDone()));
 		
-		new SimpleReact(new ForkJoinPool(3)).react( ()-> 100, ()->200, ()->400).then( it-> sleep(it)).then(it -> queue.poll().complete(it));
+		new SimpleReact(new ForkJoinPool(3)).ofAsync( ()-> 100, ()->200, ()->400).then( it-> sleep(it)).then(it -> queue.poll().complete(it));
 		
 		List<String> result = convertedToStrings.block();
 		

@@ -68,7 +68,6 @@ import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops.internal.stream.LazyFutureStreamFutureOpterationsImpl;
-import com.aol.cyclops.internal.stream.operators.futurestream.BatchByTime;
 import com.aol.cyclops.internal.stream.operators.futurestream.BatchByTimeAndSize;
 import com.aol.cyclops.react.ParallelReductionConfig;
 import com.aol.cyclops.react.RetryBuilder;
@@ -77,6 +76,8 @@ import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
+import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
+import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.FutureStreamAsyncPublisher;
@@ -104,6 +105,18 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
 
      LazyFutureStream<U> withPublisherExecutor(Executor ex);
 
+     @Override 
+     default <R> ApplyingZippingApplicativeBuilder<U,R,ZippingApplicativable<R>> applicatives(){
+         Streamable<U> streamable = toStreamable();
+             return new ApplyingZippingApplicativeBuilder<U,R,ZippingApplicativable<R>> (streamable,streamable);
+     }
+     @Override
+     default <R> ZippingApplicativable<R> ap1(Function<? super U,? extends R> fn){
+         val dup = this.duplicateSequence();
+         Streamable<U> streamable = dup.v1.toStreamable();
+         return new ApplyingZippingApplicativeBuilder<U, R, ZippingApplicativable<R>>(streamable,streamable).applicative(fn).ap(dup.v2);
+         
+     }
      
      @Override
  	default <R>  LazyFutureStream<R> filterMap(Function<CheckValues<U, R>, CheckValues<U, R>> case1) {
@@ -125,7 +138,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     default LazyFutureStream<Tuple2<U,Long>> elapsed(){
             return fromStream(ReactiveSeq.fromStream(stream()).elapsed());
     }
-
+    default LazyFutureStream<U> combine(BiPredicate<? super U, ? super U> predicate, BinaryOperator<U> op){
+        return fromStream(StreamUtils.combine(this, predicate, op));
+     }
     /**
      * If this SequenceM is empty replace it with a another Stream
      *
@@ -1201,11 +1216,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @return Stream of Lists
      */
     default LazyFutureStream<ListX<U>> groupedByTime(long time, TimeUnit unit) {
-        Queue queue = toQueue();
-        Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit,
-                this.getSubscription(),queue,()->new ListXImpl<>());
-
-        return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());	}
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).groupedByTime(time,unit));
+      
+    }
 
     /**
      * Organise elements in a Stream into a Collections based on the time period
@@ -1233,10 +1246,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      */
     default  <C extends Collection<? super U>> LazyFutureStream<C> groupedByTime(long time,
             TimeUnit unit, Supplier<C> factory) {
-        Queue queue = toQueue();
-        Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTime<U>(time,unit, this.getSubscription(),queue,(Supplier)factory);
-        return fromStream(queue.streamBatch(getSubscription(), fn)).filter(c->!((Collection)c).isEmpty());
-    }
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).groupedByTime(time,unit,factory));
+
+     }
 
 
     /*
@@ -1701,25 +1713,25 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     @Override
     default LazyFutureStream<U> takeUntil(Predicate<? super U> p) {
         
-        return this.takeUntil(p);
+        return this.limitUntil(p);
     }
 
     @Override
     default LazyFutureStream<U>  dropUntil(Predicate<? super U> p) {
        
-        return this.dropUntil(p);
+        return this.skipUntil(p);
     }
 
     @Override
     default LazyFutureStream<U>  dropRight(int num) {
         
-        return this.dropRight(num);
+        return this.skipLast(num);
     }
 
     @Override
-    default ReactiveSeq<U> takeRight(int num) {
-        
-        return this.takeRight(num);
+    default LazyFutureStream<U> takeRight(int num) {
+       
+        return this.limitLast(num);
     }
     /*
      * LazyFutureStream.of(1,2,3,4).skip(2)
@@ -1772,7 +1784,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      */
     @Override
     default LazyFutureStream<ListX<U>> sliding(int size){
-        return (LazyFutureStream)fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).sliding(size));
+    //    return this.fromStream(SlidingWindow.sliding(this,size, 1));
+       return (LazyFutureStream)fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).sliding(size));
     }
     /**
      * Create a sliding view over this Stream
@@ -1795,7 +1808,9 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      */
     @Override
     default LazyFutureStream<ListX<U>> sliding(int size, int increment){
+        //return this.fromStream(SlidingWindow.sliding(this,size, increment));
         return (LazyFutureStream)fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).sliding(size,increment));
+       
     }
     /**
      * Duplicate a LazyFutureStream into two equivalent Streams.
@@ -2691,8 +2706,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     @Override
     default LazyFutureStream<ListX<U>> grouped(int groupSize) {
         return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                            .grouped(groupSize));
-
+                .grouped(groupSize));
     }
 
 
@@ -2707,14 +2721,6 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
                 .scanLeft(monoid));
     }
 
-
-
-  
-
-
-
-   
-   
 
     /*
      * @see com.aol.cyclops.control.ReactiveSeq#toStreamable()
@@ -3321,7 +3327,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @see Stream#of(Object)
      */
     static <T> LazyFutureStream<T> react(Supplier<T> value) {
-        return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false).react(value);
+        return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false).ofAsync(value);
     }
 
     /**
@@ -3331,7 +3337,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      */
     @SafeVarargs
     static <T> LazyFutureStream<T> react(Supplier<T>... values) {
-        return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false).react(values);
+        return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false).ofAsync(values);
     }
     /**
      * Create a sequential synchronous stream that runs on the current thread

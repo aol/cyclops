@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -146,12 +147,28 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	default PStackX<T> toPStackX() {
 		return this;
 	}
-	@Override
-	default <R> PStackX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (PStackX<R>)PersistentCollectionX.super.ap1(ap);
-	}
 	
+	  /**
+     * Combine two adjacent elements in a PStackX using the supplied BinaryOperator
+     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * with it's neighbor
+     * <pre>
+     * {@code 
+     *  PStackX.of(1,1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX()
+                   
+     *  //ListX(3,4) 
+     * }</pre>
+     * 
+     * @param predicate Test to see if two neighbors should be joined
+     * @param op Reducer to combine neighbors
+     * @return Combined / Partially Reduced PStackX
+     */
+    default PStackX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+        return (PStackX<T>)PersistentCollectionX.super.combine(predicate,op);
+    }
+    
 	@Override
 	default<R> PStackX<R> unit(Collection<R> col){
 		if(isEfficientOps())

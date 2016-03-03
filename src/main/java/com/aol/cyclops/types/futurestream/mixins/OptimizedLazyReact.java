@@ -171,7 +171,7 @@ public class OptimizedLazyReact {
 	 * @return LazyFutureStream
 	 */
 	public <T> LazyFutureStream<T> react(Supplier<T>... suppliers) {
-		return react.react(suppliers).sync();
+		return react.ofAsync(suppliers).sync();
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class OptimizedLazyReact {
 	 * @return LazyFutureStream
 	 */
 	public <T> LazyFutureStream<T> react(Stream<Supplier<T>> suppliers) {
-		return react.react(suppliers).sync();
+		return react.fromStreamAsync(suppliers).sync();
 	}
 
 	/**
@@ -251,6 +251,6 @@ public class OptimizedLazyReact {
 	 * @return LazyFutureStream
 	 */
 	public <T> LazyFutureStream<T> reactIterable(Iterable<Supplier<T>> suppliers) {
-		return react.reactIterable(suppliers).sync();
+		return react.fromIterableAsync(suppliers).sync();
 	}
 }

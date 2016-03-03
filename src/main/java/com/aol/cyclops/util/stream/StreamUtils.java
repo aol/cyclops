@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -732,6 +733,39 @@ public class StreamUtils{
 	public static <U> Stream<U> skip(Stream<U> stream,long time, TimeUnit unit){
 		return new SkipWhileTimeOperator<U>(stream).skipWhile(time,unit);
 	}
+	public static <T> Stream<T> combine(Stream<T> stream, BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+        Iterator<T> it = stream.iterator();
+        final Object UNSET = (T)new Object();
+        return StreamUtils.stream(new Iterator<ReactiveSeq<T>>(){
+            T current = (T)UNSET;
+            @Override
+            public boolean hasNext() {
+                return it.hasNext() || current != UNSET;
+            }
+
+            @Override
+            public ReactiveSeq<T> next() {
+                while(it.hasNext()){
+                    T next = it.next();
+                   
+                    if(current==UNSET){
+                        current= next;
+                        
+                    }
+                    else if(predicate.test(current, next)){
+                        current = op.apply(current, next);
+                        
+                    }else{
+                        T result = current;
+                        current = (T)UNSET;
+                        return ReactiveSeq.of(result,next);
+                    }
+                }
+                return ReactiveSeq.empty();
+            }
+            
+        }).flatMap(Function.identity());
+    }
 	/**
 	 * Take elements from a stream while the predicates hold
 	 * <pre>

@@ -73,7 +73,7 @@ public abstract class LazySeqTest extends BaseSeqTest {
 		{
 			
 		//	System.out.println(i);
-			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(1000);return 6;})
+			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(2000);return 6;})
 						
 							.groupedByTime(10,TimeUnit.MICROSECONDS)
 							.toList()
@@ -166,7 +166,7 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	@Test
 	public void zipFastSlow() {
 		Queue q = new Queue();
-		LazyReact.parallelBuilder().reactInfinitely(() -> sleep(100))
+		LazyReact.parallelBuilder().generate(() -> sleep(100))
 				.then(it -> q.add("100")).runThread(new Thread());
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
@@ -177,13 +177,13 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	
 	@Test
 	public void reactInfinitely(){
-		 assertThat(LazyReact.sequentialBuilder().reactInfinitely(() -> "100")
+		 assertThat(LazyReact.sequentialBuilder().generateAsync(() -> "100")
 		 	.limit(100)
 		 	.toList().size(),equalTo(100));
 	}
 	@Test 
 	public void streamFromQueue() {
-		assertThat( LazyReact.sequentialBuilder().reactInfinitely(() -> "100")
+		assertThat( LazyReact.sequentialBuilder().generateAsync(() -> "100")
 			.limit(100)
 			.withQueueFactory(QueueFactories.boundedQueue(100)).toQueue()
 			.stream().collect(Collectors.toList()).size(),equalTo(100));
@@ -192,7 +192,7 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	@Test 
 	public void testBackPressureWhenZippingUnevenStreams2() {
 
-		Queue fast = LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).reactInfinitely(() -> "100")
+		Queue fast = LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).generateAsync(() -> "100")
 				.peek(System.out::println)
 				.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue();
 

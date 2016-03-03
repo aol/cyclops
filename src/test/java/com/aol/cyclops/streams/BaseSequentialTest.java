@@ -2,10 +2,13 @@ package com.aol.cyclops.streams;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -43,7 +46,160 @@ public class BaseSequentialTest {
 	Integer value2() {
 		return 5;
 	}
-		
+	@Test
+    public void dropRight(){
+        assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
+    }
+    @Test
+    public void dropRightEmpty(){
+        assertThat(of().dropRight(1).toList(),equalTo(Arrays.asList()));
+    }
+    
+    @Test
+    public void dropUntil(){
+        assertThat(of(1,2,3,4,5).dropUntil(p->p==2).toList().size(),lessThan(5));
+    }
+    @Test
+    public void dropUntilEmpty(){
+        assertThat(of().dropUntil(p->true).toList(),equalTo(Arrays.asList()));
+    }
+    @Test
+    public void dropWhile(){
+        assertThat(of(1,2,3,4,5).dropWhile(p->p<6).toList().size(),lessThan(1));
+    }
+    @Test
+    public void dropWhileEmpty(){
+        assertThat(of().dropWhile(p->true).toList(),equalTo(Arrays.asList()));
+    }
+    @Test
+    public void takeRight(){
+        assertThat(of(1,2,3).takeRight(1).toList(),hasItems(3));
+    }
+    @Test
+    public void takeRightEmpty(){
+        assertThat(of().takeRight(1).toList(),equalTo(Arrays.asList()));
+    }
+    
+    @Test
+    public void takeUntil(){
+        assertThat(of(1,2,3,4,5).takeUntil(p->p==2).toList().size(),greaterThan(0));
+    }
+    @Test
+    public void takeUntilEmpty(){
+        assertThat(of().takeUntil(p->true).toList(),equalTo(Arrays.asList()));
+    }
+    @Test
+    public void takeWhile(){
+        assertThat(of(1,2,3,4,5).takeWhile(p->p<6).toList().size(),greaterThan(1));
+    }
+    @Test
+    public void takeWhileEmpty(){
+        assertThat(of().takeWhile(p->true).toList(),equalTo(Arrays.asList()));
+    } 
+    @Test
+    public void presentConvert(){
+        assertTrue(of(1).toMaybe().isPresent());
+        assertTrue(of(1).toOptional().isPresent());
+        assertTrue(of(1).toListX().size()>0);
+        assertTrue(of(1).toDequeX().size()>0);
+        assertTrue(of(1).toPStackX().size()>0);
+        assertTrue(of(1).toQueueX().size()>0);
+        assertTrue(of(1).toPVectorX().size()>0);
+        assertTrue(of(1).toPQueueX().size()>0);
+        assertTrue(of(1).toSetX().size()>0);
+        assertTrue(of(1).toSortedSetX().size()>0);
+        assertTrue(of(1).toPOrderedSetX().size()>0);
+        assertTrue(of(1).toPBagX().size()>0);
+        assertTrue(of(1).toPMapX(t->t,t->t).size()>0);
+        assertTrue(of(1).toMapX(t->t,t->t).size()>0);
+        assertTrue(of(1).toXor().get().size()>0);
+        assertTrue(of(1).toIor().get().size()>0);
+        assertTrue(of(1).toXor().isPrimary());
+        assertTrue(of(1).toIor().isPrimary());
+        assertFalse(of(1).toXorSecondary().isPrimary());
+        assertFalse(of(1).toIorSecondary().isPrimary());
+        assertTrue(of(1).toTry().isSuccess());
+        assertTrue(of(1).toEvalNow().get().size()>0);
+        assertTrue(of(1).toEvalLater().get().size()>0);
+        assertTrue(of(1).toEvalAlways().get().size()>0);
+        assertTrue(of(1).toCompletableFuture().join().size()>0);
+        assertTrue(of(1).toSet().size()>0);
+        assertTrue(of(1).toList().size()>0);
+        assertTrue(of(1).toStreamable().size()>0);
+        
+        
+    }
+	@Test
+    public void zap1(){
+	    
+        assertThat(of(1,2,3).ap1(this::addOne)
+                  .toListX(),equalTo(Arrays.asList(2,3,4)));
+        
+    }
+    @Test
+    public void zap2(){
+        assertThat(of(1,2,3).ap2(this::add)
+                  .ap(of(3,4,5))
+                  .toListX(),equalTo(Arrays.asList(4,6,8)));
+        
+    }
+    @Test
+    public void zap3(){
+        assertThat(of("a","b","c")
+                  .ap3(this::concat)
+                  .ap(of("1","2","3"))
+                  .ap(of(".","?","!"))
+                  .toListX(),equalTo(Arrays.asList("a1.","b2?","c3!")));
+    }
+    @Test
+    public void zap4(){
+        assertThat(of("a","b","c")
+                  .ap4(this::concat4)
+                  .ap(of("1","2","3"))
+                  .ap(of(".","?","!"))
+                  .ap(of("R","R","R"))
+                  .toListX(),equalTo(Arrays.asList("a1.R","b2?R","c3!R")));
+    }
+    @Test
+    public void zap5(){
+        assertThat(of("a","b","c")
+                  .ap5(this::concat5)
+                  .ap(of("1","2","3"))
+                  .ap(of(".","?","!"))
+                  .ap(of("R","R","R"))
+                  .ap(of("Z","Z","Z"))
+                  .toListX(),equalTo(Arrays.asList("a1.RZ","b2?RZ","c3!RZ")));
+    }
+        
+    private int addOne(Integer i){
+        return i+1;
+    }
+    private int add(Integer a, Integer b){
+        return a+b;
+    }
+    private String concat(String a, String b, String c){
+        return a+b+c;
+    }
+    private String concat4(String a, String b, String c,String d){
+        return a+b+c+d;
+    }
+    private String concat5(String a, String b, String c,String d,String e){
+        return a+b+c+d+e;
+    }
+		@Test
+		public void groupedFunction(){
+		    assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").count(),equalTo((2L)));
+		    assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").filter(t->t.v1.equals("a"))
+		                    .map(t->t.v2).map(s->s.toList()).single(),
+		                        equalTo((Arrays.asList(1,2))));
+		}
+		@Test
+		public void groupedFunctionCollector(){
+		    assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",Collectors.toList()).count(),equalTo((2L)));
+		    assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",Collectors.toList()).filter(t->t.v1.equals("a"))
+                    .map(t->t.v2).single(),
+                        equalTo((Arrays.asList(1,2))));
+		}
 		
 		@Test
 		public void batchBySize(){

@@ -50,7 +50,7 @@ public class LazySequentialSeqObjectPoolsTest extends BaseSequentialSeqTest {
 	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
 		return new LazyReact(ThreadPools.getCommonFreeThread()).objectPoolingOn()
 								.sync()
-								.react(array);
+								.ofAsync(array);
 	}
 	@Test
     public void testCycle() {

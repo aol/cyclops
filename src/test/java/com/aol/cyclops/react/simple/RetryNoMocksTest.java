@@ -27,7 +27,7 @@ public class RetryNoMocksTest {
 		count = new AtomicInteger(0);
 		errors = Collections.synchronizedCollection(new ArrayList<>());
 		final RetryExecutor executor = new AsyncRetryExecutor(Executors.newSingleThreadScheduledExecutor());
-		List<Integer> result = new SimpleReact().react(()->1,()->2,()->3)
+		List<Integer> result = new SimpleReact().ofAsync(()->1,()->2,()->3)
 												.withRetrier(executor)
 												.capture(e -> errors.add(e))
 												.retry(it -> throwOrReturn(it))
@@ -41,7 +41,7 @@ public class RetryNoMocksTest {
 		count = new AtomicInteger(0);
 		errors = Collections.synchronizedCollection(new ArrayList<>());
 		final RetryExecutor executor = new AsyncRetryExecutor(Executors.newSingleThreadScheduledExecutor());
-		List<Integer> result = new SimpleReact().react(()->1,()->2,()->3)
+		List<Integer> result = new SimpleReact().ofAsync(()->1,()->2,()->3)
 												.withRetrier(executor)
 												.capture(e -> errors.add(e))
 												.retry(it -> abortOrReturn(it))
@@ -60,7 +60,7 @@ public class RetryNoMocksTest {
 												.withMaxDelay(0_10)               //10 miliseconds
 												.withUniformJitter()                //add between +/- 100 ms randomly
 												.withMaxRetries(20);
-		List result = SimpleReact.builder().retrier(executor).build().react(()->1,()->2,()->3)
+		List result = SimpleReact.builder().retrier(executor).build().ofAsync(()->1,()->2,()->3)
 												.capture(e -> errors.add(e))
 												.retry((it) -> { throw new RuntimeException("failed"); })
 												.block();

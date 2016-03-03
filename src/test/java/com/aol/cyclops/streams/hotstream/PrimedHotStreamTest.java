@@ -91,13 +91,16 @@ public class PrimedHotStreamTest {
 									 .toList();
 		
 		assertThat(list,equalTo(Arrays.asList(0,1)));
+		
 	}
+	volatile boolean active;
 	@Test
 	public void hotStreamConnectPausable() throws InterruptedException{
 		value= null;
+		active=true;
 		CountDownLatch latch = new CountDownLatch(1);
 		PausableHotStream s = ReactiveSeq.range(0,Integer.MAX_VALUE)
-				.limit(1000)
+				.limitWhile(i->active)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.primedPausableHotStream(exec);
@@ -107,16 +110,19 @@ public class PrimedHotStreamTest {
 				.forEach(System.out::println);
 		
 		Object oldValue = value;
+	
+		
 		try{
 			s.pause();
 			s.unpause();
-			LockSupport.parkNanos(1000000000l);
+			Thread.sleep(1000);
 			s.pause();
 			assertTrue(value!=oldValue);
 			s.unpause();
 			latch.await();
 			assertTrue(value!=null);
 		}finally{
+		    active=false;
 			s.unpause();
 		}
 	}

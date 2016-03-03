@@ -1,22 +1,20 @@
 package com.aol.cyclops.internal.react.stream;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.Queue.ClosedQueueException;
 import com.aol.cyclops.react.async.subscription.Continueable;
 
-public class InfiniteClosingSpliteratorFromIterator<T>  implements Spliterator<T> {
+public class InfiniteClosingSpliteratorFromSupplier<T>  implements Spliterator<T> {
 	    private long estimate;
-	    final Iterator<T> it;
+	    final Supplier<T> it;
 	    private final Continueable subscription;
 	   
 
-	    public InfiniteClosingSpliteratorFromIterator(long estimate,Iterator<T> it,
+	    public InfiniteClosingSpliteratorFromSupplier(long estimate,Supplier<T> it,
 	    		Continueable subscription) {
 	        this.estimate = estimate;
 	        this.it = it;
@@ -43,7 +41,7 @@ public class InfiniteClosingSpliteratorFromIterator<T>  implements Spliterator<T
 				
 	        try{ 
 	        	
-	        	action.accept(it.next());
+	        	action.accept(it.get());
 	        	if(subscription.closed())
 	        		return false;
 	        	return true;
@@ -58,7 +56,7 @@ public class InfiniteClosingSpliteratorFromIterator<T>  implements Spliterator<T
 		@Override
 		public Spliterator<T> trySplit() {
 			
-			return new InfiniteClosingSpliteratorFromIterator(estimate >>>= 1, it,subscription);
+			return new InfiniteClosingSpliteratorFromSupplier(estimate >>>= 1, it,subscription);
 		}
 
 	   

@@ -2,7 +2,7 @@ package com.aol.cyclops.react.lazy.sequenceM;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -143,13 +143,14 @@ public class SequenceMTest {
 	}
 	@Test
 	public void skipTime(){
-		List<Integer> result = LazyFutureStream.of(1,2,3,4,5,6)
-										.peek(i->sleep(i*100))
-										.skip(1000,TimeUnit.MILLISECONDS)
+		List<Integer> result = LazyFutureStream.of(0,1,2,3,4,5,6)
+										.peek(i->sleep(i*300))
+										.skip(500,TimeUnit.MILLISECONDS)
 										.toList();
 		
 		
-		assertThat(result,equalTo(Arrays.asList(4,5,6)));
+		assertThat(result,hasItems(6));
+		assertThat(result,not(hasItems(0)));
 	}
 	@Test
 	public void skipTimeEmpty(){

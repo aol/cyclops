@@ -11,6 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -34,11 +35,32 @@ import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyCollectable;
 import com.aol.cyclops.types.stream.lazy.LazyOperationsImpl;
+import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 
 public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSequence<T> {
 	
+    /**
+     * Combine two adjacent elements in a traversable using the supplied BinaryOperator
+     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * with it's neighbour
+     * <pre>
+     * {@code 
+     *  ReactiveSeq.of(1,1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX()
+                   
+     *  //ListX(3,4) 
+     * }</pre>
+     * 
+     * @param predicate Test to see if two neighbours should be joined
+     * @param op Reducer to combine neighbours
+     * @return Combined / Partially Reduced Traversable
+     */
+    default Traversable<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+        return stream().combine(predicate, op);
+    }
 	
 	
 	/**

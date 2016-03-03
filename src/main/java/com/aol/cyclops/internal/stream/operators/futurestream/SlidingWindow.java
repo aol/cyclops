@@ -1,22 +1,21 @@
 package com.aol.cyclops.internal.stream.operators.futurestream;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 
 public class SlidingWindow {
 	
-	public final static <T> Stream<List<T>> sliding(Stream<T> stream,int windowSize,int increment) {
+	public final static <T> Stream<ListX<T>> sliding(Stream<T> stream,int windowSize,int increment) {
 		Iterator<T> it = stream.iterator();
-		Mutable<PStack<T>> list = Mutable.of(ConsPStack.empty());
-		return stream(new Iterator<List<T>>(){
+		Mutable<PStackX<T>> list = Mutable.of(PStackX.empty());
+		return stream(new Iterator<ListX<T>>(){
 			
 			@Override
 			public boolean hasNext() {
@@ -24,7 +23,7 @@ public class SlidingWindow {
 			}
 
 			@Override
-			public List<T> next() {
+			public ListX<T> next() {
 				for(int i=0;i<increment && list.get().size()>0;i++)
 					 list.mutate(var -> var.minus(0));
 				for (int i = 0; list.get().size() < windowSize && it.hasNext(); i++) {
@@ -33,7 +32,7 @@ public class SlidingWindow {
 					}
 					
 				}
-				return list.get();
+				return ListX.fromIterable(list.get());
 			}
 			
 		});

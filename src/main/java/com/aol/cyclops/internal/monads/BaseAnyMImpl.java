@@ -271,9 +271,7 @@ public class BaseAnyMImpl<T> implements AnyM<T>{
 		return unit(Stream.concat(stream(), next.stream()).collect(Collectors.toList()));
 		
 	}
-	public final  <R> AnyM<List<R>> aggregateUntyped(AnyM<?> next){
-		return monad.aggregate(next.monad()).anyM();
-	}
+	
 	
 	public void forEach(Consumer<? super T> action) {
 		asSequence().forEach(action);	

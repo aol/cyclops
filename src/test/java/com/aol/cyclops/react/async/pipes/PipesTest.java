@@ -11,7 +11,9 @@ import java.util.concurrent.ForkJoinPool;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.async.Queue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 public class PipesTest {
@@ -41,10 +43,10 @@ public class PipesTest {
 	}
 	@Test
 	public void publisherTest(){
-		SeqSubscriber subscriber = SeqSubscriber.subscriber();
-		Queue queue = new Queue();
+		SeqSubscriber<String> subscriber = SeqSubscriber.subscriber();
+		Queue<String> queue = new Queue<>();
 		Pipes.register("hello", queue);
-		Pipes.publisher("hello",ForkJoinPool.commonPool()).get().subscribe(subscriber);
+		Pipes.<String>publisher("hello",ForkJoinPool.commonPool()).get().subscribe(subscriber);
 		queue.offer("world");
 		queue.close();
 		assertThat(subscriber.stream().findAny().get(),equalTo("world"));
@@ -70,5 +72,21 @@ public class PipesTest {
 		queue.close();
 		assertThat(queue.stream().toList(),equalTo(Arrays.asList(1,2,3,4)));
 	}
+	@Test
+	public void seqSubscriberTest(){
+	    SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
+        ReactiveSeq.of(1,2,3).subscribe(sub);
+        assertThat(sub.toListX(),equalTo(ListX.of(1,2,3)));
+	}
+	@Test
+    public void publishToSync() throws InterruptedException{
+	   
+        Queue<Integer> queue = new Queue<>();
+        Pipes.<Integer>register("hello", queue);
+        Pipes.publishTo("hello",ReactiveSeq.of(1,2,3));
+        queue.offer(4);
+        queue.close();
+        assertThat(queue.stream().toList(),equalTo(Arrays.asList(1,2,3,4)));
+    }
 }
 

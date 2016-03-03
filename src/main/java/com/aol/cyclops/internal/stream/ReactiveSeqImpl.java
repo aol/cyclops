@@ -459,18 +459,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 		return zip3(second,third).zipStream(fourth).map(t ->  new Tuple4(t.v1().v1(), t.v1().v2(),t.v1().v3(),t.v2()));
 		
 	}
-	/** 
-	 * Add an index to the current Stream
-	 * 
-	 * <pre>
-	 * {@code 
-	 * assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
-	 * }
-	 * </pre>
-	 */
-	public final  ReactiveSeq<Tuple2<T,Long>> zipWithIndex(){
-		return zipStream(LongStream.iterate(0, i->i+1),(a,b)->new Tuple2<>(a,b));
-	}
+	
 	/**
 	 * Generic zip function. E.g. Zipping a Stream and an Optional
 	 * 

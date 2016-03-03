@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -72,11 +73,27 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	public static<T> PBagX<T> fromStream(Stream<T> stream){
 		return new PBagXImpl<>((PBag<T>)PBags.toPBag().mapReduce(stream));
 	}
-	@Override
-	default <R> PBagX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (PBagX<R>)(PBagX<T>)PersistentCollectionX.super.ap1(ap);
-	}
+	
+	  /**
+     * Combine two adjacent elements in a PBagX using the supplied BinaryOperator
+     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * with it's neighbor
+     * <pre>
+     * {@code 
+     *  PBagX.of(1,1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX()
+                   
+     *  //ListX(3,4) 
+     * }</pre>
+     * 
+     * @param predicate Test to see if two neighbors should be joined
+     * @param op Reducer to combine neighbors
+     * @return Combined / Partially Reduced PBagX
+     */
+    default PBagX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+        return (PBagX<T>)PersistentCollectionX.super.combine(predicate,op);
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
 	 */

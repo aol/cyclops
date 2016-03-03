@@ -17,9 +17,10 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.internal.react.LazyFutureStreamImpl;
 import com.aol.cyclops.internal.react.stream.InfiniteClosingSpliterator;
-import com.aol.cyclops.internal.react.stream.InfiniteClosingSpliteratorFromIterator;
+import com.aol.cyclops.internal.react.stream.InfiniteClosingSpliteratorFromSupplier;
 import com.aol.cyclops.internal.react.stream.ReactBuilder;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.ThreadPools;
@@ -123,6 +124,19 @@ public class LazyReact implements ReactBuilder {
 		this.autoMemoize =false;
 		this.memoizeCache=null;
 	}
+	public LazyReact(int maxActive,Executor executor) {
+        
+        this.executor = executor;
+        this.retrier = null;
+        this.async = true;
+        this.maxActive = MaxActive.IO;
+        this.publisherExecutor=null;
+        this.streamOfFutures=false;
+        this.poolingActive=false;
+        this.autoOptimize=true;
+        this.autoMemoize =false;
+        this.memoizeCache=null;
+    }
 	
 	/**
 	 * LazyReact builder with a new TaskExecutor with threads determined by threadPoolSize
@@ -163,7 +177,7 @@ public class LazyReact implements ReactBuilder {
 	 *	@return
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
 	 */
-	public <U> LazyFutureStream<U> construct(Stream s) {
+	public <U> LazyFutureStream<U> construct(Stream<U> s) {
 		this.log.debug("Constructing Stream with {}",this);
 		return (LazyFutureStream) new LazyFutureStreamImpl<U>( this,s);
 
@@ -174,7 +188,7 @@ public class LazyReact implements ReactBuilder {
 			Stream<CompletableFuture<U>> s) {
 		LazyReact toUse = this.withStreamOfFutures(true);
 		this.log.debug("Constructing Stream with {}",toUse);
-		return toUse.construct((Stream)s);
+		return toUse.construct((Stream<U>)s);
 	}
 	
 	/**
@@ -312,7 +326,7 @@ public class LazyReact implements ReactBuilder {
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#react(java.util.function.Supplier[])
 	 */
 	@SafeVarargs
-	public final <U> LazyFutureStream<U> react(final Supplier<U>... actions) {
+	public final <U> LazyFutureStream<U> ofAsync(final Supplier<U>... actions) {
 
 		return (LazyFutureStream)reactI(actions);
 
@@ -344,16 +358,11 @@ public class LazyReact implements ReactBuilder {
 	public <U> LazyFutureStream<U> react(Collection<Supplier<U>> actions) {
 		
 		ReactiveSeq<Supplier<U>> seq = actions instanceof List ? ReactiveSeq.fromList((List)actions) : ReactiveSeq.fromIterable(actions);
-		return react(seq);
+		return fromStreamAsync(seq);
 	}
-
-
-
 	
-
-	
-
-	protected <U> LazyFutureStream<U> reactI(Supplier<U>... actions) {
+	@SafeVarargs
+	private final <U> LazyFutureStream<U> reactI(Supplier<U>... actions) {
 		
 		return constructFutures(Stream.of(actions).map(
 				next -> CompletableFuture.supplyAsync(next, this.getExecutor())));
@@ -409,7 +418,7 @@ public class LazyReact implements ReactBuilder {
 	 *	@return LazyFutureStream
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#react(java.util.stream.Stream)
 	 */
-	public <U> LazyFutureStream<U> react(Stream<Supplier<U>> actions) {
+	public <U> LazyFutureStream<U> fromStreamAsync(Stream<Supplier<U>> actions) {
 	
 		return constructFutures(actions.map(
 				next -> CompletableFuture.supplyAsync(next, getExecutor())));
@@ -423,9 +432,9 @@ public class LazyReact implements ReactBuilder {
 	 *	@return LazyFutureStream
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#react(java.util.Iterator)
 	 */
-	public <U> LazyFutureStream<U> react(Iterator<Supplier<U>> actions) {
+	public <U> LazyFutureStream<U> fromIteratorAsync(Iterator<Supplier<U>> actions) {
 		
-		return construct(StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
+		return this.<U>constructFutures(StreamSupport.<Supplier<U>>stream(Spliterators.<Supplier<U>>spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 	}
 
@@ -437,9 +446,9 @@ public class LazyReact implements ReactBuilder {
 	 *	@return
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#reactIterable(java.lang.Iterable)
 	 */
-	public <U> LazyFutureStream<U> reactIterable(Iterable<Supplier<U>> actions) {
+	public <U> LazyFutureStream<U> fromIterableAsync(Iterable<Supplier<U>> actions) {
 		ReactiveSeq<Supplier<U>> seq = actions instanceof List ? ReactiveSeq.fromList((List)actions) : ReactiveSeq.fromIterable(actions);
-		return construct(seq.map(
+		return this.<U>constructFutures(seq.map(
 				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 	}
 	
@@ -531,78 +540,61 @@ public class LazyReact implements ReactBuilder {
 
 
 	
-	/**
-	 * Generate an infinite reactive flow. Requires a lazy flow. Supplier will be executed multiple times sequentially / synchronously by populating thread.
-	 * 
-	 * 
-	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
-	 * 
-	 * @see com.aol.cyclops.data.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
-	 * 
-	 * @param s Supplier to generate the infinite flow
-	 * @return Next stage in the flow
-	 */
-	public <U> LazyFutureStream< U> reactInfinitely(final Supplier<U> s) {
-		
-		Subscription sub = new Subscription();
-		LazyFutureStream stream = construct(StreamSupport.stream(
-                new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> s.get(),sub), false)).withSubscription(sub);
-		
-		return stream;
-		
-
-	}
-	/**
-	 * Generate an infinite reactive flow. Requires a lazy flow. Supplier may be executed multiple times in parallel asynchronously by populating thread.
-	 * Active CompletableFutures may grow rapidly.
-	 * 
-	 * The flow will run indefinitely unless / until the provided Supplier throws an Exception
-	 * 
-	 * @see com.aol.cyclops.data.async.Queue   SimpleReact Queue for a way to create a more managable infinit flow
-	 * 
-	 * @param s Supplier to generate the infinite flow
-	 * @return Next stage in the flow
-	 */
-	public <U> LazyFutureStream< U> reactInfinitelyAsync(final Supplier<U> s) {
-		
-		Subscription sub = new Subscription();
-		LazyFutureStream stream = constructFutures(StreamSupport.stream(
-                new InfiniteClosingSpliterator(Long.MAX_VALUE, () -> CompletableFuture.supplyAsync(s),sub), false)).withSubscription(sub);
-		
-		return stream;
-		
-
-	}
+	
+	
+	
+	
 	private static final Object NONE = new Object();
 	/**
 	 * Iterate infinitely using the supplied seed and function
+	 * Iteration is synchronized to support multiple threads using the same iterator.
 	 * 
+	 * @see LazyFutureStream#iterate for an alternative which does not synchronize iteration
 	 * @param seed Initial value
 	 * @param f Function that performs the iteration
 	 * @return Next stage in the flow / stream
 	 */
-	public <U> LazyFutureStream<U> iterateInfinitely(final U seed, final UnaryOperator<U> f){
+	public <U> LazyFutureStream<U> iterate(final U seed, final UnaryOperator<U> f){
 		
-		Subscription sub = new Subscription();
-		 final Iterator<U> iterator = new Iterator<U> () {
+		 Subscription sub = new Subscription();
+		 final Supplier<U> supplier = new Supplier<U> () {
 	            @SuppressWarnings("unchecked")
 	            U t = (U) NONE;
-
+ 
 	            @Override
-	            public boolean hasNext() {
-	                return true;
-	            }
-
-	            @Override
-	            public U  next() {
+	            public U  get() {
 	                return t = (t == NONE) ? seed : f.apply(t);
 	            }
 	        };
-	      return  construct(StreamSupport.stream(  new InfiniteClosingSpliteratorFromIterator(Long.MAX_VALUE,iterator,sub),false));
+	      return  construct(StreamSupport.<U>stream(  new InfiniteClosingSpliteratorFromSupplier<U>(Long.MAX_VALUE,supplier,sub),false));
 
 	}
 	
+	/**
+	 * Generate an infinite Stream
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  new LazyReact().generate(()->"hello")
+                       .limit(5)
+                       .reduce(Semigroups.stringConcat);
+                       
+        //Optional[hellohellohellohellohello]         
+	 * 
+	 * }</pre>
+	 * 
+	 * @param generate Supplier that generates stream input
+	 * @return
+	 */
+	public <U> LazyFutureStream<U> generate(final Supplier<U> generate){
+	   
+	    return  construct(StreamSupport.<U>stream(  new InfiniteClosingSpliteratorFromSupplier<U>(Long.MAX_VALUE,generate,new Subscription()),false));
+	}
 	
+	public <U> LazyFutureStream< U> generateAsync(final Supplier<U> s) {
+        return this.constructFutures(ReactiveSeq.generate(()->1).map(n->CompletableFuture.supplyAsync(s,this.getExecutor())));
+	    
+    }
 	/**
 	 * Start a reactive flow from a JDK Iterator
 	 * 
@@ -661,8 +653,8 @@ public class LazyReact implements ReactBuilder {
 	public  LazyFutureStream<Long> from(final LongStream stream) {
 		return from(stream.boxed());
 	}
-	
-	public <U> LazyFutureStream<U> of(U...array){
+	@SafeVarargs
+	public final <U> LazyFutureStream<U> of(U...array){
 		return from(Stream.of(array));
 	}
 	

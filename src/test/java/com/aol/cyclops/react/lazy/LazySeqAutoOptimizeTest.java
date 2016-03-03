@@ -25,7 +25,7 @@ public class LazySeqAutoOptimizeTest extends LazySeqTest {
 	@Override
 	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
 		return new LazyReact().autoOptimizeOn()
-								.react(array);
+								.ofAsync(array);
 	}
 	@Test
 	public void multi(){

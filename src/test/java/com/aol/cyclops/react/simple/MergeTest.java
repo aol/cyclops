@@ -18,9 +18,9 @@ public class MergeTest {
 	@Test
 	public void testMerge() throws InterruptedException, ExecutionException {
 
-		SimpleReactStream<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
+		SimpleReactStream<String> stage1 = new SimpleReact().<Integer> ofAsync(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		SimpleReactStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
+		SimpleReactStream<String> stage2 = new SimpleReact().<Integer> ofAsync(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<String> result = stage1.merge(stage2).block();
@@ -33,9 +33,9 @@ public class MergeTest {
 	public void testMergeTypes() throws InterruptedException,
 			ExecutionException {
 
-		SimpleReactStream<Integer> stage1 = new SimpleReact().<Integer> react(() -> 1,
+		SimpleReactStream<Integer> stage1 = new SimpleReact().<Integer> ofAsync(() -> 1,
 				() -> 2, () -> 3);
-		SimpleReactStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
+		SimpleReactStream<String> stage2 = new SimpleReact().<Integer> ofAsync(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<Object> result = SimpleReactStream.<Object> merge(stage1, stage2).block();
@@ -48,7 +48,7 @@ public class MergeTest {
 	public void testSplitAndMerge() throws InterruptedException,
 			ExecutionException {
 
-		SimpleReactStream<String> stage = new SimpleReact().<Integer> react(() -> 1,
+		SimpleReactStream<String> stage = new SimpleReact().<Integer> ofAsync(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
 		SimpleReactStream<String> stage1 = stage.filter(it -> it.startsWith("*1"));
 		SimpleReactStream<String> stage2 = stage.filter(it -> it.startsWith("*2"));
@@ -69,9 +69,9 @@ public class MergeTest {
 
 	@Test
 	public void mergeAndContinueProcessing() {
-		SimpleReactStream<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
+		SimpleReactStream<String> stage1 = new SimpleReact().<Integer> ofAsync(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		SimpleReactStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
+		SimpleReactStream<String> stage2 = new SimpleReact().<Integer> ofAsync(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<String> result = stage1.merge(stage2).then(it -> it +"*").block();
@@ -80,9 +80,9 @@ public class MergeTest {
 	}
 	@Test
 	public void mergeAndForkProcessing() {
-		SimpleReactStream<String> stage1 = new SimpleReact().<Integer> react(() -> 1,
+		SimpleReactStream<String> stage1 = new SimpleReact().<Integer> ofAsync(() -> 1,
 				() -> 2, () -> 3).then(it -> "*" + it);
-		SimpleReactStream<String> stage2 = new SimpleReact().<Integer> react(() -> 4,
+		SimpleReactStream<String> stage2 = new SimpleReact().<Integer> ofAsync(() -> 4,
 				() -> 5, () -> 6).then(it -> "*" + it);
 
 		List<String> result1 = stage1.merge(stage2).then(it -> it +"*")

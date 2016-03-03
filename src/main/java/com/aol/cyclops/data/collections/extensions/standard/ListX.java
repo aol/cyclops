@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -44,11 +45,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		return this;
 	}
 
-	@Override
-	default <R> ListX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (ListX<R>)MutableCollectionX.super.ap1(ap);
-	}
+	
 	
 	static <T> Collector<T,?,List<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new ArrayList<>());
@@ -123,7 +120,26 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 		
 		return (ListX<T>)MutableCollectionX.super.reverse();
 	}
-
+	/**
+     * Combine two adjacent elements in a ListX using the supplied BinaryOperator
+     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * with it's neighbor
+     * <pre>
+     * {@code 
+     *  ListX.of(1,1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX()
+                   
+     *  //ListX(3,4) 
+     * }</pre>
+     * 
+     * @param predicate Test to see if two neighbors should be joined
+     * @param op Reducer to combine neighbors
+     * @return Combined / Partially Reduced ListX
+     */
+    default ListX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+        return (ListX<T>)MutableCollectionX.super.combine(predicate,op);
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#filter(java.util.function.Predicate)
 	 */

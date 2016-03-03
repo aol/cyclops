@@ -45,7 +45,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 		error= null;
 		 new LazyReact()
 		 		.objectPoolingOn()
-		 		.iterateInfinitely(1,i->i+1)
+		 		.iterate(1,i->i+1)
 		 		.limit(1_000_000)
 		 		.map(x->x+2)
 		 		.capture(e->{error=e; e.printStackTrace();})
@@ -83,8 +83,9 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	
 	@Test
 	public void batchByTime2(){
-		for(int i=0;i<5;i++){
-			System.out.println(i);
+		for(int i=0;i<5;i++)
+	    {
+		    System.out.println(i);
 			assertThat(react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
 					
 							.groupedByTime(10,TimeUnit.MICROSECONDS)
@@ -178,7 +179,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Test
 	public void zipFastSlow() {
 		Queue q = new Queue();
-		LazyReact.parallelBuilder().reactInfinitely(() -> sleep(100))
+		LazyReact.parallelBuilder().generate(() -> sleep(100))
 				.then(it -> q.add("100")).runThread(new Thread());
 		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
@@ -189,13 +190,13 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	
 	@Test
 	public void reactInfinitely(){
-		 assertThat(LazyReact.sequentialBuilder().reactInfinitely(() -> "100")
+		 assertThat(LazyReact.sequentialBuilder().generate(() -> "100")
 		 	.limit(100)
 		 	.toList().size(),equalTo(100));
 	}
 	@Test 
 	public void streamFromQueue() {
-		assertThat( LazyReact.sequentialBuilder().reactInfinitely(() -> "100")
+		assertThat( LazyReact.sequentialBuilder().generate(() -> "100")
 			.limit(100)
 			.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue()
 			.stream().collect(Collectors.toList()).size(),equalTo(100));
@@ -204,7 +205,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Test 
 	public void testBackPressureWhenZippingUnevenStreams2() {
 
-		Queue fast = LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).reactInfinitely(() -> "100")
+		Queue fast = LazyReact.parallelBuilder().withExecutor(new ForkJoinPool(2)).generateAsync(() -> "100")
 				.peek(System.out::println)
 				.withQueueFactory(QueueFactories.boundedQueue(10)).toQueue();
 
@@ -293,7 +294,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Override
 	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
 		return new LazyReact().objectPoolingOn()
-								.react(array);
+								.ofAsync(array);
 	}
 	protected Object sleep(int i) {
 		try {

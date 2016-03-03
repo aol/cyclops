@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -227,15 +228,29 @@ public interface AnyMSeq<T> extends AnyM<T>,
         
         return AnyM.fromIterable(ZippingApplicativable.super.grouped(size, supplier));
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#groupedUntil(java.util.function.Predicate)
+     */
     @Override
     default AnyMSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
         
         return AnyM.fromIterable(ZippingApplicativable.super.groupedUntil(predicate));
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     */
     @Override
     default AnyMSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
         
         return AnyM.fromIterable(ZippingApplicativable.super.groupedStatefullyWhile(predicate));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     */
+    @Override
+    default AnyMSeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.combine(predicate,op));
     }
     @Override
     default AnyMSeq<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
@@ -542,8 +557,9 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.monad.AnyM#aggregate(com.aol.cyclops.monad.AnyM)
 	 */
 	@Override
-	AnyMSeq<List<T>> aggregate(AnyM<T> next) ;
-
+	AnyMSeq<List<T>> aggregate(AnyM<T> next);
+	
+	
 	/**
 	 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
 	 * etc to be injected, for example)

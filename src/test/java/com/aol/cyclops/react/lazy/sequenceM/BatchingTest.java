@@ -175,7 +175,7 @@ public class BatchingTest {
 				
 				.peek(next->System.out.println("Counter " +count2.incrementAndGet()))
 				.groupedByTime(10, TimeUnit.MICROSECONDS)
-				.peek(batch -> System.out.println("batched : " + batch))
+				.peek(batch -> System.out.println("x " + batch))
 				.filter(c->! (c.stream().count()==0))
 				
 				

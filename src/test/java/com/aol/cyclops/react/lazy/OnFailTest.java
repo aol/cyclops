@@ -27,7 +27,7 @@ public class OnFailTest {
 	}
 	@Test
 	public void chained(){
-		new LazyReact().react(()->1,()->2)
+		new LazyReact().ofAsync(()->1,()->2)
 			.then(this::throwException)
 			.onFail(IOException.class, e-> shouldNeverBeCalled.incrementAndGet())
 			.onFail(RuntimeException.class, e-> shouldBeCalled.incrementAndGet())

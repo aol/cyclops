@@ -36,7 +36,7 @@ public class AlgorithmCompareTest {
 		SimpleTimer timer = new SimpleTimer();
 		
 		Result result = new SimpleReact()
-		.<Result> react( () -> Result.builder().name("approach1").result(retrieval(arrayList)).build(), 
+		.<Result> ofAsync( () -> Result.builder().name("approach1").result(retrieval(arrayList)).build(), 
 				() -> Result.builder().name("approach2").result(retrieval(linkedList)).build())
 		.then(it -> it.withTime(timer.getElapsedNanoseconds()))
 		.filter(it -> it.getResult()==1000)
@@ -60,7 +60,7 @@ public class AlgorithmCompareTest {
 		SimpleTimer timer = new SimpleTimer();
 		
 		Result result = new SimpleReact()
-		.<Result> react( () -> Result.builder().name("approach1 : arrayList").result(retrieval(arrayList)).build(), 
+		.<Result> ofAsync( () -> Result.builder().name("approach1 : arrayList").result(retrieval(arrayList)).build(), 
 				() -> Result.builder().name("approach2 : linkedList").result(retrieval(linkedList)).build())
 		.then(it -> it.withTime(timer.getElapsedNanoseconds()))
 		.filter(it -> it.getResult()==1000)

@@ -2,6 +2,7 @@ package com.aol.cyclops.data.async;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -131,6 +132,7 @@ public class Queue<T> implements Adapter<T> {
 		q.continuationStrategy=new StreamOfContinuations(q);
 		return q;
 	}
+    
 	/**
 	 * @return Sequential Infinite (until Queue is closed) Stream of data from
 	 *         this Queue
@@ -209,7 +211,7 @@ public class Queue<T> implements Adapter<T> {
 	 *            Input data from provided Stream
 	 */
 	public boolean fromStream(Stream<T> stream) {
-		stream.collect(Collectors.toCollection(() -> queue));
+		stream.peek(System.out::println).collect(Collectors.toCollection(() -> queue));
 		return true;
 	}
 	private T ensureOpen(final long timeout, TimeUnit timeUnit) {

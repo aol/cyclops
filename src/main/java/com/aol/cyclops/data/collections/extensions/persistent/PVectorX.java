@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -135,11 +136,27 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	public static<T> PVectorX<T> fromStream(Stream<T> stream){
 		return new PVectorXImpl<>((PVector<T>)PVectors.toPVector().mapReduce(stream));
 	}
-	@Override
-	default <R> PVectorX<R> ap1( ZippingApplicative<T,R, ?> ap){
-		
-		return (PVectorX<R>)PersistentCollectionX.super.ap1(ap);
-	}
+	  /**
+     * Combine two adjacent elements in a PVectorX using the supplied BinaryOperator
+     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * with it's neighbor
+     * <pre>
+     * {@code 
+     *  PVectorX.of(1,1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX()
+                   
+     *  //ListX(3,4) 
+     * }</pre>
+     * 
+     * @param predicate Test to see if two neighbors should be joined
+     * @param op Reducer to combine neighbors
+     * @return Combined / Partially Reduced PVectorX
+     */
+    default PVectorX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
+        return (PVectorX<T>)PersistentCollectionX.super.combine(predicate,op);
+    }
+	
 	default PVector<T> toPVector(){
 		return this;
 	}

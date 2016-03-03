@@ -113,20 +113,7 @@ public class SimpleReact implements ReactBuilder{
 
 	
 	
-	/**
-	 * 
-	 * Start a reactive dataflow with a list of one-off-suppliers
-	 * 
-	 * @param actions
-	 *            List of Suppliers to provide data (and thus events) that
-	 *            downstream jobs will react too
-	 * @return Next stage in the reactive flow
-	 */
-	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> reactCollection(final Collection<Supplier<U>> actions) {
-
-		return react((Supplier[]) actions.toArray(new Supplier[] {}));
-	}
+	
 	/**
 	 * 
 	 * Start a reactive dataflow with a list of one-off-suppliers
@@ -136,8 +123,7 @@ public class SimpleReact implements ReactBuilder{
 	 *            downstream jobs will react too
 	 * @return Next stage in the reactive flow
 	 */
-	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> reactStream(final Stream<Supplier<U>> actions) {
+	public <U> SimpleReactStream<U> fromStreamAsync(final Stream<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,actions.map(
 				next -> CompletableFuture.supplyAsync(next, executor)));
@@ -152,8 +138,7 @@ public class SimpleReact implements ReactBuilder{
 	 *            downstream jobs will react too
 	 * @return Next stage in the reactive flow
 	 */
-	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> reactIterator(final Iterator<Supplier<U>> actions) {
+	public <U> SimpleReactStream<U> fromIteratorAsync(final Iterator<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, executor)));
@@ -168,8 +153,7 @@ public class SimpleReact implements ReactBuilder{
 	 *            downstream jobs will react too
 	 * @return Next stage in the reactive flow
 	 */
-	@SuppressWarnings("unchecked")
-	public <U> SimpleReactStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
+	public <U> SimpleReactStream<U> fromIterableAsync(final Iterable<Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions.iterator(), Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, executor)));
@@ -184,7 +168,7 @@ public class SimpleReact implements ReactBuilder{
 	 * @return Next stage in the reactive flow
 	 */
 	@SafeVarargs
-	public final <U> SimpleReactStream<U> react(final Supplier<U>... actions) {
+	public final <U> SimpleReactStream<U> ofAsync(final Supplier<U>... actions) {
 
 		return reactI(actions);
 
@@ -195,8 +179,8 @@ public class SimpleReact implements ReactBuilder{
 	 * This internal method has been left protected, so it can be mocked / stubbed as some of the entry points are final
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
-	protected <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
+	@SafeVarargs
+	private final <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
 		
 		
 			return new SimpleReactStreamImpl<U>(this,Stream.of(actions).map(

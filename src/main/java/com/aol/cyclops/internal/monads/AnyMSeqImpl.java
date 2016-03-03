@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -17,6 +19,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.IterableFunctor;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.stream.Streamable;
@@ -109,7 +112,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	public AnyMSeq<T> reduceMStreamable(Monoid<Streamable<T>> reducer) {
 		return anyM.reduceMStreamable(reducer);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.anyM.AnyMSeq#reduceMIterable(com.aol.cyclops.Monoid)
 	 */

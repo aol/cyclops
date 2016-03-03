@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -167,7 +168,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		return from(this.<ListX<T>>monoid().mapReduce(stream().grouped(groupSize).map(ListX::fromIterable)));
 	}
 	default <K, A, D> PersistentCollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
-		return from(this.<Tuple2<K, D>>monoid().mapReduce(stream().grouped(classifier)));
+		return from(this.<Tuple2<K, D>>monoid().mapReduce(stream().grouped(classifier,downstream)));
 	}
 	default <K> PersistentCollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return from(this.<Tuple2<K, Seq<T>>>monoid().mapReduce(stream().grouped(classifier)));
@@ -179,10 +180,10 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		return from(this.<R>monoid().mapReduce(stream().zip(other,zipper)));
 	}
 	default PersistentCollectionX<ListX<T>> sliding(int windowSize){
-		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize).map(ListX::of)));
+		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize)));
 	}
 	default PersistentCollectionX<ListX<T>> sliding(int windowSize, int increment){
-		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize,increment).map(ListX::of)));
+		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize,increment)));
 	}
 	default PersistentCollectionX<T> scanLeft(Monoid<T> monoid){
 		
@@ -539,6 +540,13 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
     @Override
     default PersistentCollectionX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
         return from(this.<ListX<T>>monoid().mapReduce(stream().groupedStatefullyWhile(predicate)));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     */
+    @Override
+    default PersistentCollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+        return from(this.<T>monoid().mapReduce(stream().combine(predicate,op)));
     }
     @Override
     default PersistentCollectionX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {

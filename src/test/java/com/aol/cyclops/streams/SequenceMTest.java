@@ -24,14 +24,23 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 public class SequenceMTest {
 	
+    @Test
+    public void combine(){
+        assertThat(ReactiveSeq.of(1,1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX(),equalTo(ListX.of(4,3))); 
+                   
+    }
 	@Test
 	public void subStream(){
 		List<Integer> list = ReactiveSeq.of(1,2,3,4,5,6).subStream(1,3).toList();

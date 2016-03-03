@@ -57,8 +57,7 @@ public class DoListsTest {
        
     }
 	private List<Integer> loadBreakdown(Integer integer) {
-        // TODO Auto-generated method stub
-        return null;
+        return Arrays.asList(1);
     }
     @Test
 	public void optionalListMultiReturn(){
