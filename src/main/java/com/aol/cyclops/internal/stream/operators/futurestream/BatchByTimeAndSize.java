@@ -61,16 +61,6 @@ public class BatchByTimeAndSize<U> implements Function<BiFunction<Long,TimeUnit,
 			} while (timer.getElapsedNanoseconds()<unit.toNanos(time));
 		return list;
 	}
-	public Function<BiFunction<Long,TimeUnit,U>, Supplier<Optional<Collection<U>>>> liftOptional(){
-		return biF ->  () -> {
-			try {
-				return Optional.of(this.apply(biF).get());
-			} catch (ClosedQueueException e) {
-				
-				return Optional.ofNullable((List<U>)e.getCurrentData()).
-						flatMap(list-> list.isEmpty() ? Optional.empty() : Optional.of(list));
-			}
-		};
-	}
+
 
 }
