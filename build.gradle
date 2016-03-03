@@ -88,8 +88,15 @@ sourceSets {
 	test.compileClasspath += [configurations.provided]
 	test.runtimeClasspath += [configurations.provided]
 }
-
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: 'com/aol/cyclops/util/stream/scheduling/cron/**')
+        })
+    }
+}
 test {
+    
         forkEvery = 10
         /**
         testLogging {

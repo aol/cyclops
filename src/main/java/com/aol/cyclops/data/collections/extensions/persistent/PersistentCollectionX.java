@@ -180,10 +180,10 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 		return from(this.<R>monoid().mapReduce(stream().zip(other,zipper)));
 	}
 	default PersistentCollectionX<ListX<T>> sliding(int windowSize){
-		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize).map(ListX::of)));
+		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize)));
 	}
 	default PersistentCollectionX<ListX<T>> sliding(int windowSize, int increment){
-		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize,increment).map(ListX::of)));
+		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize,increment)));
 	}
 	default PersistentCollectionX<T> scanLeft(Monoid<T> monoid){
 		

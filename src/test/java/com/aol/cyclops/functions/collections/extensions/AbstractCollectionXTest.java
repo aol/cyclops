@@ -1,6 +1,7 @@
 package com.aol.cyclops.functions.collections.extensions;
 
 
+import static com.aol.cyclops.control.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -38,6 +39,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.streams.SQLTest.X;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -46,8 +48,21 @@ import com.aol.cyclops.util.stream.Streamable;
 public abstract class AbstractCollectionXTest {
 	public abstract <T> CollectionX<T> empty();
 	public abstract <T> CollectionX<T> of(T... values);
-	
+	@SuppressWarnings("serial")
+    public class X extends Exception {
+    }
 
+	@Test
+    public void testOnEmpty() throws X {
+        assertEquals(asList(1), of().onEmpty(1).toListX());
+        assertEquals(asList(1), of().onEmptyGet(() -> 1).toListX());
+
+        assertEquals(asList(2), of(2).onEmpty(1).toListX());
+        assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toListX());
+        assertEquals(asList(2), of(2).onEmptyThrow(() -> new X()).toListX());
+
+        
+    }
 	@Test
 	public void visit(){
 		
@@ -944,5 +959,5 @@ public abstract class AbstractCollectionXTest {
 	}
 
 
-			
+	 
 }

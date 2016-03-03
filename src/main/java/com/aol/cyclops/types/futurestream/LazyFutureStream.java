@@ -1713,25 +1713,25 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     @Override
     default LazyFutureStream<U> takeUntil(Predicate<? super U> p) {
         
-        return this.takeUntil(p);
+        return this.limitUntil(p);
     }
 
     @Override
     default LazyFutureStream<U>  dropUntil(Predicate<? super U> p) {
        
-        return this.dropUntil(p);
+        return this.skipUntil(p);
     }
 
     @Override
     default LazyFutureStream<U>  dropRight(int num) {
         
-        return this.dropRight(num);
+        return this.skipLast(num);
     }
 
     @Override
-    default ReactiveSeq<U> takeRight(int num) {
-        
-        return this.takeRight(num);
+    default LazyFutureStream<U> takeRight(int num) {
+       
+        return this.limitLast(num);
     }
     /*
      * LazyFutureStream.of(1,2,3,4).skip(2)

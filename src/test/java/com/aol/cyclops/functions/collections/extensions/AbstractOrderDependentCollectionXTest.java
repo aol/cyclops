@@ -1,12 +1,15 @@
 package com.aol.cyclops.functions.collections.extensions;
 
 import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops.control.ReactiveSeq.of;
 import static com.aol.cyclops.control.Matchable.then;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -24,6 +27,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.streams.SQLTest.X;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -36,6 +40,86 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {
+    @Test
+    public void takeRight(){
+        assertThat(of(1,2,3).takeRight(1).toList(),hasItems(3));
+    }
+    @Test
+    public void takeRightEmpty(){
+        assertThat(of().takeRight(1).toList(),equalTo(Arrays.asList()));
+    }
+    
+    @Test
+    public void takeUntil(){
+        assertThat(of(1,2,3,4,5).takeUntil(p->p==2).toList().size(),greaterThan(0));
+    }
+    @Test
+    public void takeUntilEmpty(){
+        assertThat(of().takeUntil(p->true).toList(),equalTo(Arrays.asList()));
+    }
+    @Test
+    public void takeWhile(){
+        assertThat(of(1,2,3,4,5).takeWhile(p->p<6).toList().size(),greaterThan(1));
+    }
+    @Test
+    public void takeWhileEmpty(){
+        assertThat(of().takeWhile(p->true).toList(),equalTo(Arrays.asList()));
+    } 
+    
+    @Test
+    public void testOnEmptyOrdered() throws X {
+        assertEquals(asList(1), of().onEmpty(1).toListX());
+        assertEquals(asList(1), of().onEmptyGet(() -> 1).toListX());
+
+        assertEquals(asList(2), of(2).onEmpty(1).toListX());
+        assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toListX());
+        assertEquals(asList(2), of(2).onEmptyThrow(() -> new X()).toListX());
+
+        assertEquals(asList(2, 3), of(2, 3).onEmpty(1).toListX());
+        assertEquals(asList(2, 3), of(2, 3).onEmptyGet(() -> 1).toListX());
+        assertEquals(asList(2, 3), of(2, 3).onEmptyThrow(() -> new X()).toListX());
+    }
+    @Test
+    public void testCycle() {
+        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
+        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle(2).toListX());
+    }
+    @Test
+    public void testCycleTimes() {
+        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
+       
+    }
+    int count =0;
+    @Test
+    public void testCycleWhile() {
+        count =0;
+        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toListX());
+       
+    }
+    @Test
+    public void testCycleUntil() {
+        count =0;
+        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
+       
+    }
+    @Test
+    public void sliding() {
+        ListX<ListX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
+
+        System.out.println(list);
+        assertThat(list.get(0), hasItems(1, 2));
+        assertThat(list.get(1), hasItems(2, 3));
+    }
+
+    @Test
+    public void slidingIncrement() {
+        List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+
+        System.out.println(list);
+        assertThat(list.get(0), hasItems(1, 2, 3));
+        assertThat(list.get(1), hasItems(3, 4, 5));
+    }
+
     @Test
     public void combine(){
         assertThat(of(1,1,2,3)

@@ -254,38 +254,11 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	}
 	
 	
-	/**
-	 * Aggregate the contents of this Monad and the supplied Monad 
-	 * 
-	 * <pre>{@code 
-	 * 
-	 * List<Integer> result = monad(Stream.of(1,2,3,4)).<Integer>aggregate(monad(Optional.of(5))).toList();
-		
-		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
-		}</pre>
-	 * 
-	 * @param next Monad to aggregate content with
-	 * @return Aggregated Monad
-	 */
-	default <R> Monad<MONAD,R> aggregate(Monad<?,?> next){
-		Stream concat = Stream.concat(stream(),next.stream() );
-		
-		return (Monad)withMonad(new ComprehenderSelector().selectComprehender(
-				unwrap()).of(fromStream(concat)
-						.flatMap(Function.identity())
-						.sequence().collect(Collectors.toList())))
-						.bind(Function.identity() );
-	}
-	default <MONAD2,NT>  Monad<MONAD2,NT> monadMap(Function<? super MONAD,? extends NT> fn) {
-		return new MonadWrapper<>(fn.apply(unwrap()));
-	}
-	default Optional<MONAD> monadFilter(Predicate<? super MONAD> p) {
-		return p.test(unwrap()) ? Optional.of(unwrap()) : Optional.empty();
-	}
 	
-	default <MONAD2,NT,R extends Monad<MONAD2,NT>> R monadFlatMap(Function<? super MONAD,? extends R> fn) {
-		return fn.apply(unwrap());
-	}
+	
+	
+	
+	
 	/**
 	 * flatMap operation
 	 * 

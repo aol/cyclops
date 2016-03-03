@@ -29,46 +29,7 @@ public class MonadTest {
 	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> monadOf = input ->new MonadWrapper<>(input);
 	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> f = input -> new MonadWrapper<>(Optional.of(input.get()*5));
 	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> g = input -> new MonadWrapper<>(Optional.of(input.get()*50));
-	  /**
-     * Monad law 1, Left Identity
-     *
-     * From LYAHFGG [1] above: 
-     *   The first monad law states that if we take a value, put it in a default context 
-     *   with return and then feed it to a function by using >>=, it’s the same as just 
-     *   taking the value and applying the function to it
-     */
-	 @Test
-    public void satisfiesLaw1LeftIdentity() {
-        assertThat( monadicValue.monadFlatMap(f),
-            equalTo(f.apply(value) ));
-    }
-	
- 
-    /**
-     * Monad law 2, Right Identity
-     *
-     * From LYAHFGG [1] above: 
-     *   The second law states that if we have a monadic value and we use >>= to feed 
-     *   it to return, the result is our original monadic value.
-     */
-    @Test
-    public void satisfiesLaw2RightIdentity() {
-         assertThat(monadicValue.monadFlatMap(monadOf),
-            equalTo(monadicValue));
-    }
- 
-    /**
-     * Monad law 3, Associativity
-     *
-     * From LYAHFGG [1] above: 
-     *   The final monad law says that when we have a chain of monadic function 
-     *   applications with >>=, it shouldn’t matter how they’re nested.
-     */
-    @Test
-    public void satisfiesLaw3Associativity() {
-    	assertThat(monadicValue.monadFlatMap(f).monadFlatMap(g)
-            ,equalTo((Monad)monadicValue.monadFlatMap( input ->f.apply(input).monadFlatMap(g))));
-    }
+
 	
 	@Test
 	public void test() {

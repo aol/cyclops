@@ -91,6 +91,7 @@ public class PrimedHotStreamTest {
 									 .toList();
 		
 		assertThat(list,equalTo(Arrays.asList(0,1)));
+		
 	}
 	volatile boolean active;
 	@Test

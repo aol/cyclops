@@ -45,7 +45,7 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 				return false;
 			}
 
-			while(open.get()){
+			while(open.get() || queue.size()>0){
 				long nanos=1l;
 
         
