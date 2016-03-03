@@ -1,22 +1,18 @@
 package com.aol.cyclops.internal.stream.operators;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import lombok.Value;
-
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.util.stream.StreamUtils;
-@Value
+
 public class BatchWhileOperator<T, C extends Collection<? super T>> {
 	 private static final Object UNSET = new Object();
-	Stream<T> stream;
-	Supplier<C> factory;
+	 private final Stream<T> stream;
+	 private final Supplier<C> factory;
 	
 	public BatchWhileOperator(Stream<T> stream){
 		this.stream = stream;

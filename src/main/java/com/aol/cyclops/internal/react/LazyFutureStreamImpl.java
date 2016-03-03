@@ -61,7 +61,6 @@ import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
 @Wither
-@Builder
 @Getter
 @Slf4j 
 @AllArgsConstructor(access=AccessLevel.PRIVATE)

@@ -1,38 +1,30 @@
 package com.aol.cyclops.internal.react;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Builder;
-import lombok.experimental.Wither;
-import lombok.extern.slf4j.Slf4j;
-
-import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.async.QueueFactory;
-import com.aol.cyclops.internal.react.stream.BaseSimpleReact;
 import com.aol.cyclops.internal.react.stream.EagerStreamWrapper;
-import com.aol.cyclops.internal.react.stream.ReactBuilder;
 import com.aol.cyclops.react.async.subscription.AlwaysContinue;
 import com.aol.cyclops.react.async.subscription.Continueable;
-import com.aol.cyclops.react.threads.ReactPool;
 import com.aol.cyclops.types.futurestream.EagerToQueue;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Wither;
+import lombok.extern.slf4j.Slf4j;
+
 @Wither
-@Builder
 @Getter
 @Slf4j
 @AllArgsConstructor

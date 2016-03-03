@@ -6,10 +6,14 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.util.stream.StreamUtils;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
-@Value
+
+@AllArgsConstructor
 public class LimitWhileOperator<U> {
-	Stream<U> stream;
+    
+    private final Stream<U> stream;
+	
 	public  Stream<U>  limitWhile(Predicate<? super U> predicate){
 		Iterator<U> it = stream.iterator();
 		return StreamUtils.stream(new Iterator<U>(){

@@ -4,14 +4,17 @@ import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
 
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.stream.StreamUtils;
-@Value
+@AllArgsConstructor
 public class RecoverOperator<T> {
-	Stream<T> stream;
-	Class<Throwable> type;
+    
+    private final  Stream<T> stream;
+    private final Class<Throwable> type;
+    
 	private static final Object UNSET = new Object();
 	public Stream<T> recover(Function<Throwable,? extends T> fn){
 		Iterator<T> it = stream.iterator();

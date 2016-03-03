@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Wither;
 
-@Value
+
 @AllArgsConstructor
 public class MonadWrapper<MONAD,T> implements Monad<MONAD,T>, Decomposable{
 	@Wither

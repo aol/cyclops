@@ -6,10 +6,14 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.util.stream.StreamUtils;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
-@Value
+
+@AllArgsConstructor
 public class DebounceOperator<T> {
-	Stream<T> stream;
+    
+    private final Stream<T> stream;
+    
 	public Stream<T> debounce(long time, TimeUnit t){
 		Iterator<T> it = stream.iterator();
 		long timeNanos = t.toNanos(time);

@@ -11,11 +11,14 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.util.stream.StreamUtils;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
-@Value
+
+@AllArgsConstructor
 public class MultiReduceOperator<R> {
 
-	Stream<R> stream;
+    private final Stream<R> stream;
+    
 	public List<R> reduce(Iterable<? extends Monoid<R>> reducers){
 		Reducer<R> m = new Reducer(){
 			public List zero(){

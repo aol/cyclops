@@ -52,13 +52,12 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.CyclopsCollectors;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
-import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.functions.collections.extensions.AbstractOrderDependentCollectionXTest.MyCase;
-import com.aol.cyclops.functions.collections.extensions.AbstractOrderDependentCollectionXTest.MyCase2;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.function.Predicates;
@@ -69,8 +68,56 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 public abstract class AbstractCollectionXTest {
-	public abstract <T> CollectionX<T> empty();
-	public abstract <T> CollectionX<T> of(T... values);
+	public abstract <T> FluentCollectionX<T> empty();
+	public abstract <T> FluentCollectionX<T> of(T... values);
+	
+	@Test
+	public void plusOne(){
+	    assertThat(of().plus(1),hasItem(1));
+	}
+	@Test
+    public void plusTwo(){
+        assertThat(of().plus(1).plus(2),hasItems(1,2));
+    }
+	@Test
+    public void plusOneOrder(){
+        assertThat(of().plusInOrder(1),hasItem(1));
+    }
+	@Test
+    public void plusAllOne(){
+        assertThat(of().plusAll(of(1)),hasItem(1));
+    }
+    @Test
+    public void plusAllTwo(){
+        assertThat(of().plusAll(of(1)).plus(2),hasItems(1,2));
+    }
+    
+	@Test
+    public void minusOne(){
+        assertThat(of().minus(1).size(),equalTo(0));
+    }
+	@Test
+    public void minusOneNotEmpty(){
+        assertThat(of(1).minus(1).size(),equalTo(0));
+    }
+	@Test
+    public void minusOneTwoValues(){
+        assertThat(of(1,2).minus(1),hasItem(2));
+        assertThat(of(1,2).minus(1),not(hasItem(1)));
+    }
+	@Test
+    public void minusAllOne(){
+        assertThat(of().minusAll(of(1)).size(),equalTo(0));
+    }
+    @Test
+    public void minusAllOneNotEmpty(){
+        assertThat(of(1).minusAll(of(1)).size(),equalTo(0));
+    }
+    @Test
+    public void minusAllOneTwoValues(){
+        assertThat(of(1,2).minusAll(of(1)),hasItem(2));
+        assertThat(of(1,2).minusAll(of(1)),not(hasItem(1)));
+    }
 	
 	@Test
     public void notNull(){
@@ -80,6 +127,7 @@ public abstract class AbstractCollectionXTest {
 	public void retainAll(){
 	    assertThat(of(1,2,3,4,5).retainAll((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
 	}
+	
 	@Test
     public void retainAllSeq(){
         assertThat(of(1,2,3,4,5).retainAll(Seq.of(1,2,3)),hasItems(1,2,3));
@@ -90,7 +138,7 @@ public abstract class AbstractCollectionXTest {
     }
 	@Test
     public void retainAllValues(){
-        assertThat(of(1,2,3,4,5).removeAll(1,2,3),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).retainAll(1,2,3),hasItems(1,2,3));
     }
 	@Test
     public void removeAll(){
@@ -217,6 +265,10 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void testFilter(){
         assertThat(of(1,1,1,2).filter(it -> it==1).collect(Collectors.toList()),hasItem(1));
+    }
+    @Test
+    public void testFilterNot(){
+        assertThat(of(1,1,1,2).filterNot(it -> it==1).collect(Collectors.toList()),hasItem(2));
     }
     @Test
     public void testMap2(){
@@ -348,6 +400,22 @@ public abstract class AbstractCollectionXTest {
 		assertThat(of().dropWhile(p->true).toList(),equalTo(Arrays.asList()));
 	}
 	@Test
+    public void skipUntil(){
+        assertThat(of(1,2,3,4,5).skipUntil(p->p==2).toListX().size(),lessThan(5));
+    }
+    @Test
+    public void skipUntilEmpty(){
+        assertThat(of().skipUntil(p->true).toListX(),equalTo(Arrays.asList()));
+    }
+    @Test
+    public void skipWhile(){
+        assertThat(of(1,2,3,4,5).skipWhile(p->p<6).toListX().size(),lessThan(1));
+    }
+    @Test
+    public void skipWhileEmpty(){
+        assertThat(of().skipWhile(p->true).toListX(),equalTo(Arrays.asList()));
+    }
+	@Test
 	public void filter(){
 		assertThat(of(1,2,3,4,5).filter(i->i<3).toList(),hasItems(1,2));
 	}
@@ -394,7 +462,7 @@ public abstract class AbstractCollectionXTest {
 
 	
 	@Test
-	public void limitWhileTest(){
+	public void takeWhileTest(){
 		
 		List<Integer> list = new ArrayList<>();
 		while(list.size()==0){
@@ -408,6 +476,21 @@ public abstract class AbstractCollectionXTest {
 		
 		
 	}
+	@Test
+    public void limitWhileTest(){
+        
+        List<Integer> list = new ArrayList<>();
+        while(list.size()==0){
+            list = of(1,2,3,4,5,6).limitWhile(it -> it<4)
+                        .toListX();
+    
+        }
+        assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(list.get(0)));
+        
+        
+        
+        
+    }
 
     @Test
     public void testScanLeftStringConcat() {
@@ -518,7 +601,7 @@ public abstract class AbstractCollectionXTest {
 	    }
 
 	    @Test
-	    public void testLimitUntil() {
+	    public void testTakeUntil() {
 	        
 
 	        assertTrue(of(1, 2, 3, 4, 5).takeUntil(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
@@ -527,7 +610,15 @@ public abstract class AbstractCollectionXTest {
 	        assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
 	    }
 
-	   
+	    @Test
+        public void testLimitUntil() {
+            
+
+            assertTrue(of(1, 2, 3, 4, 5).limitUntil(i -> false).toListX().containsAll(asList(1, 2, 3, 4, 5)));
+            assertFalse(of(1, 2, 3, 4, 5).limitUntil(i -> i % 3 == 0).toListX().size()==5);
+            
+            assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toListX());
+        }
 
 	    
 
@@ -1404,6 +1495,21 @@ public abstract class AbstractCollectionXTest {
 	                    .size(),equalTo(1));
 	           
 	        }
+	        @Test
+            public void batchUntilSupplier(){
+                assertThat(of(1,2,3,4,5,6)
+                        .groupedUntil(i->false,()->new ListXImpl())
+                        .toListX().size(),equalTo(1));
+               
+            }
+            @Test
+            public void batchWhileSupplier(){
+                assertThat(of(1,2,3,4,5,6)
+                        .groupedWhile(i->true,()->new ListXImpl())
+                        .toListX()
+                        .size(),equalTo(1));
+               
+            }
 	      
 	        @Test
 	        public void slidingNoOrder() {
@@ -1592,6 +1698,23 @@ public abstract class AbstractCollectionXTest {
 	        }
 	        return i;
 	    }
-
+	    @Test
+	    public void trampoline2Test(){
+	        of(10,20,30,40)
+	                 .trampoline(i-> fibonacci(i))
+	                 .forEach(System.out::println);
+	    }
+	    @Test
+	    public void trampolineTest(){
+	        of(10_000,200_000,3_000_000,40_000_000)
+	                 .trampoline(i-> fibonacci(i))
+	                 .forEach(System.out::println);
+	    }
+	    Trampoline<Long> fibonacci(int i){
+	        return fibonacci(i,1,0);
+	    }
+	    Trampoline<Long> fibonacci(int n, long a, long b) {
+	        return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
+	    }
 	 
 }

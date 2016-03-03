@@ -25,7 +25,7 @@ public class POrderedSets {
 			return (POrderedSet)(stream);
 		return OrderedPSet.from(stream);
 	}
-	public static<T> POrderedSet<T> toPOrderedSet(Stream<T> stream){
+	public static<T> POrderedSet<T> fromStream(Stream<T> stream){
 		return (POrderedSet<T>)toPOrderedSet().mapReduce(stream);
 	}
 	public static <T> Reducer<POrderedSet<T>> toPOrderedSet() { 

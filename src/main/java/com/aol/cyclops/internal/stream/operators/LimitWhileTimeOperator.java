@@ -6,13 +6,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
 
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.StreamUtils;
-@Value
+@AllArgsConstructor
 public class LimitWhileTimeOperator<U> {
-	Stream<U> stream;
+    
+    private final  Stream<U> stream;
+    
 	public  Stream<U>  limitWhile(long time, TimeUnit unit){
 		Iterator<U> it = stream.iterator();
 		long start = System.nanoTime();
