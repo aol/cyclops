@@ -1,7 +1,5 @@
 package com.aol.cyclops.types.mixins;
 
-import com.aol.cyclops.types.Functor;
-
 public class AsFunctor {
 	
 	/**
