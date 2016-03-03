@@ -1,9 +1,12 @@
 package com.aol.cyclops.data.collections.extensions.standard;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -29,6 +32,8 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.util.stream.StreamUtils;
+
+import lombok.val;
 
 public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	static <T> Collector<T,?,SortedSet<T>> defaultCollector(){
@@ -252,7 +257,8 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 		return (SortedSetX)MutableCollectionX.super.grouped(classifier,downstream);
 	}
 	default <K> SortedSetX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
-		return (SortedSetX)MutableCollectionX.super.grouped(classifier);	 
+	    
+		return (SortedSetX)fromStream(stream().grouped(classifier).map(t->t.map2(Comparables::comparable)));     
 	}
 	default <U> SortedSetX<Tuple2<T, U>> zip(Iterable<U> other){
 		return (SortedSetX<Tuple2<T, U>>)(SortedSetX<T>)MutableCollectionX.super.zip(other);
@@ -642,6 +648,49 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	    default SortedSetX<T> retainAll(Seq<T> stream) {
 	       
 	        return (SortedSetX<T>)MutableCollectionX.super.retainAll(stream);
+	    }
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
+	     */
+	    @Override
+	    default SortedSetX<ReactiveSeq<T>> permutations() {
+	        return fromStream(stream().permutations().map(Comparables::comparable));
+	        
+	    }
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
+	     */
+	    @Override
+	    default SortedSetX<ReactiveSeq<T>> combinations(int size) {
+	        return fromStream(stream().combinations(size).map(Comparables::comparable));
+	    }
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
+	     */
+	    @Override
+	    default SortedSetX<ReactiveSeq<T>> combinations() {
+	        return fromStream(stream().combinations().map(Comparables::comparable));
+	    }
+	   
+	    static class Comparables{
+	        static <T, R extends ReactiveSeq<T> & Comparable<T>> R comparable(Seq<T> seq){
+	            return comparable(ReactiveSeq.fromStream(seq));
+	        }
+            @SuppressWarnings("unchecked")
+            static <T, R extends ReactiveSeq<T> & Comparable<T>> R comparable(ReactiveSeq<T> seq){
+                Method compareTo = Stream.of(Comparable.class.getMethods()).filter(m->m.getName().equals("compareTo"))
+                            .findFirst().get();
+               
+                return (R) Proxy.newProxyInstance(SortedSetX.class
+                        .getClassLoader(), new Class[]{ReactiveSeq.class, Comparable.class},
+                        (proxy,method,args)->{
+                            if(compareTo.equals(method))
+                               return Objects.compare(System.identityHashCode(seq), System.identityHashCode(args[0]),Comparator.naturalOrder() );
+                            else
+                               return method.invoke(seq,args);
+                        });
+                
+            }
 	    }
 	
 }

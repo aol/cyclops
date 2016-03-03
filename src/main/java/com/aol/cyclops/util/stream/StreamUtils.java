@@ -761,7 +761,11 @@ public class StreamUtils{
                         return ReactiveSeq.of(result,next);
                     }
                 }
-                return ReactiveSeq.empty();
+                if(it.hasNext())
+                    return ReactiveSeq.empty();
+                T result = current;
+                current = (T)UNSET;
+                return ReactiveSeq.of(result);
             }
             
         }).flatMap(Function.identity());
