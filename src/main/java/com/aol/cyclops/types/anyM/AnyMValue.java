@@ -377,7 +377,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <T,R> AnyMValue<ListX<R>> traverse(Stream<? extends AnyMValue<T>> seq, Function<? super T,? extends R> fn){
+	public static <T,R> AnyMValue<ListX<R>> traverse(Collection<? extends AnyMValue<T>> seq, Function<? super T,? extends R> fn){
 		
 		return AnyMValueImpl.from(new AnyMonads().traverse(seq,fn));
 	}

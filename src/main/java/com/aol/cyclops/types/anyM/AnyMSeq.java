@@ -769,7 +769,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <T,R> AnyMSeq<ListX<R>> traverse(Stream<? extends AnyMSeq<T>> seq, Function<? super T,? extends R> fn){
+	public static <T,R> AnyMSeq<ListX<R>> traverse(Collection<? extends AnyMSeq<T>> seq, Function<? super T,? extends R> fn){
 		
 		return AnyMSeqImpl.from(new AnyMonads().traverse(seq,fn));
 	}

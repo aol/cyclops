@@ -2,6 +2,7 @@ package com.aol.cyclops.internal.monads;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -14,13 +15,12 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.stream.Streamable;
-import com.google.common.base.Objects;
+
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
