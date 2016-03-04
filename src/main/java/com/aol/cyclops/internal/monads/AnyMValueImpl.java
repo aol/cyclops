@@ -18,7 +18,9 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.stream.Streamable;
+import com.google.common.base.Objects;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
@@ -247,5 +249,23 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
 	public <T> T unwrap() {
 		return this.baseImpl().unwrap();
 	}
+	@Override
+    public String toString() {
+        return mkString();
+    }
+    @Override
+    public int hashCode() {
+       return Objects.hashCode(this.anyM.unwrap());
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof AnyMValue))
+            return false;
+        AnyMValue v2 = (AnyMValue)obj;
+        return this.toMaybe().equals(v2.toMaybe());
+        
+       
+    }
+	
 
 }

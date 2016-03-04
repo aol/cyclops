@@ -41,20 +41,20 @@ import com.aol.cyclops.util.stream.StreamUtils;
 
 
 
-public class MaybeTest {
+public class Eval2Test {
 
-	Maybe<Integer> just;
-	Maybe<Integer> none;
+	Eval<Integer> just;
+	Eval<Integer> none;
 	@Before
 	public void setUp() throws Exception {
-		just = Maybe.of(10);
-		none = Maybe.none();
+		just = Eval.now(10);
+		none = Eval.now(null);
 	}
 
 	@Test
 	public void testToMaybe() {
-		assertThat(just.toMaybe(),equalTo(just));
-		assertThat(none.toMaybe(),equalTo(none));
+		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
+		assertThat(none.toMaybe(),equalTo(Maybe.none()));
 	}
 
 	private int add1(int i){
@@ -70,12 +70,12 @@ public class MaybeTest {
 
 	@Test
 	public void testFromOptional() {
-		assertThat(Maybe.fromOptional(Optional.of(10)),equalTo(just));
+		assertThat(Maybe.fromOptional(Optional.of(10)),equalTo(just.toMaybe()));
 	}
 
 	@Test
 	public void testFromEvalSome() {
-		assertThat(Maybe.fromEvalOf(Eval.now(10)),equalTo(just));
+		assertThat(Maybe.fromEvalOf(Eval.now(10)),equalTo(just.toMaybe()));
 	}
 
 	@Test
@@ -99,62 +99,62 @@ public class MaybeTest {
 
 	@Test
 	public void testSequence() {
-		Maybe<ListX<Integer>> maybes =Maybe.sequence(ListX.of(just,none,Maybe.of(1)));
-		assertThat(maybes,equalTo(Maybe.of(ListX.of(10,1))));
+		Eval<ListX<Integer>> maybes =Eval.sequence(ListX.of(just,Eval.now(1)));
+		assertThat(maybes,equalTo(Eval.now(ListX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Maybe<PSetX<Integer>> maybes =Maybe.accumulateJust(ListX.of(just,none,Maybe.of(1)),Reducers.toPSetX());
-		assertThat(maybes,equalTo(Maybe.of(PSetX.of(10,1))));
+		Eval<PSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,none,Eval.now(1)),Reducers.toPSetX());
+		assertThat(maybes,equalTo(Eval.now(PSetX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Maybe<String> maybes =Maybe.accumulateJust(ListX.of(just,none,Maybe.of(1)),i->""+i,Semigroups.stringConcat);
-		assertThat(maybes,equalTo(Maybe.of("101")));
+		Eval<String> maybes =Eval.accumulate(ListX.of(just,none,Eval.later(()->1)),i->""+i,Semigroups.stringConcat);
+		assertThat(maybes,equalTo(Eval.now("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Maybe<Integer> maybes =Maybe.accumulateJust(ListX.of(just,none,Maybe.of(1)),Semigroups.intSum);
-		assertThat(maybes,equalTo(Maybe.of(11)));
+		Eval<Integer> maybes =Eval.accumulate(ListX.of(just,none,Eval.now(1)),Semigroups.intSum);
+		assertThat(maybes,equalTo(Eval.now(11)));
 	}
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20),equalTo(Maybe.of(20)));
+		assertThat(just.unit(20),equalTo(Eval.now(20)));
 	}
 
 	
 
 	@Test
 	public void testIsPresent() {
-		assertTrue(just.isPresent());
-		assertFalse(none.isPresent());
+		assertTrue(just.toMaybe().isPresent());
+		assertFalse(none.toMaybe().isPresent());
 	}
 
 	@Test
 	public void testRecoverSupplierOfT() {
-		assertThat(just.recover(20),equalTo(Maybe.of(10)));
-		assertThat(none.recover(10),equalTo(Maybe.of(10)));
+		assertThat(just.toMaybe().recover(20),equalTo(Maybe.of(10)));
+		assertThat(none.toMaybe().recover(10),equalTo(Maybe.of(10)));
 	}
 
 	@Test
 	public void testRecoverT() {
-		assertThat(just.recover(()->20),equalTo(Maybe.of(10)));
-		assertThat(none.recover(()->10),equalTo(Maybe.of(10)));
+		assertThat(just.toMaybe().recover(()->20),equalTo(Maybe.of(10)));
+		assertThat(none.toMaybe().recover(()->10),equalTo(Maybe.of(10)));
 	}
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5),equalTo(Maybe.of(15)));
-		assertThat(none.map(i->i+5),equalTo(Maybe.none()));
+		assertThat(just.map(i->i+5),equalTo(Eval.now(15)));
+		assertThat(none.toMaybe().map(i->i+5),equalTo(Maybe.none()));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(just.flatMap(i->Maybe.of(i+5)),equalTo(Maybe.of(15)));
-		assertThat(none.flatMap(i->Maybe.of(i+5)),equalTo(Maybe.none()));
+		assertThat(just.flatMap(i->Eval.now(i+5)),equalTo(Eval.later(()->15)));
+		assertThat(none.toMaybe().flatMap(i->Maybe.of(i+5)),equalTo(Maybe.none()));
 	}
 
 	@Test
@@ -172,7 +172,7 @@ public class MaybeTest {
 	@Test
 	public void testStream() {
 		assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-		assertThat(none.stream().toListX(),equalTo(ListX.of()));
+		assertThat(none.stream().filter(i->i!=null).toListX(),equalTo(ListX.of()));
 	}
 
 	@Test
@@ -227,10 +227,10 @@ public class MaybeTest {
 	public void testToLazyImmutable() {
 		assertThat(just.toLazyImmutable(),equalTo(LazyImmutable.of(10)));
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testToLazyImmutableNone(){
-		none.toLazyImmutable();
-		fail("exception expected");
+		assertThat(none.toLazyImmutable().get(),nullValue());
+		
 		
 	}
 
@@ -240,10 +240,10 @@ public class MaybeTest {
 		
 		
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testToMutableNone(){
-		none.toMutable();
-		fail("exception expected");
+		assertThat(none.toMutable().get(),nullValue());
+		
 		
 	}
 
@@ -283,7 +283,7 @@ public class MaybeTest {
 
 	@Test
 	public void testToTryClassOfXArray() {
-		assertTrue(none.toTry(Throwable.class).isFailure());
+		assertTrue(none.toTry(Throwable.class).isSuccess());
 	}
 
 	@Test
@@ -315,10 +315,10 @@ public class MaybeTest {
 	public void testToEvalNow() {
 		assertThat(just.toEvalNow(),equalTo(Eval.now(10)));
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testToEvalNowNone() {
-		none.toEvalNow();
-		fail("exception expected");
+		assertThat(none.toEvalNow(),equalTo(Eval.now(null)));
+		
 		
 	}
 
@@ -326,10 +326,10 @@ public class MaybeTest {
 	public void testToEvalLater() {
 		assertThat(just.toEvalLater(),equalTo(Eval.later(()->10)));
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testToEvalLaterNone() {
-		none.toEvalLater().get();
-		fail("exception expected");
+	    assertThat(none.toEvalLater().get(),nullValue());
+	
 		
 	}
 
@@ -337,10 +337,10 @@ public class MaybeTest {
 	public void testToEvalAlways() {
 		assertThat(just.toEvalAlways(),equalTo(Eval.always(()->10)));
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testToEvalAlwaysNone() {
-		none.toEvalAlways().get();
-		fail("exception expected");
+		assertThat(none.toEvalAlways().get(),nullValue());
+		
 		
 	}
 
@@ -413,41 +413,41 @@ public class MaybeTest {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Just[10]"));
-		assertThat(none.mkString(),equalTo("Nothing[]"));
+		assertThat(just.mkString(),equalTo("Now[10]"));
+		assertThat(none.mkString(),equalTo("Now[]"));
 	}
 	LazyReact react = new LazyReact();
 	@Test
 	public void testToFutureStreamLazyReact() {
 		assertThat(just.toFutureStream(react).toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toFutureStream(react).toList(),equalTo(Arrays.asList()));
+		assertThat(none.toFutureStream(react).filter(i->i!=null).toList(),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testToFutureStream() {
 		assertThat(just.toFutureStream().toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toFutureStream().toList(),equalTo(Arrays.asList()));
+		assertThat(none.toFutureStream().filter(i->i!=null).toList(),equalTo(Arrays.asList()));
 	}
 	SimpleReact react2 = new SimpleReact();
 	@Test
 	public void testToSimpleReactSimpleReact() {
 		assertThat(just.toSimpleReact(react2).block(),equalTo(Arrays.asList(10)));
-		assertThat(none.toSimpleReact(react2).block(),equalTo(Arrays.asList()));
+		assertThat(none.toSimpleReact(react2).filter(i->i!=null).block(),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testToSimpleReact() {
 		assertThat(just.toSimpleReact().block(),equalTo(Arrays.asList(10)));
-		assertThat(none.toSimpleReact().block(),equalTo(Arrays.asList()));
+		assertThat(none.toSimpleReact().filter(i->i!=null).block(),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testGet() {
 		assertThat(just.get(),equalTo(10));
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testGetNone() {
-		none.get();
+		assertThat(none.get(),nullValue());
 		
 	}
 
@@ -622,9 +622,9 @@ public class MaybeTest {
 	public void testToAtomicReference() {
 		assertThat(just.toAtomicReference().get(),equalTo(10));
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testToAtomicReferenceNone() {
-		none.toAtomicReference().get();
+		assertThat(none.toAtomicReference().get(),nullValue());
 	}
 
 	@Test
@@ -724,19 +724,19 @@ public class MaybeTest {
 
 	@Test
 	public void testCast() {
-		Maybe<Number> num = just.cast(Number.class);
+		Eval<Number> num = just.cast(Number.class);
 	}
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5),equalTo(Maybe.of(15)));
+		assertThat(just.map(i->i+5),equalTo(Eval.now(15)));
 	}
 	
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c));
-		assertNull(capture.get());
+		
 		
 		just.get();
 		assertThat(capture.get(),equalTo(10));
@@ -747,7 +747,7 @@ public class MaybeTest {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Maybe.of(65)));
+		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Eval.now(65)));
 	}
 
 	

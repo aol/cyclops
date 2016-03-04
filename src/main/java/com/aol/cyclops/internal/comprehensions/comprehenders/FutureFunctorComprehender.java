@@ -2,8 +2,10 @@ package com.aol.cyclops.internal.comprehensions.comprehenders;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 public class FutureFunctorComprehender implements Comprehender<FutureW>{
@@ -15,7 +17,10 @@ public class FutureFunctorComprehender implements Comprehender<FutureW>{
 	public Object map(FutureW t, Function fn) {
 		return t.map(fn);
 	}
-
+	@Override
+    public Object filter(FutureW t, Predicate p){
+        return t.filter(p);
+    }
 	@Override
 	public FutureW flatMap(FutureW t, Function fn) {
 		return t.flatMap(fn);
@@ -35,6 +40,12 @@ public class FutureFunctorComprehender implements Comprehender<FutureW>{
 	public FutureW empty() {
 		return FutureW.of(new CompletableFuture());
 	}
+
+    @Override
+    public Object resolveForCrossTypeFlatMap(Comprehender comp, FutureW apply) {
+        Xor<Throwable,?> res = apply.toXor();
+        return res.isPrimary() ? comp.of(res.get()) :  comp.empty();
+    }
 	
 
 }

@@ -41,20 +41,20 @@ import com.aol.cyclops.util.stream.StreamUtils;
 
 
 
-public class MaybeTest {
+public class Ior2Test {
 
-	Maybe<Integer> just;
-	Maybe<Integer> none;
+	Ior<String,Integer> just;
+	Ior<String,Integer> none;
 	@Before
 	public void setUp() throws Exception {
-		just = Maybe.of(10);
-		none = Maybe.none();
+		just = Ior.primary(10);
+		none = Ior.secondary("none");
 	}
 
 	@Test
 	public void testToMaybe() {
-		assertThat(just.toMaybe(),equalTo(just));
-		assertThat(none.toMaybe(),equalTo(none));
+		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
+		assertThat(none.toMaybe(),equalTo(Maybe.none()));
 	}
 
 	private int add1(int i){
@@ -68,93 +68,67 @@ public class MaybeTest {
 
 	
 
-	@Test
-	public void testFromOptional() {
-		assertThat(Maybe.fromOptional(Optional.of(10)),equalTo(just));
-	}
+	
 
-	@Test
-	public void testFromEvalSome() {
-		assertThat(Maybe.fromEvalOf(Eval.now(10)),equalTo(just));
-	}
-
+	
 	@Test
 	public void testOfT() {
-		assertThat(Maybe.of(1),equalTo(Maybe.of(1)));
+		assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
 	}
 
 	
 
-	@Test
-	public void testOfNullable() {
-		assertFalse(Maybe.ofNullable(null).isPresent());
-		assertThat(Maybe.ofNullable(1),equalTo(Maybe.of(1)));
-		
-	}
+	
 
-	@Test
-	public void testNarrow() {
-		assertThat(Maybe.ofNullable(1),equalTo(Maybe.narrow(Maybe.of(1))));
-	}
+	
 
 	@Test
 	public void testSequence() {
-		Maybe<ListX<Integer>> maybes =Maybe.sequence(ListX.of(just,none,Maybe.of(1)));
-		assertThat(maybes,equalTo(Maybe.of(ListX.of(10,1))));
+		Ior<ListX<String>,ListX<Integer>> maybes =Ior.sequencePrimary(ListX.of(just,none,Ior.primary(1)));
+		assertThat(maybes,equalTo(Ior.primary(ListX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Maybe<PSetX<Integer>> maybes =Maybe.accumulateJust(ListX.of(just,none,Maybe.of(1)),Reducers.toPSetX());
-		assertThat(maybes,equalTo(Maybe.of(PSetX.of(10,1))));
+		Ior<?,PSetX<Integer>> maybes =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPSetX());
+		assertThat(maybes,equalTo(Ior.primary(PSetX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Maybe<String> maybes =Maybe.accumulateJust(ListX.of(just,none,Maybe.of(1)),i->""+i,Semigroups.stringConcat);
-		assertThat(maybes,equalTo(Maybe.of("101")));
+		Ior<?,String> maybes = Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),i->""+i,Semigroups.stringConcat);
+		assertThat(maybes,equalTo(Ior.primary("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Maybe<Integer> maybes =Maybe.accumulateJust(ListX.of(just,none,Maybe.of(1)),Semigroups.intSum);
-		assertThat(maybes,equalTo(Maybe.of(11)));
+		Ior<?,Integer> maybes =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Semigroups.intSum);
+		assertThat(maybes,equalTo(Ior.primary(11)));
 	}
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20),equalTo(Maybe.of(20)));
+		assertThat(just.unit(20),equalTo(Ior.primary(20)));
 	}
 
 	
 
 	@Test
-	public void testIsPresent() {
-		assertTrue(just.isPresent());
-		assertFalse(none.isPresent());
+	public void testisPrimary() {
+		assertTrue(just.isPrimary());
+		assertFalse(none.isPrimary());
 	}
 
-	@Test
-	public void testRecoverSupplierOfT() {
-		assertThat(just.recover(20),equalTo(Maybe.of(10)));
-		assertThat(none.recover(10),equalTo(Maybe.of(10)));
-	}
-
-	@Test
-	public void testRecoverT() {
-		assertThat(just.recover(()->20),equalTo(Maybe.of(10)));
-		assertThat(none.recover(()->10),equalTo(Maybe.of(10)));
-	}
-
+	
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5),equalTo(Maybe.of(15)));
-		assertThat(none.map(i->i+5),equalTo(Maybe.none()));
+		assertThat(just.map(i->i+5),equalTo(Ior.primary(15)));
+		assertThat(none.map(i->i+5),equalTo(Ior.secondary("none")));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(just.flatMap(i->Maybe.of(i+5)),equalTo(Maybe.of(15)));
-		assertThat(none.flatMap(i->Maybe.of(i+5)),equalTo(Maybe.none()));
+		assertThat(just.flatMap(i->Ior.primary(i+5)),equalTo(Ior.primary(15)));
+		assertThat(none.flatMap(i->Ior.primary(i+5)),equalTo(Ior.secondary("none")));
 	}
 
 	@Test
@@ -166,7 +140,7 @@ public class MaybeTest {
 	@Test
 	public void testUnapply() {
 		assertThat(just.unapply(),equalTo(ListX.of(10)));
-		assertThat(none.unapply(),equalTo(ListX.of()));
+		assertThat(none.unapply(),equalTo(ListX.of("none")));
 	}
 
 	@Test
@@ -254,12 +228,18 @@ public class MaybeTest {
 	}
 	@Test
 	public void testToXorNone(){
-	    Xor<?,Integer> empty = none.toXor();
-	    
-	    
-        assertTrue(empty.swap().map(__->10).get()==10);
+		Xor<String,Integer> xor = none.toXor();
+		assertTrue(xor.isSecondary());
+		assertThat(xor,equalTo(Xor.secondary("none")));
 		
 	}
+	@Test
+    public void testToIorNone(){
+        Ior<?,Integer> ior = none.toIor();
+        assertTrue(ior.isSecondary());
+        assertThat(ior,equalTo(Ior.secondary("none")));
+        
+    }
 
 
 	@Test
@@ -268,13 +248,14 @@ public class MaybeTest {
 	}
 
 	@Test
-	public void testToXorSecondaryNone(){
-		Xor<Integer,?> empty = none.toXor().swap();
-		assertTrue(empty.isPrimary());
-		assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
-		
-		
-	}
+    public void testToXorSecondaryNone(){
+        Xor<Integer,String> ior = none.toXor().swap();
+        System.out.println(none);
+        System.out.println(ior);
+        assertTrue(ior.isPrimary());
+        assertThat(ior,equalTo(Xor.primary("none")));
+        
+    }
 	@Test
 	public void testToTry() {
 		assertTrue(none.toTry().isFailure());
@@ -291,13 +272,7 @@ public class MaybeTest {
 		assertThat(just.toIor(),equalTo(Ior.primary(10)));
 		
 	}
-	@Test
-	public void testToIorNone(){
-	    Xor<Integer,?> empty = none.toXor().swap();
-        assertTrue(empty.isPrimary());
-        assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
-		
-	}
+	
 
 
 	@Test
@@ -306,11 +281,12 @@ public class MaybeTest {
 	}
 
 	@Test
-	public void testToIorSecondaryNone(){
-		Ior<Integer,?> ior = none.toIor().swap().map(__->10);
-		assertThat(ior.get(),equalTo(10));
-		
-	}
+    public void testToIorSecondaryNone(){
+        Ior<Integer,String> ior = none.toIor().swap();
+        assertTrue(ior.isPrimary());
+        assertThat(ior,equalTo(Ior.primary("none")));
+        
+    }
 	@Test
 	public void testToEvalNow() {
 		assertThat(just.toEvalNow(),equalTo(Eval.now(10)));
@@ -413,8 +389,8 @@ public class MaybeTest {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Just[10]"));
-		assertThat(none.mkString(),equalTo("Nothing[]"));
+		assertThat(just.mkString(),equalTo("Ior.primary[10]"));
+		assertThat(none.mkString(),equalTo("Ior.secondary[none]"));
 	}
 	LazyReact react = new LazyReact();
 	@Test
@@ -453,33 +429,33 @@ public class MaybeTest {
 
 	@Test
 	public void testFilter() {
-		assertFalse(just.filter(i->i<5).isPresent());
-		assertTrue(just.filter(i->i>5).isPresent());
-		assertFalse(none.filter(i->i<5).isPresent());
-		assertFalse(none.filter(i->i>5).isPresent());
+		assertFalse(just.filter(i->i<5).isPrimary());
+		assertTrue(just.filter(i->i>5).isPrimary());
+		assertFalse(none.filter(i->i<5).isPrimary());
+		assertFalse(none.filter(i->i>5).isPrimary());
 		
 	}
 
 	@Test
 	public void testOfType() {
-		assertFalse(just.ofType(String.class).isPresent());
-		assertTrue(just.ofType(Integer.class).isPresent());
-		assertFalse(none.ofType(String.class).isPresent());
-		assertFalse(none.ofType(Integer.class).isPresent());
+		assertFalse(just.ofType(String.class).isPrimary());
+		assertTrue(just.ofType(Integer.class).isPrimary());
+		assertFalse(none.ofType(String.class).isPrimary());
+		assertFalse(none.ofType(Integer.class).isPrimary());
 	}
 
 	@Test
 	public void testFilterNot() {
-		assertTrue(just.filterNot(i->i<5).isPresent());
-		assertFalse(just.filterNot(i->i>5).isPresent());
-		assertFalse(none.filterNot(i->i<5).isPresent());
-		assertFalse(none.filterNot(i->i>5).isPresent());
+		assertTrue(just.filterNot(i->i<5).isPrimary());
+		assertFalse(just.filterNot(i->i>5).isPrimary());
+		assertFalse(none.filterNot(i->i<5).isPrimary());
+		assertFalse(none.filterNot(i->i>5).isPrimary());
 	}
 
 	@Test
 	public void testNotNull() {
-		assertTrue(just.notNull().isPresent());
-		assertFalse(none.notNull().isPresent());
+		assertTrue(just.notNull().isPrimary());
+		assertFalse(none.notNull().isPrimary());
 		
 	}
 
@@ -488,7 +464,7 @@ public class MaybeTest {
 
 	@Test
 	public void testAp1() {
-		assertThat(Maybe.of(1).ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
+		assertThat(Ior.primary(1).ap1(this::add1).toMaybe(),equalTo(Ior.primary(2).toMaybe()));
 	}
 	
 	private int add(int a, int b){
@@ -497,35 +473,35 @@ public class MaybeTest {
 
 	@Test
 	public void testAp2() {
-		assertThat(Maybe.of(1).ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
+		assertThat(Ior.primary(1).ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Ior.primary(4).toMaybe()));
 	}
 	private int add3(int a, int b, int c){
 		return a+b+c;
 	}
 	@Test
 	public void testAp3() {
-		assertThat(Maybe.of(1).ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
+		assertThat(Ior.primary(1).ap3(this::add3).ap(Optional.of(3)).ap(Ior.primary(4)).toMaybe(),equalTo(Ior.primary(8).toMaybe()));
 	}
 	private int add4(int a, int b, int c,int d){
 		return a+b+c+d;
 	}
 	@Test
 	public void testAp4() {
-		assertThat(Maybe.of(1).ap4(this::add4)
+		assertThat(Ior.primary(1).ap4(this::add4)
 						.ap(Optional.of(3))
-						.ap(Maybe.of(4))
-						.ap(Maybe.of(6)).toMaybe(),equalTo(Maybe.of(14)));
+						.ap(Ior.primary(4))
+						.ap(Ior.primary(6)).toMaybe(),equalTo(Ior.primary(14).toMaybe()));
 	}
 	private int add5(int a, int b, int c,int d,int e){
 		return a+b+c+d+e;
 	}
 	@Test
 	public void testAp5() {
-		assertThat(Maybe.of(1).ap5(this::add5)
+		assertThat(Ior.primary(1).ap5(this::add5)
 				.ap(Optional.of(3))
-				.ap(Maybe.of(4))
-				.ap(Maybe.of(6))
-				.ap(Maybe.of(10)).toMaybe(),equalTo(Maybe.of(24)));
+				.ap(Ior.primary(4))
+				.ap(Ior.primary(6))
+				.ap(Ior.primary(10)).toMaybe(),equalTo(Ior.primary(24).toMaybe()));
 	}
 
 	
@@ -724,21 +700,19 @@ public class MaybeTest {
 
 	@Test
 	public void testCast() {
-		Maybe<Number> num = just.cast(Number.class);
+		Ior<?,Number> num = just.cast(Number.class);
 	}
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5),equalTo(Maybe.of(15)));
+		assertThat(just.map(i->i+5),equalTo(Ior.primary(15)));
 	}
 	
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c));
-		assertNull(capture.get());
 		
-		just.get();
 		assertThat(capture.get(),equalTo(10));
 	}
 
@@ -747,7 +721,7 @@ public class MaybeTest {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Maybe.of(65)));
+		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Ior.primary(65)));
 	}
 
 	

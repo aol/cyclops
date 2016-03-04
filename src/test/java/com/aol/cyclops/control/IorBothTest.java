@@ -1,8 +1,7 @@
 package com.aol.cyclops.control;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertFalse;
@@ -20,14 +19,14 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
-public class IorPrimaryTest {
+public class IorBothTest {
 
 	Ior<FileNotFoundException,Integer> success;
 	final Integer value = 10;
 	
 	
 	public Ior<FileNotFoundException,String> load(String filename){
-		return Ior.primary("test-data");
+		return Ior.both(new FileNotFoundException(),"test-data");
 	}
 	
 	public void process(){
@@ -41,30 +40,30 @@ public class IorPrimaryTest {
 	
 	@Before
 	public void setup(){
-		success = Ior.primary(10);
+		success = Ior.both(new FileNotFoundException(),10);
 	}
 	@Test
-    public void bimap(){
-       
-        Ior<RuntimeException,Integer> mapped = success.bimap(e->new RuntimeException(), d->d+1);
-        assertThat(mapped.get(),equalTo(11));
-        assertTrue(mapped.isPrimary());
-    }
-    Throwable capT;
-    int capInt=0;
-    @Test
+	public void bimap(){
+	   
+	    Ior<RuntimeException,Integer> mapped = success.bimap(e->new RuntimeException(), d->d+1);
+	    assertThat(mapped.get(),equalTo(11));
+	    assertThat(mapped.swap().get(),instanceOf(RuntimeException.class));
+	}
+	Throwable capT;
+	int capInt=0;
+	@Test
     public void bipeek(){
        capT =null;
        capInt=0;
          success.bipeek(e->capT=e, d->capInt=d);
         assertThat(capInt,equalTo(10));
-        assertThat(capT,nullValue());
+        assertThat(capT,instanceOf(FileNotFoundException.class));
     }
-    @Test
+	@Test
     public void bicast(){
         Ior<Throwable,Number> mapped = success.bicast(Throwable.class, Number.class);
         assertThat(mapped.get(),equalTo(10));
-        assertTrue(mapped.isPrimary());
+        assertThat(mapped.swap().get(),instanceOf(Throwable.class));
     }
 
 	@Test
@@ -84,12 +83,12 @@ public class IorPrimaryTest {
 
 	@Test
 	public void testMap() {
-		assertThat(success.map(x->x+1),equalTo(Ior.primary(value+1)));
+		assertThat(success.map(x->x+1).get(),equalTo(Ior.primary(value+1).get()));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(success.flatMap(x->Ior.primary(x+1)),equalTo(Ior.primary(value+1)));
+		assertThat(success.flatMap(x->Ior.primary(x+1)).get(),equalTo(Ior.primary(value+1).get()));
 	}
 
 	@Test
@@ -126,7 +125,8 @@ public class IorPrimaryTest {
 
 	@Test
 	public void testIsSuccess() {
-		assertTrue(success.isPrimary());
+		assertTrue(success.isBoth());
+		assertFalse(success.isPrimary());
 	}
 
 	@Test

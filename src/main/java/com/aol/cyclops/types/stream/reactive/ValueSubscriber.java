@@ -107,13 +107,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T>{
             return Xor.primary(get());
         }
 
-        @Override
-        public  Xor<T, Throwable> toXorSecondary() {
-            if(get()==null && firstError.get()!=UNSET){
-                return Xor.primary((Throwable)firstError.get());
-            }
-           return Xor.secondary(get());
-        }
+       
 
        
 
@@ -139,27 +133,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T>{
                
         }
 
-        @Override
-        public Ior<T, Throwable> toIorSecondary() {
-            get();
-            
-            Ior<T, Throwable>  secondary=null;
-            Ior<T, Throwable>  primary=null;
-            
-            if(firstError.get()!=UNSET){
-                primary = Ior.<T,Throwable>primary((Throwable)firstError.get());
-            }
-            if(firstValue.get()!=UNSET){
-               secondary= Ior.<T,Throwable>secondary((T)firstValue.get());
-            }
-            if(secondary!=null && primary!=null)
-                return Ior.both(secondary, primary);
-            if(primary!=null)
-                return primary;
-            
-            return secondary;
-        }
-        
+       
         
 
 }

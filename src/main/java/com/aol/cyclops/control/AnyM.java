@@ -557,6 +557,14 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 		Objects.requireNonNull(future);
 		return AnyMFactory.instance.value(future);
 	}
+	public static <T> AnyMValue<T> fromFeatureToggle(FeatureToggle<T> future){
+        Objects.requireNonNull(future);
+        return AnyMFactory.instance.value(future);
+    }
+	public static <T> AnyMValue<T> fromTry(Try<T,?> future){
+        Objects.requireNonNull(future);
+        return AnyMFactory.instance.value(future);
+    }
 	public static <T> AnyMValue<T> fromIor(Ior<?,T> future){
 		Objects.requireNonNull(future);
 		return AnyMFactory.instance.value(future);

@@ -78,11 +78,11 @@ public interface AnyMSeq<T> extends AnyM<T>,
 		
 		return ()-> firstOrNull(toListX());
 	}
-	default <ST> Xor<ST,ListX<T>> toXor(){
+	default  Xor<?,ListX<T>> toXor(){
 		return toValue().toXor();
 	}
-	default <PT> Xor<ListX<T>,PT> toXorSecondary(){
-		return toValue().toXorSecondary();
+	default Xor<ListX<T>,?> toXorSecondary(){
+		return toValue().toXor().swap();
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)

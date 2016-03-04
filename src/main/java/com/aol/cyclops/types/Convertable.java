@@ -4,6 +4,7 @@ package com.aol.cyclops.types;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -56,7 +57,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	
 	
 	default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
-		return Maybe.ofNullable(get()).visit(present, absent);
+		return Maybe.fromOptional(toOptional()).visit(present, absent);
 	}
 	
 	
@@ -68,7 +69,12 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 * @return Optional that wraps contained value, Optional.empty if value is null
 	 */
 	default Optional<T> toOptional(){
-		return Optional.ofNullable(get());
+	    
+	    try{
+	        return Optional.ofNullable(get());
+	    }catch(NoSuchElementException e){
+	        return Optional.empty();
+	    }
 	}
 	
 	/**
