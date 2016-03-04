@@ -8,12 +8,13 @@ import java.util.stream.Stream;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.util.stream.StreamUtils;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
-@Value
+
 public class BatchBySizeOperator<T, C extends Collection<? super T>> {
 
-	Stream<T> stream;
-	Supplier<C> factory;
+	private final Stream<T> stream;
+	private final Supplier<C> factory;
 	public BatchBySizeOperator(Stream<T> stream){
 		this.stream = stream;
 		factory = ()-> (C)new ListXImpl<>();

@@ -676,24 +676,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	}
 
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default PBagX<T> retainMatches(Matcher<T> m) {
-		
-		return (PBagX<T>)PersistentCollectionX.super.retainMatches(m);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default PBagX<T> removeMatches(Matcher<T> m) {
-		
-		return (PBagX<T>)PersistentCollectionX.super.removeMatches(m);
-	}
+	
 
 
 	/* (non-Javadoc)
@@ -762,6 +745,21 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
         
         return (PBagX<C>)PersistentCollectionX.super.groupedUntil(predicate, factory);
     }
+
+
+    @Override
+    default PBagX<T> removeAll(Seq<T> stream) {
+       
+        return (PBagX<T>)PersistentCollectionX.super.removeAll(stream);
+    }
+
+
+    @Override
+    default PBagX<T> retainAll(Seq<T> stream) {
+       
+        return (PBagX<T>)PersistentCollectionX.super.retainAll(stream);
+    }
+    
 
   
 }

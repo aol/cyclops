@@ -78,11 +78,11 @@ public interface AnyMSeq<T> extends AnyM<T>,
 		
 		return ()-> firstOrNull(toListX());
 	}
-	default <ST> Xor<ST,ListX<T>> toXor(){
+	default  Xor<?,ListX<T>> toXor(){
 		return toValue().toXor();
 	}
-	default <PT> Xor<ListX<T>,PT> toXorSecondary(){
-		return toValue().toXorSecondary();
+	default Xor<ListX<T>,?> toXorSecondary(){
+		return toValue().toXor().swap();
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
@@ -474,10 +474,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     }
     
     
-    @Override
-    default <R> AnyMSeq<R> filterMap(Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
-       return (AnyMSeq<R>)FilterableFunctor.super.filterMap(case1);
-    }
+   
     @Override
     default <U> AnyMSeq<U> ofType(Class<U> type){
         
@@ -772,7 +769,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <T,R> AnyMSeq<ListX<R>> traverse(Stream<? extends AnyMSeq<T>> seq, Function<? super T,? extends R> fn){
+	public static <T,R> AnyMSeq<ListX<R>> traverse(Collection<? extends AnyMSeq<T>> seq, Function<? super T,? extends R> fn){
 		
 		return AnyMSeqImpl.from(new AnyMonads().traverse(seq,fn));
 	}

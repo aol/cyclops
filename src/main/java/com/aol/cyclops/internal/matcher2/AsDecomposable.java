@@ -2,6 +2,7 @@ package com.aol.cyclops.internal.matcher2;
 
 import com.aol.cyclops.types.Decomposable;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
 
 public class AsDecomposable {
@@ -21,7 +22,7 @@ public class AsDecomposable {
 	public static  Decomposable asDecomposable(Object toCoerce){
 		return new CoercedDecomposable(toCoerce);
 	}
-	@Value
+	@AllArgsConstructor
 	public static class CoercedDecomposable implements Decomposable{
 		private final Object dValue;
 		public Object unwrap(){

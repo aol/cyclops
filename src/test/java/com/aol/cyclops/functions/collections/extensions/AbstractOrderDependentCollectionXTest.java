@@ -30,7 +30,9 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.streams.SQLTest.X;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -40,6 +42,10 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {
+    @Test
+    public void sortedComparator() {
+        assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),is(Arrays.asList(5,4,3,2,1)));
+    }
     @Test
     public void takeRight(){
         assertThat(of(1,2,3).takeRight(1).toList(),hasItems(3));
@@ -432,5 +438,12 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 			assertEquals(3, (int) s.get().map(str -> str.length()).foldRight(0, (t, u) -> u + t));
 		}
 	}
+	private Trampoline<Integer> sum(int times,int sum){
+        return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
+    }
+    @Test
+    public void testTrampoline() {
+        assertThat(of(10).trampoline(n ->sum(10,n)),hasItem(65));
+    }
 
 }

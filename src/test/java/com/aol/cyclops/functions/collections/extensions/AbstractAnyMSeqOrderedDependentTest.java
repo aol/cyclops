@@ -38,6 +38,10 @@ import lombok.EqualsAndHashCode;
 
 public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMSeqTest {
     @Test
+    public void sortedComparator() {
+        assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),is(Arrays.asList(5,4,3,2,1)));
+    }
+    @Test
     public void testOnEmptyOrdered() throws X {
         assertEquals(asList(1), of().onEmpty(1).toListX());
         assertEquals(asList(1), of().onEmptyGet(() -> 1).toListX());

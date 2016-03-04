@@ -1,5 +1,6 @@
 package com.aol.cyclops.types.mixins;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
 
 /**
@@ -24,7 +25,7 @@ public class AsMappable {
 	public static  Mappable asMappable(Object toCoerce){
 		return new CoercedMappable(toCoerce);
 	}
-	@Value
+	@AllArgsConstructor
 	public static class CoercedMappable implements Mappable{
 		private final Object dValue;
 		public Object unwrap(){

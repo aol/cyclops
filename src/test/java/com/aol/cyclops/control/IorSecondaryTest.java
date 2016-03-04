@@ -1,10 +1,10 @@
 package com.aol.cyclops.control;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -24,6 +24,30 @@ public class IorSecondaryTest {
 	public void setup(){
 		failure = Ior.secondary(error);
 	}
+	@Test
+    public void bimap(){
+       
+        Ior<RuntimeException,Integer> mapped = failure.bimap(e->new RuntimeException(), d->d+1);
+        assertTrue(mapped.isSecondary());
+        assertThat(mapped.swap().get(),instanceOf(RuntimeException.class));
+    }
+    Throwable capT;
+    int capInt=0;
+    @Test
+    public void bipeek(){
+       capT =null;
+       capInt=0;
+         failure.bipeek(e->capT=e, d->capInt=d);
+        assertThat(capInt,equalTo(0));
+        assertThat(capT,instanceOf(FileNotFoundException.class));
+    }
+    @Test
+    public void bicast(){
+        Ior<Throwable,Number> mapped = failure.bicast(Throwable.class, Number.class);
+        assertTrue(mapped.isSecondary());
+        assertThat(mapped.swap().get(),instanceOf(Throwable.class));
+    }
+
 	@Test
 	public void testUnapply() {
 		assertThat(failure.unapply(),equalTo(Arrays.asList(error)));

@@ -1,5 +1,7 @@
 package com.aol.cyclops.util.function;
 
+import static org.jooq.lambda.tuple.Tuple.tuple;
+
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,7 +11,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import lombok.Value;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
+
+import com.aol.cyclops.util.ExceptionSoftener;
+
 import lombok.val;
 
 public class Memoize {
@@ -46,12 +53,9 @@ public class Memoize {
 	public static <T> Callable<T> memoizeCallable(Callable<T> s,Cacheable<T> cache){
 		
 		return () -> cache.soften().computeIfAbsent("k",a -> { 
-			try { 
-				return s.call();
-			}catch(Exception e){
-				throwSoftenedException(e);
-				return null;
-			}
+			
+		    return ExceptionSoftener.softenCallable(s).get();
+			
 			
 		});
 	}
@@ -64,12 +68,9 @@ public class Memoize {
 	public static <T> Callable<T> memoizeCallable(Callable<T> s){
 		Map<Object,T> lazy = new ConcurrentHashMap<>();
 		return () -> lazy.computeIfAbsent("k",a -> { 
-			try { 
-				return s.call();
-			}catch(Exception e){
-				throwSoftenedException(e);
-				return null;
-			}
+			
+				return ExceptionSoftener.softenCallable(s).get();
+			
 			
 		});
 	}
@@ -116,8 +117,8 @@ public class Memoize {
 	 * @return Memoised BiFunction
 	 */
 	public static <T1,T2 , R> BiFunction<T1, T2, R> memoizeBiFunction(BiFunction<T1, T2, R> fn) {
-		val memoise2 = memoizeFunction((Pair<T1,T2> pair) -> fn.apply(pair._1,pair._2));
-		return (t1,t2) -> memoise2.apply(new Pair<>(t1,t2));
+		val memoise2 = memoizeFunction((Tuple2<T1,T2> pair) -> fn.apply(pair.v1,pair.v2));
+		return (t1,t2) -> memoise2.apply(tuple(t1,t2));
 	}
 	/**
 	 * Convert a BiFunction into one that caches it's result
@@ -127,8 +128,8 @@ public class Memoize {
 	 * @return Memoised BiFunction
 	 */
 	public static <T1,T2 , R> BiFunction<T1, T2, R> memoizeBiFunction(BiFunction<T1, T2, R> fn,Cacheable<R> cache) {
-		val memoise2 = memoizeFunction((Pair<T1,T2> pair) -> fn.apply(pair._1,pair._2),cache);
-		return (t1,t2) -> memoise2.apply(new Pair<>(t1,t2));
+		val memoise2 = memoizeFunction((Tuple2<T1,T2> pair) -> fn.apply(pair.v1,pair.v2),cache);
+		return (t1,t2) -> memoise2.apply(tuple(t1,t2));
 	}
 	/**
 	 * Convert a TriFunction into one that caches it's result
@@ -137,8 +138,8 @@ public class Memoize {
 	 * @return Memoised TriFunction
 	 */
 	public static <T1,T2,T3, R> TriFunction<T1, T2,T3, R> memoizeTriFunction(TriFunction<T1, T2,T3, R> fn) {
-		val memoise2 = memoizeFunction((Triple<T1,T2,T3> triple) -> fn.apply(triple._1,triple._2,triple._3));
-		return (t1,t2,t3) -> memoise2.apply(new Triple<>(t1,t2,t3));
+		val memoise2 = memoizeFunction((Tuple3<T1,T2,T3> triple) -> fn.apply(triple.v1,triple.v2,triple.v3));
+		return (t1,t2,t3) -> memoise2.apply(tuple(t1,t2,t3));
 	}
 	/**
 	 * Convert a TriFunction into one that caches it's result
@@ -148,8 +149,8 @@ public class Memoize {
 	 * @return Memoised TriFunction
 	 */
 	public static <T1,T2,T3, R> TriFunction<T1, T2,T3, R> memoizeTriFunction(TriFunction<T1, T2,T3, R> fn,Cacheable<R> cache) {
-		val memoise2 = memoizeFunction((Triple<T1,T2,T3> triple) -> fn.apply(triple._1,triple._2,triple._3),cache);
-		return (t1,t2,t3) -> memoise2.apply(new Triple<>(t1,t2,t3));
+		val memoise2 = memoizeFunction((Tuple3<T1,T2,T3> triple) -> fn.apply(triple.v1,triple.v2,triple.v3),cache);
+		return (t1,t2,t3) -> memoise2.apply(tuple(t1,t2,t3));
 	}
 	/**
 	 * Convert a QuadFunction into one that caches it's result
@@ -158,8 +159,8 @@ public class Memoize {
 	 * @return Memoised TriFunction
 	 */
 	public static <T1,T2,T3,T4, R> QuadFunction<T1, T2,T3, T4,R> memoizeQuadFunction(QuadFunction<T1, T2,T3,T4, R> fn) {
-		val memoise2 = memoizeFunction((Quad<T1,T2,T3,T4> quad) -> fn.apply(quad._1,quad._2,quad._3,quad._4));
-		return (t1,t2,t3,t4) -> memoise2.apply(new Quad<>(t1,t2,t3,t4));
+		val memoise2 = memoizeFunction((Tuple4<T1,T2,T3,T4> quad) -> fn.apply(quad.v1,quad.v2,quad.v3,quad.v4));
+		return (t1,t2,t3,t4) -> memoise2.apply(tuple(t1,t2,t3,t4));
 	}
 	/**
 	 * Convert a QuadFunction into one that caches it's result
@@ -169,8 +170,8 @@ public class Memoize {
 	 * @return Memoised TriFunction
 	 */
 	public static <T1,T2,T3,T4, R> QuadFunction<T1, T2,T3, T4,R> memoizeQuadFunction(QuadFunction<T1, T2,T3,T4, R> fn,Cacheable<R> cache) {
-		val memoise2 = memoizeFunction((Quad<T1,T2,T3,T4> quad) -> fn.apply(quad._1,quad._2,quad._3,quad._4),cache);
-		return (t1,t2,t3,t4) -> memoise2.apply(new Quad<>(t1,t2,t3,t4));
+		val memoise2 = memoizeFunction((Tuple4<T1,T2,T3,T4> quad) -> fn.apply(quad.v1,quad.v2,quad.v3,quad.v4),cache);
+		return (t1,t2,t3,t4) -> memoise2.apply(tuple(t1,t2,t3,t4));
 	}
 	/**
 	 * Convert a Predicate into one that caches it's result
@@ -193,31 +194,6 @@ public class Memoize {
 		Function<T, Boolean> memoised = memoizeFunction((Function<T,Boolean>)t-> p.test(t),cache);
 		return (t) -> memoised.apply(t);
 	}
-	@Value
-	static class Pair<T1,T2>{
-		T1 _1;
-		T2 _2;
-	}
-	@Value
-	static class Triple<T1,T2,T3>{
-		T1 _1;
-		T2 _2;
-		T3 _3;
-	}
-	@Value
-	static class Quad<T1,T2,T3,T4>{
-		T1 _1;
-		T2 _2;
-		T3 _3;
-		T4 _4;
-	}
-	private static void throwSoftenedException(final Throwable e) {
-		new Thrower<RuntimeException>().uncheck(e);
-	}
-	static class Thrower<T extends Throwable> {
-		@SuppressWarnings("unchecked")
-			private void uncheck(Throwable throwable) throws T {
-			 	throw (T) throwable;
-			 }
-	}
+	
+	
 }

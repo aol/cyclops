@@ -403,7 +403,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override
 	default <U> PersistentCollectionX<U> ofType(Class<U> type) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.ofType(type);
+	    return from(this.<U>monoid().mapReduce(stream().ofType(type)));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
@@ -411,7 +411,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override
 	default PersistentCollectionX<T> filterNot(Predicate<? super T> fn) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.filterNot(fn);
+	    return from(this.<T>monoid().mapReduce(stream().filterNot(fn)));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
@@ -419,7 +419,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override
 	default PersistentCollectionX<T> notNull() {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.notNull();
+	    return from(this.<T>monoid().mapReduce(stream().notNull()));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.util.stream.Stream)
@@ -427,15 +427,20 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override
 	default PersistentCollectionX<T> removeAll(Stream<T> stream) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.removeAll(stream);
+	    return from(this.<T>monoid().mapReduce(stream().removeAll(stream)));
 	}
+	@Override
+    default PersistentCollectionX<T> removeAll(Seq<T> stream) {
+        
+        return from(this.<T>monoid().mapReduce(stream().removeAll(stream)));
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
 	 */
 	@Override
 	default PersistentCollectionX<T> removeAll(Iterable<T> it) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.removeAll(it);
+	    return from(this.<T>monoid().mapReduce(stream().removeAll(it)));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Object[])
@@ -443,7 +448,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override
 	default PersistentCollectionX<T> removeAll(T... values) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.removeAll(values);
+	    return from(this.<T>monoid().mapReduce(stream().removeAll(values)));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Iterable)
@@ -451,7 +456,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override
 	default PersistentCollectionX<T> retainAll(Iterable<T> it) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.retainAll(it);
+	    return from(this.<T>monoid().mapReduce(stream().retainAll(it)));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.util.stream.Stream)
@@ -459,39 +464,29 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override
 	default PersistentCollectionX<T> retainAll(Stream<T> stream) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.retainAll(stream);
+	    return from(this.<T>monoid().mapReduce(stream().retainAll(stream)));
 	}
+	@Override
+    default PersistentCollectionX<T> retainAll(Seq<T> stream) {
+        
+        return from(this.<T>monoid().mapReduce(stream().retainAll(stream)));
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
 	 */
 	@Override
 	default PersistentCollectionX<T> retainAll(T... values) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.retainAll(values);
+	    return from(this.<T>monoid().mapReduce(stream().retainAll(values)));
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default PersistentCollectionX<T> retainMatches(Matcher<T> m) {
-		
-		return (PersistentCollectionX)FluentCollectionX.super.retainMatches(m);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default PersistentCollectionX<T> removeMatches(Matcher<T> m) {
-		
-		return (PersistentCollectionX)FluentCollectionX.super.removeMatches(m);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
 	default <U> PersistentCollectionX<U> cast(Class<U> type) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.cast(type);
+	    return from(this.<U>monoid().mapReduce(stream().cast(type)));
 	}
 	
 	/* (non-Javadoc)
@@ -501,7 +496,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	default <R> PersistentCollectionX<R> patternMatch(
 			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (PersistentCollectionX)FluentCollectionX.super.patternMatch(case1,otherwise);
+	    return from(this.<R>monoid().mapReduce(stream().patternMatch(case1,otherwise)));
 	}
 	
 	

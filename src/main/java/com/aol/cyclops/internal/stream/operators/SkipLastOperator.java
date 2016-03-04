@@ -9,9 +9,9 @@ import com.aol.cyclops.util.stream.StreamUtils;
 
 public class SkipLastOperator<T> {
 
-	Stream<T> stream;
-	ArrayDeque<T> buffer;
-	int skip;
+    private final  Stream<T> stream;
+    private final ArrayDeque<T> buffer;
+    private final int skip;
 	public SkipLastOperator(Stream<T> stream,int skip){
 		buffer = new ArrayDeque<>(skip);
 		this.stream = stream;

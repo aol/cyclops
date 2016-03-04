@@ -626,23 +626,6 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 		return (QueueX<T>)MutableCollectionX.super.retainAll(values);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default  QueueX<T> retainMatches(Matcher<T> m) {
-		
-		return (QueueX<T>)MutableCollectionX.super.retainMatches(m);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default QueueX<T> removeMatches(Matcher<T> m) {
-		
-		return (QueueX<T>)MutableCollectionX.super.removeMatches(m);
-	}
 	
 	  @Override
 	    default <C extends Collection<? super T>> QueueX<C> grouped(int size, Supplier<C> supplier) {
@@ -686,4 +669,17 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	        
 	        return (QueueX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
 	    }	
+	    
+	    @Override
+	    default QueueX<T> removeAll(Seq<T> stream) {
+	       
+	        return (QueueX<T>)MutableCollectionX.super.removeAll(stream);
+	    }
+
+
+	    @Override
+	    default QueueX<T> retainAll(Seq<T> stream) {
+	       
+	        return (QueueX<T>)MutableCollectionX.super.retainAll(stream);
+	    }
 }

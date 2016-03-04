@@ -429,8 +429,8 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> filterNot(Predicate<? super T> fn) {
+	    return fromStream(stream().filterNot(fn));
 		
-		return (MutableCollectionX)FluentCollectionX.super.filterNot(fn);
 	}
 
 	/* (non-Javadoc)
@@ -438,8 +438,8 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> notNull() {
+	    return fromStream(stream().notNull());
 		
-		return (MutableCollectionX)FluentCollectionX.super.notNull();
 	}
 
 	/* (non-Javadoc)
@@ -448,16 +448,21 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> removeAll(Stream<T> stream) {
 		
-		return (MutableCollectionX)FluentCollectionX.super.removeAll(stream);
+	    return fromStream(stream().removeAll(stream));
 	}
+	@Override
+    default MutableCollectionX<T> removeAll(Seq<T> stream) {
+        
+        return fromStream(stream().removeAll(stream));
+    }
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
 	 */
 	@Override
 	default MutableCollectionX<T> removeAll(Iterable<T> it) {
+	    return fromStream(stream().removeAll(it));
 		
-		return (MutableCollectionX)FluentCollectionX.super.removeAll(it);
 	}
 
 	/* (non-Javadoc)
@@ -465,8 +470,8 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> removeAll(T... values) {
+	    return fromStream(stream().removeAll(values));
 		
-		return (MutableCollectionX)FluentCollectionX.super.removeAll(values);
 	}
 
 	/* (non-Javadoc)
@@ -474,8 +479,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> retainAll(Iterable<T> it) {
-		
-		return (MutableCollectionX)FluentCollectionX.super.retainAll(it);
+	    return fromStream(stream().retainAll(it));
 	}
 
 	/* (non-Javadoc)
@@ -483,44 +487,29 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> retainAll(Stream<T> stream) {
-		
-		return (MutableCollectionX)FluentCollectionX.super.retainAll(stream);
+	    return fromStream(stream().retainAll(stream));
 	}
+	@Override
+    default MutableCollectionX<T> retainAll(Seq<T> stream) {
+        return fromStream(stream().retainAll(stream));
+    }
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
 	 */
 	@Override
 	default MutableCollectionX<T> retainAll(T... values) {
-		
-		return (MutableCollectionX)FluentCollectionX.super.retainAll(values);
+	    return fromStream(stream().retainAll(values));
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default MutableCollectionX<T> retainMatches(Matcher<T> m) {
-		
-		return (MutableCollectionX)FluentCollectionX.super.retainMatches(m);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default MutableCollectionX<T> removeMatches(Matcher<T> m) {
-		
-		return (MutableCollectionX)FluentCollectionX.super.removeMatches(m);
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
 	default <U> MutableCollectionX<U> cast(Class<U> type) {
-		
-		return (MutableCollectionX)FluentCollectionX.super.cast(type);
+	    return fromStream(stream().cast(type));
 	}
 
 	
@@ -531,7 +520,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	default <R> MutableCollectionX<R> patternMatch(
 			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (MutableCollectionX)FluentCollectionX.super.patternMatch(case1,otherwise);
+	    return fromStream(stream().patternMatch(case1, otherwise));
 	}
 
 	

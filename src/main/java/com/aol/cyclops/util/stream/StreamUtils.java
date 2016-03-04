@@ -45,17 +45,19 @@ import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.CyclopsCollectors;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.MonadWrapper;
-import com.aol.cyclops.internal.stream.BaseFutureOperationsImpl;
 import com.aol.cyclops.internal.stream.FutureStreamUtils;
 import com.aol.cyclops.internal.stream.PausableHotStreamImpl;
 import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
-import com.aol.cyclops.internal.stream.ReversedIterator;
 import com.aol.cyclops.internal.stream.ReactiveSeqImpl;
+import com.aol.cyclops.internal.stream.ReversedIterator;
+import com.aol.cyclops.internal.stream.SeqUtils;
 import com.aol.cyclops.internal.stream.operators.BatchBySizeOperator;
 import com.aol.cyclops.internal.stream.operators.BatchByTimeAndSizeOperator;
 import com.aol.cyclops.internal.stream.operators.BatchByTimeOperator;
@@ -70,13 +72,8 @@ import com.aol.cyclops.internal.stream.operators.RecoverOperator;
 import com.aol.cyclops.internal.stream.operators.SkipLastOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileTimeOperator;
-import com.aol.cyclops.internal.stream.operators.WindowByTimeAndSizeOperator;
 import com.aol.cyclops.internal.stream.operators.WindowStatefullyWhileOperator;
-import com.aol.cyclops.internal.stream.operators.WindowWhileOperator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.internal.stream.SeqUtils;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.NonPausableHotStream;
@@ -761,7 +758,11 @@ public class StreamUtils{
                         return ReactiveSeq.of(result,next);
                     }
                 }
-                return ReactiveSeq.empty();
+                if(it.hasNext())
+                    return ReactiveSeq.empty();
+                T result = current;
+                current = (T)UNSET;
+                return ReactiveSeq.of(result);
             }
             
         }).flatMap(Function.identity());
@@ -1968,9 +1969,7 @@ public class StreamUtils{
 	  public final static <T> Stream<ListX<T>> groupedStatefullyWhile(Stream<T> stream,BiPredicate<ListX<? super T>,? super T> predicate){
 			return new WindowStatefullyWhileOperator<>(stream).windowStatefullyWhile(predicate);
 	  }
-	  public final static <T> Stream<Streamable<T>> windowWhile(Stream<T> stream,Predicate<? super T> predicate){
-			return new WindowWhileOperator<>(stream).windowWhile(predicate);
-	  }
+	
 	  public final static <T> Stream<ListX<T>> batchWhile(Stream<T> stream,Predicate<? super T> predicate){
 			return new BatchWhileOperator<T,ListX<T>>(stream).batchWhile(predicate);
 	  }
@@ -1986,9 +1985,7 @@ public class StreamUtils{
 	  public final static <T, C extends Collection<? super T>> Stream<C>   batchBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t,Supplier<C> factory){
 			return new BatchByTimeAndSizeOperator<T,C>(stream,factory).batchBySizeAndTime(size, time, t);
 	  }
-	  public final static <T> Stream<Streamable<T>> windowBySizeAndTime(Stream<T> stream,int size, long time, TimeUnit t){
-		  return new WindowByTimeAndSizeOperator<>(stream).windowBySizeAndTime(size, time, t);
-	  }
+	  
 	  public final static <T> Stream<T> debounce(Stream<T> stream, long time, TimeUnit t){
 			return new DebounceOperator<>(stream).debounce(time, t);
 	  }

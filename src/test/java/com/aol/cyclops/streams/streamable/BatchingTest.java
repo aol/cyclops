@@ -168,7 +168,7 @@ public class BatchingTest {
 	volatile int peek =0;
 	@Test
 	public void batchByTimeFiltered() throws IOException {
-		for(int x=0;x<10;x++){
+		for(int x=0;x<1;x++){
 			count2=new AtomicInteger(0);
 			List<Collection<Map>> result = new ArrayList<>();
 					

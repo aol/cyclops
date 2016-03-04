@@ -670,26 +670,6 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default DequeX<T> retainMatches(Matcher<T> m) {
-	
-		return  (DequeX<T>)MutableCollectionX.super.retainMatches(m);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default DequeX<T> removeMatches(Matcher<T> m) {
-		
-		return  (DequeX<T>)MutableCollectionX.super.removeMatches(m);
-	}
-
-
     @Override
     default <C extends Collection<? super T>> DequeX<C> grouped(int size, Supplier<C> supplier) {
         
@@ -732,7 +712,20 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
         
         return (DequeX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
     }
-	
+    
+    @Override
+    default DequeX<T> removeAll(Seq<T> stream) {
+       
+        return (DequeX<T>)MutableCollectionX.super.removeAll(stream);
+    }
+
+
+    @Override
+    default DequeX<T> retainAll(Seq<T> stream) {
+       
+        return (DequeX<T>)MutableCollectionX.super.retainAll(stream);
+    }
+    
 	
 	
 }

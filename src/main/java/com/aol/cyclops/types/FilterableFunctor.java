@@ -13,9 +13,4 @@ public interface FilterableFunctor<T> extends Filterable<T>, Functor<T>{
 	<R> FilterableFunctor<R>  map(Function<? super T,? extends R> fn);
 	
 	
-	default <R> FilterableFunctor<R> filterMap(Function<CheckValues<T,R>,CheckValues<T,R>> case1){
-		return  map(u->Matchable.of(u).mayMatch(case1))
-        		.filter(Maybe::isPresent)
-        		.map(Maybe::get);
-    }
 }

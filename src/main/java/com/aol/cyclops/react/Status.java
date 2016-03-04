@@ -13,7 +13,6 @@ import org.pcollections.PStack;
  * @param <T> Result type
  */
 @AllArgsConstructor
-@Builder
 public class Status<T> {
 	
 	private final int completed;

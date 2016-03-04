@@ -8,9 +8,9 @@ import com.aol.cyclops.util.stream.StreamUtils;
 
 public class LimitLastOperator<T> {
 
-	Stream<T> stream;
-	ArrayDeque<T> buffer;
-	int limit;
+    private final Stream<T> stream;
+    private final ArrayDeque<T> buffer;
+    private final int limit;
 	public LimitLastOperator(Stream<T> stream,int limit){
 		buffer = new ArrayDeque<>(limit);
 		this.stream = stream;

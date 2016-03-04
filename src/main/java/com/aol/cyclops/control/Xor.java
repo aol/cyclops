@@ -104,8 +104,14 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	Xor<ST,PT> peek(Consumer<? super PT> action);
 	
 	Xor<PT,ST> swap();
+	@Override
+    Ior<ST,PT> toIor();
 	
-	
+	@Override
+    default Xor<ST,PT> toXor(){
+        return this;
+    }
+   
 	public static <ST,PT> Xor<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Xor<ST,PT>> xors){
 		return AnyM.sequence(AnyM.listFromXor(xors.map(Xor::swap))).unwrap();
 	}
@@ -116,6 +122,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	public static <ST,PT,R> Xor<?,R> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Function<? super ST, R> mapper,Semigroup<R> reducer){
 		return sequenceSecondary(xors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
+	
 	public static <ST,PT> Xor<ListX<ST>,ListX<PT>> sequencePrimary(CollectionX<Xor<ST,PT>> xors){
 		return AnyM.sequence(AnyM.<ST,PT>listFromXor(xors)).unwrap();
 	}
@@ -126,6 +133,9 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	public static <ST,PT,R> Xor<?,R> accumulatePrimary(CollectionX<Xor<ST,PT>> xors,Function<? super PT, R> mapper,Semigroup<R> reducer){
 		return sequencePrimary(xors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
+	public static <ST,PT> Xor<?,PT> accumulatePrimary(CollectionX<Xor<ST,PT>> xors,Semigroup<PT> reducer){
+        return sequencePrimary(xors).map(s->s.reduce(reducer.reducer()).get());
+    }
 	
 	/**
 	 * 
@@ -180,6 +190,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	
 	public boolean isPrimary();
 	public boolean isSecondary();
+	
 	
 	
 	
@@ -323,8 +334,19 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 			return Value.of(()->null);
 		}
 		public String toString(){
-			return "Xor.primary["+value+"]";
+			return mkString();
 		}
+		public String mkString(){
+            return "Xor.primary["+value+"]";
+        }
+
+        @Override
+        public Ior<ST, PT> toIor() {
+           return Ior.primary(value);
+        }
+
+        
+		
 		
 	}
 	@AllArgsConstructor(access=AccessLevel.PRIVATE)
@@ -410,8 +432,10 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		public Value<ST> secondaryValue(){
 			return Value.of(()->value);
 		}
-		
 		public String toString(){
+            return mkString();
+        }
+		public String mkString(){
 			return "Xor.secondary["+value+"]";
 		}
 		/* (non-Javadoc)
@@ -422,7 +446,12 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 			return	ListX.of(value);
 		}
 		
-		
+        @Override
+        public Ior<ST, PT> toIor() {
+            return Ior.secondary(value);
+        }
+
+        
 		
 	}
 }

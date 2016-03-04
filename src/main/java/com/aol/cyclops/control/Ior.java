@@ -52,6 +52,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	public static <ST,PT> Ior<ST,PT> both(Ior<ST,PT> secondary,Ior<ST,PT> primary){
 		return new Both<ST,PT>(secondary,primary);
 	}
+	public static <ST,PT> Ior<ST,PT> both(ST secondary,PT primary){
+        return new Both<ST,PT>(Ior.secondary(secondary),Ior.primary(primary));
+    }
 	default AnyM<PT> anyM(){
 		return AnyM.ofMonad(this);
 	}
@@ -63,6 +66,13 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	Ior<ST,PT> filter(Predicate<? super PT> test);
 	Xor<ST,PT> toXor(); //drop ST
 	Xor<ST,PT> toXorDropPrimary(); //drop ST
+	
+    
+	@Override
+	default Ior<ST,PT> toIor(){
+	    return this;
+	}
+	
 	
 	Ior<ST,PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
 	<R> Ior<R,PT> secondaryMap(Function<? super ST, ? extends R> fn);
@@ -129,6 +139,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	public static <ST,PT,R> Ior<?,R> accumulateSecondary(CollectionX<Ior<ST,PT>> iors,Function<? super ST, R> mapper,Semigroup<R> reducer){
 		return sequenceSecondary(iors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
+	public static <ST,PT> Ior<?,ST> accumulateSecondary(CollectionX<Ior<ST,PT>> iors,Semigroup<ST> reducer){
+        return sequenceSecondary(iors).map(s->s.reduce(reducer.reducer()).get());
+    }
 	public static <ST,PT> Ior<ListX<ST>,ListX<PT>> sequencePrimary(CollectionX<Ior<ST,PT>> iors){
 		return AnyM.sequence(AnyM.<ST,PT>listFromIor(iors)).unwrap();
 	}
@@ -139,6 +152,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	public static <ST,PT,R> Ior<?,R> accumulatePrimary(CollectionX<Ior<ST,PT>> iors,Function<? super PT, R> mapper,Semigroup<R> reducer){
 		return sequencePrimary(iors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
+	public static <ST,PT> Ior<?,PT> accumulatePrimary(CollectionX<Ior<ST,PT>> iors,Semigroup<PT> reducer){
+        return sequencePrimary(iors).map(s->s.reduce(reducer.reducer()).get());
+    }
 	
 	
 	/* (non-Javadoc)
@@ -183,8 +199,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		return (Ior<ST,R>)Applicativable.super.trampoline(mapper);
 	}
 	
-	
-	
+
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
 	 */
@@ -220,6 +235,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		public Xor<ST,PT> toXor(){
 			return Xor.primary(value);
 		}
+		
 		public Xor<ST,PT> toXorDropPrimary(){
 			return Xor.primary(value);
 		}
@@ -326,6 +342,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 			return Value.of(()->null);
 		}
 		public String toString(){
+            return  mkString();
+        }
+		public String mkString(){
 			return "Ior.primary["+value+"]";
 		}
 		
@@ -347,6 +366,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		public Xor<ST,PT> toXorDropPrimary(){
 			return Xor.secondary(value);
 		}
+		
 		
 		@Override
 		public Ior<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn) {
@@ -440,8 +460,11 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		}
 		
 		public String toString(){
-			return "Ior.secondary["+value+"]";
+			return mkString();
 		}
+		public String mkString(){
+            return "Ior.secondary["+value+"]";
+        }
 	}
 	@AllArgsConstructor(access=AccessLevel.PACKAGE)
 	@EqualsAndHashCode(of={"secondary","primary"})
@@ -467,6 +490,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		public Xor<ST, PT> toXorDropPrimary() {
 			return secondary.toXor();
 		}
+		
 		@Override
 		public Ior<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn) {
 			return this;
@@ -558,6 +582,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 			return true;
 		}
 		public String toString(){
+            return mkString();
+         }
+		public String mkString(){
 			return "Ior.both["+primary.toString() + ":" + secondary.toString()+"]";
 		}
 	}

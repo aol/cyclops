@@ -671,22 +671,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 		
 		return (PVectorX<T>)PersistentCollectionX.super.retainAll(values);
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default PVectorX<T> retainMatches(Matcher<T> m) {
-		
-		return (PVectorX<T>)PersistentCollectionX.super.retainMatches(m);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeMatches(org.hamcrest.Matcher)
-	 */
-	@Override
-	default PVectorX<T> removeMatches(Matcher<T> m) {
-		
-		return (PVectorX<T>)PersistentCollectionX.super.removeMatches(m);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
 	 */
@@ -747,4 +732,17 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	        
 	        return (PVectorX<C>)PersistentCollectionX.super.groupedUntil(predicate, factory);
 	    }
+	    @Override
+	    default PVectorX<T> removeAll(Seq<T> stream) {
+	       
+	        return (PVectorX<T>)PersistentCollectionX.super.removeAll(stream);
+	    }
+
+
+	    @Override
+	    default PVectorX<T> retainAll(Seq<T> stream) {
+	       
+	        return (PVectorX<T>)PersistentCollectionX.super.retainAll(stream);
+	    }
+	    
 }

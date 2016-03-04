@@ -153,12 +153,14 @@ public interface Value<T> extends Supplier<T>,
 	 default Mutable<T> toMutable(){
 		 return Mutable.of(get());
 	 }
-	 default <ST>  Xor<ST,T> toXor(){
-		 return Xor.primary(get());
+	 default Xor<?,T> toXor(){
+	     if(this instanceof Xor)
+	         return (Xor)this;
+	     Optional<T> o = toOptional();
+	     return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(null);
+		
 	 }
-	 default <PT>  Xor<T,PT> toXorSecondary(){
-		 return Xor.secondary(get());
-	 }
+	 
 	 default Try<T,NoSuchElementException> toTry(){
 		 Optional<T> opt = toOptional();
 		 if(opt.isPresent())
@@ -168,12 +170,13 @@ public interface Value<T> extends Supplier<T>,
 	 default <X extends Throwable> Try<T,X> toTry(Class<X>... classes){
 		 return Try.withCatch( ()->get(),classes);
 	 }
-	 default <ST>  Ior<ST,T> toIor(){
-		 return Ior.primary(get());
+	 default   Ior<?,T> toIor(){
+	     if(this instanceof Ior)
+             return (Ior)this;
+         Optional<T> o = toOptional();
+         return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(null);
 	 }
-	 default <PT>  Ior<T,PT> toIorSecondary(){
-		 return Ior.secondary(get());
-	 }
+	 
 	 default Eval<T> toEvalNow(){
 		 return Eval.now(get());
 	 }

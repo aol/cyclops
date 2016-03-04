@@ -6,11 +6,13 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.util.stream.StreamUtils;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
-@Value
+@AllArgsConstructor
 public class SkipWhileOperator<U> {
 
-	Stream<U> stream;
+    private final  Stream<U> stream;
+    
 	public Stream<U> skipWhile(Predicate<? super U> predicate){
 		Iterator<U> it = stream.iterator();
 		return StreamUtils.stream(new Iterator<U>(){

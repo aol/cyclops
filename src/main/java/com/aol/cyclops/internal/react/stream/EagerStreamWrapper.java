@@ -18,7 +18,6 @@ import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
 @Wither
 @AllArgsConstructor
-@Builder
 public class EagerStreamWrapper implements StreamWrapper {
 	@SuppressWarnings("rawtypes")
 	private final List<CompletableFuture> list;

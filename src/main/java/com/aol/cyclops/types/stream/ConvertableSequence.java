@@ -137,21 +137,21 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 	default Maybe<ListX<T>> toMaybe(){
 		return Maybe.fromOptional(toOptional());
 	}
-	default <ST> Xor<ST,ListX<T>> toXor(){
+	default  Xor<?,ListX<T>> toXor(){
 		return toValue().toXor();
 	}
-	default <PT> Xor<ListX<T>,PT> toXorSecondary(){
-		return toValue().toXorSecondary();
+	default  Xor<ListX<T>,?> toXorSecondary(){
+		return toValue().toXor().swap();
 	}
 	default  Try<ListX<T>,NoSuchElementException> toTry(){
 		
 		return toValue().toTry();
 	}
-	default <ST> Ior<ST,ListX<T>> toIor(){
+	default  Ior<?,ListX<T>> toIor(){
 		return toValue().toIor();
 	}
-	default <PT> Ior<ListX<T>,PT> toIorSecondary(){
-		return toValue().toIorSecondary();
+	default  Ior<ListX<T>,?> toIorSecondary(){
+		return toValue().toIor().swap();
 	}
 	default Eval<ListX<T>> toEvalNow(){
 		return toValue().toEvalNow();

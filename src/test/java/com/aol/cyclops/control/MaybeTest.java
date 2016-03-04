@@ -252,23 +252,27 @@ public class MaybeTest {
 		assertThat(just.toXor(),equalTo(Xor.primary(10)));
 		
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testToXorNone(){
-		none.toXor();
-		fail("exception expected");
+	    Xor<?,Integer> empty = none.toXor();
+	    
+	    
+        assertTrue(empty.swap().map(__->10).get()==10);
 		
 	}
 
 
 	@Test
 	public void testToXorSecondary() {
-		assertThat(just.toXorSecondary(),equalTo(Xor.secondary(10)));
+		assertThat(just.toXor().swap(),equalTo(Xor.secondary(10)));
 	}
 
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testToXorSecondaryNone(){
-		none.toXorSecondary();
-		fail("exception expected");
+		Xor<Integer,?> empty = none.toXor().swap();
+		assertTrue(empty.isPrimary());
+		assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
+		
 		
 	}
 	@Test
@@ -287,23 +291,24 @@ public class MaybeTest {
 		assertThat(just.toIor(),equalTo(Ior.primary(10)));
 		
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testToIorNone(){
-		none.toIor();
-		fail("exception expected");
+	    Xor<Integer,?> empty = none.toXor().swap();
+        assertTrue(empty.isPrimary());
+        assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
 		
 	}
 
 
 	@Test
 	public void testToIorSecondary() {
-		assertThat(just.toIorSecondary(),equalTo(Ior.secondary(10)));
+		assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
 	}
 
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void testToIorSecondaryNone(){
-		none.toIorSecondary();
-		fail("exception expected");
+		Ior<Integer,?> ior = none.toIor().swap().map(__->10);
+		assertThat(ior.get(),equalTo(10));
 		
 	}
 	@Test

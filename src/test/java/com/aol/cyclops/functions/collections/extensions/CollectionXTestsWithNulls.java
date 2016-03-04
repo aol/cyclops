@@ -8,9 +8,10 @@ import java.util.function.Supplier;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 
 public abstract class CollectionXTestsWithNulls extends AbstractOrderDependentCollectionXTest {
-	public abstract <T> CollectionX<T> of(T... values);
+	public abstract <T> FluentCollectionX<T> of(T... values);
 
 	@Test
 	public void testSkipUntilWithNulls() {

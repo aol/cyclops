@@ -450,10 +450,7 @@ public class BaseAnyMImpl<T> implements AnyM<T>{
 		}
 		return this.<T>toSequence().toSet();
 	}
-	@Override
-	public Iterator<T> iterator() {
-		return null;
-	}
+	
 	
 	
 	public <R1, R> AnyM<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad, Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {

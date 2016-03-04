@@ -68,7 +68,7 @@ public class ValueSubscriberTest {
         Xor.primary(1)
              .subscribe(sub);
         
-        Xor<Integer,Throwable> maybe = sub.toXorSecondary();
+        Xor<Integer,Throwable> maybe = sub.toXor().swap();
         assertThat(maybe.swap().get(),equalTo(1));
     }
     @Test
@@ -77,7 +77,7 @@ public class ValueSubscriberTest {
         Xor.<Integer,Integer>secondary(1)
              .subscribe(sub);
         
-        Xor<Integer,Throwable> xor = sub.toXorSecondary();
+        Xor<Integer,Throwable> xor = sub.toXor().swap();
         assertThat(xor.get(),instanceOf(NoSuchElementException.class));
     }
     @Test
@@ -104,7 +104,7 @@ public class ValueSubscriberTest {
         Ior.primary(1)
              .subscribe(sub);
         
-        Ior<Integer,Throwable> maybe = sub.toIorSecondary();
+        Ior<Integer,Throwable> maybe = sub.toIor().swap();
         assertThat(maybe.swap().get(),equalTo(1));
     }
     @Test
@@ -113,7 +113,7 @@ public class ValueSubscriberTest {
         Ior.<Integer,Integer>secondary(1)
              .subscribe(sub);
         
-        Ior<Integer,Throwable> xor = sub.toIorSecondary();
+        Ior<Integer,Throwable> xor = sub.toIor().swap();
         assertThat(xor.get(),instanceOf(NoSuchElementException.class));
     }
     

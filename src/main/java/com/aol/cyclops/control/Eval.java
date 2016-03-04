@@ -53,6 +53,9 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>, Filterable<T
 	public static <T,R> Eval<R> accumulate(CollectionX<Eval<T>> maybes,Function<? super T, R> mapper,Semigroup<R> reducer){
 		return sequence(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
+	public static <T> Eval<T> accumulate(CollectionX<Eval<T>> maybes,Semigroup<T> reducer){
+        return sequence(maybes).map(s->s.reduce(reducer.reducer()).get());
+    }
 	public <T> Eval<T> unit(T unit);
 	public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
 	public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper);
@@ -93,7 +96,7 @@ public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>, Filterable<T
 	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
 	 */
 	@Override
-	default Functor<T> peek(Consumer<? super T> c) {
+	default Eval<T> peek(Consumer<? super T> c) {
 		return (Eval<T>)Applicativable.super.peek(c);
 	}
 	/* (non-Javadoc)

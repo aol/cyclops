@@ -1,11 +1,13 @@
 package com.aol.cyclops.control;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.Reducer;
@@ -13,18 +15,23 @@ import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
+import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.ToAnyM;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 @AllArgsConstructor
+@EqualsAndHashCode
 public class FutureW<T> implements ConvertableFunctor<T>,
 											Applicativable<T>, 
 											Value<T>, 
 											FlatMap<T>,
-											ToAnyM<T>{
+											ToAnyM<T>,Filterable<T>{
 
 	public static <T> FutureW<T> of(CompletableFuture<T> f){
 		return new FutureW<>(f);
@@ -39,8 +46,11 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	public static <T,R> FutureW<R> accumulate(CollectionX<FutureW<T>> fts,Function<? super T, R> mapper,Semigroup<R> reducer){
 		return sequence(fts).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
+	public static <T> FutureW<T> accumulate(CollectionX<FutureW<T>> fts,Semigroup<T> reducer){
+        return sequence(fts).map(s->s.reduce(reducer.reducer()).get());
+    }
 
-	
+	@Getter
 	private final CompletableFuture<T> future;
 
 	@Override
@@ -56,10 +66,20 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 
 	@Override
 	public T get() {
-		return future.join();
+	    try{
+	        return future.join();
+	    }catch(Throwable t){
+	        throw ExceptionSoftener.throwSoftenedException(t.getCause());
+	    }
 	}
 	
 
+	public boolean isSuccess(){
+	    return future.isDone() && !future.isCompletedExceptionally();
+	}
+	public boolean isFailed(){
+        return future.isCompletedExceptionally();
+    }
 	@Override
 	public Iterator<T> iterator() {
 		return toStream().iterator();
@@ -74,32 +94,39 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 
 	@Override
 	public ReactiveSeq<T> stream() {
-		return ReactiveSeq.generate(()->get()).limit(1);
+		return ReactiveSeq.generate(()->Try.withCatch(()->get()))
+		                  .limit(1)
+		                  .filter(t->t.isSuccess())
+		                  .map(Value::get);
 	}
 
+	
 	@Override
 	public <R> FutureW<R> flatten() {
 		return FutureW.of(AnyM.fromCompletableFuture(future).flatten().unwrap());
 	}
-	public <R> FutureW<R> flatMap(Function<? super T, ? extends CompletionStage<? extends R>> mapper){
-		return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage)mapper.apply(t)));
-		
+	public <R> FutureW<R> flatMap(Function<? super T, ? extends FutureW<? extends R>> mapper){
+		return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage<R>)mapper.apply(t).getFuture()));	
 	}
+	public <R> FutureW<R> flatMapCf(Function<? super T, ? extends CompletionStage<? extends R>> mapper){
+        return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage<R>)mapper.apply(t))); 
+    }
 	
 	public  Xor<Throwable,T> toXor(){
 		try{
 			return Xor.primary(future.join());
 		}catch(Throwable t){
-			return Xor.<Throwable,T>secondary(t);
+			return Xor.<Throwable,T>secondary(t.getCause());
 		}
 	}
 	public  Ior<Throwable,T> toIor(){
 		try{
 			return Ior.primary(future.join());
 		}catch(Throwable t){
-			return Ior.<Throwable,T>secondary(t);
+			return Ior.<Throwable,T>secondary(t.getCause());
 		}
 	}
+	
 	
 
 	/* (non-Javadoc)
@@ -165,6 +192,53 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	public String toString() {
 		return mkString();
 	}
+    public static <T> FutureW<T> ofResult(T result) {
+       return FutureW.of(CompletableFuture.completedFuture(result));
+    }
+    public static <T> FutureW<T> ofError(Throwable error) {
+        CompletableFuture<T> cf = new CompletableFuture<>();
+        cf.completeExceptionally(error);
+        
+        return FutureW.<T>of(cf);
+     }
+    
+   
+    public String mkString(){
+        return "FutureW["+future.toString()+"]";
+    }
+    @Override
+    public Maybe<T> filter(Predicate<? super T> fn) {
+        return toMaybe().filter(fn);
+    }
+    @Override
+    public <U> Maybe<U> ofType(Class<U> type) {
+        
+        return (Maybe<U>)Filterable.super.ofType(type);
+    }
+    @Override
+    public Maybe<T> filterNot(Predicate<? super T> fn) {
+       
+        return (Maybe<T>)Filterable.super.filterNot(fn);
+    }
+    @Override
+    public Maybe<T> notNull() {
+       
+        return (Maybe<T>)Filterable.super.notNull();
+    }
+    @Override
+    public Optional<T> toOptional() {
+        if(future.isDone() && future.isCompletedExceptionally())
+            return Optional.empty();
+        
+        try{
+            return Optional.ofNullable(get());
+        }catch(Throwable t){
+            return Optional.empty();
+        }
+        
+    }
+   
+    
 	
 	
 }

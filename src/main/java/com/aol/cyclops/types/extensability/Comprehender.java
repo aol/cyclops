@@ -128,7 +128,11 @@ public interface Comprehender<T> {
 			return comp.of(((LongStream) apply).boxed().collect(Collectors.toCollection(MaterializedList::new)));
 		}
 		if (apply instanceof CompletableFuture) {
-			return comp.of(((CompletableFuture) apply).join());
+		    try{
+		        return comp.of(((CompletableFuture) apply).join());
+		    }catch(Throwable t){
+		        return comp.empty();
+		    }
 		}
 		if(apply instanceof StreamT)
 			return comp.of( ((StreamT)apply).unwrap());

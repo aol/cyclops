@@ -1,21 +1,19 @@
 package com.aol.cyclops.internal.stream.operators;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.util.stream.StreamUtils;
-import com.aol.cyclops.util.stream.Streamable;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
 
-@Value
+@AllArgsConstructor
 public class WindowStatefullyWhileOperator<T> {
 	 private static final Object UNSET = new Object();
-	Stream<T> stream;
+	 private final Stream<T> stream;
+	 
 	public Stream<ListX<T>> windowStatefullyWhile(BiPredicate<ListX<? super T>,? super T> predicate){
 		Iterator<T> it = stream.iterator();
 		return StreamUtils.stream(new Iterator<ListX<T>>(){

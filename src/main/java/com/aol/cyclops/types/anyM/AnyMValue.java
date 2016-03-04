@@ -10,6 +10,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.function.Function3;
@@ -19,6 +20,7 @@ import org.jooq.lambda.function.Function5;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -26,6 +28,9 @@ import com.aol.cyclops.internal.monads.AnyMValueImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
 
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.QuadFunction;
@@ -34,13 +39,60 @@ import com.aol.cyclops.util.function.TriFunction;
 
 public interface AnyMValue<T> extends AnyM<T>,
 									  Value<T>,
+									  Filterable<T>,
 									  Applicativable<T>{
 	
 	
+    default String mkString(){
+        Optional<T> opt = toOptional();
+        return opt.isPresent() ? "AnyMValue["+get()+"]" : "AnyMValue[]";
+    }
 	default Value<T> toFirstValue(){
 		return ()-> firstOrNull(toListX());
 	}
-	/* (non-Javadoc)
+	
+	
+	@Override
+    default <U> AnyMValue<U> ofType(Class<U> type) {
+       
+        return ( AnyMValue<U>)Filterable.super.ofType(type);
+    }
+
+
+    @Override
+    default AnyMValue<T> filterNot(Predicate<? super T> fn) {
+       
+        return ( AnyMValue<T>)Filterable.super.filterNot(fn);
+    }
+
+
+    @Override
+    default  AnyMValue<T> notNull() {
+       
+        return ( AnyMValue<T>)Filterable.super.notNull();
+    }
+
+
+    @Override
+    default <U> AnyMValue<U> cast(Class<U> type) {
+       
+        return (AnyMValue<U>)AnyM.super.cast(type);
+    }
+
+    @Override
+    default <R> AnyMValue<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        
+        return (AnyMValue<R>)AnyM.super.trampoline(mapper);
+    }
+
+    @Override
+    default <R> AnyMValue<R> patternMatch(Function<CheckValues<T, R>, CheckValues<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+        
+        return (AnyMValue<R>)AnyM.super.patternMatch(case1, otherwise);
+    }
+
+    /* (non-Javadoc)
 	 * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
 	 */
 	@Override
@@ -325,7 +377,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <T,R> AnyMValue<ListX<R>> traverse(Stream<? extends AnyMValue<T>> seq, Function<? super T,? extends R> fn){
+	public static <T,R> AnyMValue<ListX<R>> traverse(Collection<? extends AnyMValue<T>> seq, Function<? super T,? extends R> fn){
 		
 		return AnyMValueImpl.from(new AnyMonads().traverse(seq,fn));
 	}

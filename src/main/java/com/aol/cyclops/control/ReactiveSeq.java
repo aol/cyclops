@@ -86,13 +86,13 @@ import com.aol.cyclops.util.stream.Streamable;
 import lombok.val;
 
 
-public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterable<T>,FilterableFunctor<T>, ExtendedTraversable<T>,
+public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T>,
+                                                IterableFilterable<T>,FilterableFunctor<T>, ExtendedTraversable<T>,
 												Foldable<T>,CyclopsCollectable<T>,
 												JoolWindowing<T>, 
-												JoolManipulation<T>,
+												
 												Seq<T>,  Iterable<T>, Publisher<T>,
 												ReactiveStreamsTerminalOperations<T>,
-												
 												ZippingApplicativable<T>, Unit<T>,
 												ConvertableSequence<T>{
 	@Override
@@ -101,12 +101,14 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
 	@Override
 	public <T> ReactiveSeq<T> unit(T unit);
 
-	
+	default <U> U  foldRight(U identity, BiFunction<? super T, U,U> accumulator){
+        return JoolWindowing.super.foldRight(identity,accumulator);
+    }
 	 @Override
-	    default void printOut() {
+	 default void printOut() {
 	        
 	        JoolWindowing.super.printOut();
-	    }
+	  }
 	@Override 
 	default <R> ApplyingZippingApplicativeBuilder<T,R,ZippingApplicativable<R>> applicatives(){
 	    Streamable<T> streamable = toStreamable();
@@ -120,12 +122,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, IterableFilterabl
         
     }
     
-	@Override
-	default <R>  ReactiveSeq<R> filterMap(Function<CheckValues<T, R>, CheckValues<T, R>> case1) {
-		
-		return (ReactiveSeq<R>)FilterableFunctor.super.filterMap(case1);
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
