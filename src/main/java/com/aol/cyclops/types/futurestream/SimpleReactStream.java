@@ -30,13 +30,13 @@ import com.aol.cyclops.data.async.QueueFactory;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.react.exceptions.FilteredExecutionPathException;
 import com.aol.cyclops.internal.react.stream.EagerStreamWrapper;
-import com.aol.cyclops.internal.stream.operators.futurestream.StreamCopier;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.aol.cyclops.react.StageWithResults;
 import com.aol.cyclops.react.Status;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.Blocker;
 import com.aol.cyclops.util.ThrowsSoftened;
+import com.aol.cyclops.util.stream.StreamUtils;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
@@ -317,13 +317,13 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
         this.streamCompletableFutures().forEach(next-> next.cancel(true));
     }
 
-    default List<SimpleReactStream<U>> copySimpleReactStream(final int times){
+    default ListX<SimpleReactStream<U>> copySimpleReactStream(final int times){
 
-        return (List)StreamCopier.toBufferingCopier(getLastActive().stream().iterator(), times)
+        return (ListX)StreamUtils.toBufferingCopier(getLastActive().stream().iterator(), times)
                 .stream()
                 .map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false))
                 .<BaseSimpleReactStream<U>>map(fs-> this.getSimpleReact().construct(fs))
-                .collect(Collectors.toList());
+                .toListX();
     }
     /*
      * React to new events with the supplied function on the supplied Executor

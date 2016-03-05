@@ -1789,13 +1789,13 @@ public class StreamUtils{
 		  return new Tuple2(new DuplicatingIterator(bufferTo,bufferFrom,iterator,Long.MAX_VALUE,0),
 				  new DuplicatingIterator(bufferFrom,bufferTo,iterator,pos,0));
 	 }
-	 public static final <A> List<Iterator<A>> toBufferingCopier(Iterator<A> iterator,int copies) {
+	 public static final <A> ListX<Iterator<A>> toBufferingCopier(Iterator<A> iterator,int copies) {
 		List<Iterator<A>> result = new ArrayList<>();
 		List<CopyingIterator<A>> leaderboard = new LinkedList<>();
 		LinkedList<A> buffer = new LinkedList<>();
 		 for(int i=0;i<copies;i++)
 			 result.add(new CopyingIterator(iterator,leaderboard,buffer,copies));
-		 return result;
+		 return ListX.fromIterable(result);
 	 }
 	
 	 @AllArgsConstructor

@@ -312,37 +312,37 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 		return this;
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)
-	 */
-	@Override
-	default SortedSetX<T> cycle(int times) {
-		
-		return (SortedSetX<T>)MutableCollectionX.super.cycle(times);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
-	 */
-	@Override
-	default SortedSetX<T> cycle(Monoid<T> m, int times) {
-		
-		return (SortedSetX<T>)MutableCollectionX.super.cycle(m, times);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleWhile(java.util.function.Predicate)
-	 */
-	@Override
-	default SortedSetX<T> cycleWhile(Predicate<? super T> predicate) {
-		
-		return (SortedSetX<T>)MutableCollectionX.super.cycleWhile(predicate);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleUntil(java.util.function.Predicate)
-	 */
-	@Override
-	default SortedSetX<T> cycleUntil(Predicate<? super T> predicate) {
-		
-		return (SortedSetX<T>)MutableCollectionX.super.cycleUntil(predicate);
-	}
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)
+     */
+    @Override
+    default ListX<T> cycle(int times) {
+        
+        return this.stream().cycle(times).toListX();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
+     */
+    @Override
+    default ListX<T> cycle(Monoid<T> m, int times) {
+        
+        return this.stream().cycle(m,times).toListX();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleWhile(java.util.function.Predicate)
+     */
+    @Override
+    default ListX<T> cycleWhile(Predicate<? super T> predicate) {
+        
+        return this.stream().cycleWhile(predicate).toListX();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleUntil(java.util.function.Predicate)
+     */
+    @Override
+    default ListX<T> cycleUntil(Predicate<? super T> predicate) {
+        
+        return this.stream().cycleUntil(predicate).toListX();
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zipStream(java.util.stream.Stream)
 	 */
@@ -673,10 +673,13 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	    }
 	   
 	    static class Comparables{
+	        
 	        static <T, R extends ReactiveSeq<T> & Comparable<T>> R comparable(Seq<T> seq){
 	            return comparable(ReactiveSeq.fromStream(seq));
 	        }
+	        
             @SuppressWarnings("unchecked")
+            
             static <T, R extends ReactiveSeq<T> & Comparable<T>> R comparable(ReactiveSeq<T> seq){
                 Method compareTo = Stream.of(Comparable.class.getMethods()).filter(m->m.getName().equals("compareTo"))
                             .findFirst().get();

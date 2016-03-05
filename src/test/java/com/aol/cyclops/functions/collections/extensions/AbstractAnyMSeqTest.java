@@ -1,19 +1,26 @@
 package com.aol.cyclops.functions.collections.extensions;
 
 
+import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
 import static java.util.Arrays.asList;
+import static java.util.Comparator.comparing;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
+import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,25 +30,43 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.CyclopsCollectors;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
+import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest.MyCase;
+import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest.MyCase2;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.util.SimpleTimer;
+import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 public abstract class AbstractAnyMSeqTest {
 	public abstract <T> AnyMSeq<T> empty();
@@ -928,6 +953,450 @@ public abstract class AbstractAnyMSeqTest {
 		
 	}
 
+	
 
+     
+        
+        @Test
+        public void batchBySizeCollection(){
+            
+            
+            assertThat(of(1,2,3,4,5,6).grouped(3,()->new ListXImpl<Integer>()).get(0).get().size(),is(3));
+            
+           // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).get(1).get().size(),is(1));
+        }
+        @Test
+        public void batchBySizeInternalSize(){
+            assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).get(0).size(),is(3));
+        }
+        @Test
+        public void fixedDelay(){
+            SimpleTimer timer = new SimpleTimer();
+            
+            assertThat(of(1,2,3,4,5,6).fixedDelay(10000,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
+            assertThat(timer.getElapsedNanoseconds(),greaterThan(60000l));
+        }
+        
+        
+       
+       
+        
+        @Test
+        public void testSorted() {
+            AnyMSeq<Tuple2<Integer, String>> t1 = of(tuple(2, "two"), tuple(1, "one"));
+            List<Tuple2<Integer, String>> s1 = t1.sorted().toList();
+            assertEquals(tuple(1, "one"), s1.get(0));
+            assertEquals(tuple(2, "two"), s1.get(1));
+
+            AnyMSeq<Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "one"));
+            List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toList();
+            assertEquals(tuple(1, "one"), s2.get(0));
+            assertEquals(tuple(2, "two"), s2.get(1));
+
+            AnyMSeq<Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "one"));
+            List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toList();
+            assertEquals(tuple(1, "one"), s3.get(0));
+            assertEquals(tuple(2, "two"), s3.get(1));
+        }
+
+        @Test
+        public void zip2(){
+            List<Tuple2<Integer,Integer>> list =
+                    of(1,2,3,4,5,6).zipStream(Stream.of(100,200,300,400))
+                                                    .peek(it -> System.out.println(it))
+                                                    
+                                                    .collect(Collectors.toList());
+            
+            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            assertThat(right,hasItem(100));
+            assertThat(right,hasItem(200));
+            assertThat(right,hasItem(300));
+            assertThat(right,hasItem(400));
+            
+            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+            
+            
+        }
+        
+        
+
+        @Test
+        public void testReverse() {
+            assertThat( of(1, 2, 3).reverse().toList().size(), is(asList(3, 2, 1).size()));
+        }
+
+        @Test
+        public void testShuffle() {
+            Supplier<AnyMSeq<Integer>> s = () ->of(1, 2, 3);
+
+            assertEquals(3, s.get().shuffle().toListX().size());
+            assertThat(s.get().shuffle().toListX(), hasItems(1, 2, 3));
+
+            
+        }
+        @Test
+        public void testShuffleRandom() {
+            Random r = new Random();
+            Supplier<AnyMSeq<Integer>> s = () ->of(1, 2, 3);
+
+            assertEquals(3, s.get().shuffle(r).toListX().size());
+            assertThat(s.get().shuffle(r).toListX(), hasItems(1, 2, 3));
+
+            
+        }
+
+        
+        
+        
+        
+       
+        
+        
+
+         
+            @Test
+            public void testCastNumber() {
+                
+                of(1,  2,  3)
+                        .cast(Number.class)
+                            .peek(it ->System.out.println(it)).toList();
+                
+              
+            }
+           
+
+           
+
+            
+           
+
+            
+           
+
+        
+      
+
+            @Test
+            public void testSplitAtHead() {
+                assertEquals(Optional.empty(), of().headAndTail().headOptional());
+                assertEquals(asList(), of().headAndTail().tail().toList());
+
+                assertEquals(Optional.of(1), of(1).headAndTail().headOptional());
+                assertEquals(asList(), of(1).headAndTail().tail().toList());
+
+                assertEquals(Maybe.of(1), of(1, 2).headAndTail().headMaybe());
+                assertEquals(asList(2), of(1, 2).headAndTail().tail().toList());
+
+                assertEquals(Arrays.asList(1), of(1, 2, 3).headAndTail().headStream().toList());
+                assertEquals((Integer)2, of(1, 2, 3).headAndTail().tail().headAndTail().head());
+                assertEquals(Optional.of(3), of(1, 2, 3).headAndTail().tail().headAndTail().tail().headAndTail().headOptional());
+                assertEquals(asList(2, 3), of(1, 2, 3).headAndTail().tail().toList());
+                assertEquals(asList(3), of(1, 2, 3).headAndTail().tail().headAndTail().tail().toList());
+                assertEquals(asList(), of(1, 2, 3).headAndTail().tail().headAndTail().tail().headAndTail().tail().toList());
+            }
+
+            @Test
+            public void testMinByMaxBy2() {
+                Supplier<AnyMSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+
+                assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
+                assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
+
+                assertEquals(6, (int) s.get().maxBy(t -> "" + t).get());
+                assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
+            }
+
+           
+           
+
+            @Test
+            public void testFoldLeft() {
+                for(int i=0;i<100;i++){
+                    Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
+        
+                    assertTrue(s.get().reduce("", String::concat).contains("a"));
+                    assertTrue(s.get().reduce("", String::concat).contains("b"));
+                    assertTrue(s.get().reduce("", String::concat).contains("c"));
+                   
+                    assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
+        
+                    
+                    assertEquals(3, (int) s.get().foldRight(0, (t, u) -> u + t.length()));
+                }
+            }
+            
+            @Test
+            public void testFoldRight(){
+                    Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
+
+                    assertTrue(s.get().foldRight("", String::concat).contains("a"));
+                    assertTrue(s.get().foldRight("", String::concat).contains("b"));
+                    assertTrue(s.get().foldRight("", String::concat).contains("c"));
+                    assertEquals(3, (int) s.get().foldRight(0, (t, u) -> u + t.length()));
+            }
+            
+            @Test
+            public void testFoldLeftStringBuilder() {
+                Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
+
+                
+                assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
+                assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("b"));
+                assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("c"));
+                assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("-"));
+                
+                
+                assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
+
+               
+            }
+
+            @Test
+            public void testFoldRighttringBuilder() {
+                Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
+
+                
+                assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("a"));
+                assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("b"));
+                assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("c"));
+                assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("-"));
+                
+                   
+            }
+            
+            @Test
+            public void batchUntil(){
+                assertThat(of(1,2,3,4,5,6)
+                        .groupedUntil(i->false)
+                        .toListX().size(),equalTo(1));
+               
+            }
+            @Test
+            public void batchWhile(){
+                assertThat(of(1,2,3,4,5,6)
+                        .groupedWhile(i->true)
+                        .toListX()
+                        .size(),equalTo(6));
+               
+            }
+            @Test
+            public void batchUntilSupplier(){
+                assertThat(of(1,2,3,4,5,6)
+                        .groupedUntil(i->false,()->new ListXImpl())
+                        .toListX().size(),equalTo(1));
+               
+            }
+            @Test
+            public void batchWhileSupplier(){
+                assertThat(of(1,2,3,4,5,6)
+                        .groupedWhile(i->true,()->new ListXImpl())
+                        .toListX()
+                        .size(),equalTo(1));
+               
+            }
+          
+            @Test
+            public void slidingNoOrder() {
+                ListX<ListX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
+
+                System.out.println(list);
+                assertThat(list.get(0).size(), equalTo(2));
+                assertThat(list.get(1).size(), equalTo(2));
+            }
+
+            @Test
+            public void slidingIncrementNoOrder() {
+                List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+
+                System.out.println(list);
+               
+                assertThat(list.get(1).size(), greaterThan(1));
+            }
+
+            @Test
+            public void combineNoOrder(){
+                assertThat(of(1,2,3)
+                           .combine((a, b)->a.equals(b),Semigroups.intSum)
+                           .toListX(),equalTo(ListX.of(1,2,3))); 
+                           
+            }
+            @Test
+            public void groupedFunctionNoOrder(){
+                assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").count(),equalTo((2L)));
+                assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").filter(t->t.v1.equals("a"))
+                                .map(t->t.v2).map(ReactiveSeq::fromStream).map(ReactiveSeq::toListX).single(),
+                                    equalTo((ListX.of(1,2))));
+            }
+            @Test
+            public void groupedFunctionCollectorNoOrder(){
+                assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",CyclopsCollectors.toListX()).count(),equalTo((2L)));
+                assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",CyclopsCollectors.toListX()).filter(t->t.v1.equals("a"))
+                        .map(t->t.v2).single(),
+                            equalTo((Arrays.asList(1,2))));
+            }
+            @Test
+            public void zip3NoOrder(){
+                List<Tuple3<Integer,Integer,Character>> list =
+                        of(1,2,3,4).zip3(of(100,200,300,400).stream(),of('a','b','c','d').stream())
+                                                        .toListX();
+                
+                System.out.println(list);
+                List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+                assertThat(right,hasItem(100));
+                assertThat(right,hasItem(200));
+                assertThat(right,hasItem(300));
+                assertThat(right,hasItem(400));
+                
+                List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+                assertThat(Arrays.asList(1,2,3,4),hasItem(left.get(0)));
+                
+                List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+                assertThat(Arrays.asList('a','b','c','d'),hasItem(three.get(0)));
+                
+                
+            }
+            @Test
+            public void zip4NoOrder(){
+                List<Tuple4<Integer,Integer,Character,String>> list =
+                        of(1,2,3,4).zip4(of(100,200,300,400).stream(),of('a','b','c','d').stream(),of("hello","world","boo!","2").stream())
+                                                        .toListX();
+                System.out.println(list);
+                List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+                assertThat(right,hasItem(100));
+                assertThat(right,hasItem(200));
+                assertThat(right,hasItem(300));
+                assertThat(right,hasItem(400));
+                
+                List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+                assertThat(Arrays.asList(1,2,3,4),hasItem(left.get(0)));
+                
+                List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+                assertThat(Arrays.asList('a','b','c','d'),hasItem(three.get(0)));
+            
+                List<String> four = list.stream().map(t -> t.v4).collect(Collectors.toList());
+                assertThat(Arrays.asList("hello","world","boo!","2"),hasItem(four.get(0)));
+                
+                
+            }
+            
+            @Test
+            public void testIntersperseNoOrder() {
+                
+                assertThat(((Traversable<Integer>)of(1,2,3).intersperse(0)).toListX(),hasItem(0));
+            
+
+
+
+            }
+         
+            @Test
+            public void patternTestPojoNoOrder(){
+                
+                List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
+                                                      .patternMatch(
+                                                              c->c.is(when(new MyCase2(1,2)),then("one"))
+                                                                   .is(when(new MyCase2(3,4)),then("two"))
+                                                                   .is(when(new MyCase2(3,5)),then("three"))
+                                                                   .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
+                                                                   ,Matchable.otherwise("n/a")
+                                                              )
+                                                      .toListX();
+                assertThat(result,equalTo(Arrays.asList("one","two")));
+            }
+            @AllArgsConstructor
+            @EqualsAndHashCode
+            static class MyCase implements Comparable<MyCase>{
+                int first;
+                int second;
+                @Override
+                public int compareTo(MyCase o) {
+                    return first - o.first;
+                }
+            }
+            @AllArgsConstructor
+            @EqualsAndHashCode
+            static class MyCase2 implements Comparable<MyCase2>{
+                int first;
+                int second;
+                @Override
+                public int compareTo(MyCase2 o) {
+                    return first-o.first;
+                }
+                
+            }
+            
+            @Test @Ignore
+            public void testOfTypeNoOrder() {
+
+                
+                
+                assertThat(((Traversable<Serializable>)of(1,  0.2, 2, 0.3, 3)
+
+                        .ofType(Serializable.class)).toListX(),containsInAnyOrder(1, 0.2, 2,0.3, 3));
+
+            }
+
+            @Test
+            public void allCombinations3NoOrder() {
+                System.out.println(of(1, 2, 3).combinations().map(s->s.toListX()).toListX());
+                assertThat(of(1, 2, 3).combinations().map(s->s.toListX()).toListX().size(),equalTo(8));
+            }
+
+            @Test
+            public void emptyAllCombinationsNoOrder() {
+                assertThat(of().combinations().map(s -> s.toListX()).toListX(), equalTo(Arrays.asList(Arrays.asList())));
+            }
+            
+            @Test
+            public void emptyPermutationsNoOrder() {
+                assertThat(of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
+            }
+
+            @Test
+            public void permuations3NoOrder() {
+                System.out.println(of(1, 2, 3).permutations().map(s->s.toListX()).toListX());
+                assertThat(of(1, 2, 3).permutations().map(s->s.toListX()).toListX().get(0).size(),
+                        equalTo(3));
+            }
+
+            @Test
+            public void emptyCombinationsNoOrder() {
+                assertThat(of().combinations(2).map(s -> s.toListX()).toListX(), equalTo(Arrays.asList()));
+            }
+               
+             @Test
+            public void combinations2NoOrder() {
+                 
+                    assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX().get(0).size(),
+                            equalTo(2));
+                }
+        protected Object sleep(int i) {
+            try {
+                Thread.currentThread().sleep(i);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return i;
+        }
+        @Test
+        public void trampoline2Test(){
+            of(10,20,30,40)
+                     .trampoline(i-> fibonacci(i))
+                     .forEach(System.out::println);
+        }
+        @Test
+        public void trampolineTest(){
+            of(10_000,200_000,3_000_000,40_000_000)
+                     .trampoline(i-> fibonacci(i))
+                     .forEach(System.out::println);
+        }
+        Trampoline<Long> fibonacci(int i){
+            return fibonacci(i,1,0);
+        }
+        Trampoline<Long> fibonacci(int n, long a, long b) {
+            return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
+        }
 			
 }

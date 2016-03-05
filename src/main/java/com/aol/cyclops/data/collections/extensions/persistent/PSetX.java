@@ -333,37 +333,37 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		return (PSetX<T>)PersistentCollectionX.super.plusInOrder(e);
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(int)
-	 */
-	@Override
-	default PSetX<T> cycle(int times) {
-		
-		return (PSetX<T>)PersistentCollectionX.super.cycle(times);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
-	 */
-	@Override
-	default PSetX<T> cycle(Monoid<T> m, int times) {
-		
-		return (PSetX<T>)PersistentCollectionX.super.cycle(m, times);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycleWhile(java.util.function.Predicate)
-	 */
-	@Override
-	default PSetX<T> cycleWhile(Predicate<? super T> predicate) {
-		
-		return (PSetX<T>)PersistentCollectionX.super.cycleWhile(predicate);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycleUntil(java.util.function.Predicate)
-	 */
-	@Override
-	default PSetX<T> cycleUntil(Predicate<? super T> predicate) {
-		
-		return (PSetX<T>)PersistentCollectionX.super.cycleUntil(predicate);
-	}
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)
+     */
+    @Override
+    default PStackX<T> cycle(int times) {
+        
+        return this.stream().cycle(times).toPStackX();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
+     */
+    @Override
+    default PStackX<T> cycle(Monoid<T> m, int times) {
+        
+        return this.stream().cycle(m,times).toPStackX();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleWhile(java.util.function.Predicate)
+     */
+    @Override
+    default PStackX<T> cycleWhile(Predicate<? super T> predicate) {
+        
+        return this.stream().cycleWhile(predicate).toPStackX();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleUntil(java.util.function.Predicate)
+     */
+    @Override
+    default PStackX<T> cycleUntil(Predicate<? super T> predicate) {
+        
+        return this.stream().cycleUntil(predicate).toPStackX();
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
 	 */

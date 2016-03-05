@@ -1,7 +1,6 @@
 package com.aol.cyclops.types.futurestream;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -12,19 +11,19 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.data.async.QueueFactory;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.react.async.future.FastFuture;
 import com.aol.cyclops.internal.react.async.future.PipelineBuilder;
 import com.aol.cyclops.internal.react.exceptions.FilteredExecutionPathException;
 import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
-import com.aol.cyclops.internal.stream.operators.futurestream.StreamCopier;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.aol.cyclops.react.async.subscription.Continueable;
+import com.aol.cyclops.util.stream.StreamUtils;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
@@ -311,13 +310,13 @@ public interface LazySimpleReactStream<U> extends
 								.flatMap(flatFn));
 	}
 	
-	default List<BaseSimpleReactStream<U>> copySimpleReactStream(final int times){
+	default ListX<BaseSimpleReactStream<U>> copySimpleReactStream(final int times){
 		
-		return (List)StreamCopier.toBufferingCopier(iterator(), times)
+		return (ListX)StreamUtils.toBufferingCopier(iterator(), times)
 				.stream()
 				.map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator)it, Spliterator.ORDERED), false))
 				.<BaseSimpleReactStream<U>>map(fs-> (BaseSimpleReactStream)this.getSimpleReact().construct((Stream)fs))
-				.collect(Collectors.toList());
+				.toListX();
 	}	
 	
 	/**

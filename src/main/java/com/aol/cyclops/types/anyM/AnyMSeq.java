@@ -43,12 +43,16 @@ import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.stream.Streamable;
+
+import lombok.val;
 
 public interface AnyMSeq<T> extends AnyM<T>,
 									ConvertableSequence<T>,
@@ -61,6 +65,18 @@ public interface AnyMSeq<T> extends AnyM<T>,
 									Publisher<T>{
 
 	
+    @Override 
+    default <R> ApplyingZippingApplicativeBuilder<T,R,ZippingApplicativable<R>> applicatives(){
+        Streamable<T> streamable = toStreamable();
+            return new ApplyingZippingApplicativeBuilder<T,R,ZippingApplicativable<R>> (streamable,streamable);
+    }
+    @Override
+    default <R> ZippingApplicativable<R> ap1(Function<? super T,? extends R> fn){
+        val dup = asSequence().duplicateSequence();
+        Streamable<T> streamable = dup.v1.toStreamable();
+        return new ApplyingZippingApplicativeBuilder<T, R, ZippingApplicativable<R>>(streamable,streamable).applicative(fn).ap(dup.v2);
+        
+    }
     @Override
     default void subscribe(Subscriber<? super T> sub) {
         this.stream().subscribe(sub);

@@ -1048,9 +1048,11 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @see com.aol.cyclops.react.stream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
      */
     default LazyFutureStream<ListX<U>> groupedBySizeAndTime(int size,long time, TimeUnit unit) {
-        Queue<U> queue = toQueue();
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                .groupedBySizeAndTime(size,time,unit));
+  /**      Queue<U> queue = toQueue();
         Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ListXImpl<>());
-        return (LazyFutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());
+        return (LazyFutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());**/
     }
 
     /**
@@ -2988,9 +2990,11 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
     @Override
     default <C extends Collection<? super U>> LazyFutureStream<C> groupedBySizeAndTime(int size,
             long time, TimeUnit unit, Supplier<C> factory) {
-            Queue<U> queue = toQueue();
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                .groupedBySizeAndTime(size,time,unit,factory));
+   /**         Queue<U> queue = toQueue();
             Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize(size,time,unit,factory);
-            return (LazyFutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn));
+            return (LazyFutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn));**/
     }
 
 
