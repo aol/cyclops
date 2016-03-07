@@ -134,7 +134,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	 */
 	@Override
 	public ReactiveSeq<T> stream() {
-		return anyM.stream();
+	  return asSequence();     
 	}
 
 	/* (non-Javadoc)

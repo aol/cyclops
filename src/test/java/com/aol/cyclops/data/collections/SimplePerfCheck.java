@@ -1,4 +1,4 @@
-package com.aol.cyclops.functions.collections;
+package com.aol.cyclops.data.collections;
 
 import java.util.ArrayList;
 import java.util.List;

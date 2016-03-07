@@ -1,4 +1,4 @@
-package com.aol.cyclops.data.collections;
+package com.aol.cyclops;
 
 import java.util.Deque;
 import java.util.List;

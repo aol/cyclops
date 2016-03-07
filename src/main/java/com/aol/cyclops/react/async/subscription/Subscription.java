@@ -118,8 +118,10 @@ public class Subscription implements Continueable{
 		
 	
 		closed.set(true);
-		queue.closeAndClear();
-		queuesToLeft(queue).forEach(Queue::closeAndClear);
+		if(queue!=null){
+		    queue.closeAndClear();
+		    queuesToLeft(queue).forEach(Queue::closeAndClear);
+		}
 	
 	}
 	public void closeAll() {

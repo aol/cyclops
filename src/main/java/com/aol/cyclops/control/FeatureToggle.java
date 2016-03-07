@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 
@@ -21,12 +23,42 @@ import com.aol.cyclops.types.applicative.Applicativable;
  *
  * @param <F>
  */
-public interface FeatureToggle<F> extends Supplier<F>, Value<F>, Applicativable<F> {
+public interface FeatureToggle<F> extends Supplier<F>, 
+                                          Value<F>,
+                                          Filterable<F>,
+                                          Functor<F>, 
+                                          Applicativable<F> {
 
 	boolean isEnabled();
 	boolean isDisabled();
 	
-	default <T> FeatureToggle<T> unit(T unit){
+	
+	
+	@Override
+    default <U> FeatureToggle<U> cast(Class<U> type) {
+        return (FeatureToggle<U>)Applicativable.super.cast(type);
+    }
+    @Override
+    default <R> FeatureToggle<R> trampoline(Function<? super F, ? extends Trampoline<? extends R>> mapper) {
+      
+        return (FeatureToggle<R>)Applicativable.super.trampoline(mapper);
+    }
+    @Override
+    default <U> FeatureToggle<U> ofType(Class<U> type) {
+       
+        return (FeatureToggle<U>)Filterable.super.ofType(type);
+    }
+    @Override
+    default FeatureToggle<F> filterNot(Predicate<? super F> fn) {
+       
+        return (FeatureToggle<F>)Filterable.super.filterNot(fn);
+    }
+    @Override
+    default FeatureToggle<F> notNull() {
+       
+        return (FeatureToggle<F>)Filterable.super.notNull();
+    }
+    default <T> FeatureToggle<T> unit(T unit){
 		return FeatureToggle.enable(unit);
 	}
 	<R> R visit(Function<? super F,? extends R> enabled, 
@@ -52,9 +84,7 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, Applicativable<
 	public AnyM<F> anyMEnabled();
 	F get();
 	
-	default ListX<F> unapply(){
-		return ListX.of(get());
-	}
+	
 	/**
 	 * Create a new enabled switch
 	 * 
@@ -150,7 +180,7 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, Applicativable<
 	 * @param p Predicate to test for
 	 * @return Filtered switch
 	 */
-	default FeatureToggle<F> filter(Predicate<F> p){
+	default FeatureToggle<F> filter(Predicate<? super F> p){
 		if(isDisabled())
 			return this;
 		if(!p.test(get()))
@@ -416,7 +446,8 @@ public interface FeatureToggle<F> extends Supplier<F>, Value<F>, Applicativable<
 		     * @see com.aol.cyclops.enableswitch.Switch#get()
 		     */
 		    public F get(){
-		    	return disabled;
+		    	Optional.ofNullable(null).get();
+		    	return null;
 		    }
 		   
 

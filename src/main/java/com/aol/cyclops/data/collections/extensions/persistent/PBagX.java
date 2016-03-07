@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -25,12 +24,11 @@ import org.pcollections.PBag;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.PBags;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	@Override
@@ -71,7 +69,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 		return new PBagXImpl<>(HashTreePBag.from(stream));
 	}
 	public static<T> PBagX<T> fromStream(Stream<T> stream){
-		return new PBagXImpl<>((PBag<T>)PBags.toPBag().mapReduce(stream));
+		return Reducers.<T>toPBagX().mapReduce(stream);
 	}
 	
 	  /**
@@ -126,7 +124,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 		return fromCollection(col);
 	}
 	default <T> Reducer<PBag<T>> monoid(){
-		return PBags.toPBag();
+		return Reducers.toPBag();
 	}
 	
 	/* (non-Javadoc)

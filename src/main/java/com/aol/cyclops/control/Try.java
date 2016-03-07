@@ -11,7 +11,12 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.stream.ToStream;
@@ -47,9 +52,65 @@ import lombok.val;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStream<T>,Applicativable<T> {
-
-	/**
+public interface Try<T,X extends Throwable> extends Supplier<T>,
+                                                    Value<T>, 
+                                                    ToStream<T>,
+                                                    Filterable<T>,
+                                                    Functor<T>,
+                                                    Applicativable<T> {
+    
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toXor()
+     */
+    @Override
+    public Xor<X,T> toXor();
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toIor()
+     */
+    @Override
+    public Ior<X,T> toIor();
+    
+    
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+	 */
+	@Override
+    default <U> Try<U,X> cast(Class<U> type) {
+        return (Try<U,X>)Applicativable.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    default <R> Try<R,X> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (Try<R,X>)Applicativable.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    default <U> Maybe<U> ofType(Class<U> type) {
+       
+        return (Maybe<U>)Filterable.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    default Maybe<T> filterNot(Predicate<? super T> fn) {
+        
+        return (Maybe<T>)Filterable.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    default Maybe<T> notNull() {
+        
+        return (Maybe<T>)Filterable.super.notNull();
+    }
+    /**
 	 * Construct a Failure instance from a throwable
 	 * 
 	 * @param error for Failure
@@ -270,7 +331,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 						Class<? extends X>...classes){
 		Objects.requireNonNull(cf);
 		try{
-			return Success.of(cf.get());
+			return Try.success(cf.get());
 		}catch(Throwable t){
 			if(classes.length==0)
 				return Failure.of((X)t);
@@ -548,8 +609,15 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 		public ListX<T> unapply() {
 			return ListX.of(value);
 		}
-
-		
+		@Override
+		public Xor<X,T> toXor(){
+	        return Xor.primary(value);
+	        
+	     }
+		@Override
+        public Ior<X,T> toIor(){
+            return Ior.primary(value);
+        }
 		
 		/* 
 		 *	@return Current value
@@ -851,13 +919,25 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,Value<T>, ToStre
 	 */
 	@RequiredArgsConstructor @ToString @EqualsAndHashCode
 	public static class Failure<T,X extends Throwable> implements Try<T,X> {
-
+	    @Override
+	    public String mkString(){
+	        return "Failure["+error+ "]";
+	     }
 		@Override
 		public ListX<X> unapply() {
 			return ListX.of(error);
 		}
 		private final X error;
 		
+		@Override
+        public Xor<X,T> toXor(){
+            return Xor.secondary(error);
+            
+         }
+        @Override
+        public Ior<X,T> toIor(){
+            return Ior.secondary(error);
+        }
 		/**
 		 * @return This monad, wrapped as AnyM of Success
 		 */

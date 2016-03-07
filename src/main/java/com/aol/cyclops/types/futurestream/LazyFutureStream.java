@@ -53,6 +53,7 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.Queue.ClosedQueueException;
 import com.aol.cyclops.data.async.Queue.QueueTimeoutException;
@@ -60,7 +61,6 @@ import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.async.QueueFactory;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.internal.react.LazyFutureStreamImpl;
 import com.aol.cyclops.internal.react.async.future.FastFuture;
 import com.aol.cyclops.internal.react.stream.CloseableIterator;
@@ -68,7 +68,6 @@ import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops.internal.stream.LazyFutureStreamFutureOpterationsImpl;
-import com.aol.cyclops.internal.stream.operators.futurestream.BatchByTimeAndSize;
 import com.aol.cyclops.react.ParallelReductionConfig;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
@@ -76,6 +75,8 @@ import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
@@ -96,14 +97,35 @@ import lombok.val;
  *
  */
 
-public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStream<U>,
+public interface LazyFutureStream<U> extends  Functor<U>,
+                                            Filterable<U>,   
+                                            LazySimpleReactStream<U>,
+                                            LazyStream<U>,
                                             ReactiveSeq<U>,
                                             LazyToQueue<U>,
                                             ConfigurableStream<U,FastFuture<U>>,
                                             FutureStreamAsyncPublisher<U>,
                                             FutureStreamSynchronousPublisher<U> {
 
-     LazyFutureStream<U> withPublisherExecutor(Executor ex);
+    
+    
+    
+    @Override
+    default LazyFutureStream<U> filterNot(Predicate<? super U> fn) {
+        
+        return (LazyFutureStream<U>)ReactiveSeq.super.filterNot(fn);
+    }
+    @Override
+    default LazyFutureStream<U> notNull() {
+        
+        return (LazyFutureStream<U>)ReactiveSeq.super.notNull();
+    }
+    @Override
+    default <R> LazyFutureStream<R> trampoline(Function<? super U, ? extends Trampoline<? extends R>> mapper) {
+       
+        return (LazyFutureStream<R>)ReactiveSeq.super.trampoline(mapper);
+    }
+    LazyFutureStream<U> withPublisherExecutor(Executor ex);
      default <R> R  foldRight(R identity, BiFunction<? super U, R,R> accumulator){
          return ReactiveSeq.super.foldRight(identity,accumulator);
      }
@@ -363,7 +385,7 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @return LqzyFutureStream between supplied indexes of original Sequence
      */
     default LazyFutureStream<U> subStream(int start, int end){
-        return fromStream(ReactiveSeq.super.subStream(start, end));
+        return this.fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).subStream(start,end));
     }
     /**
      * Generate the permutations based on values in the LazyFutureStream
@@ -373,7 +395,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @return Permutations from this LazyFutureStream
      */
     default LazyFutureStream<ReactiveSeq<U>> permutations() {
-        return this.fromStream(ReactiveSeq.super.permutations());
+        return this.fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).permutations());
+      
      }
     /**
      * <pre>
@@ -389,7 +412,8 @@ public interface LazyFutureStream<U> extends  LazySimpleReactStream<U>,LazyStrea
      * @return All combinations of the elements in this stream
      */
     default LazyFutureStream<ReactiveSeq<U>> combinations() {
-        return this.fromStream(ReactiveSeq.super.combinations());
+        return this.fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).combinations());
+
      }
     /**
      * LazyFutureStream operators act on the results of the previous stage by default. That means limiting,

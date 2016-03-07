@@ -3,6 +3,8 @@ package com.aol.cyclops.functions.collections.extensions.standard.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Date;
+
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
@@ -61,18 +63,19 @@ public class LazyFutureStreamTest extends AbstractAnyMSeqOrderedDependentTest{
 		assertThat(res,equalTo("2world3"));
 	}
 	
-	/**
-	 *
-		Eval e;
-		//int cost = ReactiveSeq.of(1,2).when((head,tail)-> head.when(h-> (int)h>5, h-> 0 )
-		//		.flatMap(h-> head.when());
-		
-		ht.headMaybe().when(some-> Matchable.of(some).matches(
-											c->c.hasValues(1,2,3).then(i->"hello world"),
-											c->c.hasValues('b','b','c').then(i->"boo!")
-									),()->"hello");
-									**/
-	 
+	@Test
+    public void cast(){
+        assertThat(of(1,2,3).cast(String.class).toListX(),equalTo(ListX.of()));
+    }
+	@Test
+    public void testCastPast() {
+        of(1, "a", 2, "b", 3).cast(Date.class).map(d -> d.getTime())
+                .toList();
+    
+
+
+
+    }
 
 }
 

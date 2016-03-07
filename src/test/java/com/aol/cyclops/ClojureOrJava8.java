@@ -3,16 +3,15 @@ package com.aol.cyclops;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.HashMaps;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.data.collections.extensions.standard.MapXs;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,17 +40,17 @@ public class ClojureOrJava8 {
     
     public void transformMap(){
         
-       MapX<String,String> x = MapX.fromMap(HashMaps.of("hello","1"));
+       MapX<String,String> x = MapX.fromMap(MapXs.of("hello","1"));
        
        MapX<String,Integer> y = x.map(Integer::parseInt);
        
-       MapX<String,Integer> y2 = MapX.fromMap(HashMaps.of("hello","1"))
+       MapX<String,Integer> y2 = MapX.fromMap(MapXs.of("hello","1"))
                                     .map(Integer::parseInt);
         
     }
     public void transformMapJava8(){
         
-        Map<String,String> x = HashMaps.of("hello","1");
+        Map<String,String> x = MapXs.of("hello","1");
         
         Map<String,Integer> y = x.entrySet()
                                  .stream()

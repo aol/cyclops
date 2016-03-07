@@ -44,6 +44,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.cyclops.CyclopsCollectors;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
@@ -52,7 +53,6 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.CyclopsCollectors;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
@@ -983,10 +983,13 @@ public abstract class AbstractAnyMSeqTest {
         
         @Test
         public void testSorted() {
-            AnyMSeq<Tuple2<Integer, String>> t1 = of(tuple(2, "two"), tuple(1, "one"));
-            List<Tuple2<Integer, String>> s1 = t1.sorted().toList();
-            assertEquals(tuple(1, "one"), s1.get(0));
-            assertEquals(tuple(2, "two"), s1.get(1));
+         
+            AnyM.fromList(ListX.of(tuple(2, 2), tuple(1, 1))).printOut();
+            AnyMSeq<Tuple2<Integer, Integer>> t1 = of(tuple(2, 2), tuple(1, 1));
+           
+            List<Tuple2<Integer, Integer>> s1 = t1.sorted().toList();
+            assertEquals(tuple(1, 1), s1.get(0));
+            assertEquals(tuple(2, 2), s1.get(1));
 
             AnyMSeq<Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "one"));
             List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toList();

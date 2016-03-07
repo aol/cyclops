@@ -1,31 +1,41 @@
-package com.aol.cyclops.data.collections;
+package com.aol.cyclops.data.collections.extensions.standard;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import org.jooq.lambda.tuple.Tuple2;
+
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
+import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
 
 
 
-public class HashMaps {
+public class MapXs {
 
 	public static <K, V> MapX<K, V> of() {
-		return MapX.fromMap(MapX.immutableCollector(), new HashMap<>());
+		return MapX.fromMap(new HashMap<>());
 	}
 	public static <K, V> MapX<K, V> of(K key, V value) {
-		return MapX.fromMap(MapX.immutableCollector(), new Builder<K, V>(key, value).build());
+		return MapX.fromMap(new Builder<K, V>(key, value).build());
 	}
 	public static <K, V> MapX<K, V> of(K key, V value,K key1, V value1) {
-		return MapX.fromMap(MapX.immutableCollector(), new Builder<K, V>(key, value).put(key1, value1).build());
+		return MapX.fromMap(new Builder<K, V>(key, value).put(key1, value1).build());
 	}
 	public static <K, V> MapX<K, V> of(K key, V value,K key1, V value1,K key2, V value2) {
-		return MapX.fromMap(MapX.immutableCollector(), new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2).build());
+		return MapX.fromMap(new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2).build());
 	}
 	public static <K, V> MapX<K, V> of(K key, V value,K key1, V value1,K key2, V value2,K key3, V value3) {
-		return MapX.fromMap(MapX.immutableCollector(), new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2,key3, value3).build());
+		return MapX.fromMap(new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2,key3, value3).build());
 	}
 
+	public static<K,V> PMapX<K,V> toPMapX(Stream<Tuple2<K,V>> stream){
+		return (PMapX<K,V>)toPMapX().mapReduce(stream);
+	}
+	public static <K,V> Reducer<PMapX<K,V>> toPMapX() { 
+		return	Reducers.toPMapX();
+	}
 	
 	public static <K, V> Builder<K, V> from(Map<K,V> map) {
 		return new Builder<K, V>(map);
@@ -85,9 +95,8 @@ public class HashMaps {
 		}
 
 		public MapX<K, V> build() {
-			return MapX.fromMap(MapX.immutableCollector(),build);
+			return MapX.fromMap(build);
 		}
-		
 	}
 
 }

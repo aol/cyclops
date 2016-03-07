@@ -14,24 +14,20 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.OrderedPSet;
-import org.pcollections.PBag;
 import org.pcollections.POrderedSet;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.PBags;
-import com.aol.cyclops.data.collections.POrderedSets;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T>{
 	
@@ -44,6 +40,24 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	public static <T> POrderedSetX<T> singleton(T value){
 		return new POrderedSetXImpl<>(OrderedPSet.singleton(value));
 	}
+	/**
+     * Reduce a Stream to a POrderedSetX, 
+     * 
+     * 
+     * <pre>
+     * {@code 
+     *    POrderedSetX<Integer> set = POrderedSetX.fromStream(Stream.of(1,2,3));
+     * 
+     *  //set = [1,2,3]
+     * }</pre>
+     * 
+     * 
+     * @param stream to convert 
+     * @return
+     */
+    public static<T> POrderedSetX<T> fromStream(Stream<T> stream){
+        return Reducers.<T>toPOrderedSetX().mapReduce(stream);
+    }
 	public static<T> POrderedSetX<T> fromCollection(Collection<T> stream){
 		if(stream instanceof POrderedSetX)
 			return (POrderedSetX)(stream);
@@ -64,7 +78,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 		return new POrderedSetXImpl<>(res);
 	}
 	public static<T> POrderedSetX<T> toPOrderedSet(Stream<T> stream){
-		return new POrderedSetXImpl<>((POrderedSet<T>)POrderedSets.toPOrderedSet().mapReduce(stream));
+		return  Reducers.<T>toPOrderedSetX().mapReduce(stream);
 	}
 	@Override
 	default POrderedSetX<T> toPOrderedSetX() {
@@ -118,8 +132,8 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	default <X> POrderedSetX<X> from(Collection<X> col){
 		return fromCollection(col);
 	}
-	default <T> Reducer<PBag<T>> monoid(){
-		return PBags.toPBag();
+	default <T> Reducer<POrderedSet<T>> monoid(){
+		return Reducers.toPOrderedSet();
 	}
 	
 	/* (non-Javadoc)

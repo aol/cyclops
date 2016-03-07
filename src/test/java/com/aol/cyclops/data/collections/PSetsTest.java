@@ -1,4 +1,4 @@
-package com.aol.cyclops.functions.collections;
+package com.aol.cyclops.data.collections;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -10,44 +10,45 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.PBags;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 
-public class PBagsTest {
+public class PSetsTest {
 
 	@Test
 	public void testOf() {
-		assertThat(PBags.of("a","b","c")
+		assertThat(PSetX.of("a","b","c")
 							.stream()
 							.collect(Collectors.toList()),hasItems("a","b","c"));
 	}
 
 	@Test
 	public void testEmpty() {
-		assertThat(PBags.empty().stream()
+		assertThat(PSetX.empty().stream()
 				.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testSingleton() {
-		assertThat(PBags.of("a").stream()
+		assertThat(PSetX.of("a").stream()
 				.collect(Collectors.toList()),equalTo(Arrays.asList("a")));
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(PBags.fromCollection(Arrays.asList("a","b","c")).stream()
+		assertThat(PSetX.fromCollection(Arrays.asList("a","b","c")).stream()
 				.collect(Collectors.toList()),hasItems("a","b","c"));
 	}
 	@Test
-	public void testToPBagstreamOfT() {
-		assertThat(PBags.fromStream(Stream.of("a","b","c")).stream()
+	public void testToPSetstreamOfT() {
+		assertThat(PSetX.fromStream(Stream.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						hasItems("a","b","c"));
 	}
 
 	@Test
-	public void testToPBags() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(PBags.toPBag()).stream()
+	public void testToPSets() {
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPSet()).stream()
 				.collect(Collectors.toList()),
 				hasItems("a","b","c"));
 	}
