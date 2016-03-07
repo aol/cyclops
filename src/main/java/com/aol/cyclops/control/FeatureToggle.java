@@ -117,28 +117,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 		return disable(f);
 	}
 	
-	/**
-	 * Flatten a nested Switch, maintaining top level enabled / disabled semantics
-	 * 
-	 * <pre>
-	 * Enabled&lt;Enabled&lt;Disabled&gt;&gt; nested= Switch.enable(Switch.enable(Switch.disable(100)));
-	 * </pre>
-	 * 
-	 * unwraps to enabled[100]
-	 * 
-	 * @return flattened switch
-	 */
-	default <X> FeatureToggle<X> flatten(){
-		Optional s = Optional.of(get()).flatMap(x->{
-			if(x instanceof FeatureToggle)
-				return Optional.of(((FeatureToggle)x).flatten());
-			else
-				return Optional.of(FeatureToggle.from(this,x));
-		});
-		Object value = s.get();
-		FeatureToggle<X> newSwitch = from((FeatureToggle<X>)this,((FeatureToggle<X>)value).get());
-		return newSwitch;
-	}
+
 	
 	/**
 	 * Peek at current switch value
@@ -147,7 +126,8 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	 * @return This Switch
 	 */
 	default FeatureToggle<F> peek(Consumer<? super F> consumer){
-		consumer.accept(get());
+		if(this.isEnabled())
+		    consumer.accept(get());
 		return this;
 	}
 	
@@ -215,9 +195,9 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	default FeatureToggle<F> flip(){
 		
 		if(isEnabled())
-			return disable(get());
+			return disable();
 		else
-			return enable(get());
+			return enable();
 	}
 	
 	
@@ -395,7 +375,9 @@ public interface FeatureToggle<F> extends Supplier<F>,
 			private final F disabled;
 			
 
-
+			public Enabled<F> enable(){
+		        return new Enabled<F>(disabled); 
+		    }
 		    /**
 		     * Constructs a left.
 		     *
