@@ -10,7 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public  class StreamableImpl<T> implements Streamable<T>{
 	@Getter
-	private final T streamable;
+	private final Iterable<T> streamable;
 
 	
 	

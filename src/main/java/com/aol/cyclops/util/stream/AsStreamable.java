@@ -1,5 +1,6 @@
 package com.aol.cyclops.util.stream;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Stream;
@@ -36,36 +37,42 @@ public class AsStreamable {
 		return new StreamableImpl(collectStreamConcurrent(toCoerce));
 	}
 	
-	private static <T> T collectStreamConcurrent(T object){
+	private static <T> Iterable<T> collectStreamConcurrent(T object){
 		if(object instanceof Stream){
 			
 			Collection c = SeqUtils.toConcurrentLazyCollection((Stream)object);
-			return (T)new Iterable(){
+			return new Iterable<T>(){
 
 				@Override
-				public Iterator iterator() {
+				public Iterator<T> iterator() {
 					return c.iterator();
 				}
 				
 		};
 		}
-		return object;
+		if(object instanceof Object[]){
+            return (Iterable<T>)Arrays.asList((Object[])object);
+        }
+        return (Iterable<T>)object;
 	}
 	
-	private static <T> T collectStream(T object){
+	private static <T> Iterable<T> collectStream(T object){
 		if(object instanceof Stream){
 			
 			Collection c = SeqUtils.toLazyCollection((Stream)object);
-			return (T)new Iterable(){
+			return new Iterable<T>(){
 
 				@Override
-				public Iterator iterator() {
+				public Iterator<T> iterator() {
 					return c.iterator();
 				}
 				
 		};
 		}
-		return object;
+		if(object instanceof Object[]){
+		    return (Iterable<T>)Arrays.asList((Object[])object);
+		}
+		return (Iterable<T>)object;
 	}
 	
 }

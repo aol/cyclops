@@ -26,7 +26,6 @@ public class Comprehenders {
 
 		comprehenders = Reducers.<Map.Entry<Class,Comprehender>>toPStack().mapReduce((Stream)Seq.seq(loader.iterator())
 													.sorted((a,b) ->  b.priority()-a.priority())
-													.filter(c -> !(c instanceof InvokeDynamicComprehender))
 													.map(comp->new AbstractMap.SimpleEntry(comp.getTargetClass(),comp)));
 	
 	}

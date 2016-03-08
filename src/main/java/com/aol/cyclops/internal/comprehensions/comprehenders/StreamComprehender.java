@@ -54,10 +54,7 @@ public class StreamComprehender implements Comprehender<Stream> {
 			return (T)((Collection)apply).stream();
 		}
 		if(apply instanceof Iterable){
-			if((new ComprehenderSelector().selectComprehender(apply) instanceof InvokeDynamicComprehender)){
-				 return (T)StreamSupport.stream(((Iterable)apply).spliterator(),
-							false);
-			}else if(apply instanceof ToStream){
+			if(apply instanceof ToStream){
 				return (T)((ToStream)apply).reactiveSeq();
 			}
 		}
