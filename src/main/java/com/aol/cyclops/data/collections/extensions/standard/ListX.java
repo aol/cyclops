@@ -33,7 +33,12 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T>,IterableFunctor<T>,ZippingApplicativable<T> {
+public interface ListX<T> extends List<T>, 
+                                  MutableCollectionX<T>, 
+                                  MutableSequenceX<T>, 
+                                  Comparable<T>,
+                                  IterableFunctor<T>,
+                                  ZippingApplicativable<T> {
 	
 
 	

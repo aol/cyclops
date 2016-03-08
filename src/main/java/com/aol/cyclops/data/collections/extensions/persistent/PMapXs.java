@@ -1,44 +1,39 @@
-package com.aol.cyclops.data.collections;
+package com.aol.cyclops.data.collections.extensions.persistent;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
-import org.pcollections.HashTreePMap;
-import org.pcollections.PBag;
-import org.pcollections.PMap;
 
-import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
 
 
 
-public class PMaps {
+public class PMapXs {
 
-	public static <K, V> PMap<K, V> of() {
-		return HashTreePMap.from(new HashMap<>());
+	public static <K, V> PMapX<K, V> of() {
+		return PMapX.fromMap(new HashMap<>());
 	}
-	public static <K, V> PMap<K, V> of(K key, V value) {
-		return HashTreePMap.from(new Builder<K, V>(key, value).build());
+	public static <K, V> PMapX<K, V> of(K key, V value) {
+		return PMapX.fromMap(new Builder<K, V>(key, value).build());
 	}
-	public static <K, V> PMap<K, V> of(K key, V value,K key1, V value1) {
-		return HashTreePMap.from(new Builder<K, V>(key, value).put(key1, value1).build());
+	public static <K, V> PMapX<K, V> of(K key, V value,K key1, V value1) {
+		return PMapX.fromMap(new Builder<K, V>(key, value).put(key1, value1).build());
 	}
-	public static <K, V> PMap<K, V> of(K key, V value,K key1, V value1,K key2, V value2) {
-		return HashTreePMap.from(new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2).build());
+	public static <K, V> PMapX<K, V> of(K key, V value,K key1, V value1,K key2, V value2) {
+		return PMapX.fromMap(new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2).build());
 	}
-	public static <K, V> PMap<K, V> of(K key, V value,K key1, V value1,K key2, V value2,K key3, V value3) {
-		return HashTreePMap.from(new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2,key3, value3).build());
+	public static <K, V> PMapX<K, V> of(K key, V value,K key1, V value1,K key2, V value2,K key3, V value3) {
+		return PMapX.fromMap(new Builder<K, V>(key, value).put(key, value, key1, value1, key2, value2,key3, value3).build());
 	}
 
-	public static<K,V> PMap<K,V> toPMap(Stream<Tuple2<K,V>> stream){
-		return (PMap<K,V>)toPMap().mapReduce(stream);
+	public static<K,V> PMapX<K,V> toPMapX(Stream<Tuple2<K,V>> stream){
+		return (PMapX<K,V>)toPMapX().mapReduce(stream);
 	}
-	public static <K,V> Reducer<PMap<K,V>> toPMap() { 
-		return	Reducers.toPMap();
+	public static <K,V> Reducer<PMapX<K,V>> toPMapX() { 
+		return	Reducers.toPMapX();
 	}
 	
 	public static <K, V> Builder<K, V> from(Map<K,V> map) {
@@ -98,8 +93,8 @@ public class PMaps {
 			return this;
 		}
 
-		public PMap<K, V> build() {
-			return HashTreePMap.from(build);
+		public PMapX<K, V> build() {
+			return PMapX.fromMap(build);
 		}
 	}
 

@@ -1,5 +1,6 @@
 package com.aol.cyclops.util.stream;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -47,8 +48,8 @@ import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
+import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 
@@ -69,6 +70,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
 											ZippingApplicativable<T>{
 	
 	default Collectable<T> collectable(){
+	  
 		return Seq.seq(stream());
 	}
 	
@@ -115,12 +117,13 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
 	 */
 	public static<T> Streamable<T> of(T... values){
 		Exception e;
+		Iterable<T> it = Arrays.asList(values);
 		return new Streamable<T>(){
 			public ReactiveSeq<T> stream(){
 				return ReactiveSeq.of(values);
 			}
-			public Object getStreamable(){
-				return values;
+			public Iterable<T> getStreamable(){
+				return it;
 			}
 			public ReactiveSeq<T> reactiveSeq(){
 				return ReactiveSeq.of(values);

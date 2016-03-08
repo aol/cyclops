@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -24,12 +23,11 @@ import org.pcollections.PSet;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.PSets;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	
@@ -63,7 +61,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		return new PSetXImpl<>(HashTreePSet.from(stream));
 	}
 	public static<T> PSetX<T> fromStream(Stream<T> stream){
-		return new PSetXImpl<>((PSet<T>)PSets.toPSet().mapReduce(stream));
+		return Reducers.<T>toPSetX().mapReduce(stream);
 	}
 	@Override
 	default PSetX<T> toPSetX() {
@@ -119,7 +117,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		return fromCollection(col);
 	}
 	default <T> Reducer<PSet<T>> monoid(){
-		return PSets.toPSet();
+		return Reducers.toPSet();
 	}
 	
 	/* (non-Javadoc)
@@ -333,37 +331,37 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		return (PSetX<T>)PersistentCollectionX.super.plusInOrder(e);
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(int)
-	 */
-	@Override
-	default PSetX<T> cycle(int times) {
-		
-		return (PSetX<T>)PersistentCollectionX.super.cycle(times);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
-	 */
-	@Override
-	default PSetX<T> cycle(Monoid<T> m, int times) {
-		
-		return (PSetX<T>)PersistentCollectionX.super.cycle(m, times);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycleWhile(java.util.function.Predicate)
-	 */
-	@Override
-	default PSetX<T> cycleWhile(Predicate<? super T> predicate) {
-		
-		return (PSetX<T>)PersistentCollectionX.super.cycleWhile(predicate);
-	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycleUntil(java.util.function.Predicate)
-	 */
-	@Override
-	default PSetX<T> cycleUntil(Predicate<? super T> predicate) {
-		
-		return (PSetX<T>)PersistentCollectionX.super.cycleUntil(predicate);
-	}
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)
+     */
+    @Override
+    default PStackX<T> cycle(int times) {
+        
+        return this.stream().cycle(times).toPStackX();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
+     */
+    @Override
+    default PStackX<T> cycle(Monoid<T> m, int times) {
+        
+        return this.stream().cycle(m,times).toPStackX();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleWhile(java.util.function.Predicate)
+     */
+    @Override
+    default PStackX<T> cycleWhile(Predicate<? super T> predicate) {
+        
+        return this.stream().cycleWhile(predicate).toPStackX();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleUntil(java.util.function.Predicate)
+     */
+    @Override
+    default PStackX<T> cycleUntil(Predicate<? super T> predicate) {
+        
+        return this.stream().cycleUntil(predicate).toPStackX();
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
 	 */

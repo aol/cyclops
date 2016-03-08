@@ -16,102 +16,95 @@ import com.aol.cyclops.util.ExceptionSoftener;
 
 
 public class InvokeDynamic {
-	private static volatile Map<Method, CallSite> callSites = new ConcurrentHashMap<>();
-	private static volatile Map<Class, Optional<Method>> streamMethod = new ConcurrentHashMap<>();
-	private static volatile Map<Class, Optional<Method>> supplierMethod = new ConcurrentHashMap<>();
-	private static volatile Map<String,Map<Class, List<Method>>> generalMethods = new ConcurrentHashMap<>();
-	public Optional<Stream> stream(Object t) {
+    private static volatile Map<Method, CallSite> callSites = new ConcurrentHashMap<>();
 
-		Class clazz = t.getClass();
+    private static volatile Map<String,Map<Class, List<Method>>> generalMethods = new ConcurrentHashMap<>();
+   
+    public <T> Optional<T> execute(List<String> methodNames, Object obj, Object... args){
+        return (Optional)methodNames.stream().map(s -> execute(s,obj,args)).filter(Optional::isPresent).findFirst().flatMap(i->i);
+    }
+    public <T> Optional<T> execute(String methodName,Object obj,Object... args) {
+        Class clazz = obj instanceof Class ?  (Class)obj :obj.getClass();
+        Map<Class, List<Method>> methods = generalMethods.computeIfAbsent(methodName, k->new ConcurrentHashMap<>());
+        List<Method> om = methods.computeIfAbsent(
+                clazz,
+                c -> Stream.of(c.getMethods())
+                        .filter(method -> methodName.equals(method.getName()))
+                        .filter(method -> method.getParameterCount() == args.length)
+                        .map(m2 -> {
+                            m2.setAccessible(true);
+                            return m2;
+                        }).collect(Collectors.toList()));
+        
+        if(om.size()>0){
+            return  obj instanceof Class ?  Optional.of((T)executeStaticMethod( om.get(0),(Class)obj,args)) : Optional.of((T)executeMethod( om.get(0),obj,args));
+        }
+        return Optional.empty();
+    }
+   
+    private Object executeStaticMethod(Method m, Class type,Object... args) {
+        try {
 
-		Optional<Method> om = streamMethod.computeIfAbsent(
-				clazz,
-				c -> Stream.of(c.getMethods())
-						.filter(method -> "stream".equals(method.getName()) || "toStream".equals(method.getName()))
-						.filter(method -> method.getParameterCount() == 0)
-						.findFirst().map(m2 -> {
-							m2.setAccessible(true);
-							return m2;
-						}));
-		if (!om.isPresent())
-			return Optional.empty();
-		Method m = om.get();
+            
+            MethodHandle mh = this.callSites
+                    .computeIfAbsent(
+                            m,
+                            (m2) -> {
+                                try {
+                                    return new ConstantCallSite(MethodHandles
+                                            .publicLookup().unreflect(m2));
+                                } catch (Exception e) {
+                                    throw ExceptionSoftener.throwSoftenedException(e);
+                                   
+                                }
+                                
+                            }).dynamicInvoker();
+            
+            if(args.length==0)
+                return mh.invoke();
+            if(args.length==1)
+                return mh.invoke(args[0]);
+            if(args.length==2)
+                return mh.invoke(args[0],args[1]);
 
-		return Optional.of((Stream) executeMethod( m,t));
+        } catch (Throwable e) {
+            throw ExceptionSoftener.throwSoftenedException(e);
+        } finally {
 
-	}
-	public <T> Optional<T> execute(List<String> methodNames, Object obj, Object... args){
-		return (Optional)methodNames.stream().map(s -> execute(s,obj,args)).filter(Optional::isPresent).findFirst().get();
-	}
-	public <T> Optional<T> execute(String methodName,Object obj,Object... args) {
-		Class clazz = obj.getClass();
-		Map<Class, List<Method>> methods = generalMethods.computeIfAbsent(methodName, k->new ConcurrentHashMap<>());
-		List<Method> om = methods.computeIfAbsent(
-				clazz,
-				c -> Stream.of(c.getMethods())
-						.filter(method -> methodName.equals(method.getName()))
-						.filter(method -> method.getParameterCount() == args.length)
-						.map(m2 -> {
-							m2.setAccessible(true);
-							return m2;
-						}).collect(Collectors.toList()));
-		
-		if(om.size()>0){
-			return Optional.of((T)executeMethod( om.get(0),obj,args));
-		}
-		return Optional.empty();
-	}
-	public <T> Optional<T> supplier(Object t,List<String> methodNames) {
+        }
+        return null;
+    }
 
-		Class clazz = t.getClass();
+    public Object executeMethod(Method m, Object obj,Object... args) {
+        try {
 
-		Optional<Method> om = streamMethod.computeIfAbsent(
-				clazz,
-				c -> Stream.of(c.getMethods())
-						.filter(method -> methodNames.contains(method.getName()))
-						.filter(method -> method.getParameterCount() == 0)
-						.findFirst().map(m2 -> {
-							m2.setAccessible(true);
-							return m2;
-						}));
-		if (!om.isPresent())
-			return Optional.empty();
-		Method m = om.get();
+            
+            MethodHandle mh = this.callSites
+                    .computeIfAbsent(
+                            m,
+                            (m2) -> {
+                                try {
+                                    return new ConstantCallSite(MethodHandles
+                                            .publicLookup().unreflect(m2));
+                                } catch (Exception e) {
+                                    throw ExceptionSoftener.throwSoftenedException(e);
+                                   
+                                }
+                                
+                            }).dynamicInvoker();
+            if(args.length==0)
+                return mh.invoke(obj);
+            if(args.length==1)
+                return mh.invoke(obj,args[0]);
+            if(args.length==2)
+                return mh.invoke(obj,args[0],args[1]);
 
-		return Optional.of( (T)executeMethod( m,t));
+        } catch (Throwable e) {
+            throw ExceptionSoftener.throwSoftenedException(e);
+        } finally {
 
-	}
-
-	private Object executeMethod(Method m, Object obj,Object... args) {
-		try {
-
-			
-			MethodHandle mh = this.callSites
-					.computeIfAbsent(
-							m,
-							(m2) -> {
-								try {
-									return new ConstantCallSite(MethodHandles
-											.publicLookup().unreflect(m2));
-								} catch (Exception e) {
-									ExceptionSoftener.throwSoftenedException(e);
-									return null;
-								}
-								
-							}).dynamicInvoker();
-			if(args.length==0)
-				return mh.invoke(obj);
-			if(args.length==1)
-				return mh.invoke(obj,args[0]);
-			if(args.length==2)
-				return mh.invoke(obj,args[0],args[1]);
-
-		} catch (Throwable e) {
-			ExceptionSoftener.throwSoftenedException(e);
-		} finally {
-
-		}
-		return null;
-	}
-	
+        }
+        return null;
+    }
+    
 }

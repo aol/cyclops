@@ -25,7 +25,7 @@ public class DisabledTest {
 	@Test
 	public void testPeek(){
 		disabled.peek(it -> value=it);
-		assertThat(value,is(100));
+		assertThat(value,is(nullValue()));
 	}
 	
 	@Test
@@ -38,7 +38,7 @@ public class DisabledTest {
 	}
 	@Test
 	public void testFilter(){
-		assertThat(disabled.filter(i->i<200).map(i->i+1).get(),is(100));
+		assertThat(disabled.filter(i->i<200).map(i->i+1).enable().get(),is(100));
 	}
 	@Test
 	public void testFilterTrue(){
@@ -61,11 +61,11 @@ public class DisabledTest {
 	
 	@Test
 	public void testMap(){
-		assertThat(disabled.map(i->i+1).get(),is(100));
+		assertThat(disabled.map(i->i+1).enable().get(),is(100));
 	}
 	@Test
 	public void testEnabled() {
-		assertThat(disabled.get(),is(100));
+		assertThat(disabled.enable().get(),is(100));
 	}
 
 	@Test

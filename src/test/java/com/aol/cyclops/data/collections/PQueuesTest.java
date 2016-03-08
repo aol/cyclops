@@ -1,4 +1,4 @@
-package com.aol.cyclops.functions.collections;
+package com.aol.cyclops.data.collections;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -9,44 +9,45 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.PQueues;
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
 
 public class PQueuesTest {
 
 	@Test
 	public void testOf() {
-		assertThat(PQueues.of("a","b","c")
+		assertThat(PQueueX.of("a","b","c")
 							.stream()
 							.collect(Collectors.toList()),equalTo(Arrays.asList("a","b","c")));
 	}
 
 	@Test
 	public void testEmpty() {
-		assertThat(PQueues.empty().stream()
+		assertThat(PQueueX.empty().stream()
 				.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testSingleton() {
-		assertThat(PQueues.of("a").stream()
+		assertThat(PQueueX.of("a").stream()
 				.collect(Collectors.toList()),equalTo(Arrays.asList("a")));
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(PQueues.fromCollection(Arrays.asList("a","b","c")).stream()
+		assertThat(PQueueX.fromCollection(Arrays.asList("a","b","c")).stream()
 				.collect(Collectors.toList()),equalTo(Arrays.asList("a","b","c")));
 	}
 	@Test
 	public void testToPStackstreamOfT() {
-		assertThat(PQueues.fromStream(Stream.of("a","b","c")).stream()
+		assertThat(PQueueX.fromStream(Stream.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						equalTo(Arrays.asList("a","b","c")));
 	}
 
 	@Test
 	public void testToPStack() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(PQueues.toPQueue()).stream()
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPQueue()).stream()
 				.collect(Collectors.toList()),
 				equalTo(Arrays.asList("a","b","c")));
 	}

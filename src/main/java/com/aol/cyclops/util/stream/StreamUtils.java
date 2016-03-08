@@ -43,12 +43,12 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 import org.reactivestreams.Subscription;
 
+import com.aol.cyclops.CyclopsCollectors;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.data.collections.CyclopsCollectors;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.MonadWrapper;
@@ -1789,13 +1789,13 @@ public class StreamUtils{
 		  return new Tuple2(new DuplicatingIterator(bufferTo,bufferFrom,iterator,Long.MAX_VALUE,0),
 				  new DuplicatingIterator(bufferFrom,bufferTo,iterator,pos,0));
 	 }
-	 public static final <A> List<Iterator<A>> toBufferingCopier(Iterator<A> iterator,int copies) {
+	 public static final <A> ListX<Iterator<A>> toBufferingCopier(Iterator<A> iterator,int copies) {
 		List<Iterator<A>> result = new ArrayList<>();
 		List<CopyingIterator<A>> leaderboard = new LinkedList<>();
 		LinkedList<A> buffer = new LinkedList<>();
 		 for(int i=0;i<copies;i++)
 			 result.add(new CopyingIterator(iterator,leaderboard,buffer,copies));
-		 return result;
+		 return ListX.fromIterable(result);
 	 }
 	
 	 @AllArgsConstructor

@@ -45,6 +45,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.cyclops.CyclopsCollectors;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
@@ -53,7 +54,6 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.CyclopsCollectors;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -1715,6 +1715,36 @@ public abstract class AbstractCollectionXTest {
 	    }
 	    Trampoline<Long> fibonacci(int n, long a, long b) {
 	        return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
+	    }
+	    @Test
+	    public void cycleMonoidNoOrder(){
+	        assertThat(of(1,2,3)
+	                    .cycle(Reducers.toCountInt(),3)
+	                    .toListX(),
+	                    equalTo(ListX.of(3,3,3)));
+	    }
+	    @Test
+	    public void testCycleNoOrder() {
+	        assertEquals(6,of(1, 2).cycle(3).toListX().size());
+	        assertEquals(6, of(1, 2, 3).cycle(2).toListX().size());
+	    }
+	    @Test
+	    public void testCycleTimesNoOrder() {
+	        assertEquals(6,of(1, 2).cycle(3).toListX().size());
+	       
+	    }
+	    int count =0;
+	    @Test
+	    public void testCycleWhile() {
+	        count =0;
+	        assertEquals(6,of(1, 2, 3).cycleWhile(next->count++<6).toListX().size());
+	       
+	    }
+	    @Test
+	    public void testCycleUntil() {
+	        count =0;
+	        assertEquals(6,of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
+	       
 	    }
 	 
 }

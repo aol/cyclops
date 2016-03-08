@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.CyclopsCollectors;
+import com.aol.cyclops.CyclopsCollectors;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;

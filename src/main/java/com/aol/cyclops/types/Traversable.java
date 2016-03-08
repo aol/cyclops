@@ -34,7 +34,7 @@ import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyCollectable;
-import com.aol.cyclops.types.stream.lazy.LazyOperationsImpl;
+import com.aol.cyclops.types.stream.lazy.LazyOperations;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
@@ -1076,8 +1076,8 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	 * 
 	 * @return Lazy Terminal Operations
 	 */
-	default LazyCollectable<T> lazyOperations(){
-		return new LazyOperationsImpl<T>(stream());
+	default LazyOperations<T> lazyOperations(){
+		return new LazyOperations<T>(stream());
 	}
 	
 	/**

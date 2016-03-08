@@ -31,8 +31,6 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	@Wither
 	AnyM anyM;
 	
-
-	
 	static <T> AnyMSeqImpl<T> with(AnyM<T> anyM){
 		return new  AnyMSeqImpl<T>(anyM);
 	}
@@ -134,7 +132,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	 */
 	@Override
 	public ReactiveSeq<T> stream() {
-		return anyM.stream();
+	  return asSequence();     
 	}
 
 	/* (non-Javadoc)

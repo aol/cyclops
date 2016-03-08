@@ -257,6 +257,8 @@ public class Predicates {
 	}
 	
 	
+	
+	
 	@SafeVarargs
 	public static <T1> Predicate<? super T1> in(T1... values){
 		return test ->Arrays.asList(values).contains(test);
@@ -310,6 +312,7 @@ public class Predicates {
     }
 	
 	public static <T1> Predicate<? super T1> instanceOf(Class<T1> clazz){
+	    
 		return test -> clazz.isAssignableFrom(test.getClass());
 	}
 	@SafeVarargs

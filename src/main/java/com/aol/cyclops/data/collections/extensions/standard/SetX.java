@@ -308,33 +308,33 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)
 	 */
 	@Override
-	default SetX<T> cycle(int times) {
+	default ListX<T> cycle(int times) {
 		
-		return (SetX<T>)MutableCollectionX.super.cycle(times);
+		return this.stream().cycle(times).toListX();
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
 	 */
 	@Override
-	default SetX<T> cycle(Monoid<T> m, int times) {
+	default ListX<T> cycle(Monoid<T> m, int times) {
 		
-		return (SetX<T>)MutableCollectionX.super.cycle(m, times);
+		return this.stream().cycle(m,times).toListX();
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleWhile(java.util.function.Predicate)
 	 */
 	@Override
-	default SetX<T> cycleWhile(Predicate<? super T> predicate) {
+	default ListX<T> cycleWhile(Predicate<? super T> predicate) {
 		
-		return (SetX<T>)MutableCollectionX.super.cycleWhile(predicate);
+		return this.stream().cycleWhile(predicate).toListX();
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleUntil(java.util.function.Predicate)
 	 */
 	@Override
-	default SetX<T> cycleUntil(Predicate<? super T> predicate) {
+	default ListX<T> cycleUntil(Predicate<? super T> predicate) {
 		
-		return (SetX<T>)MutableCollectionX.super.cycleUntil(predicate);
+		return this.stream().cycleUntil(predicate).toListX();
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zipStream(java.util.stream.Stream)

@@ -13,36 +13,38 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.pcollections.AmortizedPQueue;
 import org.pcollections.PQueue;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.PQueues;
-import com.aol.cyclops.data.collections.PSets;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
 
     public static <T> PQueueX<T> of(T... values) {
-
-        return new PQueueXImpl<>(PQueues.of(values));
+        PQueue<T> result = empty();
+        for(T value : values){
+            result = result.plus(value);
+        }
+        
+        return new PQueueXImpl<>(result);
     }
 
     public static <T> PQueueX<T> empty() {
-        return new PQueueXImpl<>(PQueues.empty());
+        return new PQueueXImpl<>(AmortizedPQueue.empty());
     }
 
     public static <T> PQueueX<T> singleton(T value) {
-        return new PQueueXImpl<>(PQueues.singleton(value));
+        return PQueueX.<T>empty().plus(value);
     }
 
     public static <T> PQueueX<T> fromIterable(Iterable<T> iterable) {
@@ -50,7 +52,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
             return (PQueueX) iterable;
         if (iterable instanceof PQueue)
             return new PQueueXImpl<>((PQueue) (iterable));
-        PQueue<T> res = PQueues.<T> empty();
+        PQueue<T> res =  empty();
         Iterator<T> it = iterable.iterator();
         while (it.hasNext())
             res = res.plus(it.next());
@@ -63,11 +65,11 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
             return (PQueueX) (stream);
         if (stream instanceof PQueue)
             return new PQueueXImpl<>((PQueue) (stream));
-        return new PQueueXImpl<>(PQueues.fromCollection(stream));
+        return PQueueX.<T>empty().plusAll(stream);
     }
 
     public static <T> PQueueX<T> fromStream(Stream<T> stream) {
-        return new PQueueXImpl<>((PQueue<T>) PSets.toPSet().mapReduce(stream));
+        return Reducers.<T>toPQueueX().mapReduce(stream);
     }
 
     /**
@@ -131,11 +133,11 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
     }
 
     default <X> PQueueX<X> from(Collection<X> col) {
-        return new PQueueXImpl<>(PQueues.fromCollection(col));
+        return  fromCollection(col);
     }
 
     default <T> Reducer<PQueue<T>> monoid() {
-        return PQueues.toPQueue();
+        return Reducers.toPQueue();
     }
 
     /*

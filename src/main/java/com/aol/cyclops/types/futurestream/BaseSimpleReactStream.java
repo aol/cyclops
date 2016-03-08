@@ -5,18 +5,12 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -26,18 +20,13 @@ import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.QueueFactory;
 import com.aol.cyclops.internal.react.SimpleReactStreamImpl;
-import com.aol.cyclops.internal.react.stream.BaseSimpleReact;
 import com.aol.cyclops.internal.react.stream.CloseableIterator;
 import com.aol.cyclops.internal.react.stream.ReactBuilder;
 import com.aol.cyclops.internal.react.stream.StreamWrapper;
-import com.aol.cyclops.internal.stream.operators.futurestream.StreamCopier;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
-import com.aol.cyclops.react.Status;
 import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.async.subscription.Continueable;
-import com.aol.cyclops.react.collectors.lazy.Blocker;
-import com.aol.cyclops.util.ThrowsSoftened;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 

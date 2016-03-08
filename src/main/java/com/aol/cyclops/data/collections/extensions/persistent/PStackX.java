@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -24,13 +23,12 @@ import org.pcollections.PStack;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.PStacks;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 
 public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>{
 	
@@ -62,7 +60,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 			return (PStackX)iterable;
 		if(iterable instanceof PStack)
 			return new PStackXImpl<>((PStack)(iterable),true);
-		PStack<T> res = PStacks.<T>empty();
+		PStack<T> res = ConsPStack.<T>empty();
 		Iterator<T> it = iterable.iterator();
 		while(it.hasNext())
 			res = res.plus(it.next());
@@ -141,7 +139,8 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @return
 	 */
 	public static<T> PStackX<T> fromStream(Stream<T> stream){
-		return new PStackXImpl<>((PStack<T>)PStacks.toPStack().mapReduce(stream),false);
+	   	return Reducers.<T>toPStackX().mapReduce(stream)
+		                            .efficientOpsOff();
 	}
 	@Override
 	default PStackX<T> toPStackX() {
@@ -210,8 +209,8 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	}
 	default <T> Reducer<PStack<T>> monoid(){
 		if(isEfficientOps())
-			return PStacks.toPStackReverse();
-		return PStacks.toPStack();
+			return Reducers.toPStackReversed();
+		return Reducers.toPStack();
 		
 	}
 	

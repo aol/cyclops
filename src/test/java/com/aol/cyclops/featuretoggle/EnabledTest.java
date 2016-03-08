@@ -23,22 +23,6 @@ public class EnabledTest {
 		enabled = FeatureToggle.enable(100);
 	}
 	
-	@Test
-	public void testFlatten(){
-		Enabled<Enabled<Disabled<Integer>>> nested= FeatureToggle.enable(FeatureToggle.enable(FeatureToggle.disable(100)));
-		FeatureToggle<Integer> o = nested.<Integer>flatten();
-		System.out.println(o.get());
-		FeatureToggle<Integer> flat = nested.<Integer>flatten();
-		assertThat(flat.get(),is(100));
-	}
-	@Test
-	public void testFlattenSematics(){
-		Enabled<Enabled<Disabled<Integer>>> nested= FeatureToggle.enable(FeatureToggle.enable(FeatureToggle.disable(100)));
-		FeatureToggle<Integer> o = nested.<Integer>flatten();
-		System.out.println(o.get());
-		FeatureToggle<Integer> flat = nested.<Integer>flatten();
-		assertThat(flat,instanceOf(Enabled.class));
-	}
 	
 	@Test
 	public void testPeek(){

@@ -4,8 +4,12 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class FunctionExecutionInvocationHandler implements InvocationHandler{
 
 	@Setter

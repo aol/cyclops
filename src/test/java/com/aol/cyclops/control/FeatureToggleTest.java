@@ -44,20 +44,20 @@ import com.aol.cyclops.util.stream.StreamUtils;
 
 
 
-public class MaybeTest {
+public class FeatureToggleTest {
 
-	Maybe<Integer> just;
-	Maybe<Integer> none;
+	FeatureToggle<Integer> just;
+	FeatureToggle<Integer> none;
 	@Before
 	public void setUp() throws Exception {
-		just = Maybe.of(10);
-		none = Maybe.none();
+		just = FeatureToggle.enable(10);
+		none = FeatureToggle.disable(null);
 	}
 
 	@Test
 	public void testToMaybe() {
-		assertThat(just.toMaybe(),equalTo(just));
-		assertThat(none.toMaybe(),equalTo(none));
+		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
+		assertThat(none.toMaybe(),equalTo(Maybe.none()));
 	}
 
 	private int add1(int i){
@@ -73,12 +73,12 @@ public class MaybeTest {
 
 	@Test
 	public void testFromOptional() {
-		assertThat(Maybe.fromOptional(Optional.of(10)),equalTo(just));
+		assertThat(Maybe.fromOptional(Optional.of(10)),equalTo(just.toMaybe()));
 	}
 
 	@Test
 	public void testFromEvalSome() {
-		assertThat(Maybe.fromEvalOf(Eval.now(10)),equalTo(just));
+		assertThat(Maybe.fromEvalOf(Eval.now(10)),equalTo(just.toMaybe()));
 	}
 
 	@Test
@@ -100,64 +100,33 @@ public class MaybeTest {
 		assertThat(Maybe.ofNullable(1),equalTo(Maybe.narrow(Maybe.of(1))));
 	}
 
-	@Test
-	public void testSequence() {
-		Maybe<ListX<Integer>> maybes =Maybe.sequence(ListX.of(just,none,Maybe.of(1)));
-		assertThat(maybes,equalTo(Maybe.of(ListX.of(10,1))));
-	}
-
-	@Test
-	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Maybe<PSetX<Integer>> maybes =Maybe.accumulateJust(ListX.of(just,none,Maybe.of(1)),Reducers.toPSetX());
-		assertThat(maybes,equalTo(Maybe.of(PSetX.of(10,1))));
-	}
-
-	@Test
-	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Maybe<String> maybes =Maybe.accumulateJust(ListX.of(just,none,Maybe.of(1)),i->""+i,Semigroups.stringConcat);
-		assertThat(maybes,equalTo(Maybe.of("101")));
-	}
-	@Test
-	public void testAccumulateJust() {
-		Maybe<Integer> maybes =Maybe.accumulateJust(ListX.of(just,none,Maybe.of(1)),Semigroups.intSum);
-		assertThat(maybes,equalTo(Maybe.of(11)));
-	}
+	
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20),equalTo(Maybe.of(20)));
+		assertThat(just.unit(20),equalTo(FeatureToggle.enable(20)));
 	}
 
 	
 
 	@Test
 	public void testIsPresent() {
-		assertTrue(just.isPresent());
-		assertFalse(none.isPresent());
+		assertTrue(just.isEnabled());
+		assertFalse(none.isEnabled());
 	}
 
-	@Test
-	public void testRecoverSupplierOfT() {
-		assertThat(just.recover(20),equalTo(Maybe.of(10)));
-		assertThat(none.recover(10),equalTo(Maybe.of(10)));
-	}
-
-	@Test
-	public void testRecoverT() {
-		assertThat(just.recover(()->20),equalTo(Maybe.of(10)));
-		assertThat(none.recover(()->10),equalTo(Maybe.of(10)));
-	}
+	
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5),equalTo(Maybe.of(15)));
-		assertThat(none.map(i->i+5),equalTo(Maybe.none()));
+		assertThat(just.map(i->i+5).toMaybe(),equalTo(Maybe.of(15)));
+		assertThat(none.map(i->i+5).toMaybe(),equalTo(Maybe.none()));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(just.flatMap(i->Maybe.of(i+5)),equalTo(Maybe.of(15)));
-		assertThat(none.flatMap(i->Maybe.of(i+5)),equalTo(Maybe.none()));
+		assertThat(just.flatMap(i->FeatureToggle.enable(i+5)),equalTo(FeatureToggle.enable(15)));
+		assertThat(none.flatMap(i->FeatureToggle.enable(i+5)),equalTo(FeatureToggle.disable(null)));
 	}
 
 	@Test
@@ -286,6 +255,7 @@ public class MaybeTest {
 
 	@Test
 	public void testToTryClassOfXArray() {
+	    
 		assertTrue(none.toTry(Throwable.class).isFailure());
 	}
 
@@ -416,32 +386,32 @@ public class MaybeTest {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Just[10]"));
-		assertThat(none.mkString(),equalTo("Nothing[]"));
+		assertThat(just.mkString(),equalTo("Enabled[10]"));
+		assertThat(none.mkString(),equalTo("Disabled[]"));
 	}
 	LazyReact react = new LazyReact();
 	@Test
 	public void testToFutureStreamLazyReact() {
 		assertThat(just.toFutureStream(react).toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toFutureStream(react).toList(),equalTo(Arrays.asList()));
+		assertThat(none.toFutureStream(react).notNull().toList(),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testToFutureStream() {
 		assertThat(just.toFutureStream().toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toFutureStream().toList(),equalTo(Arrays.asList()));
+		assertThat(none.toFutureStream().notNull().toList(),equalTo(Arrays.asList()));
 	}
 	SimpleReact react2 = new SimpleReact();
 	@Test
 	public void testToSimpleReactSimpleReact() {
 		assertThat(just.toSimpleReact(react2).block(),equalTo(Arrays.asList(10)));
-		assertThat(none.toSimpleReact(react2).block(),equalTo(Arrays.asList()));
+		assertThat(none.toSimpleReact(react2).filter(i->i!=null).block(),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testToSimpleReact() {
 		assertThat(just.toSimpleReact().block(),equalTo(Arrays.asList(10)));
-		assertThat(none.toSimpleReact().block(),equalTo(Arrays.asList()));
+		assertThat(none.toSimpleReact().filter(i->i!=null).block(),equalTo(Arrays.asList()));
 	}
 
 	@Test
@@ -456,33 +426,33 @@ public class MaybeTest {
 
 	@Test
 	public void testFilter() {
-		assertFalse(just.filter(i->i<5).isPresent());
-		assertTrue(just.filter(i->i>5).isPresent());
-		assertFalse(none.filter(i->i<5).isPresent());
-		assertFalse(none.filter(i->i>5).isPresent());
+		assertFalse(just.filter(i->i<5).isEnabled());
+		assertTrue(just.filter(i->i>5).isEnabled());
+		assertFalse(none.filter(i->i<5).isEnabled());
+		assertFalse(none.filter(i->i>5).isEnabled());
 		
 	}
 
 	@Test
 	public void testOfType() {
-		assertFalse(just.ofType(String.class).isPresent());
-		assertTrue(just.ofType(Integer.class).isPresent());
-		assertFalse(none.ofType(String.class).isPresent());
-		assertFalse(none.ofType(Integer.class).isPresent());
+		assertFalse(just.ofType(String.class).isEnabled());
+		assertTrue(just.ofType(Integer.class).isEnabled());
+		assertFalse(none.ofType(String.class).isEnabled());
+		assertFalse(none.ofType(Integer.class).isEnabled());
 	}
 
 	@Test
 	public void testFilterNot() {
-		assertTrue(just.filterNot(i->i<5).isPresent());
-		assertFalse(just.filterNot(i->i>5).isPresent());
-		assertFalse(none.filterNot(i->i<5).isPresent());
-		assertFalse(none.filterNot(i->i>5).isPresent());
+		assertTrue(just.filterNot(i->i<5).isEnabled());
+		assertFalse(just.filterNot(i->i>5).isEnabled());
+		assertFalse(none.filterNot(i->i<5).isEnabled());
+		assertFalse(none.filterNot(i->i>5).isEnabled());
 	}
 
 	@Test
 	public void testNotNull() {
-		assertTrue(just.notNull().isPresent());
-		assertFalse(none.notNull().isPresent());
+		assertTrue(just.notNull().isEnabled());
+		assertFalse(none.notNull().isEnabled());
 		
 	}
 
@@ -727,19 +697,19 @@ public class MaybeTest {
 
 	@Test
 	public void testCast() {
-		Maybe<Number> num = just.cast(Number.class);
+		FeatureToggle<Number> num = just.cast(Number.class);
 	}
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5),equalTo(Maybe.of(15)));
+		assertThat(just.map(i->i+5).toMaybe(),equalTo(Maybe.of(15)));
 	}
 	
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c));
-		assertNull(capture.get());
+		
 		
 		just.get();
 		assertThat(capture.get(),equalTo(10));
@@ -750,7 +720,7 @@ public class MaybeTest {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Maybe.of(65)));
+		assertThat(just.trampoline(n ->sum(10,n)),equalTo(FeatureToggle.enable(65)));
 	}
 
 	
