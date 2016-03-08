@@ -41,7 +41,7 @@ import lombok.Getter;
 
 
 @AllArgsConstructor
-public class LazyOperationsImpl<T> implements  DoubleOperatorsMixin<T>, 
+public class LazyOperations<T> implements  DoubleOperatorsMixin<T>, 
 						IntOperatorsMixin<T>, LongOperatorsMixin<T>,LazyCollectable<T>{
 
 	
