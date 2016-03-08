@@ -359,7 +359,7 @@ public abstract class AbstractAnyMSeqTest {
 		@Test
 		public void zip(){
 			List<Tuple2<Integer,Integer>> list =
-					of(1,2,3,4,5,6).zip(of(100,200,300,400).asSequence())
+					of(1,2,3,4,5,6).zip(of(100,200,300,400).stream())
 													.peek(it -> System.out.println(it))
 													.collect(Collectors.toList());
 			System.out.println("list = " +list);
@@ -662,7 +662,7 @@ public abstract class AbstractAnyMSeqTest {
 		peek = 0 ;
 		   AnyM.fromStream(Stream.of(asList(1,3)))
 				  				.flatMap(c->AnyM.fromStream(c.stream()))
-				  				.asSequence()
+				  				.stream()
 				  				.map(i->i*2)
 				  				.peek(i-> peek=i)
 				  				.collect(Collectors.toList());
@@ -672,7 +672,7 @@ public abstract class AbstractAnyMSeqTest {
 	public void testMap() {
 		  List<Integer> list = AnyM.fromStream(Stream.of(asList(1,3)))
 				  				.flatMap(c->AnyM.fromStream(c.stream()))
-				  				.asSequence()
+				  				.stream()
 				  				.map(i->i*2)
 				  				.peek(System.out::println)
 				  				.collect(Collectors.toList());
@@ -806,7 +806,7 @@ public abstract class AbstractAnyMSeqTest {
 
 	@Test
 	public void testZipDifferingLength() {
-		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d").asSequence()).toList();
+		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d").stream()).toList();
 
 		assertEquals(2, list.size());
 		assertTrue(asList(1, 2).contains(list.get(0).v1));
@@ -841,7 +841,7 @@ public abstract class AbstractAnyMSeqTest {
 
 	@Test
 	public void testZipDifferingLengthStream() {
-		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d").asSequence()).toList();
+		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d").stream()).toList();
 
 		assertEquals(2, list.size());
 		assertTrue(asList(1, 2).contains(list.get(0).v1));

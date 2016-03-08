@@ -258,7 +258,7 @@ public class SequenceMTest {
 	@Test
 	public void anyMTest(){
 		List<Integer> list = LazyFutureStream.of(1,2,3,4,5,6)
-								.anyM().filter(i->i>3).asSequence().toList();
+								.anyM().filter(i->i>3).stream().toList();
 		
 		assertThat(list,equalTo(Arrays.asList(4,5,6)));
 	}
@@ -310,7 +310,7 @@ public class SequenceMTest {
 		peek = 0 ;
 		AnyM.fromStream(Stream.of(asList(1,3)))
 				  				.flatMap(c->AnyM.fromStream(c.stream()))
-				  				.asSequence()
+				  				.stream()
 				  				.map(i->i*2)
 				  				.peek(i-> peek=i)
 				  				.collect(Collectors.toList());
@@ -320,7 +320,7 @@ public class SequenceMTest {
 	public void testMap() {
 		  List<Integer> list = AnyM.fromStream(Stream.of(asList(1,3)))
 				  				.flatMap(c->AnyM.fromStream(c.stream()))
-				  				.asSequence()
+				  				.stream()
 				  				.map(i->i*2)
 				  				.peek(System.out::println)
 				  				.collect(Collectors.toList());

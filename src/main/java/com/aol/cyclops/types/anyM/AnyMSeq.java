@@ -72,7 +72,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     }
     @Override
     default <R> ZippingApplicativable<R> ap1(Function<? super T,? extends R> fn){
-        val dup = asSequence().duplicateSequence();
+        val dup = stream().duplicateSequence();
         Streamable<T> streamable = dup.v1.toStreamable();
         return new ApplyingZippingApplicativeBuilder<T, R, ZippingApplicativable<R>>(streamable,streamable).applicative(fn).ap(dup.v2);
         
@@ -727,23 +727,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 		 */
 		<R> AnyMSeq<R> applyM(AnyM<Function<? super T,? extends R>> fn);
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#toSequence(java.util.function.Function)
-	 */
-	@Override
-	 <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) ;
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#toSequence()
-	 */
-	@Override
-	<T> ReactiveSeq<T> toSequence() ;
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#asSequence()
-	 */
-	@Override
-	ReactiveSeq<T> asSequence() ;
+	
 	
 	
 

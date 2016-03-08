@@ -86,7 +86,26 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public ReactiveSeq<T> stream();
 	
-
+    /**
+     * Sequence the contents of a Monad.  e.g.
+     * Turn an <pre>
+     *  {@code Optional<List<Integer>>  into Stream<Integer> }</pre>
+     * 
+     * <pre>{@code
+     * List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
+                                            .<Integer>toSequence(c->c.stream())
+                                            .collect(Collectors.toList());
+        
+        
+        assertThat(list,hasItems(1,2,3,4,5,6));
+        
+     * 
+     * }</pre>
+     * 
+     * @return A Sequence that wraps a Stream
+     */
+     <NT> ReactiveSeq<NT> toSequence(Function<? super T,? extends Stream<? extends NT>> fn);
+   
 	<R, A> R collect(Collector<? super T, A, R> collector);
 	
 	
@@ -236,57 +255,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	
 	
 	
-	/**
-	 * Sequence the contents of a Monad.  e.g.
-	 * Turn an <pre>
-	 * 	{@code Optional<List<Integer>>  into Stream<Integer> }</pre>
-	 * 
-	 * <pre>{@code
-	 * List<Integer> list = anyM(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-											.<Integer>toSequence(c->c.stream())
-											.collect(Collectors.toList());
-		
-		
-		assertThat(list,hasItems(1,2,3,4,5,6));
-		
-	 * 
-	 * }</pre>
-	 * 
-	 * @return A Sequence that wraps a Stream
-	 */
-	 <NT> ReactiveSeq<NT> toSequence(Function<? super T,? extends Stream<? extends NT>> fn);
-	/**
-	 *  <pre>
-	 *  {@code Optional<List<Integer>>  into Stream<Integer> }
-	 *  </pre>
-	 * Less type safe equivalent, but may be more accessible than toSequence(fn) i.e. 
-	 * <pre>
-	 * {@code 
-	 *    toSequence(Function<T,Stream<NT>> fn)
-	 *   }
-	 *   </pre>
-	 *  <pre>{@code
-	 * List<Integer> list = anyM(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-											.<Integer>toSequence()
-											.collect(Collectors.toList());
-		
-		
-		
-	 * 
-	 * }</pre>
-	
-	 * @return A Sequence that wraps a Stream
-	 */
-	 <T> ReactiveSeq<T> toSequence();
-	
-	
-	/**
-	 * Wrap this Monad's contents as a Sequence without disaggreating it. .e.
-	 *  <pre>{@code Optional<List<Integer>>  into Stream<List<Integer>> }</pre>
-	 * If the underlying monad is a Stream it is returned
-	 * Otherwise we flatMap the underlying monad to a Stream type
-	 */
-	 ReactiveSeq<T> asSequence();
+
 	
 	
 		

@@ -22,7 +22,7 @@ public class LiftAndBindSequenceMTest {
 		
 		
 		List<String> result = AnyM.streamOf("input.file")
-								.asSequence()
+		                          .stream()
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
@@ -37,7 +37,7 @@ public class LiftAndBindSequenceMTest {
 		
 		
 		List<String> result = AnyM.streamOf("input.file")
-								.asSequence()
+		                          .stream()
 								.map(getClass().getClassLoader()::getResource)
 								.<String>flatMapAnyM(AnyM::ofConvertable)
 								.toList();
@@ -49,7 +49,7 @@ public class LiftAndBindSequenceMTest {
 		
 		
 		List<Character> result = StreamUtils.flatMapCharSequence(AnyM.streamOf("input.file")
-									.asSequence(),i->"hello world")
+		                                .stream(),i->"hello world")
 									.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
@@ -59,7 +59,7 @@ public class LiftAndBindSequenceMTest {
 		
 		
 		List<String> result = StreamUtils.flatMapBufferedReader(AnyM.streamOf("input.file")
-								.asSequence()
+		                                .stream()
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
 								,r-> new BufferedReader(r))

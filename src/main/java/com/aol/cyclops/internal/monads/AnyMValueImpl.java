@@ -146,13 +146,10 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
 
 	@Override
 	public <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
-		return anyM.toSequence(fn);
+		return this.baseImpl().toSequence(fn);
 	}
 
-	@Override
-	public <T> ReactiveSeq<T> toSequence() {
-		return anyM.toSequence();
-	}
+	
 
 	@Override
 	public Iterator<T> iterator() {
@@ -227,10 +224,7 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
 		return with(baseImpl().flatMap(fn));
 	}
 
-	@Override
-	public ReactiveSeq<T> asSequence() {
-		return anyM.asSequence();
-	}
+	
 
 	@Override
 	public <R> AnyMValue<R> applyM(AnyMValue<Function<? super T, ? extends R>> fn) {
@@ -267,5 +261,8 @@ public class AnyMValueImpl<T> implements AnyMValue<T> {
        
     }
 	
-
+    @Override
+    public <NT> ReactiveSeq<NT> toSequence() {
+        return this.baseImpl().toSequence();
+    }
 }

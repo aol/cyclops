@@ -46,6 +46,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 		
 	}
 	
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
@@ -132,7 +133,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	 */
 	@Override
 	public ReactiveSeq<T> stream() {
-	  return asSequence();     
+	  return  this.baseImpl().asSequence();  
 	}
 
 	/* (non-Javadoc)
@@ -257,30 +258,7 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 		return with(this.baseImpl().applyM(fn));
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#toSequence(java.util.function.Function)
-	 */
-	@Override
-	public <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
-		return anyM.toSequence(fn);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#toSequence()
-	 */
-	@Override
-	public <T> ReactiveSeq<T> toSequence() {
-		return anyM.toSequence();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#asSequence()
-	 */
-	@Override
-	public ReactiveSeq<T> asSequence() {
-		return anyM.asSequence();
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.anyM.AnyMSeq#unit(java.lang.Object)
 	 */
@@ -316,5 +294,9 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	public <R, A> R collect(Collector<? super T, A, R> collector) {
 		return (R)anyM.collect(collector);
 	}
+    @Override
+    public <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
+        return this.baseImpl().toSequence(fn);
+    }
 	
 }

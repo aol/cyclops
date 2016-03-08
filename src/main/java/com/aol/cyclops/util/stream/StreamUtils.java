@@ -74,6 +74,7 @@ import com.aol.cyclops.internal.stream.operators.SkipWhileOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileTimeOperator;
 import com.aol.cyclops.internal.stream.operators.WindowStatefullyWhileOperator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
+import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.NonPausableHotStream;
@@ -1110,7 +1111,7 @@ public class StreamUtils{
 	 */
 	public final static <T,S, R> Stream<R> zipAnyM(Stream<T> stream,AnyM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return zipSequence(stream,second.toSequence(), zipper);
+		return zipSequence(stream,second.stream(), zipper);
 	}
 
 	/**
@@ -1610,7 +1611,7 @@ public class StreamUtils{
 		return stream.flatMap(fn);
 	}
 	public final static <T,R> Stream<R> flatMapAnyM(Stream<T> stream,Function<? super T,AnyM<? extends R>> fn) {
-		return AnyM.fromStream(stream).flatMap(fn).asSequence();
+		return AnyM.fromStream(stream).flatMap(fn).stream();
 		
 	}
 	

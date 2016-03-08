@@ -117,7 +117,7 @@ public class SetT<T> {
 	 */
    public <B> SetT<B> flatMap(Function<? super T,SetT<B>> f){
 	  
-	   return of( run.map(stream-> ReactiveSeq.fromIterable(stream).flatMap(a-> f.apply(a).run.asSequence()).flatMap(a->a.stream())
+	   return of( run.map(stream-> ReactiveSeq.fromIterable(stream).flatMap(a-> f.apply(a).run.stream()).flatMap(a->a.stream())
 			   .toSet()));
    }
    /**

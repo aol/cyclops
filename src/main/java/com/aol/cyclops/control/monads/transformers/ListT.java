@@ -110,7 +110,7 @@ public class ListT<T> {
 	 */
    public <B> ListT<B> flatMap(Function1<? super T,ListT<B>> f){
 	  
-	   return of( run.map(stream-> ReactiveSeq.fromList(stream).flatMap(a-> f.apply(a).run.asSequence()).flatMap(a->a.stream())
+	   return of( run.map(stream-> ReactiveSeq.fromList(stream).flatMap(a-> f.apply(a).run.stream()).flatMap(a->a.stream())
 			   .toList()));
    }
    /**

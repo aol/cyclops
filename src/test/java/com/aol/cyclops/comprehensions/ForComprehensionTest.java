@@ -100,7 +100,7 @@ public class ForComprehensionTest {
 			
 			Stream<Integer> res =Do.add(Arrays.asList(1,2))
 										.yield(v1 -> v1+1)
-										.toSequence();;
+										.stream();
 			
 			List<Integer> expected = Arrays.asList(2,3);
 		

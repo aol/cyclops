@@ -16,7 +16,7 @@ public class HeadTailTest {
 	@Test
 	public void headTailReplay(){
 	
-		ReactiveSeq<String> helloWorld = AnyM.streamOf("hello","world","last").toSequence();
+		ReactiveSeq<String> helloWorld = AnyM.streamOf("hello","world","last").stream();
 		HeadAndTail<String> headAndTail = helloWorld.headAndTail();
 		 String head = headAndTail.head();
 		 assertThat(head,equalTo("hello"));

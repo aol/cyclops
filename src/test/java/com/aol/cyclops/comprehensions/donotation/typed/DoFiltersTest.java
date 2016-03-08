@@ -46,7 +46,7 @@ public class DoFiltersTest {
 		Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
 							.withCollection( d-> asList(2.0))
 							.filter(d-> e ->     (e*d)>10.00)
-							.yield(base -> bonus->   base*(1.0+bonus)).toSequence();
+							.yield(base -> bonus->   base*(1.0+bonus)).stream();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(330.9));
@@ -59,7 +59,7 @@ public class DoFiltersTest {
 	public void do1(){
 		Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
 							.filter( d-> d > 10.00)
-							.yield(base -> base+10).toSequence();
+							.yield(base -> base+10).stream();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(110.3));
@@ -72,7 +72,7 @@ public class DoFiltersTest {
 							.withCollection( d-> asList(2.0))
 							.withCollection( d -> e->asList(10.0))
 							.filter(d-> e -> f->    (e*d*f)>10.00)
-							.yield(base -> bonus-> woot ->    base*(1.0+bonus)*woot).toSequence();
+							.yield(base -> bonus-> woot ->    base*(1.0+bonus)*woot).stream();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459.0));
@@ -84,7 +84,7 @@ public class DoFiltersTest {
 							.withCollection( d -> e->asList(10.0))
 							.withCollection( d -> e -> f -> asList(10.0))
 							.filter(d-> e -> f-> g->    (e*d*f*g)>10.00)
-							.yield(base -> bonus-> woot ->  f->   base*(1.0+bonus)*woot*f).toSequence();
+							.yield(base -> bonus-> woot ->  f->   base*(1.0+bonus)*woot*f).stream();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590.0));
@@ -97,7 +97,7 @@ public class DoFiltersTest {
 								.withCollection( d -> e -> f -> asList(10.0))
 								.withCollection( d -> e ->  f ->  g-> asList(10.0) )
 								.filter(d-> e -> f-> g-> h->   (e*d*f*g*h)>10.00)
-								.yield(base -> bonus-> woot ->  f-> g ->   base*(1.0+bonus)*woot*f*g).toSequence();
+								.yield(base -> bonus-> woot ->  f-> g ->   base*(1.0+bonus)*woot*f*g).stream();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900.0));
@@ -112,7 +112,7 @@ public class DoFiltersTest {
 							.withCollection( d -> e ->  f -> g -> h->
 									asList(10.0) )
 							.filter(d-> e -> f-> g-> h-> i->  (e*d*f*g*h*i)>10.00)
-							.yield(base -> bonus-> woot ->  f-> g -> h ->  base*(1.0+bonus)*woot*f*g*h).toSequence();
+							.yield(base -> bonus-> woot ->  f-> g -> h ->  base*(1.0+bonus)*woot*f*g*h).stream();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(3459000.0));
@@ -128,7 +128,7 @@ public class DoFiltersTest {
 												asList(10.0) )
 							.withCollection(  d -> e -> f ->  g -> h ->  i -> asList(10.0) )
 							.filter(d-> e -> f-> g-> h-> i-> j-> (e*d*f*g*h*i*j)>10.00)
-							.yield(base -> bonus-> woot ->  f-> g -> h -> i-> base*(1.0+bonus)*woot*f*g*h*i).toSequence();
+							.yield(base -> bonus-> woot ->  f-> g -> h -> i-> base*(1.0+bonus)*woot*f*g*h*i).stream();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(34590000.0));
@@ -145,7 +145,7 @@ public class DoFiltersTest {
 						.withCollection(  d -> e -> f ->  g -> h ->  i -> asList(10.0) )
 						.withCollection( d ->  e -> f ->  g ->  h ->  i ->  j -> asList(10.0) )
 						.filter(d-> e -> f-> g-> h-> i-> j-> k->(e*d*f*g*h*i*j*k)>10.00)
-						.yield(base -> bonus-> woot ->  f-> g -> h -> i-> j-> base*(1.0+bonus)*woot*f*g*h*i*j).toSequence();
+						.yield(base -> bonus-> woot ->  f-> g -> h -> i-> j-> base*(1.0+bonus)*woot*f*g*h*i*j).stream();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
 		assertThat(total,equalTo(345900000.0));

@@ -48,7 +48,7 @@ public class StreamTest {
 		
 		List<String> res = Do.addValues(new String[]{"hello world","hello"}) 
 							.yield( v1->  v1 + "1")
-							.asSequence().toList();
+							.stream().toList();
 		List<String> expected = Arrays.asList("hello world1", "hello1");
 		
 		
@@ -59,7 +59,7 @@ public class StreamTest {
 	public void stringStream() {
 		
 		List<String> res = Do.add("hello world") 
-							.yield( v-> ""+ v + "1").<String>toSequence().toList();
+							.yield( v-> ""+ v + "1").<String>stream().toList();
 		List<String> expected = Arrays.asList("h1", "e1", "l1", "l1", "o1",  " 1", "w1", "o1", "r1", 
 				"l1", "d1");
 		
@@ -146,7 +146,7 @@ public class StreamTest {
 		m.put("hello",10);
 		List<String> res = Do.addStream(m.entrySet().stream()) 
 								.yield( v-> ""+ v + "*")
-								.asSequence()
+								.stream()
 								.toList();
 		List<String> expected = Arrays.asList("hello=10*");
 		

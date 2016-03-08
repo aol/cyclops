@@ -25,7 +25,7 @@ public class LiftAndBindTest {
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
-								.asSequence(),
+								.stream(),
 								 File::new)
 								.collect(Collectors.toList());
 		
@@ -36,7 +36,7 @@ public class LiftAndBindTest {
 		
 		
 		List<String> result = StreamUtils.flatMapURL(AnyM.streamOf("input.file")
-								.asSequence()
+								.stream()
 								,getClass().getClassLoader()::getResource)
 								.collect(Collectors.toList());
 		
@@ -47,7 +47,7 @@ public class LiftAndBindTest {
 		
 		
 		List<Character> result = StreamUtils.flatMapCharSequence(AnyM.streamOf("input.file")
-								.asSequence()
+								.stream()
 								,i->"hello world")
 								.collect(Collectors.toList());
 		
@@ -60,7 +60,7 @@ public class LiftAndBindTest {
 		List<String> result = StreamUtils.flatMapBufferedReader(AnyM.streamOf("input.file")
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
-								.asSequence(),
+								.stream(),
 								BufferedReader::new)
 								.collect(Collectors.toList());
 								
