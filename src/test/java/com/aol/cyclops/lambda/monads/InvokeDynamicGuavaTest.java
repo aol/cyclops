@@ -1,12 +1,13 @@
 package com.aol.cyclops.lambda.monads;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
@@ -57,10 +58,29 @@ public class InvokeDynamicGuavaTest {
        assertThat(res.toList(),equalTo(Arrays.asList()));
     }
     @Test
+    public void flatMap2(){
+      List<Integer> res = AnyM.<Integer>ofSeq(Arrays.asList(1))
+                                         .flatMap(i-> AnyM.ofSeq(FluentIterable.from(Arrays.asList(2)))).unwrap();
+      
+       System.out.println(res);
+       assertThat(res,equalTo(Arrays.asList(2)));
+    }
+    @Test @Ignore
+    public void safeCrossTypeFlatMapflatMap3(){
+       FluentIterable res = AnyM.<Integer>ofSeq(FluentIterable.from(Arrays.asList(1)))
+                                         .flatMap(i-> AnyM.ofSeq(Arrays.asList(2))).unwrap();
+      
+       System.out.println(res);
+       assertThat(res.toList(),equalTo(Arrays.asList(2)));
+    }
+    @Test
     public void flatMap(){
-       
-       FluentIterable<Integer> res = AnyM.<Integer>ofSeq(FluentIterable.from(Arrays.asList(1)))
-               .flatMap(i-> AnyM.ofSeq(FluentIterable.from(Arrays.asList(2)))).unwrap();
+       FluentIterable res = AnyM.<Integer>ofSeq(FluentIterable.from(Arrays.asList(1)))
+           
+                                      .flatMap((Integer i)-> { System.out.println(i);
+                                            return AnyM.ofSeq(FluentIterable.from(Arrays.asList(2)));
+                                         }).unwrap();
+      
        System.out.println(res);
        assertThat(res.toList(),equalTo(Arrays.asList(2)));
     }

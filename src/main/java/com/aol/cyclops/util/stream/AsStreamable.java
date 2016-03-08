@@ -53,7 +53,10 @@ public class AsStreamable {
 		if(object instanceof Object[]){
             return (Iterable<T>)Arrays.asList((Object[])object);
         }
-        return (Iterable<T>)object;
+		if(object instanceof Iterable)
+            return (Iterable<T>)object;
+        
+        return Arrays.asList(object);
 	}
 	
 	private static <T> Iterable<T> collectStream(T object){
@@ -72,7 +75,10 @@ public class AsStreamable {
 		if(object instanceof Object[]){
 		    return (Iterable<T>)Arrays.asList((Object[])object);
 		}
-		return (Iterable<T>)object;
+		if(object instanceof Iterable)
+		    return (Iterable<T>)object;
+		
+		return Arrays.asList(object);
 	}
 	
 }

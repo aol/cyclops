@@ -12,7 +12,7 @@ import com.aol.cyclops.internal.stream.SeqUtils;
 public interface ToStream<T> extends Iterable<T>,ConvertableToReactiveSeq<T>{
     
     default ReactiveSeq<T> reactiveSeq(){
-        return stream();
+        return ReactiveSeq.fromStream(StreamSupport.stream(getStreamable().spliterator(), false));
     }
 	default Iterator<T> iterator(){
 		return stream().iterator();

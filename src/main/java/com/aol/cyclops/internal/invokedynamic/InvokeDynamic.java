@@ -17,31 +17,11 @@ import com.aol.cyclops.util.ExceptionSoftener;
 
 public class InvokeDynamic {
     private static volatile Map<Method, CallSite> callSites = new ConcurrentHashMap<>();
-    private static volatile Map<Class, Optional<Method>> streamMethod = new ConcurrentHashMap<>();
-    private static volatile Map<Class, Optional<Method>> supplierMethod = new ConcurrentHashMap<>();
+
     private static volatile Map<String,Map<Class, List<Method>>> generalMethods = new ConcurrentHashMap<>();
-    public Optional<Stream> stream(Object t) {
-
-        Class clazz = t.getClass();
-
-        Optional<Method> om = streamMethod.computeIfAbsent(
-                clazz,
-                c -> Stream.of(c.getMethods())
-                        .filter(method -> "stream".equals(method.getName()) || "toStream".equals(method.getName()))
-                        .filter(method -> method.getParameterCount() == 0)
-                        .findFirst().map(m2 -> {
-                            m2.setAccessible(true);
-                            return m2;
-                        }));
-        if (!om.isPresent())
-            return Optional.empty();
-        Method m = om.get();
-
-        return Optional.of((Stream) executeMethod( m,t));
-
-    }
+   
     public <T> Optional<T> execute(List<String> methodNames, Object obj, Object... args){
-        return (Optional)methodNames.stream().map(s -> execute(s,obj,args)).filter(Optional::isPresent).findFirst().get();
+        return (Optional)methodNames.stream().map(s -> execute(s,obj,args)).filter(Optional::isPresent).findFirst().flatMap(i->i);
     }
     public <T> Optional<T> execute(String methodName,Object obj,Object... args) {
         Class clazz = obj instanceof Class ?  (Class)obj :obj.getClass();
@@ -61,26 +41,7 @@ public class InvokeDynamic {
         }
         return Optional.empty();
     }
-    public <T> Optional<T> supplier(Object t,List<String> methodNames) {
-
-        Class clazz = t.getClass();
-
-        Optional<Method> om = streamMethod.computeIfAbsent(
-                clazz,
-                c -> Stream.of(c.getMethods())
-                        .filter(method -> methodNames.contains(method.getName()))
-                        .filter(method -> method.getParameterCount() == 0)
-                        .findFirst().map(m2 -> {
-                            m2.setAccessible(true);
-                            return m2;
-                        }));
-        if (!om.isPresent())
-            return Optional.empty();
-        Method m = om.get();
-
-        return Optional.of( (T)executeMethod( m,t));
-
-    }
+   
     private Object executeStaticMethod(Method m, Class type,Object... args) {
         try {
 
@@ -114,7 +75,7 @@ public class InvokeDynamic {
         return null;
     }
 
-    private Object executeMethod(Method m, Object obj,Object... args) {
+    public Object executeMethod(Method m, Object obj,Object... args) {
         try {
 
             
