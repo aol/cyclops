@@ -13,20 +13,19 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.ToAnyM;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.applicative.Applicativable;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 
-public interface Maybe<T> extends Value<T>, 
+public interface Maybe<T> extends MonadicValue<T>,
 								Supplier<T>, 
 								ConvertableFunctor<T>, 
 								Filterable<T>,
-								Applicativable<T>,
-								ToAnyM<T>{
+								Applicativable<T>
+								{
 
 	
 	final static Maybe EMPTY = new Nothing<>();

@@ -220,7 +220,7 @@ public class FluentFunctionTest {
 											  .liftM()
 											  .apply(AnyM.streamOf(1,2,3,4));
 		
-		assertThat(result.asSequence().toList(),
+		assertThat(result.stream().toList(),
 					equalTo(Arrays.asList(2,3,4,5)));
 	}
 	@Test

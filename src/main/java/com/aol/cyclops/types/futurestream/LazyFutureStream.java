@@ -77,6 +77,7 @@ import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
@@ -1494,6 +1495,12 @@ public interface LazyFutureStream<U> extends  Functor<U>,
 
         return (LazyFutureStream) LazySimpleReactStream.super.flatMap(flatFn);
     }
+    @Override
+    default <R> LazyFutureStream<R> flatMapAnyM(
+            Function<? super U,  AnyM<? extends R>> flatFn) {
+
+        return (LazyFutureStream) LazySimpleReactStream.super.flatMap(flatFn.andThen(anyM->anyM.stream()));
+    }
 
     /**
      * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -2239,8 +2246,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
     @Override
     default LazyFutureStream<U> cycle(){
     	return fromStream(StreamUtils.cycle(this));
-    //    RepeatableStream s = new RepeatableStream(ToLazyCollection.toLazyCollection(toQueue().stream(getSubscription()).iterator()));
-     //   return fromStream(Stream.iterate(s.stream(),s1-> s.stream()).flatMap(i->i));
+   
     }
 
     /**
@@ -2805,20 +2811,12 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      * @see com.aol.cyclops.control.ReactiveSeq#anyM()
      */
     @Override
-    default AnyM<U> anyM() {
+    default AnyMSeq<U> anyM() {
     	return AnyM.fromStream(this);
     }
 
 
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#flatMapAnyM(java.util.function.Function)
-     */
-    @Override
-    default <R> LazyFutureStream<R> flatMapAnyM(
-            Function<? super U, AnyM<? extends R>> fn) {
-        return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                .flatMapAnyM(fn));
-    }
+    
 
     /*
      * @see com.aol.cyclops.control.ReactiveSeq#flatMapCollection(java.util.function.Function)

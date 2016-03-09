@@ -28,7 +28,7 @@ public class EvalTTest {
 		Function<EvalT<Integer>, EvalT<Integer>> optTAdd2 = EvalT.lift(add2);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,3);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofValue(withNulls);
 		AnyM<Eval<Integer>> streamOpt = stream.map(this::toEval);
 		List<Integer> results = optTAdd2.apply(EvalT.of(streamOpt))
 										.unwrap()
@@ -49,11 +49,11 @@ public class EvalTTest {
 		BiFunction<EvalT<Integer>,EvalT<Integer>, EvalT<Integer>> optTAdd2 = EvalT.lift2(add);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,3);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofSeq(withNulls);
 		AnyM<Eval<Integer>> streamOpt = stream.map(this::toEval);
 		
 		CompletableFuture<Eval<Integer>> two = CompletableFuture.completedFuture(Eval.now(2));
-		AnyM<Eval<Integer>> future=  AnyM.ofMonad(two);
+		AnyM<Eval<Integer>> future=  AnyM.ofValue(two);
 		List<Integer> results = optTAdd2.apply(EvalT.of(streamOpt),EvalT.of(future))
 										.unwrap()
 										.<Stream<Eval<Integer>>>unwrap()
@@ -68,7 +68,7 @@ public class EvalTTest {
 	
 	@Test
 	public void filterFail(){
-		EvalT<Integer> optionT = EvalT.of(AnyM.ofMonad(Stream.of(Eval.now(10))));
+		EvalT<Integer> optionT = EvalT.of(AnyM.ofSeq(Stream.of(Eval.now(10))));
 		assertThat(optionT.filter(num->num<10).unwrap().<Stream<Maybe<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Maybe.none()));
 	}
@@ -81,22 +81,22 @@ public class EvalTTest {
 	@Test
 	public void peek() {
 		result = null;
-		EvalT<Integer> optionT = EvalT.of(AnyM.ofMonad(Stream.of(Eval.now(10))));
+		EvalT<Integer> optionT = EvalT.of(AnyM.ofSeq(Stream.of(Eval.now(10))));
 		optionT.peek(num->result = "hello world"+num)
 				.unwrap().<Stream<Eval<String>>>unwrap().collect(Collectors.toList());
 		assertThat(result,  equalTo("hello world10"));
 	}
 	@Test
 	public void map() {
-		EvalT<Integer> optionT = EvalT.of(AnyM.ofMonad(Stream.of(Eval.now(10))));
+		EvalT<Integer> optionT = EvalT.of(AnyM.ofSeq(Stream.of(Eval.now(10))));
 		assertThat(optionT.map(num->"hello world"+num).unwrap().<Stream<Eval<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Eval.now("hello world10")));
 	}
 	@Test
 	public void flatMap() {
-		EvalT<Integer> optionT = EvalT.of(AnyM.ofMonad(Stream.of(Eval.now(10))));
+		EvalT<Integer> optionT = EvalT.of(AnyM.ofSeq(Stream.of(Eval.now(10))));
 		
-		assertThat(optionT.flatMap(num->EvalT.fromAnyM(AnyM.ofMonad(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMap(num->EvalT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
 				.unwrap().<Stream<Eval<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Eval.now("hello world10")));
 	}

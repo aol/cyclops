@@ -85,7 +85,7 @@ public class CompletableFutureT<A> {
 	 */
 
    public <B> CompletableFutureT<B> flatMap(Function<? super A,CompletableFutureT<B>> f){
-	   return of(run.map(future-> future.thenCompose(a-> f.apply(a).run.asSequence().toList().get(0))));
+	   return of(run.map(future-> future.thenCompose(a-> f.apply(a).run.stream().toList().get(0))));
    }
    /**
 	 * Lift a function into one that accepts and returns an CompletableFutureT

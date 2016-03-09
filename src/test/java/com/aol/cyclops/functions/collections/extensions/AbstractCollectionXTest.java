@@ -980,7 +980,7 @@ public abstract class AbstractCollectionXTest {
 		peek = 0 ;
 		   AnyM.fromStream(Stream.of(asList(1,3)))
 				  				.flatMap(c->AnyM.fromStream(c.stream()))
-				  				.asSequence()
+				  				.stream()
 				  				.map(i->i*2)
 				  				.peek(i-> peek=i)
 				  				.collect(Collectors.toList());
@@ -990,7 +990,7 @@ public abstract class AbstractCollectionXTest {
 	public void testMap() {
 		  List<Integer> list = AnyM.fromStream(Stream.of(asList(1,3)))
 				  				.flatMap(c->AnyM.fromStream(c.stream()))
-				  				.asSequence()
+				  				.stream()
 				  				.map(i->i*2)
 				  				.peek(System.out::println)
 				  				.collect(Collectors.toList());

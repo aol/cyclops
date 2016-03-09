@@ -58,14 +58,12 @@ import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableFilterable;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
+import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative2;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative3;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative4;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -77,9 +75,6 @@ import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.QuintFunction;
-import com.aol.cyclops.util.function.TriFunction;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
@@ -1471,7 +1466,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	/**
 	 * @return this SequenceM converted to AnyM format
 	 */
-	public AnyM<T> anyM();
+	public AnyMSeq<T> anyM();
 
 	/*
 	 * (non-Javadoc)

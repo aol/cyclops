@@ -213,7 +213,7 @@ public class FluentSupplierTest {
 											  .liftM()
 											  .get();
 		
-		assertThat(result.asSequence().toList(),
+		assertThat(result.stream().toList(),
 					equalTo(Arrays.asList(1)));
 	}
 	@Test

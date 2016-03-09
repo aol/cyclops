@@ -44,7 +44,7 @@ public class StreamTTest {
 	
 	@Test
 	public void filterFail(){
-		StreamT<Integer> streamT = StreamT.of(AnyM.ofMonad(Optional.of(Stream.of(10))));
+		StreamT<Integer> streamT = StreamT.of(AnyM.ofValue(Optional.of(Stream.of(10))));
 		assertThat(streamT.filter(num->num<10).unwrap().<Optional<Stream<String>>>unwrap()
 						.get().collect(Collectors.toList()),  equalTo(Arrays.asList()));
 		
@@ -52,14 +52,14 @@ public class StreamTTest {
 	}
 	@Test
 	public void filterSuccess(){
-		StreamT<Integer> streamT = StreamT.of(AnyM.ofMonad(Optional.of(Stream.of(10))));
+		StreamT<Integer> streamT = StreamT.of(AnyM.ofValue(Optional.of(Stream.of(10))));
 		assertThat(streamT.filter(num->num==10).unwrap().<Optional<Stream<String>>>unwrap()
 						.get().collect(Collectors.toList()),  equalTo(Arrays.asList(10)));
 	}
 	@Test
 	public void peek() {
 		result = null;
-		StreamT<Integer> streamT = StreamT.of(AnyM.ofMonad(Optional.of(Stream.of(10))));
+		StreamT<Integer> streamT = StreamT.of(AnyM.ofValue(Optional.of(Stream.of(10))));
 		
 		streamT.peek(num->result = "hello world"+num)
 				.unwrap().<Optional<Stream<String>>>unwrap().get().collect(Collectors.toList());
@@ -67,7 +67,7 @@ public class StreamTTest {
 	}
 	@Test
 	public void map() {
-		StreamT<Integer> streamT = StreamT.of(AnyM.ofMonad(Optional.of(Stream.of(10))));
+		StreamT<Integer> streamT = StreamT.of(AnyM.ofValue(Optional.of(Stream.of(10))));
 		assertThat(streamT.map(num->"hello world"+num)
 						.unwrap().<Optional<Stream<String>>>unwrap()
 						.get().collect(Collectors.toList()),  equalTo(Arrays.asList("hello world10")));

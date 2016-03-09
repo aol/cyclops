@@ -1,14 +1,12 @@
 package com.aol.cyclops.internal;
 import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.Mutable;
@@ -39,12 +37,12 @@ import com.aol.cyclops.util.stream.Streamable;
  * @param <MONAD>
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<T>, WrappingFilterable<T>{
+public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T>{
 	
 	
-	public <MONAD,T> Monad<MONAD,T> withMonad(Object invoke);
+	public <T> Monad<T> withMonad(Object invoke);
 	
-	default <T> Monad<MONAD,T> withFunctor(T functor){
+	default <T> Monad<T> withFunctor(T functor){
 		return withMonad(functor);
 	}
 	default Object getFunctor(){
@@ -69,11 +67,11 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	 * 
 	 * @return A Monad that wraps a Stream
 	 */
-	default <R,NT> Monad<R,NT> streamedMonad(){
+	default <NT> Monad<NT> streamedMonad(){
 		Stream stream = Stream.of(1);
-		 Monad r = this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
+		 Monad r = this.<T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
 				stream).executeflatMap(stream, i-> unwrap()));
-		 return r.flatMap(e->e);
+		 return r.bind(e->e);
 	}
 	/**
 	 * Unwrap this Monad into a Stream.
@@ -98,7 +96,7 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	 * @param times Times values should be repeated within a Stream
 	 * @return Stream with values repeated
 	 */
-	default Monad<Stream<T>,T> cycle(int times){
+	default Monad<T> cycle(int times){
 		
 		return fromStream(SeqUtils.cycle(times,Streamable.fromStream(stream())));
 		
@@ -113,19 +111,19 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
 	 */
-	default   Monad<MONAD,T>  filter(Predicate<? super T> fn){
+	default   Monad<T>  filter(Predicate<? super T> fn){
 		return (Monad)WrappingFilterable.super.filter(fn);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
 	 */
-	default  <R> Monad<MONAD,R> map(Function<? super T,? extends R> fn){
+	default  <R> Monad<R> map(Function<? super T,? extends R> fn){
 		return (Monad)WrappingFunctor.super.map(fn);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
 	 */
-	default   Monad<MONAD,T>  peek(Consumer<? super T> c) {
+	default   Monad<T>  peek(Consumer<? super T> c) {
 		return (Monad)WrappingFunctor.super.peek(c);
 	}
 
@@ -136,8 +134,8 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	 */
-	default <R> Monad<MONAD,T> bind(Function<? super T,? extends R> fn){
-		return withMonad((MONAD)new ComprehenderSelector().selectComprehender(
+	default <R> Monad<R> bind(Function<? super T,?> fn){
+		return withMonad(new ComprehenderSelector().selectComprehender(
 				unwrap())
 				.executeflatMap(unwrap(), fn));
 	
@@ -149,8 +147,8 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	 * @param fn flatMap function
 	 * @return flatMapped monad
 	 */
-	default <MONAD1,R> Monad<MONAD1,R> liftAndBind(Function<? super T,?> fn){
-		return withMonad((MONAD)new ComprehenderSelector().selectComprehender(
+	default <R> Monad<R> liftAndBind(Function<? super T,?> fn){
+		return withMonad(new ComprehenderSelector().selectComprehender(
 				unwrap())
 				.liftAndFlatMap(unwrap(), fn));
 	
@@ -161,44 +159,19 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	 * 
 	 * @return Flattened / joined one level
 	 */
-	default <T1> Monad<T,T1> flatten(){
-		return (Monad)this.flatMap( t->  t instanceof AnyM ?   (MONAD)((AnyM)t).unwrap() : (MONAD)t );
+	default <T1> Monad<T1> flatten(){
+		return this.<T1>bind( t->  t instanceof AnyM ?   (T1)((AnyM)t).unwrap() : (T1)t );
 	}
-	
-	/**
-	 * @return This monad coverted to an Optional
-	 * 
-	 * Streams will be converted into <pre>{@code Optional<List<T>> }</pre>
-	 * 
-	 */
-	default <T> Optional<T> toOptional(){
-		Optional stream = Optional.of(1);
-		return this.<Optional,T>withMonad((Optional)new ComprehenderSelector().selectComprehender(
-				stream).executeflatMap(stream, i-> unwrap())).unwrap();
-		
-	}
-	
-	default <R> Monad<Optional<R>,R> flatMapToOptional(Function<? super MONAD,Optional<? extends R>> fn){
-		Optional opt = Optional.of(1);
-		return new MonadWrapper(opt.flatMap(i->fn.apply(unwrap())));
-	}
-	
-	default <R> Monad<Stream<R>,R> flatMapToStream(Function<? super MONAD,Stream<? extends R>> fn){
+
+	default <R> Monad<R> flatMapToStream(Function<Object,? extends Stream<? extends R>> fn){
 		
 		
 		Stream stream = Stream.of(1);
-		 Monad r = this.<Stream,T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
+		 Monad r = this.<T>withMonad((Stream)new ComprehenderSelector().selectComprehender(
 				stream).executeflatMap(stream, i-> unwrap()));
-		 return r.flatMap(e->e);
+		 return r.bind(e->e);
 		 
 	}
-	
-	default <R> Monad<CompletableFuture<R>,R> flatMapToCompletableFuture(Function<? super MONAD,CompletableFuture<? extends R>> fn){
-		CompletableFuture future = CompletableFuture.completedFuture(1);
-		return new MonadWrapper<>(future.thenCompose(i->fn.apply(unwrap())));
-	}
-	
-
 	
 
 	/**
@@ -207,13 +180,15 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	 * @param value  to construct new instance with
 	 * @return new instance of underlying Monad
 	 */
-	default <MONAD,T> MONAD unit(T value) {
-		return (MONAD)new ComprehenderSelector().selectComprehender(unwrap()).of(value);
+	default <T> Object unit(T value) {
+		return new ComprehenderSelector().selectComprehender(unwrap()).of(value);
 	}
 	
 	default  T get(){
 		Mutable<T> captured = Mutable.of(null);
-		new ComprehenderSelector().selectComprehender(unwrap()).resolveForCrossTypeFlatMap(new Comprehender(){
+		
+		Comprehender c = new ComprehenderSelector().selectComprehender((Object)unwrap());
+		c.resolveForCrossTypeFlatMap(new Comprehender(){
 
 			/* (non-Javadoc)
 			 * @see com.aol.cyclops.lambda.api.Comprehender#of(java.lang.Object)
@@ -259,99 +234,111 @@ public interface Monad<MONAD,T> extends MonadFunctions<MONAD,T>,WrappingFunctor<
 	
 	
 	
-	/**
-	 * flatMap operation
-	 * 
-	 * @param fn
-	 * @return
-	 */
-	default <R extends MONAD,NT> Monad<R,NT> flatMap(Function<? super T,? extends R> fn) {
-		return (Monad)bind(fn);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#unwrap()
 	 */
-	default   MONAD unwrap(){
-		return (MONAD)unwrap();
-	}
+	Object unwrap();
 	
 	
 	
 	
 	
-	/**
-	 * @return AnyM view on a wrapped Monad, with a single typed parameter - which is the datatype
-	 * ultimately being handled by the Monad.
-	 * 
-	 * E.g.
-	 * <pre>{@code 
-	 * 		Monad<Stream<String>,String> becomes Simplex<String>
-	 * }</pre>
-	 * To get back to <pre>{@code Stream<String> }</pre> use
-	 * 
-	 * <pre>{@code
-	 *   
-	 * 	simplex.<Stream<String>>.monad();  
-	 * }</pre>
-	 * 
-	 */
-	public <T> AnyM<T> anyM();
+
 	public <T> AnyMValue<T> anyMValue();
 	public <T> AnyMSeq<T> anyMSeq();
 	public <T> ReactiveSeq<T>  sequence();
-	/**
-	 * Create a duck typed Monad wrapper. Using AnyM we focus only on the underlying type
-	 * e.g. instead of 
-	 * <pre>
-	 * {@code 
-	 *  Monad<Stream<Integer>,Integer> stream;
-	 * 
-	 * we can write
-	 * 
-	 *   AnyM<Integer> stream;
-	 * }</pre>
-	 *  
-	 * The wrapped Monaad should have equivalent methods for
-	 * 
-	 * <pre>
-	 * {@code 
-	 * map(F f)
-	 * 
-	 * flatMap(F<x,MONAD> fm)
-	 * 
-	 * and optionally 
-	 * 
-	 * filter(P p)
-	 * }
-	 * </pre>
-	 * 
-	 * A Comprehender instance can be created and registered for new Monad Types. Cyclops will attempt
-	 * to manage any Monad type (via the InvokeDynamicComprehender) althouh behaviour is best guaranteed with
-	 * customised Comprehenders.
-	 * 
-	 * Where F is a Functional Interface of any type that takes a single parameter and returns
-	 * a result.	 
-	 * Where P is a Functional Interface of any type that takes a single parameter and returns
-	 * a boolean
-	 * 
-	 *  flatMap operations on the duck typed Monad can return any Monad type
-	 *  
-	 * 
-	 * @param o  to wrap
-	 * @return Duck typed Monad
-	 */
-	public static <MONAD,T> Monad<MONAD,T> of(Object o){
+	
+	public static <T> Monad<T> of(Object o){
 		return new MonadWrapper(o);
 	}
 
-	default Monad<MONAD,T> empty(){
+	default Monad<T> empty(){
 		return (Monad)new ComprehenderSelector().selectComprehender(
 				unwrap()).empty();
 	}
-	static <T> Monad<Stream<T>,T> fromStream(Stream<T> monad){
+	static <T> Monad<T> fromStream(Stream<T> monad){
 		return new MonadWrapper<>(monad);
 	}
 
+
+    /**
+     * Apply function/s inside supplied Monad to data in current Monad
+     * 
+     * e.g. with Streams
+     * <pre>
+     * {@code 
+     * 
+     * AnyM<Integer> applied = AsAnyM.anyM(Stream.of(1,2,3))
+     *                               .applyM(AsAnyM.anyM(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2)));
+    
+        assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
+     }</pre>
+     * 
+     * with Optionals 
+     * 
+     * <pre>{@code
+     * 
+     *  AnyM<Integer> applied = AsAnyM.anyM(Optional.of(2))
+     *                                .applyM( AsAnyM.anyM(Optional.of( (Integer a)->a+1)) );
+        
+        assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(3)));
+        }
+     * </pre>
+     * @param fn
+     * @return
+     */
+    default <R> Monad<R> applyM(Monad<Function<? super T,? extends R>> fn){
+    
+        return (Monad)this.bind(v-> fn.map(innerFn -> innerFn.apply(v))
+                            .unwrap());
+        
+    }
+    
+    /**
+     * 
+     * Replicate given Monad
+     * 
+     * <pre>{@code 
+     *  
+     *   AnyM<Integer> applied =AsAnyM.anyM(Optional.of(2))
+     *                                .replicateM(5);
+     *                                
+         assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
+         
+         }</pre>
+     * 
+     * 
+     * @param times number of times to replicate
+     * @return Replicated Monad
+     */
+    default <R> Monad<R> replicateM(int times){
+        
+        return (Monad)new MonadWrapper<> (unit(1))
+                        .flatten()
+                        .bind(v-> cycle(times).unwrap());       
+    }
+    /**
+     * Perform a reduction where NT is a (native) Monad type
+     * e.g. 
+     * <pre>{@code 
+     * Monoid<Optional<Integer>> optionalAdd = Monoid.of(Optional.of(0), (a,b)-> Optional.of(a.get()+b.get()));
+        
+        assertThat(AsAnyM.anyM(Stream.of(2,8,3,1)).reduceM(optionalAdd).unwrap(),equalTo(Optional.of(14)));
+        }</pre>
+     * 
+     * 
+     * @param reducer
+     * @return
+     */
+    default <R> Monad<R> reduceM(Monoid<R> reducer){
+    //  List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
+    //  convert to list Optionals
+        
+        return new MonadWrapper<>(Monad.fromStream(stream()).map(value ->new ComprehenderSelector()
+                            .selectComprehender(reducer.zero().getClass()).of(value))
+                            .sequence().reduce((Monoid)reducer));       
+    }
 	
 
 }

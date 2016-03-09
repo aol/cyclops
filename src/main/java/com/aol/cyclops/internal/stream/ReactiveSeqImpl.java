@@ -56,6 +56,7 @@ import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.Unwrapable;
+import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
@@ -501,9 +502,10 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * </pre>
 	 * 
 	 */
-	public final <S, R> ReactiveSeq<R> zip(AnyM<? extends S> second,
+	@Override
+	public final <S, R> ReactiveSeq<R> zipAnyM(AnyM<? extends S> second,
 			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return zipSequence(second.toSequence(), zipper);
+		return zipSequence(second.stream(), zipper);
 	}
 
 	/**
@@ -1209,7 +1211,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	/**
 	 * @return this SequenceM converted to AnyM format
 	 */
-	public AnyM<T> anyM(){
+	@Override
+	public AnyMSeq<T> anyM(){
 		return AnyM.fromStream(stream);
 
 	}
@@ -1250,6 +1253,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * @param fn to be applied
 	 * @return new stage in Sequence with flatMap operation to be lazily applied
 	 */
+	@Override
 	public final <R> ReactiveSeq<R> flatMapAnyM(Function<? super T,AnyM<? extends R>> fn) {
 		return StreamUtils.reactiveSeq(StreamUtils.flatMapAnyM(stream,fn),reversable);
 	}
@@ -1826,43 +1830,11 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	}
 
 
-	@Override
-	public <S, R> ReactiveSeq<R> zipAnyM(AnyM<? extends S> second,
-			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return StreamUtils.reactiveSeq(StreamUtils.zipAnyM(stream,second,zipper),reversable);
-	}
+	
 
 
 	
-/**
 
-	@Override
-	public <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Stream<U> other) {
-		return StreamUtils.sequenceM(stream.crossJoin(other),reversable);
-	}
-
-
-	@Override
-	public <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Stream<U> other,
-			BiPredicate<? super T, ? super U> predicate) {
-		
-		return StreamUtils.sequenceM(stream.innerJoin(other, predicate),reversable);
-	}
-
-
-	@Override
-	public <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Stream<U> other,
-			BiPredicate<? super T, ? super U> predicate) {
-		return StreamUtils.sequenceM(stream.leftOuterJoin(other, predicate),reversable);
-	}
-
-
-	@Override
-	public <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Stream<U> other,
-			BiPredicate<? super T, ? super U> predicate) {
-		return StreamUtils.sequenceM(stream.rightOuterJoin(other, predicate),reversable);
-	}
-**/
 
 	@Override
 	public ReactiveSeq<T> onEmpty(T value) {

@@ -36,18 +36,18 @@ public class InvokeDynamicTest {
     }
     @Test
     public void map(){
-       MyStream<Integer> res = AnyM.<Integer>ofMonad(MyStream.of(1)).map(i->i+2).unwrap();
+       MyStream<Integer> res = AnyM.<Integer>ofValue(MyStream.of(1)).map(i->i+2).unwrap();
        assertThat(res.get(),equalTo(3));
     }
     @Test
     public void filter(){
-       MyStream<Integer> res = AnyM.<Integer>ofMonad(MyStream.of(1))
+       MyStream<Integer> res = AnyM.<Integer>ofValue(MyStream.of(1))
                .filter(i->i>0).unwrap();
        assertThat(res.get(),equalTo(1));
     }
     @Test
     public void filterEmpty(){
-       MyStream<Integer> res = AnyM.<Integer>ofMonad(MyStream.of(1))
+       MyStream<Integer> res = AnyM.<Integer>ofValue(MyStream.of(1))
                .filter(i->i>10).unwrap();
        assertThat(res.get(),nullValue());
     }

@@ -21,10 +21,10 @@ public class StreamTTest {
 
 	@Test
 	public void flatMap() {
-		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofMonad(Optional.of(Streamable.of(10))));
+		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofValue(Optional.of(Streamable.of(10))));
 		
 		
-		assertThat(streamT.flatMap(num->StreamableT.fromAnyM(AnyM.ofMonad(Stream.of("hello world"+num))))
+		assertThat(streamT.flatMap(num->StreamableT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
 						.unwrap()
 						.<Optional<Streamable<String>>>unwrap()
 						.get()

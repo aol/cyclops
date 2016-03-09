@@ -43,7 +43,7 @@ public class CompletableFutureTTest {
 		BiFunction<CompletableFutureT<Integer>,CompletableFutureT<Integer>,CompletableFutureT<Integer>> optTAdd2 = CompletableFutureT.lift2(add);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,3);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofSeq(withNulls);
 		AnyM<CompletableFuture<Integer>> streamOpt = stream.map(CompletableFuture::completedFuture);
 		
 		CompletableFuture<CompletableFuture<Integer>> two = CompletableFuture.completedFuture(CompletableFuture.completedFuture(2));

@@ -29,7 +29,7 @@ public class TryTTest {
 		Function<TryT<Integer,RuntimeException>, TryT<Integer,RuntimeException>> optTAdd2 = TryT.lift(add2);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,null);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofSeq(withNulls);
 		AnyM<Try<Integer,RuntimeException>> streamOpt = stream.map(this::toTry);
 		List<Integer> results = optTAdd2.apply(TryT.of(streamOpt))
 										.unwrap()
@@ -50,11 +50,11 @@ public class TryTTest {
 		BiFunction<TryT<Integer,RuntimeException>,TryT<Integer,RuntimeException>, TryT<Integer,RuntimeException>> optTAdd2 = TryT.lift2(add);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,null);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofSeq(withNulls);
 		AnyM<Try<Integer,RuntimeException>> streamOpt = stream.map(this::toTry);
 		
 		CompletableFuture<Try<Integer,RuntimeException>> two = CompletableFuture.completedFuture(Try.of(2));
-		AnyM<Try<Integer,RuntimeException>> future=  AnyM.ofMonad(two);
+		AnyM<Try<Integer,RuntimeException>> future=  AnyM.ofValue(two);
 		List<Integer> results = optTAdd2.apply(TryT.of(streamOpt),TryT.of(future))
 										.unwrap()
 										.<Stream<Try<Integer,RuntimeException>>>unwrap()
@@ -69,7 +69,7 @@ public class TryTTest {
 	
 	@Test
 	public void filterFail(){
-		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofMonad(Stream.of(Try.of(10))));
+		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofValue(Stream.of(Try.of(10))));
 		assertThat(optionT.filter(num->num<10).unwrap().<Stream<Maybe<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Maybe.none()));
 	}
@@ -82,22 +82,22 @@ public class TryTTest {
 	@Test
 	public void peek() {
 		result = null;
-		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofMonad(Stream.of(Try.of(10))));
+		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofValue(Stream.of(Try.of(10))));
 		optionT.peek(num->result = "hello world"+num)
 				.unwrap().<Stream<Try<String,RuntimeException>>>unwrap().collect(Collectors.toList());
 		assertThat(result,  equalTo("hello world10"));
 	}
 	@Test
 	public void map() {
-		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofMonad(Stream.of(Try.of(10))));
+		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofSeq(Stream.of(Try.of(10))));
 		assertThat(optionT.map(num->"hello world"+num).unwrap().<Stream<Try<String,RuntimeException>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Try.of("hello world10")));
 	}
 	@Test
 	public void flatMap() {
-		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofMonad(Stream.of(Try.of(10))));
+		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofSeq(Stream.of(Try.of(10))));
 		
-		assertThat(optionT.flatMap(num->TryT.fromAnyM(AnyM.ofMonad(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMap(num->TryT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
 				.unwrap().<Stream<Try<String,RuntimeException>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Try.of("hello world10")));
 	}

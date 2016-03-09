@@ -26,7 +26,7 @@ public class MaybeTTest {
 		Function<MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift(add2);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,null);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofSeq(withNulls);
 		AnyM<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
 		List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt))
 										.unwrap()
@@ -44,11 +44,11 @@ public class MaybeTTest {
 		BiFunction<MaybeT<Integer>,MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift2(add);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,null);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofSeq(withNulls);
 		AnyM<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
 		
 		CompletableFuture<Maybe<Integer>> two = CompletableFuture.completedFuture(Maybe.of(2));
-		AnyM<Maybe<Integer>> future=  AnyM.ofMonad(two);
+		AnyM<Maybe<Integer>> future=  AnyM.ofValue(two);
 		List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt),MaybeT.of(future))
 										.unwrap()
 										.<Stream<Maybe<Integer>>>unwrap()
@@ -63,7 +63,7 @@ public class MaybeTTest {
 	
 	@Test
 	public void filterFail(){
-		MaybeT<Integer> optionT = MaybeT.of(AnyM.ofMonad(Stream.of(Maybe.of(10))));
+		MaybeT<Integer> optionT = MaybeT.of(AnyM.ofSeq(Stream.of(Maybe.of(10))));
 		assertThat(optionT.filter(num->num<10).unwrap().<Stream<Maybe<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Maybe.none()));
 	}
@@ -76,7 +76,7 @@ public class MaybeTTest {
 	@Test
 	public void peekNull() {
 		result = null;
-		MaybeT<Integer> optionT = MaybeT.of(AnyM.ofMonad(Stream.of(Maybe.of(10))));
+		MaybeT<Integer> optionT = MaybeT.of(AnyM.ofSeq(Stream.of(Maybe.of(10))));
 		optionT.peek(num->result = "hello world"+num)
 				.unwrap().<Stream<Maybe<Integer>>>unwrap().collect(Collectors.toList());
 		assertTrue(result==null); //maybe is lazy
@@ -85,15 +85,15 @@ public class MaybeTTest {
 	
 	@Test
 	public void map() {
-		MaybeT<Integer> optionT = MaybeT.of(AnyM.ofMonad(Stream.of(Maybe.of(10))));
+		MaybeT<Integer> optionT = MaybeT.of(AnyM.ofSeq(Stream.of(Maybe.of(10))));
 		assertThat(optionT.map(num->"hello world"+num).unwrap().<Stream<Maybe<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Maybe.of("hello world10")));
 	}
 	@Test
 	public void flatMap() {
-		MaybeT<Integer> optionT = MaybeT.of(AnyM.ofMonad(Stream.of(Maybe.of(10))));
+		MaybeT<Integer> optionT = MaybeT.of(AnyM.ofSeq(Stream.of(Maybe.of(10))));
 		
-		assertThat(optionT.flatMap(num->MaybeT.fromAnyM(AnyM.ofMonad(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMap(num->MaybeT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
 				.unwrap().<Stream<Maybe<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Maybe.of("hello world10")));
 	}

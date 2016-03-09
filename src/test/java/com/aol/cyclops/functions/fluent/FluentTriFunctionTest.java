@@ -229,7 +229,7 @@ public class FluentTriFunctionTest {
 											  .liftM()
 											  .apply(AnyM.streamOf(1,2,3,4),AnyM.ofNullable(1),AnyM.ofNullable(10));
 		
-		assertThat(result.asSequence().toList(),
+		assertThat(result.stream().toList(),
 					equalTo(Arrays.asList(12,13,14,15)));
 	}
 	@Test

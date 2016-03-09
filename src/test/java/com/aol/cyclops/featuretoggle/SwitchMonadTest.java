@@ -16,9 +16,9 @@ import com.aol.cyclops.control.AnyM;
 public class SwitchMonadTest {
 	@Test
 	public void switchTest(){
-		assertThat(AnyM.ofMonad(FeatureToggle.enable("hello world"))
+		assertThat(AnyM.ofValue(FeatureToggle.enable("hello world"))
 						.map(o-> "2" + o)
-						.asSequence()
+						.stream()
 						.toList(),equalTo(Arrays.asList("2hello world")));
 	}
 	
@@ -27,7 +27,7 @@ public class SwitchMonadTest {
 	
 		List<Integer> list = AnyM.fromStream(Stream.of(1,2,3))
 									.<Integer>bind(i ->  i==1 ? FeatureToggle.disable(i) : FeatureToggle.enable(i))
-									.asSequence()
+									.stream()
 									.toList();
 		
 		

@@ -13,27 +13,28 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.control.AnyM;
 
 public class UnwrapTest {
 
 	@Test
 	public void unwrap(){
-		Stream<String> stream = AnyM.streamOf("hello","world").asSequence().stream();
+		Stream<String> stream = AnyM.streamOf("hello","world").stream().stream();
 		assertThat(stream.collect(Collectors.toList()),equalTo(Arrays.asList("hello","world")));
 	}
 	
 	@Test
 	public void unwrapOptional(){
 		Optional<ListX<String>> stream = AnyM.streamOf("hello","world")
-											.asSequence()
+											.stream()
 											.toOptional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
 	}
 	@Test
 	public void unwrapOptionalEmpty(){
-		Optional<ListX<String>> opt = AnyM.streamOf(Optional.empty())
-											.<String>toSequence()
+		Optional<ListX<String>> opt = AnyM.fromOptional(Optional.of(Optional.empty()))
+		                                    .<String>toSequence()
 											.toOptional();
 		System.out.println(opt);
 		assertFalse(opt.isPresent());
@@ -48,7 +49,7 @@ public class UnwrapTest {
 	@Test
 	public void unwrapCompletableFuture(){
 		CompletableFuture<ListX<String>> cf = AnyM.streamOf("hello","world")
-											.asSequence()
+											.stream()
 											.toCompletableFuture();
 		assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
 	}

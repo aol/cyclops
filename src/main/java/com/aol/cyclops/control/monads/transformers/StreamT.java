@@ -106,7 +106,7 @@ public class StreamT<T> {
 	 * @return StreamT that applies the flatMap function to the wrapped Stream
 	 */
    public <B> StreamT<B> flatMap(Function<? super T,StreamT<? extends B>> f){
-	   return of(run.map(stream-> stream.flatMap(a-> f.apply(a).run.asSequence())
+	   return of(run.map(stream-> stream.flatMap(a-> f.apply(a).run.stream())
 			   							.<B>flatMap(a->a)));
    }
    /**

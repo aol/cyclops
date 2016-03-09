@@ -15,7 +15,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 public class StreamTest {
 	 public static <U> ReactiveSeq<U> of(U... array){
-		 return AnyM.streamOf(array).asSequence();
+		 return AnyM.streamOf(array).stream();
 	 }
 
 	@Test

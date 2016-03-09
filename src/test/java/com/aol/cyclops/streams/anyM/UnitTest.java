@@ -24,7 +24,7 @@ public class UnitTest {
 	public void unitList() {
 	    AnyM<Integer> empty = AnyM.fromIterable(Collections.emptyList());
 	    AnyM<Integer> unit = empty.unit(1);
-	    List<Integer> unwrapped = unit.asSequence().toList();
+	    List<Integer> unwrapped = unit.stream().toList();
 	    assertEquals(Integer.valueOf(1), unwrapped.get(0));
 	}
 }

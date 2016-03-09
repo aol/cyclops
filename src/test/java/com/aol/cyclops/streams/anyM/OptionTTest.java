@@ -13,8 +13,8 @@ public class OptionTTest {
 	
 	@Test
 	public void test() {
-		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofMonad(Stream.of(Optional.of(10))));
-		System.out.println(optionT.map(num->"hello world"+num).unwrap().asSequence().firstValue());
+		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofValue(Stream.of(Optional.of(10))));
+		System.out.println(optionT.map(num->"hello world"+num).unwrap().stream().firstValue());
 	}
 
 

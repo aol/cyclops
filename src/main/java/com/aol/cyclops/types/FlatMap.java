@@ -1,22 +1,12 @@
 package com.aol.cyclops.types;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import com.aol.cyclops.control.Do;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.util.function.CurryVariance;
-import com.aol.cyclops.util.function.TriFunction;
-
-import lombok.Value;
-
-public interface FlatMap<T> extends Functor<T>, ToAnyM<T> {
+public interface FlatMap<T> extends Functor<T> {
 
 	
 	public <R> FlatMap<R> flatten();
 	
 	
-	
+	/**
 	default<T2> Apply2<T,T2> applyWith(Functor<T2> functor){
 		return new Apply2Impl<T,T2>(anyM(),functor);
 	}
@@ -61,7 +51,7 @@ public interface FlatMap<T> extends Functor<T>, ToAnyM<T> {
 			return apply(CurryVariance.curry3(fn));
 		}
 	}
-	
+	**/
 	//Maybe.of(10).applyWith(Maybe.of(20)).apply(this::add)
 	
 }

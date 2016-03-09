@@ -46,6 +46,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -824,7 +825,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     	 * </pre>
     	 * 
     	 */
-    	default <S, R> Streamable<R> zipAnyM(AnyM<? extends S> second,
+    	default <S, R> Streamable<R> zipAnyM(AnyMSeq<? extends S> second,
     			BiFunction<? super T, ? super S, ? extends R> zipper){
     		return fromStream(reactiveSeq().zipAnyM(second, zipper));
     	}

@@ -29,7 +29,7 @@ public class StreamableTTest {
 		Function<StreamableT<Integer>, StreamableT<Integer>> optTAdd2 = StreamableT.lift(add2);
 		
 		Stream<Integer> nums = Stream.of(1,2);
-		AnyM<Stream<Integer>> stream = AnyM.ofMonad(Optional.of(nums));
+		AnyM<Stream<Integer>> stream = AnyM.ofValue(Optional.of(nums));
 		
 		List<Integer> results = optTAdd2.apply(StreamableT.fromStream(stream))
 										.unwrap()
@@ -46,7 +46,7 @@ public class StreamableTTest {
 		BiFunction<StreamableT<Integer>,StreamableT<Integer>, StreamableT<Integer>> optTAdd2 = StreamableT.lift2(add);
 		
 		Streamable<Integer> threeValues = Streamable.of(1,2,3);
-		AnyM<Integer> stream = AnyM.ofMonad(threeValues);
+		AnyM<Integer> stream = AnyM.ofSeq(threeValues);
 		AnyM<Streamable<Integer>> streamOpt = stream.map(Streamable::of);
 		
 		CompletableFuture<Streamable<Integer>> two = CompletableFuture.completedFuture(Streamable.of(2));
@@ -63,20 +63,20 @@ public class StreamableTTest {
 	
 	@Test
 	public void filterFail(){
-		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofMonad(Optional.of(Streamable.of(10))));
+		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofValue(Optional.of(Streamable.of(10))));
 		assertThat(streamT.filter(num->num<10).unwrap().<Optional<Streamable<String>>>unwrap()
 						.get().collect(Collectors.toList()),  equalTo(Arrays.asList()));
 	}
 	@Test
 	public void filterSuccess(){
-		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofMonad(Optional.of(Streamable.of(10))));
+		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofValue(Optional.of(Streamable.of(10))));
 		assertThat(streamT.filter(num->num==10).unwrap().<Optional<Streamable<String>>>unwrap()
 						.get().collect(Collectors.toList()),  equalTo(Arrays.asList(10)));
 	}
 	@Test
 	public void peek() {
 		result = null;
-		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofMonad(Optional.of(Streamable.of(10))));
+		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofValue(Optional.of(Streamable.of(10))));
 		
 		streamT.peek(num->result = "hello world"+num)
 				.unwrap().<Optional<Streamable<String>>>unwrap().get().collect(Collectors.toList());
@@ -84,7 +84,7 @@ public class StreamableTTest {
 	}
 	@Test
 	public void map() {
-		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofMonad(Optional.of(Streamable.of(10))));
+		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofValue(Optional.of(Streamable.of(10))));
 		assertThat(streamT.map(num->"hello world"+num)
 						.unwrap().<Optional<Streamable<String>>>unwrap()
 						.get().collect(Collectors.toList()),  equalTo(Arrays.asList("hello world10")));

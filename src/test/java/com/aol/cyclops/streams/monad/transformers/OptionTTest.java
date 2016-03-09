@@ -26,7 +26,7 @@ public class OptionTTest {
 		Function<OptionalT<Integer>, OptionalT<Integer>> optTAdd2 = OptionalT.lift(add2);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,null);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofSeq(withNulls);
 		AnyM<Optional<Integer>> streamOpt = stream.map(Optional::ofNullable);
 		List<Integer> results = optTAdd2.apply(OptionalT.of(streamOpt))
 										.unwrap()
@@ -44,11 +44,11 @@ public class OptionTTest {
 		BiFunction<OptionalT<Integer>,OptionalT<Integer>, OptionalT<Integer>> optTAdd2 = OptionalT.lift2(add);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,null);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofSeq(withNulls);
 		AnyM<Optional<Integer>> streamOpt = stream.map(Optional::ofNullable);
 		
 		CompletableFuture<Optional<Integer>> two = CompletableFuture.completedFuture(Optional.of(2));
-		AnyM<Optional<Integer>> future=  AnyM.ofMonad(two);
+		AnyM<Optional<Integer>> future=  AnyM.ofValue(two);
 		List<Integer> results = optTAdd2.apply(OptionalT.of(streamOpt),OptionalT.of(future))
 										.unwrap()
 										.<Stream<Optional<Integer>>>unwrap()
@@ -63,7 +63,7 @@ public class OptionTTest {
 	
 	@Test
 	public void filterFail(){
-		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofMonad(Stream.of(Optional.of(10))));
+		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofSeq(Stream.of(Optional.of(10))));
 		assertThat(optionT.filter(num->num<10).unwrap().<Stream<Optional<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Optional.empty()));
 	}
@@ -76,22 +76,22 @@ public class OptionTTest {
 	@Test
 	public void peek() {
 		result = null;
-		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofMonad(Stream.of(Optional.of(10))));
+		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofSeq(Stream.of(Optional.of(10))));
 		optionT.peek(num->result = "hello world"+num)
 				.unwrap().<Stream<Optional<String>>>unwrap().collect(Collectors.toList());
 		assertThat(result,  equalTo("hello world10"));
 	}
 	@Test
 	public void map() {
-		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofMonad(Stream.of(Optional.of(10))));
+		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofSeq(Stream.of(Optional.of(10))));
 		assertThat(optionT.map(num->"hello world"+num).unwrap().<Stream<Optional<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Optional.of("hello world10")));
 	}
 	@Test
 	public void flatMap() {
-		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofMonad(Stream.of(Optional.of(10))));
+		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofSeq(Stream.of(Optional.of(10))));
 		
-		assertThat(optionT.flatMap(num->OptionalT.fromAnyM(AnyM.ofMonad(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMap(num->OptionalT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
 				.unwrap().<Stream<Optional<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Optional.of("hello world10")));
 	}

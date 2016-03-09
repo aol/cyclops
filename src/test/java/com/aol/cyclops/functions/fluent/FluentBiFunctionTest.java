@@ -225,7 +225,7 @@ public class FluentBiFunctionTest {
 											  .liftM()
 											  .apply(AnyM.streamOf(1,2,3,4),AnyM.ofNullable(1));
 		
-		assertThat(result.asSequence().toList(),
+		assertThat(result.stream().toList(),
 					equalTo(Arrays.asList(2,3,4,5)));
 	}
 	@Test
