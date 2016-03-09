@@ -180,7 +180,16 @@ public class Validator<T,R,E> {
 	 * @param validation Validator instance
 	 * @return CumulativeValidator that includes the new validation (or set of validations)
 	 */
-	public Validator<T,R,E> add(Tuple3<Predicate<? super T>,R,E> validation){
+	public Validator<T,R,E> add(Validator<T, R, E> validator){
+		if(next==null)
+           		return this.withNext(validator);
+		else
+			return next.add(validation);
+	}
+	
+	
+	
+	private Validator<T,R,E> add(Tuple3<Predicate<? super T>,R,E> validation){
 		if(next==null)
            		return this.withNext(new Validator<T,R,E>(validation,null));
 		else

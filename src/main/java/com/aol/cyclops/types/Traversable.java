@@ -24,11 +24,14 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Validator;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
@@ -1279,6 +1282,15 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	}
 	
 
+
+	default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<? extends S>> validate(Validator<T, S, F> validator) {
+
+		ReactiveSeq<Xor<F, S>> xors = stream().<Xor<F, S>> flatMap(s -> validator.accumulate(s).toXors().stream());
+		MapX<Boolean, List<Xor<F, S>>> map = xors.groupBy(s -> s.isPrimary());
+
+		return Ior.both(ReactiveSeq.fromStream(map.get(false).stream().map(x -> x.secondaryGet())),
+				ReactiveSeq.fromStream(map.get(true).stream().map(x -> x.get())));
+	}
 
 
 }
