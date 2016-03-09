@@ -1283,7 +1283,7 @@ public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSeq
 	
 
 
-	default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<? extends S>> validate(Validator<T, S, F> validator) {
+	default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(Validator<T, S, F> validator) {
 
 		ReactiveSeq<Xor<F, S>> xors = stream().<Xor<F, S>> flatMap(s -> validator.accumulate(s).toXors().stream());
 		MapX<Boolean, List<Xor<F, S>>> map = xors.groupBy(s -> s.isPrimary());
