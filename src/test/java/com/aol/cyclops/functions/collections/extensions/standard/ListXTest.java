@@ -5,6 +5,9 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.Ior;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
@@ -72,5 +75,18 @@ public class ListXTest extends CollectionXTestsWithNulls{
 									**/
 	 
 
+	
+	@Test
+	public void validate() {
+		ListX<Integer> numbers = ListX.of(1,2,3,4,5,6,7);
+		Validator<Integer, Integer, Integer> validator = Validator.of(i -> i % 2 == 0, 1, 1);
+		Ior<ReactiveSeq<Integer>, ReactiveSeq<Integer>> ior = numbers.validate(validator);
+		int even = ior.get().sum().get();
+		int odd = ior.secondaryGet().sum().get();
+		assertThat(even, equalTo(3));
+		assertThat(odd, equalTo(4));
+
+	}
+	
 }
 
