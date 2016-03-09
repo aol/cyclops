@@ -50,7 +50,18 @@ public class Ior2Test {
 		just = Ior.primary(10);
 		none = Ior.secondary("none");
 	}
-
+	@Test
+    public void visit(){
+        assertThat(just.visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("yes"));
+        assertThat(none.visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("no"));
+        assertThat(Ior.both(10, "eek").visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("oops"));
+    }
+    @Test
+    public void visitIor(){
+        assertThat(just.visitIor(secondary->"no", primary->"yes"),equalTo(Ior.primary("yes")));
+        assertThat(none.visitIor(secondary->"no", primary->"yes"),equalTo(Ior.secondary("no")));
+        assertThat(Ior.both(10, "eek").visitIor(secondary->"no", primary->"yes"),equalTo(Ior.both("no","yes")));
+    }
 	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));

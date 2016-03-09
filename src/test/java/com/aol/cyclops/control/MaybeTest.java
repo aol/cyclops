@@ -55,6 +55,16 @@ public class MaybeTest {
 	}
 
 	@Test
+	public void testFiltering(){
+	    assertThat(ReactiveSeq.of(Maybe.some(1),Try.success(1)).filter(Xor.primary(1))
+	                .toListX(),equalTo(ListX.of(Maybe.some(1),Try.success(1))));
+	}
+	@Test
+    public void testFilteringNoValue(){
+        assertThat(ReactiveSeq.of(1,1).filter(Xor.primary(1))
+                    .toListX(),equalTo(ListX.of(1,1)));
+    }
+	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(just));
 		assertThat(none.toMaybe(),equalTo(none));

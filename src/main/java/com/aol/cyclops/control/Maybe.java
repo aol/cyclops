@@ -43,6 +43,9 @@ public interface Maybe<T> extends MonadicValue<T>,
 	static <T> Maybe<T> fromEvalOf(Eval<T> eval){
 		return new Just<T>(eval);
 	}
+	static <T> Maybe<T> some(T value){
+	    return of(value);
+	}
 	static <T> Maybe<T> of(T value){
 		Objects.requireNonNull(value);
 		return new Just<T>(Eval.later(()->value));

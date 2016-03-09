@@ -21,6 +21,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.jooq.lambda.tuple.Tuple5;
 
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
 import com.aol.cyclops.internal.matcher2.MatchableCase;
 import com.aol.cyclops.internal.matcher2.MatchingInstance;
@@ -209,7 +210,7 @@ public interface Matchable<TYPE>{
 		return ()->o.iterator();
 	}
 	public static<T> Matchable<T> of(Optional<T> o){
-		return AsMatchable.asMatchable(o);
+		return  AsMatchable.asMatchable(o);
 	}
 	public static<T> Matchable<T> of(CompletableFuture<T> o){
 		return of(FutureW.of(o));
@@ -461,6 +462,7 @@ public interface Matchable<TYPE>{
 		}
 		
 	}
+	
 	public static interface MTuple1<T1> extends MatchableTuple1<T1>{
 		default <U1> MTuple1<U1> map1(Function1<? super T1, ? extends U1> function) {
 	        return ()->getMatchable().map1(function);
@@ -494,10 +496,10 @@ public interface Matchable<TYPE>{
 						.match(getMatchable());
 		}
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		default <R> Eval<R>  matches(Function<CheckValue1<T1,R>,CheckValue1<T1,R>> fn1,Supplier<? extends R> s){
+		default <R> Eval<R>  matches(Function<CheckValue1<T1,R>,CheckValue1<T1,R>> fn1,Supplier<? extends R> otherwise){
 			return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
 					new MatchableCase(new PatternMatcher()).withType1(getMatchable().getClass())).getPatternMatcher()))
-						.match(getMatchable()).orElseGet(s));
+						.match(getMatchable()).orElseGet(otherwise));
 		}
 		
 		

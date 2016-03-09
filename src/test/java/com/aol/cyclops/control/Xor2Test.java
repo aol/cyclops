@@ -52,6 +52,16 @@ public class Xor2Test {
 	}
 
 	@Test
+	public void visit(){
+	    assertThat(just.visit(secondary->"no", primary->"yes"),equalTo("yes"));
+	    assertThat(none.visit(secondary->"no", primary->"yes"),equalTo("no"));
+	}
+	@Test
+    public void visitXor(){
+        assertThat(just.visitXor(secondary->"no", primary->"yes"),equalTo(Xor.primary("yes")));
+        assertThat(none.visitXor(secondary->"no", primary->"yes"),equalTo(Xor.secondary("no")));
+    }
+	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
 		assertThat(none.toMaybe(),equalTo(Maybe.none()));

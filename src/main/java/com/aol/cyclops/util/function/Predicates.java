@@ -45,6 +45,13 @@ public class Predicates {
 		return p;
 	}
 
+	
+	public static <T> Predicate<T> some(T value){
+	    return t-> eq(value).test(t);
+	}
+	public static <T> Predicate<T> some(Predicate<? super T> value){
+        return t-> value.test(t);
+    }
 	/**
 	 * wildcard predicate
 	 * 
@@ -244,11 +251,16 @@ public class Predicates {
 	 * @param value
 	 * @return
 	 */
-	public static<V> Predicate<V> eqv(Value<? super V> value){
+	public static<V> Predicate<Value<? super V>> eqv(Value<? super V> value){
 	   
         return test-> test == null ? (value== null ?  true : !value.toMaybe().isPresent()) :
-          ( test instanceof Value ? ((Value)test).toMaybe().equals(value.toMaybe()) :
-                                    Maybe.ofNullable(test).equals(value.toMaybe()));
+                            ((Value)test).toMaybe().equals(value.toMaybe());
+        
+    }
+	public static<V> Predicate<V> eqv2(Value<? super V> value){
+	       
+        return test-> test == null ? (value== null ?  true : !value.toMaybe().isPresent()) :
+                            Maybe.ofNullable(test).equals(value.toMaybe());
         
     }
 

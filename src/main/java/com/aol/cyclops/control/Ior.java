@@ -3,6 +3,7 @@ package com.aol.cyclops.control;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -105,10 +106,19 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		
 		return Ior.both(stMap.get(),ptMap.get());
 	}
-	default <R1,R2> Ior<R1,R2> visit(Function<? super ST,? extends R1> secondary, 
+	default <R> R visit(Function<? super ST,? extends R> secondary, 
+            Function<? super PT,? extends R> primary, BiFunction<? super ST, ? super PT, ? extends R> both){
+        
+        if(isSecondary())
+            return swap().visit(secondary,()->null);
+        if(isPrimary())
+            return visit(primary,()->null);
+        return Matchable.from(both().get()).visit((a,b)-> both.apply(a.get(), b.get()));
+    }
+	default <R1,R2> Ior<R1,R2> visitIor(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
 		if(isSecondary())
-			return (Ior<R1,R2>)swap().map(secondary);
+			return (Ior<R1,R2>)swap().map(secondary).swap();
 		if(isPrimary())
 			return (Ior<R1,R2>)map(primary);
 		return bimap(secondary,primary);
