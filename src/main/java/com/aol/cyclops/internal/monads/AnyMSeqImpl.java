@@ -1,51 +1,56 @@
 package com.aol.cyclops.internal.monads;
 
-import com.aol.cyclops.control.AnyM;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.AnyM;
+
+import com.aol.cyclops.control.Do;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.internal.Monad;
+
 import com.aol.cyclops.types.IterableFunctor;
-import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.stream.Streamable;
 
-import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
-@AllArgsConstructor
-public class AnyMSeqImpl<T> implements AnyMSeq<T> {
-	@Wither
-	AnyM anyM;
+public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
 	
-	static <T> AnyMSeqImpl<T> with(AnyM<T> anyM){
-		return new  AnyMSeqImpl<T>(anyM);
-	}
-	public static <T> AnyMSeq<T> from(AnyM<T> anyM){
-		if(anyM instanceof AnyMSeq)
-			return (AnyMSeq)anyM;
-		return new AnyMSeqImpl(anyM);
-			
+	
+	protected AnyMSeqImpl(Monad<T> monad, Class initialType) {
+        super(monad, initialType);
+       
+    }
+	
+	public static <T> AnyMSeqImpl<T> from(AnyMValue<T> value){
+	    AnyMValueImpl<T> impl =(AnyMValueImpl<T>)value;
+	   return new AnyMSeqImpl<T>(impl.monad,impl.initialType);
 	}
 	
-	private BaseAnyMImpl<T> baseImpl(){
-		return (BaseAnyMImpl)anyM;
-		
-	}
+	private <T> AnyMSeqImpl<T> with(Monad<T> anyM){
+        
+        return  new AnyMSeqImpl<>(anyM,initialType);
+    }
+    private <T> AnyMSeqImpl<T> with(AnyM<T> anyM){
+        
+        return (AnyMSeqImpl<T>)anyM;
+    }
 	
+    @Override
+    public AnyMSeq<T> peek(Consumer<? super T> c) {
+        return with(super.peekInternal(c));
+    }
 	
 
 	/* (non-Javadoc)
@@ -57,246 +62,171 @@ public class AnyMSeqImpl<T> implements AnyMSeq<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#emptyUnit()
+	 * @see com.aol.cyclops.types.super.AnyMSeq#emptyUnit()
 	 */
 	@Override
 	public <T> AnyMSeq<T> emptyUnit() {
-		return with((AnyMSeq<T>)anyM.emptyUnit());
+	    return new AnyMSeqImpl(monad.empty(),initialType);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#reduceMOptional(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	public AnyMValue<T> reduceMOptional(Monoid<Optional<T>> reducer) {
-		return anyM.reduceMOptional(reducer);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#reduceMEval(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	public AnyMValue<T> reduceMEval(Monoid<Eval<T>> reducer) {
-		return anyM.reduceMEval(reducer);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#reduceMMaybe(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	public AnyMValue<T> reduceMMaybe(Monoid<Maybe<T>> reducer) {
-		return anyM.reduceMMaybe(reducer);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#reduceMXor(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	public AnyMValue<T> reduceMXor(Monoid<Xor<?, T>> reducer) {
-		return anyM.reduceMXor(reducer);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#reduceMStream(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	public AnyMSeq<T> reduceMStream(Monoid<Stream<T>> reducer) {
-		return anyM.reduceMStream(reducer);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#reduceMStreamable(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	public AnyMSeq<T> reduceMStreamable(Monoid<Streamable<T>> reducer) {
-		return anyM.reduceMStreamable(reducer);
-	}
 	
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#reduceMIterable(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	public AnyMSeq<T> reduceMIterable(Monoid<Iterable<T>> reducer) {
-		return anyM.reduceMIterable(reducer);
-	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#reduceMCompletableFuture(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	public AnyMValue<T> reduceMCompletableFuture(Monoid<CompletableFuture<T>> reducer) {
-		return anyM.reduceMCompletableFuture(reducer);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#stream()
+	 * @see com.aol.cyclops.types.super.AnyMSeq#stream()
 	 */
 	@Override
 	public ReactiveSeq<T> stream() {
-	  return  this.baseImpl().asSequence();  
+	  return  super.asSequence();  
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#unwrap()
+	 * @see com.aol.cyclops.types.super.AnyMSeq#unwrap()
 	 */
 	@Override
 	public <R> R unwrap() {
-		return (R)anyM.unwrap();
+		return (R)super.unwrap();
 	}
 
+	
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#monad()
-	 */
-	@Override
-	public <X> X monad() {
-		return (X)anyM.monad();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#filter(java.util.function.Predicate)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#filter(java.util.function.Predicate)
 	 */
 	@Override
 	public AnyMSeq<T> filter(Predicate<? super T> p) {
-		return withAnyM(anyM.filter(p));
+		return with(super.filterInternal(p));
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#map(java.util.function.Function)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#map(java.util.function.Function)
 	 */
 	@Override
 	public <R> AnyMSeq<R> map(Function<? super T, ? extends R> fn) {
-		return with(anyM.map(fn));
+		return with(super.mapInternal(fn));
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#bind(java.util.function.Function)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#bind(java.util.function.Function)
 	 */
 	@Override
 	public <R> AnyMSeq<R> bind(Function<? super T, ?> fn) {
-		return with(anyM.bind(fn));
-	}
-
+		return with(super.bindInternal(fn));
+	} 
+	
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#liftAndBind(java.util.function.Function)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#flatten()
 	 */
 	@Override
-	public <R> AnyMSeq<R> liftAndBind(Function<? super T, ?> fn) {
-		return with(anyM.liftAndBind(fn));
+	public <T1> AnyMSeq<T1> flatten() {
+		return with(super.flattenInternal());
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#flatten()
-	 */
-	@Override
-	public <T1> AnyM<T1> flatten() {
-		return with(anyM.flatten());
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#aggregate(com.aol.cyclops.control.AnyM)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#aggregate(com.aol.cyclops.control.AnyM)
 	 */
 	@Override
 	public AnyMSeq<List<T>> aggregate(AnyM<T> next) {
-		return with(anyM.aggregate(next));
+		return with(super.aggregate(next));
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#forEach2(java.util.function.Function, java.util.function.Function)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#forEach2(java.util.function.Function, java.util.function.Function)
 	 */
 	@Override
 	public <R1, R> AnyMSeq<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-		return with(this.baseImpl().forEach2(monad, yieldingFunction));
+		return Do.add((AnyM<T>)this)
+		              .withAnyM(u -> monad.apply(u))
+		              .yield(yieldingFunction);
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#forEach2(java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#forEach2(java.util.function.Function, java.util.function.Function, java.util.function.Function)
 	 */
 	@Override
 	public <R1, R> AnyMSeq<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad,
 			Function<? super T, Function<? super R1, Boolean>> filterFunction,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-		return with(this.baseImpl().forEach2(monad, filterFunction, yieldingFunction));
+		return Do.add((AnyM<T>)this)
+                .withAnyM(u -> monad.apply(u))
+                .filter(filterFunction)
+                .yield(yieldingFunction);
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#forEach3(java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#forEach3(java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
 	 */
 	@Override
 	public <R1, R2, R> AnyMSeq<R> forEach3(Function<? super T, ? extends AnyM<R1>> monad1,
 			Function<? super T, Function<? super R1, ? extends AnyM<R2>>> monad2,
 			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-		return with(this.baseImpl().forEach3(monad1, monad2, filterFunction, yieldingFunction));
+		return Do.add((AnyM<T>)this)
+                .withAnyM(u -> monad1.apply(u))
+                .withAnyM(a -> b -> monad2.apply(a).apply(b))
+                .filter(filterFunction)
+                .yield(yieldingFunction);
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#forEach3(java.util.function.Function, java.util.function.Function, java.util.function.Function)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#forEach3(java.util.function.Function, java.util.function.Function, java.util.function.Function)
 	 */
 	@Override
 	public <R1, R2, R> AnyMSeq<R> forEach3(Function<? super T, ? extends AnyM<R1>> monad1,
 			Function<? super T, Function<? super R1, ? extends AnyM<R2>>> monad2,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-		return with(this.baseImpl().forEach3(monad1, monad2, yieldingFunction));
+		return Do.add((AnyM<T>)this)
+                .withAnyM(u -> monad1.apply(u))
+                .withAnyM(a -> b -> monad2.apply(a).apply(b))
+                .yield(yieldingFunction);
 
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#flatMap(java.util.function.Function)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#flatMap(java.util.function.Function)
 	 */
 	@Override
 	public <R> AnyMSeq<R> flatMap(Function<? super T, ? extends AnyM<? extends R>> fn) {
-		return with(this.baseImpl().flatMap(fn));
+		return with(super.flatMapInternal(fn));
 
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#applyM(com.aol.cyclops.control.AnyM)
-	 */
-	@Override
-	public <R> AnyMSeq<R> applyM(AnyM<Function<? super T, ? extends R>> fn) {
-		return with(this.baseImpl().applyM(fn));
-	}
+	 public Xor<AnyMValue<T>,AnyMSeq<T>> matchable(){
+	        return Xor.primary(this);
+	 }
 
 	
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#unit(java.lang.Object)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#unit(java.lang.Object)
 	 */
 	@Override
 	public <T> AnyMSeq<T> unit(T value) {
-		return with(anyM.unit(value));
+		return AnyM.ofSeq(monad.unit(value));
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#empty()
+	 * @see com.aol.cyclops.types.super.AnyMSeq#empty()
 	 */
 	@Override
 	public <T> AnyMSeq<T> empty() {
-		return with(anyM.empty());
+		return with(new AnyMSeqImpl(monad.empty(),initialType));
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#replicateM(int)
+	 * @see com.aol.cyclops.types.super.AnyMSeq#replicateM(int)
 	 */
 	@Override
-	public AnyMSeq<List<T>> replicateM(int times) {
-		return with(anyM.replicateM(times));
+	public AnyMSeq<T> replicateM(int times){
+	    return monad.replicateM(times).anyMSeq(); 
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.anyM.AnyMSeq#reduceM(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	public AnyM<T> reduceM(Monoid<AnyM<T>> reducer) {
-		return  anyM.reduceM(reducer);
-	}
-	@Override
-	public <R, A> R collect(Collector<? super T, A, R> collector) {
-		return (R)anyM.collect(collector);
-	}
+	public <R> AnyMSeq<R> applyM(AnyM<Function<? super T,? extends R>> fn){
+        return monad.applyM(((AnyMSeqImpl<Function<? super T,? extends R>>)fn).monad()).anyMSeq();
+        
+    }
+	
     @Override
     public <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
-        return this.baseImpl().toSequence(fn);
+        return super.toSequence(fn);
     }
 	
 }

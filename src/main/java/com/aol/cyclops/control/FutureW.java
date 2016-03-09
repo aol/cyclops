@@ -17,7 +17,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FlatMap;
-import com.aol.cyclops.types.ToAnyM;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -29,9 +29,9 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class FutureW<T> implements ConvertableFunctor<T>,
 											Applicativable<T>, 
-											Value<T>, 
+											MonadicValue<T>, 
 											FlatMap<T>,
-											ToAnyM<T>,Filterable<T>{
+											Filterable<T>{
 
 	public static <T> FutureW<T> of(CompletableFuture<T> f){
 		return new FutureW<>(f);

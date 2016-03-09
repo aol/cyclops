@@ -20,7 +20,7 @@ public class LiftTest {
 		
 		val add = AnyM.liftM2(this::add);
 		
-		AnyM<Integer> result = add.apply(AnyM.ofMonad(FeatureToggle.enable(2)), AnyM.ofMonad(FeatureToggle.enable(3)));
+		AnyM<Integer> result = add.apply(AnyM.ofValue(FeatureToggle.enable(2)), AnyM.ofValue(FeatureToggle.enable(3)));
 		assertThat(result.<FeatureToggle<Integer>>unwrap().get(),equalTo(5));
 	}
 	
@@ -30,7 +30,7 @@ public class LiftTest {
 	public void testLiftDisabled(){
 		val divide = AnyM.liftM2(this::add);
 		
-		AnyM<Integer> result = divide.apply(AnyM.ofMonad(FeatureToggle.enable(2)), AnyM.ofMonad(FeatureToggle.disable(4)));
+		AnyM<Integer> result = divide.apply(AnyM.ofValue(FeatureToggle.enable(2)), AnyM.ofValue(FeatureToggle.disable(4)));
 		assertThat(result.<FeatureToggle<Integer>>unwrap().isDisabled(),equalTo(true));
 	}
 	

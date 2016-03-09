@@ -20,7 +20,7 @@ public class FlatMapSequenceMTest {
 	@Test
 	public void flatMapCrossType(){
 		AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3)))
-		.stream().forEach(System.out::println);
+		     .stream().forEach(System.out::println);
 	
 		assertThat(AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3))).stream().flatMapStream(i->Stream.of(i.size())).toList(),equalTo(Arrays.asList(3)));
 	}

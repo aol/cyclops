@@ -25,17 +25,17 @@ import lombok.val;
 public class MonadTest {
 
 	 Optional<Integer> value = Optional.of(42);
-	 Monad<Optional<Integer>,Integer> monadicValue = new MonadWrapper<>(value);
-	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> monadOf = input ->new MonadWrapper<>(input);
-	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> f = input -> new MonadWrapper<>(Optional.of(input.get()*5));
-	 Function<Optional<Integer>,Monad<Optional<Integer>,Integer>> g = input -> new MonadWrapper<>(Optional.of(input.get()*50));
+	 Monad<Integer> monadicValue = new MonadWrapper<>(value);
+	 Function<Optional<Integer>,Monad<Integer>> monadOf = input ->new MonadWrapper<>(input);
+	 Function<Optional<Integer>,Monad<Integer>> f = input -> new MonadWrapper<>(Optional.of(input.get()*5));
+	 Function<Optional<Integer>,Monad<Integer>> g = input -> new MonadWrapper<>(Optional.of(input.get()*50));
 
 	
 	@Test
 	public void test() {
-		val list = MonadWrapper.<Stream<Integer>,List<Integer>>of(Stream.of(Arrays.asList(1,3)))
-				.flatMap(Collection::stream).unwrap()
-				.map(i->i*2)
+		val stream = (Stream<Integer>) MonadWrapper.<List<Integer>>of(Stream.of(Arrays.asList(1,3)))
+				.bind(Collection::stream).unwrap();
+		val list = stream.map((Integer i)->i*2)
 				.peek(System.out::println)
 				.collect(Collectors.toList());
 		assertThat(Arrays.asList(2,6),equalTo(list));
@@ -112,7 +112,7 @@ public class MonadTest {
 	
 	@Test
 	public void testReplicateM(){
-		 AnyM<List<Integer>> applied =new MonadWrapper<>(Optional.of(2)).replicateM(5).anyM();
+		 AnyM<List<Integer>> applied =new MonadWrapper<>(Optional.of(2)).replicateM(5).anyMValue();
 		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
 	}
 

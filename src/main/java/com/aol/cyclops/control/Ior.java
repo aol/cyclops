@@ -18,7 +18,9 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
@@ -37,7 +39,7 @@ import lombok.EqualsAndHashCode;
  * @param <PT> Primary type
  */
 public interface Ior<ST,PT> extends Supplier<PT>,
-									Value<PT>,
+                                    MonadicValue<PT>,
 									BiFunctor<ST,PT>,
 									Functor<PT>,
 									Filterable<PT>,
@@ -55,8 +57,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	public static <ST,PT> Ior<ST,PT> both(ST secondary,PT primary){
         return new Both<ST,PT>(Ior.secondary(secondary),Ior.primary(primary));
     }
-	default AnyM<PT> anyM(){
-		return AnyM.ofMonad(this);
+	default AnyMValue<PT> anyM(){
+		return AnyM.ofValue(this);
 	}
 	
 

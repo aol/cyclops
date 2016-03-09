@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.function.Function3;
@@ -20,17 +21,13 @@ import org.jooq.lambda.function.Function5;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.monads.AnyMValueImpl;
-import com.aol.cyclops.internal.monads.AnyMonads;
-
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.QuadFunction;
@@ -42,6 +39,12 @@ public interface AnyMValue<T> extends AnyM<T>,
 									  Filterable<T>,
 									  Applicativable<T>{
 	
+    default <R, A> R collect(Collector<? super T, A, R> collector){
+        
+         return this.<T>toSequence().collect(collector);
+        
+    }
+    
 	
     default String mkString(){
         Optional<T> opt = toOptional();
@@ -98,29 +101,23 @@ public interface AnyMValue<T> extends AnyM<T>,
 	@Override
 	<T> AnyMValue<T> emptyUnit();
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.ReduceM#reduceMOptional(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	AnyMValue<T> reduceMOptional(Monoid<Optional<T>> reducer);
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.ReduceM#reduceMEval(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	AnyMValue<T> reduceMEval(Monoid<Eval<T>> reducer) ;
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.ReduceM#reduceMMaybe(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	AnyMValue<T> reduceMMaybe(Monoid<Maybe<T>> reducer) ;
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.ReduceM#reduceMXor(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	AnyMValue<T> reduceMXor(Monoid<Xor<?, T>> reducer) ;
+	   /**
+     * 
+     * Replicate given Monad
+     * 
+     * <pre>{@code 
+     *  
+     *   AnyM<Optional<Integer>> applied =AnyM.fromOptional(Optional.of(2)).replicateM(5);
+     *   
+         //AnyM[Optional[List(2,2,2,2,2)]]
+         
+         }</pre>
+     * 
+     * 
+     * @param times number of times to replicate
+     * @return Replicated Monad
+     */
+     AnyM<List<T>> replicateM(int times);
 
 	
 	/* (non-Javadoc)
@@ -129,11 +126,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	@Override
 	ReactiveSeq<T> stream() ;
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#monad()
-	 */
-	@Override
-	<X> X monad() ;
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyM#filter(java.util.function.Predicate)
@@ -159,11 +152,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	@Override
 	<R> AnyMValue<R> bind(Function<? super T, ?> fn) ;
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#liftAndBind(java.util.function.Function)
-	 */
-	@Override
-	<R> AnyMValue<R> liftAndBind(Function<? super T, ?> fn) ;
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyM#flatten()
@@ -381,18 +370,9 @@ public interface AnyMValue<T> extends AnyM<T>,
 	@Override
 	<T> AnyMValue<T> empty() ;
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#replicateM(int)
-	 */
-	@Override
-	AnyMValue<List<T>> replicateM(int times);
+	
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#reduceM(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	AnyM<T> reduceM(Monoid<AnyM<T>> reducer);
-
+	
 	@Override
 	default Iterator<T> iterator() {
 		
@@ -416,7 +396,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	 */
 	public static <T,R> AnyMValue<ListX<R>> traverse(Collection<? extends AnyMValue<T>> seq, Function<? super T,? extends R> fn){
 		
-		return AnyMValueImpl.from(new AnyMonads().traverse(seq,fn));
+		return new AnyMonads().traverse(seq,fn);
 	}
 
 	
@@ -436,7 +416,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	 * @return Monad with a List
 	 */ 
 	public static <T1>  AnyMValue<ListX<T1>> sequence(Collection<? extends AnyMValue<T1>> seq){
-		return AnyMValueImpl.from(new AnyMonads().sequence(seq));
+		return new AnyMonads().sequence(seq);
 	}
 	/**
 	 * Convert a Stream of Monads to a Monad with a List
@@ -453,7 +433,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	 * @return Monad with a List
 	 */
 	public static <T1>  AnyMValue<ListX<T1>> sequence(Stream<? extends AnyMValue<T1>> seq){
-		return AnyMValueImpl.from(new AnyMonads().sequence(seq));
+		return new AnyMonads().sequence(seq);
 	}
 	/**
 	 * Lift a function so it accepts an AnyM and returns an AnyM (any monad)

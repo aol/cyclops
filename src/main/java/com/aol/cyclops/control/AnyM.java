@@ -31,21 +31,13 @@ import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.Ior;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.internal.monads.AnyMFunctions;
-import com.aol.cyclops.internal.monads.AnyMSeqImpl;
-import com.aol.cyclops.internal.monads.AnyMValueImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.Foldable;
@@ -54,7 +46,6 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.anyM.ReduceM;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
@@ -73,10 +64,18 @@ import com.aol.cyclops.util.stream.Streamable;
 
 public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Functor<T>,
 									FlatMap<T>,
-									ToStream<T>,
-									ReduceM<T>{
+									ToStream<T>
+									{
 	
-	/* Convert this AnyM to a Stream (SequenceM)
+	
+    Xor<AnyMValue<T>,AnyMSeq<T>> matchable();
+    
+    /**
+     * Collect the contents of the monad wrapped by this AnyM into supplied collector
+     */
+   
+    <R, A> R collect(Collector<? super T, A, R> collector);
+    /* Convert this AnyM to a Stream (SequenceM)
 	 * Chooses the most appropriate of asSequence() and toSequence()
 	 * 
 	 * (non-Javadoc)
@@ -106,7 +105,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
      */
      <NT> ReactiveSeq<NT> toSequence(Function<? super T,? extends Stream<? extends NT>> fn);
    
-	<R, A> R collect(Collector<? super T, A, R> collector);
+
 	
 	
 	 /* 
@@ -121,7 +120,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	
 	
 
-	 <X extends Object> X monad();
+	 
 	
 	/**
 	 * Perform a filter operation on the wrapped monad instance e.g.
@@ -200,6 +199,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @return flatMapped monad
 	*/
 	 <R> AnyM<R> bind(Function<? super T,?> fn);
+	 
 	/**
 	 * Perform a bind operation (@see #bind) but also lift the return value into a Monad using configured
 	 * MonadicConverters
@@ -209,9 +209,9 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * 
 	 * @param fn flatMap function
 	 * @return flatMapped monad
-	 */
+	 *
 	 <R> AnyM<R> liftAndBind(Function<? super T,?> fn);
-
+      */
 	
 	/**
 	 * join / flatten one level of a nested hierarchy
@@ -294,40 +294,35 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @return Empty AnyM
 	 */
 	public <T> AnyM<T> empty();
-	/**
-	 * 
-	 * Replicate given Monad
-	 * 
-	 * <pre>{@code 
-	 * 	
-	 *   AnyM<Optional<Integer>> applied =AnyM.fromOptional(Optional.of(2)).replicateM(5);
-	 *   
-		 //AnyM[Optional[List(2,2,2,2,2)]]
-		 
-		 }</pre>
-	 * 
-	 * 
-	 * @param times number of times to replicate
-	 * @return Replicated Monad
-	 */
-	 AnyM<List<T>> replicateM(int times);
+
 	
 	 /**
-		 * Perform a reduction where NT is a (native) Monad type
-		 * e.g. 
-		 * <pre>{@code 
-		 *   Monoid<Optional<Integer>> optionalAdd = Monoid.of(AnyM.fromOptional(Optional.of(0)), (a,b)-> AnyM.fromOptional(Optional.of(a.get()+b.get())));
+	  * Perform a reduction using a Monoid that combines AnyM types.
+	  * 
+	  *
+	  * 
+	  * 
+	  * 
+	  * e.g. 
+	  * <pre>{@code 
+	  *   Monoid<AnyMValue<Integer>> optionalAdd = Monoid.of(AnyM.fromOptional(Optional.of(0)), (a,b)-> AnyM.fromOptional(Optional.of(a.get()+b.get())));
 			
 			AnyM.fromStream(Stream.of(2,8,3,1)).reduceM(optionalAdd);
 			
 			//AnyM[Optional(14)];
+			  
+			 
+			
+			 
 			}</pre>
-		 * 
-		 * 
-		 * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
-		 * @return Reduced AnyM
-		 */
-	  AnyM<T> reduceM(Monoid<AnyM<T>> reducer);
+	* 
+	* 
+	* 
+	* @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
+	* @return Reduced AnyM
+	*/
+	AnyMValue<T> reduceMValue(Monoid<AnyMValue<T>> reducer);
+	AnyMSeq<T> reduceMSeq(Monoid<AnyMSeq<T>> reducer);
 	
 	 
 	 
@@ -379,7 +374,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromStreamable(ToStream<T> streamable){
 		 Objects.requireNonNull(streamable);
-		return new AnyMSeqImpl<>(AnyMFactory.instance.convertSeq(streamable));
+		return AnyMFactory.instance.convertSeq(streamable);
 	}
 	/**
 	 * Create an AnyM from a List
@@ -598,20 +593,15 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param monad
 	 * @return
 	 */
-	public static <T> AnyM<T> ofConvertable(Object monad){
+	public static <T> AnyM<T> ofConvertableValue(Object monad){
 		Objects.requireNonNull(monad);
-		return AnyMFactory.instance.convert(monad);
+		return AnyMFactory.instance.convertValue(monad);
 	}
-	/**
-	 * Take the supplied object and wrap it inside an AnyM - must be a supported monad type already
-	 * 
-	 * @param monad to wrap
-	 * @return Wrapped Monad
-	 */
-	public static <T> AnyM<T> ofMonad(Object monad){
-		Objects.requireNonNull(monad);
-		return AnyMFactory.instance.monad(monad);
-	}
+	public static <T> AnyM<T> ofConvertableSeq(Object monad){
+        Objects.requireNonNull(monad);
+        return AnyMFactory.instance.convertSeq(monad);
+    }
+	
 	public static <T> AnyMValue<T> ofValue(Object monad){
 		Objects.requireNonNull(monad);
 		return AnyMFactory.instance.value(monad);
@@ -630,16 +620,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 		return AnyMFactory.instance.value(Optional.ofNullable(nullable));
 	}
 	
-	/**
-	 * Take an iterable containing monads and convert it into a List of AnyMs
-	 * Uses ofMonad to take the supplied object and wrap it inside an AnyM - must be a supported monad type already
-	 * 
-	 * @param anyM Iterable containing Monads
-	 * @return List of AnyMs
-	 */
-	public static <T> List<AnyM<T>> ofMonadList(Iterable<Object> anyM){
-		return StreamSupport.stream(anyM.spliterator(),false).map(i-> (AnyM<T>)AnyM.ofMonad(i)).collect(Collectors.toList());
-	}
+	
 	
 	/**
 	 * Take an iterable containing Streamables and convert them into a List of AnyMs
@@ -777,7 +758,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <T,R> AnyM<ListX<R>> traverse(Collection<? extends AnyM<T>> seq, Function<? super T,? extends R> fn){
+	public static <T,R> AnyMValue<ListX<R>> traverse(Collection<? extends AnyM<T>> seq, Function<? super T,? extends R> fn){
 		return new AnyMonads().traverse(seq,fn);
 	}
 	/**
@@ -793,7 +774,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param fn Function to apply 
 	 * @return Monad with a list
 	 */
-	public static <T,R> AnyM<ListX<R>> traverse(Stream<? extends AnyM<T>> seq, Function<? super T,? extends R> fn){
+	public static <T,R> AnyMValue<ListX<R>> traverse(Stream<? extends AnyM<T>> seq, Function<? super T,? extends R> fn){
 		
 		return new AnyMonads().traverse(seq,fn);
 	}
@@ -814,7 +795,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param seq Collection of monads to convert
 	 * @return Monad with a List
 	 */ 
-	public static <T1>  AnyM<ListX<T1>> sequence(Collection<? extends AnyM<T1>> seq){
+	public static <T1>  AnyMValue<ListX<T1>> sequence(Collection<? extends AnyM<T1>> seq){
 		return new AnyMonads().sequence(seq);
 	}
 	/**
@@ -831,7 +812,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param seq Stream of monads to convert
 	 * @return Monad with a List
 	 */
-	public static <T1>  AnyM<ListX<T1>> sequence(Stream<? extends AnyM<T1>> seq){
+	public static <T1>  AnyMValue<ListX<T1>> sequence(Stream<? extends AnyM<T1>> seq){
 		return new AnyMonads().sequence(seq);
 	}
 	/**
@@ -1038,29 +1019,20 @@ static AnyMFactory instance = new AnyMFactory();
 			return new MonadWrapper<>(new MonadicConverters().convertToMonadicForm(o)).anyMSeq();
 		return new MonadWrapper<>(o).anyMSeq();
 	}
-	public <T> AnyM<T> convert(Object o) {
-		
-		if(new ComprehenderSelector().selectComprehender(
-				o) instanceof InvokeDynamicComprehender)
-			return new MonadWrapper<>(new MonadicConverters().convertToMonadicForm(o)).anyM();
-		return new MonadWrapper<>(o).anyM();
-	}
-	public <T> AnyM<T> monad(Object o) {
-		
-		if(new ComprehenderSelector().selectComprehender(
-				o) instanceof InvokeDynamicComprehender)
-			return new MonadWrapper<>(new MonadicConverters().convertToMonadicForm(o)).anyM();
-		return new MonadWrapper<>(o).anyM();
-	}
+	
 	/* This will accept the supplied monad as is
 	 * 
 	 * (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyMFactory#monad(java.lang.Object)
 	 */
 	public <T> AnyMValue<T> value(Object o) {
+	    if(o instanceof AnyMValue)
+	        return (AnyMValue<T>)o;
 		return new MonadWrapper<>(o).anyMValue();
 	}
 	public <T> AnyMSeq<T> seq(Object o) {
+	    if(o instanceof AnyMSeq)
+            return (AnyMSeq<T>)o;
 		return new MonadWrapper<>(o).anyMSeq();
 	}
 	public AnyMFunctions anyMonads() {

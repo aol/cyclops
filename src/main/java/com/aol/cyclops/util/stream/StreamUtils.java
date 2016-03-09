@@ -1708,7 +1708,7 @@ public class StreamUtils{
 	 * @return
 	 *///rename -flatMapCharSequence
 	public final static <T> Stream<Character> flatMapCharSequence(Stream<T> stream,Function<? super T,CharSequence> fn) {
-		return new MonadWrapper<Stream<T>,T>(stream).liftAndBind(fn).sequence();
+		return new MonadWrapper<T>(stream).liftAndBind(fn).sequence();
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1734,7 +1734,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final static <T> Stream<String> flatMapFile(Stream<T> stream,Function<? super T,File> fn) {
-		return new MonadWrapper<Stream<T>,T>(stream).liftAndBind(fn).sequence();	
+		return new MonadWrapper<T>(stream).liftAndBind(fn).sequence();	
 	}
 	/**
 	 *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1755,7 +1755,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final  static <T> Stream<String> flatMapURL(Stream<T> stream,Function<? super T, URL> fn) {
-		return new MonadWrapper<Stream<T>,T>(stream).liftAndBind(fn).sequence();			
+		return new MonadWrapper<T>(stream).liftAndBind(fn).sequence();			
 	}
 	/**
 	  *  Perform a flatMap operation where the result will be a flattened stream of Strings
@@ -1777,7 +1777,7 @@ public class StreamUtils{
 	 * @return
 	 */
 	public final static <T> Stream<String> flatMapBufferedReader(Stream<T> stream,Function<? super T,BufferedReader> fn) {
-		return new MonadWrapper<Stream<T>,T>(stream).liftAndBind(fn).sequence();
+		return new MonadWrapper<T>(stream).liftAndBind(fn).sequence();
 	}
 
 	

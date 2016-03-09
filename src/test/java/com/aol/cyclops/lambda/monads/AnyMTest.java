@@ -36,16 +36,16 @@ public class AnyMTest {
 	@Test
 	public void createAnyMFromListOrOptional(){
 		List<Integer> list = Arrays.asList(1,2,3);
-		assertThat(AnyM.ofMonad(list).unwrap(),instanceOf(List.class));
+		assertThat(AnyM.ofSeq(list).unwrap(),instanceOf(List.class));
 		Optional<Integer> opt = Optional.of(1);
-		assertThat(AnyM.ofMonad(opt).unwrap(),instanceOf(Optional.class));
+		assertThat(AnyM.ofSeq(opt).unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void createAnyMFromListOrOptionalAsAnyM(){
 		List<Integer> list = Arrays.asList(1,2,3);
-		assertThat(AnyM.ofMonad(list).unwrap(),instanceOf(List.class));
+		assertThat(AnyM.ofSeq(list).unwrap(),instanceOf(List.class));
 		Optional<Integer> opt = Optional.of(1);
-		assertThat(AnyM.ofMonad(opt).unwrap(),instanceOf(Optional.class));
+		assertThat(AnyM.ofSeq(opt).unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void flatMapWithListComprehender() {
@@ -108,17 +108,17 @@ public class AnyMTest {
 	}
 	@Test
 	public void ofMonad(){
-		AnyM<Integer> opt = AnyM.ofMonad(Optional.of(1));
+		AnyM<Integer> opt = AnyM.ofSeq(Optional.of(1));
 		assertThat(opt.unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void ofConvertable(){
-		AnyM<Integer> future = AnyM.ofConvertable((Supplier<Integer>)()->1);
+		AnyM<Integer> future = AnyM.ofConvertableValue((Supplier<Integer>)()->1);
 		assertThat(future.unwrap(),instanceOf(CompletableFuture.class));
 	}
 	@Test
 	public void testLisOfMonad(){
-		AnyM<Integer> list = AnyM.ofMonad(Arrays.asList(1,2,3));
+		AnyM<Integer> list = AnyM.ofSeq(Arrays.asList(1,2,3));
 		assertThat(list.unwrap(),instanceOf(List.class));
 	}
 	

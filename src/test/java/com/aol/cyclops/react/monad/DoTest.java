@@ -33,7 +33,7 @@ public class DoTest {
 		}
 	}
 	public <T> AnyM<T> anyM(BaseSimpleReactStream<T> stream){
-		return AnyM.ofMonad(stream);
+		return AnyM.ofSeq(stream);
 	}
 	@Test
 	public void doTestSimple(){

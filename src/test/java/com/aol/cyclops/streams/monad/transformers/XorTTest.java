@@ -28,7 +28,7 @@ public class XorTTest {
 		Function<XorT<Integer>, XorT<Integer>> optTAdd2 = XorT.lift(add2);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,3);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofSeq(withNulls);
 		AnyM<Xor<?,Integer>> streamOpt = stream.map(this::toXor);
 		List<Integer> results = optTAdd2.apply(XorT.of(streamOpt))
 										.unwrap()
@@ -49,11 +49,11 @@ public class XorTTest {
 		BiFunction<XorT<Integer>,XorT<Integer>, XorT<Integer>> optTAdd2 = XorT.lift2(add);
 		
 		Stream<Integer> withNulls = Stream.of(1,2,3);
-		AnyM<Integer> stream = AnyM.ofMonad(withNulls);
+		AnyM<Integer> stream = AnyM.ofSeq(withNulls);
 		AnyM<Xor<?,Integer>> streamOpt = stream.map(this::toXor);
 		
 		CompletableFuture<Xor<?,Integer>> two = CompletableFuture.completedFuture(Xor.primary(2));
-		AnyM<Xor<?,Integer>> future=  AnyM.ofMonad(two);
+		AnyM<Xor<?,Integer>> future=  AnyM.ofValue(two);
 		List<Integer> results = optTAdd2.apply(XorT.of(streamOpt),XorT.of(future))
 										.unwrap()
 										.<Stream<Xor<?,Integer>>>unwrap()
@@ -68,7 +68,7 @@ public class XorTTest {
 	
 	@Test
 	public void filterFail(){
-		XorT<Integer> optionT = XorT.of(AnyM.ofMonad(Stream.of(Xor.primary(10))));
+		XorT<Integer> optionT = XorT.of(AnyM.ofSeq(Stream.of(Xor.primary(10))));
 		assertThat(optionT.filter(num->num<10).unwrap().<Stream<Xor<?,Integer>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Xor.secondary(null)));
 	}
@@ -81,22 +81,22 @@ public class XorTTest {
 	@Test
 	public void peek() {
 		result = null;
-		XorT<Integer> optionT = XorT.of(AnyM.ofMonad(Stream.of(Xor.primary(10))));
+		XorT<Integer> optionT = XorT.of(AnyM.ofSeq(Stream.of(Xor.primary(10))));
 		optionT.peek(num->result = "hello world"+num)
 				.unwrap().<Stream<Xor<?,String>>>unwrap().collect(Collectors.toList());
 		assertThat(result,  equalTo("hello world10"));
 	}
 	@Test
 	public void map() {
-		XorT<Integer> optionT = XorT.of(AnyM.ofMonad(Stream.of(Xor.primary(10))));
+		XorT<Integer> optionT = XorT.of(AnyM.ofSeq(Stream.of(Xor.primary(10))));
 		assertThat(optionT.map(num->"hello world"+num).unwrap().<Stream<Xor<?,String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Xor.primary("hello world10")));
 	}
 	@Test
 	public void flatMap() {
-		XorT<Integer> optionT = XorT.of(AnyM.ofMonad(Stream.of(Xor.primary(10))));
+		XorT<Integer> optionT = XorT.of(AnyM.ofSeq(Stream.of(Xor.primary(10))));
 		
-		assertThat(optionT.flatMap(num->XorT.fromAnyM(AnyM.ofMonad(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMap(num->XorT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
 				.unwrap().<Stream<Xor<String,RuntimeException>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Xor.primary("hello world10")));
 	}

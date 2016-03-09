@@ -16,8 +16,8 @@ public class MonadBugTest {
 	@Test
 	 public void test() {
 	    List<Integer> list = Arrays.asList(1,2,3);
-	    Monad<Stream<Integer>, Integer> m = Monad.of(list.stream());
-	    AnyMSeq<Integer> any = new AnyMSeqImpl<>(m.anyM());
+	    Monad<Integer> m = Monad.of(list.stream());
+	    AnyMSeq<Integer> any = m.anyMSeq();
 	    AnyM<Integer> mapped = any.flatMap(e -> any.unit(e));
 	    List<Integer> unwrapped = mapped.stream().toList();
 	    assertEquals(list, unwrapped);

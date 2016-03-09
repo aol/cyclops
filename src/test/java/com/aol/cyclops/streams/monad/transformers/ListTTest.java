@@ -30,7 +30,7 @@ public class ListTTest {
 		Function<ListT<Integer>, ListT<Integer>> optTAdd2 = ListT.lift(add2);
 		
 		Stream<Integer> nums = Stream.of(1,2);
-		AnyM<Stream<Integer>> stream = AnyM.ofMonad(Optional.of(nums));
+		AnyM<Stream<Integer>> stream = AnyM.ofSeq(Optional.of(nums));
 		
 		List<Integer> results = optTAdd2.apply(ListT.fromStream(stream))
 										.unwrap()

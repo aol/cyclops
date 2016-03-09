@@ -63,8 +63,12 @@ public interface AnyMSeq<T> extends AnyM<T>,
 									FilterableFunctor<T>,
 									ZippingApplicativable<T>,
 									Publisher<T>{
-
-	
+    @Override
+    default <R, A> R collect(Collector<? super T, A, R> collector){
+        return stream().collect(collector);
+        
+    }
+   
     @Override 
     default <R> ApplyingZippingApplicativeBuilder<T,R,ZippingApplicativable<R>> applicatives(){
         Streamable<T> streamable = toStreamable();
@@ -81,8 +85,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     default void subscribe(Subscriber<? super T> sub) {
         this.stream().subscribe(sub);
     }
-	@Override
-	<R, A> R collect(Collector<? super T, A, R> collector);
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.sequence.SequenceMCollectable#collectable()
 	 */
@@ -518,11 +521,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	 <R> R unwrap();
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#monad()
-	 */
-	@Override
-	<X> X monad() ;
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyM#filter(java.util.function.Predicate)
@@ -548,23 +547,13 @@ public interface AnyMSeq<T> extends AnyM<T>,
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#bind(java.util.function.Function)
-	 */
-	@Override
-	<R> AnyMSeq<R> bind(Function<? super T, ?> fn);
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#liftAndBind(java.util.function.Function)
-	 */
-	@Override
-	 <R> AnyMSeq<R> liftAndBind(Function<? super T, ?> fn);
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyM#flatten()
 	 */
 	@Override
-	 <T1> AnyM<T1> flatten();
+	 <T1> AnyMSeq<T1> flatten();
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.monad.AnyM#aggregate(com.aol.cyclops.monad.AnyM)
@@ -743,18 +732,13 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
 	<T> AnyMSeq<T> empty();
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#replicateM(int)
-	 */
-	@Override
-	 AnyMSeq<List<T>> replicateM(int times) ;
+	
+	
+	 AnyMSeq<T> replicateM(int times) ;
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.monad.AnyM#reduceM(com.aol.cyclops.Monoid)
-	 */
-	@Override
-	AnyM<T> reduceM(Monoid<AnyM<T>> reducer);
-
+	
+    
+     <R> AnyMSeq<R> bind(Function<? super T,?> fn);
 
 	/**
 	 * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process

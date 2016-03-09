@@ -27,7 +27,7 @@ public class LiftAndBindSequenceMTest {
 								.peek(System.out::println)
 								.map(URL::getFile)
 								.map(File::new)
-								.<String>flatMapAnyM(AnyM::ofConvertable)
+								.<String>flatMapAnyM(AnyM::ofConvertableValue)
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
@@ -39,7 +39,7 @@ public class LiftAndBindSequenceMTest {
 		List<String> result = AnyM.streamOf("input.file")
 		                          .stream()
 								.map(getClass().getClassLoader()::getResource)
-								.<String>flatMapAnyM(AnyM::ofConvertable)
+								.<String>flatMapAnyM(AnyM::ofConvertableValue)
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));

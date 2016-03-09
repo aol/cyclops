@@ -145,7 +145,10 @@ public interface Value<T> extends Supplier<T>,
 		 return monoid.reduce(toStream());
 	 }
 	 default  T fold(T identity,BinaryOperator<T> accumulator){
-		return accumulator.apply(identity, get());
+	     Optional<T> opt = toOptional();
+	     if(opt.isPresent())
+	         return accumulator.apply(identity, get());
+	     return identity;
 	 }
 	 default LazyImmutable<T> toLazyImmutable(){
 		 return LazyImmutable.of(get());

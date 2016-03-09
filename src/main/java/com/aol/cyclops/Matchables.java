@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
@@ -26,11 +27,16 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 public class Matchables {
     
+    public static <T> Xor<AnyMValue<T>,AnyMSeq<T>> anyM(AnyM<T> anyM){
+        return anyM instanceof AnyMValue ?  Xor.secondary((AnyMValue<T>)anyM) : Xor.primary((AnyMSeq<T>)anyM);
+    }
 	public static<X extends Throwable> MTuple4<Class,String,Throwable,MatchableIterable<StackTraceElement>> throwable(X t){
 		return Matchable.from(()->(Class)t.getClass(),
 							  ()->t.getMessage(),

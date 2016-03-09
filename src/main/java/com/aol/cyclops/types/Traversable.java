@@ -22,6 +22,8 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Maybe;
@@ -35,12 +37,14 @@ import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyCollectable;
 import com.aol.cyclops.types.stream.lazy.LazyOperations;
+import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 
 public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSequence<T> {
 	
+   
     /**
      * Combine two adjacent elements in a traversable using the supplied BinaryOperator
      * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

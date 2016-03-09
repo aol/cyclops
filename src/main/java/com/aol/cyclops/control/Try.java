@@ -11,13 +11,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -941,19 +939,19 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		/**
 		 * @return This monad, wrapped as AnyM of Success
 		 */
-		public AnyM<T> anyM(){
+		public AnyMValue<T> anyM(){
 			return this.anyMSuccess();
 		}
 		/**
 		 * @return This monad, wrapped as AnyM of Failure
 		 */
-		public AnyM<X> anyMFailure(){
-			return AnyM.ofMonad(this);
+		public AnyMValue<X> anyMFailure(){
+			return AnyM.ofValue(this);
 		}
 		/**
 		 * @return This monad, wrapped as AnyM of Success
 		 */
-		public AnyM<T> anyMSuccess(){
+		public AnyMValue<T> anyMSuccess(){
 			return AnyM.fromOptional(Optional.empty());
 		}
 		/**

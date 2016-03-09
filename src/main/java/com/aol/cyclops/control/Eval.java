@@ -14,6 +14,7 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.Memoize;
@@ -29,7 +30,7 @@ import com.aol.cyclops.util.function.Memoize;
  *
  * @param <T>
  */
-public interface Eval<T> extends Supplier<T>, Value<T>, Functor<T>, Filterable<T>, Applicativable<T>{
+public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filterable<T>, Applicativable<T>{
 
     
 	public static<T> Eval<T> now(T value){

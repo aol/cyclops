@@ -7,10 +7,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
 
 
@@ -24,7 +25,7 @@ import com.aol.cyclops.types.applicative.Applicativable;
  * @param <F>
  */
 public interface FeatureToggle<F> extends Supplier<F>, 
-                                          Value<F>,
+                                          MonadicValue<F>,
                                           Filterable<F>,
                                           Functor<F>, 
                                           Applicativable<F> {
@@ -73,7 +74,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	/**
 	 * @return This monad, wrapped as AnyM
 	 */
-	public AnyM<F> anyM();
+	public AnyMValue<F> anyM();
 	/**
 	 * @return This monad, wrapped as AnyM of Disabled
 	 */
@@ -249,19 +250,19 @@ public interface FeatureToggle<F> extends Supplier<F>,
 		/**
 		 * @return This monad, wrapped as AnyM
 		 */
-		public AnyM<F> anyM(){
+		public AnyMValue<F> anyM(){
 			return AnyM.ofValue(this);
 		}
 		/**
 		 * @return This monad, wrapped as AnyM of Disabled
 		 */
-		public AnyM<F> anyMDisabled(){
-			return  AnyM.ofMonad(Optional.empty());
+		public AnyMValue<F> anyMDisabled(){
+			return  AnyM.ofValue(Optional.empty());
 		}
 		/**
 		 * @return This monad, wrapped as AnyM of Enabled
 		 */
-		public AnyM<F> anyMEnabled(){
+		public AnyMValue<F> anyMEnabled(){
 			return anyM();
 		}
 		/**
@@ -390,7 +391,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 		    /**
 			 * @return This monad, wrapped as AnyM
 			 */
-			public AnyM<F> anyM(){
+			public AnyMValue<F> anyM(){
 				return AnyM.fromOptional(Optional.empty());
 			}
 			/**
