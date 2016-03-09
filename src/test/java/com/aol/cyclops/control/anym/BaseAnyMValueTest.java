@@ -687,6 +687,7 @@ public abstract class BaseAnyMValueTest {
 
 	@Test
 	public void testMatches() {
+	    
 		assertThat(just.mayMatch(c->c.is(when(10),then("hello"))),equalTo(Maybe.of("hello")));
 		assertThat(just.mayMatch(c->c.is(when(10),then("hello")).is(when(2),then("hello"))),equalTo(Maybe.of("hello")));
 		assertThat(just.mayMatch(c->c.is(when(1),then("hello"))

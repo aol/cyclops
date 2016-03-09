@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -24,7 +25,8 @@ public interface Maybe<T> extends MonadicValue<T>,
 								Supplier<T>, 
 								ConvertableFunctor<T>, 
 								Filterable<T>,
-								Applicativable<T>
+								Applicativable<T>,
+								Matchable.MatchableOptional<T>
 								{
 
 	
@@ -43,7 +45,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 	static <T> Maybe<T> fromEvalOf(Eval<T> eval){
 		return new Just<T>(eval);
 	}
-	static <T> Maybe<T> some(T value){
+	static <T> Maybe<T> just(T value){
 	    return of(value);
 	}
 	static <T> Maybe<T> of(T value){
@@ -78,6 +80,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 	default <T> Maybe<T> unit(T unit){
 		return  Maybe.of(unit);
 	}
+	
 	
 	
 	/* (non-Javadoc)
@@ -172,7 +175,16 @@ public interface Maybe<T> extends MonadicValue<T>,
 
 
 
-	@AllArgsConstructor(access=AccessLevel.PRIVATE)
+	@Override
+    default Optional<T> toOptional() {
+       
+        return MonadicValue.super.toOptional();
+    }
+
+
+
+
+    @AllArgsConstructor(access=AccessLevel.PRIVATE)
 	public static final class Just<T> implements Maybe<T>{
 		
 		private final Eval<T> lazy;

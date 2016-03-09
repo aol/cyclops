@@ -56,7 +56,7 @@ public class MatchablesTest {
     @Test
     public void tryTest2(){
         Eval<Integer> result = Matchables.tryMatch(Try.success(1))
-                                         .matches(c-> c.is( when(Maybe.some(1)), then(10)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+                                         .matches(c-> c.is( when(Maybe.just(1)), then(10)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
         
         assertThat(result,equalTo(Eval.now(10)));
     }

@@ -26,6 +26,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
@@ -53,7 +54,10 @@ public interface Value<T> extends Supplier<T>,
                                   Convertable<T>,
                                   Publisher<T>,
                                   Predicate<T>{
-
+    
+   
+   
+    
 
     default boolean test(T t){
         if(!(t instanceof Value))

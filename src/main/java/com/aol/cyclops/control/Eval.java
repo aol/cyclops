@@ -1,6 +1,7 @@
 package com.aol.cyclops.control;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
@@ -30,7 +31,7 @@ import com.aol.cyclops.util.function.Memoize;
  *
  * @param <T>
  */
-public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filterable<T>, Applicativable<T>{
+public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filterable<T>, Applicativable<T>,Matchable.MatchableOptional<T>{
 
     
 	public static<T> Eval<T> now(T value){
@@ -126,7 +127,11 @@ public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filte
 	default Eval<CompletableFuture<T>> asyncAlways(){
 		return Eval.always(()->this.toCompletableFutureAsync());
 	}
-	static <R> Eval<R> narrow(Eval<? extends R> broad){
+	@Override
+    default Optional<T> toOptional() {
+         return MonadicValue.super.toOptional();
+    }
+    static <R> Eval<R> narrow(Eval<? extends R> broad){
 		return (Eval<R>)broad;
 	}
 	public static class Now<T> implements Eval<T>{

@@ -3,11 +3,11 @@ package com.aol.cyclops.util.function;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
-import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple1;
@@ -15,11 +15,6 @@ import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
 import com.aol.cyclops.control.Matchable.MTuple4;
 import com.aol.cyclops.control.Matchable.MTuple5;
-import com.aol.cyclops.control.Matchable.MatchableTuple1;
-import com.aol.cyclops.control.Matchable.MatchableTuple2;
-import com.aol.cyclops.control.Matchable.MatchableTuple3;
-import com.aol.cyclops.control.Matchable.MatchableTuple4;
-import com.aol.cyclops.control.Matchable.MatchableTuple5;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
@@ -45,7 +40,21 @@ public class Predicates {
 		return p;
 	}
 
-	
+	public static <T> Predicate<T>  optionalPresent(){
+	   return t-> (t instanceof Optional) ?    ((Optional)t).isPresent() : false;
+	}
+	public static <T> Predicate<T>  valuePresent(){
+	       return t-> (t instanceof Value) ?    ((Value)t).toMaybe().isPresent() : false;
+	}
+	public static <T> Predicate<T>  iterablePresent(){
+        return t-> (t instanceof Iterable) ?    ((Iterable)t).iterator().hasNext() : false;
+	}
+	public static <T> Predicate<T> some(){
+        return Predicates.<T>p(t-> t!=null )
+                         .and(not(optionalPresent()))
+                         .and(not(valuePresent()))
+                         .and(not(iterablePresent()));
+    }
 	public static <T> Predicate<T> some(T value){
 	    return t-> eq(value).test(t);
 	}
@@ -100,15 +109,15 @@ public class Predicates {
 
 	
     @NoArgsConstructor
-    public static class PredicateBuilder1<T1> implements Predicate<Matchable.MatchableTuple1<T1>>{
+    public static class PredicateBuilder1<T1> implements Predicate<Matchable.MTuple1<T1>>{
         Predicate predicate;
         public PredicateBuilder1(MTuple1<Predicate<? super T1>> when) {   
-            predicate = new ADTPredicateBuilder<>(Matchable.MatchableTuple2.class).isGuard(when.v1());
+            predicate = new ADTPredicateBuilder<>(Matchable.MTuple2.class).isGuard(when.getMatchable().v1());
           
         }
 
         @Override
-        public boolean test(MatchableTuple1<T1> t) {
+        public boolean test(MTuple1<T1> t) {
           return predicate.test(t);
         }
     }
@@ -117,15 +126,15 @@ public class Predicates {
         return new PredicateBuilder1<T1>(when);
     }	
     @NoArgsConstructor
-    public static class PredicateBuilder2<T1,T2> implements Predicate<Matchable.MatchableTuple2<Object,T1,T2>>{
+    public static class PredicateBuilder2<T1,T2> implements Predicate<Matchable.MTuple2<T1,T2>>{
         Predicate predicate;
         public PredicateBuilder2(MTuple2<Predicate<? super T1>,Predicate<? super T2>> when) {   
-            predicate = new ADTPredicateBuilder<>(Matchable.MatchableTuple2.class).isGuard(when.v1(),when.v2());
+            predicate = new ADTPredicateBuilder<>(Matchable.MTuple2.class).isGuard(when.getMatchable().v1(),when.getMatchable().v2());
           
         }
 
         @Override
-        public boolean test(MatchableTuple2<Object,T1,T2> t) {
+        public boolean test(MTuple2<T1,T2> t) {
           return predicate.test(t);
         }
     }
@@ -134,15 +143,15 @@ public class Predicates {
         return new PredicateBuilder2<T1,T2>(when);
     }
     @NoArgsConstructor
-    public static class PredicateBuilder3<T1,T2,T3> implements Predicate<Matchable.MatchableTuple3<Object,T1,T2,T3>>{
+    public static class PredicateBuilder3<T1,T2,T3> implements Predicate<Matchable.MTuple3<T1,T2,T3>>{
         Predicate predicate;
         public PredicateBuilder3(MTuple3<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>> when) {   
-            predicate = new ADTPredicateBuilder<>(Matchable.MatchableTuple3.class).isGuard(when.v1(),when.v2(),when.v3());
+            predicate = new ADTPredicateBuilder<>(Matchable.MTuple3.class).isGuard(when.getMatchable().v1(),when.getMatchable().v2(),when.getMatchable().v3());
          
         }
 
         @Override
-        public boolean test(MatchableTuple3<Object,T1,T2,T3> t) {
+        public boolean test(MTuple3<T1,T2,T3> t) {
           return predicate.test(t);
         }
     }
@@ -151,15 +160,15 @@ public class Predicates {
         return new PredicateBuilder3<T1,T2,T3>(when);
     }
     @NoArgsConstructor
-    public static class PredicateBuilder4<T1,T2,T3,T4> implements Predicate<Matchable.MatchableTuple4<Object,T1,T2,T3,T4>>{
+    public static class PredicateBuilder4<T1,T2,T3,T4> implements Predicate<Matchable.MTuple4<T1,T2,T3,T4>>{
         Predicate predicate;
         public PredicateBuilder4(MTuple4<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>> when) {   
-            predicate = new ADTPredicateBuilder<>(Matchable.MatchableTuple4.class).isGuard(when.v1(),when.v2(),when.v3(),when.v4());
+            predicate = new ADTPredicateBuilder<>(Matchable.MTuple4.class).isGuard(when.getMatchable().v1(),when.getMatchable().v2(),when.getMatchable().v3(),when.getMatchable().v4());
           
         }
 
         @Override
-        public boolean test(MatchableTuple4<Object,T1,T2,T3,T4> t) {
+        public boolean test(MTuple4<T1,T2,T3,T4> t) {
           return predicate.test(t);
         }
     }
@@ -168,15 +177,15 @@ public class Predicates {
         return new PredicateBuilder4<T1,T2,T3,T4>(when);
     }
     @NoArgsConstructor
-    public static class PredicateBuilder5<T1,T2,T3,T4,T5> implements Predicate<Matchable.MatchableTuple5<Object,T1,T2,T3,T4,T5>>{
+    public static class PredicateBuilder5<T1,T2,T3,T4,T5> implements Predicate<Matchable.MTuple5<T1,T2,T3,T4,T5>>{
         Predicate predicate;
         public PredicateBuilder5(MTuple5<Predicate<? super T1>,Predicate<? super T2>,Predicate<? super T3>,Predicate<? super T4>,Predicate<? super T5>> when) {   
-            predicate = new ADTPredicateBuilder<>(Matchable.MatchableTuple5.class).isGuard(when.v1(),when.v2(),when.v3(),when.v4());
+            predicate = new ADTPredicateBuilder<>(Matchable.MTuple5.class).isGuard(when.getMatchable().v1(),when.getMatchable().v2(),when.getMatchable().v3(),when.getMatchable().v4());
           
         }
 
         @Override
-        public boolean test(MatchableTuple5<Object,T1,T2,T3,T4,T5> t) {
+        public boolean test(MTuple5<T1,T2,T3,T4,T5> t) {
           return predicate.test(t);
         }
     }

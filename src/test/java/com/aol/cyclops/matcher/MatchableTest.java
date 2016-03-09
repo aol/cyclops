@@ -1,10 +1,14 @@
 package com.aol.cyclops.matcher;
 
+import static org.hamcrest.Matchers.equalTo;
 import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static com.aol.cyclops.control.Matchable.whenGuard;
+import static com.aol.cyclops.control.Matchable.whenTrue;
+import static com.aol.cyclops.control.Maybe.just;
 import static com.aol.cyclops.util.function.Predicates.__;
+import static com.aol.cyclops.util.function.Predicates.any;
 import static com.aol.cyclops.util.function.Predicates.decons;
 import static com.aol.cyclops.util.function.Predicates.eq;
 import static com.aol.cyclops.util.function.Predicates.has;
@@ -12,9 +16,7 @@ import static com.aol.cyclops.util.function.Predicates.in;
 import static com.aol.cyclops.util.function.Predicates.lessThan;
 import static com.aol.cyclops.util.function.Predicates.not;
 import static com.aol.cyclops.util.function.Predicates.type;
-import static org.hamcrest.Matchers.any;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
+
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -29,6 +31,7 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
 import com.aol.cyclops.control.Matchable.MatchSelf;
+
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -94,12 +97,11 @@ public class MatchableTest {
 	public void pojoTypeSafe(){
 		
 		
-		new Address(10,"hello","world").match().mayMatch(c->c.is(when(this::isValidHouse, this::isValidStreet,this::isValidCity),then("ok")))
-																	 .orElse("hello");
+		new Address(10,"hello","world").match().matches(c->c.is(when(this::isValidHouse, this::isValidStreet,this::isValidCity),then("ok")),otherwise("hoo!"));
 			
-		new Address(10,"hello","world").match().mayMatch(c->c.is(when(10,"hello","world"),then("ok"))
+		new Address(10,"hello","world").match().matches(c->c.is(when(10,"hello","world"),then("ok"))
 															 .is(when(6,"something","oops!"),then("res"))
-															 .isEmpty(then(()->"empty")));
+															 .isEmpty(then(()->"empty")),otherwise("boo"));
 	
 				
 	}
@@ -113,7 +115,7 @@ public class MatchableTest {
 	@Test
 	public void tuple2Predicates(){
 		 Matchable.from(()->"hello",()->2)
- 			.mayMatch(c->c.is(when(s->s=="hello",t->(int)t>5),then(()->"hello")));
+ 			.matches(c->c.is(when(s->s=="hello",t->(int)t>5),then(()->"hello")),otherwise("world"));
 	}
 	@Test
 	public void matchTestStructuralAndGuards(){
@@ -130,11 +132,11 @@ public class MatchableTest {
 		String v  =new Address(10,"hello","my city").match()
 							   			 .on$12_()
 							   			 .visit((house,street)-> 
-							   			 	house.<String>mayMatch(c->c.is(when(this::isValidHouse),then("valid house")))
+							   			 	just(house).<String>mayMatch(c->c.is(when(this::isValidHouse),then("valid house")))
 							   		            	 .recover("incorrectly configured house")
 							   		            	 .ap2(this::concat)
 							   		            	 .ap(
-							   		      				street
+							   		      				just(street)
 							   		      						.<String>mayMatch(c->c.has(when(this::isValidStreet),then(()->"valid street")))
 							   		      						
 							   		      				.recover("incorrectly configured steet")
@@ -147,15 +149,16 @@ public class MatchableTest {
 	}
 	@Test
 	public void matchTestStructuralOnly(){
+	    
 		String v =new Address(10,"hello","my city")
 										 .match()
 							   			 .on$12_()
 							   			 .visit((house,street)-> 
-							   					house.filter(this::isValidHouse)
+							   					just(house).filter(this::isValidHouse)
 							   						 .map(i->"valid house")
 							   						 .recover("incorrectly configured house")
 							   		                 .ap2(this::concat)
-							   		            	 .ap(street.filter(this::isValidStreet)
+							   		            	 .ap(just(street).filter(this::isValidStreet)
 							   		            			   .map(s->"valid street")
 							   		            			   .recover("incorrectly configured steet"))
 							   		            	 .get());
@@ -173,11 +176,11 @@ public class MatchableTest {
 							   			 .visit(address ->
 							   			   		 address.on$12_()
 							   					   		.visit((house,street)-> 
-							   									house.filter(this::isValidHouse)
+							   									just(house).filter(this::isValidHouse)
 							   										 .map(i->"valid house")
 							   										 .recover("incorrectly configured house")
 							   									 	 .ap2(this::concat)
-							   									 	 .ap(street.filter(this::isValidStreet)
+							   									 	 .ap(just(street).filter(this::isValidStreet)
 							   									 			   .map(s->"valid street")
 							   									 			   .recover("incorrectly configured steet"))
 							   									 	 .get())
@@ -220,7 +223,7 @@ public class MatchableTest {
 					.matches(c->c.is(whenGuard(t->t.equals(1),Predicates.__,t->t.equals(3)),then("2")),otherwise("-2"));
 		
 		Matchable.of(Arrays.asList(1,2,3))
-					.matches(c->c.is(when(equalTo(1),any(Integer.class),equalTo(4)),then("2")),otherwise("45"));
+					.matches(c->c.is(when(eq(1),any(Integer.class),eq(4)),then("2")),otherwise("45"));
 		
 		
 		

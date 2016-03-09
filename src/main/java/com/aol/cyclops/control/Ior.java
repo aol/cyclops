@@ -113,7 +113,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
             return swap().visit(secondary,()->null);
         if(isPrimary())
             return visit(primary,()->null);
-        return Matchable.from(both().get()).visit((a,b)-> both.apply(a.get(), b.get()));
+        
+        return Matchable.from(both().get()).visit((a,b)-> both.apply(a, b));
     }
 	default <R1,R2> Ior<R1,R2> visitIor(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){

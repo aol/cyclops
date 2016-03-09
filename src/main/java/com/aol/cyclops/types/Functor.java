@@ -94,8 +94,8 @@ public interface Functor<T> {
      * @return CollectionX where elements are transformed by pattern matching
      */
     default <R> Functor<R> patternMatch(Function<CheckValues<T,R>,CheckValues<T,R>> case1,Supplier<? extends R> otherwise){
-
-        return  map(u-> Matchable.of(u).mayMatch(case1).orElseGet(otherwise));
+      
+        return  map(u-> Matchable.of(u).matches(case1,otherwise).get());
     }
 
 	

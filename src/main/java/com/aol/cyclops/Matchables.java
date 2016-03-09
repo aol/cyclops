@@ -15,19 +15,16 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
 import com.aol.cyclops.control.Matchable.MTuple4;
 import com.aol.cyclops.control.Matchable.MTuple5;
+import com.aol.cyclops.control.Matchable.MXor;
 import com.aol.cyclops.control.Matchable.MatchableIterable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -41,14 +38,7 @@ import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 public class Matchables {
-    /**
-     * useful to determining limits of pattern matching and api simplification
-    public static <T1> MXor<T1,MTuple4<Class,String,Throwable,MatchableIterable<StackTraceElement>>> futureBreakdown(CompletableFuture<T1> future){
-        return ()-> FutureW.of(future).toXor().swap().map(t->throwable(t));
-    }
-    public static <T1> MXor<T1,MTuple4<Class,String,Throwable,MatchableIterable<StackTraceElement>>> futureBreakdown(FutureW<T1> future){
-        return ()-> future.toXor().swap().map(t->throwable(t));
-    }**/
+    
     public static <T1> MXor<T1,Throwable> future(CompletableFuture<T1> future){
         return ()-> FutureW.of(future).toXor().swap();
     }
@@ -59,52 +49,15 @@ public class Matchables {
     public static <T1,X extends Throwable> MXor<T1,X> tryMatch(Try<T1,X> match){
         return ()-> match.toXor().swap();
     }
-    public static <T1> OptionalXor<T1,Void> maybe(Maybe<T1> opt){
-        return ()-> (Xor)opt.toXor().swap();
+    public static <T> Matchable.MatchableOptional<T> maybe(Maybe<T> opt){
+        return opt;
     }
-    public static <T1> OptionalXor<T1,Void> optional(Optional<T1> opt){
-        return ()-> (Xor)Maybe.fromOptional(opt).toXor().swap();
+    public static <T> Matchable.MatchableOptional<T> optional(Optional<T> opt){
+        return Maybe.fromOptional(opt);
     }
-    public static interface OptionalXor<T1,Void>{
-        Xor<T1,Void> getMatchable();
-        
-        
-        default <R> R visit(Function<? super T1,? extends R> some, 
-                Function<? super Void,? extends R> none){
-            
-            return getMatchable().visit(some, none);
-        }  
-       
-       
-        default <R> Eval<R>  matches(Function<CheckValue1<T1,R>,CheckValue1<T1,R>> some,Supplier<? extends R> otherwise){
-            if(getMatchable().isSecondary())
-                return  getMatchable().matches(some, null, otherwise);
-            return Eval.narrow( Eval.later(otherwise));
-        }
-        
-        
-        
-    }
-    public static interface MXor<T1,T2>{
-        Xor<T1,T2> getMatchable();
-        
-        
-        default <R> R visit(Function<? super T1,? extends R> secondary, 
-                Function<? super T2,? extends R> primary){
-            
-            return getMatchable().visit(secondary, primary);
-        }  
-       
-       
-        default <R> Eval<R>  matches(Function<CheckValue1<T1,R>,CheckValue1<T1,R>> secondary,Function<CheckValue1<T2,R>,CheckValue1<T2,R>> primary,Supplier<? extends R> otherwise){
-            return  getMatchable().matches(secondary, primary, otherwise);
-        }
-        
-        
-        
-    }
-    public static <T> Xor<AnyMValue<T>,AnyMSeq<T>> anyM(AnyM<T> anyM){
-        return anyM instanceof AnyMValue ?  Xor.secondary((AnyMValue<T>)anyM) : Xor.primary((AnyMSeq<T>)anyM);
+ 
+    public static <T> MXor<AnyMValue<T>,AnyMSeq<T>> anyM(AnyM<T> anyM){
+        return ()-> anyM instanceof AnyMValue ?  Xor.secondary((AnyMValue<T>)anyM) : Xor.primary((AnyMSeq<T>)anyM);
     }
 	public static<X extends Throwable> MTuple4<Class,String,Throwable,MatchableIterable<StackTraceElement>> throwable(X t){
 		return Matchable.from(()->(Class)t.getClass(),
@@ -162,11 +115,8 @@ public class Matchables {
 	public static MatchableIterable<Character> chars(CharSequence seq){
 		return Matchable.fromCharSequence(seq);
 	}
-	public static <ST,PT> MTuple2<Maybe<ST>,Maybe<PT>> xor(Xor<ST,PT> xor){
-	
-		
-		return Matchable.from(()-> xor.swap().toMaybe(),
-									()->xor.toMaybe());
+	public static <ST,PT> MXor<ST,PT> xor(Xor<ST,PT> xor){
+	    return ()->xor;
 	}
 	public static <T> MTuple2<Maybe<T>,ListX<T>> headAndTail(Collection<T> col){
 		HeadAndTail<T> ht = CollectionX.fromCollection(col).headAndTail();
@@ -174,7 +124,7 @@ public class Matchables {
 	}
 	public static <K,V> ReactiveSeq<MTuple2<K,V>> keysAndValues(Map<K,V> map){
 		return ReactiveSeq.fromIterable(map.entrySet()).map(entry ->
-										(MTuple2<K,V>)Matchable.from(()->entry.getKey(),()->entry.getValue()));
+		                    (MTuple2<K,V>)Matchable.from(()->entry.getKey(),()->entry.getValue()));
 	}
 	public static MTuple3<Integer,Integer,Integer> dateDDMMYYYY(Date date){
 		Date input = new Date();
