@@ -28,7 +28,8 @@ public interface FeatureToggle<F> extends Supplier<F>,
                                           MonadicValue<F>,
                                           Filterable<F>,
                                           Functor<F>, 
-                                          Applicativable<F> {
+                                          Applicativable<F>,
+                                          Matchable.ValueAndOptionalMatcher<F>{
 
 	boolean isEnabled();
 	boolean isDisabled();

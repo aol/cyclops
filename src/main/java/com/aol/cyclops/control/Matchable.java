@@ -323,144 +323,156 @@ public interface Matchable<TYPE>{
                         .match(getMatchable()).orElseGet(otherwise));
           
         }
-		//move out
-		default Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> toTuple5(Object o){
-			Iterator it = ((Iterable)o).iterator();
-			return Tuple.tuple((TYPE)(it.hasNext() ?it.next():null),
-					(TYPE)(it.hasNext() ?it.next():null),
-					(TYPE)(it.hasNext() ?it.next():null),
-					(TYPE)(it.hasNext() ?it.next():null),
-					(TYPE)(it.hasNext() ?it.next():null));
+		static interface MIUtil { 
+    		
+            static <TYPE> Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> toTuple5(Object o){
+                Iterator it = ((Iterable)o).iterator();
+                return Tuple.tuple((TYPE)(it.hasNext() ?it.next():null),
+                        (TYPE)(it.hasNext() ?it.next():null),
+                        (TYPE)(it.hasNext() ?it.next():null),
+                        (TYPE)(it.hasNext() ?it.next():null),
+                        (TYPE)(it.hasNext() ?it.next():null));
+            }
 		}
 		default MTuple1<TYPE> on$1____(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple1<TYPE>(it.v1);
 		}
 		default MTuple1<TYPE> on$_2___(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple1<TYPE>(it.v2);
 		}
 		default MTuple1<TYPE> on$__3__(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple1<TYPE>(it.v3);
 		}
 		default MTuple1<TYPE> on$___4_(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple1<TYPE>(it.v4);
 		}
 		default MTuple1<TYPE> on$____5(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple1<TYPE>(it.v5);
 		}
 		default MTuple2<TYPE,TYPE> on$12___(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple2<TYPE,TYPE>(it.v1,it.v2);
 		}
 		default MTuple2<TYPE,TYPE> on$1_3__(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple2<TYPE,TYPE>(it.v1,it.v3);
 		}
 		default MTuple2<TYPE,TYPE> on$1__4_(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple2<TYPE,TYPE>(it.v1,it.v4);
 		}
 		default MTuple2<TYPE,TYPE> on$1___5(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple2<TYPE,TYPE>(it.v1,it.v5);
 		}
 		default MTuple2<TYPE,TYPE> on$_23__(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple2<TYPE,TYPE>(it.v2,it.v3);
 		}
 		default MTuple2<TYPE,TYPE> on$_2_4_(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple2<TYPE,TYPE>(it.v2,it.v4);
 		}
 		default MTuple2<TYPE,TYPE> on$_2__5(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple2<TYPE,TYPE>(it.v2,it.v5);
 		}
 		default MTuple2<TYPE,TYPE> on$__34_(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple2<TYPE,TYPE>(it.v3,it.v4);
 		}
 		default MTuple2<TYPE,TYPE> on$__3_5(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple2<TYPE,TYPE>(it.v3,it.v5);
 		}
 		default MTuple2<TYPE,TYPE> on$___45(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple2<TYPE,TYPE>(it.v4,it.v5);
 		}
 		
 		default MTuple3<TYPE,TYPE,TYPE> on$123__(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v2,it.v3);
 		}
 		default MTuple3<TYPE,TYPE,TYPE> on$12_4_(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v2,it.v4);
 		}
 		default MTuple3<TYPE,TYPE,TYPE> on$12__5(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v2,it.v5);
 		}
 		default MTuple3<TYPE,TYPE,TYPE> on$1_34_(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v3,it.v4);
 		}
 		default MTuple3<TYPE,TYPE,TYPE> on$1_3_5(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v3,it.v5);
 		}
 		default MTuple3<TYPE,TYPE,TYPE> on$1__45(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v1,it.v4,it.v5);
 		}
 	
 		default MTuple3<TYPE,TYPE,TYPE> on$_234_(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v2,it.v3,it.v4);
 		}
 		default MTuple3<TYPE,TYPE,TYPE> on$_23_5(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v2,it.v3,it.v5);
 		}
 		default MTuple3<TYPE,TYPE,TYPE> on$__345(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple3<TYPE,TYPE,TYPE>(it.v3,it.v4,it.v5);
 		}
 		default MTuple4<TYPE,TYPE,TYPE,TYPE> on$1234_(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple4<TYPE,TYPE,TYPE,TYPE>(it.v1,it.v2,it.v3,it.v4);
 		}
 		default MTuple4<TYPE,TYPE,TYPE,TYPE> on$123_5(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple4<TYPE,TYPE,TYPE,TYPE>(it.v1,it.v2,it.v3,it.v5);
 		}
 		default MTuple4<TYPE,TYPE,TYPE,TYPE> on$12_45(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple4<TYPE,TYPE,TYPE,TYPE>(it.v1,it.v2,it.v4,it.v5);
 		}
 		default MTuple4<TYPE,TYPE,TYPE,TYPE> on$1_345(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple4<TYPE,TYPE,TYPE,TYPE>(it.v1,it.v3,it.v4,it.v5);
 		}
 		default MTuple4<TYPE,TYPE,TYPE,TYPE> on$_2345(){
-			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)toTuple5(getMatchable());
+			Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE> it = (Tuple5<TYPE,TYPE,TYPE,TYPE,TYPE>)MIUtil.toTuple5(getMatchable());
 			return ()->new Tuple4<TYPE,TYPE,TYPE,TYPE>(it.v2,it.v3,it.v4,it.v5);
 		}
 		
 	}
 	
+	static interface ValueAndOptionalMatcher<T> extends MatchableOptional<T>, Value<T>{
+
+        @Override
+        default Optional<T> toOptional() {
+           
+            return Value.super.toOptional();
+        }
+	    
+	}
+	
 	 static interface MatchableOptional<T>{
 	        
 	        Optional<T> toOptional();
-	        default <R> R  matches(Function<CheckValue1<T,R>,CheckValue1<T,R>> some,Supplier<? extends R> otherwise){
+	        default <R> Eval<R>  matches(Function<CheckValue1<T,R>,CheckValue1<T,R>> some,Supplier<? extends R> otherwise){
 	            Optional<T> opt = toOptional();
 	            if(opt.isPresent())
-	                return  Matchable.from(()->opt.get()).matches(some, otherwise).get();
-	            return otherwise.get();
+	                return  Matchable.from(()->opt.get()).matches(some, otherwise);
+	            return Eval.later(()->otherwise.get());
 	        }
 	    }
 	

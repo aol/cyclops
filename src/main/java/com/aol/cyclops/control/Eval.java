@@ -31,7 +31,7 @@ import com.aol.cyclops.util.function.Memoize;
  *
  * @param <T>
  */
-public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filterable<T>, Applicativable<T>,Matchable.MatchableOptional<T>{
+public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filterable<T>, Applicativable<T>,Matchable.ValueAndOptionalMatcher<T>{
 
     
 	public static<T> Eval<T> now(T value){
@@ -127,10 +127,7 @@ public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filte
 	default Eval<CompletableFuture<T>> asyncAlways(){
 		return Eval.always(()->this.toCompletableFutureAsync());
 	}
-	@Override
-    default Optional<T> toOptional() {
-         return MonadicValue.super.toOptional();
-    }
+	
     static <R> Eval<R> narrow(Eval<? extends R> broad){
 		return (Eval<R>)broad;
 	}

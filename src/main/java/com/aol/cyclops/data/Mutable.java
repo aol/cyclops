@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 
@@ -38,7 +39,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class Mutable<T> implements Supplier<T>,Consumer<T>, Value<T>{
+public class Mutable<T> implements Supplier<T>,Consumer<T>, Matchable.ValueAndOptionalMatcher<T>{
 
 	private T var;
 	

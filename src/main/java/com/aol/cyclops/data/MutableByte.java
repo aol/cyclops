@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.control.Matchable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -37,7 +37,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableByte implements Supplier<Byte>, Consumer<Byte>,Value<Byte>{
+public class MutableByte implements Supplier<Byte>, Consumer<Byte>,Matchable.ValueAndOptionalMatcher<Byte>{
 
 	private byte var;
 	

@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static org.hamcrest.Matchers.equalTo;
@@ -658,17 +659,16 @@ public class FeatureToggleTest {
 	public void testGetMatchable1() {
 		assertThat(just.getMatchable(),equalTo(10));
 	}
-
 	@Test
-	public void testMatches() {
-		assertThat(just.mayMatch(c->c.is(when(10),then("hello"))),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.is(when(10),then("hello")).is(when(2),then("hello"))),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.is(when(1),then("hello"))
-									 .is(when(2),then(()->"hello"))
-									 .is(when(3),then(()->"hello"))),equalTo(Maybe.none()));
-		
-	}
-
+    public void testMatches() {
+        assertThat(just.matches(c->c.is(when(10),then("hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.of("hello")));
+        assertThat(just.matches(c->c.is(when(10),then("hello")).is(when(2),then("hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.of("hello")));
+        assertThat(just.matches(c->c.is(when(1),then("hello"))
+                                     .is(when(2),then(()->"hello"))
+                                     .is(when(3),then(()->"hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.none()));
+        
+    }
+	
 	
 	
 

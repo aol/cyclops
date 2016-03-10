@@ -8,6 +8,7 @@ import java.util.function.LongSupplier;
 import java.util.function.LongUnaryOperator;
 import java.util.stream.LongStream;
 
+import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.Value;
 
 import lombok.AllArgsConstructor;
@@ -41,7 +42,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableLong implements LongSupplier, LongConsumer,Value<Long>{
+public class MutableLong implements LongSupplier, LongConsumer,Matchable.ValueAndOptionalMatcher<Long>{
 
 	private long var;
 	

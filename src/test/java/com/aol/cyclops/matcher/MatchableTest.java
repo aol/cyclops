@@ -323,7 +323,7 @@ public class MatchableTest {
 						.matches(
 				            			o-> o.isEmpty(then("hello"))
 				            			      .is(when(1),then("2"))
-				            			      .has(when(2),then("3")),otherwise("boo!")
+				            			      .is(when(2),then("3")),otherwise("boo!")
 				            		)
 				            		,equalTo(Eval.now("hello")));
 		

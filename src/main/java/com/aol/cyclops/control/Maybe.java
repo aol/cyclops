@@ -26,7 +26,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 								ConvertableFunctor<T>, 
 								Filterable<T>,
 								Applicativable<T>,
-								Matchable.MatchableOptional<T>
+								Matchable.ValueAndOptionalMatcher<T>
 								{
 
 	
@@ -175,11 +175,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 
 
 
-	@Override
-    default Optional<T> toOptional() {
-       
-        return MonadicValue.super.toOptional();
-    }
+	
 
 
 

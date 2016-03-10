@@ -4,6 +4,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 
@@ -38,7 +39,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Value<Boolean>{
+public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Matchable.ValueAndOptionalMatcher<Boolean>{
 
 	private boolean var;
 	

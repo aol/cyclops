@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.Functor;
@@ -41,7 +42,8 @@ import lombok.ToString;
  */
 @ToString
 
-public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Value<T>, Functor<T>, Applicativable<T>{
+public class LazyImmutable<T> implements Supplier<T>, 
+                                Consumer<T>, Matchable.ValueAndOptionalMatcher<T>, Functor<T>, Applicativable<T>{
 	private final static Object UNSET = new Object();
 	private AtomicReference value = new AtomicReference<>(UNSET);
 	private final AtomicBoolean set= new AtomicBoolean(false);
