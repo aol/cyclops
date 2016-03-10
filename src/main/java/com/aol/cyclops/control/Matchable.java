@@ -203,10 +203,11 @@ public interface Matchable<TYPE>{
 	       return  Matchables.tryMatch(match);
 	        
 	}
-	/**
+	
 	public static<T> MatchableObject<Optional<T>> fromOptional(Optional<T> o){
 		return AsMatchable.asMatchable(o);
 	}
+	/**
 	public static<T> MatchableObject<Value<T>> fromValue(Value<T> o){
 		return AsMatchable.asMatchable(o);
 	}
@@ -462,12 +463,33 @@ public interface Matchable<TYPE>{
            
             return Value.super.toOptional();
         }
+        default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
+            return Value.super.visit(present,absent);
+        }
+        @Override
+        default Iterator<T> iterator() {
+         
+            return MatchableOptional.super.iterator();
+        }
 	    
 	}
 	
-	 static interface MatchableOptional<T>{
+	 static interface MatchableOptional<T> extends Iterable<T>{
 	        
 	        Optional<T> toOptional();
+	        
+	        default Iterator<T> iterator(){
+	           Optional<T> opt = toOptional();
+	           return opt.isPresent() ? Arrays.asList(opt.get()).iterator() : Arrays.<T>asList().iterator();
+	        }
+	        
+	        default <R> R visit(Function<? super T,? extends R> some, 
+                    Supplier<? extends R> none){
+	            Optional<T> opt = toOptional();
+                if(opt.isPresent())
+                    return  some.apply(opt.get());
+                return none.get();
+            } 
 	        default <R> Eval<R>  matches(Function<CheckValue1<T,R>,CheckValue1<T,R>> some,Supplier<? extends R> otherwise){
 	            Optional<T> opt = toOptional();
 	            if(opt.isPresent())
@@ -478,9 +500,12 @@ public interface Matchable<TYPE>{
 	
 	     
 	 
-	    public static interface MXor<T1,T2>{
+	    public static interface MXor<T1,T2> extends Iterable<Object>{
 	        Xor<T1,T2> getMatchable();
-	        
+	        default Iterator<Object> iterator(){
+	           return  getMatchable().isPrimary() ? (Iterator)getMatchable().toList().iterator() : 
+	                   (Iterator) Arrays.asList(getMatchable().secondaryGet()).iterator();
+	        }
 	        
 	        default <R> R visit(Function<? super T1,? extends R> secondary, 
 	                Function<? super T2,? extends R> primary){
@@ -496,9 +521,13 @@ public interface Matchable<TYPE>{
 	        
 	        
 	    }
-	public static interface MTuple1<T1>{
+	@FunctionalInterface
+	public static interface MTuple1<T1> extends Iterable<Object>{
 		Tuple1<T1> getMatchable();
 		
+		default Iterator<Object> iterator(){
+		    return getMatchable().iterator();
+		}
 		default <R> R visit(Function<? super T1,? extends R> some,Supplier<? extends R> none ){
 			@SuppressWarnings("unchecked")
 			Tuple1<T1> it = (Tuple1<T1>)getMatchable();
@@ -516,9 +545,13 @@ public interface Matchable<TYPE>{
 		
 		
 	}
-	
-	public static interface MTuple2<T1,T2> {
+	@FunctionalInterface
+	public static interface MTuple2<T1,T2>  extends Iterable<Object>{
 		Tuple2<T1,T2> getMatchable();
+		
+		default Iterator<Object> iterator(){
+            return getMatchable().iterator();
+        }
 		
 		default <R> R visit(BiFunction<? super T1,? super T2,? extends R> match ){
 			@SuppressWarnings("unchecked")
@@ -545,9 +578,12 @@ public interface Matchable<TYPE>{
 	}
 	
 	@FunctionalInterface
-	public static interface MTuple3<T1 ,T2,T3> {
+	public static interface MTuple3<T1 ,T2,T3>  extends Iterable<Object>{
 		Tuple3<T1,T2,T3> getMatchable();
 		
+		default Iterator<Object> iterator(){
+            return getMatchable().iterator();
+        }
 		
 		default <R> Eval<R> visit(TriFunction<? super T1,? super T2,? super T3,? extends R> match ){
 			@SuppressWarnings("unchecked")
@@ -589,9 +625,13 @@ public interface Matchable<TYPE>{
 			return ()->new Tuple2<T2,T3>(it.v2,it.v3);
 		}
 	}
-	
-	public static interface MTuple4<T1,T2,T3,T4>{
+	@FunctionalInterface
+	public static interface MTuple4<T1,T2,T3,T4>  extends Iterable<Object>{
 		Tuple4<T1,T2,T3,T4> getMatchable();
+		
+		default Iterator<Object> iterator(){
+            return getMatchable().iterator();
+        }
 		
 		default <R> Eval<R> visit(QuadFunction<? super T1,? super T2,? super T3,? super T4,? extends R> match ){
 			@SuppressWarnings("unchecked")
@@ -669,9 +709,13 @@ public interface Matchable<TYPE>{
 		
 		
 	}
-	
-	public static interface MTuple5<T1,T2,T3,T4,T5> {
+	@FunctionalInterface
+	public static interface MTuple5<T1,T2,T3,T4,T5>  extends Iterable<Object>{
 		Tuple5<T1,T2,T3,T4,T5> getMatchable();
+		
+		default Iterator<Object> iterator(){
+            return getMatchable().iterator();
+        }
 		
 		default <R> Eval<R> visit(QuintFunction<? super T1,? super T2,? super T3,? super T4,? super T5,? extends R> match ){
 			@SuppressWarnings("unchecked")
@@ -862,8 +906,8 @@ public interface Matchable<TYPE>{
 		public final <V> CheckValue1<T,R> isEmpty(Supplier<? extends R> then) {
 
 			Predicate predicate = it -> Maybe.ofNullable(it)
-					.map(v -> v.getClass().isAssignableFrom(clazz))
-					.orElse(false);
+			                                 .map(v -> v.getClass().isAssignableFrom(clazz))
+			                                 .orElse(false);
 			// add wildcard support
 			
 			Predicate<V>[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
@@ -1084,38 +1128,38 @@ public interface Matchable<TYPE>{
 			return isWhere(then,when);
 		}
 		public final CheckValues<T,R> is(MTuple1<Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return isWhere(then,(Iterable)when);
+			return isWhere(then,Arrays.asList(when.getMatchable().v1));
 		}
 		public final CheckValues<T,R> is(MTuple2<Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return isWhere(then,(Iterable)when);
+		    return isWhere(then,Arrays.asList(when.getMatchable().v1,when.getMatchable().v2));
 		}
 		public final CheckValues<T,R> is(MTuple3<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return isWhere(then,(Iterable)when);
+		    return isWhere(then,Arrays.asList(when.getMatchable().v1,when.getMatchable().v2,when.getMatchable().v3));
 		}
 		public final CheckValues<T,R> is(MTuple4<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return isWhere(then,(Iterable)when);
+		    return isWhere(then,Arrays.asList(when.getMatchable().v1,when.getMatchable().v2,when.getMatchable().v3,when.getMatchable().v4));
 		}
 		public final CheckValues<T,R> is(MTuple5<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return isWhere(then,(Iterable)when);
+		    return isWhere(then,Arrays.asList(when.getMatchable().v1,when.getMatchable().v2,when.getMatchable().v3,when.getMatchable().v4,when.getMatchable().v5));
 		}
 		
 		public final CheckValues<T,R> has(Iterable<Predicate<? super T>> when,Supplier<? extends R> then) {		
 			return hasWhere(then,when);
 		}
 		public final CheckValues<T,R> has(MTuple1<Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return hasWhere(then,(Iterable)when);
+		    return hasWhere(then,Arrays.asList(when.getMatchable().v1));
 		}
 		public final CheckValues<T,R> has(MTuple2<Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return hasWhere(then,(Iterable)when);
+		    return hasWhere(then,Arrays.asList(when.getMatchable().v1,when.getMatchable().v2));
 		}
 		public final CheckValues<T,R> has(MTuple3<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return hasWhere(then,(Iterable)when);
+		    return hasWhere(then,Arrays.asList(when.getMatchable().v1,when.getMatchable().v2,when.getMatchable().v3));
 		}
 		public final CheckValues<T,R> has(MTuple4<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return hasWhere(then,(Iterable)when);
+		    return hasWhere(then,Arrays.asList(when.getMatchable().v1,when.getMatchable().v2,when.getMatchable().v3,when.getMatchable().v4));
 		}
 		public final CheckValues<T,R> has(MTuple5<Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>,Predicate<? super T>> when,Supplier<? extends R> then) {		
-			return hasWhere(then,(Iterable)when);
+		    return hasWhere(then,Arrays.asList(when.getMatchable().v1,when.getMatchable().v2,when.getMatchable().v3,when.getMatchable().v4,when.getMatchable().v5));
 		}
 		
 		

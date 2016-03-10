@@ -706,7 +706,7 @@ public class MaybeTest {
         assertThat(just.matches(c->c.is(when(10),then("hello")).is(when(2),then("hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.of("hello")));
         assertThat(just.matches(c->c.is(when(1),then("hello"))
                                      .is(when(2),then(()->"hello"))
-                                     .is(when(3),then(()->"hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.none()));
+                                     .is(when(3),then(()->"hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
         
     }
 

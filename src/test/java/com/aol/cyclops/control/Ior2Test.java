@@ -1,7 +1,9 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
@@ -37,6 +39,7 @@ import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.Applicativable.Applicatives;
+import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 
@@ -54,7 +57,7 @@ public class Ior2Test {
     public void visit(){
         assertThat(just.visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("yes"));
         assertThat(none.visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("no"));
-        assertThat(Ior.both(10, "eek").visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("oops"));
+        assertThat(Ior.both(10, "eek").visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("oops!"));
     }
     @Test
     public void visitIor(){
@@ -674,14 +677,49 @@ public class Ior2Test {
 	}
 
 	@Test
-	public void testMatches() {
-		assertThat(just.mayMatch(c->c.is(when(10),then("hello"))),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.is(when(10),then("hello")).is(when(2),then("hello"))),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.is(when(1),then("hello"))
-									 .is(when(2),then(()->"hello"))
-									 .is(when(3),then(()->"hello"))),equalTo(Maybe.none()));
-		
-	}
+    public void testMatches() {
+        assertThat(just.matches(c->c.is(when("10"),then("hello")),
+                                        c->c.is(when(instanceOf(Integer.class)), then("error")),
+                                        c->c.is(when("10",10), then("boo!")),
+                                            otherwise("miss")).toMaybe(),
+                                            equalTo(Maybe.of("miss")));
+        
+            assertThat(just.matches(c->c.is(when("10"),then("hello")).is(when("2"),then("hello")),
+                                    c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
+                                    c->c.is(when("10",10), then("boo!")),
+                                        otherwise("miss")).toMaybe(),
+                                            equalTo(Maybe.of("error")));
+            
+            assertThat(just.matches(c->c.is(when("1"),then("hello"))
+                                     .is(when("2"),then(()->"hello"))
+                                     .is(when("3"),then(()->"hello")),
+                                     c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
+                                     c->c.is(when("10",10), then("boo!")),
+                                     otherwise("miss")).toMaybe(),equalTo(Maybe.just("error")));
+            
+            
+            assertThat(none.matches(/**secondary**/
+                                    c->c.is(when("1"),then("hello"))
+                                        .is(when("2"),then(()->"hello"))
+                                        .is(when("3"),then(()->"hello")),
+                                        /**primary**/
+                                    c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
+                                        /**both**/
+                                    c->c.is(when("10",10), then("boo!")),
+                                            otherwise("miss")).toMaybe(),
+                                    equalTo(Maybe.just("miss")));
+            assertThat(Ior.both("10", 10).matches(/**secondary**/
+                    c->c.is(when("1"),then("hello"))
+                        .is(when("2"),then(()->"hello"))
+                        .is(when("3"),then(()->"hello")),
+                        /**primary**/
+                    c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
+                        /**both**/
+                    c->c.is(when("10",10), then("boo!")),
+                            otherwise("miss")).toMaybe(),
+                    equalTo(Maybe.just("boo!")));
+        
+    }
 
 	
 	

@@ -102,11 +102,15 @@ public class ADTPredicateBuilder<T>{
 														   
 			
 			
-			return t -> toPredicate().test(t) 
+			return t -> {
+			    System.out.println(t);
+			    return toPredicate().test(t) 
+			
 					  	&& SeqUtils.seq(Extractors.decomposeCoerced().apply(t))
 							.zip(predicates,(a,b)->Tuple.tuple(a, b))
 							.map(tuple -> tuple.v2.test(tuple.v1))
 							.allMatch(v->v==true);
+			};
 			
 		}
 		

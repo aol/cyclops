@@ -1,7 +1,9 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
@@ -37,6 +39,7 @@ import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.Applicativable.Applicatives;
+import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 
@@ -640,14 +643,30 @@ public class TryTest {
 	}
 
 	@Test
-	public void testMatches() {
-		assertThat(just.mayMatch(c->c.is(when(10),then("hello"))),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.is(when(10),then("hello")).is(when(2),then("hello"))),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.is(when(1),then("hello"))
-									 .is(when(2),then(()->"hello"))
-									 .is(when(3),then(()->"hello"))),equalTo(Maybe.none()));
-		
-	}
+    public void testMatches() {
+        assertThat(just.matches(c->c.is(when(10),then("hello")),
+                                        c->c.is(when(instanceOf(Throwable.class)), then("error")),
+                                            otherwise("miss")).toMaybe(),
+                                            equalTo(Maybe.of("hello")));
+        
+            assertThat(just.matches(c->c.is(when(10),then("hello")).is(when(2),then("hello")),
+                                    c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
+                                        otherwise("miss")).toMaybe(),
+                                            equalTo(Maybe.of("hello")));
+            
+            assertThat(just.matches(c->c.is(when(1),then("hello"))
+                                     .is(when(2),then(()->"hello"))
+                                     .is(when(3),then(()->"hello")),
+                                     c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
+                                     otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
+            
+            assertThat(none.matches(c->c.is(when(1),then("hello"))
+                    .is(when(2),then(()->"hello"))
+                    .is(when(3),then(()->"hello")),
+                    c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
+                    otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
+        
+    }
 
 	
 	

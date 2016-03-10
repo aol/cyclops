@@ -1,27 +1,21 @@
 package com.aol.cyclops.internal.matcher2;
 
-import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterators.spliteratorUnknownSize;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.StreamSupport;
 
-import lombok.val;
-
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-
-import com.aol.cyclops.data.LazyImmutable;
-import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
 import com.aol.cyclops.control.FluentFunctions;
+import com.aol.cyclops.control.Matchable.MTuple1;
+import com.aol.cyclops.control.Matchable.MTuple2;
+import com.aol.cyclops.control.Matchable.MTuple3;
+import com.aol.cyclops.control.Matchable.MTuple4;
+import com.aol.cyclops.control.Matchable.MTuple5;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.LazyImmutable;
+import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
+import com.aol.cyclops.data.collections.extensions.persistent.PMapXs;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
 import com.aol.cyclops.types.Decomposable;
-import com.aol.cyclops.util.ExceptionSoftener;
 
 /**
  * Generic extractors for use s pre and post data extractors.
@@ -48,6 +42,9 @@ public class Extractors {
 		};
 		
 	}
+	
+	
+	
 	/**
 	 * @return Extractor that decomposes Case classes into iterables 
 	 */
@@ -77,6 +74,7 @@ public class Extractors {
 			if(input instanceof Optional){
 				return (R)Maybe.fromOptional((Optional)(input));
 			}
+			
 			return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(FluentFunctions.ofChecked(m->m.invoke(input))).orElse(AsDecomposable.asDecomposable(input).unapply());
 
 		};
