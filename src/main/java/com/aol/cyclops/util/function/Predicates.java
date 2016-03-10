@@ -7,8 +7,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
-
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple1;
 import com.aol.cyclops.control.Matchable.MTuple2;
@@ -220,10 +218,7 @@ public class Predicates {
 	public	static<V> Predicate<V> hasWhere(Predicate<V>... values){
 		return (Predicate<V>) new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(Object.class).hasWhere(values);
 	}
-	@SafeVarargs
-	public	static<V> Predicate<V> hasMatch(Matcher<V>... values){
-		return (Predicate<V>)new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(Object.class).hasMatch(values);
-	}
+	
 	@SafeVarargs
 	public	static<V> Predicate<V> is(V... values){
 		return new ADTPredicateBuilder<Object>(Object.class).<V>isGuard(values);
@@ -232,10 +227,7 @@ public class Predicates {
 	public	static<V> Predicate<V> isWhere(Predicate<V>... values){
 		return (Predicate<V>)new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(Object.class).isWhere(values);
 	}
-	@SafeVarargs
-	public	static<V> Predicate<V> isMatch(Matcher<V>... values){
-		return (Predicate<V>)new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(Object.class).isMatch(values);
-	}
+	
 	
 	/**
 	 * Check for universal equality (Object#equals)

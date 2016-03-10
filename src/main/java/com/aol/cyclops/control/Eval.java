@@ -1,7 +1,6 @@
 package com.aol.cyclops.control;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
@@ -16,7 +15,6 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.Memoize;
 
