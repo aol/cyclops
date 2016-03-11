@@ -175,15 +175,14 @@ public interface Value<T> extends Supplier<T>,
 	     if(this instanceof Xor)
 	         return (Xor)this;
 	     Optional<T> o = toOptional();
-	     return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(null);
+	     return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(new NoSuchElementException());
 		
 	 }
 	 
 	 default Try<T,NoSuchElementException> toTry(){
-		 Optional<T> opt = toOptional();
-		 if(opt.isPresent())
-			 return Try.success(opt.get());
-		 return Try.failure(new NoSuchElementException());
+	    return toXor().visit(secondary->Try.failure(new NoSuchElementException()),
+	                         primary->Try.success(primary));
+		
 	 }
 	 default <X extends Throwable> Try<T,X> toTry(Class<X>... classes){
 		 return Try.withCatch( ()->get(),classes);

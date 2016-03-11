@@ -3317,7 +3317,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      */
     static <T> LazyFutureStream<T> lazyFutureStreamFrom(Stream<CompletableFuture<T>> stream) {
         return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false)
-                                    .fromStream(stream);
+                                    .fromStreamFutures(stream);
     }
     /**
      *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
@@ -3328,7 +3328,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      */
     static <T> LazyFutureStream<T> lazyFutureStream(CompletableFuture<T> value) {
         return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false)
-                                    .fromStream(Stream.of(value));
+                                    .fromStreamFutures(Stream.of(value));
     }
     /**
      *  Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
@@ -3339,7 +3339,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      */
     static <T> LazyFutureStream<T> lazyFutureStream(CompletableFuture<T>... values) {
         return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false)
-                                    .fromStream(Stream.of(values));
+                                    .fromStreamFutures(Stream.of(values));
     }
 
 

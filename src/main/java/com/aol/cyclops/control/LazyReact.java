@@ -302,7 +302,7 @@ public class LazyReact implements ReactBuilder {
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#range(int, int)
 	 */
 	public LazyFutureStream<Integer> range(int startInclusive, int endExclusive){
-		return from(ReactiveSeq.range(startInclusive, endExclusive));
+		return fromStream(ReactiveSeq.range(startInclusive, endExclusive));
 	}
 
 	/* 
@@ -312,7 +312,7 @@ public class LazyReact implements ReactBuilder {
 	 *	@return LazyFutureStream
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#fromStream(java.util.stream.Stream)
 	 */
-	public <U> LazyFutureStream<U> fromStream(
+	public <U> LazyFutureStream<U> fromStreamFutures(
 			Stream<CompletableFuture<U>> stream) {
 	
 		return  constructFutures(stream);
@@ -339,7 +339,7 @@ public class LazyReact implements ReactBuilder {
 	 *	@return LazyFutureStream
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
 	 */
-	public <U> LazyFutureStream<U> from(Stream<U> stream) {
+	public <U> LazyFutureStream<U> fromStream(Stream<U> stream) {
 		
 		return construct( stream);
 	}
@@ -406,7 +406,7 @@ public class LazyReact implements ReactBuilder {
 	 */
 	public <U> LazyFutureStream<U> fromIterable(Iterable<U> iter) {
 		ReactiveSeq<U> seq = iter instanceof List ? ReactiveSeq.fromList((List)iter) : ReactiveSeq.fromIterable(iter);
-		return this.from(seq);
+		return this.fromStream(seq);
 	}
 
 
@@ -603,7 +603,7 @@ public class LazyReact implements ReactBuilder {
 	 */
 	@SuppressWarnings("unchecked")
 	public <U> LazyFutureStream<U> from(final Iterator<U> iterator){
-		return from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),false));
+		return fromStream(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),false));
 		
 	
 	}
@@ -616,7 +616,7 @@ public class LazyReact implements ReactBuilder {
 	 */
 	@SuppressWarnings("unchecked")
 	public <R> LazyFutureStream<R> from(final Collection<R> collection){
-		return from(collection.stream());
+		return fromStream(collection.stream());
 	}
 
 
@@ -632,7 +632,7 @@ public class LazyReact implements ReactBuilder {
 	 */
 	public  LazyFutureStream<Integer> from(final IntStream stream) {
 		
-		return from(stream.boxed());
+		return fromStream(stream.boxed());
 	
 	}
 	/**
@@ -642,7 +642,7 @@ public class LazyReact implements ReactBuilder {
 	 * @return Next stage in the reactive flow
 	 */
 	public  LazyFutureStream<Double> from(final DoubleStream stream) {
-		return from(stream.boxed());
+		return fromStream(stream.boxed());
 	}
 	/**
 	 * Start a reactive dataflow from a stream.
@@ -651,11 +651,11 @@ public class LazyReact implements ReactBuilder {
 	 * @return Next stage in the reactive flow
 	 */
 	public  LazyFutureStream<Long> from(final LongStream stream) {
-		return from(stream.boxed());
+		return fromStream(stream.boxed());
 	}
 	@SafeVarargs
 	public final <U> LazyFutureStream<U> of(U...array){
-		return from(Stream.of(array));
+		return fromStream(Stream.of(array));
 	}
 	
 	

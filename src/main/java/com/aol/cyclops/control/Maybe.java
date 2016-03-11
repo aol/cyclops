@@ -21,6 +21,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 
+/**
+ * Totally lazy more powerful general Option type
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>
+ */
 public interface Maybe<T> extends MonadicValue<T>,
 								Supplier<T>, 
 								ConvertableFunctor<T>, 
@@ -190,7 +197,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 			return new Just<>(lazy.map(t->mapper.apply(t)));
 		}
 		public <R>  Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper){
-			return narrow(mapper.apply(lazy.get()));
+			return new Lazy(Eval.later(()->this)).flatMap(mapper);//narrow(mapper.apply(lazy.get()));
 			
 		}
 		public Maybe<T> filter(Predicate<? super T> test){
@@ -235,6 +242,80 @@ public interface Maybe<T> extends MonadicValue<T>,
 		}
 		
 	}
+    @AllArgsConstructor(access=AccessLevel.PRIVATE)
+    static final class Lazy<T> implements Maybe<T>{
+        
+        private final Eval<Maybe<T>> lazy;
+        
+        
+        public <R> Maybe<R> map(Function<? super T, ? extends R> mapper){
+            return flatMap(t->Maybe.just(mapper.apply(t)));
+        }
+        public <R>  Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper){
+            Supplier<Eval<Maybe<R>>> s = ()->Eval.later(Maybe.none()) ;
+            Eval<Maybe<R>> eval = lazy.get().visit(some->Eval.later( ()->narrow(mapper.apply(some))), s);
+            return new Lazy<R>(eval);
+            
+        }
+        public Maybe<T> filter(Predicate<? super T> test){
+           return flatMap(t-> test.test(t) ? this : Maybe.none());
+        }
+        public <R> R visit(Function<? super T,? extends R> some, 
+                Supplier<? extends R> none){
+            return map(some).get();
+        }
+        public Maybe<T> recover(T value){
+            return new Lazy<T>(lazy.map(m->m.recover(value)));
+        }
+        public Maybe<T> recover(Supplier<T> value){
+            return new Lazy<T>(lazy.map(m->m.recover(value)));
+        }
+        public String toString(){
+            Maybe<T> maybe =  lazy.get();
+            while(maybe instanceof Lazy){
+                maybe = ((Lazy<T>)maybe).lazy.get();
+            }
+            return maybe.mkString();
+        }
+        public T  get(){
+            Maybe<T> maybe =  lazy.get();
+            while(maybe instanceof Lazy){
+                maybe = ((Lazy<T>)maybe).lazy.get();
+            }
+            return maybe.get();
+        }
+        public boolean isPresent(){
+            Maybe<T> maybe =  lazy.get();
+            while(maybe instanceof Lazy){
+                maybe = ((Lazy<T>)maybe).lazy.get();
+            }
+            return maybe.isPresent();
+        }
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            Maybe<T> maybe =  lazy.get();
+            while(maybe instanceof Lazy){
+                maybe = ((Lazy<T>)maybe).lazy.get();
+            }
+            return Objects.hashCode(maybe.get());
+        }
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            
+            if(obj instanceof Just)
+                return Objects.equals(get(),((Just)obj).get());
+            if(obj instanceof Lazy)
+                return Objects.equals(get(),((Lazy)obj).get());
+            return false;
+        }
+        
+    }
 	
 	public static class Nothing<T> implements Maybe<T>{
 		

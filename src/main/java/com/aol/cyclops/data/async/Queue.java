@@ -28,6 +28,7 @@ import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.types.futurestream.Continuation;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.SimpleTimer;
+import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -512,5 +513,12 @@ public class Queue<T> implements Adapter<T> {
 			continuationStrategy = new SingleContinuation(this);
 		this.continuationStrategy.addContinuation(c);
 	}
+	
+    @Override
+    public <R> R visit(Function<? super Queue<T>, ? extends R> caseQueue,
+            Function<? super Topic<T>, ? extends R> caseTopic) {
+        return caseQueue.apply(this);
+    }
+    
 	
 }

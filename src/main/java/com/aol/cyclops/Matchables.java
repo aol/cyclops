@@ -30,6 +30,9 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.data.async.Adapter;
+import com.aol.cyclops.data.async.Queue;
+import com.aol.cyclops.data.async.Topic;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -39,6 +42,9 @@ import com.aol.cyclops.util.ExceptionSoftener;
 
 public class Matchables {
     
+    public static <T> MXor<Queue<T>,Topic<T>> adapter(Adapter<T> adapter){
+        return adapter.matches();
+    }
     public static <T1> MXor<T1,Throwable> future(CompletableFuture<T1> future){
         return ()-> FutureW.of(future).toXor().swap();
     }

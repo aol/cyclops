@@ -167,9 +167,16 @@ public class MaybeTest {
 
 	@Test
 	public void testFlatMap() {
+	    
 		assertThat(just.flatMap(i->Maybe.of(i+5)),equalTo(Maybe.of(15)));
 		assertThat(none.flatMap(i->Maybe.of(i+5)),equalTo(Maybe.none()));
 	}
+	@Test
+    public void testFlatMapAndRecover() {
+        assertThat(just.flatMap(i->Maybe.none()).recover(15),equalTo(Maybe.of(15)));
+        assertThat(just.flatMap(i->Maybe.none()).recover(()->15),equalTo(Maybe.of(15)));
+        assertThat(none.flatMap(i->Maybe.of(i+5)).recover(15),equalTo(Maybe.of(15)));
+    }
 
 	@Test
 	public void testWhenFunctionOfQsuperTQextendsRSupplierOfQextendsR() {

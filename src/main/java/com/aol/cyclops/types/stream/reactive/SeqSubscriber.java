@@ -100,8 +100,7 @@ public class SeqSubscriber<T> implements Subscriber<T>,
                 throw ExceptionSoftener.throwSoftenedException(toThrow);
             }
             T result = (T)lastValue.get();
-            reset();
-            requestOne.run();
+            
             return result;
             
         }
@@ -114,7 +113,7 @@ public class SeqSubscriber<T> implements Subscriber<T>,
         @Override
         public Iterator<T> iterator() {
             return new Iterator<T>(){
-
+                boolean first = true;
                 @Override
                 public boolean hasNext() {
                     return !complete;
@@ -122,6 +121,12 @@ public class SeqSubscriber<T> implements Subscriber<T>,
 
                 @Override
                 public T next() {
+                   if(!first){
+                       reset();
+                       requestOne.run();
+                   }
+                   else
+                       first = false;
                    return get();
                 }
                 

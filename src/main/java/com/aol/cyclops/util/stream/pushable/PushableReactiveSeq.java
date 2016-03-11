@@ -1,10 +1,8 @@
 package com.aol.cyclops.util.stream.pushable;
 
-import java.util.stream.Stream;
-
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.async.Queue;
 
 /**
@@ -16,10 +14,10 @@ import com.aol.cyclops.data.async.Queue;
  *
  * @param <T> data type
  */
-public class PushableSeq<T> extends AbstractPushableStream<T,Queue<T>,Seq<T>> {
+public class PushableReactiveSeq<T> extends AbstractPushableStream<T,Queue<T>,ReactiveSeq<T>> {
 
 	
-	public PushableSeq(Queue<T> v1, Seq<T> v2) {
+	public PushableReactiveSeq(Queue<T> v1, ReactiveSeq<T> v2) {
 		super(v1, v2);
 		
 	}
