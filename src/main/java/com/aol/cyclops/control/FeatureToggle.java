@@ -223,7 +223,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	@Override
 	default Iterator<F> iterator() {
 	
-		return Applicativable.super.iterator();
+		return Matchable.ValueAndOptionalMatcher.super.iterator();
 	}
 	
 	/**

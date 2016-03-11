@@ -683,20 +683,28 @@ public class Ior2Test {
                                         c->c.is(when("10",10), then("boo!")),
                                             otherwise("miss")).toMaybe(),
                                             equalTo(Maybe.of("miss")));
-        
+	}
+	@Test
+    public void testMatches2() {     
             assertThat(just.matches(c->c.is(when("10"),then("hello")).is(when("2"),then("hello")),
                                     c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
                                     c->c.is(when("10",10), then("boo!")),
                                         otherwise("miss")).toMaybe(),
-                                            equalTo(Maybe.of("error")));
-            
+                                            equalTo(Maybe.of("miss")));
+	}
+    @Test
+    public void testMatches3() {     
+                 
             assertThat(just.matches(c->c.is(when("1"),then("hello"))
                                      .is(when("2"),then(()->"hello"))
                                      .is(when("3"),then(()->"hello")),
                                      c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
                                      c->c.is(when("10",10), then("boo!")),
-                                     otherwise("miss")).toMaybe(),equalTo(Maybe.just("error")));
+                                     otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
             
+    }
+    @Test
+    public void testMatches4() {     
             
             assertThat(none.matches(/**secondary**/
                                     c->c.is(when("1"),then("hello"))

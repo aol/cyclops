@@ -1,12 +1,9 @@
 package com.aol.cyclops.matcher;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
 import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static com.aol.cyclops.control.Matchable.whenGuard;
-import static com.aol.cyclops.control.Matchable.whenTrue;
 import static com.aol.cyclops.control.Maybe.just;
 import static com.aol.cyclops.util.function.Predicates.__;
 import static com.aol.cyclops.util.function.Predicates.any;
@@ -18,12 +15,14 @@ import static com.aol.cyclops.util.function.Predicates.lessThan;
 import static com.aol.cyclops.util.function.Predicates.not;
 import static com.aol.cyclops.util.function.Predicates.some;
 import static com.aol.cyclops.util.function.Predicates.type;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;
@@ -31,9 +30,7 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
 import com.aol.cyclops.control.Matchable.MatchSelf;
-
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.util.function.Predicates;
@@ -264,13 +261,13 @@ public class MatchableTest {
 											.matches(c->c.is(when(2),then(2)),otherwise(3));
 	
 		assertThat(result
-						 .matches(c->c.isEmpty( then("hello")),otherwise("none")),equalTo(Eval.now("hello")));
+						 .matches(c->c.is(when(10), then("hello")),otherwise("none")),equalTo(Eval.now("none")));
 		
 	}
 	@Test 
 	public void optionalMatch(){
 		Eval<Integer> result2 = Matchable.of(Optional.of(1)).matches(c->c.is(when(not(in(2,3,4))),then(3)),otherwise(2));
-		assertThat(result2,equalTo(Eval.now(1)));
+		assertThat(result2,equalTo(Eval.now(3)));
 		
 		assertThat(Matchable.of(Optional.of(1)).visit(i->"some", ()->"none"),equalTo("some"));
 	}
@@ -287,16 +284,16 @@ public class MatchableTest {
 	@Test 
 	public void emptyOptional(){
 		
-		assertThat(Matchable.of(Optional.empty()).matches(c->c.isEmpty(then("hello")),otherwise("n/a")),equalTo(Eval.now("hello")));
+		assertThat(Matchable.fromOptional(Optional.empty()).matches(c->c.isEmpty(then("hello")),otherwise("n/a")),equalTo(Eval.now("hello")));
 	}
 	@Test
 	public void emptyOptionalMultiple2(){
 		assertThat(Matchable.of(Optional.empty())
 				            .matches(
-				            			o-> o.isEmpty(then("hello"))
-				            			     .is(when(1),then("2")),otherwise("world")
+				            			o-> 
+				            			     o.is(when(1),then("2")),otherwise("world")
 				            		)
-				            		,equalTo(Eval.now("hello")));
+				            		,equalTo(Eval.now("world")));
 		
 		
 	}
@@ -305,10 +302,10 @@ public class MatchableTest {
 		assertThat(Matchable.of(Optional.empty())
 							
 				            .matches(
-				            			o-> o.isEmpty(then("hello"))
+				            			o-> o
 				            			     .is(when(1),then(""+2))
 				            			     .is(when(2),then(""+3))
-				            			     ,otherwise("world")
+				            			     ,otherwise("hello")
 				            		).get()
 				            		,equalTo("hello"));
 		
@@ -318,9 +315,9 @@ public class MatchableTest {
 	public void emptyMaybeMultiple3(){
 		assertThat(Maybe.none()
 						.matches(
-				            			o-> o.isEmpty(then("hello"))
+				            			o-> o
 				            			      .is(when(1),then("2"))
-				            			      .is(when(2),then("3")),otherwise("boo!")
+				            			      .is(when(2),then("3")),otherwise("hello")
 				            		)
 				            		,equalTo(Eval.now("hello")));
 		
@@ -328,14 +325,13 @@ public class MatchableTest {
 	}
 	@Test
 	public void emptyOptionalMultiple4(){
-	    Matchable.of(Optional.of(3)).matches(o-> o.isEmpty(then("none"))
+	    Matchable.fromOptional(Optional.of(3)).matches(o-> o.isEmpty(then("none"))
                 .is(when(1),then("one"))
                 .is(when(2),then("two"))
                 .is(when(lessThan(0)), then("negative")),otherwise("many"));
 		assertThat(Matchable.of(Optional.of(3))
 							 .matches(
-				            		o-> o.isEmpty(then("hello"))
-		            			      	 .is(when(1),then("2"))
+				            		o-> o.is(when(1),then("2"))
 		            			      	 .is(when(2),then("3"))
 		            			      	 .is(when(3), then("4")),otherwise("boo!")
 				            		)
@@ -347,12 +343,14 @@ public class MatchableTest {
 	@Test 
 	public void emptyOptionalMaybe(){
 		
-		assertThat(Matchable.of(Optional.empty()).matches(c->c.is(when(some()),then("goodbye")),otherwise("hello")).get(),equalTo("hello"));
+		assertThat(Matchable.fromOptional(Optional.empty())
+		                        .matches(c->c.is(when(some()),then("goodbye")),
+		                                otherwise("hello")).get(),equalTo("goodbye"));
 		assertThat(Matchable.of(Optional.empty()).visit(i->"some", ()->"none"),equalTo("none"));
 	}
 	@Test
 	public void emptyOptionalMultiple2Maybe(){
-		assertThat(Matchable.from(Optional.empty())
+		assertThat(Matchable.fromOptional(Optional.empty())
 				            .matches(
 				            			o-> o.isEmpty(then("hello"))
 				            				 .is(when(Optional.of(2)),then("3")),otherwise("miss")
@@ -363,7 +361,7 @@ public class MatchableTest {
 	}
 	@Test
 	public void emptyOptionalMultiple3Maybe(){
-		assertThat(Matchable.of(Optional.empty())
+		assertThat(Matchable.fromOptional(Optional.empty())
 				            .matches(
 				            			o-> o.isEmpty(then("hello"))
 				            			      .is(when(1),then("2"))
@@ -377,8 +375,7 @@ public class MatchableTest {
 	public void emptyOptionalMultiple4Maybe(){
 		assertThat(Matchable.of(Optional.of(3))
 				            .matches(
-				            			o-> o.isEmpty(then("hello"))
-				            			     .is(when(1),then("2"))
+				            			o-> o.is(when(1),then("2"))
 				            			     .is(when(2),then("3"))
 				            			     .is(when(3),then("4")),
 				            			     otherwise("miss")

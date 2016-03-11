@@ -40,7 +40,8 @@ public class MatchablesTest {
     @Test
     public void cFuture(){
         Eval<Integer> result = Matchables.future(CompletableFuture.completedFuture(10))
-                                         .matches(c-> c.is( when(some(10)), then(20)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+                                         .matches(c-> c.is( when(some(10)), then(20)), 
+                                                      c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
         
         assertThat(result,equalTo(Eval.now(20)));
     }

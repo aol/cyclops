@@ -137,8 +137,8 @@ public class BatchingTest {
 
 	}
 	@Test
-	public void xPerSecond() {
-
+	public void xPerSecond() throws InterruptedException {
+	    Thread.sleep(500);
 		long start = System.currentTimeMillis();
 				iterate(1, it -> it + 1)
 				.limit(3)

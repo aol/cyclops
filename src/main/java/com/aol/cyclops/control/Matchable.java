@@ -21,7 +21,6 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.jooq.lambda.tuple.Tuple5;
 
 import com.aol.cyclops.Matchables;
-import com.aol.cyclops.control.Matchable.MXor;
 import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
 import com.aol.cyclops.internal.matcher2.MatchableCase;
 import com.aol.cyclops.internal.matcher2.MatchingInstance;
@@ -204,7 +203,7 @@ public interface Matchable<TYPE>{
 	        
 	}
 	
-	public static<T> MatchableObject<Optional<T>> fromOptional(Optional<T> o){
+	public static<T> MatchableObject<T> fromOptional(Optional<T> o){
 		return AsMatchable.asMatchable(o);
 	}
 	/**
@@ -490,10 +489,12 @@ public interface Matchable<TYPE>{
                     return  some.apply(opt.get());
                 return none.get();
             } 
-	        default <R> Eval<R>  matches(Function<CheckValue1<T,R>,CheckValue1<T,R>> some,Supplier<? extends R> otherwise){
+	        default <R> Eval<R>  matches(Function<CheckValueOpt<T,R>,CheckValueOpt<T,R>> some,Supplier<? extends R> otherwise){
 	            Optional<T> opt = toOptional();
 	            if(opt.isPresent())
-	                return  Matchable.from(()->opt.get()).matches(some, otherwise);
+	                return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( some.apply( (CheckValueOpt)
+	                        new MatchableCase(new PatternMatcher()).withTypeOpt(Tuple1.class)).getPatternMatcher()))
+	                        .match(Tuple.tuple(opt.get())).orElseGet(otherwise));
 	            return Eval.later(()->otherwise.get());
 	        }
 	    }
@@ -507,10 +508,10 @@ public interface Matchable<TYPE>{
 	                   (Iterator) Arrays.asList(getMatchable().secondaryGet()).iterator();
 	        }
 	        
-	        default <R> R visit(Function<? super T1,? extends R> secondary, 
-	                Function<? super T2,? extends R> primary){
+	        default <R> R visit(Function<? super T1,? extends R> case1, 
+	                Function<? super T2,? extends R> case2){
 	            
-	            return getMatchable().visit(secondary, primary);
+	            return getMatchable().visit(case1, case2);
 	        }  
 	       
 	       
@@ -873,6 +874,39 @@ public interface Matchable<TYPE>{
 			
 		}
 	}
+	@AllArgsConstructor(access=AccessLevel.PUBLIC)
+    public static class CheckValueOpt<T,R> {
+        private final Class<T> clazz;
+        protected final MatchableCase<R> simplerCase;
+
+        
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        public final CheckValueOpt<T,R> is(MTuple1<Predicate<? super T>> when,Supplier<? extends R> then) {       
+            return isWhere(then,when.getMatchable().v1);
+        }
+        
+         @SuppressWarnings({ "rawtypes", "unchecked" })
+        private final  CheckValueOpt<T,R> isWhere(Supplier<? extends R> result,Predicate<? super T> value){
+            Predicate predicate = it -> Optional.of(it)
+                    .map(v -> v.getClass().isAssignableFrom(clazz))
+                    .orElse(false);
+            // add wildcard support
+            
+            Predicate<T>[] predicates = ReactiveSeq.of(value)
+                    .map(nextValue -> simplerCase.convertToPredicate(nextValue)).toListX().plus(i->SeqUtils.EMPTY==i)
+                    .toArray(new Predicate[0]);
+
+        
+            return new CheckValueOpt(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->result.get(),
+                    predicates)));
+        }
+        
+  
+
+        PatternMatcher getPatternMatcher() {
+            return simplerCase.getPatternMatcher();
+        }
+    }
 	@AllArgsConstructor(access=AccessLevel.PUBLIC)
 	public static class CheckValue1<T,R> {
 		private final Class<T> clazz;

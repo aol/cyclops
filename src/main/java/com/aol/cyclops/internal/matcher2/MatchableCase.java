@@ -38,6 +38,9 @@ public class MatchableCase<X> extends CaseBeingBuilt {
 	public  <T1>  Matchable.CheckValue1<X,T1> withType1(Class<Tuple1<T1>> type){
 		return new Matchable.CheckValue1(type,this);	
 	}
+	public  <T1>  Matchable.CheckValueOpt<X,T1> withTypeOpt(Class<Tuple1<T1>> type){
+        return new Matchable.CheckValueOpt(type,this);    
+    }
 	
 	
 	

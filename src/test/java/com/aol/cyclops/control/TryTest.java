@@ -648,23 +648,30 @@ public class TryTest {
                                         c->c.is(when(instanceOf(Throwable.class)), then("error")),
                                             otherwise("miss")).toMaybe(),
                                             equalTo(Maybe.of("hello")));
-        
+	}
+	@Test
+    public void testMatches2() {
             assertThat(just.matches(c->c.is(when(10),then("hello")).is(when(2),then("hello")),
                                     c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
                                         otherwise("miss")).toMaybe(),
                                             equalTo(Maybe.of("hello")));
-            
+      
+	}
+	@Test
+    public void testMatches3() {
             assertThat(just.matches(c->c.is(when(1),then("hello"))
                                      .is(when(2),then(()->"hello"))
                                      .is(when(3),then(()->"hello")),
                                      c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
                                      otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
-            
+	}
+     @Test
+     public void testMatches4() {
             assertThat(none.matches(c->c.is(when(1),then("hello"))
                     .is(when(2),then(()->"hello"))
                     .is(when(3),then(()->"hello")),
                     c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
-                    otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
+                    otherwise("miss")).toMaybe(),equalTo(Maybe.just("error")));
         
     }
 

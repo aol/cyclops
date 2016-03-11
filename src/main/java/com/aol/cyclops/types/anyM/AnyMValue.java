@@ -373,7 +373,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	@Override
 	default Iterator<T> iterator() {
 		
-		return Applicativable.super.iterator();
+		return Matchable.ValueAndOptionalMatcher.super.iterator();
 	}
 
 	

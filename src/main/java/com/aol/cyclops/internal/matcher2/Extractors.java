@@ -1,19 +1,9 @@
 package com.aol.cyclops.internal.matcher2;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import com.aol.cyclops.control.FluentFunctions;
-import com.aol.cyclops.control.Matchable.MTuple1;
-import com.aol.cyclops.control.Matchable.MTuple2;
-import com.aol.cyclops.control.Matchable.MTuple3;
-import com.aol.cyclops.control.Matchable.MTuple4;
-import com.aol.cyclops.control.Matchable.MTuple5;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.data.LazyImmutable;
-import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
-import com.aol.cyclops.data.collections.extensions.persistent.PMapXs;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
 import com.aol.cyclops.types.Decomposable;
 
@@ -27,21 +17,6 @@ public class Extractors {
 	
 	
 	
-	
-	/**
-	 * An extractor that caches the extraction result
-	 * 
-	 * @param extractor to memoise (cache result of)
-	 * @return Memoised extractor
-	 */
-	public static final <T,R > Extractor<T,R> memoised( Extractor<T,R> extractor){
-		final LazyImmutable<R> value = new LazyImmutable<>();
-		return input -> {
-			return value.computeIfAbsent(()->extractor.apply(input));
-				
-		};
-		
-	}
 	
 	
 	

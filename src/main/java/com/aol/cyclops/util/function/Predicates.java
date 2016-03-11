@@ -324,7 +324,7 @@ public class Predicates {
        
     }
 	
-	public static <T1> Predicate<? super T1> instanceOf(Class<T1> clazz){
+	public static <T1> Predicate<? super T1> instanceOf(Class<?> clazz){
 	    
 		return test -> clazz.isAssignableFrom(test.getClass());
 	}
