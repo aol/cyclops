@@ -8,8 +8,8 @@ import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Value;
 
-import com.aol.cyclops.internal.sequence.streamable.StreamableImpl;
 import com.aol.cyclops.internal.stream.SeqUtils;
+import com.aol.cyclops.internal.stream.StreamableImpl;
 
 
 public class AsStreamable {

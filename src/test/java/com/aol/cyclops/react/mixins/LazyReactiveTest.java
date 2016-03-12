@@ -22,6 +22,8 @@ public class LazyReactiveTest {
             pipes.register("hello", new Queue<String>());
            
             pipes.push("hello", "world");
+            
+            pipes.get("hello").map(a->a.close()).orElse(false);
             pipes.reactiveSeq("hello").get().forEach(System.out::println);
           //  assertThat(pipes.oneOrError("hello"),equalTo(Xor.primary("world")));
             
