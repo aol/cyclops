@@ -3,6 +3,7 @@ package com.aol.cyclops.data.async;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -301,19 +302,19 @@ public class Queue<T> implements Adapter<T> {
 	 *
 	 */
 	@AllArgsConstructor
-	
 	public static class ClosedQueueException extends
 			SimpleReactProcessingException {
 		private static final long serialVersionUID = 1L;
 		@Getter
-		private final Object currentData;
-		private final Object NOT_PRESENT = new Object();
+		private final List currentData;
+		
 		public ClosedQueueException() {
-			currentData = NOT_PRESENT;
+			currentData = null;
 		}
 		
+		
 		public boolean isDataPresent(){
-			return currentData != NOT_PRESENT;
+			return currentData !=null;
 		}
 
 		@Override

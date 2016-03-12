@@ -27,6 +27,6 @@ public class FlatMapConfig<T>{
         return new FlatMapConfig<T>(QueueFactories.<T>boundedQueue(maxConcurrent),Maybe.none());
     }
     public static <T> FlatMapConfig<T> defaultConfig(){
-        return new FlatMapConfig<T>(QueueFactories.<T>boundedQueue(1000),Maybe.none());
+        return new FlatMapConfig<T>(QueueFactories.<T>boundedQueue(5_000),Maybe.none());
     }
 }

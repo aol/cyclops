@@ -8,6 +8,7 @@ import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
 import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
+import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber.Counter;
 
 @Test
 public class TckWhiteBoxSubscriberTest extends SubscriberWhiteboxVerification<Long>{
@@ -26,7 +27,7 @@ public class TckWhiteBoxSubscriberTest extends SubscriberWhiteboxVerification<Lo
 	public Subscriber<Long> createSubscriber(
 			org.reactivestreams.tck.SubscriberWhiteboxVerification.WhiteboxSubscriberProbe<Long> probe) {
 		
-		 return new QueueBasedSubscriber<Long>() {
+		 return new QueueBasedSubscriber<Long>(new Counter()) {
 	            @Override
 	            public void onSubscribe(final Subscription rsSubscription) {
 	               probe.registerOnSubscribe(new SubscriberPuppet() {

@@ -61,7 +61,7 @@ configurations {
 dependencies {
    
 	
-	
+   
 	compile 'com.nurkiewicz.asyncretry:asyncretry:'+asyncRetryVersion
 	compile 'org.pcollections:pcollections:'+pCollectionsVersion
 	compile "org.jooq:jool:${joolVersion}"

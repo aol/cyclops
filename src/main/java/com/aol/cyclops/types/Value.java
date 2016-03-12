@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -73,17 +74,21 @@ public interface Value<T> extends Supplier<T>,
     default void subscribe(Subscriber<? super T> sub) {
 	     sub.onSubscribe(new Subscription(){
 	            
-             volatile boolean running = true;
+            AtomicBoolean running =  new AtomicBoolean(true);
              
              @Override
              public void request(long n) {
-                 if(!running)
-                     return;
+                 
                  if(n<1){
                      sub.onError(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                  }
+                
+                 if(!running.compareAndSet(true, false)){
+                     
+                     return;
+                 }
                 try {
-
+                    
                     sub.onNext(get());
 
                 } catch (Throwable t) {
@@ -94,14 +99,15 @@ public interface Value<T> extends Supplier<T>,
                     sub.onComplete();
 
                 } finally {
-                    running = false;
+                    
 
                 }
                  
              }
              @Override
              public void cancel() {
-                 running = false;
+                
+                 running.set(false);
                  
              }
              
