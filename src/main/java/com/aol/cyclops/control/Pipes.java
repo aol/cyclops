@@ -147,12 +147,12 @@ public class Pipes<K,V> {
         ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a->a.stream().subscribe(sub))
                         .map(a-> Eval.always(()->{
-                            val res = sub.toMaybe();
+                            Maybe<V> res = sub.toMaybe();
                             sub.requestOne();
                             return res;
                         }))
                         
-                        .orElse(Eval.now(Maybe.none()));
+                        .orElse(Eval.now(Maybe.<V>none()));
     }
     /**
      * Return an Eval that allows retrieval of the next value from the attached pipe when get() is called
@@ -166,12 +166,12 @@ public class Pipes<K,V> {
         ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a->a.stream().subscribe(sub))
                         .map(a-> Eval.always(()->{
-                            val res = sub.toMaybe();
+                            Maybe<V> res = sub.toMaybe();
                             sub.requestOne();
                             return res.orElse(null);
                         }))
                         
-                        .orElse(Eval.now(null));
+                        .orElse(Eval.<V>now(null));
     }
 	/**
 	 * Register a Queue, and get back a listening LazyFutureStream that runs on a single thread

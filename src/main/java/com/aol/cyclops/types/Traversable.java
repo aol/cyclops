@@ -48,6 +48,7 @@ public interface Traversable<T> extends Foldable<T>,
                                         Publisher<T>{
 	
    
+    
     default void subscribe(Subscriber<? super T> s){
         stream().subscribe(s);
     }

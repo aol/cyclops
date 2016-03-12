@@ -3,8 +3,12 @@ package com.aol.cyclops.functions.collections.extensions.standard;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
@@ -21,6 +25,30 @@ public class ListXTest extends CollectionXTestsWithNulls{
 	public <T> FluentCollectionX<T> empty() {
 		return ListX.empty();
 	}
+	@Test
+	public void flatMapPublisher() throws InterruptedException{
+	    assertThat(ListX.of(1,2,3)
+	                    .flatMapPublisher(i->Maybe.of(i))
+	                    .toListX(),equalTo(Arrays.asList(1,2,3)));
+	    
+	}
+	private void sleep2(int time){
+	    try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	}
+	@Test
+    public void flatMapPublisherAsync() throws InterruptedException{
+       LazyReact r = new LazyReact(10,10);
+       
+       
+      assertThat(ListX.of(3,2,1)
+               .flatMapPublisher(i-> r.generate(()->i).peek(a->sleep2(a*100)).limit(5).async())
+               .toListX().size(),equalTo(15));
+    }
 	@Test
 	public void when(){
 		
