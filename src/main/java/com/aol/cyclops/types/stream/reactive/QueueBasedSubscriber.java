@@ -84,7 +84,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 	    queue = new Queue<T>(){
             public T get(){
                 subscription.forEach(s->s.request(1));
-               
+                
                 return (T)super.get();  
             }
         };
@@ -96,7 +96,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
             queue = new Queue<T>(factory){
                 public T get(){
                     subscription.forEach(s->s.request(1));
-                   
+                    
                     return (T)super.get();  
                 }
             };
@@ -142,7 +142,6 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 	public void onNext(T t) {
 		
 		Objects.requireNonNull(t);
-		System.out.println("next! " + t);
 		queue.add(t);
 		
 		
@@ -162,19 +161,31 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 	@Override
 	public void onComplete() {
 		
-		if(queue!=null && closeable && completed.incrementAndGet()== subscription.size()){
-		    
-			queue.addContinuation(new Continuation( () -> {
-						throw new ClosedQueueException();
-			}));
-			queue.close();
+		if(queue!=null  && completed.incrementAndGet()>= subscription.size()){
+		    if(closeable){
+    			queue.addContinuation(new Continuation( () -> {
+    						throw new ClosedQueueException();
+    			}));
+    			queue.close();
+		    }else{
+		        finished =true;
+		    }
 		}
 		
 		
 	}
+	volatile boolean finished = false;
 	volatile boolean closeable = false;
 	public void close(){
 	    closeable = true;
+	    if(finished){
+	        queue.addContinuation(new Continuation( () -> {
+                throw new ClosedQueueException();
+	        }));
+	        queue.close();
+	    }
+	        
+	    
 	}
 	public void addContinuation(Continuation c){
 	    queue.addContinuation(c);

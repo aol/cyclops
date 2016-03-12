@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.concurrent.Executors;
 
 import org.junit.Test;
 
@@ -12,6 +13,7 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
+import com.aol.cyclops.types.stream.reactive.FlatMapConfig;
 public class ListXTest extends CollectionXTestsWithNulls{
 
 	@Override
@@ -32,6 +34,13 @@ public class ListXTest extends CollectionXTestsWithNulls{
 	                    .toListX(),equalTo(Arrays.asList(1,2,3)));
 	    
 	}
+	@Test
+    public void flatMapPublisherWithAsync() throws InterruptedException{
+        assertThat(ListX.of(1,2,3)
+                        .flatMapPublisher(i->Maybe.of(i),FlatMapConfig.unbounded(Executors.newFixedThreadPool(1)))
+                        .toListX(),equalTo(Arrays.asList(1,2,3)));
+        
+    }
 	private void sleep2(int time){
 	    try {
             Thread.sleep(time);

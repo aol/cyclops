@@ -27,7 +27,8 @@ public interface IterableFunctor<T> extends Iterable<T>,Functor<T>, Foldable<T>,
             stream.map(mapper).forEachEvent(p->{
                 config.ex.peek(e-> CompletableFuture.runAsync(()->p.subscribe(sub),e))
                          .orElseGet( ()->{p.subscribe(sub); return null;});
-                } ,i->{} ,()->{ sub.close();});
+                
+                } ,i->{} ,()->{ sub.close(); });
             return Continuation.empty();
         };
         Continuation continuation = new Continuation(sp);
