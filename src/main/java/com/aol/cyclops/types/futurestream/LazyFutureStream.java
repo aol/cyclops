@@ -347,7 +347,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
     @Override
     default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues< U,R>> case1,Supplier<? extends R> otherwise){
 
-        return  map(u-> Matchable.of(u).mayMatch(case1).orElseGet(otherwise));
+        return  map(u-> Matchable.of(u).matches(case1,otherwise).get());
     }
 
     /**

@@ -15,8 +15,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 
 import lombok.Value;
 
@@ -31,6 +34,7 @@ import lombok.Value;
  */
 public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	
+   
 	/**
 	 * Construct a Convertable from a Supplier
 	 * 

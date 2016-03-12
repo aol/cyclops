@@ -28,7 +28,8 @@ public interface FeatureToggle<F> extends Supplier<F>,
                                           MonadicValue<F>,
                                           Filterable<F>,
                                           Functor<F>, 
-                                          Applicativable<F> {
+                                          Applicativable<F>,
+                                          Matchable.ValueAndOptionalMatcher<F>{
 
 	boolean isEnabled();
 	boolean isDisabled();
@@ -222,7 +223,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	@Override
 	default Iterator<F> iterator() {
 	
-		return Applicativable.super.iterator();
+		return Matchable.ValueAndOptionalMatcher.super.iterator();
 	}
 	
 	/**

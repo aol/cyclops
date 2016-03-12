@@ -3,6 +3,7 @@ package com.aol.cyclops.control;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -10,15 +11,21 @@ import java.util.function.Supplier;
 
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.internal.matcher2.MatchableCase;
+import com.aol.cyclops.internal.matcher2.MatchingInstance;
+import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
@@ -105,14 +112,28 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		
 		return Ior.both(stMap.get(),ptMap.get());
 	}
-	default <R1,R2> Ior<R1,R2> visit(Function<? super ST,? extends R1> secondary, 
+	default <R> R visit(Function<? super ST,? extends R> secondary, 
+            Function<? super PT,? extends R> primary, BiFunction<? super ST, ? super PT, ? extends R> both){
+        
+        if(isSecondary())
+            return swap().visit(secondary,()->null);
+        if(isPrimary())
+            return visit(primary,()->null);
+        
+        return Matchable.from(both().get()).visit((a,b)-> both.apply(a, b));
+    }
+	default <R1,R2> Ior<R1,R2> visitIor(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
 		if(isSecondary())
-			return (Ior<R1,R2>)swap().map(secondary);
+			return (Ior<R1,R2>)swap().map(secondary).swap();
 		if(isPrimary())
 			return (Ior<R1,R2>)map(primary);
 		return bimap(secondary,primary);
 	}
+	<R> Eval<R>  matches(Function<CheckValue1<ST,R>,CheckValue1<ST,R>> fn1,
+	                     Function<CheckValue1<PT,R>,CheckValue1<PT,R>> fn2,
+	                     Function<CheckValue2<ST,PT,R>,CheckValue2<ST,PT,R>> fn3,Supplier<? extends R> otherwise);
+
 	PT get();
 
 	Value<ST> secondaryValue();
@@ -349,6 +370,20 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		public String mkString(){
 			return "Ior.primary["+value+"]";
 		}
+
+       
+
+        @Override
+        public <R> Eval<R> matches(
+                Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> fn1,
+                Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn2,
+                Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
+                Supplier<? extends R> otherwise) {
+           
+            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
+                    new MatchableCase(new PatternMatcher()).withType1(getMatchable().getClass())).getPatternMatcher()))
+                    .match(getMatchable()).orElseGet(otherwise));
+        }
 		
 		
 	}
@@ -466,6 +501,17 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		}
 		public String mkString(){
             return "Ior.secondary["+value+"]";
+        }
+		@Override
+        public <R> Eval<R> matches(
+                Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> fn1,
+                Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn2,
+                Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
+                Supplier<? extends R> otherwise) {
+           
+            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn2.apply( (CheckValue1)
+                    new MatchableCase(new PatternMatcher()).withType1(value.getClass())).getPatternMatcher()))
+                    .match(value).orElseGet(otherwise));
         }
 	}
 	@AllArgsConstructor(access=AccessLevel.PACKAGE)
@@ -589,5 +635,16 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		public String mkString(){
 			return "Ior.both["+primary.toString() + ":" + secondary.toString()+"]";
 		}
+		@Override
+        public <R> Eval<R> matches(
+                Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> fn1,
+                Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn2,
+                Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
+                Supplier<? extends R> otherwise) {
+           
+            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn3.apply( (CheckValue2)
+                    new MatchableCase(new PatternMatcher()).withType2(Tuple2.class)).getPatternMatcher()))
+                    .match(both().get()).orElseGet(otherwise));
+        }
 	}
 }

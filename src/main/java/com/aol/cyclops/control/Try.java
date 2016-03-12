@@ -58,6 +58,9 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
                                                     Applicativable<T> {
     
     
+    default <R> Eval<R>  matches(Function<CheckValue1<T,R>,CheckValue1<T,R>> secondary,Function<CheckValue1<X,R>,CheckValue1<X,R>> primary,Supplier<? extends R> otherwise){
+        return  toXor().swap().matches(secondary, primary, otherwise);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Value#toXor()
      */

@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static org.hamcrest.Matchers.equalTo;
@@ -54,6 +55,16 @@ public class MaybeTest {
 		none = Maybe.none();
 	}
 
+	@Test
+	public void testFiltering(){
+	    assertThat(ReactiveSeq.of(Maybe.just(1),Try.success(1)).filter(Xor.primary(1))
+	                .toListX(),equalTo(ListX.of(Maybe.just(1),Try.success(1))));
+	}
+	@Test
+    public void testFilteringNoValue(){
+        assertThat(ReactiveSeq.of(1,1).filter(Xor.primary(1))
+                    .toListX(),equalTo(ListX.of(1,1)));
+    }
 	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(just));
@@ -690,14 +701,14 @@ public class MaybeTest {
 	}
 
 	@Test
-	public void testMatches() {
-		assertThat(just.mayMatch(c->c.is(when(10),then("hello"))),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.is(when(10),then("hello")).is(when(2),then("hello"))),equalTo(Maybe.of("hello")));
-		assertThat(just.mayMatch(c->c.is(when(1),then("hello"))
-									 .is(when(2),then(()->"hello"))
-									 .is(when(3),then(()->"hello"))),equalTo(Maybe.none()));
-		
-	}
+    public void testMatches() {
+        assertThat(just.matches(c->c.is(when(10),then("hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.of("hello")));
+        assertThat(just.matches(c->c.is(when(10),then("hello")).is(when(2),then("hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.of("hello")));
+        assertThat(just.matches(c->c.is(when(1),then("hello"))
+                                     .is(when(2),then(()->"hello"))
+                                     .is(when(3),then(()->"hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
+        
+    }
 
 	
 	

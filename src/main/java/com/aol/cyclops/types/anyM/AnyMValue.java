@@ -18,13 +18,10 @@ import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
-import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.Filterable;
@@ -37,7 +34,7 @@ import com.aol.cyclops.util.function.TriFunction;
 public interface AnyMValue<T> extends AnyM<T>,
 									  Value<T>,
 									  Filterable<T>,
-									  Applicativable<T>{
+									  Applicativable<T>,Matchable.ValueAndOptionalMatcher<T>{
 	
     default <R, A> R collect(Collector<? super T, A, R> collector){
         
@@ -376,7 +373,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	@Override
 	default Iterator<T> iterator() {
 		
-		return Applicativable.super.iterator();
+		return Matchable.ValueAndOptionalMatcher.super.iterator();
 	}
 
 	

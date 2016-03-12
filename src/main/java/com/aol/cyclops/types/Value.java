@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -25,6 +26,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
@@ -38,9 +40,11 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AllArgsConstructor;
 
@@ -48,9 +52,20 @@ public interface Value<T> extends Supplier<T>,
                                   Foldable<T>, 
                                   Matchable<T>, 
                                   Convertable<T>,
-                                  Publisher<T>{
+                                  Publisher<T>,
+                                  Predicate<T>{
+    
+   
+   
+    
 
-
+    default boolean test(T t){
+        if(!(t instanceof Value))
+            return Predicates.eqv(Maybe.ofNullable(t)).test(this);
+        else
+            return Predicates.eqv((Value)t).test(this);
+            
+    }
     default ValueSubscriber<T> newSubscriber(){
         return ValueSubscriber.subscriber();
     }

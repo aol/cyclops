@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
@@ -50,6 +51,9 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         return sequence(fts).map(s->s.reduce(reducer.reducer()).get());
     }
 
+	public <R> Eval<R>  matches(Function<CheckValue1<T,R>,CheckValue1<T,R>> secondary,Function<CheckValue1<Throwable,R>,CheckValue1<Throwable,R>> primary,Supplier<? extends R> otherwise){
+        return  toXor().swap().matches(secondary, primary, otherwise);
+    }
 	@Getter
 	private final CompletableFuture<T> future;
 

@@ -3,11 +3,14 @@ package com.aol.cyclops;
 import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops.control.Try.success;
 import static com.aol.cyclops.util.function.Predicates.__;
 import static com.aol.cyclops.util.function.Predicates.any;
 import static com.aol.cyclops.util.function.Predicates.eq;
 import static com.aol.cyclops.util.function.Predicates.in;
+import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static com.aol.cyclops.util.function.Predicates.not;
+import static com.aol.cyclops.util.function.Predicates.some;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -17,18 +20,111 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Try;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.util.function.Predicates;
 
 import lombok.val;
 
 public class MatchablesTest {
-
+    @Test
+    public void cFuture(){
+        Eval<Integer> result = Matchables.future(CompletableFuture.completedFuture(10))
+                                         .matches(c-> c.is( when(some(10)), then(20)), 
+                                                      c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(20)));
+    }
+    @Test
+    public void cFutureFail(){
+        CompletableFuture<Integer> cf = new CompletableFuture<>();
+        cf.completeExceptionally(new RuntimeException());
+        Eval<Integer> result = Matchables.future(cf)
+                                         .matches(c-> c.is( when(some(10)), then(2)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(2)));
+    }
+    @Test
+    public void tryTest2(){
+        Eval<Integer> result = Matchables.tryMatch(Try.success(1))
+                                         .matches(c-> c.is( when(Maybe.just(1)), then(10)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(10)));
+    }
+    @Test
+    public void tryTest3(){
+       
+        Eval<Integer> result = Matchables.tryMatch(Try.success(1))
+                                         .matches(c-> c.is( when(success(1)), then(10)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(10)));
+    }
+    @Test
+    public void tryTest(){
+        Eval<Integer> result = Matchables.tryMatch(Try.success(1))
+                                         .matches(c-> c.is( when(some(1)), then(10)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(10)));
+    }
+    @Test
+    public void tryFail(){
+        Eval<Integer> result = Matchables.tryMatch(Try.failure(new RuntimeException()))
+                                         .matches(c-> c.is( when(some(10)), then(2)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(2)));
+    }
+    @Test
+    public void future(){
+        Eval<Integer> result = Matchables.future(FutureW.ofResult(1))
+                                         .matches(c-> c.is( when(some(1)), then(10)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(10)));
+    }
+    @Test
+    public void futureFail(){
+        Eval<Integer> result = Matchables.future(FutureW.ofError(new RuntimeException()))
+                                         .matches(c-> c.is( when(some(10)), then(2)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(2)));
+    }
+    @Test
+    public void optional(){
+        Eval<Integer> result = Matchables.optional(Optional.of(1))
+                                        .matches(c-> c.is( when(some(1)), then(2)), otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(2)));
+    }
+    @Test
+    public void optionalEmpty(){
+        Eval<Integer> result = Matchables.optional(Optional.empty())
+                                        .matches(c-> c.is( when(some(1)), then(20)), otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(3)));
+    }
+    @Test
+    public void maybe(){
+        Eval<Integer> result = Matchables.maybe(Maybe.of(1))
+                                        .matches(c-> c.is( when(Predicates.some(1)), then(2)), otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(2)));
+    }
+    @Test
+    public void maybeEmpty(){
+        Eval<Integer> result = Matchables.maybe(Maybe.none())
+                                        .matches(c-> c.is( when(Predicates.some(10)), then(2)), otherwise(3));
+        
+        assertThat(result,equalTo(Eval.now(3)));
+    }
 	@Test
 	public void test() {
 		Matchables.headAndTail(Arrays.asList(1,2))

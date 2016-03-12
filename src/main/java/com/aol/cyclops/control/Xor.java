@@ -174,7 +174,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	default <R1,R2> Xor<R1,R2> visitXor(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
 		if(isSecondary())
-			return (Xor<R1,R2>)swap().map(secondary);
+			return (Xor<R1,R2>)swap().map(secondary).swap();
 		return (Xor<R1,R2>)map(primary);
 	}
 	@Override
@@ -183,7 +183,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		
 		return (Xor<ST,R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
-	<R> Eval<R>  matches(Function<CheckValue1<ST,R>,CheckValue1<ST,R>> fn1,Function<CheckValue1<PT,R>,CheckValue1<PT,R>> fn2,Supplier<? extends R> s);
+	<R> Eval<R>  matches(Function<CheckValue1<ST,R>,CheckValue1<ST,R>> fn1,Function<CheckValue1<PT,R>,CheckValue1<PT,R>> fn2,Supplier<? extends R> otherwise);
         
 	
 	PT get();
@@ -390,8 +390,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
                 Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> primary,
                 Supplier<? extends R> s) {
             return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
-                    new MatchableCase(new PatternMatcher()).withType1(getMatchable().getClass())).getPatternMatcher()))
-                        .match(getMatchable()).orElseGet(s));
+                    new MatchableCase(new PatternMatcher()).withType1(value.getClass())).getPatternMatcher()))
+                        .match(value).orElseGet(s));
         }
 		@Override
 		public Xor<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn) {

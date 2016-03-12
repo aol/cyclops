@@ -8,6 +8,7 @@ import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.stream.DoubleStream;
 
+import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.Value;
 
 import lombok.AllArgsConstructor;
@@ -41,7 +42,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString @EqualsAndHashCode
-public class MutableDouble implements DoubleSupplier, DoubleConsumer,Value<Double>{
+public class MutableDouble implements DoubleSupplier, DoubleConsumer,Matchable.ValueAndOptionalMatcher<Double>{
 
 	private double var;
 	

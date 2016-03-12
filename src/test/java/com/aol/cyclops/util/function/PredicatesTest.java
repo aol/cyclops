@@ -10,6 +10,7 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 
 import static com.aol.cyclops.util.function.Predicates.eqv;
+import static com.aol.cyclops.util.function.Predicates.eqv2;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -28,7 +29,7 @@ public class PredicatesTest {
     }
     @Test
     public void testEqvNonValue() {
-        assertThat(Stream.of(2).filter(eqv(Maybe.of(2))).collect(Collectors.toList()).get(0),equalTo(2));
+        assertThat(Stream.of(2).filter(eqv2(Maybe.of(2))).collect(Collectors.toList()).get(0),equalTo(2));
         
     }
     @Test
