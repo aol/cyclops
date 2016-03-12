@@ -132,7 +132,7 @@ public abstract class AbstractAnyMSeqTest {
         for(int x=0;x<10_000;x++){
         assertThat(of(1,2,3)
                         .flatMapPublisher(i->Maybe.of(i),FlatMapConfig.unbounded(ex))
-                        .toListX(),equalTo(Arrays.asList(1,2,3)));
+                        .toListX(),hasItems(1,2,3));
         }
         
     }

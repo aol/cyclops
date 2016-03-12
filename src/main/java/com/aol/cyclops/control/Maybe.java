@@ -252,7 +252,7 @@ public interface Maybe<T> extends MonadicValue<T>,
             return flatMap(t->Maybe.just(mapper.apply(t)));
         }
         public <R>  Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper){
-            Supplier<Eval<Maybe<R>>> s = ()->Eval.later(Maybe.none()) ;
+            Supplier<Eval<Maybe<R>>> s = ()->Eval.later(()->Maybe.none()) ;
             Eval<Maybe<R>> eval = lazy.get().visit(some->Eval.later( ()->narrow(mapper.apply(some))), s);
             return new Lazy<R>(eval);
             
