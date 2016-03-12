@@ -113,20 +113,20 @@ public class SeqSubscriber<T> implements Subscriber<T>,
         @Override
         public Iterator<T> iterator() {
             return new Iterator<T>(){
-                boolean first = true;
+                boolean requested = true;
                 @Override
                 public boolean hasNext() {
+                    if(!complete && !requested){
+                        reset();
+                        requestOne.run();
+                        requested =true;
+                    }
                     return !complete;
                 }
 
                 @Override
                 public T next() {
-                   if(!first){
-                       reset();
-                       requestOne.run();
-                   }
-                   else
-                       first = false;
+                   requested = false;
                    return get();
                 }
                 
