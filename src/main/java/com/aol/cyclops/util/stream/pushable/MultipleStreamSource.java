@@ -18,25 +18,24 @@ import com.aol.cyclops.types.futurestream.LazyFutureStream;
  *
  * @param <T>
  */
-public class MultiplePushableStreamsBuilder<T>  {
+public class MultipleStreamSource<T>  {
 	
 	private final Topic<T> topic;
-
 	
-	MultiplePushableStreamsBuilder(Queue<T> q){
+	public MultipleStreamSource(Queue<T> q){
 		topic = new Topic(q);
 	}
 	
 	/**
 	 * Create a pushable LazyFutureStream using the supplied ReactPool
 	 * 
-	 * @param s ReactPool to use to create the Stream
+	 * @param s React builder to use to create the Stream
 	 * @return a Tuple2 with a Topic&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
-	public  LazyFutureStream<T> pushable(ReactPool<LazyReact> s){
+	public  LazyFutureStream<T> futureStream(LazyReact s){
 		
-		return s.nextReactor().from(topic.stream());
+		return s.fromStream(topic.stream());
 		
 	}
 
@@ -45,7 +44,7 @@ public class MultiplePushableStreamsBuilder<T>  {
 	 * @return a Tuple2 with a Topic&lt;T&gt; and Stream&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
-	public   Stream<T> pushableStream(){
+	public   Stream<T> stream(){
 		
 		return (Stream)topic.stream();
 		
@@ -56,23 +55,12 @@ public class MultiplePushableStreamsBuilder<T>  {
 	 * @return a Tuple2 with a Topic&lt;T&gt; and Seq&lt;T&gt; - add data to the Queue
 	 * to push it to the Stream
 	 */
-	public ReactiveSeq<T> pushableSeq(){
+	public ReactiveSeq<T> reactiveSeq(){
 		
 		return topic.stream();
 	}
 	
-	/**
-	 * Create a pushable LazyFutureStream. This will call LazyFutureStream#futureStream(Stream) which creates
-	 * a sequential LazyFutureStream
-	 * 
-	  @return a Tuple2 with a Queue&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
-	 * to push it to the Stream
-	 */
-	public  <T> LazyFutureStream<T> pushableLazyFutureStream(){
-		
-		return LazyFutureStream.lazyFutureStream((Stream<T>)topic.stream());
-	}
-
+	
 	/**
 	 * @return Topic used as input for any generated Streams
 	 */

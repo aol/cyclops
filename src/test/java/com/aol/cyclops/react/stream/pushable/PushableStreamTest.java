@@ -17,23 +17,26 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamSource;
 import com.aol.cyclops.data.async.Queue;
+import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.async.Signal;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.aol.cyclops.util.stream.pushable.MultiplePushableStreamsBuilder;
+import com.aol.cyclops.util.stream.pushable.MultipleStreamSource;
 import com.aol.cyclops.util.stream.pushable.PushableLazyFutureStream;
-import com.aol.cyclops.util.stream.pushable.PushableSeq;
+import com.aol.cyclops.util.stream.pushable.PushableReactiveSeq;
 import com.aol.cyclops.util.stream.pushable.PushableStream;
-import com.aol.cyclops.util.stream.pushable.PushableStreamBuilder;
 
 
 public class PushableStreamTest {
 
 	@Test
 	public void testLazyFutureStream() {
-		PushableLazyFutureStream<Integer> pushable = new PushableStreamBuilder()
-				.pushableLazyFutureStream();
+		PushableLazyFutureStream<Integer> pushable = StreamSource.ofUnbounded()
+				                                                 .futureStream(new LazyReact());
 		pushable.getInput().add(100);
 		pushable.getInput().close();
 		assertThat(pushable.getStream().collect(Collectors.toList()),
@@ -42,8 +45,8 @@ public class PushableStreamTest {
 
 	@Test
 	public void testReactPool() {
-		PushableLazyFutureStream<Integer> pushable = new PushableStreamBuilder()
-				.pushable(SequentialElasticPools.lazyReact);
+		PushableLazyFutureStream<Integer> pushable = StreamSource.ofUnbounded()
+		                                                        .futureStream(SequentialElasticPools.lazyReact.nextReactor());
 		pushable.getInput().add(100);
 		pushable.getInput().close();
 		assertThat(pushable.getStream().collect(Collectors.toList()),
@@ -53,8 +56,8 @@ public class PushableStreamTest {
 	@Test
 	public void testStreamTuple() {
 
-		Tuple2<Queue<Integer>, Stream<Integer>> pushable = new PushableStreamBuilder()
-				.pushableStream();
+		Tuple2<Queue<Integer>, Stream<Integer>> pushable = StreamSource.ofUnbounded()
+				                                                        .stream();
 		pushable.v1.add(10);
 		pushable.v1.close();
 		assertThat(pushable.v2.collect(Collectors.toList()), hasItem(10));
@@ -62,8 +65,8 @@ public class PushableStreamTest {
 
 	@Test
 	public void testStream() {
-		PushableStream<Integer> pushable = new PushableStreamBuilder()
-				.pushableStream();
+		PushableStream<Integer> pushable = StreamSource.ofUnbounded()
+				                                        .stream();
 		pushable.getInput().add(10);
 		pushable.getInput().close();
 		assertThat(pushable.getStream().collect(Collectors.toList()),
@@ -73,9 +76,8 @@ public class PushableStreamTest {
 	@Test
 	public void testStreamBackPressure1() throws InterruptedException {
 
-		PushableStream<Integer> pushable = new PushableStreamBuilder()
-				.withBackPressureAfter(1).withBackPressureOn(true)
-				.pushableStream();
+		PushableStream<Integer> pushable = StreamSource.of(1)
+            			                               .stream();
 		List events = Collections.synchronizedList(new ArrayList<>());
 		new Thread(() -> pushable.getStream().forEach(events::add)).start();
 		pushable.getInput().offer(10);
@@ -100,8 +102,8 @@ public class PushableStreamTest {
 
 	@Test
 	public void testSeqTuple() {
-		Tuple2<Queue<Integer>, Seq<Integer>> pushable = new PushableStreamBuilder()
-				.pushableSeq();
+		Tuple2<Queue<Integer>, ReactiveSeq<Integer>> pushable = StreamSource.ofUnbounded()
+				                                                            .reactiveSeq();
 		pushable.v1.add(10);
 		pushable.v1.close();
 		assertThat(pushable.v2.collect(Collectors.toList()), hasItem(10));
@@ -109,8 +111,8 @@ public class PushableStreamTest {
 
 	@Test
 	public void testSeq() {
-		PushableSeq<Integer> pushable = new PushableStreamBuilder()
-				.pushableSeq();
+		PushableReactiveSeq<Integer> pushable = StreamSource.ofUnbounded()
+				                                    .reactiveSeq();
 		pushable.getInput().add(10);
 		pushable.getInput().close();
 		assertThat(pushable.getStream().collect(Collectors.toList()),
@@ -120,8 +122,8 @@ public class PushableStreamTest {
 	@Test
 	public void testLazyFutureStreamAdapter() {
 		Signal<Integer> signal = Signal.queueBackedSignal();
-		LazyFutureStream<Integer> pushable = new PushableStreamBuilder()
-				.pushableLazyFutureStream(signal.getDiscrete());
+		LazyFutureStream<Integer> pushable = StreamSource
+				                                .futureStream(signal.getDiscrete(),new LazyReact());
 		signal.set(100);
 		signal.close();
 		assertThat(pushable.collect(Collectors.toList()), hasItem(100));
@@ -130,7 +132,7 @@ public class PushableStreamTest {
 	@Test
 	public void testSeqAdapter() {
 		Signal<Integer> signal = Signal.queueBackedSignal();
-		Seq<Integer> pushable = new PushableStreamBuilder().pushableSeq(signal
+		Seq<Integer> pushable = StreamSource.reactiveSeq(signal
 				.getDiscrete());
 		signal.set(100);
 		signal.close();
@@ -140,8 +142,8 @@ public class PushableStreamTest {
 	@Test
 	public void testStreamAdapter() {
 		Signal<Integer> signal = Signal.queueBackedSignal();
-		Stream<Integer> pushable = new PushableStreamBuilder()
-				.pushableStream(signal.getDiscrete());
+		Stream<Integer> pushable = StreamSource
+				                        .stream(signal.getDiscrete());
 		signal.set(100);
 		signal.close();
 		assertThat(pushable.collect(Collectors.toList()), hasItem(100));
@@ -149,21 +151,43 @@ public class PushableStreamTest {
 	
 	@Test
 	public void testLazyFutureStreamTopic() {
-		MultiplePushableStreamsBuilder<Integer> multi = new PushableStreamBuilder()
-		.multiple();
+		MultipleStreamSource<Integer> multi = StreamSource
+		                                        .ofMultiple();
 		LazyFutureStream<Integer> pushable = multi
-				.pushableLazyFutureStream();
+				.futureStream(new LazyReact());
 		multi.getInput().offer(100);
 		multi.getInput().close();
 		assertThat(pushable.collect(Collectors.toList()),
 				hasItem(100));
 	}
 	@Test
+    public void testLazyFutureStreamTopicBackPressure() {
+        MultipleStreamSource<Integer> multi = StreamSource
+                                                .ofMultiple(2);
+        LazyFutureStream<Integer> pushable = multi
+                .futureStream(new LazyReact());
+        multi.getInput().offer(100);
+        multi.getInput().close();
+        assertThat(pushable.collect(Collectors.toList()),
+                hasItem(100));
+    }
+	@Test
+    public void testLazyFutureStreamTopicQueueFactory() {
+        MultipleStreamSource<Integer> multi = StreamSource
+                                                .ofMultiple(QueueFactories.boundedQueue(100));
+        LazyFutureStream<Integer> pushable = multi
+                .futureStream(new LazyReact());
+        multi.getInput().offer(100);
+        multi.getInput().close();
+        assertThat(pushable.collect(Collectors.toList()),
+                hasItem(100));
+    }
+	@Test
 	public void testReactPoolTopic() {
-		MultiplePushableStreamsBuilder<Integer> multi = new PushableStreamBuilder()
-		.multiple();
+		MultipleStreamSource<Integer> multi =  StreamSource
+		                                            .ofMultiple();
 		LazyFutureStream<Integer> pushable = multi
-										.pushable(SequentialElasticPools.lazyReact);
+										.futureStream(SequentialElasticPools.lazyReact.nextReactor());
 		multi.getInput().offer(100);
 		multi.getInput().close();
 		assertThat(pushable.collect(Collectors.toList()),
@@ -171,9 +195,9 @@ public class PushableStreamTest {
 	}
 	@Test
 	public void testStreamTopic() {
-		MultiplePushableStreamsBuilder<Integer> multi = new PushableStreamBuilder()
-		.multiple();
-		Stream<Integer> pushable = multi.pushableStream();
+		MultipleStreamSource<Integer> multi = StreamSource
+		                                                .ofMultiple();
+		Stream<Integer> pushable = multi.stream();
 		multi.getInput().offer(10);
 		multi.getInput().close();
 		assertThat(pushable.collect(Collectors.toList()),
@@ -181,8 +205,8 @@ public class PushableStreamTest {
 	}
 	@Test
 	public void testSeqTopic() {
-		PushableSeq<Integer> pushable = new PushableStreamBuilder()
-				.pushableSeq();
+		PushableReactiveSeq<Integer> pushable = StreamSource.ofUnbounded()
+				                                    .reactiveSeq();
 		pushable.getInput().offer(10);
 		pushable.getInput().close();
 		assertThat(pushable.getStream().collect(Collectors.toList()),
@@ -191,12 +215,12 @@ public class PushableStreamTest {
 	
 	@Test
 	public void testMultiple() {
-		MultiplePushableStreamsBuilder<Integer> multi = new PushableStreamBuilder()
-												.multiple();
+		MultipleStreamSource<Integer> multi = StreamSource
+												.ofMultiple();
 		LazyFutureStream<Integer> pushable = multi
-				.pushableLazyFutureStream();
-		Seq<Integer> seq = multi.pushableSeq();
-		Stream<Integer> stream = multi.pushableStream();
+				.futureStream(new LazyReact());
+		Seq<Integer> seq = multi.reactiveSeq();
+		Stream<Integer> stream = multi.stream();
 		multi.getInput().offer(100);
 		multi.getInput().close();
 		
@@ -208,22 +232,11 @@ public class PushableStreamTest {
 		assertThat(Sets.newSet(100),is(vals));
 	}
 	
-	@Test
-	public void testWithBackPressureAfterButOff() {
-		PushableLazyFutureStream<Integer> pushable = new PushableStreamBuilder().withBackPressureAfter(10)
-				.withBackPressureOn(false)
-				.pushableLazyFutureStream();
-		
-		pushable.getInput().add(100);
-		pushable.getInput().close();
-		assertThat(pushable.getStream().collect(Collectors.toList()),
-				hasItem(100));
-	}
+	
 	@Test(expected=IllegalArgumentException.class)
 	public void testWithBackPressureNegativeAfterButOn() {
-		PushableLazyFutureStream<Integer> pushable = new PushableStreamBuilder().withBackPressureAfter(-10)
-				.withBackPressureOn(true)
-				.pushableLazyFutureStream();
+		PushableLazyFutureStream<Integer> pushable = StreamSource.of(-10)
+		                                                          .futureStream(new LazyReact());
 		
 		pushable.getInput().add(100);
 		pushable.getInput().close();

@@ -64,7 +64,7 @@ public class VertxTest {
 	    
 	    LazyReact react = new LazyReact(c->vertx.runOnContext(v -> c.run()));
 	    
-	    react.from(reqs.stream())
+	    react.fromStream(reqs.stream())
 	         .filter(req->req.getParam("num")!=null)
 	         .peek(i->System.out.println("grouping " + i))
 	         .grouped(2)
@@ -114,7 +114,7 @@ public class VertxTest {
                    .forEach(downloadQueue::add);
         
         //download asynchronously : all cyclops-react tasks are passed into vert.x
-        react.from(downloadQueue.stream())
+        react.fromStream(downloadQueue.stream())
              .peek(System.out::println)
              .map(url->vertx.createHttpClient().getNow(url,"",resp->resp.bodyHandler(body-> completedQueue.add(body.getString(0, body.length())))))
              .run();

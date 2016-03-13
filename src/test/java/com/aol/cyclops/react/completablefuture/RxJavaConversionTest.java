@@ -26,7 +26,7 @@ public class RxJavaConversionTest {
 		
 		
 		
-		List<String> titles = new LazyReact().fromStream(Stream.of(query("Hello, world!")))
+		List<String> titles = new LazyReact().fromStreamFutures(Stream.of(query("Hello, world!")))
 				
 								.flatMap(Collection::stream)
 								.peek(System.out::println)

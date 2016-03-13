@@ -1079,7 +1079,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
     default LazyFutureStream<U> convertToLazyStream(){
         return new LazyReact(getTaskExecutor()).withRetrier(getRetrier())
-                .fromStream((Stream)getLastActive().stream());
+                .fromStreamFutures((Stream)getLastActive().stream());
     }
 
 

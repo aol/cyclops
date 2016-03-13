@@ -6,6 +6,7 @@ import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
 import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
+import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber.Counter;
 
 @Test
 public class TckBlackBoxSubscriberTest extends SubscriberBlackboxVerification<Long>{
@@ -15,7 +16,7 @@ public class TckBlackBoxSubscriberTest extends SubscriberBlackboxVerification<Lo
 
 	@Override
 	public Subscriber<Long> createSubscriber() {
-		return new QueueBasedSubscriber();
+		return new QueueBasedSubscriber(new Counter());
 		
 	}
 

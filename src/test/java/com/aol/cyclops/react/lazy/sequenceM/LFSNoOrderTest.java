@@ -4,6 +4,7 @@ import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,6 +16,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -26,25 +29,111 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.stream.reactive.FlatMapConfig;
 
 
 
 
 //see BaseSequentialSeqTest for in order tests
-public  class BaseSequenceMTest {
+public  class LFSNoOrderTest {
 	
 	
 	LazyFutureStream<Integer> empty;
 	LazyFutureStream<Integer> nonEmpty;
-
+	public static Executor ex =  Executors.newFixedThreadPool(10);
+    public static final LazyReact r = new LazyReact(10,10);
 	@Before
 	public void setup(){
 		empty = of();
 		nonEmpty = of(1);
 	}
+	@Test
+    public void stream(){
+        assertThat(of(1,2,3).stream().toListX(),hasItems(1,2,3));
+    }
 
+	@Test
+    public void mergePublisher() throws InterruptedException{
+      
+        assertThat(of(1,2,3)
+                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)))
+                        .toListX(),hasItems(1,2,3,4,5));
+        
+    }
+	
+    @Test
+    public void mergePublisherSize() throws InterruptedException{
+      
+        assertThat(of(1,2,3)
+                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)))
+                        .toListX().size(),equalTo(5));
+        
+    }
+    @Test
+    public void mergePublisherWithAsync() throws InterruptedException{
+        assertThat(of(1,2,3)
+                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),FlatMapConfig.unbounded(Executors.newFixedThreadPool(1)))
+                        .toListX(),hasItems(1,2,3,4,5));
+        
+    }
+    @Test
+    public void mergePublisherWithSizeAsync() throws InterruptedException{
+        assertThat(of(1,2,3)
+                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),FlatMapConfig.unbounded(Executors.newFixedThreadPool(1)))
+                        .toListX().size(),equalTo(5));
+        
+    }
+    
+    @Test
+    public void mergePublisherAsync() throws InterruptedException{
+       
+       
+       
+      assertThat(of(3,2,1)
+               .mergePublisher(ReactiveSeq.generate(()->r.generate(()->1).peek(a->sleep2(a*100)).limit(5).async()).limit(2).toList())
+               .toListX().size(),equalTo(13));
+    }
+    @Test
+    public void flatMapPublisher() throws InterruptedException{
+        
+        assertThat(of(1,2,3)
+                        .flatMapPublisher(i->Maybe.of(i))
+                        .toListX(),equalTo(Arrays.asList(1,2,3)));
+        
+        
+    }
+    
+    @Test
+    public void flatMapPublisherWithAsync() throws InterruptedException{
+        for(int x=0;x<10_000;x++){
+        assertThat(of(1,2,3)
+                        .flatMapPublisher(i->Maybe.of(i),FlatMapConfig.unbounded(ex))
+                        .toListX(),hasItems(1,2,3));
+        }
+        
+    }
+    private void sleep2(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void flatMapPublisherAsync() throws InterruptedException{
+       LazyReact r = new LazyReact(10,10);
+       
+      
+      assertThat(of(3,2,1)
+               .flatMapPublisher(i-> r.generate(()->i).peek(a->sleep2(a*100)).limit(5).async())
+               .toListX().size(),equalTo(15));
+       
+    }
 	
 	protected Object value() {
 		

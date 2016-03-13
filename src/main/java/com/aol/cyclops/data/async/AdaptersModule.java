@@ -282,13 +282,14 @@ static class QueueToBlockingQueueWrapper implements BlockingQueue{
                subscription.closeQueueIfFinished(queue);
             return true;
            }catch(ClosedQueueException e){
-           
-               if(e.isDataPresent())
-                   action.accept((T)e.getCurrentData());
+               
+               if(e.isDataPresent()){
+                   e.getCurrentData().forEach(action);
+               }
                return false;
            }catch(Exception e){
-               
-               return false;
+              
+              return false;
            }finally {
                
            }

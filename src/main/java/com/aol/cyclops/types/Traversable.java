@@ -45,9 +45,16 @@ import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 
-public interface Traversable<T> extends Foldable<T>, Iterable<T>, ConvertableSequence<T> {
+public interface Traversable<T> extends Foldable<T>, 
+                                        Iterable<T>, 
+                                        ConvertableSequence<T>,
+                                        Publisher<T>{
 	
    
+    
+    default void subscribe(Subscriber<? super T> s){
+        stream().subscribe(s);
+    }
     /**
      * Combine two adjacent elements in a traversable using the supplied BinaryOperator
      * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

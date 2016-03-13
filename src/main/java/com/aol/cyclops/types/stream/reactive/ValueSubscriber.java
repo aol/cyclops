@@ -74,6 +74,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T>{
 
         @Override
         public void onNext(T t) {
+           
             Objects.requireNonNull(t);
             firstValue.compareAndSet((T)UNSET, t);
         }
@@ -86,11 +87,19 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T>{
 
         @Override
         public void onComplete() {
+            
            this.onComplete.run();
+           firstError.set(new NoSuchElementException("publisher has no elements"));
             
         }
+        public void requestOne(){
+            
+            firstValue.set(UNSET);
+            firstError.set(UNSET);
+           this.s.request(1);
+        }
         public T get(){
-            requestOne.run();
+        
             while(firstValue.get()==UNSET && firstError.get()==UNSET)
                 LockSupport.parkNanos(1000000l);
             if(firstValue.get()==UNSET)
@@ -106,7 +115,19 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T>{
              }
             return Xor.primary(get());
         }
-
+        private T throwingGet(){
+           
+            while(firstValue.get()==UNSET && firstError.get()==UNSET)
+                LockSupport.parkNanos(1000000l);
+            if(firstValue.get()==UNSET)
+                throw ExceptionSoftener.throwSoftenedException((Throwable)firstError.get());
+          
+            return (T)firstValue.get();
+        }
+        @Override
+        public <X extends Throwable> Try<T,X> toTry(Class<X>... classes){
+            return Try.withCatch( ()->throwingGet(),classes);
+        }
        
 
        

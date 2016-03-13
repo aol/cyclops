@@ -201,6 +201,14 @@ public class Topic<T> implements Adapter<T> {
 		
 		
 	}
+	
+	
+
+    @Override
+    public <R> R visit(Function<? super Queue<T>, ? extends R> caseQueue,
+                        Function<? super Topic<T>, ? extends R> caseTopic) {
+       return caseTopic.apply(this);
+    }
 
 
 	

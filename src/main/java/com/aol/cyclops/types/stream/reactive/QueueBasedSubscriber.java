@@ -2,19 +2,27 @@ package com.aol.cyclops.types.stream.reactive;
 
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.control.FluentFunctions;
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.Queue.ClosedQueueException;
 import com.aol.cyclops.data.async.QueueFactory;
+import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.types.futurestream.Continuation;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
@@ -23,17 +31,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Create a LazyFutureStream Subscriber
- * 
- * to use 
- * 
- * <pre>
- * {@code 
- * FutureStreamSubscriber<Long> sub = new FutureStreamSubscriber<>();
- * reactivePublisher.subscribe(sub);
- * LazyFutureStream<Long> stream = sub.getStream();
- * 
- * }</pre>
+ * A reactive-streams subscriber for merging data from multiple publishers into a single Stream
  * 
  * @author johnmcclean
  *
@@ -41,13 +39,18 @@ import lombok.Setter;
  */
 public class QueueBasedSubscriber<T> implements Subscriber<T> {
 	
-    public static <T> QueueBasedSubscriber<T> subscriber(){
-        return new QueueBasedSubscriber<>();
+    public static <T> QueueBasedSubscriber<T> subscriber(Counter counter){
+        return new QueueBasedSubscriber<>(counter);
     }
-    public static <T> QueueBasedSubscriber<T> subscriber(QueueFactory<T> factory){
+    public static <T> QueueBasedSubscriber<T> subscriber(Queue<T> q,Counter counter){
+        return new QueueBasedSubscriber<>(q,counter);
+    }
+    
+    public static <T> QueueBasedSubscriber<T> subscriber(QueueFactory<T> factory,Counter counter){
         
-        return new QueueBasedSubscriber<>();
+        return new QueueBasedSubscriber<>(factory,counter);
     }
+    
 	
     private Stream<T> genJdkStream(){
         Continueable subscription =  new com.aol.cyclops.react.async.subscription.Subscription();
@@ -60,22 +63,51 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 					.fromStream(queue.stream(subscription));
 	}
 	private final QueueFactory<T> factory;
+	@Getter
 	protected volatile Queue<T> queue;
 	@Getter
 	volatile Subscription subscription;
 	
 	private volatile LazyFutureStream<T> stream;
-	private volatile Supplier<LazyFutureStream<T>> futureStream;
-	private volatile Supplier<Stream<T>> jdkStream;
-	private volatile Supplier<ReactiveSeq<T>> reactiveSeq;
+	private volatile Supplier<LazyFutureStream<T>> futureStream = Eval.later(this::genStream);
+	private volatile Supplier<Stream<T>> jdkStream = Eval.later(this::genJdkStream);
+	private volatile Supplier<ReactiveSeq<T>> reactiveSeq = Eval.later(()->ReactiveSeq.fromStream(jdkStream.get()));
 	@Setter
 	private volatile Consumer<Throwable> errorHandler;
 	
-	public QueueBasedSubscriber(){
-	    this(null);
+	
+	private final Counter counter;
+	public QueueBasedSubscriber(Counter counter){
+	    factory=null;
+	    
+	    this.counter = counter;
+	    queue = new Queue<T>(){
+            public T get(){
+                counter.subscription.forEach(s->s.request(1));
+                
+                return (T)super.get();  
+            }
+        };
 	}
-	private QueueBasedSubscriber(QueueFactory<T> factory){
+	private QueueBasedSubscriber(Queue<T> q,Counter counter){
+        factory=null;
+        
+        this.counter = counter;
+        queue = q;
+    }
+	private QueueBasedSubscriber(QueueFactory<T> factory,Counter counter){
+	    this.counter = counter;
 	    this.factory=factory;
+	    this.queue = new Queue<T>(factory){
+            public T get(){
+                counter.subscription.forEach(s->s.request(1));
+                   
+                
+                return (T)super.get();  
+            }
+        };
+       
+        
 	}
 	
 	public LazyFutureStream<T> futureStream(){
@@ -88,48 +120,41 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         return reactiveSeq.get();
     }
 	
+	
+	
 	@Override
 	public void onSubscribe(final Subscription s) {
 		Objects.requireNonNull(s);
-	
+		
+		
 		if(this.subscription!=null){
-			s.cancel();
+		   
+		    subscription.cancel();
+		    s.cancel();
+			
 			return;
 		}
 		
-		if(factory!=null) {
-    		queue = new Queue<T>(factory){
-    			public T get(){
-    				s.request(1);
-    				return (T)super.get();	
-    			}
-    		};
-		}else{
-		    queue = new Queue<T>(){
-                public T get(){
-                    s.request(1);
-                    return (T)super.get();  
-                }
-            };
+		
+		subscription=s;
+		
+		while(counter.subscription.size()>10_000){
+		   
+		    LockSupport.parkNanos(100l); //max of 10k active subscriptions
 		}
-	
-		this.subscription= s;
+		counter.subscription.plus(subscription);
 		
 		s.request(1);
-		futureStream= FluentFunctions.of(this::genStream)
-		                             .memoize();
-		jdkStream= FluentFunctions.of(this::genJdkStream)
-                                  .memoize();
-		reactiveSeq = FluentFunctions.of(()->ReactiveSeq.fromStream(jdkStream.get()))
-		                            .memoize();
+		
 		
 	}
-
+    
 	@Override
 	public void onNext(T t) {
 		
 		Objects.requireNonNull(t);
 		queue.add(t);
+		counter.added++;
 		
 		
 	}
@@ -144,18 +169,60 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 		    errorHandler.accept(t);
 		
 	}
+	public static class Counter{
+	    public AtomicLong active = new AtomicLong(0);
+	    volatile boolean completable = false;
+	    final QueueX<Subscription> subscription = QueueX.fromIterable(Collectors.toCollection(()->new ConcurrentLinkedQueue<Subscription>()), Arrays.<Subscription>asList());
+	    volatile boolean closed= false;
+	    volatile int added =0;
+	}
 
 	@Override
 	public void onComplete() {
+	   
+		counter.active.decrementAndGet();
+		counter.subscription.minus(subscription);
+		boolean set = false;
 		
-		if(queue!=null){
-			queue.addContinuation(new Continuation( () -> {
-						throw new ClosedQueueException();
-			}));
-			queue.close();
+		if(queue!=null  && counter.active.get()==0){
+		   
+		    if(counter.completable){
+		        
+		        counter.closed = true;
+                queue.addContinuation(new Continuation( () -> {
+                    List current = new ArrayList();
+                    while(queue.size()>0)
+                        current.add(queue.get());
+                    throw new ClosedQueueException(current);
+                }));
+                queue.close();
+		    }
+    		   
 		}
 		
 		
+	}
+	
+	
+	public void close(){
+	    counter.completable =true;
+	    boolean set= false;
+	   
+	    if(queue!=null  && counter.active.get()==0){
+	        counter.closed = true;
+	       
+	        queue.addContinuation(new Continuation( () -> {
+                throw new ClosedQueueException();
+                }));
+                queue.close();
+	    }
+	   
+	        
+	    
+	}
+	
+	public void addContinuation(Continuation c){
+	   queue.addContinuation(c);
 	}
 
 }

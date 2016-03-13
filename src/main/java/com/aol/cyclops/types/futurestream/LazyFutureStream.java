@@ -43,6 +43,7 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -82,8 +83,11 @@ import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuild
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
+import com.aol.cyclops.types.stream.reactive.FlatMapConfig;
 import com.aol.cyclops.types.stream.reactive.FutureStreamAsyncPublisher;
 import com.aol.cyclops.types.stream.reactive.FutureStreamSynchronousPublisher;
+import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
+import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber.Counter;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
@@ -3317,7 +3321,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      */
     static <T> LazyFutureStream<T> lazyFutureStreamFrom(Stream<CompletableFuture<T>> stream) {
         return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false)
-                                    .fromStream(stream);
+                                    .fromStreamFutures(stream);
     }
     /**
      *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
@@ -3328,7 +3332,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      */
     static <T> LazyFutureStream<T> lazyFutureStream(CompletableFuture<T> value) {
         return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false)
-                                    .fromStream(Stream.of(value));
+                                    .fromStreamFutures(Stream.of(value));
     }
     /**
      *  Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
@@ -3339,7 +3343,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      */
     static <T> LazyFutureStream<T> lazyFutureStream(CompletableFuture<T>... values) {
         return  new LazyReact(ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(ThreadPools.getSequentialRetry())).withAsync(false)
-                                    .fromStream(Stream.of(values));
+                                    .fromStreamFutures(Stream.of(values));
     }
 
 

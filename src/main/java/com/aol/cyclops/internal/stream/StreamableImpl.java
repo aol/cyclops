@@ -1,4 +1,4 @@
-package com.aol.cyclops.internal.sequence.streamable;
+package com.aol.cyclops.internal.stream;
 
 import com.aol.cyclops.util.stream.Streamable;
 

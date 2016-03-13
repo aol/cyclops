@@ -3,6 +3,7 @@ package com.aol.cyclops.control;
 
 import java.io.Closeable;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -61,6 +62,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
     default <R> Eval<R>  matches(Function<CheckValue1<T,R>,CheckValue1<T,R>> secondary,Function<CheckValue1<X,R>,CheckValue1<X,R>> primary,Supplier<? extends R> otherwise){
         return  toXor().swap().matches(secondary, primary, otherwise);
     }
+    public X failureGet();
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Value#toXor()
      */
@@ -786,7 +788,10 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		public T orElse(T value) {
 			return get();
 		}
-
+		@Override
+		public X failureGet(){
+		    throw new NoSuchElementException("Can't call failureGet() on an instance of Try.Success");
+		}
 		/* 
 		 *	@param value (ignored)
 		 *	@return Returns current value (ignores Supplier)
@@ -957,6 +962,10 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		public AnyMValue<T> anyMSuccess(){
 			return AnyM.fromOptional(Optional.empty());
 		}
+		@Override
+        public X failureGet(){
+           return error;
+        }
 		/**
 		 * Construct a Failure instance from a throwable
 		 * 
@@ -981,8 +990,8 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		 * @see com.aol.cyclops.trycatch.Try#get()
 		 */
 		public T get(){
-			ExceptionSoftener.throwSoftenedException((Throwable)error);
-			return null;
+			throw ExceptionSoftener.throwSoftenedException((Throwable)error);
+			
 		}
 
 		/* 
