@@ -114,7 +114,7 @@ public class OptionalT<T> {
 	 * @param f FlatMap function
 	 * @return OptionalT that applies the flatMap function to the wrapped Optional
 	 */
-	public <B> OptionalT<B> flatMap(Function1<? super T, OptionalT<? extends B>> f) {
+	public <B> OptionalT<B> flatMap(Function<? super T, OptionalT<? extends B>> f) {
 
 		return of(run.bind(opt -> {
 			if (opt.isPresent())
