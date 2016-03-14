@@ -17,9 +17,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.internal.react.LazyFutureStreamImpl;
-import com.aol.cyclops.internal.react.stream.InfiniteClosingSpliterator;
 import com.aol.cyclops.internal.react.stream.InfiniteClosingSpliteratorFromSupplier;
 import com.aol.cyclops.internal.react.stream.ReactBuilder;
 import com.aol.cyclops.react.RetryBuilder;
@@ -66,7 +64,7 @@ public class LazyReact implements ReactBuilder {
 	@Getter
 	private final MaxActive maxActive;
 	
-	private final Executor publisherExecutor;
+	
 	@Getter
 	private final boolean streamOfFutures;
 	@Getter
@@ -79,9 +77,7 @@ public class LazyReact implements ReactBuilder {
 	private final Cacheable memoizeCache;
 	
 	
-	public Executor getPublisherExecutor(){
-		return publisherExecutor!=null ? publisherExecutor : executor;
-	}
+	
 	public LazyReact autoMemoizeOn( Cacheable memoizeCache){
 		return this.withAutoMemoize(true).withMemoizeCache(memoizeCache);
 	}
@@ -117,7 +113,7 @@ public class LazyReact implements ReactBuilder {
 		this.retrier = null;
 		this.async = true;
 		this.maxActive = MaxActive.IO;
-		this.publisherExecutor=null;
+		
 		this.streamOfFutures=false;
 		this.poolingActive=false;
 		this.autoOptimize=true;
@@ -130,7 +126,7 @@ public class LazyReact implements ReactBuilder {
         this.retrier = null;
         this.async = true;
         this.maxActive = MaxActive.IO;
-        this.publisherExecutor=null;
+       
         this.streamOfFutures=false;
         this.poolingActive=false;
         this.autoOptimize=true;
@@ -151,7 +147,7 @@ public class LazyReact implements ReactBuilder {
 		this.retrier = new RetryBuilder().parallelism(threadPoolSize);
 		this.async = true;
 		this.maxActive = new MaxActive(maxActiveTasks,threadPoolSize);
-		this.publisherExecutor=null;
+	
 		this.streamOfFutures=false;
 		this.poolingActive=false;
 		this.autoOptimize=true;
@@ -373,7 +369,7 @@ public class LazyReact implements ReactBuilder {
 	 * @param async If true each task will be submitted to an executor service
 	 */
 	public LazyReact(Executor executor, RetryExecutor retrier,
-			Boolean async, MaxActive maxActive, Executor pub,boolean streamOfFutures, 
+			Boolean async, MaxActive maxActive,boolean streamOfFutures, 
 			boolean objectPoolingActive,
 			boolean autoOptimize,
 			boolean autoMemoize, Cacheable memoizeCache) {
@@ -383,7 +379,7 @@ public class LazyReact implements ReactBuilder {
 		this.async = Optional.ofNullable(async).orElse(true);
 		this.maxActive = Optional.ofNullable(maxActive).orElse(MaxActive.IO);
 		this.streamOfFutures = streamOfFutures;
-		this.publisherExecutor=pub;
+		
 		this.poolingActive = objectPoolingActive;
 		this.autoOptimize = autoOptimize;
 		this.autoMemoize =autoMemoize;
@@ -392,7 +388,7 @@ public class LazyReact implements ReactBuilder {
 
 	public LazyReact(Executor currentThreadExecutor,
 			AsyncRetryExecutor withScheduler, boolean async, MaxActive maxActive2) {
-		this(currentThreadExecutor,withScheduler,async,maxActive2,null,false,
+		this(currentThreadExecutor,withScheduler,async,maxActive2,false,
 				false,async,false,null);
 	}
 

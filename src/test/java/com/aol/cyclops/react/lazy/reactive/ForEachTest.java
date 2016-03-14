@@ -114,7 +114,6 @@ public class ForEachTest {
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
 		LazyFutureStream<Integer> stream = LazyFutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4,()->5)
-													.withPublisherExecutor(new ForkJoinPool(1))
 													.async()
 													.map(Supplier::get);
 		stream.forEachWithError( i->list.add(i),

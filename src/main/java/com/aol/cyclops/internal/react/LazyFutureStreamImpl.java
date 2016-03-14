@@ -79,7 +79,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final ParallelReductionConfig parallelReduction;
 	private final ConsumerHolder error;
 	
-	private final Executor publisherExecutor;
+	
 	private final MaxActive maxActive;
 	
 	
@@ -101,7 +101,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
 		this.parallelReduction = ParallelReductionConfig.defaultValue;
-		this.publisherExecutor = lazyReact.getPublisherExecutor();
+		
 		this.maxActive = lazyReact.getMaxActive();
 		
 		
@@ -173,7 +173,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	@Override
 	public LazyFutureStream<U> withLastActive(LazyStreamWrapper w) {
 		return new LazyFutureStreamImpl<U>(errorHandler, (LazyStreamWrapper)w,  lazyCollector, 
-				queueFactory, simpleReact, subscription, parallelReduction, error,this.publisherExecutor,maxActive);
+				queueFactory, simpleReact, subscription, parallelReduction, error,maxActive);
 		
 	}
 	@Override

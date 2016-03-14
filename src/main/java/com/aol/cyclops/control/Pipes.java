@@ -218,8 +218,8 @@ public class Pipes<K,V> {
 	 * @param subscriber Reactive Streams subscriber for data on this pipe
 	 */
 	public void subscribeTo(K key,Subscriber<V> subscriber,Executor subscribeOn){
-		LazyFutureStream.lazyFutureStream((registered.get(key)).stream())
-						.async().withPublisherExecutor(subscribeOn).subscribe(subscriber);
+	    CompletableFuture.runAsync(()->subscribeTo(key,subscriber),subscribeOn);
+		
 	}
 	/**
 	 * @param key for registered simple-react async.Adapter

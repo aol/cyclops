@@ -124,7 +124,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
        
         return (LazyFutureStream<R>)ReactiveSeq.super.trampoline(mapper);
     }
-    LazyFutureStream<U> withPublisherExecutor(Executor ex);
+    
      default <R> R  foldRight(R identity, BiFunction<? super U, R,R> accumulator){
          return ReactiveSeq.super.foldRight(identity,accumulator);
      }
@@ -488,7 +488,9 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
      */
     default void  subscribe(Subscriber<? super U> s){
-       
+      /**  if(isAsync())
+            FutureStreamAsyncPublisher.super.subscribe(s);
+        else**/
             FutureStreamSynchronousPublisher.super.subscribe(s);
     }
 
