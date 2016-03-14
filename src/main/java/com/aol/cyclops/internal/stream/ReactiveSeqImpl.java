@@ -6,12 +6,12 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,14 +47,14 @@ import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -1768,7 +1768,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 			
 				volatile boolean running = true;
 				boolean active = false;
-				final Stack<Long> requests = new Stack<Long>();
+				final LinkedList<Long> requests = new LinkedList<Long>();
 				@Override
 				public void request(long n) {
 				    if(!running)

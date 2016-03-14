@@ -43,7 +43,6 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -83,11 +82,7 @@ import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuild
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
-import com.aol.cyclops.types.stream.reactive.FlatMapConfig;
-import com.aol.cyclops.types.stream.reactive.FutureStreamAsyncPublisher;
 import com.aol.cyclops.types.stream.reactive.FutureStreamSynchronousPublisher;
-import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
-import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber.Counter;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
@@ -109,7 +104,6 @@ public interface LazyFutureStream<U> extends  Functor<U>,
                                             ReactiveSeq<U>,
                                             LazyToQueue<U>,
                                             ConfigurableStream<U,FastFuture<U>>,
-                                            FutureStreamAsyncPublisher<U>,
                                             FutureStreamSynchronousPublisher<U> {
 
     
@@ -494,9 +488,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
      */
     default void  subscribe(Subscriber<? super U> s){
-        if(isAsync())
-            FutureStreamAsyncPublisher.super.subscribe(s);
-        else
+       
             FutureStreamSynchronousPublisher.super.subscribe(s);
     }
 

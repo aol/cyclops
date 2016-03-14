@@ -29,6 +29,7 @@ import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Wither;
 
 /**
  * A reactive-streams subscriber for merging data from multiple publishers into a single Stream
@@ -39,16 +40,16 @@ import lombok.Setter;
  */
 public class QueueBasedSubscriber<T> implements Subscriber<T> {
 	
-    public static <T> QueueBasedSubscriber<T> subscriber(Counter counter){
-        return new QueueBasedSubscriber<>(counter);
+    public static <T> QueueBasedSubscriber<T> subscriber(Counter counter, int maxConcurrency){
+        return new QueueBasedSubscriber<>(counter,maxConcurrency);
     }
-    public static <T> QueueBasedSubscriber<T> subscriber(Queue<T> q,Counter counter){
-        return new QueueBasedSubscriber<>(q,counter);
+    public static <T> QueueBasedSubscriber<T> subscriber(Queue<T> q,Counter counter, int maxConcurrency){
+        return new QueueBasedSubscriber<>(q,counter,maxConcurrency);
     }
     
-    public static <T> QueueBasedSubscriber<T> subscriber(QueueFactory<T> factory,Counter counter){
+    public static <T> QueueBasedSubscriber<T> subscriber(QueueFactory<T> factory,Counter counter, int maxConcurrency){
         
-        return new QueueBasedSubscriber<>(factory,counter);
+        return new QueueBasedSubscriber<>(factory,counter,maxConcurrency);
     }
     
 	
@@ -62,6 +63,8 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 					.withSubscription(subscription)
 					.fromStream(queue.stream(subscription));
 	}
+	
+	private final int maxConcurrency;
 	private final QueueFactory<T> factory;
 	@Getter
 	protected volatile Queue<T> queue;
@@ -77,7 +80,8 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 	
 	
 	private final Counter counter;
-	public QueueBasedSubscriber(Counter counter){
+	public QueueBasedSubscriber(Counter counter, int maxConcurrency){
+	    this.maxConcurrency =maxConcurrency;
 	    factory=null;
 	    
 	    this.counter = counter;
@@ -89,15 +93,16 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
             }
         };
 	}
-	private QueueBasedSubscriber(Queue<T> q,Counter counter){
+	private QueueBasedSubscriber(Queue<T> q,Counter counter,int maxConcurrency){
         factory=null;
-        
+        this.maxConcurrency =maxConcurrency;
         this.counter = counter;
         queue = q;
     }
-	private QueueBasedSubscriber(QueueFactory<T> factory,Counter counter){
+	private QueueBasedSubscriber(QueueFactory<T> factory,Counter counter,int maxConcurrency){
 	    this.counter = counter;
 	    this.factory=factory;
+	    this.maxConcurrency =maxConcurrency;
 	    this.queue = new Queue<T>(factory){
             public T get(){
                 counter.subscription.forEach(s->s.request(1));
@@ -138,7 +143,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 		
 		subscription=s;
 		
-		while(counter.subscription.size()>10_000){
+		while(counter.subscription.size()>maxConcurrency){
 		   
 		    LockSupport.parkNanos(100l); //max of 10k active subscriptions
 		}

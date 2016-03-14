@@ -147,7 +147,7 @@ public class BatchingTest {
 				.peek(System.out::println)
 				.toList();
 				
-	 assertTrue(System.currentTimeMillis()-start>1900);
+	 assertTrue("failed time was " + (System.currentTimeMillis()-start),System.currentTimeMillis()-start>1600);
 
 	}
 

@@ -12,10 +12,10 @@ import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Validator;
+import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
-import com.aol.cyclops.types.stream.reactive.FlatMapConfig;
 public class ListXTest extends CollectionXTestsWithNulls{
 
 	@Override
@@ -33,7 +33,7 @@ public class ListXTest extends CollectionXTestsWithNulls{
     public void flatMapPublisherWithAsync20k() throws InterruptedException{
         for(int x=0;x<10_000;x++){
         assertThat(ReactiveSeq.generate(()->1)
-                        .flatMapPublisher(i->Maybe.of(i),FlatMapConfig.unbounded(ex))
+                        .flatMapPublisher(i->Maybe.of(i),500,QueueFactories.unboundedQueue())
                         .limit(300_000)
                         .toListX(),equalTo(Arrays.asList(1,2,3)));
         }

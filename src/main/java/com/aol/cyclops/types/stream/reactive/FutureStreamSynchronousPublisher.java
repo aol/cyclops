@@ -2,9 +2,10 @@ package com.aol.cyclops.types.stream.reactive;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -51,11 +52,11 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 				volatile boolean complete =false;
 				
 				volatile boolean cancelled = false;
-				final Stack<Long> requests = new Stack<Long>();
+				final LinkedList<Long> requests = new LinkedList<Long>();
 				
 				
 				
-				
+				boolean active = false;
 
 				private void handleNext(T data){
 					if(!cancelled){ 
@@ -70,42 +71,73 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 						s.onError(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
 					}
 					requests.add(n);
-					if(requests.size()>1)
-						return;
+					
 					List<CompletableFuture> results = new ArrayList<>();
-					while(!cancelled  && requests.size()>0){
-						long n2 = requests.peek();
-						for(int i=0;i<n2;i++){
-							try{
-								if(it.hasNext()){
-									handleNext(s, it, results);
-									
-								}
-								else{
-									handleComplete(s);
-									break;
-								}
-							}catch(Throwable t){
-								s.onError(t);
-							}
-							
-							
-						}
-						requests.pop();
+					if(active){
+					   
+					    return;
 					}
+					
+    					try{
+    					  
+            					while(!cancelled  && requests.size()>0){
+            						long n2 = requests.peek();
+            						
+            						for(int i=0;i<n2;i++){
+            							try{
+            							    
+            								if(it.hasNext()){
+            									handleNext(s, it, results);
+            									
+            								}
+            								else{
+            									handleComplete(results,s);
+            									break;
+            								}
+            							}catch(Throwable t){
+            								s.onError(t);
+            							}
+            							
+            							
+            						}
+            						requests.pop();
+            					}
+            					
+    					}finally{
+    					    active=false;
+    					}
+					 
+					 
 				
 					
 				}
-				private void handleComplete(Subscriber<? super T> s) {
+				private void handleComplete(List<CompletableFuture> results,Subscriber<? super T> s) {
 					if(!complete && !cancelled){
 						complete=true;
-						s.onComplete();
+						
+						if(results.size()>0){
+    						CompletableFuture.allOf(results.stream()
+    						                               .map(cf->cf.exceptionally(e->null))
+    						                               .collect(Collectors.toList())
+    						                               .toArray(new CompletableFuture[results.size()]))
+    						.thenAccept(a->callOnComplete(s))
+    						.exceptionally(e->{callOnComplete(s); return null;});
+						}else{
+						    callOnComplete(s);
+						}
+						       
+						
 					}
 				}
+                private void callOnComplete(Subscriber<? super T> s) {
+                   
+                    s.onComplete();
+                }
 				private void handleNext(Subscriber<? super T> s,
 						Iterator<CompletableFuture<T>> it,
 						List<CompletableFuture> results) {
-					results.add(it.next().thenAccept( r-> s.onNext(r)).exceptionally(t->{ 
+				    
+					results.add(it.next().thenAccept( r-> {s.onNext(r); }).exceptionally(t->{ 
 						
 								s.onError(t); return null;
 								

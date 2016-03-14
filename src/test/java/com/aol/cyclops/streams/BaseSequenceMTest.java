@@ -1,13 +1,11 @@
 package com.aol.cyclops.streams;
 
 import static com.aol.cyclops.control.ReactiveSeq.of;
-
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -33,7 +31,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.types.stream.reactive.FlatMapConfig;
+import com.aol.cyclops.data.async.QueueFactories;
 
 
 
@@ -71,15 +69,17 @@ public  class BaseSequenceMTest {
     }
     @Test
     public void mergePublisherWithAsync() throws InterruptedException{
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),FlatMapConfig.unbounded(Executors.newFixedThreadPool(1)))
-                        .toListX(),hasItems(1,2,3,4,5));
+        for(int i=0;i<10_000;i++){
+            assertThat(of(1,2,3)
+                            .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
+                            .toListX(),hasItems(1,2,3,4,5));
+        }
         
     }
     @Test
     public void mergePublisherWithSizeAsync() throws InterruptedException{
         assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),FlatMapConfig.unbounded(ex))
+                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
                         .toListX().size(),equalTo(5));
         
     }
@@ -107,7 +107,7 @@ public  class BaseSequenceMTest {
     public void flatMapPublisherWithAsync() throws InterruptedException{
         for(int x=0;x<10_000;x++){
         assertThat(of(1,2,3)
-                        .flatMapPublisher(i->Maybe.of(i),FlatMapConfig.unbounded(ex))
+                        .flatMapPublisher(i->Maybe.of(i),500,QueueFactories.unboundedQueue())
                         .toListX(),hasItems(1,2,3));
         }
         

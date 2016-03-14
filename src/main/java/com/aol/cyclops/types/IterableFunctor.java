@@ -2,7 +2,8 @@ package com.aol.cyclops.types;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -10,10 +11,10 @@ import org.jooq.lambda.Collectable;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.data.async.QueueFactories;
+import com.aol.cyclops.data.async.QueueFactory;
 import com.aol.cyclops.types.futurestream.Continuation;
 import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.types.stream.reactive.FlatMapConfig;
 import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber.Counter;
 
@@ -23,49 +24,36 @@ public interface IterableFunctor<T> extends Iterable<T>,Functor<T>, Foldable<T>,
     /**
       A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergeublisher(Collection, FlatMapConfig)} 
-     * method to subscribe asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
+     * method to subscribe asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
      * backpressure is applied.
      * 
      * @param publishers
      * @return
      */
     default  ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers){
-        return mergePublisher(publishers,FlatMapConfig.defaultConfig());
+        return mergePublisher(publishers,QueueFactories.boundedQueue(5_000));
     }
+    
     /**
      * A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the @see {@link FlatMapConfig} class to configure an executor for asynchronous subscription.
-     * FlatMap config can also be used to place limits on the maximum active elements. A default limit of 10k active publishers is enforced.
+     * The QueueFactory parameter can be used to control the maximum queued elements @see {@link QueueFactories}
      * 
      * 
      */
-    default  ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers, FlatMapConfig<T> config){
+    default  ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers, QueueFactory<T> factory){
         Counter c = new Counter();
         c.active.set(publishers.size()+1);
-        QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(config.factory,c);
+        QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory,c,publishers.size());
        
-        ReactiveSeq<T> stream = stream();
-        
+       
+        Executor e = Executors.newFixedThreadPool(1);
         Supplier<Continuation> sp = ()->{
-               config.ex.peek(ex->{
+              subscribe(init);
+              for(Publisher next : publishers){
+                     next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c,publishers.size()));
+               }
                    
-                   CompletableFuture.runAsync(()-> stream.subscribe(init),ex);
-                   for(Publisher next : publishers){
-                      
-                       CompletableFuture.runAsync(()->  next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c)),ex);
-                      
-                   }
-                   
-               })
-                .orElseGet(()->{
-                            
-                            stream.subscribe(init);
-                           for(Publisher next : publishers){
-                               
-                               next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c));
-                           }
-                           return null;
-                         });
                init.close();
                 
             return Continuation.empty();
@@ -84,37 +72,38 @@ public interface IterableFunctor<T> extends Iterable<T>,Functor<T>, Foldable<T>,
      * @return
      */
     default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper){
-        return flatMapPublisher(mapper,FlatMapConfig.defaultConfig());
+        return flatMapPublisher(mapper,10_000);
+    }
+    /**
+     * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
+     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, FlatMapConfig)} 
+     * method to subscribe asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
+     * backpressure is applied.
+     * 
+     * @param mapper
+     * @return
+     */
+    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper, int maxConcurrency){
+        return flatMapPublisher(mapper,maxConcurrency, QueueFactories.boundedQueue(5_000));
     }
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the @see {@link FlatMapConfig} class to configure an executor for asynchronous subscription.
-     * FlatMap config can also be used to place limits on the maximum active elements. A default limit of 10k active publishers is enforced.
+     * Active publishers are limited by the maxConcurrency parameter. The QueueFactory parameter can be used to control the maximum queued elements @see {@link QueueFactories}
      * 
      * 
      */
-    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper, FlatMapConfig<R> config){
+    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper, int maxConcurrency,QueueFactory<R> factory){
         Counter c = new Counter();
-        QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(config.factory,c);
+        QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory,c,maxConcurrency);
        
         ReactiveSeq<T> stream = stream();
         Supplier<Continuation> sp = ()->{
             
             stream.map(mapper).forEachEvent(p->{
                 c.active.incrementAndGet();
-                config.ex.peek(e->{  
-                   
-                            CompletableFuture.runAsync(()->{p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c)); 
-                                     },e);
-                           
-                          })
-                         .orElseGet( ()->{
-                            
-                                 p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c)); 
-                                
-                                 return null;
-                                 });
-               
+                p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c,maxConcurrency)); 
+                
                 } ,
                 i->{} ,
                 ()->{ init.close(); });

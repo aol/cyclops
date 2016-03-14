@@ -27,7 +27,7 @@ public class TckWhiteBoxSubscriberTest extends SubscriberWhiteboxVerification<Lo
 	public Subscriber<Long> createSubscriber(
 			org.reactivestreams.tck.SubscriberWhiteboxVerification.WhiteboxSubscriberProbe<Long> probe) {
 		
-		 return new QueueBasedSubscriber<Long>(new Counter()) {
+		 return new QueueBasedSubscriber<Long>(new Counter(),500) {
 	            @Override
 	            public void onSubscribe(final Subscription rsSubscription) {
 	               probe.registerOnSubscribe(new SubscriberPuppet() {

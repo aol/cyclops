@@ -32,8 +32,8 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.aol.cyclops.types.stream.reactive.FlatMapConfig;
 
 
 
@@ -76,14 +76,14 @@ public  class LFSNoOrderTest {
     @Test
     public void mergePublisherWithAsync() throws InterruptedException{
         assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),FlatMapConfig.unbounded(Executors.newFixedThreadPool(1)))
+                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
                         .toListX(),hasItems(1,2,3,4,5));
         
     }
     @Test
     public void mergePublisherWithSizeAsync() throws InterruptedException{
         assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),FlatMapConfig.unbounded(Executors.newFixedThreadPool(1)))
+                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
                         .toListX().size(),equalTo(5));
         
     }
@@ -111,7 +111,7 @@ public  class LFSNoOrderTest {
     public void flatMapPublisherWithAsync() throws InterruptedException{
         for(int x=0;x<10_000;x++){
         assertThat(of(1,2,3)
-                        .flatMapPublisher(i->Maybe.of(i),FlatMapConfig.unbounded(ex))
+                        .flatMapPublisher(i->Maybe.of(i),500,QueueFactories.unboundedQueue())
                         .toListX(),hasItems(1,2,3));
         }
         

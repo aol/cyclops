@@ -83,7 +83,11 @@ public interface AnyMSeq<T> extends AnyM<T>,
     }
     @Override
     default void subscribe(Subscriber<? super T> sub) {
-        this.stream().subscribe(sub);
+        if(unwrap() instanceof Publisher){
+            ((Publisher)unwrap()).subscribe(sub);
+        }else{
+            this.stream().subscribe(sub);
+        }
     }
 	
 	/* (non-Javadoc)

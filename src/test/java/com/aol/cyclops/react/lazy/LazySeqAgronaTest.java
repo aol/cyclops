@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
@@ -12,11 +13,11 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,9 +28,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.async.Signal;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.base.BaseSeqTest;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
@@ -37,7 +40,17 @@ import com.aol.cyclops.types.futurestream.LazyFutureStream;
 public class LazySeqAgronaTest extends BaseSeqTest {
 	
 	
-
+    @Test
+    public void mergePublisherWithAsync() throws InterruptedException{
+       
+        for(int i=0;i<10_000;i++){
+            ListX<Integer> list  = of(1,2,3)
+                    .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
+                    .toListX();
+        assertThat("failed " +  list,list,hasItems(1,2,3,4,5));
+        }
+        
+    }
 	
 	
 	@Test

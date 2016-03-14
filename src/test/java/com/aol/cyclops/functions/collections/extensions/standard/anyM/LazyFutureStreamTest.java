@@ -16,7 +16,7 @@ public class LazyFutureStreamTest extends AbstractAnyMSeqOrderedDependentTest{
 
 	@Override
 	public <T> AnyMSeq<T> of(T... values) {
-		return AnyM.fromIterable(LazyFutureStream.of(values));
+		return AnyM.fromIterable(LazyFutureStream.of(values).async());
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()

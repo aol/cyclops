@@ -32,8 +32,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -57,12 +55,12 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.types.stream.reactive.FlatMapConfig;
 import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -74,7 +72,6 @@ import lombok.EqualsAndHashCode;
 public abstract class AbstractCollectionXTest {
 	public abstract <T> FluentCollectionX<T> empty();
 	public abstract <T> FluentCollectionX<T> of(T... values);
-	public static Executor ex =  Executors.newFixedThreadPool(10);
 	public static final LazyReact r = new LazyReact(10,10);
 	@Test
     public void mergePublisher() throws InterruptedException{
@@ -95,14 +92,14 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void mergePublisherWithAsync() throws InterruptedException{
         assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),FlatMapConfig.unbounded(ex))
+                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
                         .toListX(),hasItems(1,2,3,4,5));
         
     }
     @Test
     public void mergePublisherWithSizeAsync() throws InterruptedException{
         assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),FlatMapConfig.unbounded(ex))
+                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
                         .toListX().size(),equalTo(5));
         
     }
@@ -132,7 +129,7 @@ public abstract class AbstractCollectionXTest {
            for(int x=0;x<10_000;x++){
                
            assertThat(of(1,2,3)
-                           .flatMapPublisher(i->Maybe.of(i),FlatMapConfig.unbounded(ex))
+                           .flatMapPublisher(i->Maybe.of(i),500,QueueFactories.unboundedQueue())
                            .toListX(),hasItems(1,2,3));
            }
            

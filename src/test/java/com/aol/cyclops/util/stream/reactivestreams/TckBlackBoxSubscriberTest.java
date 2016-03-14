@@ -16,7 +16,7 @@ public class TckBlackBoxSubscriberTest extends SubscriberBlackboxVerification<Lo
 
 	@Override
 	public Subscriber<Long> createSubscriber() {
-		return new QueueBasedSubscriber(new Counter());
+		return new QueueBasedSubscriber(new Counter(),500);
 		
 	}
 

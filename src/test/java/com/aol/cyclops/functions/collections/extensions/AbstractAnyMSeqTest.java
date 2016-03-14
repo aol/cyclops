@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.not;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -32,8 +31,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -56,14 +53,11 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
-import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest.MyCase;
-import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest.MyCase2;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.stream.reactive.FlatMapConfig;
 import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -75,7 +69,7 @@ import lombok.EqualsAndHashCode;
 public abstract class AbstractAnyMSeqTest {
 	public abstract <T> AnyMSeq<T> empty();
 	public abstract <T> AnyMSeq<T> of(T... values);
-	public static Executor ex =  Executors.newFixedThreadPool(10);
+
     public static final LazyReact r = new LazyReact(10,10);
 	@Test
     public void mergePublisher() throws InterruptedException{
@@ -95,15 +89,20 @@ public abstract class AbstractAnyMSeqTest {
     }
     @Test
     public void mergePublisherWithAsync() throws InterruptedException{
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),FlatMapConfig.unbounded(Executors.newFixedThreadPool(1)))
-                        .toListX(),hasItems(1,2,3,4,5));
+        
+        for(int i=0;i<10_000;i++){
+            
+            ListX<Integer> list  = of(1,2,3)
+                    .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
+                    .toListX();
+        assertThat("failed " +  list,list,hasItems(1,2,3,4,5));
+        }
         
     }
     @Test
     public void mergePublisherWithSizeAsync() throws InterruptedException{
         assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),FlatMapConfig.unbounded(Executors.newFixedThreadPool(1)))
+                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
                         .toListX().size(),equalTo(5));
         
     }
@@ -131,7 +130,7 @@ public abstract class AbstractAnyMSeqTest {
     public void flatMapPublisherWithAsync() throws InterruptedException{
         for(int x=0;x<10_000;x++){
         assertThat(of(1,2,3)
-                        .flatMapPublisher(i->Maybe.of(i),FlatMapConfig.unbounded(ex))
+                        .flatMapPublisher(i->Maybe.of(i),1000,QueueFactories.unboundedQueue())
                         .toListX(),hasItems(1,2,3));
         }
         
