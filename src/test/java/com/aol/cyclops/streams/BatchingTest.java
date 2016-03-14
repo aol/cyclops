@@ -141,12 +141,12 @@ public class BatchingTest {
 	    Thread.sleep(500);
 		long start = System.currentTimeMillis();
 				iterate(1, it -> it + 1)
-				.limit(3)
 				.xPer(1,1, TimeUnit.SECONDS)
+				.limit(3)
 				.map(seconds -> "hello!")
 				.peek(System.out::println)
 				.toList();
-				
+	 System.out.println("time = " +(System.currentTimeMillis()-start));
 	 assertTrue("failed time was " + (System.currentTimeMillis()-start),System.currentTimeMillis()-start>1600);
 
 	}
