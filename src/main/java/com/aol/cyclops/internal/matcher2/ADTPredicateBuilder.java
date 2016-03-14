@@ -103,7 +103,7 @@ public class ADTPredicateBuilder<T>{
 			
 			
 			return t -> {
-			    System.out.println(t);
+			    
 			    return toPredicate().test(t) 
 			
 					  	&& SeqUtils.seq(Extractors.decomposeCoerced().apply(t))
