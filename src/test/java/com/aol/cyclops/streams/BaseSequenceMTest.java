@@ -48,6 +48,10 @@ public  class BaseSequenceMTest {
 		empty = of();
 		nonEmpty = of(1);
 	}
+	
+	
+	
+	
 	@Test
     public void mergePublisher() throws InterruptedException{
 	    System.out.println(of(1,2,3)
