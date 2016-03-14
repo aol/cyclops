@@ -27,6 +27,38 @@ public class ForEachSequenceMTest {
 		error= null;
 		complete =false;
 	}
+	volatile int times = 0;
+	@Test
+	public void onComplete(){
+        ReactiveSeq.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+                    .map(this::load)
+                    .forEachEvent(System.out::println,
+                aEx -> System.err.println(aEx + ":" + aEx.getMessage()), () -> {
+                    times++;
+                    System.out.println("Over");
+                });
+        assertThat(times,equalTo(1));
+	}
+	@Test
+    public void onCompleteXEvents(){
+        ReactiveSeq.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+                    .map(this::load)
+                   .forEachXEvents(Long.MAX_VALUE,System.out::println,
+                aEx -> System.err.println(aEx + ":" + aEx.getMessage()), () -> {
+                    times++;
+                    System.out.println("Over");
+                });
+        assertThat(times,equalTo(1));
+    }
+	
+	//this::load is simple
+	String load(int i){
+        if (i == 2) {
+            throw new RuntimeException("test exception:" + i);
+        } else {
+            return "xx" + i;
+        }
+	}
 
 	@Test
 	public void forEachX(){
