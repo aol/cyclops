@@ -100,21 +100,21 @@ jacocoTestReport {
 }
 task testNG(type: Test) {
     useTestNG {}
-    reports.html.destination = file("$buildDir/reports/testng")
+    reports.html.destination = file("$buildDir/reports/test")
 }
 
 task testSuite(type: Test) {
     //include '**/*SuiteOne.*'
     include '**/*TestSuite.class'
-    reports.junitXml.destination = "$buildDir/reports/suite"
-    reports.html.destination = "$buildDir/reports/suite"
+    reports.junitXml.destination = "$buildDir/reports/test"
+    reports.html.destination = "$buildDir/reports/test"
  }
  
 
 test {
         reports.html.destination = file("$buildDir/reports/test")
     
-       // dependsOn testNG
+        dependsOn testNG
         dependsOn testSuite 
         forkEvery = 50
         
