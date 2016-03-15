@@ -33,12 +33,12 @@ public class ExecutionPipeline {
 			return true;
 		return false;
 	}
-	public <T> ExecutionPipeline peek(Consumer<T> c){
+	public <T> ExecutionPipeline peek(Consumer<? super T> c){
 		return this.<T,Object>thenApply(i->{c.accept(i); return i;});
 		
 	}
 	
-	public  <T,R> ExecutionPipeline thenApplyAsync(Function<T,R> fn,Executor exec){
+	public  <T,R> ExecutionPipeline thenApplyAsync(Function<? super T,? extends R> fn,Executor exec){
 		
 		return new ExecutionPipeline(addFn(fn),addExec(exec),firstRecover,onFail);
 		
@@ -48,7 +48,7 @@ public class ExecutionPipeline {
 		return new ExecutionPipeline(addFn(t-> fn.apply(t).join()),addExec(exec),firstRecover,onFail);
 	}
 	
-	public<T,R> ExecutionPipeline thenCompose(Function<T,CompletableFuture<R>> fn){
+	public<T,R> ExecutionPipeline thenCompose(Function<? super T,CompletableFuture<? extends R>> fn){
 		Function<T,R> unpacked= t-> fn.apply(t).join();
 		return new ExecutionPipeline(swapFn(unpacked),execList.size()==0?execList.plus(null)  : execList,firstRecover,onFail);
 
@@ -56,7 +56,7 @@ public class ExecutionPipeline {
 	public<T,R> ExecutionPipeline thenApply(Function<T,R> fn){
 		return new ExecutionPipeline(swapComposeFn(fn),execList.size()==0?execList.plus(null)  : execList,firstRecover,onFail);
 	}
-	public <X extends Throwable,T> ExecutionPipeline exceptionally(Function<X,T> fn){
+	public <X extends Throwable,T> ExecutionPipeline exceptionally(Function<? super X,? extends T> fn){
 		if(functionList.size()>0){
 			Function before = functionList.get(functionList.size()-1);
 			Function except = t-> {
@@ -74,7 +74,7 @@ public class ExecutionPipeline {
 	
 		
 	}
-	public <X extends Throwable,T> ExecutionPipeline whenComplete(BiConsumer<T,X> fn){
+	public <X extends Throwable,T> ExecutionPipeline whenComplete(BiConsumer<? super T,? super X> fn){
 		
 		Function before = functionList.get(functionList.size()-1);
 	

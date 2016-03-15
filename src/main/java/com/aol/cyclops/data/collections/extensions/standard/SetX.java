@@ -17,17 +17,16 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
@@ -52,6 +51,16 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	public static <T> SetX<T> singleton(T value){
 		return SetX.<T>of(value);
 	}
+    /**
+     * Construct a SetX from an Publisher
+     * 
+     * @param iterable
+     *            to construct SetX from
+     * @return SetX
+     */
+    public static <T> SetX<T> fromPublisher(Publisher<? extends T> publisher) {
+        return ReactiveSeq.fromPublisher((Publisher<T>)publisher).toSetX();
+    }
 	public static <T> SetX<T> fromIterable(Iterable<T> it){
 		return fromIterable(defaultCollector(),it);
 	}

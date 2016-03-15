@@ -154,7 +154,7 @@ public interface LazySimpleReactStream<U> extends
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	default  <R> LazySimpleReactStream<R> then(final Function<U,R> fn) {
+	default  <R> LazySimpleReactStream<R> then(final Function<? super U,? extends R> fn) {
 		if(!this.isAsync())
 			return thenSync(fn);
 		Function<PipelineBuilder,PipelineBuilder> streamMapper = ft -> ft.thenApplyAsync(LazySimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor());
@@ -162,36 +162,7 @@ public interface LazySimpleReactStream<U> extends
 	}
 	
 	
-	/**
-	 * 
-	 * Applies a function to this phase independent on the main flow.
-	 * Convenience over taking a reference to this phase and splitting it.
-	 * 
-	 * @param fn Function to be applied to each completablefuture on completion
-	 * @return This phase in Stream
-	 */
-	default   LazySimpleReactStream<U> doOnEach(final Function<U, U> fn) {
-		if(!isAsync())
-			return doOnEachSync(fn);
-		this.withLastActive(getLastActive().operation(
-						(ft) -> ft.thenApplyAsync(LazySimpleReactStream.<U,U>handleExceptions(fn),
-								getTaskExecutor())));
-		return this;
-	}
-	/**
-	 * 
-	 * Applies a function to this phase independent on the main flow, continues on the currently executing thread.
-	 * Convenience over taking a reference to this phase and splitting it.
-	 * 
-	 * @param fn Function to be applied to each completablefuture on completion
-	 * @return This phase in Stream
-	 */
-	default   LazySimpleReactStream<U> doOnEachSync(final Function<U, U> fn) {
-		
-		getLastActive().operation(
-						(ft) -> ft.thenApply(LazySimpleReactStream.<U,U>handleExceptions(fn)));
-		return this;
-	}
+	
 	/**
 	 * Peek asynchronously at the results in the current stage. Current results
 	 * are passed through to the next stage.
@@ -260,7 +231,7 @@ public interface LazySimpleReactStream<U> extends
 	 * @return Flatten Stream with flatFn applied
 	 */
 	default <R> LazySimpleReactStream<R> flatMapToCompletableFuture(
-			Function<U, CompletableFuture<R>> flatFn) {
+			Function<? super U, CompletableFuture<? extends R>> flatFn) {
 		if(!this.isAsync())
 			return flatMapToCompletableFutureSync(flatFn);
 		Function<PipelineBuilder,PipelineBuilder> streamMapper = ft -> ft.thenComposeAsync(LazySimpleReactStream.handleExceptions(flatFn),getTaskExecutor());
@@ -285,7 +256,7 @@ public interface LazySimpleReactStream<U> extends
 	 * @return Flatten Stream with flatFn applied
 	 */
 	default <R> LazySimpleReactStream<R> flatMapToCompletableFutureSync(
-			Function<U, CompletableFuture<R>> flatFn) {
+			Function<? super U, CompletableFuture<? extends R>> flatFn) {
 		
 		Function<PipelineBuilder,PipelineBuilder> streamMapper = ft -> ft.thenCompose(LazySimpleReactStream.handleExceptions(flatFn));
 		return  this.withLastActive(getLastActive().operation(streamMapper));
@@ -426,7 +397,7 @@ public interface LazySimpleReactStream<U> extends
 	 *         the dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	default LazySimpleReactStream<U> onFail(final Function<SimpleReactFailedStageException, U> fn) {
+	default LazySimpleReactStream<U> onFail(final Function<? super SimpleReactFailedStageException,? extends U> fn) {
 		return onFail(Throwable.class,fn);
 	}
 
@@ -457,7 +428,8 @@ public interface LazySimpleReactStream<U> extends
 	 * @param fn Recovery function
 	 * @return recovery value
 	 */
-	default LazySimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<SimpleReactFailedStageException, U> fn){
+	default LazySimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, 
+	                        final Function<? super SimpleReactFailedStageException, ? extends U> fn){
 		
 		Function<PipelineBuilder,PipelineBuilder> mapper =(ft) -> ft.exceptionally((t) -> {
 			if (t instanceof FilteredExecutionPathException)

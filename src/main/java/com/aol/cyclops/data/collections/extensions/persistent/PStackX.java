@@ -20,6 +20,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -55,6 +56,16 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	public static <T> PStackX<T> of(T...values){
 		return new PStackXImpl<>(ConsPStack.from(Arrays.asList(values)),true);
 	}
+    /**
+     * Construct a PStackX from an Publisher
+     * 
+     * @param publisher
+     *            to construct PStackX from
+     * @return PStackX
+     */
+    public static <T> PStackX<T> fromPublisher(Publisher<? extends T> publisher) {
+        return ReactiveSeq.fromPublisher((Publisher<T>)publisher).toPStackX();
+    }
 	public static<T> PStackX<T> fromIterable(Iterable<T> iterable){
 		if(iterable instanceof PStackX)
 			return (PStackX)iterable;

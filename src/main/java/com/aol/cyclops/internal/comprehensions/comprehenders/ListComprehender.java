@@ -1,7 +1,10 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -11,8 +14,6 @@ import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import org.pcollections.PVector;
 
 import com.aol.cyclops.types.extensability.Comprehender;
 
@@ -60,6 +61,13 @@ public class ListComprehender implements Comprehender {
 	public List of(Object o) {
 		return Arrays.asList(o);
 	}
+	public List fromIterator(Iterator it){
+        List list= new ArrayList();
+        for(Object next : (Iterable)()-> it){
+            list.add(next);
+        }
+        return Collections.unmodifiableList(list);
+    }
 	
 	@Override 
 	public List unwrap(Object o){

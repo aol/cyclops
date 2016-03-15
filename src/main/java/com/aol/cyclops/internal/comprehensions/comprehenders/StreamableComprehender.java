@@ -1,11 +1,13 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 public class StreamableComprehender implements Comprehender {
@@ -45,6 +47,9 @@ public class StreamableComprehender implements Comprehender {
 	public Stream of(Object o) {
 		return Stream.of(o);
 	}
+	public Stream fromIterator(Iterator it){
+        return StreamUtils.stream(it);
+    }
 	
 	
 

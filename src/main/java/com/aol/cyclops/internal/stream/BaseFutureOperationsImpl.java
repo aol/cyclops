@@ -322,7 +322,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	}
 	
 	@Override
-	public void forEach(Consumer<T> c) {
+	public void forEach(Consumer<? super T> c) {
 		 CompletableFuture.runAsync(()->stream.forEach(c),exec);
 		
 	}

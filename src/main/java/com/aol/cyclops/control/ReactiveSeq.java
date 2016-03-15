@@ -2348,7 +2348,19 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 		ReversingListSpliterator array = new ReversingListSpliterator<T>(list, false);
 		return StreamUtils.reactiveSeq(StreamSupport.stream(array,false),Optional.ofNullable(array));
 	}
-
+	/**
+     * Construct a ReactiveSeq from an Publisher
+     * 
+     * @param iterable
+     *            to construct ReactiveSeq from
+     * @return ReactiveSeq
+     */
+    public static <T> ReactiveSeq<T> fromPublisher(Publisher<? extends T> publisher) {
+        Objects.requireNonNull(publisher);
+        SeqSubscriber<T> sub = SeqSubscriber.subscriber();
+        publisher.subscribe(sub);
+        return sub.stream();
+    }
 	/**
 	 * Construct a Sequence from an Iterable
 	 * 

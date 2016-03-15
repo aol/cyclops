@@ -7,8 +7,9 @@ import java.util.stream.DoubleStream;
 
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class OptionalComprehender implements Comprehender<Optional> {
+public class OptionalComprehender implements ValueComprehender<Optional> {
 	public Class getTargetClass(){
 		return Optional.class;
 	}

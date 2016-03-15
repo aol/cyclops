@@ -7,8 +7,9 @@ import java.util.function.Predicate;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class IorComprehender implements Comprehender<Ior> {
+public class IorComprehender implements ValueComprehender<Ior> {
 
 	public Object filter(Ior t, Predicate p){
 		return t.filter(x->p.test(x));

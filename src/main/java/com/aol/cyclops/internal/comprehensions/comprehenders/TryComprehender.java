@@ -1,13 +1,17 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Failure;
 import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
+import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
 /**
  * Comprehender for performant for-comprehensions for Try 
@@ -16,7 +20,7 @@ import com.aol.cyclops.types.extensability.Comprehender;
  * @author johnmcclean
  *
  */
-public class TryComprehender implements Comprehender<Try> {
+public class TryComprehender implements ValueComprehender<Try> {
 
 	/* 
 	 * @see com.aol.cyclops.lambda.api.Comprehender#filter(java.lang.Object, java.util.function.Predicate)
@@ -62,7 +66,7 @@ public class TryComprehender implements Comprehender<Try> {
 			return Failure.of((Throwable)o);
 		return Success.of(o);
 	}
-
+	
 	/* 
 	 * @see com.aol.cyclops.lambda.api.Comprehender#of()
 	 */

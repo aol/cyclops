@@ -2,6 +2,7 @@ package com.aol.cyclops.control;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -16,6 +17,8 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.reactivestreams.Publisher;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
@@ -25,7 +28,9 @@ import com.aol.cyclops.internal.react.SimpleReactStreamImpl;
 import com.aol.cyclops.internal.react.stream.ReactBuilder;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.ThreadPools;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
+import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 /**
@@ -129,6 +134,19 @@ public class SimpleReact implements ReactBuilder{
 				next -> CompletableFuture.supplyAsync(next, executor)));
 		
 	}
+	/**
+     * Construct a SimpleReactStream from an Publisher
+     * 
+     * @param publisher
+     *            to construct SimpleReactStream from
+     * @return SimpleReactStream
+     */
+    public <T> SimpleReactStream<T> fromPublisher(Publisher<? extends T> publisher) {
+        Objects.requireNonNull(publisher);
+        SeqSubscriber<T> sub = SeqSubscriber.subscriber();
+        publisher.subscribe(sub);
+        return sub.toSimpleReact(this);
+    }
 	/**
 	 * 
 	 * Start a reactive dataflow with a list of one-off-suppliers

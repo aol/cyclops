@@ -20,20 +20,17 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
 import com.aol.cyclops.util.stream.StreamUtils;
-
-import lombok.val;
 
 public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	static <T> Collector<T,?,SortedSet<T>> defaultCollector(){
@@ -56,6 +53,16 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	public static <T> SortedSetX<T> singleton(T value){
 		return of(value);
 	}
+    /**
+     * Construct a SortedSetX from an Publisher
+     * 
+     * @param iterable
+     *            to construct SortedSetX from
+     * @return SortedSetX
+     */
+    public static <T> SortedSetX<T> fromPublisher(Publisher<? extends T> publisher) {
+        return ReactiveSeq.fromPublisher((Publisher<T>)publisher).toSortedSetX();
+    }
 	public static <T> SortedSetX<T> fromIterable(Iterable<T> it){
 		return fromIterable(defaultCollector(),it);
 	}

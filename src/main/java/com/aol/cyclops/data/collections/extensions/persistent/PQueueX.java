@@ -19,6 +19,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.AmortizedPQueue;
 import org.pcollections.PQueue;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -47,6 +48,16 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
         return PQueueX.<T>empty().plus(value);
     }
 
+    /**
+     * Construct a PQueueX from an Publisher
+     * 
+     * @param publisher
+     *            to construct PQueueX from
+     * @return PQueueX
+     */
+    public static <T> PQueueX<T> fromPublisher(Publisher<? extends T> publisher) {
+        return ReactiveSeq.fromPublisher((Publisher<T>)publisher).toPQueueX();
+    }
     public static <T> PQueueX<T> fromIterable(Iterable<T> iterable) {
         if (iterable instanceof PQueueX)
             return (PQueueX) iterable;

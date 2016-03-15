@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -23,6 +24,7 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValues;
@@ -31,6 +33,7 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
+import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface ListX<T> extends List<T>, 
@@ -73,6 +76,16 @@ public interface ListX<T> extends List<T>,
 	public static <T> ListX<T> singleton(T value){
 		return ListX.<T>of(value);
 	}
+	/**
+     * Construct a ListX from an Publisher
+     * 
+     * @param iterable
+     *            to construct ListX from
+     * @return ListX
+     */
+    public static <T> ListX<T> fromPublisher(Publisher<? extends T> publisher) {
+        return ReactiveSeq.fromPublisher((Publisher<T>)publisher).toListX();
+    }
 	public static <T> ListX<T> fromIterable(Iterable<T> it){
 		return fromIterable(defaultCollector(),it);
 	}
