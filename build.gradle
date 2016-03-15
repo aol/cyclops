@@ -98,9 +98,25 @@ jacocoTestReport {
         })
     }
 }
+task testNG(type: Test) {
+    useTestNG {}
+    reports.html.destination = file("$buildDir/reports/testng")
+}
+
+task testSuite(type: Test) {
+    //include '**/*SuiteOne.*'
+    include '**/*TestSuite.class'
+    reports.junitXml.destination = "$buildDir/reports/suite"
+    reports.html.destination = "$buildDir/reports/suite"
+ }
+ 
+
 test {
+        reports.html.destination = file("$buildDir/reports/test")
     
-        forkEvery = 100
+       // dependsOn testNG
+        dependsOn testSuite 
+        forkEvery = 50
         
         testLogging {
             events "started","passed", "skipped", "failed"//, "standardOut", "standardError"

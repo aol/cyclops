@@ -68,11 +68,21 @@ import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public abstract class AbstractCollectionXTest {
 	public abstract <T> FluentCollectionX<T> empty();
 	public abstract <T> FluentCollectionX<T> of(T... values);
 	public static final LazyReact r = new LazyReact(10,10);
+	@Test
+    public void mergePublisherFlux() throws InterruptedException{
+      
+        assertThat(of(1,2,3)
+                        .mergePublisher(Arrays.asList(Flux.just(10,20),Mono.just(4),Maybe.of(5)))
+                        .toListX(),hasItems(10,20,1,2,3,4,5));
+        
+    }
 	@Test
     public void mergePublisher() throws InterruptedException{
       
@@ -131,6 +141,27 @@ public abstract class AbstractCollectionXTest {
            assertThat(of(1,2,3)
                            .flatMapPublisher(i->Maybe.of(i),500,QueueFactories.unboundedQueue())
                            .toListX(),hasItems(1,2,3));
+           }
+           
+   }
+    @Test
+    public void flatMapPublisherFlux() throws InterruptedException{
+        
+        assertThat(of(1,2,3)
+                        .flatMapPublisher(i->Flux.just(i,i*10))
+                        .toListX(),hasItems(1,10,2,20,3,30));
+        
+        
+    }
+    
+    @Test
+    public void flatMapPublisherWithAsyncFlux() throws InterruptedException{
+        
+           for(int x=0;x<10_000;x++){
+               
+           assertThat(of(1,2,3)
+                           .flatMapPublisher(i->Flux.just(i,i*10),500,QueueFactories.unboundedQueue())
+                           .toListX(),hasItems(1,10,2,20,3,30));
            }
            
    }
