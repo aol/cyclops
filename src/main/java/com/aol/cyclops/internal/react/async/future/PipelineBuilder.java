@@ -45,12 +45,12 @@ public class PipelineBuilder {
 		this.autoMemoize=autoMemoize;
 		this.memoizeFactory= memoizeFactory;
 	}
-	public <T,R> PipelineBuilder thenCompose(Function<T,CompletableFuture<R>> fn){
+	public <T,R> PipelineBuilder thenCompose(Function<? super T,CompletableFuture<? extends R>> fn){
 		if(autoOptimise && builder.functionListSize()==0) 
 			return thenComposeAsync(fn,optimisingExec);
 		return this.withBuilder(builder.thenCompose((Function)memoize(fn)));
 	}
-	public <T,R> PipelineBuilder thenComposeAsync(Function<T,CompletableFuture<R>> fn,Executor exec){
+	public <T,R> PipelineBuilder thenComposeAsync(Function<? super T,CompletableFuture<? extends R>> fn,Executor exec){
 		if(autoOptimise){//if we already have a function present, compose with that
 			if(builder.functionListSize()>0)
 				return thenCompose(fn);
@@ -68,23 +68,23 @@ public class PipelineBuilder {
 		
 		
 	}
-	public  <T> PipelineBuilder peek(Consumer<T> c){
+	public  <T> PipelineBuilder peek(Consumer<? super T> c){
 		
 		return this.withBuilder( builder.peek(c));
 		
 	}
-	public <T,R> PipelineBuilder thenApply(Function<T,R> fn){
+	public <T,R> PipelineBuilder thenApply(Function<? super T,? extends R> fn){
 		if(autoOptimise && builder.functionListSize()==0)
 			return this.withBuilder(builder.thenApplyAsync(memoize(fn),  optimisingExec));
 		return  this.withBuilder(builder.thenApply(memoize(fn)));
 
 	}
 	
-	public <X extends Throwable,T>  PipelineBuilder exceptionally(Function<X,T> fn){
+	public <X extends Throwable,T>  PipelineBuilder exceptionally(Function<? super X,? extends T> fn){
 		
 		return this.withBuilder(builder.exceptionally(fn));
 	}
-	public <T,X extends Throwable> PipelineBuilder whenComplete(BiConsumer<T,X> fn){
+	public <T,X extends Throwable> PipelineBuilder whenComplete(BiConsumer<? super T,? super X> fn){
 		return this.withBuilder(builder.whenComplete(fn));
 	}
 	public <T> FastFuture<T> build() {

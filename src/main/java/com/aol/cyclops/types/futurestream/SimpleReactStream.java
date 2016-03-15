@@ -368,22 +368,23 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    default <T, R> SimpleReactStream<R> allOf(final Collector collector,
-            final Function<T, R> fn) {
+    default <R1,R2> SimpleReactStream<R2> allOf(final Collector<? super U, ?, R1> collector,
+            final Function<? super R1,? extends R2> fn) {
+       
         CompletableFuture[] array = lastActiveArray(getLastActive());
         CompletableFuture cf = CompletableFuture.allOf(array);
-        Function<Exception, T> f = (Exception e) -> {
+        Function<Exception, R2> f = (Exception e) -> {
             BlockingStreamHelper.capture(e,getErrorHandler());
             return BlockingStreamHelper.block(this,Collectors.toList(),
                     new EagerStreamWrapper(Stream.of(array)));
         };
         CompletableFuture onFail = cf.exceptionally(f);
         CompletableFuture onSuccess = onFail.thenApplyAsync((result) -> {
-            return new StageWithResults(this.getTaskExecutor(),null, result).submit(() -> (R)fn
+            return new StageWithResults(this.getTaskExecutor(),null, result).submit(() -> (R2)fn
                     .apply(BlockingStreamHelper.aggregateResultsCompletable(collector, Stream.of(array)
                             .collect(Collectors.toList()),getErrorHandler())));
         }, getTaskExecutor());
-        return (SimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess));
+        return (SimpleReactStream<R2>) withLastActive(new EagerStreamWrapper(onSuccess));
 
     }
     /**
@@ -395,7 +396,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @return Next stage in the stream
      */
     default <R> SimpleReactStream<R> anyOf(
-            final Function<U, R> fn) {
+            final Function<? super U, ? extends R> fn) {
         CompletableFuture[] array = lastActiveArray(getLastActive());
         CompletableFuture cf = CompletableFuture.anyOf(array);
         CompletableFuture onSuccess = cf.thenApplyAsync(fn,getTaskExecutor());
@@ -510,7 +511,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     @SuppressWarnings("unchecked")
-    default  <R> SimpleReactStream<R> then(final Function<U,R> fn) {
+    default  <R> SimpleReactStream<R> then(final Function<? super U,? extends R> fn) {
         if(!this.isAsync())
             return thenSync(fn);
         Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->s.<CompletableFuture>map(ft ->
@@ -520,36 +521,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
 
 
 
-    /**
-     *
-     * Applies a function to this phase independent on the main flow.
-     * Convenience over taking a reference to this phase and splitting it.
-     *
-     * @param fn Function to be applied to each completablefuture on completion
-     * @return This phase in Stream
-     */
-    default   SimpleReactStream<U> doOnEach(final Function<U, U> fn) {
-        if(!isAsync())
-            return doOnEachSync(fn);
-        getLastActive().stream(s ->s.peek(
-                        (ft) -> ft.thenApplyAsync(SimpleReactStream.<U,U>handleExceptions(fn),
-                                getTaskExecutor())));
-        return this;
-    }
-    /**
-     *
-     * Applies a function to this phase independent on the main flow, continues on the currently executing thread.
-     * Convenience over taking a reference to this phase and splitting it.
-     *
-     * @param fn Function to be applied to each completablefuture on completion
-     * @return This phase in Stream
-     */
-    default   SimpleReactStream<U> doOnEachSync(final Function<U, U> fn) {
-
-        getLastActive().stream(s ->s.peek(
-                        (ft) -> ft.thenApply(SimpleReactStream.<U,U>handleExceptions(fn))));
-        return this;
-    }
+    
     /**
      * Peek asynchronously at the results in the current stage. Current results
      * are passed through to the next stage.
@@ -615,8 +587,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param flatFn flatMap function
      * @return Flatten Stream with flatFn applied
      */
+    @Override
     default <R> SimpleReactStream<R> flatMapToCompletableFuture(
-            Function<U, CompletableFuture<R>> flatFn) {
+            Function<? super U,  CompletableFuture<? extends R>> flatFn) {
         if(!this.isAsync())
             return flatMapToCompletableFutureSync(flatFn);
         Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->(Stream)s.<CompletableFuture>map(ft ->
@@ -641,8 +614,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param flatFn flatMap function
      * @return Flatten Stream with flatFn applied
      */
+    @Override
     default <R> SimpleReactStream<R> flatMapToCompletableFutureSync(
-            Function<U, CompletableFuture<R>> flatFn) {
+            Function<? super U, CompletableFuture<? extends R>> flatFn) {
 
         Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->(Stream)s.<CompletableFuture>map(ft -> ft.thenCompose(SimpleReactStream.handleExceptions(flatFn)));
         return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
@@ -706,7 +680,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         application of the supplied function
      */
     @SuppressWarnings("unchecked")
-    default <R> List<CompletableFuture<R>> with(final Function<U, R> fn) {
+    default <R> List<CompletableFuture<R>> with(final Function<? super U,? extends R> fn) {
 
         return getLastActive()
                 .stream()
@@ -918,7 +892,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    default SimpleReactStream<U> onFail(final Function<SimpleReactFailedStageException, U> fn) {
+    default SimpleReactStream<U> onFail(final Function<? super SimpleReactFailedStageException,? extends U> fn) {
         return onFail(Throwable.class,fn);
     }
 
@@ -949,7 +923,8 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param fn Recovery function
      * @return recovery value
      */
-    default SimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<SimpleReactFailedStageException, U> fn){
+    default SimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, 
+                        final Function<? super SimpleReactFailedStageException, ? extends U> fn){
 
         Function<Stream<CompletableFuture>,Stream<CompletableFuture>> mapper = s -> s.map((ft) -> ft.exceptionally((t) -> {
             if (t instanceof FilteredExecutionPathException)
@@ -1065,9 +1040,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     @SuppressWarnings("unchecked")
-    default <T, R> SimpleReactStream<R> allOf(final Function<List<T>, R> fn) {
+    default <R> SimpleReactStream<R> allOf(final Function<? super List<U>,? extends R> fn) {
 
-        return (SimpleReactStream<R>) allOf(Collectors.toList(), (Function<R, U>) fn);
+        return (SimpleReactStream<R>) allOf(Collectors.<U>toList(),  fn);
 
     }
 

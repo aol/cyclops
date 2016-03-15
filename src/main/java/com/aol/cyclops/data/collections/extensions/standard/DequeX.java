@@ -17,11 +17,11 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValues;
@@ -48,6 +48,16 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	public static <T> DequeX<T> singleton(T value){
 		return of(value);
 	}
+    /**
+     * Construct a DequeX from an Publisher
+     * 
+     * @param publisher
+     *            to construct DequeX from
+     * @return DequeX
+     */
+    public static <T> DequeX<T> fromPublisher(Publisher<? extends T> publisher) {
+        return ReactiveSeq.fromPublisher((Publisher<T>)publisher).toDequeX();
+    }
 	public static <T> DequeX<T> fromIterable(Iterable<T> it){
 		return fromIterable(defaultCollector(),it);
 	}

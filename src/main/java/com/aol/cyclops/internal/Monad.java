@@ -16,6 +16,7 @@ import com.aol.cyclops.internal.stream.SeqUtils;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
 import com.aol.cyclops.types.mixins.WrappingFilterable;
 import com.aol.cyclops.types.mixins.WrappingFunctor;
 import com.aol.cyclops.util.stream.Streamable;
@@ -188,7 +189,7 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T>{
 		Mutable<T> captured = Mutable.of(null);
 		
 		Comprehender c = new ComprehenderSelector().selectComprehender((Object)unwrap());
-		c.resolveForCrossTypeFlatMap(new Comprehender(){
+		c.resolveForCrossTypeFlatMap(new ValueComprehender(){
 
 			/* (non-Javadoc)
 			 * @see com.aol.cyclops.lambda.api.Comprehender#of(java.lang.Object)

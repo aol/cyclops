@@ -8,10 +8,11 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
 
 
 
-public class EvalComprehender implements Comprehender<Eval>{
+public class EvalComprehender implements ValueComprehender<Eval>{
 	
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, Eval apply) {

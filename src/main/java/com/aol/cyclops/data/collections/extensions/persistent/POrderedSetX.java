@@ -20,6 +20,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.OrderedPSet;
 import org.pcollections.POrderedSet;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -65,6 +66,16 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 			return new  POrderedSetXImpl<>((POrderedSet)(stream));
 		return new  POrderedSetXImpl<>(OrderedPSet.from(stream));
 	}
+    /**
+     * Construct a POrderedSetX from an Publisher
+     * 
+     * @param publisher
+     *            to construct POrderedSetX from
+     * @return POrderedSetX
+     */
+    public static <T> POrderedSetX<T> fromPublisher(Publisher<? extends T> publisher) {
+        return ReactiveSeq.fromPublisher((Publisher<T>)publisher).toPOrderedSetX();
+    }
 	public static<T> POrderedSetX<T> fromIterable(Iterable<T> iterable){
 		if(iterable instanceof POrderedSetX)
 			return (POrderedSetX)iterable;

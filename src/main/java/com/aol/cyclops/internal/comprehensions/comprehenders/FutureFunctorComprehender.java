@@ -7,8 +7,9 @@ import java.util.function.Predicate;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class FutureFunctorComprehender implements Comprehender<FutureW>{
+public class FutureFunctorComprehender implements ValueComprehender<FutureW>{
 	public Class getTargetClass(){
 		return FutureW.class;
 	}

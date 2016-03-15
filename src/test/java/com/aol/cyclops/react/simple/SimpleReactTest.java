@@ -98,7 +98,7 @@ public class SimpleReactTest {
 	public void doOnEach(){
 		String[] found = {""};
 		String res = new SimpleReact().ofAsync(()->"hello")
-										.doOnEach(it->{ found[0]=it;return "world";})
+										.peek(it->{ found[0]=it;})
 										.then(it->it+"!")
 										.block().firstValue();
 		assertThat(found[0],is("hello"));

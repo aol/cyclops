@@ -21,6 +21,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.HashTreePBag;
 import org.pcollections.MapPBag;
 import org.pcollections.PBag;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -48,6 +49,16 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	public static<T> PBagX<T> singleton(T value){
 		return new PBagXImpl<>(HashTreePBag.singleton(value));
 	}
+    /**
+     * Construct a PBagX from an Publisher
+     * 
+     * @param publisher
+     *            to construct PBagX from
+     * @return PBagX
+     */
+    public static <T> PBagX<T> fromPublisher(Publisher<? extends T> publisher) {
+        return ReactiveSeq.fromPublisher((Publisher<T>)publisher).toPBagX();
+    }
 	public static<T> PBagX<T> fromIterable(Iterable<T> iterable){
 		if(iterable instanceof PBagX)
 			return (PBagX)iterable;

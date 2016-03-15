@@ -44,7 +44,7 @@ public interface BlockingStream<U> {
 			EagerStreamWrapper last = (EagerStreamWrapper)lastActive;
 			return BlockingStreamHelper.block(this,CyclopsCollectors.toListX(), last);
 		}else{
-			LazyStreamWrapper last = (LazyStreamWrapper)lastActive;
+			LazyStreamWrapper<U> last = (LazyStreamWrapper)lastActive;
 			return BlockingStreamHelper.block(this,CyclopsCollectors.toListX(), last);
 		}
 	}

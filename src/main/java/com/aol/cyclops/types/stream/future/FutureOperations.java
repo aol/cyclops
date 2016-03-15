@@ -243,6 +243,6 @@ public interface FutureOperations<T> extends
 	 * 	 @see java.util.stream.Stream#noneMatch(Predicate)
 	 * */
 	public CompletableFuture<Boolean>   noneMatch(Predicate<? super T> predicate);
-	public void forEach(Consumer<T> object);
+	public void forEach(Consumer<? super T> object);
 	
 }

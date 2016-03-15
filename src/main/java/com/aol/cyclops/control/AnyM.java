@@ -593,11 +593,11 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 * @param monad
 	 * @return
 	 */
-	public static <T> AnyM<T> ofConvertableValue(Object monad){
+	public static <T> AnyMValue<T> ofConvertableValue(Object monad){
 		Objects.requireNonNull(monad);
 		return AnyMFactory.instance.convertValue(monad);
 	}
-	public static <T> AnyM<T> ofConvertableSeq(Object monad){
+	public static <T> AnyMSeq<T> ofConvertableSeq(Object monad){
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.convertSeq(monad);
     }

@@ -11,6 +11,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public class LazyFutureStreamUtils {
@@ -45,11 +46,11 @@ public class LazyFutureStreamUtils {
 	 * @param consumer To accept incoming events from the Stream
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachX(Stream<T> stream, long x, Consumer<? super T> consumerElement){
+	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachX(LazyFutureStream<T> stream, long x, Consumer<? super T> consumerElement){
 		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
 		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
 		return tuple(subscription,()->{
-			ReactiveSeq.fromStream(stream).subscribe(new Subscriber<T>(){
+			stream.subscribe(new Subscriber<T>(){
 
 				@Override
 				public void onSubscribe(Subscription s) {
@@ -111,11 +112,11 @@ public class LazyFutureStreamUtils {
 	 * @param onComplete To run after an onComplete event
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachXWithError(Stream<T> stream, long x, Consumer<? super T> consumerElement,Consumer<? super Throwable> consumerError){
+	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachXWithError(LazyFutureStream<T> stream, long x, Consumer<? super T> consumerElement,Consumer<? super Throwable> consumerError){
 		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
 		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
 		return tuple(subscription,()->{
-			ReactiveSeq.fromStream(stream).subscribe(new Subscriber<T>(){
+			stream.subscribe(new Subscriber<T>(){
 
 				@Override
 				public void onSubscribe(Subscription s) {
@@ -179,14 +180,14 @@ public class LazyFutureStreamUtils {
 	 * @param onComplete To run after an onComplete event
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachXEvents(Stream<T> stream, long x, 
+	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachXEvents(LazyFutureStream<T> stream, long x, 
 												Consumer<? super T> consumerElement,
 												Consumer<? super Throwable> consumerError,
 												Runnable onComplete){
 		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
 		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
 		return tuple(subscription,()->{
-			ReactiveSeq.fromStream(stream).subscribe(new Subscriber<T>(){
+			stream.subscribe(new Subscriber<T>(){
 
 				@Override
 				public void onSubscribe(Subscription s) {
@@ -239,12 +240,12 @@ public class LazyFutureStreamUtils {
 	 * @param consumer To accept incoming elements from the Stream
 	 * @param consumerError To accept incoming processing errors from the Stream
 	 */
-	public static <T,X extends Throwable>  Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachWithError(Stream<T> stream, Consumer<? super T> consumerElement,
+	public static <T,X extends Throwable>  Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachWithError(LazyFutureStream<T> stream, Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError){
 		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
 		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
 		return tuple(subscription,()-> {
-			ReactiveSeq.fromStream(stream).subscribe(new Subscriber<T>(){
+			stream.subscribe(new Subscriber<T>(){
 
 				@Override
 				public void onSubscribe(Subscription s) {
@@ -304,13 +305,13 @@ public class LazyFutureStreamUtils {
 	 * @param onComplete To run after an onComplete event
 	 * @return Subscription so that further processing can be continued or cancelled.
 	 */
-	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachEvent(Stream<T> stream,Consumer<? super T> consumerElement,
+	public static <T,X extends Throwable> Tuple3<CompletableFuture<Subscription>,Runnable,CompletableFuture<Boolean>> forEachEvent(LazyFutureStream<T> stream,Consumer<? super T> consumerElement,
 			Consumer<? super Throwable> consumerError,
 			Runnable onComplete){
 		CompletableFuture<Subscription>subscription = new CompletableFuture<>();
 		CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
 		return tuple(subscription,()->{
-			ReactiveSeq.fromStream(stream).subscribe(new Subscriber<T>(){
+			stream.subscribe(new Subscriber<T>(){
 
 				@Override
 				public void onSubscribe(Subscription s) {

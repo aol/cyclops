@@ -5,8 +5,9 @@ import java.util.function.Predicate;
 
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class MaybeComprehender implements Comprehender<Maybe> {
+public class MaybeComprehender implements ValueComprehender<Maybe> {
 	public Class getTargetClass(){
 		return Maybe.class;
 	}

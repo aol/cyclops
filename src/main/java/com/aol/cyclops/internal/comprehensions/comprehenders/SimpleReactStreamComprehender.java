@@ -1,13 +1,17 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 public class SimpleReactStreamComprehender implements Comprehender {
 
@@ -35,12 +39,14 @@ public class SimpleReactStreamComprehender implements Comprehender {
 
 	@Override
 	public SimpleReactStream of(Object o) {
-		return (SimpleReactStream)BaseSimpleReactStream.of(o);
+	    return new SimpleReact().of(o);
 	}
-
+	public SimpleReactStream fromIterator(Iterator it){
+        return new SimpleReact().fromIterable(()->it);
+    }
 	@Override
 	public SimpleReactStream empty() {
-		return (SimpleReactStream)BaseSimpleReactStream.empty();
+	    return new SimpleReact().of();
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.aol.cyclops.types.extensability;
 
+import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -100,6 +101,7 @@ public interface Comprehender<T> {
 		return getTargetClass().isAssignableFrom(apply.getClass());
 	}
 	public T of(Object o);
+	public T fromIterator(Iterator o);
 	public T empty();
 	
 	static Object liftObject(Comprehender comp, Object apply){
@@ -154,6 +156,7 @@ public interface Comprehender<T> {
 	default Object resolveForCrossTypeFlatMap(Comprehender comp,T apply){
 		return comp.of(apply);
 	}
+	
 	
 	
 

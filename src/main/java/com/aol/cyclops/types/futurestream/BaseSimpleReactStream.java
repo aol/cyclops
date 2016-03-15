@@ -200,27 +200,9 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	<R> BaseSimpleReactStream<R> then(final Function<U,R> fn) ;
+	<R> BaseSimpleReactStream<R> then(final Function<? super U,? extends R> fn) ;
 	
 
-	/**
-	 * 
-	 * Applies a function to this phase independent on the main flow.
-	 * Convenience over taking a reference to this phase and splitting it.
-	 * 
-	 * @param fn Function to be applied to each completablefuture on completion
-	 * @return This phase in Stream
-	 */
-	BaseSimpleReactStream<U> doOnEach(final Function<U, U> fn) ;
-	/**
-	 * 
-	 * Applies a function to this phase independent on the main flow, continues on the currently executing thread.
-	 * Convenience over taking a reference to this phase and splitting it.
-	 * 
-	 * @param fn Function to be applied to each completablefuture on completion
-	 * @return This phase in Stream
-	 */
-	BaseSimpleReactStream<U> doOnEachSync(final Function<U, U> fn);
 	/**
 	 * Peek asynchronously at the results in the current stage. Current results
 	 * are passed through to the next stage.
@@ -264,7 +246,8 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 * @return Flatten Stream with flatFn applied
 	 */
 	<R> BaseSimpleReactStream<R> flatMapToCompletableFuture(
-			Function<U, CompletableFuture<R>> flatFn);
+			Function<? super U, CompletableFuture<? extends R>> flatFn);
+	 
 	/**
 	 * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
 	 * This operation is performed synchronously
@@ -284,7 +267,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 * @return Flatten Stream with flatFn applied
 	 */
 	<R> BaseSimpleReactStream<R> flatMapToCompletableFutureSync(
-			Function<U, CompletableFuture<R>> flatFn) ;
+			Function<? super U, CompletableFuture<? extends R>> flatFn) ;
 
 	/**
 	 * Allows aggregate values in a Stream to be flatten into a single Stream.
@@ -385,7 +368,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 *         the dataflow
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	BaseSimpleReactStream<U> onFail(final Function<SimpleReactFailedStageException, U> fn) ;
+	BaseSimpleReactStream<U> onFail(final Function<? super SimpleReactFailedStageException, ? extends U> fn) ;
 
 	/**
 	 * Recover for a particular class of exceptions only. Chain onFail methods from specific Exception classes
@@ -414,7 +397,8 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 * @param fn Recovery function
 	 * @return recovery value
 	 */
-	BaseSimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, final Function<SimpleReactFailedStageException, U> fn);
+	BaseSimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, 
+	                        final Function<? super SimpleReactFailedStageException, ? extends U> fn);
 	
 
 	/**
