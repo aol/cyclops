@@ -33,9 +33,11 @@ public interface Maybe<T> extends MonadicValue<T>,
 								ConvertableFunctor<T>, 
 								Filterable<T>,
 								Applicativable<T>,
-								Matchable.ValueAndOptionalMatcher<T>
+								Matchable.ValueAndOptionalMatcher<T>,
+								MaybeOps<T>
 								{
 
+   
 	
 	final static Maybe EMPTY = new Nothing<>();
 	
