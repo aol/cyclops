@@ -189,6 +189,10 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
 		return with(super.flatMapInternal(fn));
 
 	}
+	public <R> AnyMSeq<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn) {
+        return with(super.flatMapInternal(fn));
+
+    }
 
 	 public Xor<AnyMValue<T>,AnyMSeq<T>> matchable(){
 	        return Xor.primary(this);

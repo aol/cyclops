@@ -11,6 +11,7 @@ import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 import org.pcollections.PStack;
 
+import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.internal.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
@@ -71,15 +72,21 @@ public interface ComprehensionsModule {
 		}
 
 		public <R extends BaseComprehensionData> R $Internal(String name, Object f) {
+		    if(f instanceof Supplier)
+		        System.out.println("Supplier " + f);
 			Expansion g = new Expansion(name, new ContextualExecutor(this) {
 				public Object execute() {
 					currentContext = this;
+					
 					return unwrapSupplier(f);
 				}
 
 				private Object unwrapSupplier(Object f) {
-					if (f instanceof Supplier)
-						return ((Supplier) f).get();
+				 
+					if (f instanceof InternalSupplier){
+					   return FluentFunctions.of((Supplier)f).println().get();
+						
+					}
 					return f;
 				}
 
@@ -104,28 +111,19 @@ public interface ComprehensionsModule {
 	 * @param <V>
 	 *            Aggregate Variable type holder
 	 */
-	public static class ComprehensionData<T, R, V extends Initialisable> {
+	public static class ComprehensionData<T, R> {
 		private final BaseComprehensionData data;
 		@Getter
-		private final V vars;
+		private final Varsonly vars;
 
-		private final Proxier proxier = new Proxier();
+		
 
-		ComprehensionData(ExecutionState state, Optional<Class<V>> varsClass) {
-			super();
+		ComprehensionData(ExecutionState state) {
+		
 			data = new BaseComprehensionData(state);
 
-			this.vars = (V) new Varsonly();
+			this.vars =  new Varsonly();
 			this.vars.init(data);
-		}
-
-		ComprehensionData(V vars, ExecutionState state) {
-			super();
-			data = new BaseComprehensionData(state);
-
-			this.vars = (V) ((Initialisable) vars);
-			this.vars.init(data);
-
 		}
 
 		/**
@@ -144,14 +142,8 @@ public interface ComprehensionsModule {
 		 *            in the comprehension
 		 * @return this
 		 */
-		public ComprehensionData<T, R, V> filter(Supplier<Boolean> s) {
+		public ComprehensionData<T, R> filter(Supplier<Boolean> s) {
 			data.guardInternal(s);
-			return this;
-
-		}
-
-		ComprehensionData<T, R, V> filterFunction(Function<V, Boolean> s) {
-			data.guardInternal(() -> s.apply(vars));
 			return this;
 
 		}
@@ -174,11 +166,6 @@ public interface ComprehensionsModule {
 		 */
 		public <R> R yield(Supplier s) {
 			return data.yieldInternal(s);
-
-		}
-
-		<R> R yieldFunction(Function<V, ?> s) {
-			return data.yieldInternal(() -> s.apply(vars));
 
 		}
 
@@ -220,7 +207,7 @@ public interface ComprehensionsModule {
 		 *            value
 		 * @return this
 		 */
-		public <T> ComprehensionData<T, R, V> $(String name, Object f) {
+		public <T> ComprehensionData<T, R> $(String name, Object f) {
 			data.$Internal(name, f);
 
 			return (ComprehensionData) this;
@@ -243,27 +230,30 @@ public interface ComprehensionsModule {
 		 *            value
 		 * @return this
 		 */
-		public <T> ComprehensionData<T, R, V> $(String name, Supplier f) {
+		public <T> ComprehensionData<T, R> $(String name, InternalSupplier f) {
 			data.$Internal(name, f);
 
 			return (ComprehensionData) this;
 		}
 
 	}
+	static interface InternalSupplier extends Supplier<Object>{
+	    
+	}
 
 	@AllArgsConstructor
 	@Getter
-	abstract static class ContextualExecutor<T, C> {
+	abstract static class ContextualExecutor {
 
-		private volatile C context;
+		private volatile Object context;
 
-		public T executeAndSetContext(C context) {
+		public <T> T executeAndSetContext(Object context) {
 			this.context = context;
 			return execute();
 
 		}
 
-		public abstract T execute();
+		public abstract <T> T execute();
 	}
 
 	@Getter
@@ -275,58 +265,12 @@ public interface ComprehensionsModule {
 
 	}
 
-	/**
-	 * Extend this interface to implement custom For Comprehensions
-	 * 
-	 * Format is
-	 * 
-	 * to bind a Monad or colleciton use methods in the following format
-	 * 
-	 * varName(Monad m);
-	 * 
-	 * to access the current value in a filter or yield expression
-	 * 
-	 * varName();
-	 *
-	 * e.g.
-	 * 
-	 * <pre>
-	 * static interface Custom extends CustomForComprehension&lt;Stream&lt;Integer&gt;, Custom&gt; {
-	 * 	Integer myVar();
-	 * 
-	 * 	Custom myVar(List&lt;Integer&gt; value);
-	 * }
-	 * </pre>
-	 *
-	 * <pre>
-	 * Stream&lt;Integer&gt; stream = ForComprehensions.foreachX(Custom.class,
-	 * 		c -&gt; c.myVar(list).yield(() -&gt; c.myVar() + 3));
-	 * 
-	 * </pre>
-	 * 
-	 * 
-	 * 
-	 * @author johnmcclean
-	 *
-	 * @param <R>
-	 *            Return type of the end result
-	 * @param <T>
-	 *            The type of the Custom For Comprehension (the interface that
-	 *            extends this one).
-	 */
-	public static interface CustomForComprehension<R, T> {
 
-		public T filter(Supplier<Boolean> s);
-
-		public R yield(Supplier s);
-
-		public void run(Runnable r);
-	}
 
 	@AllArgsConstructor
-	final static class ExecutionState<T1, T2, V> {
+	final static class ExecutionState {
 
-		public final ContextualExecutor<T1, T2> contextualExecutor;
+		public final ContextualExecutor contextualExecutor;
 
 	}
 
@@ -345,7 +289,7 @@ public interface ComprehensionsModule {
 		private final MonadicConverters converters = new MonadicConverters();
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		T process(ContextualExecutor<?, Map> yieldExecutor, PMap<String, Object> context,
+		T process(ContextualExecutor yieldExecutor, PMap<String, Object> context,
 				Object currentExpansionUnwrapped, String lastExpansionName, int index) {
 
 			Tuple2<Comprehender, Object> comprehender = selectComprehender(
@@ -430,7 +374,7 @@ public interface ComprehensionsModule {
 
 	}
 
-	public static class Varsonly<T1, T2, T3, T4, T5> implements Initialisable {
+	public static class Varsonly implements Initialisable {
 		@Setter
 		private BaseComprehensionData data;
 
@@ -444,40 +388,9 @@ public interface ComprehensionsModule {
 
 		}
 
-		public T1 $1() {
-			return data.$Internal("$1");
-
-		}
-
-		public T2 $2() {
-			return data.$Internal("$2");
-
-		}
-
-		public T3 $3() {
-			return data.$Internal("$3");
-
-		}
-
-		public T4 $4() {
-			return data.$Internal("$4");
-
-		}
-
-		public T5 $5() {
-			return data.$Internal("$5");
-
-		}
 	}
 
-@AllArgsConstructor
-public static class MyComprehension<X,V>{
-	private final Class<X> c;
-	private final Class<V> vars;
-	public <R> R foreach(Function<X,R> fn){
-		return (R)new FreeFormForComprehension(c,vars).foreach(fn);
-	}
-}
+
 public static interface Initialisable {
 	public void init(BaseComprehensionData data);
 }
@@ -500,7 +413,7 @@ static class Foreach<T> {
 		generators = generators.plus(generators.size(),g);
 	}
 
-	public static<T> T foreach(ContextualExecutor<T,Foreach<T>> comprehension) {
+	public static<T> T foreach(ContextualExecutor comprehension) {
 
 		return comprehension.executeAndSetContext(new Foreach<>());
 	}

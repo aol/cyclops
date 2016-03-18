@@ -36,7 +36,10 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 	}
 	
 	
+	public <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn) {
+        return with(super.flatMapInternal(fn));
 
+    }
 	@Override
 	public ReactiveSeq<T> reactiveSeq() {
 		return stream();

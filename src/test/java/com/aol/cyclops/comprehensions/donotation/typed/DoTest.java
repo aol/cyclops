@@ -89,7 +89,7 @@ public class DoTest {
 						.add(Arrays.asList(2.0))
 						.add(Arrays.asList(2.0))
 						.add(Arrays.asList(2.0))
-						.addStream(()->Stream.of(3.0))
+						.withStream(a->b->c->d->Stream.of(3.0) )
 						.yield( base -> bonus-> v->v1->v2-> base*(1.0+bonus)).unwrap();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));

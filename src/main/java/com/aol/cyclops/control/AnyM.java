@@ -69,7 +69,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	
 	
     Xor<AnyMValue<T>,AnyMSeq<T>> matchable();
-    
+    <R> AnyM<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn);
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
      */

@@ -44,7 +44,7 @@ public class DoFiltersTest {
 	public void do2(){
 		
 		Stream<Double> s = Do.add(asList(10.00,5.00,100.30))
-							.withCollection( d-> asList(2.0))
+							.withCollection( d -> asList(2.0))
 							.filter(d-> e ->     (e*d)>10.00)
 							.yield(base -> bonus->   base*(1.0+bonus)).stream();
 		

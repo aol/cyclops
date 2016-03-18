@@ -12,12 +12,9 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Do;
-import com.aol.cyclops.internal.comprehensions.ForComprehensions;
-import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.CustomForComprehension;
-import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.MyComprehension;
 public class FreeFormTest {
 
-	MyComprehension<Custom2,Custom2> comp = ForComprehensions.custom(Custom2.class);
+	
 	
 	@Test
 	public void freeForm(){
@@ -71,35 +68,6 @@ public class FreeFormTest {
 			
 	}
 	
-	@Test
-	public void freeFormCustom(){
-		
-		List<Integer> list= Arrays.asList(1,2,3);
-		Stream<Integer> stream = foreachX(Custom.class,  
-									c-> c.myVar(list)
-										.yield(()->c.myVar()+3)
-									);
-		
-		assertThat(Arrays.asList(4,5,6),equalTo(stream.collect(Collectors.toList())));
-										
-	}
 	
-	@Test
-	public void freeFormCustom2(){
-			comp.foreach(c -> c.i(Arrays.asList(20,30))
-								.j(Arrays.asList(1,2,3))
-								.yield(() -> c.i() +c.j()));
-	}
-	
-	static interface Custom extends CustomForComprehension<Stream<Integer>,Custom>{
-		Integer myVar();
-		Custom myVar(List<Integer> value);
-	}
-	static interface Custom2 extends CustomForComprehension<Stream<Integer>,Custom2>{
-		Integer i();
-		Custom2 i(List<Integer> value);
-		Integer j();
-		Custom2 j(List<Integer> value);
-	}
 	
 }
