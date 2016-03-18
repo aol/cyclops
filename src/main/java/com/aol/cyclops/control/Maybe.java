@@ -15,6 +15,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 
 import lombok.AccessLevel;
@@ -33,8 +34,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 								ConvertableFunctor<T>, 
 								Filterable<T>,
 								Applicativable<T>,
-								Matchable.ValueAndOptionalMatcher<T>,
-								MaybeOps<T>
+								Matchable.ValueAndOptionalMatcher<T>
 								{
 
    
@@ -91,7 +91,6 @@ public interface Maybe<T> extends MonadicValue<T>,
 	}
 	
 	
-	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.value.Value#toMaybe()
 	 */
@@ -106,7 +105,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 	Maybe<T> recover(Supplier<T> value);
 	Maybe<T> recover(T value);
 	<R> Maybe<R> map(Function<? super T, ? extends R> mapper);
-	<R>  Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper);
+	<R>  Maybe<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 	<R> R visit(Function<? super T,? extends R> some, 
 						Supplier<? extends R> none);
 	
@@ -198,8 +197,8 @@ public interface Maybe<T> extends MonadicValue<T>,
 		public <R> Maybe<R> map(Function<? super T, ? extends R> mapper){
 			return new Just<>(lazy.map(t->mapper.apply(t)));
 		}
-		public <R>  Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper){
-			return new Lazy(Eval.later(()->this)).flatMap(mapper);//narrow(mapper.apply(lazy.get()));
+		public <R>  Maybe<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper){
+			return new Lazy(Eval.later(()->this)).flatMap(mapper);
 			
 		}
 		public Maybe<T> filter(Predicate<? super T> test){
@@ -253,9 +252,9 @@ public interface Maybe<T> extends MonadicValue<T>,
         public <R> Maybe<R> map(Function<? super T, ? extends R> mapper){
             return flatMap(t->Maybe.just(mapper.apply(t)));
         }
-        public <R>  Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper){
+        public <R>  Maybe<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper){
             Supplier<Eval<Maybe<R>>> s = ()->Eval.later(()->Maybe.none()) ;
-            Eval<Maybe<R>> eval = lazy.get().visit(some->Eval.later( ()->narrow(mapper.apply(some))), s);
+            Eval<Maybe<R>> eval = lazy.get().visit(some->Eval.later( ()->narrow(mapper.apply(some).toMaybe())), s);
             return new Lazy<R>(eval);
             
         }
@@ -324,7 +323,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 		public <R> Maybe<R> map(Function<? super T, ? extends R> mapper){
 			return EMPTY;
 		}
-		public <R>  Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper){
+		public <R>  Maybe<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper){
 			return EMPTY;
 			
 		}

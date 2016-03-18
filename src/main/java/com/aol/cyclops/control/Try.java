@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.stream.ToStream;
@@ -52,13 +52,17 @@ import lombok.val;
  * @param <X> Base Error type
  */
 public interface Try<T,X extends Throwable> extends Supplier<T>,
-                                                    Value<T>, 
+                                                    MonadicValue<T>, 
                                                     ToStream<T>,
                                                     Filterable<T>,
                                                     Functor<T>,
                                                     Applicativable<T> {
     
     
+    default Try<T,Throwable> toTry(){
+        return (Try<T,Throwable>)this;
+        
+     }
     default <R> Eval<R>  matches(Function<CheckValue1<T,R>,CheckValue1<T,R>> secondary,Function<CheckValue1<X,R>,CheckValue1<X,R>> primary,Supplier<? extends R> otherwise){
         return  toXor().swap().matches(secondary, primary, otherwise);
     }
@@ -151,7 +155,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 	/**
 	 * @return This monad, wrapped as AnyM of Success
 	 */
-	public AnyM<T> anyM();
+	public AnyMValue<T> anyM();
 	/**
 	 * @return This monad, wrapped as AnyM of Failure
 	 */
@@ -632,8 +636,8 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		/**
 		 * @return This monad wrapped as AnyM
 		 */
-		public AnyM<T> anyM(){
-			return AnyM.fromIterable(this);
+		public AnyMValue<T> anyM(){
+			return AnyM.fromTry(this);
 		}
 		/**
 		 * @return This monad, wrapped as AnyM of Failure

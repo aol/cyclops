@@ -25,6 +25,7 @@ import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -46,7 +47,7 @@ import lombok.EqualsAndHashCode;
  * @param <PT> Primary type
  */
 public interface Ior<ST,PT> extends Supplier<PT>,
-                                    MonadicValue<PT>,
+                                    MonadicValue2<ST,PT>,
 									BiFunctor<ST,PT>,
 									Functor<PT>,
 									Filterable<PT>,
@@ -142,11 +143,11 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	ReactiveSeq<ST> secondaryToStream();
 	
 	
-	<LT1,RT1> Ior<LT1,RT1> flatMap(Function<? super PT,? extends Ior<LT1,RT1>> mapper);
+	<LT1,RT1> Ior<LT1,RT1> flatMap(Function<? super PT,? extends MonadicValue2<? extends LT1,? extends RT1>> mapper);
 	<LT1,RT1> Ior<LT1,RT1> secondaryFlatMap(Function<? super ST,? extends Ior<LT1,RT1>> mapper);
 	Ior<ST,PT> secondaryToPrimayFlatMap(Function<? super ST, ? extends Ior<ST,PT>> fn);
 	
-	
+	 
 	
 	public boolean isPrimary();
 	public boolean isSecondary();
@@ -324,8 +325,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		}
 
 		@Override
-		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends Ior<LT1, RT1>> mapper) {
-			return mapper.apply(value);
+		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper) {
+			return (Ior<LT1,RT1>)mapper.apply(value).toIor();
 		}
 
 		@Override
@@ -458,7 +459,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 			return ReactiveSeq.fromStream(StreamUtils.optionalToStream(secondaryToOptional()));
 		}
 		@Override
-		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends Ior<LT1, RT1>> mapper) {
+		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper) {
 			return (Ior<LT1, RT1>)this;
 		}
 		@Override
@@ -594,7 +595,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 			return secondary.secondaryToStream();
 		}
 		@Override
-		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends Ior<LT1, RT1>> mapper) {
+		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper) {
 			return Ior.both(secondary.flatMap(mapper), primary.flatMap(mapper));
 		}
 		@Override

@@ -1,27 +1,18 @@
-package com.aol.cyclops.control.monads.transformers;
+package com.aol.cyclops.control.monads.transformers.values;
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
-
-import org.jooq.lambda.function.Function1;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Reader;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 /**
- * Monad transformer for JDK Maybe
- * 
- * MaybeT consists of an AnyM instance that in turns wraps anoter Monad type
- * that contains an Maybe
- * 
- * MaybeT<AnyM<*SOME_MONAD_TYPE*<Maybe<T>>>>
- * 
- * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested
- * /contained context
+ * Monad transformer for Reader
  * 
  * 
  * @author johnmcclean
@@ -29,18 +20,19 @@ import com.aol.cyclops.types.MonadicValue;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class MaybeT<T> {
+public class ReaderT<T,R> implements Function<T,R> {
 
-    private final AnyM<Maybe<T>> run;
+    
+    private final AnyMValue<Reader<T,R>> run;
 
-    private MaybeT(final AnyM<Maybe<T>> run) {
+    private ReaderT(final AnyMValue<Reader<T,R>> run) {
         this.run = run;
     }
 
     /**
      * @return The wrapped AnyM
      */
-    public AnyM<Maybe<T>> unwrap() {
+    public AnyMValue<Reader<T,R>> unwrap() {
         return run;
     }
 
@@ -60,7 +52,7 @@ public class MaybeT<T> {
      *            Consumer to accept current value of Maybe
      * @return MaybeT with peek call
      */
-    public MaybeT<T> peek(Consumer<? super T> peek) {
+    public ReaderT<T,R> peek(Consumer<? super R> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
             return a;
@@ -75,17 +67,17 @@ public class MaybeT<T> {
      *    MaybeT.of(AnyM.fromStream(Maybe.of(10))
      *             .filter(t->t!=10);
      *             
-     *     //MaybeT<AnyM<Stream<Maybe.empty>>>
+     *     //MaybeT<AnyMValue<Stream<Maybe.empty>>>
      * }
      * </pre>
      * 
      * @param test
      *            Predicate to filter the wrapped Maybe
      * @return MaybeT that applies the provided filter
-     */
-    public MaybeT<T> filter(Predicate<? super T> test) {
+    
+    public ReaderT<T,R> filter(Predicate<? super T> test) {
         return of(run.map(opt -> opt.filter(test)));
-    }
+    } */
 
     /**
      * Map the wrapped Maybe
@@ -96,7 +88,7 @@ public class MaybeT<T> {
      *             .map(t->t=t+1);
      *  
      *  
-     *  //MaybeT<AnyM<Stream<Maybe[11]>>>
+     *  //MaybeT<AnyMValue<Stream<Maybe[11]>>>
      * }
      * </pre>
      * 
@@ -104,36 +96,31 @@ public class MaybeT<T> {
      *            Mapping function for the wrapped Maybe
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
-    public <B> MaybeT<B> map(Function<? super T, ? extends B> f) {
-        return new MaybeT<B>(run.map(o -> o.map(f)));
+    public <B> ReaderT<T,B> map(Function<? super R, ? extends B> f) {
+        return new ReaderT<T,B>(run.map(o -> o.map(f)));
     }
 
     /**
-     * Flat Map the wrapped Maybe
+     * Flat Map the wrapped Reader
      * 
-     * <pre>
-    * {@code 
-    *  MaybeT.of(AnyM.fromStream(Maybe.of(10))
-    *             .flatMap(t->Maybe.empty();
-    *  
-    *  
-    *  //MaybeT<AnyM<Stream<Maybe.empty>>>
-    * }
-     * </pre>
+     
      * 
      * @param f
      *            FlatMap function
-     * @return MaybeT that applies the flatMap function to the wrapped Maybe
+     * @return ReaderT that applies the flatMap function to the wrapped Maybe
      */
-    public <B> MaybeT<B> flatMap(Function<? super T, MaybeT<? extends B>> f) {
-
-        return of(run.bind(opt -> {
-            if (opt.isPresent())
-                return f.apply(opt.get()).run.unwrap();
-            return run.unit(Maybe.<B> none()).unwrap();
-        }));
+    public <B> ReaderT<T,B> flatMapT(Function<? super R, ReaderT<T,B>> mapper) {
+      
+        return of(run.bind(reader -> reader.flatMap(r->mapper.apply(r).run.unwrap())));
 
     }
+    public <B> ReaderT<T,B> flatMap(Function<? super R, ? extends Reader<T,B>> f) {
+
+        return new ReaderT<T,B>(run.map(o -> o.flatMap(f)));
+
+    }
+    
+   
 
     /**
      * Lift a function into one that accepts and returns an MaybeT This allows
@@ -150,8 +137,8 @@ public class MaybeT<T> {
      *     Function<MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift(add2);
      * 
      *     Stream<Integer> withNulls = Stream.of(1, 2, null);
-     *     AnyM<Integer> stream = AnyM.ofMonad(withNulls);
-     *     AnyM<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
+     *     AnyMValue<Integer> stream = AnyM.ofMonad(withNulls);
+     *     AnyMValue<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
      *     List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt)).unwrap().<Stream<Maybe<Integer>>> unwrap()
      *             .filter(Maybe::isPresent).map(Maybe::get).collect(Collectors.toList());
      * 
@@ -166,7 +153,7 @@ public class MaybeT<T> {
      *            monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U, R> Function<MaybeT<U>, MaybeT<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <T,U, R> Function<ReaderT<T,U>, ReaderT<T,R>> lift(Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -185,11 +172,11 @@ public class MaybeT<T> {
      *     BiFunction<MaybeT<Integer>, MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift2(add);
      * 
      *     Stream<Integer> withNulls = Stream.of(1, 2, null);
-     *     AnyM<Integer> stream = AnyM.ofMonad(withNulls);
-     *     AnyM<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
+     *     AnyMValue<Integer> stream = AnyM.ofMonad(withNulls);
+     *     AnyMValue<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
      * 
      *     CompletableFuture<Maybe<Integer>> two = CompletableFuture.supplyAsync(() -> Maybe.of(2));
-     *     AnyM<Maybe<Integer>> future = AnyM.ofMonad(two);
+     *     AnyMValue<Maybe<Integer>> future = AnyM.ofMonad(two);
      *     List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt), MaybeT.of(future)).unwrap()
      *             .<Stream<Maybe<Integer>>> unwrap().filter(Maybe::isPresent).map(Maybe::get)
      *             .collect(Collectors.toList());
@@ -202,10 +189,12 @@ public class MaybeT<T> {
      *            another monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U1, U2, R> BiFunction<MaybeT<U1>, MaybeT<U2>, MaybeT<R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
-        return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+    public static <T,U1, U2, R> BiFunction<ReaderT<T,U1>, ReaderT<T,U2>, ReaderT<T,R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
+        return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
-   
+    public static <T,A,V extends MonadicValue<Reader<T,A>>> ReaderT<T,A> fromValue(V monadicValue){
+        return of(AnyM.ofValue(monadicValue));
+    }
     /**
      * Construct an MaybeT from an AnyM that contains a monad type that contains
      * type other than Maybe The values in the underlying monad will be mapped
@@ -215,8 +204,8 @@ public class MaybeT<T> {
      *            AnyM that doesn't contain a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <A> MaybeT<A> fromAnyM(AnyM<A> anyM) {
-        return of(anyM.map(Maybe::ofNullable));
+    public static <T,A> ReaderT<T,A> fromAnyM(AnyMValue<Function<T,A>> anyM) {
+        return of(anyM.map(FluentFunctions::of));
     }
 
     /**
@@ -226,8 +215,9 @@ public class MaybeT<T> {
      *            AnyM that contains a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <A> MaybeT<A> of(AnyM<Maybe<A>> monads) {
-        return new MaybeT<>(monads);
+    public static <T,A> ReaderT<T,A> of(AnyMValue<Reader<T,A>> monads) {
+        
+        return new ReaderT<>(monads);
     }
 
     /*
@@ -239,4 +229,15 @@ public class MaybeT<T> {
         return run.toString();
     }
 
+    @Override
+    public R apply(T t) {
+       return run.get().apply(t);
+    }
+    
+    public Maybe<R> maybeApply(T t) {
+       return run.toMaybe().map(fn->fn.apply(t));
+    }
+
+
+ 
 }

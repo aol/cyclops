@@ -34,6 +34,9 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	boolean isEnabled();
 	boolean isDisabled();
 	
+	static <T> FeatureToggle<T> narrow(FeatureToggle<? extends T> toggle){
+	    return (FeatureToggle<T>)toggle;
+	}
 	
 	
 	@Override
@@ -71,6 +74,10 @@ public interface FeatureToggle<F> extends Supplier<F>,
 			Function<CheckValues<F, R>, CheckValues<F, R>> case1, Supplier<? extends R> otherwise) {
 		
 		return (FeatureToggle<R>)Applicativable.super.patternMatch(case1,otherwise);
+	}
+	
+	default FeatureToggle<F> toFeatureToggle(){
+	    return this;
 	}
 	/**
 	 * @return This monad, wrapped as AnyM
@@ -137,10 +144,10 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	 * @param map Create a new Switch with provided function
 	 * @return switch from function
 	 */
-	default <X> FeatureToggle<X> flatMap(Function<? super F,? extends FeatureToggle<X>> map){
+	default <X> FeatureToggle<X> flatMap(Function<? super F,? extends MonadicValue<? extends X>> map){
 		if(isDisabled())
 			return (FeatureToggle<X>)this;
-		return map.apply(get());
+		return narrow(map.apply(get()).toFeatureToggle());
 	}
 	
 	

@@ -109,8 +109,8 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	public <R> FutureW<R> flatten() {
 		return FutureW.of(AnyM.fromCompletableFuture(future).flatten().unwrap());
 	}
-	public <R> FutureW<R> flatMap(Function<? super T, ? extends FutureW<? extends R>> mapper){
-		return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage<R>)mapper.apply(t).getFuture()));	
+	public <R> FutureW<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper){
+		return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage<R>)mapper.apply(t).toFutureW().getFuture()));	
 	}
 	public <R> FutureW<R> flatMapCf(Function<? super T, ? extends CompletionStage<? extends R>> mapper){
         return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage<R>)mapper.apply(t))); 
