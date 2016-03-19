@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 public class FreeFormTest {
 
 	
@@ -29,7 +29,7 @@ public class FreeFormTest {
 	@Test
 	public void freeFormDo(){
 		List<Integer> list= Arrays.asList(1,2,3);
-		List<Integer> stream = Do.add(list)
+		List<Integer> stream = For.iterable(list)
 								.yield((Integer a)-> a +2).unwrap();
 				
 										
@@ -40,7 +40,7 @@ public class FreeFormTest {
 	@Test
 	public void freeFormDoWithFilter(){
 		List<Integer> list= Arrays.asList(1,2,3);
-		List<Integer> stream = Do.add(list)
+		List<Integer> stream = For.iterable(list)
 								.filter((Integer a) -> a>2)
 								.yield((Integer a)-> a +2).unwrap();
 				
@@ -51,8 +51,8 @@ public class FreeFormTest {
 	}
 	@Test
 	public void freeFormDo2(){
-		List<Integer> stream = Do.add(asList(20,30))
-								   .withIterable((Integer i)->asList(1,2,3))
+		List<Integer> stream = For.iterable(asList(20,30))
+								   .iterable(i->asList(1,2,3))
 								   .yield((Integer a)-> (Integer b) -> a + b+2).unwrap();
 		
 		assertThat(stream,equalTo(Arrays.asList(23,24,25,33,34,35)));
@@ -60,8 +60,8 @@ public class FreeFormTest {
 	}
 	@Test
 	public void freeFormDo3(){
-		List<Integer> stream = Do.add(asList(20,30))
-								   .add(asList(1,2,3))
+		List<Integer> stream = For.iterable(asList(20,30))
+								   .iterable(i->asList(1,2,3))
 								   .yield((Integer a)-> (Integer b) -> a + b+2).unwrap();
 		
 		assertThat(stream,equalTo(Arrays.asList(23,24,25,33,34,35)));

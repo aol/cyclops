@@ -13,11 +13,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.ReactiveSeq;
 
@@ -46,7 +47,7 @@ public class StreamTest {
 	@Test
 	public void arrayStream() {
 		
-		List<String> res = Do.addValues(new String[]{"hello world","hello"}) 
+		List<String> res = For.stream(Stream.of("hello world","hello")) 
 							.yield( v1->  v1 + "1")
 							.stream().toList();
 		List<String> expected = Arrays.asList("hello world1", "hello1");
@@ -58,7 +59,7 @@ public class StreamTest {
 	@Test
 	public void stringStream() {
 		
-		List<String> res = Do.add("hello world") 
+		List<String> res = For.stream("hello world".chars().boxed().map(i->Character.toChars(i)[0])) 
 							.yield( v-> ""+ v + "1").<String>stream().toList();
 		List<String> expected = Arrays.asList("h1", "e1", "l1", "l1", "o1",  " 1", "w1", "o1", "r1", 
 				"l1", "d1");
@@ -70,58 +71,11 @@ public class StreamTest {
 	@Test
 	public void stringStreamWithNull() {
 		
-		ReactiveSeq<String> res =  Do.add(  "hello world") 
-							.add((Iterable<String>)null)
+		ReactiveSeq<String> res =  For.stream(  "hello world".chars().boxed().map(i->Character.toChars(i)[0])) 
+							.iterable(i->(Iterable<String>)null)
 							.yield( v1-> v2-> ""+ v1 + v2)
 							.unwrap();
 		List<String> expected = Arrays.asList();
-		
-		
-		
-		assertThat(expected, equalTo( res.toList()));
-	}
-	@Test @Ignore
-	public void urlStream() throws MalformedURLException {
-		val url = new URL("http://www.aol.com");
-		ReactiveSeq<String> res = Do.add (url) 
-									 .yield( v1->  v1 + "New line!").unwrap();
-		List<String> expected = Arrays.asList("h1", "e1", "l1", "l1", "o1",  " 1", "w1", "o1", "r1", 
-				"l1", "d1");
-		
-		
-		
-		assertThat(expected, equalTo( res.toList()));
-	}
-	@Test
-	public void bufferedReaderStream() {
-		
-		ReactiveSeq<String> res = Do.add(  new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
-                               	.getResourceAsStream("input2.file")))) 
-                              .yield( v -> ""+ v + "*").unwrap();
-		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
-		
-		
-		
-		assertThat(expected, equalTo( res.toList()));
-	}
-	@Test
-	public void urlStream2() {
-		URL url =this.getClass().getClassLoader().getResource("input2.file");
-		ReactiveSeq<String> res = Do.add (url) 
-							.yield( v-> ""+ v+ "*").unwrap();
-		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
-		
-		
-		
-		assertThat(expected, equalTo( res.toList()));
-	}
-	@Test
-	public void fileStream2() {
-		URL url =this.getClass().getClassLoader().getResource("input2.file");
-		File file = new File(url.getFile());
-		ReactiveSeq<String> res = Do.add(  file) 
-							 .yield( v-> ""+ v + "*").unwrap();
-		List<String> expected = Arrays.asList("line 1*","line 2*","line 3*");
 		
 		
 		
@@ -131,7 +85,7 @@ public class StreamTest {
 	@Test
 	public void iterableStream() {
 		
-		ReactiveSeq<String> res = Do.add(  new MyIterable()) 
+		ReactiveSeq<String> res = For.iterable(  new MyIterable()) 
 							.yield( v->  v + "*").unwrap();
 		List<String> expected = Arrays.asList("hello*","world*");
 		
@@ -144,7 +98,7 @@ public class StreamTest {
 		
 		Map<String,Integer> m = new HashMap<>();
 		m.put("hello",10);
-		List<String> res = Do.addStream(m.entrySet().stream()) 
+		List<String> res = For.stream(m.entrySet().stream()) 
 								.yield( v-> ""+ v + "*")
 								.stream()
 								.toList();

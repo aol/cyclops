@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -134,8 +134,8 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
 	@Override
 	public <R1, R> AnyMSeq<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-		return Do.add((AnyM<T>)this)
-		              .withAnyM(u -> monad.apply(u))
+		return For.anyM((AnyM<T>)this)
+		              .anyM(u -> monad.apply(u))
 		              .yield(yieldingFunction);
 	}
 
@@ -146,8 +146,8 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
 	public <R1, R> AnyMSeq<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad,
 			Function<? super T, Function<? super R1, Boolean>> filterFunction,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-		return Do.add((AnyM<T>)this)
-                .withAnyM(u -> monad.apply(u))
+		return For.anyM((AnyM<T>)this)
+                .anyM(u -> monad.apply(u))
                 .filter(filterFunction)
                 .yield(yieldingFunction);
 	}
@@ -160,9 +160,9 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
 			Function<? super T, Function<? super R1, ? extends AnyM<R2>>> monad2,
 			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-		return Do.add((AnyM<T>)this)
-                .withAnyM(u -> monad1.apply(u))
-                .withAnyM(a -> b -> monad2.apply(a).apply(b))
+		return For.anyM((AnyM<T>)this)
+                .anyM(u -> monad1.apply(u))
+                .anyM(a -> b -> monad2.apply(a).apply(b))
                 .filter(filterFunction)
                 .yield(yieldingFunction);
 	}
@@ -174,9 +174,9 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
 	public <R1, R2, R> AnyMSeq<R> forEach3(Function<? super T, ? extends AnyM<R1>> monad1,
 			Function<? super T, Function<? super R1, ? extends AnyM<R2>>> monad2,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-		return Do.add((AnyM<T>)this)
-                .withAnyM(u -> monad1.apply(u))
-                .withAnyM(a -> b -> monad2.apply(a).apply(b))
+		return For.anyM((AnyM<T>)this)
+                .anyM(u -> monad1.apply(u))
+                .anyM(a -> b -> monad2.apply(a).apply(b))
                 .yield(yieldingFunction);
 
 	}

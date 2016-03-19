@@ -23,7 +23,7 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
@@ -299,9 +299,9 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, Iterable<R1>> stream1,
 			Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction){
-		return Do.add(stream())
-				.withIterable(stream1)
-				.withIterable(stream2)
+		return For.stream(stream())
+				.iterable(stream1)
+				.iterable(stream2)
 				.yield(yieldingFunction)
 				.unwrap();
 		
@@ -342,9 +342,9 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 			Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
 			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction){
-		return Do.add(stream())
-				.withIterable(stream1)
-				.withIterable(stream2)
+		return For.stream(stream())
+				.iterable(stream1)
+				.iterable(stream2)
 				.filter(filterFunction)
 				.yield(yieldingFunction)
 				.unwrap();
@@ -376,8 +376,8 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, Iterable<R1>> stream1,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction){
 		
-		return Do.add(stream())
-				.withIterable(stream1)
+		return For.stream(stream())
+				.iterable(stream1)
 				.yield(yieldingFunction).unwrap();
 	}
 
@@ -410,8 +410,8 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, Iterable<R1>> stream1, 
 			Function<? super T, Function<? super R1, Boolean>> filterFunction,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction){
-		return Do.add(stream())
-				.withIterable(stream1)
+		return For.stream(stream())
+				.iterable(stream1)
 				.filter(filterFunction)
 				.yield(yieldingFunction).unwrap();
 		

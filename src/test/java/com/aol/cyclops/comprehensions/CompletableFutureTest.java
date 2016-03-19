@@ -9,7 +9,8 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
+import com.aol.cyclops.control.FutureW;
 
 import lombok.val;
 
@@ -22,9 +23,9 @@ public class CompletableFutureTest {
 		val f = CompletableFuture.completedFuture("hello world");
 		val f2 = CompletableFuture.completedFuture("2");
 		val f3 = CompletableFuture.completedFuture("3");
-		CompletableFuture<String> result = Do.add(f)
-											.add(f2)
-											.add(f3) 
+		CompletableFuture<String> result = For.future(f)
+											.future(a->f2)
+											.future(a->b->f3) 
 											.yield(v1->v2->v3 -> v1 +v2 +v3)
 											.unwrap();
 									
@@ -39,9 +40,9 @@ public class CompletableFutureTest {
 		val f = CompletableFuture.completedFuture("hello world");
 		val f2 = CompletableFuture.completedFuture("2");
 		val f3 = CompletableFuture.completedFuture("3");
-		CompletableFuture<String> result =  Do.add((Callable<String>)()->"hello world")
-												.add(f2)
-												.add(f3)
+		CompletableFuture<String> result =  For.iterable(FutureW.ofSupplier(()->"hello world"))
+												.future(a->f2)
+												.future(a->b->f3)
 												.yield(v1->v2->v3 -> v1 +v2 +v3).unwrap();
 									
 		
@@ -54,9 +55,9 @@ public class CompletableFutureTest {
 		val f = CompletableFuture.completedFuture("hello world");
 		val f2 = CompletableFuture.completedFuture("2");
 		val f3 = CompletableFuture.completedFuture("3");
-		CompletableFuture<String> result = Do.add((Supplier<String>)()->"hello world")
-											 .add(f2)
-											 .add(f3)
+		CompletableFuture<String> result = For.iterable(FutureW.ofSupplier(()->"hello world"))
+											 .future(a->f2)
+											 .future(a->b->f3)
 											 .yield(v1->v2->v3 -> v1 +v2 +v3)
 											 .unwrap();
 		

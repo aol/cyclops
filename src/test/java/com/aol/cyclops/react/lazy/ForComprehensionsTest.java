@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class ForComprehensionsTest {
@@ -32,7 +32,7 @@ public class ForComprehensionsTest {
 	}
 	@Test
 	public void intStreamSanityCheck() {
-		Stream<Integer> s1 =  Do.addStream(Stream.of(1,2,3))
+		Stream<Integer> s1 =  For.addStream(Stream.of(1,2,3))
 				.withBaseStream(u->IntStream.range(0,10))
 				//.withStream(d->IntStream.range(0,10).boxed())
 				.yield( a -> b-> a+b).unwrap();
@@ -44,7 +44,7 @@ public class ForComprehensionsTest {
 	}
 	@Test
 	public void listSanityCheck(){
-		List<Integer> s = Do.add(Arrays.asList(1,2,3))
+		List<Integer> s = For.add(Arrays.asList(1,2,3))
 				.withBaseStream(u->IntStream.range(0,10))
 				.yield(a->b->a+b)
 				.unwrap();
@@ -56,7 +56,7 @@ public class ForComprehensionsTest {
 	}
 	@Test
 	public void setSanityCheck(){
-		Set<Integer> s = Do.add(new HashSet<>(Arrays.asList(1,2,3)))
+		Set<Integer> s = For.add(new HashSet<>(Arrays.asList(1,2,3)))
 				.withBaseStream(u->IntStream.range(0,10))
 				.yield(a->b->a+b)
 				.unwrap();

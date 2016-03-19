@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 public class MixedDoTest {
 
 	@Test
@@ -22,8 +22,8 @@ public class MixedDoTest {
 		
 		
 		
-		CompletableFuture<String> results1 = Do.add(future)
-									 				.addStream(()->Stream.of("first","second"))
+		CompletableFuture<String> results1 = For.future(future)
+									 				.stream(a->Stream.of("first","second"))
 									 				.yield((String loadedData) -> (String local)-> loadedData + ":" + local )
 									 				.unwrap();
 		
@@ -52,8 +52,8 @@ public class MixedDoTest {
 		
 		
 		
-		Stream<String> results1 = Do.addStream(Stream.of("first","second"))
-									 				.add(CompletableFuture.supplyAsync(this::loadData))
+		Stream<String> results1 = For.stream(Stream.of("first","second"))
+									 				.future(a->CompletableFuture.supplyAsync(this::loadData))
 									 				.yield((String local) -> (String loadedData)-> loadedData + ":" + local ).unwrap();
 		
 	
