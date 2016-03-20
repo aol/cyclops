@@ -177,13 +177,13 @@ public abstract class BaseAnyMValueTest {
 
 	@Test
 	public void testConvertTo() {
-		Stream<Integer> toStream = just.convertTo(m->Stream.of((int)m.get()));
+		Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
 		assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
 	}
 
 	@Test
 	public void testConvertToAsync() {
-		FutureW<Stream<Integer>> async = just.convertToAsync(f->f.thenApply(i->Stream.of((int)i)));
+		FutureW<Stream<Integer>> async = FutureW.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
 		
 		assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
 	}

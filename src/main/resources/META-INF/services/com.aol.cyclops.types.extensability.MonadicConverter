@@ -20,3 +20,4 @@ com.aol.cyclops.internal.comprehensions.converters.URLToStreamConverter
 com.aol.cyclops.internal.comprehensions.converters.IntStreamToStreamConverter
 com.aol.cyclops.internal.comprehensions.converters.DoubleStreamToStreamConverter
 com.aol.cyclops.internal.comprehensions.converters.LongStreamToStreamConverter
+com.aol.cyclops.internal.comprehensions.converters.PublisherToStreamConverter

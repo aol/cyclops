@@ -68,7 +68,6 @@ import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops.internal.stream.LazyFutureStreamFutureOpterationsImpl;
-import com.aol.cyclops.react.ParallelReductionConfig;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.aol.cyclops.react.ThreadPools;
@@ -3282,10 +3281,9 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      
 	
 
-	/** END SEQUENCEM **/
+	/** END REACTIVESEQ **/
 
-    LazyFutureStream<U> withParallelReduction(
-            ParallelReductionConfig parallelReductionConfig);
+   
 
     /**
      * Construct an parallel LazyFutureStream from specified array, using the configured

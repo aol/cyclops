@@ -111,10 +111,15 @@ public class PushableStreamTest {
 
 	@Test
 	public void testSeq() {
+	    
 		PushableReactiveSeq<Integer> pushable = StreamSource.ofUnbounded()
-				                                    .reactiveSeq();
+				                                            .reactiveSeq();
 		pushable.getInput().add(10);
 		pushable.getInput().close();
+		
+		pushable.getStream().forEach(System.out::println);
+		//10
+		
 		assertThat(pushable.getStream().collect(Collectors.toList()),
 				hasItem(10));
 	}

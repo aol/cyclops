@@ -39,7 +39,6 @@ import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.async.QueueFactory;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
-import com.aol.cyclops.react.ParallelReductionConfig;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.async.subscription.Subscription;
 import com.aol.cyclops.react.collectors.lazy.BatchingCollector;
@@ -76,7 +75,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	private final LazyReact simpleReact;
 	private final Continueable subscription;
 	private final static ReactPool<LazyReact> pool = ReactPool.elasticPool(()->new LazyReact(Executors.newSingleThreadExecutor()));
-	private final ParallelReductionConfig parallelReduction;
+	
 	private final ConsumerHolder error;
 	
 	
@@ -100,7 +99,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 		this.lazyCollector = ()->new BatchingCollector<U>(getMaxActive(),this);
 		this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
 		this.subscription = new Subscription();
-		this.parallelReduction = ParallelReductionConfig.defaultValue;
+		
 		
 		this.maxActive = lazyReact.getMaxActive();
 		
@@ -173,7 +172,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U>{
 	@Override
 	public LazyFutureStream<U> withLastActive(LazyStreamWrapper w) {
 		return new LazyFutureStreamImpl<U>(errorHandler, (LazyStreamWrapper)w,  lazyCollector, 
-				queueFactory, simpleReact, subscription, parallelReduction, error,maxActive);
+				queueFactory, simpleReact, subscription,  error,maxActive);
 		
 	}
 	@Override
