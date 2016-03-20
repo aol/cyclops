@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 import lombok.val;
@@ -48,7 +48,7 @@ public class DoListsTest {
     @Test
     public void forComprehensionImpl(){
         
-        ListX<Integer> list = Do.iterable(Arrays.asList(1,2,3,null,4))
+        ListX<Integer> list = For.iterable(Arrays.asList(1,2,3,null,4))
                                .optional(Optional::ofNullable)
                                .iterable(i->j-> loadBreakdown(j))
                                .iterable(i->j->k->Arrays.asList(10,20,30,40,50))
@@ -61,7 +61,7 @@ public class DoListsTest {
     }
     @Test
 	public void optionalListMultiReturn(){
-		AnyM<Integer> anyM = Do.optional(Optional.of(1))
+		AnyM<Integer> anyM = For.optional(Optional.of(1))
 									 .stream(i->Stream.of(i,2))
 									 .yield(a->b-> a+b);
 		
@@ -71,7 +71,7 @@ public class DoListsTest {
 
 	@Test
 	public void do2(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 						.iterable( d -> asList(2.0))
 						.yield( base -> bonus-> base*(1.0+bonus)).stream();
 		
@@ -80,7 +80,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do1(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 						.yield( base-> base+10).stream();
 		
 		val total = s.collect(Collectors.summingDouble(t->t));
@@ -90,7 +90,7 @@ public class DoListsTest {
 	
 	@Test
 	public void do3(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 						.iterable( d ->asList(2.0))
 						.iterable(d -> e->asList(10.0))
 						.yield(base ->bonus->woot -> base*(1.0+bonus)*woot).stream();
@@ -100,7 +100,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do4(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 						.iterable(d->asList(2.0))
 						.iterable(d ->e ->asList(10.0))
 						.iterable( d -> e-> f->asList(10.0))
@@ -111,7 +111,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do5(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 						.iterable( d->asList(2.0))
 						.iterable( d-> e -> asList(10.0))
 						.iterable( d -> e -> f -> asList(10.0))
@@ -123,7 +123,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do6(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 								.iterable( d -> asList(2.0))
 								.iterable( d ->  e -> asList(10.0))
 								.iterable( d ->  e ->  f -> asList(10.0))
@@ -137,7 +137,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do7(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 							.iterable( d -> asList(2.0))
 							.iterable( d -> e ->  asList(10.0))
 							.iterable( d -> e ->  f ->  asList(10.0))
@@ -151,7 +151,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do9(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 							.iterable(d -> asList(2.0))
 							.iterable( d -> e ->  asList(10.0))
 							.iterable( d -> e ->  f -> asList(10.0))
@@ -170,7 +170,7 @@ public class DoListsTest {
 	
 	@Test
 	public void do2Just(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 								.iterable(d->asList(2.0))
 								.yield( base -> bonus -> base*(1.0+bonus)).stream();
 		
@@ -181,7 +181,7 @@ public class DoListsTest {
 	
 	@Test
 	public void do3Just(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 								.iterable(d->asList(2.0))
 								.iterable(d->e->asList(10.0))
 								.yield((Double base)->(Double bonus)->(Double woot) -> base*(1.0+bonus)*woot).stream();
@@ -191,7 +191,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do4Just(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 							.iterable(d->Arrays.asList(2.0))
 							.iterable( d -> e -> asList(10.0))
 							.iterable( d->e->f->asList(10.0))
@@ -202,7 +202,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do5Just(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 							.iterable( d-> asList(2.0))
 							.iterable( d -> e -> asList(10.0))
 							.iterable( d -> e -> f -> asList(10.0))
@@ -214,7 +214,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do6Just(){
-		Stream<Double> s = Do.iterable( asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable( asList(10.00,5.00,100.30))
 							.iterable( d -> asList(2.0))
 							.iterable( d ->  e -> asList(10.0))
 							.iterable((Double d)->(Double e)->(Double f)->Arrays.asList(10.0))
@@ -227,7 +227,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do7Just(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 						.iterable( d -> asList(2.0))
 						.iterable( d -> e -> asList(10.0))
 						.iterable( d -> e -> f -> asList(10.0))
@@ -241,7 +241,7 @@ public class DoListsTest {
 	}
 	@Test
 	public void do9Just(){
-		Stream<Double> s = Do.iterable(asList(10.00,5.00,100.30))
+		Stream<Double> s = For.iterable(asList(10.00,5.00,100.30))
 								.iterable( d -> asList(2.0))
 								.iterable(  d ->  e -> asList(10.0))
 								.iterable(  d ->  e -> f ->  asList(10.0))

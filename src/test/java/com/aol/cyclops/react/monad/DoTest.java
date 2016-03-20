@@ -22,8 +22,8 @@ public class DoTest {
 	public void doTestLazy(){
 		for(int i=0;i<100;i++){
 		LazyFutureStream<Integer> result =
-				For.add(LazyFutureStream.of(1,2,3))
-												.add(Optional.of(2))
+				For.stream(LazyFutureStream.of(1,2,3))
+												.optional(a->Optional.of(2))
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 												
@@ -38,8 +38,8 @@ public class DoTest {
 	@Test
 	public void doTestSimple(){
 		for(int i=0;i<1000;i++){
-		SimpleReactStream<Integer> result = For.add(anyM(BaseSimpleReactStream.of(1,2,3)))
-												.add(Optional.of(2))
+		SimpleReactStream<Integer> result = For.anyM(anyM(BaseSimpleReactStream.of(1,2,3)))
+												.optional(a->Optional.of(2))
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 		assertThat(result.block(),equalTo(Arrays.asList(3,4,5)));
@@ -49,16 +49,16 @@ public class DoTest {
 	
 	@Test
 	public void doTestLazyOptional(){
-		Optional<List<Integer>> result = For.add(lookup("empty"))
-												.add(LazyFutureStream.of(1,2,3))
+		Optional<List<Integer>> result = For.optional(lookup("empty"))
+												.stream(a->LazyFutureStream.of(1,2,3))
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 		assertThat(result.isPresent(),equalTo(false));
 	}
 	@Test
 	public void doTestSimpleOptional(){
-		Optional<List<Integer>> result = For.add(lookup("empty"))
-												.add(anyM(BaseSimpleReactStream.of(1,2,3)))
+		Optional<List<Integer>> result = For.optional(lookup("empty"))
+												.anyM(a->anyM(BaseSimpleReactStream.of(1,2,3)))
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 		assertThat(result.isPresent(),equalTo(false));
@@ -67,8 +67,8 @@ public class DoTest {
 	@Test
 	public void doTestLazyOptionalEmptyStream(){
 		
-		Optional<List<Integer>> result = For.add(lookup("1"))
-												.add(LazyFutureStream.<Integer>of())
+		Optional<List<Integer>> result = For.optional(lookup("1"))
+												.stream(a->LazyFutureStream.<Integer>of())
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 		System.out.println(result);
@@ -76,8 +76,8 @@ public class DoTest {
 	}
 	@Test
 	public void doTestSimpleOptionalEmptyStream(){
-		Optional<SimpleReactStream<Integer>> result = For.add(lookup("1"))
-												.add(anyM(BaseSimpleReactStream.<Integer>of()))
+		Optional<SimpleReactStream<Integer>> result = For.optional(lookup("1"))
+												.anyM(a->anyM(BaseSimpleReactStream.<Integer>of()))
 												.yield((Integer a) -> (Integer b) -> a+b)
 												.unwrap();
 		assertThat(result.get().block().size(),equalTo(0));

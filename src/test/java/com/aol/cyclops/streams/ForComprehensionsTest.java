@@ -32,8 +32,8 @@ public class ForComprehensionsTest {
 	}
 	@Test
 	public void intStreamSanityCheck() {
-		Stream<Integer> s1 =  For.addStream(Stream.of(1,2,3))
-				.withBaseStream(u->IntStream.range(0,10))
+		Stream<Integer> s1 =  For.stream(Stream.of(1,2,3))
+				.stream(u->IntStream.range(0,10))
 				//.withStream(d->IntStream.range(0,10).boxed())
 				.yield( a -> b-> a+b).unwrap();
 		
@@ -44,8 +44,8 @@ public class ForComprehensionsTest {
 	}
 	@Test
 	public void listSanityCheck(){
-		List<Integer> s = For.add(Arrays.asList(1,2,3))
-				.withBaseStream(u->IntStream.range(0,10))
+		List<Integer> s = For.iterable(Arrays.asList(1,2,3))
+				.stream(u->IntStream.range(0,10))
 				.yield(a->b->a+b)
 				.unwrap();
 		assertThat(s,
@@ -56,8 +56,8 @@ public class ForComprehensionsTest {
 	}
 	@Test
 	public void setSanityCheck(){
-		Set<Integer> s = For.add(new HashSet<>(Arrays.asList(1,2,3)))
-				.withBaseStream(u->IntStream.range(0,10))
+		Set<Integer> s = For.iterable(new HashSet<>(Arrays.asList(1,2,3)))
+				.stream(u->IntStream.range(0,10))
 				.yield(a->b->a+b)
 				.unwrap();
 		assertThat(s,

@@ -12,6 +12,10 @@ import org.pcollections.PMap;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.control.FluentFunctions;
+import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.ComprehensionData;
+import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.ContextualExecutor;
+import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.ExecutionState;
+import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.Foreach;
 import com.aol.cyclops.internal.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
@@ -46,12 +50,7 @@ public interface ComprehensionsModule {
 			return (R) this;
 		}
 
-		public void run(Runnable r) {
-			yieldInternal(() -> {
-				r.run();
-				return null;
-			});
-		}
+		
 
 		public <R> R yieldInternal(Supplier s) {
 			return (R) ((Foreach) delegate.getContext())
@@ -72,24 +71,17 @@ public interface ComprehensionsModule {
 		}
 
 		public <R extends BaseComprehensionData> R $Internal(String name, Object f) {
-		    if(f instanceof Supplier)
-		        System.out.println("Supplier " + f);
+		   
 			Expansion g = new Expansion(name, new ContextualExecutor(this) {
 				public Object execute() {
 					currentContext = this;
-					
-					return unwrapSupplier(f);
-				}
-
-				private Object unwrapSupplier(Object f) {
-				 
 					if (f instanceof InternalSupplier){
-					   return FluentFunctions.of((Supplier)f).println().get();
-						
-					}
-					return f;
+	                    return ((InternalSupplier)f).get();
+	                 }
+	                 return f;
 				}
 
+				
 			});
 
 			((Foreach) delegate.getContext()).addExpansion(g);
@@ -113,17 +105,11 @@ public interface ComprehensionsModule {
 	 */
 	public static class ComprehensionData<T, R> {
 		private final BaseComprehensionData data;
-		@Getter
-		private final Varsonly vars;
-
-		
-
+	
 		ComprehensionData(ExecutionState state) {
 		
 			data = new BaseComprehensionData(state);
 
-			this.vars =  new Varsonly();
-			this.vars.init(data);
 		}
 
 		/**
@@ -364,38 +350,19 @@ public interface ComprehensionsModule {
 		}
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		private Optional<Tuple2<Comprehender, Object>> selectComprehender(Object structure) {
+		private Optional<Tuple2<Comprehender, Object>> selectComprehender(final Object structure) {
 			if (structure == null)
 				return Optional.empty();
 			return new Comprehenders().getRegisteredComprehenders().stream()
-					.filter(e -> e.getKey().isAssignableFrom(structure.getClass())).map(e -> e.getValue())
+					.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
+					.map(e -> e.getValue())
 					.map(v -> new Tuple2<Comprehender, Object>(v, structure)).findFirst();
 		}
 
 	}
 
-	public static class Varsonly implements Initialisable {
-		@Setter
-		private BaseComprehensionData data;
 
-		public void init(BaseComprehensionData data) {
-			this.data = data;
-
-		}
-
-		public <T> T $(String name) {
-			return data.$Internal(name);
-
-		}
-
-	}
-
-
-public static interface Initialisable {
-	public void init(BaseComprehensionData data);
-}
-
-static class Foreach<T> {
+public static class Foreach<T> {
 
 	private PStack<Expansion> generators = ConsPStack.empty();
 
@@ -413,8 +380,15 @@ static class Foreach<T> {
 		generators = generators.plus(generators.size(),g);
 	}
 
-	public static<T> T foreach(ContextualExecutor comprehension) {
+	public static<T> T foreach(Function<ComprehensionData<?,T>,T> fn) {
+	    ContextualExecutor comprehension = new ContextualExecutor(new Foreach<T>()){
+            @SuppressWarnings("rawtypes")
+            public  T execute(){
+                return (T)fn.apply(new ComprehensionData(new ExecutionState(this)));
+            }
 
+            
+        };
 		return comprehension.executeAndSetContext(new Foreach<>());
 	}
 

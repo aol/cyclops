@@ -1,13 +1,10 @@
 package com.aol.cyclops.comprehensions;
-import static com.aol.cyclops.internal.comprehensions.ForComprehensions.foreachX;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -16,16 +13,7 @@ public class FreeFormTest {
 
 	
 	
-	@Test
-	public void freeForm(){
-		List<Integer> list= Arrays.asList(1,2,3);
-		Stream<Integer> stream = foreachX(c -> c.$("hello",list)
-										.filter(()->c.<Integer>$("hello")<10)
-										.yield(()-> c.<Integer>$("hello")+2));
-		
-		assertThat(Arrays.asList(3,4,5),equalTo(stream.collect(Collectors.toList())));
-										
-	}
+	
 	@Test
 	public void freeFormDo(){
 		List<Integer> list= Arrays.asList(1,2,3);
