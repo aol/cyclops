@@ -193,10 +193,11 @@ public class ForEachSequenceMFutureTest {
 	}
 	@Test
 	public void streamCompleteForEachWithErrorsTest(){
+	   
 		List<Integer> list = new ArrayList<>();
 		ReactiveTask s = ReactiveSeq.of(1,2,3)
 								  .futureOperations(exec)
-								   .forEachWithError( i->list.add(i),
+								   .forEachWithError( i->{ list.add(i); sleep(100);},
 											e->error=e);
 		
 		assertFalse(s.isStreamComplete());
@@ -205,8 +206,19 @@ public class ForEachSequenceMFutureTest {
 		
 		
 		assertTrue(s.isStreamComplete());
+	    
 	}
-	@Test
+	private void sleep(int i) {
+        try {
+            Thread.sleep(i);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+    }
+
+    @Test
 	public void streamCompleteForEachEventsTest(){
 		List<Integer> list = new ArrayList<>();
 		ReactiveTask s = ReactiveSeq.of(1,2,3)

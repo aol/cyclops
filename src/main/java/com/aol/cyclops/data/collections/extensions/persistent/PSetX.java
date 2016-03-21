@@ -20,6 +20,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.HashTreePSet;
 import org.pcollections.PSet;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -53,6 +54,16 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		
 		return new PSetXImpl<>(res);
 	}
+    /**
+     * Construct a PSetX from an Publisher
+     * 
+     * @param publisher
+     *            to construct PSetX from
+     * @return PSetX
+     */
+    public static <T> PSetX<T> fromPublisher(Publisher<? extends T> publisher) {
+        return ReactiveSeq.fromPublisher((Publisher<T>)publisher).toPSetX();
+    }
 	public static<T> PSetX<T> fromCollection(Collection<T> stream){
 		if(stream instanceof PSetX)
 			return (PSetX)(stream);

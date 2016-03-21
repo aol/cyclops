@@ -8,8 +8,9 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class CompletableFutureComprehender implements Comprehender<CompletableFuture>{
+public class CompletableFutureComprehender implements ValueComprehender<CompletableFuture>{
 	public Class getTargetClass(){
 		return CompletableFuture.class;
 	}

@@ -143,10 +143,10 @@ public class SequenceMTest {
 	}
 	@Test
 	public void skipTime(){
-	    sleep(100);
+	    sleep(500);
 		List<Integer> result = LazyFutureStream.of(0,1,2,3,4,5,6)
 										.peek(i->sleep(i*300))
-										.skip(500,TimeUnit.MILLISECONDS)
+										.skip(700,TimeUnit.MILLISECONDS)
 										.toList();
 		
 		

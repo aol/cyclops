@@ -1302,7 +1302,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      * com.aol.simple.react.stream.traits.FutureStream#then(java.util.function
      * .Function)
      */
-    default <R> LazyFutureStream<R> then(final Function<U, R> fn) {
+    default <R> LazyFutureStream<R> then(final Function<? super U,? extends R> fn) {
         return (LazyFutureStream) LazySimpleReactStream.super.then(fn);
     }
 
@@ -1405,7 +1405,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      */
     @Override
     default LazyFutureStream<U> onFail(
-            final Function<SimpleReactFailedStageException, U> fn) {
+            final Function<? super SimpleReactFailedStageException, ? extends U> fn) {
         return (LazyFutureStream) LazySimpleReactStream.super.onFail(fn);
     }
 
@@ -1425,7 +1425,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
     @Override
     default LazyFutureStream<U> onFail(
             Class<? extends Throwable> exceptionClass,
-            final Function<SimpleReactFailedStageException, U> fn) {
+            final Function<? super SimpleReactFailedStageException, ? extends U> fn) {
         return (LazyFutureStream) LazySimpleReactStream.super.onFail(exceptionClass, fn);
     }
 
@@ -1522,29 +1522,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
             Function<? super U,CompletableFuture<? extends R>> flatFn) {
         return fromStream(StreamUtils.flatMapCompletableFuture(toQueue().stream(getSubscription()),flatFn));
     }
-    /**
-     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
-     * This operation is performed synchronously
-     *
-     * <pre>
-     * {@code
-     * assertThat( new LazyReact()
-                                        .of(1,2,3)
-                                        .flatMapCompletableFutureSync(i->CompletableFuture.completedFuture(i))
-                                        .block(),equalTo(Arrays.asList(1,2,3)));
-     * }
-     * </pre>
-     * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
-     *
-     *
-     * @param flatFn flatMap function
-     * @return Flatten Stream with flatFn applied
-     */
-    default <R> LazyFutureStream<R> flatMapToCompletableFutureSync(
-            Function<U, CompletableFuture<R>> flatFn) {
-
-        return (LazyFutureStream) LazySimpleReactStream.super.flatMapToCompletableFutureSync(flatFn);
-    }
+    
 
     /*
      * (non-Javadoc)

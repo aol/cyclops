@@ -156,7 +156,7 @@ public class AllOfTest {
 					return it;
 				})
 				.onFail(e -> 100)
-				.<Integer,Integer>allOf(it -> {
+				.allOf(it -> {
 					
 					return it.parallelStream().filter(f -> f > 300)
 							.map(m -> m - 5)
@@ -183,7 +183,7 @@ public class AllOfTest {
 					return it;
 				})
 				.onFail(e -> 100)
-				.<Integer,List<Integer>>allOf(it -> {
+				.allOf(it -> {
 					
 					return it.parallelStream().skip(1).limit(3).collect(Collectors.toList());
 				}).block().firstValue();
@@ -209,7 +209,7 @@ public class AllOfTest {
 					return it;
 				})
 				.onFail(e -> 100)
-				.<Integer,Integer>allOf(it -> {
+				.allOf(it -> {
 					
 					return it.parallelStream().filter(f -> f > 300)
 							.map(m ->{ threadGroup.add(Thread.currentThread().getThreadGroup().getName());return m - 5; })

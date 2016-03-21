@@ -3,6 +3,7 @@ package com.aol.cyclops.control;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -17,7 +18,12 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+
 import com.aol.cyclops.data.async.Adapter;
+
+import org.reactivestreams.Publisher;
+
+
 import com.aol.cyclops.internal.react.LazyFutureStreamImpl;
 import com.aol.cyclops.internal.react.stream.InfiniteClosingSpliteratorFromSupplier;
 import com.aol.cyclops.internal.react.stream.ReactBuilder;
@@ -26,6 +32,7 @@ import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.async.subscription.Subscription;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.function.Cacheable;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -289,7 +296,19 @@ public class LazyReact implements ReactBuilder {
 	}
 	
 	
-	
+	/**
+     * Construct a LazyFutureStream from an Publisher
+     * 
+     * @param publisher
+     *            to construct LazyFutureStream from
+     * @return LazyFutureStream
+     */
+    public <T> LazyFutureStream<T> fromPublisher(Publisher<? extends T> publisher) {
+        Objects.requireNonNull(publisher);
+        SeqSubscriber<T> sub = SeqSubscriber.subscriber();
+        publisher.subscribe(sub);
+        return sub.toFutureStream(this);
+    }
 	/* 
 	 * Generate an LazyFutureStream that is a range of Integers
 	 * 

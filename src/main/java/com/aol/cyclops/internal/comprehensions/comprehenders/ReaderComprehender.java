@@ -6,10 +6,11 @@ import java.util.function.Function;
 import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.control.Reader;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
 
 
 
-public class ReaderComprehender implements Comprehender<Reader>{
+public class ReaderComprehender implements ValueComprehender<Reader>{
 	
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, Reader apply) {

@@ -1,6 +1,7 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Function;
@@ -9,9 +10,9 @@ import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.stream.ToStream;
+import com.aol.cyclops.util.stream.StreamUtils;
 
 public class StreamComprehender implements Comprehender<Stream> {
 	public Class getTargetClass(){
@@ -45,6 +46,9 @@ public class StreamComprehender implements Comprehender<Stream> {
 	@Override
 	public Stream of(Object o) {
 		return Stream.of(o);
+	}
+	public Stream fromIterator(Iterator it){
+	    return StreamUtils.stream(it);
 	}
 	public static <T> T unwrapOtherMonadTypes(Comprehender<T> comp,Object apply){
 		

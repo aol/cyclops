@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Spliterator;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 public class SetComprehender implements Comprehender<Object> {
@@ -63,6 +65,13 @@ public class SetComprehender implements Comprehender<Object> {
 		set.add(o);
 		return Collections.unmodifiableSet(set);
 	}
+	public Set fromIterator(Iterator it){
+	    Set set= new HashSet();
+	    for(Object next : (Iterable)()-> it){
+	        set.add(next);
+	    }
+	    return Collections.unmodifiableSet(set);
+    }
 	@Override 
 	public Set unwrap(Object o){
 		if(o instanceof Set)

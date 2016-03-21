@@ -14,12 +14,13 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.invokedynamic.InvokeDynamic;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
 
 import lombok.AllArgsConstructor;
 
 
 @AllArgsConstructor
-public class InvokeDynamicComprehender implements Comprehender {
+public class InvokeDynamicComprehender implements ValueComprehender {
     public Class getTargetClass(){
         return null;
     }
@@ -43,7 +44,7 @@ public class InvokeDynamicComprehender implements Comprehender {
                                                    .map(m2->{ m2.setAccessible(true); return m2;})
                                                    );
         if(m.size()==0)
-            return Comprehender.super.filter(t, p);
+            return ValueComprehender.super.filter(t, p);
         for(Method next : m) {
             
             Class z = next.getParameterTypes()[0];
@@ -59,7 +60,7 @@ public class InvokeDynamicComprehender implements Comprehender {
                 return new InvokeDynamic().executeMethod(next,t,target);
             }
         }
-        return Comprehender.super.filter(t, p);
+        return ValueComprehender.super.filter(t, p);
 
     }
 

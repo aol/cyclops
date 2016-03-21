@@ -20,6 +20,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -86,6 +87,16 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	public static <T> PVectorX<T> singleton(T value){
 		return new PVectorXImpl<>(TreePVector.singleton(value));
 	}
+    /**
+     * Construct a PVectorX from an Publisher
+     * 
+     * @param publisher
+     *            to construct PVectorX from
+     * @return PVectorX
+     */
+    public static <T> PVectorX<T> fromPublisher(Publisher<? extends T> publisher) {
+        return ReactiveSeq.fromPublisher((Publisher<T>)publisher).toPVectorX();
+    }
 	public static<T> PVectorX<T> fromIterable(Iterable<T> iterable){
 		if(iterable instanceof PVectorX)
 			return (PVectorX)iterable;

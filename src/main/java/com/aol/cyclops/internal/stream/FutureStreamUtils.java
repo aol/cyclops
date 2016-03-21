@@ -249,7 +249,7 @@ public class FutureStreamUtils {
 						return true;
 					}
 					finally{
-						if(!result){
+						if(!result && !errored){
 							try{
 								onComplete.run();
 							}finally{

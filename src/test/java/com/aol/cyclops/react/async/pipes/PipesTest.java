@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -49,9 +50,14 @@ public class PipesTest {
         bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
         
         val ev = bus.nextOrNull("reactor");
-        ev.printOut();
-        ev.printOut();
-        ev.printOut();
+        List results = new ArrayList();
+       
+        results.add(ev.get());
+        results.add(ev.get());
+        results.add(ev.get());
+        
+        assertThat(results,equalTo(ListX.of(10,20,30)));
+        
       
         //finished!
            
@@ -59,6 +65,47 @@ public class PipesTest {
      
         
 	}
+	@Test
+    public void nextValueFinished(){
+        
+        Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        val ev = bus.nextValue("reactor");
+        List results = new ArrayList();
+        
+        results.add(ev.get());
+        results.add(ev.get());
+        results.add(ev.get());
+        
+        assertThat(results,equalTo(ListX.of(10,20,30)));
+           
+        
+     
+        
+    }
+	@Test
+    public void oneOrErrorFinishes(){
+        
+        Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        List results = new ArrayList();
+        val ev = bus.oneOrError("reactor");
+        results.add(ev.get());
+        results.add(ev.get());
+        results.add(ev.get());
+        
+        assertThat(results,equalTo(ListX.of(10,20,30)));       
+     
+         
+    }
 	@Test
     public void futureStreamTest(){
         

@@ -76,6 +76,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 					   
 					    return;
 					}
+					active=true;
 					
     					try{
     					  

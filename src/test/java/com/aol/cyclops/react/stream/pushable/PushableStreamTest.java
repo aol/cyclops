@@ -17,24 +17,68 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Pipes;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamSource;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.async.Signal;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.stream.pushable.MultipleStreamSource;
 import com.aol.cyclops.util.stream.pushable.PushableLazyFutureStream;
 import com.aol.cyclops.util.stream.pushable.PushableReactiveSeq;
 import com.aol.cyclops.util.stream.pushable.PushableStream;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 
 public class PushableStreamTest {
+    
+    @Test
+    public void pipes() throws InterruptedException{
+        
+        Flux.from(PStackX.of(10,20,30));
+        
+        SetX.fromPublisher(Flux.just(10,20,30));
+        
+        PSetX.of(1,2,3)
+             .flatMapPublisher(i->Flux.just(i,i*10))
+             .toPVectorX();
+        
+        /**
+        Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        //bus.publishTo("reactor",Flux.just(10,20,30));
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        System.out.println(Thread.currentThread().getId());
+       System.out.println(bus.futureStream("reactor", new LazyReact(50,50))
+            .get()
+           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .toList());//.forEach(System.out::println);
+        
+        Thread.sleep(1500);
+        **/
+    }
 
 	@Test
 	public void testLazyFutureStream() {
+	    
+	    
+	    
+	   
+	    
 		PushableLazyFutureStream<Integer> pushable = StreamSource.ofUnbounded()
 				                                                 .futureStream(new LazyReact());
 		pushable.getInput().add(100);

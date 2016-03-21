@@ -5,13 +5,14 @@ import java.util.function.Predicate;
 import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.FeatureToggle.Enabled;
 import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.ValueComprehender;
 
 /**
  * @author johnmcclean
  *
  *  Behaviour in cross-type flatMap is to create an empty instance for Disabled Switches, but always pass Enabled values on
  */
-public class FeatureToggleComprehender implements Comprehender<FeatureToggle<Object>>{
+public class FeatureToggleComprehender implements ValueComprehender<FeatureToggle<Object>>{
 
 	@Override
 	public Object filter(FeatureToggle t, Predicate p) {

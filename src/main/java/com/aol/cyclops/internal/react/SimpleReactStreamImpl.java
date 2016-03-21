@@ -61,8 +61,8 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 	}
 
 	@Override
-	public <T, R> SimpleReactStream<R> allOf(final Collector collector,
-			final Function<T, R> fn){
+	public <R1,R2> SimpleReactStream<R2> allOf(final Collector<? super U, ?, R1> collector,
+            final Function<? super R1,? extends R2> fn) {
 		return SimpleReactStream.super.allOf(collector,fn);
 	}
 

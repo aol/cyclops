@@ -34,6 +34,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -48,11 +49,13 @@ import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
+import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 
 
 /**
@@ -74,7 +77,19 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
 	  
 		return Seq.seq(stream());
 	}
-	
+	/**
+     * Construct a LazyFutureStream from an Publisher
+     * 
+     * @param publisher
+     *            to construct ReactiveSeq from
+     * @return LazyFutureStream
+     */
+    public static <T> Streamable<T> fromPublisher(Publisher<? extends T> publisher) {
+        Objects.requireNonNull(publisher);
+        SeqSubscriber<T> sub = SeqSubscriber.subscriber();
+        publisher.subscribe(sub);
+        return fromStream(sub.stream());
+    }
 	/**
 	 * (Lazily) Construct a Streamable from a Stream.
 	 * 

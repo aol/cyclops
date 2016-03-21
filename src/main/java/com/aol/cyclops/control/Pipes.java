@@ -147,10 +147,16 @@ public class Pipes<K,V> {
      */
     public  Eval<Maybe<V>> nextValue(K key){
         ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+        LazyImmutable<Boolean> requested = LazyImmutable.def();
         return get(key).peek(a->a.stream().subscribe(sub))
                         .map(a-> Eval.always(()->{
+                            if(requested.isSet()){
+                                sub.requestOne();
+                            }else{
+                                requested.setOnce(true);
+                            }
                             Maybe<V> res = sub.toMaybe();
-                            sub.requestOne();
+                            
                             return res;
                         }))
                         
