@@ -74,7 +74,7 @@ public class DoComp3<T1,T2,T3> extends DoComp{
 			else
 				return AnyM.ofSeq(this.yieldInternal(f));
 		}
-		public <R> AnyMSeq<R> yield(TriFunction<? super T1,? super T2,? super T3,? extends R> f){
+		public <R> AnyMSeq<R> yield3(TriFunction<? super T1,? super T2,? super T3,? extends R> f){
             return this.yield(CurryVariance.curry3(f));
         }
 		

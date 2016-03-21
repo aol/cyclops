@@ -18,7 +18,7 @@ public class ValueIssueTest {
     public void valueBug(){
         assertThat(For.iterable((Iterable<Integer>)AnyM.fromOptional(Optional.of(10)))
                       .anyM(i->AnyM.fromOptional(Optional.of(i+5)))
-                      .yield(Tuple::tuple).toMaybe().get().get(0),equalTo(Tuple.tuple(10,15)));
+                      .yield2(Tuple::tuple).toMaybe().get().get(0),equalTo(Tuple.tuple(10,15)));
     }
     @Test
     public void valueBug2(){
@@ -31,6 +31,6 @@ public class ValueIssueTest {
         
         For.anyM((AnyM<Integer>)Eval.now(10).anyM())
           .anyM(i->AnyM.fromEval(Eval.now(i+5)))
-          .yield(Tuple::tuple).toMaybe().printOut();;
+          .yield2(Tuple::tuple).toMaybe().printOut();;
     }
 }

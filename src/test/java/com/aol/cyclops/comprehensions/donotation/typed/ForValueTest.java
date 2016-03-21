@@ -26,7 +26,7 @@ public class ForValueTest {
         
         val list2 = Maybe.just(10).flatMap(i-> Maybe.<Integer>just(i+5)
                                                             .map(a-> Tuple.<Integer,Integer>tuple(i,a))).toMaybe();
-                                    
+                         
         assertThat(list,equalTo(list2));
                     
     }

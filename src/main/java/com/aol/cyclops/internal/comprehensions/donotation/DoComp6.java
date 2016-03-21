@@ -71,7 +71,7 @@ public class DoComp6<T1,T2,T3,T4,T5,T6> extends DoComp{
 			else
 				return AnyM.ofSeq(this.yieldInternal(f));
 		}
-		public <R> AnyMSeq<R> yield(HexFunction<? super T1,? super T2,? super T3,? super T4,? super T5,? super T6,? extends R> f){
+		public <R> AnyMSeq<R> yield6(HexFunction<? super T1,? super T2,? super T3,? super T4,? super T5,? super T6,? extends R> f){
             return this.yield(CurryVariance.curry6(f));
         }
 		

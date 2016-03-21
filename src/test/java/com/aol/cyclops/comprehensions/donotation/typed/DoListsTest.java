@@ -47,12 +47,12 @@ public class DoListsTest {
     }
     @Test
     public void forComprehensionImpl(){
-        
+       
         ListX<Integer> list = For.iterable(Arrays.asList(1,2,3,null,4))
                                .optional(Optional::ofNullable)
                                .iterable(i->j-> loadBreakdown(j))
                                .iterable(i->j->k->Arrays.asList(10,20,30,40,50))
-                               .yield(this::calculateTotal)
+                               .yield4(this::calculateTotal)
                                .toListX();
        
     }

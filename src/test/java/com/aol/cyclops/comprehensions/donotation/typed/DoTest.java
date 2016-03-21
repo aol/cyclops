@@ -37,7 +37,7 @@ public class DoTest {
 	public void doGen(){
 	   AnyMSeq<Tuple2<Integer,Integer>> seq =  For.stream(ReactiveSeq.range(1,10))
 	                                             .stream(i->ReactiveSeq.range(0, i))
-	                                             .yield((a,b)->Tuple.tuple(a,b));
+	                                             .yield2((a,b)->Tuple.tuple(a,b));
 	   
 	   seq.forEach(System.out::println);
 	

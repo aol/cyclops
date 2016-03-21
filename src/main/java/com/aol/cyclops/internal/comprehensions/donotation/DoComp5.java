@@ -72,7 +72,7 @@ public class DoComp5<T1,T2,T3,T4,T5> extends DoComp{
 			else
 				return AnyM.ofSeq(this.yieldInternal(f));
 		}
-		public <R> AnyMSeq<R> yield(QuintFunction<? super T1,? super T2,? super T3,? super T4,? super T5,? extends R> f){
+		public <R> AnyMSeq<R> yield5(QuintFunction<? super T1,? super T2,? super T3,? super T4,? super T5,? extends R> f){
             return this.yield(CurryVariance.curry5(f));
         }
 		

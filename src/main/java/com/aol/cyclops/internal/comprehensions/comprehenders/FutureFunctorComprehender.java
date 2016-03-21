@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
@@ -39,7 +40,7 @@ public class FutureFunctorComprehender implements ValueComprehender<FutureW>{
 
 	@Override
 	public FutureW empty() {
-		return FutureW.of(new CompletableFuture());
+		return FutureW.ofResult(null);
 	}
 
     @Override

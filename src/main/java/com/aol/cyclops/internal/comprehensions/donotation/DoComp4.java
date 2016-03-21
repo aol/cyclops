@@ -71,7 +71,7 @@ public class DoComp4<T1,T2,T3,T4> extends DoComp{
 			else
 				return AnyM.ofSeq(this.yieldInternal(f));
 		}
-		public <R> AnyMSeq<R> yield(QuadFunction<? super T1,? super T2,? super T3,? super T4,? extends R> f){
+		public <R> AnyMSeq<R> yield4(QuadFunction<? super T1,? super T2,? super T3,? super T4,? extends R> f){
            return this.yield(CurryVariance.curry4(f));
         }
 		

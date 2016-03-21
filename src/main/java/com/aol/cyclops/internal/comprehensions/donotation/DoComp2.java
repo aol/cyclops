@@ -87,7 +87,7 @@ public class DoComp2<T1, T2> extends DoComp {
 		else
 			return AnyM.ofSeq(this.yieldInternal(f));
 	}
-	public <R> AnyMSeq<R> yield(BiFunction<? super T1, ? super T2, ? extends R> f) {
+	public <R> AnyMSeq<R> yield2(BiFunction<? super T1, ? super T2, ? extends R> f) {
        return this.yield(CurryVariance.curry2(f));
     }
 
@@ -110,7 +110,7 @@ public class DoComp2<T1, T2> extends DoComp {
 	 * @return Current stage  guard / filter applied
 	 */
 	public DoComp2<T1, T2> filter(Function<? super T1, Function<? super T2, Boolean>> f) {
-		return new DoComp2(getAssigned().plus(getAssigned().size(), new Entry("$$internalGUARD" + getAssigned().size(), new Guard(f))),getOrgType());
+		return new DoComp2<>(getAssigned().plus(getAssigned().size(), new Entry("$$internalGUARD" + getAssigned().size(), new Guard(f))),getOrgType());
 	}
 	
 }

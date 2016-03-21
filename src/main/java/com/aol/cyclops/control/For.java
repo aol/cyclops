@@ -41,7 +41,7 @@ public class For {
                       .publisher(a->publisher2.apply(a) )
                       .publisher(a->b->publisher3.apply(a,b) )
                       .publisher(a->b->c->publisher4.apply(a,b,c) )
-                       .yield(yieldingFunction);
+                       .yield4(yieldingFunction);
                     
         }
         /**
@@ -69,7 +69,7 @@ public class For {
                       .publisher(a->b->publisher3.apply(a,b) )
                       .publisher(a->b->c->publisher4.apply(a,b,c))
                       .filter(a->b->c->d->filterFunction.apply(a,b,c,d))
-                       .yield(yieldingFunction);
+                       .yield4(yieldingFunction);
                     
         }
     
@@ -92,7 +92,7 @@ public class For {
             return For.publisher(publisher)
                       .publisher(a->publisher1.apply(a))
                       .publisher(a->b->publisher2.apply(a,b) )
-                      .yield(yieldingFunction);
+                      .yield3(yieldingFunction);
                     
         }
         /**
@@ -118,7 +118,7 @@ public class For {
                       .publisher(t->publisher2.apply(t))
                       .publisher(a->b->publisher3.apply(a,b) )
                       .filter(a->b->c->filterFunction.apply(a,b,c))
-                      .yield(yieldingFunction);
+                      .yield3(yieldingFunction);
                     
         }
     
@@ -138,7 +138,7 @@ public class For {
             
             return For.publisher(publisher)
                       .publisher(t->publisher2.apply(t))
-                      .yield(yieldingFunction);
+                      .yield2(yieldingFunction);
                     
         }
     
@@ -163,7 +163,7 @@ public class For {
             return For.publisher(publisher)
                       .publisher(t->publisher2.apply(t))
                       .filter(a->b->filterFunction.apply(a,b))
-                      .yield(yieldingFunction);
+                      .yield2(yieldingFunction);
                     
         }
     }
@@ -190,7 +190,7 @@ public class For {
                                   .iterable(a->value2.apply(a))
                                   .iterable(a->b->value3.apply(a,b) )
                                   .iterable(a->b->c->value4.apply(a,b,c) )
-                                  .yield(yieldingFunction).unwrap());
+                                  .yield4(yieldingFunction).unwrap());
                     
         }
         /**
@@ -218,7 +218,7 @@ public class For {
                         .iterable(a->b->value3.apply(a,b) )
                         .iterable(a->b->c->value4.apply(a,b,c) )
                         .filter(a->b->c->d->filterFunction.apply(a,b,c,d))
-                        .yield(yieldingFunction).unwrap());
+                        .yield4(yieldingFunction).unwrap());
             
                     
         }
@@ -243,7 +243,7 @@ public class For {
             return AnyM.ofValue(For.iterable(monadicValue)
                     .iterable(a->value2.apply(a))
                     .iterable(a->b->value3.apply(a,b) )
-                    .yield(yieldingFunction).unwrap());
+                    .yield3(yieldingFunction).unwrap());
                     
         }
         /**
@@ -269,7 +269,7 @@ public class For {
                     .iterable(a->value2.apply(a))
                     .iterable(a->b->value3.apply(a,b) )
                     .filter(a->b->c->filterFunction.apply(a,b,c))
-                    .yield(yieldingFunction).unwrap());
+                    .yield3(yieldingFunction).unwrap());
                     
         }
     
@@ -289,7 +289,7 @@ public class For {
            
             return AnyM.ofValue(For.iterable(monadicValue)
                     .iterable(a->value2.apply(a))
-                    .yield(yieldingFunction).unwrap());
+                    .yield2(yieldingFunction).unwrap());
                     
         }
     
@@ -314,7 +314,7 @@ public class For {
             return AnyM.ofValue(For.iterable(monadicValue)
                     .iterable(a->value2.apply(a))
                     .filter(a->b->filterFunction.apply(a,b))
-                    .yield(yieldingFunction).unwrap());
+                    .yield2(yieldingFunction).unwrap());
                     
         }
         

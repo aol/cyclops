@@ -76,7 +76,7 @@ public class DoComp7<T1,T2,T3,T4,T5,T6,T7> extends DoComp{
 			else
 				return AnyM.ofSeq(this.yieldInternal(f));
 		}
-		public <R> AnyMSeq<R> yield(HeptFunction<? super T1,? super T2,? super T3,? super T4,? super T5,? super T6,? super T7,? extends R> f){
+		public <R> AnyMSeq<R> yield7(HeptFunction<? super T1,? super T2,? super T3,? super T4,? super T5,? super T6,? super T7,? extends R> f){
             return this.yield(CurryVariance.curry7(f));
         }
 		

@@ -6,16 +6,13 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.ConsPStack;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 import org.pcollections.PStack;
 
-import com.aol.cyclops.control.FluentFunctions;
-import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.ComprehensionData;
 import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.ContextualExecutor;
-import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.ExecutionState;
-import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.Foreach;
 import com.aol.cyclops.internal.comprehensions.comprehenders.Comprehenders;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
@@ -24,14 +21,13 @@ import com.aol.cyclops.types.extensability.Comprehender;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 public interface ComprehensionsModule {
 
 	static final class BaseComprehensionData {
 
-		private ContextualExecutor delegate;
-		private ContextualExecutor currentContext;
+		private ContextualExecutor<Object> delegate;
+		private ContextualExecutor<Object> currentContext;
 
 		public BaseComprehensionData(ExecutionState state) {
 
@@ -39,7 +35,7 @@ public interface ComprehensionsModule {
 
 		}
 
-		public <R extends BaseComprehensionData> R guardInternal(Supplier<Boolean> s) {
+		public BaseComprehensionData guardInternal(Supplier<Boolean> s) {
 			((Foreach) delegate.getContext())
 					.addExpansion(new Filter("guard", new ContextualExecutor(delegate.getContext()) {
 						public Object execute() {
@@ -47,10 +43,9 @@ public interface ComprehensionsModule {
 							return s.get();
 						}
 					}));
-			return (R) this;
+			return  this;
 		}
 
-		
 
 		public <R> R yieldInternal(Supplier s) {
 			return (R) ((Foreach) delegate.getContext())
@@ -70,7 +65,7 @@ public interface ComprehensionsModule {
 
 		}
 
-		public <R extends BaseComprehensionData> R $Internal(String name, Object f) {
+		public BaseComprehensionData $Internal(String name, Object f) {
 		   
 			Expansion g = new Expansion(name, new ContextualExecutor(this) {
 				public Object execute() {
@@ -86,7 +81,7 @@ public interface ComprehensionsModule {
 
 			((Foreach) delegate.getContext()).addExpansion(g);
 
-			return (R) this;
+			return this;
 		}
 
 	}
@@ -150,7 +145,7 @@ public interface ComprehensionsModule {
 		 *            Yield section
 		 * @return result of for comprehension
 		 */
-		public <R> R yield(Supplier s) {
+		public   R yield(Supplier<R> s) {
 			return data.yieldInternal(s);
 
 		}
@@ -171,7 +166,7 @@ public interface ComprehensionsModule {
 		 *            Variable name
 		 * @return variable value
 		 */
-		public <T> T $(String name) {
+		public  T $(String name) {
 			return data.$Internal(name);
 
 		}
@@ -193,10 +188,10 @@ public interface ComprehensionsModule {
 		 *            value
 		 * @return this
 		 */
-		public <T> ComprehensionData<T, R> $(String name, Object f) {
+		public ComprehensionData<T, R> $(String name, Object f) {
 			data.$Internal(name, f);
 
-			return (ComprehensionData) this;
+			return  this;
 		}
 
 		/**
@@ -216,10 +211,10 @@ public interface ComprehensionsModule {
 		 *            value
 		 * @return this
 		 */
-		public <T> ComprehensionData<T, R> $(String name, InternalSupplier f) {
+		public  ComprehensionData<T, R> $(String name, InternalSupplier f) {
 			data.$Internal(name, f);
 
-			return (ComprehensionData) this;
+			return  this;
 		}
 
 	}
@@ -229,17 +224,17 @@ public interface ComprehensionsModule {
 
 	@AllArgsConstructor
 	@Getter
-	abstract static class ContextualExecutor {
-
+	abstract static class ContextualExecutor<T> {
+	    //Xor<BaseComprehensonData,ForEach>
 		private volatile Object context;
 
-		public <T> T executeAndSetContext(Object context) {
+		public  T executeAndSetContext(Object context) {
 			this.context = context;
 			return execute();
 
 		}
 
-		public abstract <T> T execute();
+		public abstract  T execute();
 	}
 
 	@Getter
@@ -247,22 +242,22 @@ public interface ComprehensionsModule {
 	static class Expansion {
 
 		private final String name;
-		private final ContextualExecutor function;
+		private final ContextualExecutor<Object> function;
 
 	}
 
 
 
 	@AllArgsConstructor
-	final static class ExecutionState {
+	final static class ExecutionState<T> {
 
-		public final ContextualExecutor contextualExecutor;
+		public final ContextualExecutor<T> contextualExecutor;
 
 	}
 
 	static class Filter extends Expansion {
 
-		public Filter(String name, ContextualExecutor func) {
+		public Filter(String name, ContextualExecutor<Object> func) {
 			super(name, func);
 		}
 
@@ -294,7 +289,7 @@ public interface ComprehensionsModule {
 
 			if (expansions.size() == index) {
 
-				return (T) comprehender._1.map(comprehender._2,
+				return (T) comprehender.v1.map(comprehender.v2,
 						it -> yieldExecutor.executeAndSetContext(context.plus(lastExpansionName, it)));
 
 			} else {
@@ -302,52 +297,36 @@ public interface ComprehensionsModule {
 
 				if (head instanceof Filter) {
 
-					Object s = comprehender._1.filter(comprehender._2, it -> (boolean) head.getFunction()
+					Object s = comprehender.v1.filter(comprehender.v2, it -> (boolean) head.getFunction()
 							.executeAndSetContext(context.plus(lastExpansionName, it)));
 					return process(yieldExecutor, context, s, lastExpansionName, index + 1);
 				} else {
 
-					T result = (T) comprehender._1.executeflatMap(comprehender._2, it -> {
+					T result = (T) comprehender.v1.executeflatMap(comprehender.v2, it -> {
 						PMap newMap = context.plus(lastExpansionName, it);
 						return process((ContextualExecutor) yieldExecutor, newMap,
 								head.getFunction().executeAndSetContext(newMap), head.getName(), index + 1);
 					});
-					try {
-						return (T) comprehender._1.map(result, this::takeFirst);
-
-					} catch (Goto g) {
-						return (T) comprehender._1.empty();
-					}
+					return (T) comprehender.v1.executeflatMap(result, a->takeFirst(comprehender.v1,a));
+					
 
 				}
 
 			}
 		}
 
-		private static class Goto extends RuntimeException {
-
-			@Override
-			public synchronized Throwable fillInStackTrace() {
-				return null;
-			}
-
-		}
-
-		private <T> T takeFirst(Object o) {
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		private <T> T takeFirst(Comprehender comp,Object o) {
 			if (o instanceof MaterializedList) {
 				if (((List) o).size() == 0)
-					throw new Goto();
+					return (T)comp.empty();
 
-				return (T) ((List) o).get(0);
+				return (T) comp.of(((List) o).get(0));
 			}
-			return (T) o;
+			return (T) comp.of(o);
 		}
 
-		@AllArgsConstructor
-		static class Tuple2<T1, T2> {
-			final T1 _1;
-			final T2 _2;
-		}
+		
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		private Optional<Tuple2<Comprehender, Object>> selectComprehender(final Object structure) {
@@ -368,7 +347,7 @@ public static class Foreach<T> {
 
 	
 	
-	public T yield(ExecutionState state) {
+	public T yield(ExecutionState<T> state) {
 		Expansion head = generators.get(0);
 		return new Yield<T>(generators)
 				.process(state.contextualExecutor, HashTreePMap.empty(), head
@@ -380,11 +359,11 @@ public static class Foreach<T> {
 		generators = generators.plus(generators.size(),g);
 	}
 
-	public static<T> T foreach(Function<ComprehensionData<?,T>,T> fn) {
-	    ContextualExecutor comprehension = new ContextualExecutor(new Foreach<T>()){
-            @SuppressWarnings("rawtypes")
+	public static <T> T foreach(Function<ComprehensionData<?,T>,T> fn) {
+	    ContextualExecutor<T> comprehension = new ContextualExecutor<T>(new Foreach<T>()){
+            
             public  T execute(){
-                return (T)fn.apply(new ComprehensionData(new ExecutionState(this)));
+                return fn.apply(new ComprehensionData<>(new ExecutionState<>(this)));
             }
 
             
