@@ -81,7 +81,7 @@ public class PipesTest {
         results.add(ev.get());
         results.add(ev.get());
         
-        assertThat(results,equalTo(ListX.of(10,20,30)));
+        assertThat(results,equalTo(ListX.of(Maybe.of(10),Maybe.of(20),Maybe.of(30))));
            
         
      
@@ -97,10 +97,10 @@ public class PipesTest {
         bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
         
         List results = new ArrayList();
-        val ev = bus.oneOrError("reactor");
-        results.add(ev.get());
-        results.add(ev.get());
-        results.add(ev.get());
+        
+        results.add(bus.oneOrError("reactor").get());
+        results.add(bus.oneOrError("reactor").get());
+        results.add(bus.oneOrError("reactor").get());
         
         assertThat(results,equalTo(ListX.of(10,20,30)));       
      

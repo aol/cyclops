@@ -161,8 +161,7 @@ public class PushableStreamTest {
 		pushable.getInput().add(10);
 		pushable.getInput().close();
 		
-		pushable.getStream().forEach(System.out::println);
-		//10
+		
 		
 		assertThat(pushable.getStream().collect(Collectors.toList()),
 				hasItem(10));

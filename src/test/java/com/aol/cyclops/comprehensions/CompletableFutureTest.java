@@ -40,7 +40,7 @@ public class CompletableFutureTest {
 		val f = CompletableFuture.completedFuture("hello world");
 		val f2 = CompletableFuture.completedFuture("2");
 		val f3 = CompletableFuture.completedFuture("3");
-		CompletableFuture<String> result =  For.iterable(FutureW.ofSupplier(()->"hello world"))
+		FutureW<String> result =  For.iterable(FutureW.ofSupplier(()->"hello world"))
 												.future(a->f2)
 												.future(a->b->f3)
 												.yield(v1->v2->v3 -> v1 +v2 +v3).unwrap();
@@ -55,7 +55,7 @@ public class CompletableFutureTest {
 		val f = CompletableFuture.completedFuture("hello world");
 		val f2 = CompletableFuture.completedFuture("2");
 		val f3 = CompletableFuture.completedFuture("3");
-		CompletableFuture<String> result = For.iterable(FutureW.ofSupplier(()->"hello world"))
+		FutureW<String> result = For.iterable(FutureW.ofSupplier(()->"hello world"))
 											 .future(a->f2)
 											 .future(a->b->f3)
 											 .yield(v1->v2->v3 -> v1 +v2 +v3)

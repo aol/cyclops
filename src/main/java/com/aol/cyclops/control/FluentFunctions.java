@@ -589,6 +589,23 @@ public class FluentFunctions {
 		public CompletableFuture<FluentFunction<T,R>> async(Executor ex){
 			return CompletableFuture.supplyAsync(()->FluentFunctions.of(fn),ex);
 		}
+        /* (non-Javadoc)
+         * @see java.util.function.Function#compose(java.util.function.Function)
+         */
+        @Override
+        public <V> Function<V, R> compose(Function<? super V, ? extends T> before) {
+            
+            return FluentFunctions.of(Reader.super.compose(before));
+        }
+        /* (non-Javadoc)
+         * @see java.util.function.Function#andThen(java.util.function.Function)
+         */
+        @Override
+        public <V> Function<T, V> andThen(Function<? super R, ? extends V> after) {
+            
+            return FluentFunctions.of(Reader.super.andThen(after));
+        }
+		
 		
 	}
 	@Wither(AccessLevel.PRIVATE)
@@ -736,6 +753,13 @@ public class FluentFunctions {
 		public CompletableFuture<FluentBiFunction<T1,T2,R>> async(Executor ex){
 			return CompletableFuture.supplyAsync(()->FluentFunctions.of(fn),ex);
 		}
+        /* (non-Javadoc)
+         * @see java.util.function.BiFunction#andThen(java.util.function.Function)
+         */
+        @Override
+        public <V> FluentBiFunction<T1, T2, V> andThen(Function<? super R, ? extends V> after) {
+            return FluentFunctions.of(BiFunction.super.andThen(after));
+        }
 		
 	}
 	@Wither(AccessLevel.PRIVATE)

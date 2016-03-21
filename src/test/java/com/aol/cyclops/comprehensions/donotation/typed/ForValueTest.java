@@ -93,7 +93,7 @@ public class ForValueTest {
         val list2 = Maybe.just(10).flatMap(a-> Maybe.<Integer>just(a+5).flatMap(b-> Maybe.just(a+b+10)
                             .flatMap(c->Maybe.<Integer>just(a+b+c+10)
                             
-                            .map(d-> Tuple.<Integer,Integer,Integer>tuple(a,b,c))))).toListX();
+                            .map(d-> Tuple.<Integer,Integer,Integer,Integer>tuple(a,b,c,d))))).toListX();
                             
         assertThat(list,equalTo(list2));
                     
@@ -112,11 +112,11 @@ public class ForValueTest {
         val list2 = Maybe.just(10).flatMap(a-> Maybe.<Integer>just(a+5).flatMap(b-> Maybe.just(a+b+10)
                                     .flatMap(c->Maybe.<Integer>just(a+b+c+10)
                                     .filter(d->a+b+c+d<10)
-                                    .map(d-> Tuple.<Integer,Integer,Integer>tuple(a,b,c))))).toListX();
+                                    .map(d-> Tuple.<Integer,Integer,Integer,Integer>tuple(a,b,c,d))))).toListX();
                     
 
                             
-assertThat(list,equalTo(list2));
+        assertThat(list,equalTo(list2));
                     
     }
 

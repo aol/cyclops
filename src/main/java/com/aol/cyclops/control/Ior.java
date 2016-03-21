@@ -36,6 +36,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 /**
+ * An Either or Union type, but right biased. Primary and Secondary are used instead of Right & Left.
  * 'Right' (or primary type) biased disjunct union.
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *  

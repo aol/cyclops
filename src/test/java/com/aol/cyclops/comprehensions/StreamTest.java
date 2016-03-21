@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Ignore;
@@ -71,7 +72,7 @@ public class StreamTest {
 	@Test
 	public void stringStreamWithNull() {
 		
-		ReactiveSeq<String> res =  For.stream(  "hello world".chars().boxed().map(i->Character.toChars(i)[0])) 
+		Stream<String> res =  For.stream(  "hello world".chars().boxed().map(i->Character.toChars(i)[0])) 
 							.iterable(i->(Iterable<String>)null)
 							.yield( v1-> v2-> ""+ v1 + v2)
 							.unwrap();
@@ -79,7 +80,7 @@ public class StreamTest {
 		
 		
 		
-		assertThat(expected, equalTo( res.toList()));
+		assertThat(expected, equalTo( res.collect(Collectors.toList())));
 	}
 	
 	@Test
