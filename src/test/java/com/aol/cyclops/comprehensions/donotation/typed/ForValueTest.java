@@ -5,19 +5,14 @@ import static com.aol.cyclops.control.For.Values.each4;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.Optional;
-
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 import lombok.val;
-import reactor.core.publisher.Flux;
 public class ForValueTest {
     @Test
     public void forGen2(){
@@ -35,12 +30,7 @@ public class ForValueTest {
         assertThat(list,equalTo(list2));
                     
     }
-    @Test
-    public void valueBug(){
-        Do.add((Iterable<Integer>)AnyM.fromOptional(Optional.of(10)))
-          .withAnyM(i->AnyM.fromOptional(Optional.of(i+5)))
-          .yield(Tuple::tuple).toMaybe().printOut();
-    }
+    
     @Test
     public void forGenFilter2(){
         
