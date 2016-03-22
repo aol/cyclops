@@ -4,8 +4,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
+import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
+
+import com.aol.cyclops.Reducers;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX.LazyCollection;
 
 import lombok.AllArgsConstructor;
 
@@ -13,14 +19,20 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class PSetXImpl<T> implements PSetX<T> {
 	
-	private final PSet<T> set;
-
+	
+	private final LazyCollection<T,PSet<T>> lazy;
+    public PSetXImpl(PSet<T> set){
+        this.lazy = new LazyCollection<>(set,null,Reducers.toPSet());
+    }
+    private PSetXImpl(Stream<T> stream){
+        this.lazy = new LazyCollection<>(null,stream,Reducers.toPSet());
+    }
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)
 	 */
 	public void forEach(Consumer<? super T> action) {
-		set.forEach(action);
+		getSet().forEach(action);
 	}
 
 	/**
@@ -28,7 +40,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see org.pcollections.MapPSet#iterator()
 	 */
 	public Iterator<T> iterator() {
-		return set.iterator();
+		return getSet().iterator();
 	}
 
 	/**
@@ -36,7 +48,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see org.pcollections.MapPSet#size()
 	 */
 	public int size() {
-		return set.size();
+		return getSet().size();
 	}
 
 	/**
@@ -45,7 +57,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see org.pcollections.MapPSet#contains(java.lang.Object)
 	 */
 	public boolean contains(Object e) {
-		return set.contains(e);
+		return getSet().contains(e);
 	}
 
 	/**
@@ -54,7 +66,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see java.util.AbstractSet#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
-		return set.equals(o);
+		return getSet().equals(o);
 	}
 
 	/**
@@ -63,7 +75,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see org.pcollections.MapPSet#plus(java.lang.Object)
 	 */
 	public PSetX<T> plus(T e) {
-		return new PSetXImpl<>(set.plus(e));
+		return new PSetXImpl<>(getSet().plus(e));
 	}
 
 	/**
@@ -72,7 +84,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see org.pcollections.MapPSet#minus(java.lang.Object)
 	 */
 	public  PSetX<T> minus(Object e) {
-		return new PSetXImpl<>(set.minus(e));
+		return new PSetXImpl<>(getSet().minus(e));
 	}
 
 	/**
@@ -81,7 +93,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see org.pcollections.MapPSet#plusAll(java.util.Collection)
 	 */
 	public  PSetX<T> plusAll(Collection<? extends T> list) {
-		return  new PSetXImpl<>(set.plusAll(list));
+		return  new PSetXImpl<>(getSet().plusAll(list));
 	}
 
 	/**
@@ -90,7 +102,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see org.pcollections.MapPSet#minusAll(java.util.Collection)
 	 */
 	public PSetX<T> minusAll(Collection<?> list) {
-		return  new PSetXImpl<>(set.minusAll(list));
+		return  new PSetXImpl<>(getSet().minusAll(list));
 	}
 
 	/**
@@ -98,7 +110,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see java.util.AbstractCollection#isEmpty()
 	 */
 	public boolean isEmpty() {
-		return set.isEmpty();
+		return getSet().isEmpty();
 	}
 
 	/**
@@ -106,7 +118,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see java.util.AbstractSet#hashCode()
 	 */
 	public int hashCode() {
-		return set.hashCode();
+		return getSet().hashCode();
 	}
 
 	/**
@@ -114,7 +126,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see java.util.AbstractCollection#toArray()
 	 */
 	public Object[] toArray() {
-		return set.toArray();
+		return getSet().toArray();
 	}
 
 	/**
@@ -123,7 +135,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see java.util.AbstractSet#removeAll(java.util.Collection)
 	 */
 	public boolean removeAll(Collection<?> c) {
-		return set.removeAll(c);
+		return getSet().removeAll(c);
 	}
 
 	/**
@@ -132,7 +144,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see java.util.AbstractCollection#toArray(java.lang.Object[])
 	 */
 	public <T> T[] toArray(T[] a) {
-		return set.toArray(a);
+		return getSet().toArray(a);
 	}
 
 	/**
@@ -141,7 +153,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see java.util.AbstractCollection#add(java.lang.Object)
 	 */
 	public boolean add(T e) {
-		return set.add(e);
+		return getSet().add(e);
 	}
 
 	/**
@@ -150,7 +162,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see java.util.AbstractCollection#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) {
-		return set.remove(o);
+		return getSet().remove(o);
 	}
 
 	/**
@@ -159,7 +171,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see java.util.AbstractCollection#containsAll(java.util.Collection)
 	 */
 	public boolean containsAll(Collection<?> c) {
-		return set.containsAll(c);
+		return getSet().containsAll(c);
 	}
 
 	/**
@@ -169,7 +181,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 */
 	@Deprecated
 	public boolean addAll(Collection<? extends T> c) {
-		return set.addAll(c);
+		return getSet().addAll(c);
 	}
 
 	/**
@@ -179,7 +191,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 */
 	@Deprecated
 	public boolean retainAll(Collection<?> c) {
-		return set.retainAll(c);
+		return getSet().retainAll(c);
 	}
 
 	/**
@@ -188,7 +200,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 */
 	@Deprecated
 	public void clear() {
-		set.clear();
+		getSet().clear();
 	}
 
 	/**
@@ -196,7 +208,7 @@ public class PSetXImpl<T> implements PSetX<T> {
 	 * @see java.util.AbstractCollection#toString()
 	 */
 	public String toString() {
-		return set.toString();
+		return getSet().toString();
 	}
 
 	/* (non-Javadoc)
@@ -215,6 +227,19 @@ public class PSetXImpl<T> implements PSetX<T> {
 		return this.size();
 	}
 
-	
+    private PSet<T> getSet() {
+        return lazy.get();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.persistent.PBagX#stream()
+     */
+    @Override
+    public ReactiveSeq<T> stream() {
+        return lazy.stream();
+    }
+    @Override
+    public <X> PSetX<X> stream(Stream<X> stream){
+        return new PSetXImpl<X>(stream);
+    }
 
 }

@@ -84,9 +84,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 		return QueueX.<T1>fromIterable(getCollector(),c);
 	}
 	
-	default <X> QueueX<X> fromStream(Stream<X> stream){
-		return new QueueXImpl<>(stream.collect(getCollector()),getCollector());
-	}
+	
 	
 	/**
      * Combine two adjacent elements in a QueueX using the supplied BinaryOperator
@@ -122,10 +120,8 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	}
 	
 	@Override
-	default ReactiveSeq<T> stream(){
-		
-		return ReactiveSeq.fromIterable(this);
-	}
+	ReactiveSeq<T> stream();
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#reverse()

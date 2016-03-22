@@ -134,10 +134,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
     }
 
     @Override
-    default ReactiveSeq<T> stream() {
-
-        return ReactiveSeq.fromIterable(this);
-    }
+    ReactiveSeq<T> stream();
 
     default PQueue<T> toPSet() {
         return this;

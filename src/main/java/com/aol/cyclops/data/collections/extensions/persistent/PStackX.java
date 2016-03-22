@@ -209,10 +209,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		return plus(size(),e);
 	}
 	@Override
-	default ReactiveSeq<T> stream(){
-		
-		return ReactiveSeq.fromIterable(this);
-	}
+	ReactiveSeq<T> stream();
 	default <X> PStackX<X> from(Collection<X> col){
 		if(isEfficientOps())
 			return fromCollection(col);

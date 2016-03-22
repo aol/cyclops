@@ -116,10 +116,8 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		return empty();
 	}
 	@Override
-	default ReactiveSeq<T> stream(){
-		
-		return ReactiveSeq.fromIterable(this);
-	}
+	ReactiveSeq<T> stream();
+	
 	default PSet<T> toPSet(){
 		return this;
 	}

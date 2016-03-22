@@ -73,6 +73,8 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 			return new SortedSetXImpl<T>( (SortedSet)it, collector);
 		return new SortedSetXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
 	}
+	@Override
+	public <X> SortedSetX<X> stream(Stream<X> stream);
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
 	 */
@@ -116,10 +118,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 		return fromIterable(()->it);
 	}
 	@Override
-	default ReactiveSeq<T> stream(){
-		
-		return ReactiveSeq.fromIterable(this);
-	}
+	ReactiveSeq<T> stream();
 	
 	default <T1> SortedSetX<T1> from(Collection<T1> c){
 		return SortedSetX.<T1>fromIterable(getCollector(),c);
@@ -130,10 +129,6 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	
 	
 	
-	default <X> SortedSetX<X> fromStream(Stream<X> stream){
-		return new SortedSetXImpl<>(stream.collect(getCollector()),getCollector());
-	}
-
 	
 
 	/* (non-Javadoc)
@@ -265,7 +260,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	}
 	default <K> SortedSetX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 	    
-		return (SortedSetX)fromStream(stream().grouped(classifier).map(t->t.map2(Comparables::comparable)));     
+		return (SortedSetX)stream(stream().grouped(classifier).map(t->t.map2(Comparables::comparable)));     
 	}
 	default <U> SortedSetX<Tuple2<T, U>> zip(Iterable<U> other){
 		return (SortedSetX<Tuple2<T, U>>)(SortedSetX<T>)MutableCollectionX.super.zip(other);
@@ -661,7 +656,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	     */
 	    @Override
 	    default SortedSetX<ReactiveSeq<T>> permutations() {
-	        return fromStream(stream().permutations().map(Comparables::comparable));
+	        return stream(stream().permutations().map(Comparables::comparable));
 	        
 	    }
 	    /* (non-Javadoc)
@@ -669,14 +664,14 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	     */
 	    @Override
 	    default SortedSetX<ReactiveSeq<T>> combinations(int size) {
-	        return fromStream(stream().combinations(size).map(Comparables::comparable));
+	        return stream(stream().combinations(size).map(Comparables::comparable));
 	    }
 	    /* (non-Javadoc)
 	     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
 	     */
 	    @Override
 	    default SortedSetX<ReactiveSeq<T>> combinations() {
-	        return fromStream(stream().combinations().map(Comparables::comparable));
+	        return stream(stream().combinations().map(Comparables::comparable));
 	    }
 	   
 	    static class Comparables{

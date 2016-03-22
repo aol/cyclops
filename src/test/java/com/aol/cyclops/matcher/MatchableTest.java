@@ -12,6 +12,7 @@ import static com.aol.cyclops.util.function.Predicates.eq;
 import static com.aol.cyclops.util.function.Predicates.has;
 import static com.aol.cyclops.util.function.Predicates.in;
 import static com.aol.cyclops.util.function.Predicates.lessThan;
+import static com.aol.cyclops.util.function.Predicates.lessThanOrEquals;
 import static com.aol.cyclops.util.function.Predicates.not;
 import static com.aol.cyclops.util.function.Predicates.some;
 import static com.aol.cyclops.util.function.Predicates.type;
@@ -31,8 +32,10 @@ import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
 import com.aol.cyclops.control.Matchable.MatchSelf;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Decomposable;
+import com.aol.cyclops.types.mixins.Printable;
 import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AccessLevel;
@@ -40,7 +43,33 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
-public class MatchableTest {
+public class MatchableTest implements Printable{
+    Eval<Long> fibonacci(int i){
+        return fibonacci(i,1,0);
+    }
+    Eval<Long> fibonacci(int n, long a, long b) {
+        return n == 0 ? Eval.now(b) : Eval.later( ()->fibonacci(n-1, a+b, a)).flatMap(i->i);
+    }
+    
+    
+    
+    @Test
+    public void odd(){
+        System.out.println(even(Eval.now(200000)).get());
+    }
+    public Eval<String> odd(Eval<Integer> n )  {
+       
+       return n.flatMap(x->even(Eval.now(x-1)));
+    }
+    public Eval<String> even(Eval<Integer> n )  {
+        return n.flatMap(x->{
+            return Matchable.of(x)
+                            .matches(c->c.is(when(lessThanOrEquals(0)), then(()->"done")), 
+                                                    odd(Eval.now(x-1)));
+        });
+     }
+   
+    
     private String doA(){
         return "hello";
     }

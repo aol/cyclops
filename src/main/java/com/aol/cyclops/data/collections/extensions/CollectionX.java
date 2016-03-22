@@ -61,10 +61,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	
 	
 	@Override
-	default ReactiveSeq<T> stream(){
-		
-		return ReactiveSeq.fromIterable(this);
-	}
+	ReactiveSeq<T> stream();
 	@Override
 	default CyclopsCollectable<T> collectable(){
 		return stream();

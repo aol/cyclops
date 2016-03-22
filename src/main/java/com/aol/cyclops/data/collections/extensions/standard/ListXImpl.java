@@ -12,31 +12,44 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.ReactiveSeq;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
-@AllArgsConstructor
+
 public class ListXImpl<T> implements ListX<T> {
 	
-	private final List<T> list;
+	private final LazyCollection<T,List<T>> lazy;
 	@Getter
 	private final Collector<T,?,List<T>> collector;
 	
-	public ListXImpl(List<T> list){
-		this.list = list;
-		this.collector = ListX.defaultCollector();
+	public ListXImpl(List<T> list,Collector<T,?,List<T>> collector){
+	    this.lazy = new LazyCollection<>(list,null,collector);
+	    this.collector=  collector;
 	}
+	public ListXImpl(List<T> list){
+		
+		this.collector = ListX.defaultCollector();
+		this.lazy = new LazyCollection<T,List<T>>(list,null,collector);
+	}
+	private ListXImpl(Stream<T> stream){
+        
+        this.collector = ListX.defaultCollector();
+        this.lazy = new LazyCollection<>(null,stream,collector);
+    }
 	public ListXImpl(){
 		this.collector = ListX.defaultCollector();
-		this.list = (List)this.collector.supplier().get();
+		this.lazy = new LazyCollection<>((List)this.collector.supplier().get(),null,collector);
 	}
+	
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)
 	 */
 	public void forEach(Consumer<? super T> action) {
-		list.forEach(action);
+		getList().forEach(action);
 	}
 
 	/**
@@ -44,7 +57,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see org.pcollections.MapPSet#iterator()
 	 */
 	public Iterator<T> iterator() {
-		return list.iterator();
+		return getList().iterator();
 	}
 
 	/**
@@ -52,7 +65,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see org.pcollections.MapPSet#size()
 	 */
 	public int size() {
-		return list.size();
+		return getList().size();
 	}
 
 	/**
@@ -61,7 +74,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see org.pcollections.MapPSet#contains(java.lang.Object)
 	 */
 	public boolean contains(Object e) {
-		return list.contains(e);
+		return getList().contains(e);
 	}
 
 	/**
@@ -70,7 +83,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractSet#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
-		return list.equals(o);
+		return getList().equals(o);
 	}
 
 
@@ -80,7 +93,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractCollection#isEmpty()
 	 */
 	public boolean isEmpty() {
-		return list.isEmpty();
+		return getList().isEmpty();
 	}
 
 	/**
@@ -88,7 +101,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractSet#hashCode()
 	 */
 	public int hashCode() {
-		return list.hashCode();
+		return getList().hashCode();
 	}
 
 	/**
@@ -96,7 +109,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractCollection#toArray()
 	 */
 	public Object[] toArray() {
-		return list.toArray();
+		return getList().toArray();
 	}
 
 	/**
@@ -105,7 +118,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractSet#removeAll(java.util.Collection)
 	 */
 	public boolean removeAll(Collection<?> c) {
-		return list.removeAll(c);
+		return getList().removeAll(c);
 	}
 
 	/**
@@ -114,7 +127,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractCollection#toArray(java.lang.Object[])
 	 */
 	public <T> T[] toArray(T[] a) {
-		return list.toArray(a);
+		return getList().toArray(a);
 	}
 
 	/**
@@ -123,7 +136,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractCollection#add(java.lang.Object)
 	 */
 	public boolean add(T e) {
-		return list.add(e);
+		return getList().add(e);
 	}
 
 	/**
@@ -132,7 +145,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractCollection#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) {
-		return list.remove(o);
+		return getList().remove(o);
 	}
 
 	/**
@@ -141,7 +154,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractCollection#containsAll(java.util.Collection)
 	 */
 	public boolean containsAll(Collection<?> c) {
-		return list.containsAll(c);
+		return getList().containsAll(c);
 	}
 
 	/**
@@ -150,7 +163,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractCollection#addAll(java.util.Collection)
 	 */
 	public boolean addAll(Collection<? extends T> c) {
-		return list.addAll(c);
+		return getList().addAll(c);
 	}
 
 	/**
@@ -159,7 +172,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractCollection#retainAll(java.util.Collection)
 	 */
 	public boolean retainAll(Collection<?> c) {
-		return list.retainAll(c);
+		return getList().retainAll(c);
 	}
 
 	/**
@@ -167,7 +180,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractCollection#clear()
 	 */
 	public void clear() {
-		list.clear();
+		getList().clear();
 	}
 
 	/**
@@ -175,7 +188,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.AbstractCollection#toString()
 	 */
 	public String toString() {
-		return list.toString();
+		return getList().toString();
 	}
 
 	/* (non-Javadoc)
@@ -200,14 +213,14 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.List#addAll(int, java.util.Collection)
 	 */
 	public boolean addAll(int index, Collection<? extends T> c) {
-		return list.addAll(index, c);
+		return getList().addAll(index, c);
 	}
 	/**
 	 * @param operator
 	 * @see java.util.List#replaceAll(java.util.function.UnaryOperator)
 	 */
 	public void replaceAll(UnaryOperator<T> operator) {
-		list.replaceAll(operator);
+		getList().replaceAll(operator);
 	}
 	/**
 	 * @param filter
@@ -215,14 +228,14 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.Collection#removeIf(java.util.function.Predicate)
 	 */
 	public  boolean removeIf(Predicate<? super T> filter) {
-		return list.removeIf(filter);
+		return getList().removeIf(filter);
 	}
 	/**
 	 * @param c
 	 * @see java.util.List#sort(java.util.Comparator)
 	 */
 	public  void sort(Comparator<? super T> c) {
-		list.sort(c);
+		getList().sort(c);
 	}
 	/**
 	 * @param index
@@ -230,7 +243,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.List#get(int)
 	 */
 	public T get(int index) {
-		return list.get(index);
+		return getList().get(index);
 	}
 	/**
 	 * @param index
@@ -239,7 +252,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.List#set(int, java.lang.Object)
 	 */
 	public T set(int index, T element) {
-		return list.set(index, element);
+		return getList().set(index, element);
 	}
 	/**
 	 * @param index
@@ -247,7 +260,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.List#add(int, java.lang.Object)
 	 */
 	public void add(int index, T element) {
-		list.add(index, element);
+		getList().add(index, element);
 	}
 	
 	/**
@@ -256,14 +269,14 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.List#remove(int)
 	 */
 	public T remove(int index) {
-		return list.remove(index);
+		return getList().remove(index);
 	}
 	/**
 	 * @return
 	 * @see java.util.Collection#parallelStream()
 	 */
 	public  Stream<T> parallelStream() {
-		return list.parallelStream();
+		return getList().parallelStream();
 	}
 	/**
 	 * @param o
@@ -271,7 +284,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.List#indexOf(java.lang.Object)
 	 */
 	public int indexOf(Object o) {
-		return list.indexOf(o);
+		return getList().indexOf(o);
 	}
 	/**
 	 * @param o
@@ -279,14 +292,14 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.List#lastIndexOf(java.lang.Object)
 	 */
 	public int lastIndexOf(Object o) {
-		return list.lastIndexOf(o);
+		return getList().lastIndexOf(o);
 	}
 	/**
 	 * @return
 	 * @see java.util.List#listIterator()
 	 */
 	public ListIterator<T> listIterator() {
-		return list.listIterator();
+		return getList().listIterator();
 	}
 	/**
 	 * @param index
@@ -294,7 +307,7 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.List#listIterator(int)
 	 */
 	public ListIterator<T> listIterator(int index) {
-		return list.listIterator(index);
+		return getList().listIterator(index);
 	}
 	/**
 	 * @param fromIndex
@@ -303,14 +316,14 @@ public class ListXImpl<T> implements ListX<T> {
 	 * @see java.util.List#subList(int, int)
 	 */
 	public ListX<T> subList(int fromIndex, int toIndex) {
-		return new ListXImpl<>(list.subList(fromIndex, toIndex),getCollector());
+		return new ListXImpl<T>(getList().subList(fromIndex, toIndex),getCollector());
 	}
 	/**
 	 * @return
 	 * @see java.util.List#spliterator()
 	 */
 	public Spliterator<T> spliterator() {
-		return list.spliterator();
+		return getList().spliterator();
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -344,7 +357,19 @@ public class ListXImpl<T> implements ListX<T> {
 			
 			
 	}
-	
-	
+    private List<T> getList() {
+        return lazy.get();
+    }
+    @Override
+	public <X> ListX<X> stream(Stream<X> stream){
+	    return new ListXImpl<X>(stream);
+	}
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.persistent.PBagX#stream()
+     */
+    @Override
+    public ReactiveSeq<T> stream() {
+        return lazy.stream();
+    }
 
 }

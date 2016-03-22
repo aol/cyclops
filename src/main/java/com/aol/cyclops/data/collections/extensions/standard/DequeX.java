@@ -83,7 +83,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		return DequeX.<T1>fromIterable(getCollector(),c);
 	}
 	
-	default <X> DequeX<X> fromStream(Stream<X> stream){
+	default <X> DequeX<X> stream(Stream<X> stream){
 		return new DequeXImpl<>(stream.collect(getCollector()),getCollector());
 	}
 
@@ -121,10 +121,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		return fromIterable(()->it);
 	}
 	@Override
-	default ReactiveSeq<T> stream(){
-		
-		return ReactiveSeq.fromIterable(this);
-	}
+	ReactiveSeq<T> stream();
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#reverse()

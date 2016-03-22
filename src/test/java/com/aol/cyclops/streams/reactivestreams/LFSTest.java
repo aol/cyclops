@@ -1,15 +1,27 @@
 package com.aol.cyclops.streams.reactivestreams;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
+import com.aol.cyclops.control.LazyReact;
 
 public class LFSTest {
+   
+        static Supplier<Integer> countGen(AtomicInteger i) {
+            return (()-> i.getAndIncrement());
+        }
+        @Test
+        public void test(){
+            final Supplier<Integer> count = countGen(new AtomicInteger(1));
+            final Optional<Integer> sum = new LazyReact(100,100).generate(count).limit(10).reduce((a, b) -> a + b);
+            assertThat(sum.get(),equalTo(55));
+        }
+    
 /**
 	@Test @Ignore
 	public void lfs() throws InterruptedException{

@@ -1,5 +1,9 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops.util.function.Predicates.lessThanOrEquals;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -19,8 +23,10 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.jooq.lambda.tuple.Tuple5;
+import org.junit.Test;
 
 import com.aol.cyclops.Matchables;
+import com.aol.cyclops.internal.UNSET;
 import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
 import com.aol.cyclops.internal.matcher2.MatchableCase;
 import com.aol.cyclops.internal.matcher2.MatchingInstance;
@@ -42,24 +48,53 @@ import lombok.Getter;
 /**
  * Matchable
  * 
- * todo - add AsMatchable.asMatchable
+ * Gateway to the pattern matching API.
+ * 
+ * @see {@link Matchables} for precanned structural pattern matching against JDK classes
+ *
+ * Matchable supports tail recursion
+ * 
+ * <pre>
+ * {@code 
+ * @Test
+    public void odd(){
+        System.out.println(even(Eval.now(200000)).get());
+    }
+    public Eval<String> odd(Eval<Integer> n )  {
+       
+       return n.flatMap(x->even(Eval.now(x-1)));
+    }
+    public Eval<String> even(Eval<Integer> n )  {
+        return n.flatMap(x->{
+            return Matchable.of(x)
+                            .matches(c->c.is(when(lessThanOrEquals(0)), then(()->"done")), 
+                                                    odd(Eval.now(x-1)));
+        });
+     }
+ * 
+ * }
+ * </pre>
  * 
  * @author johnmcclean
  *
  */
 public interface Matchable<TYPE>{
-	
+	static interface TailRecSupplier<T> extends Supplier<T>{}
 	public static <T,R> Supplier<? extends R> then(R value){
 		return ()-> value;
 	}
 	public static <T,R> Supplier<? extends R> then(Supplier<? extends R> fn){
 		return fn;
 	}
+	
+	public static <R> Xor<Eval<? extends R>,Supplier<? extends R>> tailRec(Eval<? extends R> value){
+        return Xor.secondary(Eval.narrow(value));
+    }
 	public static <R> Supplier< R> otherwise(R value){
 		return ()-> value;
 	}
-	public static <R> Supplier<R> otherwise(Supplier<? extends R> s){
-		return  (Supplier<R>)s;
+	public static <R> Supplier< R> otherwise(Supplier<? extends R> s){
+		return (Supplier<R>)s;
 	}
 	@SafeVarargs
 	public static <T,V>  Iterable<Predicate<? super T>> whenGuard(V... values){
@@ -161,10 +196,22 @@ public interface Matchable<TYPE>{
     	 */
     	@SuppressWarnings({ "rawtypes", "unchecked" })
     	default <R> Eval<R>  matches(Function<CheckValues<TYPE,R>,CheckValues<TYPE, R>> fn1,Supplier<? extends R> otherwise){
-    		return Eval.later(()->(R) new MatchingInstance(new MatchableCase( fn1.apply( (CheckValues)
-    				new MatchableCase(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
-    					.match(getMatchable()).orElseGet(otherwise));
-    	}
+     	    
+    	    if(otherwise instanceof Eval){
+    	       Eval<R> tailRec = (Eval<R>)otherwise;
+               return  Eval.later(()->(R) new MatchingInstance(new MatchableCase( fn1.apply( (CheckValues)
+                         new MatchableCase(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
+                             .match(getMatchable()).orElse(UNSET.VOID)).flatMap(i-> i==UNSET.VOID? tailRec : Eval.now(i));
+            }
+                 
+            return  Eval.later(()->(R) new MatchingInstance(new MatchableCase( fn1.apply( (CheckValues)
+                         new MatchableCase(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
+                             .match(getMatchable()).orElseGet(otherwise));
+             
+             
+             
+         }
+    	
     	
 	}
 	
@@ -316,11 +363,10 @@ public interface Matchable<TYPE>{
 				return match.apply(head,matchable);
 			});
 		}
+		
 		default <R> Eval<R>  matches(Function<CheckValues<TYPE,R>,CheckValues<TYPE,R>> iterable,Supplier<? extends R> otherwise){
-            
-                return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( iterable.apply( (CheckValues)
-                    new MatchableCase(new PatternMatcher()).withType(getMatchable().getClass())).getPatternMatcher()))
-                        .match(getMatchable()).orElseGet(otherwise));
+            MatchableObject<TYPE> obj = ()->getMatchable();
+            return obj.matches(iterable, otherwise);
           
         }
 		static interface MIUtil { 
@@ -491,10 +537,22 @@ public interface Matchable<TYPE>{
             } 
 	        default <R> Eval<R>  matches(Function<CheckValueOpt<T,R>,CheckValueOpt<T,R>> some,Supplier<? extends R> otherwise){
 	            Optional<T> opt = toOptional();
-	            if(opt.isPresent())
+	            if(opt.isPresent()){
+	                
+	               if(otherwise instanceof Eval){
+	                   Eval<R> tailRec = (Eval<R>)otherwise;
+	                   return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( some.apply( (CheckValueOpt)
+                               new MatchableCase(new PatternMatcher()).withTypeOpt(Tuple1.class)).getPatternMatcher()))
+                               .match(Tuple.tuple(opt.get())).orElse(UNSET.VOID)).flatMap(i-> i==UNSET.VOID? tailRec : Eval.now(i));
+	                }
+	                     
+	                 
 	                return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( some.apply( (CheckValueOpt)
-	                        new MatchableCase(new PatternMatcher()).withTypeOpt(Tuple1.class)).getPatternMatcher()))
-	                        .match(Tuple.tuple(opt.get())).orElseGet(otherwise));
+	                            new MatchableCase(new PatternMatcher()).withTypeOpt(Tuple1.class)).getPatternMatcher()))
+	                            .match(Tuple.tuple(opt.get())).orElseGet(otherwise));
+	                 
+	               
+	            }
 	            return Eval.later(()->otherwise.get());
 	        }
 	    }
@@ -538,6 +596,14 @@ public interface Matchable<TYPE>{
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		default <R> Eval<R>  matches(Function<CheckValue1<T1,R>,CheckValue1<T1,R>> fn1,Supplier<? extends R> otherwise){
+		    
+		    if(otherwise instanceof Eval){
+                Eval<R> tailRec = (Eval<R>)otherwise;
+                return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
+                        new MatchableCase(new PatternMatcher()).withType1(getMatchable().getClass())).getPatternMatcher()))
+                        .match(getMatchable()).orElse(UNSET.VOID)).flatMap(i-> i==UNSET.VOID? tailRec : Eval.now(i));
+             }
+		    
 			return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
 					new MatchableCase(new PatternMatcher()).withType1(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable()).orElseGet(otherwise));
@@ -560,7 +626,13 @@ public interface Matchable<TYPE>{
 			return  match.apply(it.v1, it.v2);
 		}	
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		default <R> Eval<R>  matches(Function<CheckValue2<T1,T2,R>,CheckValue2<T1,T2,R>> fn1,Supplier<R> otherwise){
+		default <R> Eval<R>  matches(Function<CheckValue2<T1,T2,R>,CheckValue2<T1,T2,R>> fn1,Supplier<? extends R> otherwise){
+		    if(otherwise instanceof Eval){
+                Eval<R> tailRec = (Eval<R>)otherwise;
+                return   Eval.later(()-> (R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue2)
+                            new MatchableCase(new PatternMatcher()).withType2(getMatchable().getClass())).getPatternMatcher()))
+                            .match(getMatchable()).orElse(UNSET.VOID)).flatMap(i-> i==UNSET.VOID? tailRec : Eval.now(i));
+             }
 			return Eval.later(()-> (R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue2)
 					new MatchableCase(new PatternMatcher()).withType2(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable()).orElseGet(otherwise));
@@ -593,7 +665,13 @@ public interface Matchable<TYPE>{
 		}	
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		default <R> Eval<R>  matches(Function<CheckValue3<T1,T2,T3,R>,CheckValue3<T1,T2,T3,R>> fn1,Supplier<R> otherwise){
-			return Eval.later(()-> (R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue3)
+		    if(otherwise instanceof Eval){
+                Eval<R> tailRec = (Eval<R>)otherwise;
+                return   Eval.later(()-> (R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue3)
+                            new MatchableCase(new PatternMatcher()).withType3(getMatchable().getClass())).getPatternMatcher()))
+                                .match(getMatchable()).orElse(UNSET.VOID)).flatMap(i-> i==UNSET.VOID? tailRec : Eval.now(i));
+             }
+		    return Eval.later(()-> (R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue3)
 					new MatchableCase(new PatternMatcher()).withType3(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable()).orElseGet(otherwise));
 		}
@@ -642,7 +720,13 @@ public interface Matchable<TYPE>{
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
         default <R> Eval<R>  matches(Function<CheckValue4<T1,T2,T3,T4,R>,CheckValue4<T1,T2,T3,T4,R>> fn1,Supplier<R> otherwise){
-			return Eval.later(()-> (R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue4)
+		    if(otherwise instanceof Eval){
+                Eval<R> tailRec = (Eval<R>)otherwise;
+                return   Eval.later(()-> (R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue4)
+                    new MatchableCase(new PatternMatcher()).withType4(getMatchable().getClass())).getPatternMatcher()))
+                        .match(getMatchable()).orElse(UNSET.VOID)).flatMap(i-> i==UNSET.VOID? tailRec : Eval.now(i));
+             }
+		    return Eval.later(()-> (R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue4)
 					new MatchableCase(new PatternMatcher()).withType4(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable()).orElseGet(otherwise));
 		}
@@ -725,6 +809,12 @@ public interface Matchable<TYPE>{
 		}	
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		default <R> Eval<R>  matches(Function<CheckValue5<T1,T2,T3,T4,T5,R>,CheckValue5<T1,T2,T3,T4,T5,R>> fn1,Supplier<R> otherwise){
+		    if(otherwise instanceof Eval){
+                Eval<R> tailRec = (Eval<R>)otherwise;
+                return   Eval.later(()-> (R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue5)
+                            new MatchableCase(new PatternMatcher()).withType5(getMatchable().getClass())).getPatternMatcher()))
+                            .match(getMatchable()).orElse(UNSET.VOID)).flatMap(i-> i==UNSET.VOID? tailRec : Eval.now(i));
+             }
 			return Eval.later(()-> (R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue5)
 					new MatchableCase(new PatternMatcher()).withType5(getMatchable().getClass())).getPatternMatcher()))
 						.match(getMatchable()).orElseGet(otherwise));

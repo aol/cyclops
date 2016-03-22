@@ -32,11 +32,7 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
-	@Override
-	default ReactiveSeq<T> stream(){
-		
-		return ReactiveSeq.fromIterable(this);
-	}
+	ReactiveSeq<T> stream();
 	
 
 	public static<T> PBagX<T> of(T...values){

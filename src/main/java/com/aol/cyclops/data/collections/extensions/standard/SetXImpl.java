@@ -3,9 +3,14 @@ package com.aol.cyclops.data.collections.extensions.standard;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
+
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX.LazyCollection;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,24 +19,34 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SetXImpl<T> implements SetX<T> {
 	
-	private final Set<T> set;
+    private final LazyCollection<T,Set<T>> lazy;
 	@Getter
 	private final Collector<T,?,Set<T>> collector;
 	
-	public SetXImpl(Set<T> set){
-		this.set = set;
-		this.collector = SetX.defaultCollector();
-	}
-	public SetXImpl(){
-		this.collector = SetX.defaultCollector();
-		this.set = (Set)this.collector.supplier().get();
-	}
+	   public SetXImpl(Set<T> Set,Collector<T,?,Set<T>> collector){
+	        this.lazy = new LazyCollection<>(Set,null,collector);
+	        this.collector=  collector;
+	    }
+	    public SetXImpl(Set<T> Set){
+	        
+	        this.collector = SetX.defaultCollector();
+	        this.lazy = new LazyCollection<T,Set<T>>(Set,null,collector);
+	    }
+	    private SetXImpl(Stream<T> stream){
+	        
+	        this.collector = SetX.defaultCollector();
+	        this.lazy = new LazyCollection<>(null,stream,collector);
+	    }
+	    public SetXImpl(){
+	        this.collector = SetX.defaultCollector();
+	        this.lazy = new LazyCollection<>((Set)this.collector.supplier().get(),null,collector);
+	    }
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)
 	 */
 	public void forEach(Consumer<? super T> action) {
-		set.forEach(action);
+		getSet().forEach(action);
 	}
 
 	/**
@@ -39,7 +54,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see org.pcollections.MapPSet#iterator()
 	 */
 	public Iterator<T> iterator() {
-		return set.iterator();
+		return getSet().iterator();
 	}
 
 	/**
@@ -47,7 +62,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see org.pcollections.MapPSet#size()
 	 */
 	public int size() {
-		return set.size();
+		return getSet().size();
 	}
 
 	/**
@@ -56,7 +71,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see org.pcollections.MapPSet#contains(java.lang.Object)
 	 */
 	public boolean contains(Object e) {
-		return set.contains(e);
+		return getSet().contains(e);
 	}
 
 	/**
@@ -65,7 +80,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractSet#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
-		return set.equals(o);
+		return getSet().equals(o);
 	}
 
 
@@ -75,7 +90,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractCollection#isEmpty()
 	 */
 	public boolean isEmpty() {
-		return set.isEmpty();
+		return getSet().isEmpty();
 	}
 
 	/**
@@ -83,7 +98,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractSet#hashCode()
 	 */
 	public int hashCode() {
-		return set.hashCode();
+		return getSet().hashCode();
 	}
 
 	/**
@@ -91,7 +106,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractCollection#toArray()
 	 */
 	public Object[] toArray() {
-		return set.toArray();
+		return getSet().toArray();
 	}
 
 	/**
@@ -100,7 +115,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractSet#removeAll(java.util.Collection)
 	 */
 	public boolean removeAll(Collection<?> c) {
-		return set.removeAll(c);
+		return getSet().removeAll(c);
 	}
 
 	/**
@@ -109,7 +124,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractCollection#toArray(java.lang.Object[])
 	 */
 	public <T> T[] toArray(T[] a) {
-		return set.toArray(a);
+		return getSet().toArray(a);
 	}
 
 	/**
@@ -118,7 +133,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractCollection#add(java.lang.Object)
 	 */
 	public boolean add(T e) {
-		return set.add(e);
+		return getSet().add(e);
 	}
 
 	/**
@@ -127,7 +142,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractCollection#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) {
-		return set.remove(o);
+		return getSet().remove(o);
 	}
 
 	/**
@@ -136,7 +151,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractCollection#containsAll(java.util.Collection)
 	 */
 	public boolean containsAll(Collection<?> c) {
-		return set.containsAll(c);
+		return getSet().containsAll(c);
 	}
 
 	/**
@@ -145,7 +160,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractCollection#addAll(java.util.Collection)
 	 */
 	public boolean addAll(Collection<? extends T> c) {
-		return set.addAll(c);
+		return getSet().addAll(c);
 	}
 
 	/**
@@ -154,7 +169,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractCollection#retainAll(java.util.Collection)
 	 */
 	public boolean retainAll(Collection<?> c) {
-		return set.retainAll(c);
+		return getSet().retainAll(c);
 	}
 
 	/**
@@ -162,7 +177,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractCollection#clear()
 	 */
 	public void clear() {
-		set.clear();
+		getSet().clear();
 	}
 
 	/**
@@ -170,7 +185,7 @@ public class SetXImpl<T> implements SetX<T> {
 	 * @see java.util.AbstractCollection#toString()
 	 */
 	public String toString() {
-		return set.toString();
+		return getSet().toString();
 	}
 
 	/* (non-Javadoc)
@@ -188,7 +203,23 @@ public class SetXImpl<T> implements SetX<T> {
 	public long count() {
 		return this.size();
 	}
-
+    private Set<T> getSet() {
+        return lazy.get();
+    }
+   
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.persistent.PBagX#stream()
+     */
+    @Override
+    public ReactiveSeq<T> stream() {
+        return lazy.stream();
+    }
+    
+    @Override
+    public <X> SetX<X> stream(Stream<X> stream){
+        return new SetXImpl<X>(stream);
+    }
 	
 
 }

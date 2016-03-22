@@ -2,6 +2,7 @@ package com.aol.cyclops.data.collections.extensions.standard;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,9 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX.LazyCollection;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -22,25 +26,38 @@ import lombok.Getter;
 @AllArgsConstructor
 public class QueueXImpl<T> implements QueueX<T> {
 	
-	private final Queue<T> list;
+    private final LazyCollection<T,Queue<T>> lazy;
 	@Getter
 	private final Collector<T,?,Queue<T>> collector;
 	
-	public QueueXImpl(Queue<T> list){
-		this.list = list;
-		
-		this.collector = QueueX.defaultCollector();
-	}
-	public QueueXImpl(){
-		this.collector = QueueX.defaultCollector();
-		this.list = (Queue)this.collector.supplier().get();
-	}
+    public QueueXImpl(Queue<T> Queue, Collector<T, ?, Queue<T>> collector) {
+        this.lazy = new LazyCollection<>(Queue, null, collector);
+        this.collector = collector;
+    }
+
+    public QueueXImpl(Queue<T> Queue) {
+
+        this.collector = QueueX.defaultCollector();
+        this.lazy = new LazyCollection<T, Queue<T>>(Queue, null, collector);
+    }
+
+    private QueueXImpl(Stream<T> stream) {
+
+        this.collector = QueueX.defaultCollector();
+        this.lazy = new LazyCollection<>(null, stream, collector);
+    }
+
+    public QueueXImpl() {
+        this.collector = QueueX.defaultCollector();
+        this.lazy = new LazyCollection<>((Queue) this.collector.supplier().get(), null, collector);
+    }
+
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)
 	 */
 	public void forEach(Consumer<? super T> action) {
-		list.forEach(action);
+		getQueue().forEach(action);
 	}
 
 	/**
@@ -48,7 +65,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see org.pcollections.MapPSet#iterator()
 	 */
 	public Iterator<T> iterator() {
-		return list.iterator();
+		return getQueue().iterator();
 	}
 
 	/**
@@ -56,7 +73,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see org.pcollections.MapPSet#size()
 	 */
 	public int size() {
-		return list.size();
+		return getQueue().size();
 	}
 
 	/**
@@ -65,7 +82,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see org.pcollections.MapPSet#contains(java.lang.Object)
 	 */
 	public boolean contains(Object e) {
-		return list.contains(e);
+		return getQueue().contains(e);
 	}
 
 	/**
@@ -74,7 +91,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractSet#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
-		return list.equals(o);
+		return getQueue().equals(o);
 	}
 
 
@@ -84,7 +101,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractCollection#isEmpty()
 	 */
 	public boolean isEmpty() {
-		return list.isEmpty();
+		return getQueue().isEmpty();
 	}
 
 	/**
@@ -92,7 +109,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractSet#hashCode()
 	 */
 	public int hashCode() {
-		return list.hashCode();
+		return getQueue().hashCode();
 	}
 
 	/**
@@ -100,7 +117,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractCollection#toArray()
 	 */
 	public Object[] toArray() {
-		return list.toArray();
+		return getQueue().toArray();
 	}
 
 	/**
@@ -109,7 +126,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractSet#removeAll(java.util.Collection)
 	 */
 	public boolean removeAll(Collection<?> c) {
-		return list.removeAll(c);
+		return getQueue().removeAll(c);
 	}
 
 	/**
@@ -118,7 +135,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractCollection#toArray(java.lang.Object[])
 	 */
 	public <T> T[] toArray(T[] a) {
-		return list.toArray(a);
+		return getQueue().toArray(a);
 	}
 
 	/**
@@ -127,7 +144,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractCollection#add(java.lang.Object)
 	 */
 	public boolean add(T e) {
-		return list.add(e);
+		return getQueue().add(e);
 	}
 
 	/**
@@ -136,7 +153,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractCollection#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) {
-		return list.remove(o);
+		return getQueue().remove(o);
 	}
 
 	/**
@@ -145,7 +162,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractCollection#containsAll(java.util.Collection)
 	 */
 	public boolean containsAll(Collection<?> c) {
-		return list.containsAll(c);
+		return getQueue().containsAll(c);
 	}
 
 	/**
@@ -154,7 +171,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractCollection#addAll(java.util.Collection)
 	 */
 	public boolean addAll(Collection<? extends T> c) {
-		return list.addAll(c);
+		return getQueue().addAll(c);
 	}
 
 	/**
@@ -163,7 +180,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractCollection#retainAll(java.util.Collection)
 	 */
 	public boolean retainAll(Collection<?> c) {
-		return list.retainAll(c);
+		return getQueue().retainAll(c);
 	}
 
 	/**
@@ -171,7 +188,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractCollection#clear()
 	 */
 	public void clear() {
-		list.clear();
+		getQueue().clear();
 	}
 
 	/**
@@ -179,7 +196,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.AbstractCollection#toString()
 	 */
 	public String toString() {
-		return list.toString();
+		return getQueue().toString();
 	}
 
 	/* (non-Javadoc)
@@ -204,7 +221,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.Collection#removeIf(java.util.function.Predicate)
 	 */
 	public  boolean removeIf(Predicate<? super T> filter) {
-		return list.removeIf(filter);
+		return getQueue().removeIf(filter);
 	}
 	
 	
@@ -213,7 +230,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.Collection#parallelStream()
 	 */
 	public  Stream<T> parallelStream() {
-		return list.parallelStream();
+		return getQueue().parallelStream();
 	}
 	
 	/**
@@ -221,7 +238,7 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.List#spliterator()
 	 */
 	public Spliterator<T> spliterator() {
-		return list.spliterator();
+		return getQueue().spliterator();
 	}
 	/**
 	 * @param e
@@ -229,38 +246,50 @@ public class QueueXImpl<T> implements QueueX<T> {
 	 * @see java.util.Queue#offer(java.lang.Object)
 	 */
 	public boolean offer(T e) {
-		return list.offer(e);
+		return getQueue().offer(e);
 	}
 	/**
 	 * @return
 	 * @see java.util.Queue#remove()
 	 */
 	public T remove() {
-		return list.remove();
+		return getQueue().remove();
 	}
 	/**
 	 * @return
 	 * @see java.util.Queue#poll()
 	 */
 	public T poll() {
-		return list.poll();
+		return getQueue().poll();
 	}
 	/**
 	 * @return
 	 * @see java.util.Queue#element()
 	 */
 	public T element() {
-		return list.element();
+		return getQueue().element();
 	}
 	/**
 	 * @return
 	 * @see java.util.Queue#peek()
 	 */
 	public T peek() {
-		return list.peek();
+		return getQueue().peek();
 	}
+    private Queue<T> getQueue() {
+        return lazy.get();
+    }
 	
-
-	
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.persistent.PBagX#stream()
+     */
+    @Override
+    public ReactiveSeq<T> stream() {
+        return lazy.stream();
+    }
+    @Override
+    public <X> QueueX<X> stream(Stream<X> stream){
+        return new QueueXImpl<X>(stream);
+    }
 
 }

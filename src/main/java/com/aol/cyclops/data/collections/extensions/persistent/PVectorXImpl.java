@@ -11,7 +11,12 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import org.pcollections.PQueue;
 import org.pcollections.PVector;
+
+import com.aol.cyclops.Reducers;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX.LazyCollection;
 
 import lombok.AllArgsConstructor;
 
@@ -19,14 +24,20 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class PVectorXImpl<T> implements PVectorX<T> {
 	
-	private final PVector<T> stack;
+    private final LazyCollection<T,PVector<T>> lazy;
+    public PVectorXImpl(PVector<T> q){
+        this.lazy = new LazyCollection<>(q,null,Reducers.toPVector());
+    }
+    private PVectorXImpl(Stream<T> stream){
+        this.lazy = new LazyCollection<>(null,stream,Reducers.toPVector());
+    }
 
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)
 	 */
 	public void forEach(Consumer<? super T> action) {
-		stack.forEach(action);
+		getVector().forEach(action);
 	}
 
 	/**
@@ -34,7 +45,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.MapPSet#iterator()
 	 */
 	public Iterator<T> iterator() {
-		return stack.iterator();
+		return getVector().iterator();
 	}
 
 	/**
@@ -42,7 +53,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.MapPSet#size()
 	 */
 	public int size() {
-		return stack.size();
+		return getVector().size();
 	}
 
 	/**
@@ -51,7 +62,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.MapPSet#contains(java.lang.Object)
 	 */
 	public boolean contains(Object e) {
-		return stack.contains(e);
+		return getVector().contains(e);
 	}
 
 	/**
@@ -60,7 +71,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.AbstractSet#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
-		return stack.equals(o);
+		return getVector().equals(o);
 	}
 
 	/**
@@ -69,7 +80,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.MapPSet#plus(java.lang.Object)
 	 */
 	public PVectorX<T> plus(T e) {
-		return new PVectorXImpl<>(stack.plus(e));
+		return new PVectorXImpl<>(getVector().plus(e));
 	}
 
 	/**
@@ -78,7 +89,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.MapPSet#minus(java.lang.Object)
 	 */
 	public  PVectorX<T> minus(Object e) {
-		return new PVectorXImpl<>(stack.minus(e));
+		return new PVectorXImpl<>(getVector().minus(e));
 	}
 
 	/**
@@ -87,7 +98,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.MapPSet#plusAll(java.util.Collection)
 	 */
 	public  PVectorX<T> plusAll(Collection<? extends T> list) {
-		return  new PVectorXImpl<>(stack.plusAll(list));
+		return  new PVectorXImpl<>(getVector().plusAll(list));
 	}
 
 	/**
@@ -96,7 +107,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.MapPSet#minusAll(java.util.Collection)
 	 */
 	public PVectorX<T> minusAll(Collection<?> list) {
-		return  new PVectorXImpl<>(stack.minusAll(list));
+		return  new PVectorXImpl<>(getVector().minusAll(list));
 	}
 
 	/**
@@ -104,7 +115,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.AbstractCollection#isEmpty()
 	 */
 	public boolean isEmpty() {
-		return stack.isEmpty();
+		return getVector().isEmpty();
 	}
 
 	/**
@@ -112,7 +123,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.AbstractSet#hashCode()
 	 */
 	public int hashCode() {
-		return stack.hashCode();
+		return getVector().hashCode();
 	}
 
 	/**
@@ -120,7 +131,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.AbstractCollection#toArray()
 	 */
 	public Object[] toArray() {
-		return stack.toArray();
+		return getVector().toArray();
 	}
 
 	/**
@@ -129,7 +140,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.AbstractSet#removeAll(java.util.Collection)
 	 */
 	public boolean removeAll(Collection<?> c) {
-		return stack.removeAll(c);
+		return getVector().removeAll(c);
 	}
 
 	/**
@@ -138,7 +149,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.AbstractCollection#toArray(java.lang.Object[])
 	 */
 	public <T> T[] toArray(T[] a) {
-		return stack.toArray(a);
+		return getVector().toArray(a);
 	}
 
 	/**
@@ -147,7 +158,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.AbstractCollection#add(java.lang.Object)
 	 */
 	public boolean add(T e) {
-		return stack.add(e);
+		return getVector().add(e);
 	}
 
 	/**
@@ -156,7 +167,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.AbstractCollection#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) {
-		return stack.remove(o);
+		return getVector().remove(o);
 	}
 
 	/**
@@ -165,7 +176,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.AbstractCollection#containsAll(java.util.Collection)
 	 */
 	public boolean containsAll(Collection<?> c) {
-		return stack.containsAll(c);
+		return getVector().containsAll(c);
 	}
 
 	/**
@@ -175,7 +186,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 */
 	@Deprecated
 	public boolean addAll(Collection<? extends T> c) {
-		return stack.addAll(c);
+		return getVector().addAll(c);
 	}
 
 	/**
@@ -185,7 +196,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 */
 	@Deprecated
 	public boolean retainAll(Collection<?> c) {
-		return stack.retainAll(c);
+		return getVector().retainAll(c);
 	}
 
 	/**
@@ -194,7 +205,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 */
 	@Deprecated
 	public void clear() {
-		stack.clear();
+		getVector().clear();
 	}
 
 	/**
@@ -202,7 +213,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.AbstractCollection#toString()
 	 */
 	public String toString() {
-		return stack.toString();
+		return getVector().toString();
 	}
 
 	/* (non-Javadoc)
@@ -228,7 +239,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.PStack#with(int, java.lang.Object)
 	 */
 	public PVectorX<T> with(int i, T e) {
-		return new PVectorXImpl<>(stack.with(i, e));
+		return new PVectorXImpl<>(getVector().with(i, e));
 	}
 
 	/**
@@ -238,7 +249,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.PStack#plus(int, java.lang.Object)
 	 */
 	public PVectorX<T> plus(int i, T e) {
-		return new PVectorXImpl<>(stack.plus(i, e));
+		return new PVectorXImpl<>(getVector().plus(i, e));
 	}
 
 	/**
@@ -248,7 +259,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.PStack#plusAll(int, java.util.Collection)
 	 */
 	public PVectorX<T> plusAll(int i, Collection<? extends T> list) {
-		return new PVectorXImpl<>(stack.plusAll(i, list));
+		return new PVectorXImpl<>(getVector().plusAll(i, list));
 	}
 
 	/**
@@ -257,7 +268,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.PStack#minus(int)
 	 */
 	public PVectorX<T> minus(int i) {
-		return new PVectorXImpl<>(stack.minus(i));
+		return new PVectorXImpl<>(getVector().minus(i));
 	}
 
 	/**
@@ -267,7 +278,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.PStack#subList(int, int)
 	 */
 	public PVectorX<T> subList(int start, int end) {
-		return new PVectorXImpl<>(stack.subList(start, end));
+		return new PVectorXImpl<>(getVector().subList(start, end));
 	}
 
 	
@@ -280,7 +291,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.PSequence#addAll(int, java.util.Collection)
 	 */
 	public boolean addAll(int index, Collection<? extends T> c) {
-		return stack.addAll(index, c);
+		return getVector().addAll(index, c);
 	}
 
 	/**
@@ -291,7 +302,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.PSequence#set(int, java.lang.Object)
 	 */
 	public T set(int index, T element) {
-		return stack.set(index, element);
+		return getVector().set(index, element);
 	}
 
 	/**
@@ -301,7 +312,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.PSequence#add(int, java.lang.Object)
 	 */
 	public void add(int index, T element) {
-		stack.add(index, element);
+		getVector().add(index, element);
 	}
 
 	/**
@@ -311,7 +322,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see org.pcollections.PSequence#remove(int)
 	 */
 	public T remove(int index) {
-		return stack.remove(index);
+		return getVector().remove(index);
 	}
 
 	/**
@@ -319,7 +330,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.List#replaceAll(java.util.function.UnaryOperator)
 	 */
 	public  void replaceAll(UnaryOperator<T> operator) {
-		stack.replaceAll(operator);
+		getVector().replaceAll(operator);
 	}
 
 	/**
@@ -328,7 +339,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.Collection#removeIf(java.util.function.Predicate)
 	 */
 	public boolean removeIf(Predicate<? super T> filter) {
-		return stack.removeIf(filter);
+		return getVector().removeIf(filter);
 	}
 
 	/**
@@ -336,7 +347,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.List#sort(java.util.Comparator)
 	 */
 	public void sort(Comparator<? super T> c) {
-		stack.sort(c);
+		getVector().sort(c);
 	}
 
 	/**
@@ -344,7 +355,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.Collection#spliterator()
 	 */
 	public Spliterator<T> spliterator() {
-		return stack.spliterator();
+		return getVector().spliterator();
 	}
 
 	/**
@@ -353,7 +364,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.List#get(int)
 	 */
 	public T get(int index) {
-		return stack.get(index);
+		return getVector().get(index);
 	}
 
 	
@@ -363,7 +374,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.Collection#parallelStream()
 	 */
 	public Stream<T> parallelStream() {
-		return stack.parallelStream();
+		return getVector().parallelStream();
 	}
 
 	/**
@@ -372,7 +383,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.List#indexOf(java.lang.Object)
 	 */
 	public int indexOf(Object o) {
-		return stack.indexOf(o);
+		return getVector().indexOf(o);
 	}
 
 	/**
@@ -381,7 +392,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.List#lastIndexOf(java.lang.Object)
 	 */
 	public int lastIndexOf(Object o) {
-		return stack.lastIndexOf(o);
+		return getVector().lastIndexOf(o);
 	}
 
 	/**
@@ -389,7 +400,7 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.List#listIterator()
 	 */
 	public ListIterator<T> listIterator() {
-		return stack.listIterator();
+		return getVector().listIterator();
 	}
 
 	/**
@@ -398,9 +409,22 @@ public class PVectorXImpl<T> implements PVectorX<T> {
 	 * @see java.util.List#listIterator(int)
 	 */
 	public ListIterator<T> listIterator(int index) {
-		return stack.listIterator(index);
+		return getVector().listIterator(index);
 	}
 
-	
+    private PVector<T> getVector() {
+        return lazy.get();
+    }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.persistent.PBagX#stream()
+     */
+    @Override
+    public ReactiveSeq<T> stream() {
+        return lazy.stream();
+    }
+    @Override
+    public <X> PVectorX<X> stream(Stream<X> stream){
+        return new PVectorXImpl<X>(stream);
+    }
 }

@@ -413,8 +413,8 @@ public class Eval2Test {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Now[10]"));
-		assertThat(none.mkString(),equalTo("Now[]"));
+		assertThat(just.mkString(),equalTo("Always[10]"));
+		assertThat(none.mkString(),equalTo("Always[]"));
 	}
 	LazyReact react = new LazyReact();
 	@Test

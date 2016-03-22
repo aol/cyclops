@@ -2,6 +2,7 @@ package com.aol.cyclops.data.collections.extensions.standard;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -27,60 +28,82 @@ import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
+import lombok.AllArgsConstructor;
+
 public interface MutableCollectionX<T> extends FluentCollectionX<T> {
-	
-	<X> MutableCollectionX<X> fromStream(Stream<X> stream);
+    @AllArgsConstructor
+    static class LazyCollection<T,C extends Collection<T>>{
+        private volatile C list;
+        private volatile Stream<T> seq;
+        private final Collector<T,?,C> collector;
+        public C get(){
+            if( seq!=null){
+               list =  seq.collect(collector);
+               seq = null;
+            }
+              
+            return list;
+            
+        }
+        
+        public ReactiveSeq<T> stream(){
+            if(seq!=null)
+                return ReactiveSeq.fromStream(seq);
+            return ReactiveSeq.fromIterable(list);
+        }
+    }
+	<X> MutableCollectionX<X> stream(Stream<X> stream);
 	@Override
 	default MutableCollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
-	    return fromStream(stream().combine(predicate, op)); 
+	    return stream(stream().combine(predicate, op)); 
 	}
 	@Override
 	default MutableCollectionX<T> reverse(){
-		return fromStream(stream().reverse()); 
+		return stream(stream().reverse()); 
 	}
 	@Override
 	default MutableCollectionX<T> filter(Predicate<? super T> pred){
-		return fromStream(stream().filter(pred));
+		return stream(stream().filter(pred));
 	}
 	@Override
 	default <R> CollectionX<R> map(Function<? super T, ? extends R> mapper){
-		return fromStream(stream().map(mapper));
+		return stream(stream().map(mapper));
 	}
 	@Override
 	default <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper){
-		return fromStream(stream().flatMap(mapper.andThen(StreamUtils::stream)));
+		return stream(stream().flatMap(mapper.andThen(StreamUtils::stream)));
 	}
 	@Override
 	default MutableCollectionX<T> limit(long num){
-		return fromStream(stream().limit(num));
+		return stream(stream().limit(num));
 	}
 	@Override
 	default MutableCollectionX<T> skip(long num){
-		return fromStream(stream().skip(num));
+		return stream(stream().skip(num));
 	}
 	@Override
 	default MutableCollectionX<T> takeRight(int num){
-		return fromStream(stream().limitLast(num));
+		return stream(stream().limitLast(num));
 	}
 	@Override
 	default MutableCollectionX<T> dropRight(int num){
-		return fromStream(stream().skipLast(num));
+		return stream(stream().skipLast(num));
 	}
 	@Override
 	default MutableCollectionX<T> takeWhile(Predicate<? super T> p){
-		return fromStream(stream().limitWhile(p));
+		return stream(stream().limitWhile(p));
 	}
 	@Override
 	default MutableCollectionX<T> dropWhile(Predicate<? super T> p){
-		return fromStream(stream().skipWhile(p));
+		return stream(stream().skipWhile(p));
 	}
 	@Override
 	default MutableCollectionX<T> takeUntil(Predicate<? super T> p){
-		return fromStream(stream().limitUntil(p));
+		return stream(stream().limitUntil(p));
 	}
 	@Override
 	default MutableCollectionX<T> dropUntil(Predicate<? super T> p){
-		return fromStream(stream().skipUntil(p));
+		return stream(stream().skipUntil(p));
 	}
 	 /**
 	  * Performs a map operation that can call a recursive method without running out of stack space
@@ -116,7 +139,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	default <R> MutableCollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper){
 		
-		 return  fromStream(stream().trampoline(mapper));	 
+		 return  stream(stream().trampoline(mapper));	 
 	}
 	/*
 	 * (non-Javadoc)
@@ -124,43 +147,43 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 * @see org.jooq.lambda.Seq#slice(long, long)
 	 */
 	default MutableCollectionX<T> slice(long from, long to){
-		return fromStream(stream().slice(from,to));	 
+		return stream(stream().slice(from,to));	 
 	}
 	
 	
 
 	default MutableCollectionX<ListX<T>> grouped(int groupSize){
-		return fromStream(stream().grouped(groupSize).map(ListX::fromIterable));	 
+		return stream(stream().grouped(groupSize).map(ListX::fromIterable));	 
 	}
 	default <K, A, D> MutableCollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
-		return fromStream(stream().grouped(classifier,downstream));	 
+		return stream(stream().grouped(classifier,downstream));	 
 	}
 	default <K> MutableCollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
-		return fromStream(stream().grouped(classifier));	 
+		return stream(stream().grouped(classifier));	 
 	}
 	default <U> MutableCollectionX<Tuple2<T, U>> zip(Iterable<U> other){
-		return fromStream(stream().zip(other));
+		return stream(stream().zip(other));
 	}
 	default <U, R> MutableCollectionX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
-		return fromStream(stream().zip(other,zipper));
+		return stream(stream().zip(other,zipper));
 	}
 	default MutableCollectionX<ListX<T>> sliding(int windowSize){
-		return fromStream(stream().sliding(windowSize).map(ListX::fromIterable));	
+		return stream(stream().sliding(windowSize).map(ListX::fromIterable));	
 	}
 	default MutableCollectionX<ListX<T>> sliding(int windowSize, int increment){
-		return fromStream(stream().sliding(windowSize,increment).map(ListX::fromIterable));	
+		return stream(stream().sliding(windowSize,increment).map(ListX::fromIterable));	
 	}
 	default MutableCollectionX<T> scanLeft(Monoid<T> monoid){
-		return fromStream(stream().scanLeft(monoid));	
+		return stream(stream().scanLeft(monoid));	
 	}
 	default <U> MutableCollectionX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
-		return fromStream(stream().scanLeft(seed,function));	
+		return stream(stream().scanLeft(seed,function));	
 	}
 	default MutableCollectionX<T> scanRight(Monoid<T> monoid){
-		return fromStream(stream().scanRight(monoid));	
+		return stream(stream().scanRight(monoid));	
 	}
 	default <U> MutableCollectionX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
-		return fromStream(stream().scanRight(identity,combiner));
+		return stream(stream().scanRight(identity,combiner));
 	}
 	
 
@@ -170,7 +193,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
 	 */
 	default <U extends Comparable<? super U>> MutableCollectionX<T> sorted(Function<? super T, ? extends U> function){
-		return fromStream(stream().sorted(function));
+		return stream(stream().sorted(function));
 	}
 	default MutableCollectionX<T> plus(T e){
 		add(e);
@@ -203,7 +226,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> cycle(int times) {
 		
-		return fromStream(stream().cycle(times));
+		return stream(stream().cycle(times));
 	}
 
 	/* (non-Javadoc)
@@ -212,7 +235,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> cycle(Monoid<T> m, int times) {
 		
-		return fromStream(stream().cycle(m, times));
+		return stream(stream().cycle(m, times));
 	}
 
 	/* (non-Javadoc)
@@ -221,7 +244,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> cycleWhile(Predicate<? super T> predicate) {
 		
-		return fromStream(stream().cycleWhile(predicate));
+		return stream(stream().cycleWhile(predicate));
 	}
 
 	/* (non-Javadoc)
@@ -230,7 +253,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> cycleUntil(Predicate<? super T> predicate) {
 		
-		return fromStream(stream().cycleUntil(predicate));
+		return stream(stream().cycleUntil(predicate));
 	}
 
 	/* (non-Javadoc)
@@ -239,7 +262,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default <U> MutableCollectionX<Tuple2<T, U>> zipStream(Stream<U> other) {
 		
-		return fromStream(stream().zipStream(other));
+		return stream(stream().zipStream(other));
 	}
 
 	/* (non-Javadoc)
@@ -248,7 +271,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default <U> MutableCollectionX<Tuple2<T, U>> zip(Seq<U> other) {
 		
-		return fromStream(stream().zip(other));
+		return stream(stream().zip(other));
 	}
 
 	/* (non-Javadoc)
@@ -257,7 +280,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default <S, U> MutableCollectionX<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
 		
-		return fromStream(stream().zip3(second, third));
+		return stream(stream().zip3(second, third));
 	}
 
 	/* (non-Javadoc)
@@ -267,7 +290,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	default <T2, T3, T4> MutableCollectionX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
 			Stream<T4> fourth) {
 		
-		return fromStream(stream().zip4(second, third, fourth));
+		return stream(stream().zip4(second, third, fourth));
 	}
 
 	/* (non-Javadoc)
@@ -276,7 +299,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<Tuple2<T, Long>> zipWithIndex() {
 		
-		return fromStream(stream().zipWithIndex());
+		return stream(stream().zipWithIndex());
 	}
 
 	/* (non-Javadoc)
@@ -285,7 +308,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> distinct() {
 		
-		return fromStream(stream().distinct());
+		return stream(stream().distinct());
 	}
 
 	/* (non-Javadoc)
@@ -294,7 +317,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> sorted() {
 		
-		return fromStream(stream().sorted());
+		return stream(stream().sorted());
 	}
 
 	/* (non-Javadoc)
@@ -303,7 +326,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> sorted(Comparator<? super T> c) {
 		
-		return fromStream(stream().sorted(c));
+		return stream(stream().sorted(c));
 	}
 
 	/* (non-Javadoc)
@@ -312,7 +335,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> skipWhile(Predicate<? super T> p) {
 		
-		return fromStream(stream().skipWhile(p));
+		return stream(stream().skipWhile(p));
 	}
 
 	/* (non-Javadoc)
@@ -321,7 +344,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> skipUntil(Predicate<? super T> p) {
 		
-		return fromStream(stream().skipUntil(p));
+		return stream(stream().skipUntil(p));
 	}
 
 	/* (non-Javadoc)
@@ -330,7 +353,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> limitWhile(Predicate<? super T> p) {
 		
-		return fromStream(stream().limitWhile(p));
+		return stream(stream().limitWhile(p));
 	}
 
 	/* (non-Javadoc)
@@ -339,7 +362,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> limitUntil(Predicate<? super T> p) {
 		
-		return fromStream(stream().limitUntil(p));
+		return stream(stream().limitUntil(p));
 	}
 
 	
@@ -351,7 +374,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> intersperse(T value) {
 		
-		return fromStream(stream().intersperse(value));
+		return stream(stream().intersperse(value));
 	}
 
 	/* (non-Javadoc)
@@ -360,7 +383,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> shuffle() {
 		
-		return fromStream(stream().shuffle());
+		return stream(stream().shuffle());
 	}
 
 	
@@ -371,7 +394,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> skipLast(int num) {
 		
-		return fromStream(stream().skipLast(num));
+		return stream(stream().skipLast(num));
 	}
 
 	/* (non-Javadoc)
@@ -380,7 +403,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> limitLast(int num) {
 	
-		return fromStream(stream().limitLast(num));
+		return stream(stream().limitLast(num));
 	}
 
 	/* (non-Javadoc)
@@ -388,7 +411,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> onEmpty(T value) {
-		return fromStream(stream().onEmpty(value));
+		return stream(stream().onEmpty(value));
 	}
 
 	/* (non-Javadoc)
@@ -396,7 +419,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> onEmptyGet(Supplier<T> supplier) {
-		return fromStream(stream().onEmptyGet(supplier));
+		return stream(stream().onEmptyGet(supplier));
 	}
 
 	/* (non-Javadoc)
@@ -404,7 +427,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default <X extends Throwable> MutableCollectionX<T> onEmptyThrow(Supplier<X> supplier) {
-		return fromStream(stream().onEmptyThrow(supplier));
+		return stream(stream().onEmptyThrow(supplier));
 	}
 
 	/* (non-Javadoc)
@@ -412,7 +435,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> shuffle(Random random) {
-		return fromStream(stream().shuffle(random));
+		return stream(stream().shuffle(random));
 	}
 
 	/* (non-Javadoc)
@@ -429,7 +452,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> filterNot(Predicate<? super T> fn) {
-	    return fromStream(stream().filterNot(fn));
+	    return stream(stream().filterNot(fn));
 		
 	}
 
@@ -438,7 +461,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> notNull() {
-	    return fromStream(stream().notNull());
+	    return stream(stream().notNull());
 		
 	}
 
@@ -448,12 +471,12 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	@Override
 	default MutableCollectionX<T> removeAll(Stream<T> stream) {
 		
-	    return fromStream(stream().removeAll(stream));
+	    return stream(stream().removeAll(stream));
 	}
 	@Override
     default MutableCollectionX<T> removeAll(Seq<T> stream) {
         
-        return fromStream(stream().removeAll(stream));
+        return stream(stream().removeAll(stream));
     }
 
 	/* (non-Javadoc)
@@ -461,7 +484,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> removeAll(Iterable<T> it) {
-	    return fromStream(stream().removeAll(it));
+	    return stream(stream().removeAll(it));
 		
 	}
 
@@ -470,7 +493,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> removeAll(T... values) {
-	    return fromStream(stream().removeAll(values));
+	    return stream(stream().removeAll(values));
 		
 	}
 
@@ -479,7 +502,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> retainAll(Iterable<T> it) {
-	    return fromStream(stream().retainAll(it));
+	    return stream(stream().retainAll(it));
 	}
 
 	/* (non-Javadoc)
@@ -487,11 +510,11 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> retainAll(Stream<T> stream) {
-	    return fromStream(stream().retainAll(stream));
+	    return stream(stream().retainAll(stream));
 	}
 	@Override
     default MutableCollectionX<T> retainAll(Seq<T> stream) {
-        return fromStream(stream().retainAll(stream));
+        return stream(stream().retainAll(stream));
     }
 
 	/* (non-Javadoc)
@@ -499,7 +522,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<T> retainAll(T... values) {
-	    return fromStream(stream().retainAll(values));
+	    return stream(stream().retainAll(values));
 	}
 
 	
@@ -509,7 +532,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default <U> MutableCollectionX<U> cast(Class<U> type) {
-	    return fromStream(stream().cast(type));
+	    return stream(stream().cast(type));
 	}
 
 	
@@ -520,7 +543,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	default <R> MutableCollectionX<R> patternMatch(
 			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-	    return fromStream(stream().patternMatch(case1, otherwise));
+	    return stream(stream().patternMatch(case1, otherwise));
 	}
 
 	
@@ -530,7 +553,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<ReactiveSeq<T>> permutations() {
-		return fromStream(stream().permutations());
+		return stream(stream().permutations());
 		
 	}
 	/* (non-Javadoc)
@@ -538,51 +561,51 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 */
 	@Override
 	default MutableCollectionX<ReactiveSeq<T>> combinations(int size) {
-		return fromStream(stream().combinations(size));
+		return stream(stream().combinations(size));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
 	 */
 	@Override
 	default MutableCollectionX<ReactiveSeq<T>> combinations() {
-		return fromStream(stream().combinations());
+		return stream(stream().combinations());
 	}
 
     @Override
     default <C extends Collection<? super T>> MutableCollectionX<C> grouped(int size, Supplier<C> supplier) {
         
-        return fromStream(stream().grouped(size,supplier));
+        return stream(stream().grouped(size,supplier));
     }
 
     @Override
     default MutableCollectionX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
         
-        return fromStream(stream().groupedUntil(predicate));
+        return stream(stream().groupedUntil(predicate));
     }
 
     @Override
     default MutableCollectionX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
         
-        return fromStream(stream().groupedWhile(predicate));
+        return stream(stream().groupedWhile(predicate));
     }
 
     @Override
     default <C extends Collection<? super T>> MutableCollectionX<C> groupedWhile(Predicate<? super T> predicate,
             Supplier<C> factory) {
         
-        return fromStream(stream().groupedWhile(predicate,factory));
+        return stream(stream().groupedWhile(predicate,factory));
     }
 
     @Override
     default <C extends Collection<? super T>> MutableCollectionX<C> groupedUntil(Predicate<? super T> predicate,
             Supplier<C> factory) {
         
-        return fromStream(stream().groupedUntil(predicate,factory));
+        return stream(stream().groupedUntil(predicate,factory));
     }
 
     @Override
     default MutableCollectionX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return fromStream(stream().groupedStatefullyWhile(predicate));
+        return stream(stream().groupedStatefullyWhile(predicate));
     }
     
 	

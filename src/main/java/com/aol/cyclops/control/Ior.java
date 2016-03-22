@@ -381,9 +381,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
                 Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
                 Supplier<? extends R> otherwise) {
            
-            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
-                    new MatchableCase(new PatternMatcher()).withType1(getMatchable().getClass())).getPatternMatcher()))
-                    .match(getMatchable()).orElseGet(otherwise));
+            Matchable.MTuple1<PT> mt1 = ()->Tuple.tuple(value);
+            return mt1.matches(fn2, otherwise);
         }
 		
 		
@@ -509,10 +508,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
                 Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn2,
                 Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
                 Supplier<? extends R> otherwise) {
-           
-            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn2.apply( (CheckValue1)
-                    new MatchableCase(new PatternMatcher()).withType1(value.getClass())).getPatternMatcher()))
-                    .match(value).orElseGet(otherwise));
+           Matchable.MTuple1<ST> mt1 = ()->Tuple.tuple(value);
+           return mt1.matches(fn1, otherwise);
+          
         }
 	}
 	@AllArgsConstructor(access=AccessLevel.PACKAGE)
@@ -642,10 +640,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
                 Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn2,
                 Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
                 Supplier<? extends R> otherwise) {
+		        Matchable.MTuple2<ST,PT> mt2 = ()->Tuple.tuple(secondary.secondaryGet(),primary.get());
+	           return mt2.matches(fn3, otherwise);
            
-            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn3.apply( (CheckValue2)
-                    new MatchableCase(new PatternMatcher()).withType2(Tuple2.class)).getPatternMatcher()))
-                    .match(both().get()).orElseGet(otherwise));
         }
 	}
 }

@@ -101,10 +101,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	}
 	
 	@Override
-	default ReactiveSeq<T> stream(){
-		
-		return ReactiveSeq.fromIterable(this);
-	}
+	ReactiveSeq<T> stream();
 
 	@Override
 	default<R> SetX<R> unit(Collection<R> col){
@@ -125,10 +122,6 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	public <T>Collector<T,?,Set<T>> getCollector();
 	
 	
-	
-	default <X> SetX<X> fromStream(Stream<X> stream){
-		return new SetXImpl<>(stream.collect(getCollector()),getCollector());
-	}
 
 	
 

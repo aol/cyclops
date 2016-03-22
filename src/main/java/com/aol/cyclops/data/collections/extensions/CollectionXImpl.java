@@ -216,7 +216,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#fromStream(java.util.stream.Stream)
 	 */
 	@Override
-	public <X> MutableCollectionX<X> fromStream(Stream<X> stream) {
+	public <X> MutableCollectionX<X> stream(Stream<X> stream) {
 		return ListX.fromIterable(stream.collect(Collectors.toList()));
 	}
 }

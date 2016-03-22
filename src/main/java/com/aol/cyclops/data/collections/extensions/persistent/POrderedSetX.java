@@ -113,10 +113,8 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 		return empty();
 	}
 	@Override
-	default ReactiveSeq<T> stream(){
-		
-		return ReactiveSeq.fromIterable(this);
-	}
+	ReactiveSeq<T> stream();
+	
 	default POrderedSet<T> toPOrderedSet(){
 		return this;
 	}

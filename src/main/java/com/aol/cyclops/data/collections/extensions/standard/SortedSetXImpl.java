@@ -14,6 +14,9 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX.LazyCollection;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -21,24 +24,38 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SortedSetXImpl<T> implements SortedSetX<T> {
 	
-	private final SortedSet<T> set;
+    private final LazyCollection<T,SortedSet<T>> lazy;
 	@Getter
 	private final Collector<T,?,SortedSet<T>> collector;
-	
-	public SortedSetXImpl(SortedSet<T> set){
-		this.set = set;
-		this.collector = Collectors.toCollection(()->new TreeSet<>());
-	}
-	public SortedSetXImpl(){
-		this.collector = SortedSetX.defaultCollector();
-		this.set= (SortedSet)this.collector.supplier().get();
-	}
+
+    public SortedSetXImpl(SortedSet<T> SortedSet, Collector<T, ?, SortedSet<T>> collector) {
+        this.lazy = new LazyCollection<>(SortedSet, null, collector);
+        this.collector = collector;
+    }
+
+    public SortedSetXImpl(SortedSet<T> SortedSet) {
+
+        this.collector = SortedSetX.defaultCollector();
+        this.lazy = new LazyCollection<T, SortedSet<T>>(SortedSet, null, collector);
+    }
+
+    private SortedSetXImpl(Stream<T> stream) {
+
+        this.collector = SortedSetX.defaultCollector();
+        this.lazy = new LazyCollection<>(null, stream, collector);
+    }
+
+    public SortedSetXImpl() {
+        this.collector = SortedSetX.defaultCollector();
+        this.lazy = new LazyCollection<>((SortedSet) this.collector.supplier().get(), null, collector);
+    }
+
 	/**
 	 * @param action
 	 * @see java.lang.Iterable#forEach(java.util.function.Consumer)
 	 */
 	public void forEach(Consumer<? super T> action) {
-		set.forEach(action);
+		getSet().forEach(action);
 	}
 
 	/**
@@ -46,7 +63,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see org.pcollections.MapPSet#iterator()
 	 */
 	public Iterator<T> iterator() {
-		return set.iterator();
+		return getSet().iterator();
 	}
 
 	/**
@@ -54,7 +71,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see org.pcollections.MapPSet#size()
 	 */
 	public int size() {
-		return set.size();
+		return getSet().size();
 	}
 
 	/**
@@ -63,7 +80,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see org.pcollections.MapPSet#contains(java.lang.Object)
 	 */
 	public boolean contains(Object e) {
-		return set.contains(e);
+		return getSet().contains(e);
 	}
 
 	/**
@@ -72,7 +89,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractSet#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
-		return set.equals(o);
+		return getSet().equals(o);
 	}
 
 
@@ -82,7 +99,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractCollection#isEmpty()
 	 */
 	public boolean isEmpty() {
-		return set.isEmpty();
+		return getSet().isEmpty();
 	}
 
 	/**
@@ -90,7 +107,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractSet#hashCode()
 	 */
 	public int hashCode() {
-		return set.hashCode();
+		return getSet().hashCode();
 	}
 
 	/**
@@ -98,7 +115,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractCollection#toArray()
 	 */
 	public Object[] toArray() {
-		return set.toArray();
+		return getSet().toArray();
 	}
 
 	/**
@@ -107,7 +124,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractSet#removeAll(java.util.Collection)
 	 */
 	public boolean removeAll(Collection<?> c) {
-		return set.removeAll(c);
+		return getSet().removeAll(c);
 	}
 
 	/**
@@ -116,7 +133,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractCollection#toArray(java.lang.Object[])
 	 */
 	public <T> T[] toArray(T[] a) {
-		return set.toArray(a);
+		return getSet().toArray(a);
 	}
 
 	/**
@@ -125,7 +142,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractCollection#add(java.lang.Object)
 	 */
 	public boolean add(T e) {
-		return set.add(e);
+		return getSet().add(e);
 	}
 
 	/**
@@ -134,7 +151,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractCollection#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) {
-		return set.remove(o);
+		return getSet().remove(o);
 	}
 
 	/**
@@ -143,7 +160,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractCollection#containsAll(java.util.Collection)
 	 */
 	public boolean containsAll(Collection<?> c) {
-		return set.containsAll(c);
+		return getSet().containsAll(c);
 	}
 
 	/**
@@ -152,7 +169,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractCollection#addAll(java.util.Collection)
 	 */
 	public boolean addAll(Collection<? extends T> c) {
-		return set.addAll(c);
+		return getSet().addAll(c);
 	}
 
 	/**
@@ -161,7 +178,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractCollection#retainAll(java.util.Collection)
 	 */
 	public boolean retainAll(Collection<?> c) {
-		return set.retainAll(c);
+		return getSet().retainAll(c);
 	}
 
 	/**
@@ -169,7 +186,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractCollection#clear()
 	 */
 	public void clear() {
-		set.clear();
+		getSet().clear();
 	}
 
 	/**
@@ -177,7 +194,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.AbstractCollection#toString()
 	 */
 	public String toString() {
-		return set.toString();
+		return getSet().toString();
 	}
 
 	/* (non-Javadoc)
@@ -200,7 +217,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.SortedSet#comparator()
 	 */
 	public Comparator<? super T> comparator() {
-		return set.comparator();
+		return getSet().comparator();
 	}
 	/**
 	 * @param fromElement
@@ -209,7 +226,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.SortedSet#subSet(java.lang.Object, java.lang.Object)
 	 */
 	public SortedSetX<T> subSet(T fromElement, T toElement) {
-		return from(set.subSet(fromElement, toElement));
+		return from(getSet().subSet(fromElement, toElement));
 	}
 	/**
 	 * @param toElement
@@ -217,7 +234,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.SortedSet#headSet(java.lang.Object)
 	 */
 	public SortedSetX<T> headSet(T toElement) {
-		return from(set.headSet(toElement));
+		return from(getSet().headSet(toElement));
 	}
 	/**
 	 * @param fromElement
@@ -225,28 +242,28 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.SortedSet#tailSet(java.lang.Object)
 	 */
 	public SortedSet<T> tailSet(T fromElement) {
-		return from(set.tailSet(fromElement));
+		return from(getSet().tailSet(fromElement));
 	}
 	/**
 	 * @return
 	 * @see java.util.SortedSet#first()
 	 */
 	public T first() {
-		return set.first();
+		return getSet().first();
 	}
 	/**
 	 * @return
 	 * @see java.util.SortedSet#last()
 	 */
 	public T last() {
-		return set.last();
+		return getSet().last();
 	}
 	/**
 	 * @return
 	 * @see java.util.SortedSet#spliterator()
 	 */
 	public Spliterator<T> spliterator() {
-		return set.spliterator();
+		return getSet().spliterator();
 	}
 	/**
 	 * @param filter
@@ -254,7 +271,7 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.Collection#removeIf(java.util.function.Predicate)
 	 */
 	public  boolean removeIf(Predicate<? super T> filter) {
-		return set.removeIf(filter);
+		return getSet().removeIf(filter);
 	}
 	
 	/**
@@ -262,9 +279,22 @@ public class SortedSetXImpl<T> implements SortedSetX<T> {
 	 * @see java.util.Collection#parallelStream()
 	 */
 	public Stream<T> parallelStream() {
-		return set.parallelStream();
+		return getSet().parallelStream();
 	}
-
+    private SortedSet<T> getSet() {
+        return lazy.get();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.persistent.PBagX#stream()
+     */
+    @Override
+    public ReactiveSeq<T> stream() {
+        return lazy.stream();
+    }
+    @Override
+    public <X> SortedSetX<X> stream(Stream<X> stream){
+        return new SortedSetXImpl<X>(stream);
+    }
 	
 
 }

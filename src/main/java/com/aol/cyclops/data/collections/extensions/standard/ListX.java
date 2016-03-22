@@ -115,19 +115,14 @@ public interface ListX<T> extends List<T>,
         return (ListX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
     }
 	@Override
-	default ReactiveSeq<T> stream(){
-		
-		return ReactiveSeq.fromIterable(this);
-	}
+	ReactiveSeq<T> stream();
 	public <T> Collector<T,?,List<T>> getCollector();
 	
 	default <T1> ListX<T1> from(Collection<T1> c){
 		return ListX.<T1>fromIterable(getCollector(),c);
 	}
 	
-	default <X> ListX<X> fromStream(Stream<X> stream){
-		return new ListXImpl<>(stream.collect(getCollector()),getCollector());
-	}
+	
 	
 
 	/* (non-Javadoc)

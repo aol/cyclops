@@ -1,7 +1,7 @@
 package com.aol.cyclops.functions.collections.extensions.standard;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
@@ -40,6 +40,7 @@ public class ListXTest extends CollectionXTestsWithNulls{
        
         
     }
+	
 	 
 	@Test
 	public void when(){
