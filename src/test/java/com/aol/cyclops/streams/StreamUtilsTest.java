@@ -17,11 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collector;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import lombok.val;
 
 import org.junit.Test;
 
@@ -30,11 +28,43 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.types.stream.HeadAndTail;
+import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.util.stream.AsStreamable;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
+
+import lombok.val;
 public class StreamUtilsTest {
+    
+    @Test
+    public void debounceIssue(){
+        List<Integer> rs = StreamUtils.debounce(
+                StreamUtils.schedule(
+                        Stream.of(1,2,3,4,5).peek(x->System.out.println("utilPeek1:"+x))
+                        , "* * * * * ?", ThreadPools.getStandardRetry()
+                ).connect(), 10, TimeUnit.SECONDS
+        ).peek(x -> System.out.println("utilPeek2:"+x)).collect(Collectors.toList());
+        System.out.println("utilResultList:" + rs);
+        /**
+         * utilPeek1:1
+utilPeek2:1
+utilPeek1:2
+utilPeek1:3
+utilPeek1:4
+utilPeek1:5
+utilResultList:[1]
+         */
+    }
+    
+    @Test
+    public void reactiveSeq(){
+        HotStream<String> hotStream = ReactiveSeq.of("a", "b", "c", "d", "e")
+                .peek(x -> System.out.println("peek1:" + x))
+                .schedule("* * * * * ?", ThreadPools.getStandardRetry());
+    System.out.println("resultList:" + hotStream.connect().debounce(10, TimeUnit.SECONDS).peek(x->System.out.println("peek2:" + x)).toListX() );
+    }
 	@Test
 	public void headTailReplay(){
 	

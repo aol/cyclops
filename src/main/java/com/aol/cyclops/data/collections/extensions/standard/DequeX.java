@@ -39,6 +39,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	public static <T> DequeX<T> empty(){
 		return fromIterable((Deque<T>) defaultCollector().supplier().get());
 	}
+	@SafeVarargs
 	public static <T> DequeX<T> of(T...values){
 		Deque<T> res = (Deque<T>) defaultCollector().supplier().get();
 		for(T v: values)
