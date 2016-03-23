@@ -281,7 +281,12 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		public Ior<ST, PT> secondaryPeek(Consumer<? super ST> action) {
 			return this;
 		}
-
+		@Override
+		public <R> R visit(Function<? super ST,? extends R> secondary, 
+	            Function<? super PT,? extends R> primary, BiFunction<? super ST, ? super PT, ? extends R> both){	       
+	            return primary.apply(value);
+	    }
+	    
 		@Override
 		public Ior<ST, PT> peek(Consumer<? super PT> action) {
 			action.accept(value);
@@ -477,7 +482,11 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		public Value<ST> secondaryValue(){
 			return Value.of(()->value);
 		}
-		
+		@Override
+		public <R> R visit(Function<? super ST,? extends R> secondary, 
+	            Function<? super PT,? extends R> primary, BiFunction<? super ST, ? super PT, ? extends R> both){
+	        return swap().visit(secondary,()->null);  
+	    }
 		@Override
 		public boolean isBoth() {
 			return false;
@@ -569,6 +578,14 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 			return Ior.both(primary.swap(), secondary.swap());
 			
 		}
+		@Override
+		public <R> R visit(Function<? super ST,? extends R> secondary, 
+	            Function<? super PT,? extends R> primary, BiFunction<? super ST, ? super PT, ? extends R> both){
+	        
+	        
+	        return Matchable.from(both().get()).visit((a,b)-> both.apply(a, b));
+	    }
+		
 		@Override
 		public Optional<Tuple2<ST, PT>> both() {
 			return Optional.of(Tuple.tuple(secondary.secondaryGet(),primary.get()));

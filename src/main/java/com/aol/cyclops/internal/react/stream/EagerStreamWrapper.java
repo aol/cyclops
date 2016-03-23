@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -68,7 +67,7 @@ public class EagerStreamWrapper implements StreamWrapper {
 	}
 	static  List<CompletableFuture> collect(Stream<CompletableFuture> stream,Collector c,Optional<Consumer<Throwable>> errorHandler){
 	   
-	    Function<Throwable,Object> captureFn = t->{BlockingStreamHelper.captureUnwrap((CompletionException)t, errorHandler); throw ExceptionSoftener.throwSoftenedException(t);};
+	    Function<Throwable,Object> captureFn = t->{BlockingStreamHelper.captureUnwrap(t, errorHandler); throw ExceptionSoftener.throwSoftenedException(t);};
 	    if(errorHandler.isPresent())
 	        return (List<CompletableFuture>)stream
 	                                .map(cf->cf.exceptionally(captureFn))

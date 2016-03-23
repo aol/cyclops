@@ -49,8 +49,13 @@ public class BlockingStreamHelper {
 		return (R) completedFutures.stream().map(next -> getSafe(next,errorHandler))
 				.filter(v -> v != MissingValue.MISSING_VALUE).collect(collector);
 	}
-	public static void captureUnwrap(CompletionException e,Optional<Consumer<Throwable>> errorHandler){
-	    capture(e.getCause(),errorHandler);
+	public static void captureUnwrap(Throwable e,Optional<Consumer<Throwable>> errorHandler){
+	    if(e instanceof  SimpleReactFailedStageException)
+	        captureFailedStage((SimpleReactFailedStageException)e,errorHandler);
+	    else if(e.getCause()!=null)
+	        capture(e.getCause(),errorHandler);
+	    else
+	        captureGeneral(e,errorHandler);
 	}
 	static void capture(final Throwable t,Optional<Consumer<Throwable>> errorHandler) {
 	    SimpleReactFailedStageException.matchable(t)

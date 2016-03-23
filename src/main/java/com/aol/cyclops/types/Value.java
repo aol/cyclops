@@ -58,7 +58,9 @@ public interface Value<T> extends Supplier<T>,
     
    
    
-    
+    default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
+        return toMaybe().visit(present, absent);
+    }
 
     default boolean test(T t){
         if(!(t instanceof Value))
