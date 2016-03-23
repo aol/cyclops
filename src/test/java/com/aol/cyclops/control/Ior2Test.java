@@ -681,7 +681,7 @@ public class Ior2Test {
                                         c->c.is(when(instanceOf(Integer.class)), then("error")),
                                         c->c.is(when("10",10), then("boo!")),
                                             otherwise("miss")).toMaybe(),
-                                            equalTo(Maybe.of("miss")));
+                                            equalTo(Maybe.of("error")));
 	}
 	@Test
     public void testMatches2() {     
@@ -689,7 +689,7 @@ public class Ior2Test {
                                     c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
                                     c->c.is(when("10",10), then("boo!")),
                                         otherwise("miss")).toMaybe(),
-                                            equalTo(Maybe.of("miss")));
+                                            equalTo(Maybe.of("error")));
 	}
     @Test
     public void testMatches3() {     
@@ -699,7 +699,7 @@ public class Ior2Test {
                                      .is(when("3"),then(()->"hello")),
                                      c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
                                      c->c.is(when("10",10), then("boo!")),
-                                     otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
+                                     otherwise("miss")).toMaybe(),equalTo(Maybe.just("error")));
             
     }
     @Test

@@ -15,8 +15,10 @@ public class ExampleTest {
 
 	@Test(expected=UnsupportedOperationException.class)
 	public void immutable(){
-		ListX.fromIterable(ListX.immutableCollector(), Arrays.asList(1,2,3,4))
-		.plus(5);
+	    ListX.of(1,2,3)
+	        .immutable();
+		 ListX.fromIterable(ListX.immutableCollector(), Arrays.asList(1,2,3,4))
+		      .plus(5);
 	}
 	@Test
 	public void list(){
