@@ -1,5 +1,6 @@
 package com.aol.cyclops.internal.react.stream;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -46,7 +47,7 @@ public class EagerStreamWrapper implements StreamWrapper {
 	public EagerStreamWrapper(Stream<CompletableFuture> stream,Optional<Consumer<Throwable>> errorHandler) {
 		this.stream = stream;
 
-		list = collect(stream,Collectors.toList(),errorHandler);
+		list = stream.collect(Collectors.toList());
 		this.errorHandler = errorHandler;
 		async = null;
 
@@ -56,20 +57,23 @@ public class EagerStreamWrapper implements StreamWrapper {
 		this.stream = stream;
 		async = null;
 		this.errorHandler = errorHandler;
-		list =  collect(stream,c,errorHandler);
+		list =  (List)stream.collect(c);
 
 	}
-	public EagerStreamWrapper collect(){
+	public void collect(){
 	    if(list!=null)
-	        return new EagerStreamWrapper(list.stream(),this.errorHandler);
-	    return new EagerStreamWrapper(stream,this.errorHandler);
+	         collect(list.stream(),Collectors.toList(),this.errorHandler);
+	    else
+	        collect(stream,Collectors.toList(),this.errorHandler);
 	}
 	static  List<CompletableFuture> collect(Stream<CompletableFuture> stream,Collector c,Optional<Consumer<Throwable>> errorHandler){
 	   
 	    Function<Throwable,Object> captureFn = t->{BlockingStreamHelper.captureUnwrap((CompletionException)t, errorHandler); throw ExceptionSoftener.throwSoftenedException(t);};
 	    if(errorHandler.isPresent())
 	        return (List<CompletableFuture>)stream
-	                                .map(cf->cf.exceptionally(captureFn)).filter(cf->!cf.isCompletedExceptionally()).collect(c);
+	                                .map(cf->cf.exceptionally(captureFn))
+	                               
+	                                .collect(c);
 	   
 	    return (List<CompletableFuture>)stream.filter(cf->cf.isCompletedExceptionally()).collect(c);
        
@@ -78,7 +82,7 @@ public class EagerStreamWrapper implements StreamWrapper {
 	
 	public EagerStreamWrapper(CompletableFuture cf,Optional<Consumer<Throwable>> errorHandler) {
 		async = null;
-		list = collect(Stream.of(cf),Collectors.toList(),errorHandler);
+		list = Arrays.asList(cf);
 		this.errorHandler = errorHandler;
 		stream = null;
 

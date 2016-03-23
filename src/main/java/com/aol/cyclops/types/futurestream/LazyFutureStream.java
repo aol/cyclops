@@ -97,7 +97,7 @@ import lombok.val;
  *
  */
 
-public interface LazyFutureStream<U> extends  Functor<U>,
+public interface LazyFutureStream<U> extends Functor<U>,
                                             Filterable<U>,   
                                             LazySimpleReactStream<U>,
                                             LazyStream<U>,

@@ -50,12 +50,12 @@ public class CaptureTest {
         t=null;
         second =null;
         new SimpleReact().of("hello","world")
-                         .capture(e->t=e)
                          .peek(System.out::println)
                          .then(this::exception)
                          .peek(System.out::println)
                          .capture(e->second=t)
-                         .then(s->"hello"+s);
+                         .then(s->"hello"+s)
+                         .capture(e->t=e);
                          
         Thread.sleep(500);                 
         assertNotNull(t);

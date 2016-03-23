@@ -79,6 +79,10 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
     default SimpleReactStream<U> self(Consumer<SimpleReactStream<U>> consumer) {
         return peek(n->consumer.accept(this));
     }
+    
+    default void run(){
+        getLastActive().collect();
+    }
     /**
      * Split a stream at a given position. (Operates on futures)
      * <pre>
@@ -980,6 +984,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
             .block();
             }
         </pre>
+       
      *
      * In this case, strings will only contain the two successful results (for
      * ()-&gt;1 and ()-&gt;3), an exception for the chain starting from Supplier
@@ -995,7 +1000,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
     @SuppressWarnings("unchecked")
     default SimpleReactStream<U> capture(final Consumer<Throwable> errorHandler) {
-        return this.withLastActive(this.getLastActive().withErrorHandler(Optional.of(errorHandler)).collect())
+        return this.withLastActive(this.getLastActive().withErrorHandler(Optional.of(errorHandler)))
                 .withErrorHandler(Optional
                 .of((Consumer<Throwable>) errorHandler));
     }
