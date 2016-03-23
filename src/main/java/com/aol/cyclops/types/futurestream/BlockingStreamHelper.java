@@ -67,7 +67,9 @@ public class BlockingStreamHelper {
 		return null;
 	}
 	static Void captureGeneral(final Throwable t,Optional<Consumer<Throwable>> errorHandler) {
-        errorHandler.ifPresent((handler) ->  handler.accept(t.getCause()));
+	    if(t instanceof FilteredExecutionPathException)
+	        return null;
+        errorHandler.ifPresent((handler) ->  handler.accept(t));
         return null;
     }
 	@SuppressWarnings("rawtypes")

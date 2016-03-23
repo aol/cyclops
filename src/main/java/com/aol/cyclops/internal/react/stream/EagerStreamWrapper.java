@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.types.futurestream.BlockingStreamHelper;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
+import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
@@ -65,19 +66,16 @@ public class EagerStreamWrapper implements StreamWrapper {
 	}
 	static  List<CompletableFuture> collect(Stream<CompletableFuture> stream,Collector c,Optional<Consumer<Throwable>> errorHandler){
 	   
-	    Function<Throwable,Object> captureFn = t->{BlockingStreamHelper.captureUnwrap((CompletionException)t, errorHandler); return null;};
+	    Function<Throwable,Object> captureFn = t->{BlockingStreamHelper.captureUnwrap((CompletionException)t, errorHandler); throw ExceptionSoftener.throwSoftenedException(t);};
 	    if(errorHandler.isPresent())
-	        return size((List<CompletableFuture>)stream
-	                                .map(cf->cf.exceptionally(captureFn)).filter(cf->!cf.isCompletedExceptionally()).collect(c));
+	        return (List<CompletableFuture>)stream
+	                                .map(cf->cf.exceptionally(captureFn)).filter(cf->!cf.isCompletedExceptionally()).collect(c);
 	   
-	    return size((List<CompletableFuture>)stream.filter(cf->cf.isCompletedExceptionally()).collect(c));
+	    return (List<CompletableFuture>)stream.filter(cf->cf.isCompletedExceptionally()).collect(c);
        
 	}
 
-	static List<CompletableFuture> size(List<CompletableFuture> in){
-	    
-	    return in;
-	}
+	
 	public EagerStreamWrapper(CompletableFuture cf,Optional<Consumer<Throwable>> errorHandler) {
 		async = null;
 		list = collect(Stream.of(cf),Collectors.toList(),errorHandler);

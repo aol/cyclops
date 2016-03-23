@@ -44,7 +44,9 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQue
 		Stream s = stream;
 		
 		
-		this.errorHandler = Optional.of((e) -> log.error(e.getMessage(), e));
+		this.errorHandler = Optional.of((e) -> {
+		    log.error(e.getMessage(), e);
+		});
 		this.lastActive = new EagerStreamWrapper(s,this.errorHandler);
 		this.queueFactory = QueueFactories.unboundedQueue();
 		this.subscription = new AlwaysContinue();
