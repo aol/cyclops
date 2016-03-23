@@ -2,6 +2,8 @@ package com.aol.cyclops.react.simple;
 
 import static org.junit.Assert.*;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
@@ -46,8 +48,21 @@ public class CaptureTest {
         assertFalse(t.toString(),t instanceof SimpleReactFailedStageException);
         assertTrue(t.toString(),t instanceof InternalException);
     }
-    
-    
+    AtomicInteger count;
+    @Test
+    public void captureErrorOnce() throws InterruptedException{
+       count = new AtomicInteger(0);
+        new SimpleReact().of("hello","world")
+                         .capture(e->count.incrementAndGet())
+                         .peek(System.out::println)
+                         .then(this::exception)
+                         .peek(System.out::println)
+                         .then(s->"hello"+s)
+                         .run();
+                         
+        Thread.sleep(500);                 
+        assertEquals(count.get(),2);
+    }
     @Test
     public void captureBlock(){
         t=null;
