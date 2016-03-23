@@ -46,26 +46,8 @@ public class CaptureTest {
         assertFalse(t.toString(),t instanceof SimpleReactFailedStageException);
         assertTrue(t.toString(),t instanceof InternalException);
     }
-    Throwable second = null;
-    @Test
-    public void captureErrorOnce() throws InterruptedException{
-        t=null;
-        second =null;
-        new SimpleReact().of("hello","world")
-                          .capture(e->t=e)
-                         .peek(System.out::println)
-                         .then(this::exception)
-                         .peek(System.out::println)
-                         .capture(e->second=t)
-                         .then(s->"hello"+s)
-                         .run();
-                         
-        Thread.sleep(500);                 
-        assertNotNull(t);
-        assertNull(second);
-        assertFalse(t.toString(),t instanceof SimpleReactFailedStageException);
-        assertTrue(t.toString(),t instanceof InternalException);
-    }
+    
+    
     @Test
     public void captureBlock(){
         t=null;
