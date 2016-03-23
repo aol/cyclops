@@ -1,5 +1,8 @@
 package com.aol.cyclops.react;
 
+import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.Matchable.MXor;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,5 +17,11 @@ public class SimpleReactFailedStageException extends RuntimeException {
 	
 	public<T>  T getValue(){
 		return (T)value;
+	}
+	
+	public static MXor<Throwable,SimpleReactFailedStageException> matchable(Throwable t){
+	    Xor<Throwable,SimpleReactFailedStageException> error = (t instanceof SimpleReactFailedStageException) ? 
+	                                                            Xor.primary((SimpleReactFailedStageException)t) : Xor.secondary(t);
+	    return ()->error;
 	}
 }

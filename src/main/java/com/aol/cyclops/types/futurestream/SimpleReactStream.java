@@ -376,7 +376,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
         Function<Exception, R2> f = (Exception e) -> {
             BlockingStreamHelper.capture(e,getErrorHandler());
             return BlockingStreamHelper.block(this,Collectors.toList(),
-                    new EagerStreamWrapper(Stream.of(array)));
+                    new EagerStreamWrapper(Stream.of(array),this.getErrorHandler()));
         };
         CompletableFuture onFail = cf.exceptionally(f);
         CompletableFuture onSuccess = onFail.thenApplyAsync((result) -> {
@@ -384,7 +384,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
                     .apply(BlockingStreamHelper.aggregateResultsCompletable(collector, Stream.of(array)
                             .collect(Collectors.toList()),getErrorHandler())));
         }, getTaskExecutor());
-        return (SimpleReactStream<R2>) withLastActive(new EagerStreamWrapper(onSuccess));
+        return (SimpleReactStream<R2>) withLastActive(new EagerStreamWrapper(onSuccess,this.getErrorHandler()));
 
     }
     /**
@@ -401,7 +401,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
         CompletableFuture cf = CompletableFuture.anyOf(array);
         CompletableFuture onSuccess = cf.thenApplyAsync(fn,getTaskExecutor());
 
-        return (SimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess));
+        return (SimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess,this.getErrorHandler()));
 
     }
 
@@ -515,12 +515,12 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
         if(!this.isAsync())
             return thenSync(fn);
         Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->s.<CompletableFuture>map(ft ->
-        	ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()));
+        	ft.thenApplyAsync( SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()));
         return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
     }
 
 
-
+    
     
     /**
      * Peek asynchronously at the results in the current stage. Current results
@@ -779,7 +779,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
         List merged = Stream.concat(Stream.of(this),Stream.of(s))
                 .map(stream -> ((SimpleReactStream)stream).getLastActive().list())
                 .flatMap(Collection::stream).collect(Collectors.toList());
-        return (SimpleReactStream<U>) this.withLastActive(new EagerStreamWrapper(merged));
+        return (SimpleReactStream<U>) this.withLastActive(new EagerStreamWrapper(merged,this.getErrorHandler()));
     }
     /**
      * React and <b>block</b> with <b>breakout</b>
@@ -843,7 +843,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
     public static <R> SimpleReactStream<R> merge(SimpleReactStream s1, SimpleReactStream s2) {
         List merged = Stream.of(s1.getLastActive().list(), s2.getLastActive().list())
                 .flatMap(Collection::stream).collect(Collectors.toList());
-        return (SimpleReactStream<R>) s1.withLastActive(new EagerStreamWrapper(merged));
+        return (SimpleReactStream<R>) s1.withLastActive(new EagerStreamWrapper(merged,s1.getErrorHandler()));
     }
 
     /**
@@ -994,8 +994,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     @SuppressWarnings("unchecked")
-    default SimpleReactStream<U> capture(final Consumer<? extends Throwable> errorHandler) {
-        return (SimpleReactStream)this.withErrorHandler(Optional
+    default SimpleReactStream<U> capture(final Consumer<Throwable> errorHandler) {
+        return this.withLastActive(this.getLastActive().withErrorHandler(Optional.of(errorHandler)).collect())
+                .withErrorHandler(Optional
                 .of((Consumer<Throwable>) errorHandler));
     }
 

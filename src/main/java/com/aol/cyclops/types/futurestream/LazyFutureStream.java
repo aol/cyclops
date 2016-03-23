@@ -1455,7 +1455,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      */
     @Override
     default LazyFutureStream<U> capture(
-            final Consumer<? extends Throwable> errorHandler) {
+            final Consumer<Throwable> errorHandler) {
         return (LazyFutureStream) LazySimpleReactStream.super.capture(errorHandler);
     }
 

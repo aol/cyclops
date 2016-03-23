@@ -197,12 +197,13 @@ public class FluentFunctions {
 	 * @param action Consumer
 	 * @return FluentFunction
 	 */
-	public static <T> FluentFunctions.FluentFunction<T,T> expression(Consumer<T> action){
+	public static <T> FluentFunctions.FluentFunction<T,T> expression(Consumer<? super T> action){
 		return FluentFunctions.of(t->{
 			action.accept(t);
 			return t;
 		});
 	}
+	
 	/**
 	 * Convert a checked statement (e.g. a method or Consumer with no return value that throws a Checked Exception) to a 
 	 * fluent expression (FluentFunction).  The input is returned as output
@@ -242,7 +243,7 @@ public class FluentFunctions {
 	 * @param action BiConsumer
 	 * @return FluentBiFunction
 	 */
-	public static <T1,T2> FluentFunctions.FluentBiFunction<T1,T2,Tuple2<T1,T2>> expression(BiConsumer<T1,T2> action){
+	public static <T1,T2> FluentFunctions.FluentBiFunction<T1,T2,Tuple2<T1,T2>> expression(BiConsumer<? super T1,? super T2> action){
 		return FluentFunctions.of((t1,t2)->{
 			action.accept(t1,t2);
 			return Tuple.tuple(t1,t2);
