@@ -21,7 +21,8 @@ public class CaptureTest {
                          .peek(System.out::println)
                          .then(this::exception)
                          .peek(System.out::println)
-                         .then(s->"hello"+s);
+                         .then(s->"hello"+s)
+                         .run();
                          
         Thread.sleep(500);                 
         assertNotNull(t);
@@ -36,7 +37,8 @@ public class CaptureTest {
                          .peek(System.out::println)
                          .peek(System.out::println)
                          .then(s->"hello"+s)
-                         .then(this::exception);
+                         .then(this::exception)
+                         .run();
         
                          
         Thread.sleep(500);                 
@@ -50,12 +52,13 @@ public class CaptureTest {
         t=null;
         second =null;
         new SimpleReact().of("hello","world")
+                          .capture(e->t=e)
                          .peek(System.out::println)
                          .then(this::exception)
                          .peek(System.out::println)
                          .capture(e->second=t)
                          .then(s->"hello"+s)
-                         .capture(e->t=e);
+                         .run();
                          
         Thread.sleep(500);                 
         assertNotNull(t);
