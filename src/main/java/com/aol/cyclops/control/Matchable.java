@@ -1,15 +1,12 @@
 package com.aol.cyclops.control;
 
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
-import static com.aol.cyclops.util.function.Predicates.lessThanOrEquals;
+
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,7 +20,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.jooq.lambda.tuple.Tuple5;
-import org.junit.Test;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.internal.UNSET;
@@ -32,10 +28,7 @@ import com.aol.cyclops.internal.matcher2.MatchableCase;
 import com.aol.cyclops.internal.matcher2.MatchingInstance;
 import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.internal.matcher2.SeqUtils;
-import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
@@ -48,14 +41,24 @@ import lombok.Getter;
 /**
  * Matchable
  * 
- * Gateway to the pattern matching API.
+ * Gateway to the guard based pattern matching API.
+ * 
+ * Matchable uses a when / then / otherwise DSL.
+ * The Matchable class provides static when / then /otherwise methods @see {@link Matchable#then(Supplier)} {@link Matchable#when(Predicate)} {@link Matchable#otherwise(Supplier)}
+ * 
+ * 
  * 
  * @see {@link Matchables} for precanned structural pattern matching against JDK classes
+ * 
+ * Use Matchable#of or Matchable#matchable (an alias for use with static imports) to pattern match via guards on an Object.
  *
  * Matchable supports tail recursion
  * 
  * <pre>
  * {@code 
+ * 
+ * import static com.aol.cyclops.control.Matchable.matchable;
+ * 
  * @Test
     public void odd(){
         System.out.println(even(Eval.now(200000)).get());
@@ -66,7 +69,7 @@ import lombok.Getter;
     }
     public Eval<String> even(Eval<Integer> n )  {
         return n.flatMap(x->{
-            return Matchable.of(x)
+            return matchable(x)
                             .matches(c->c.is(when(lessThanOrEquals(0)), then(()->"done")), 
                                                     odd(Eval.now(x-1)));
         });
@@ -79,7 +82,67 @@ import lombok.Getter;
  *
  */
 public interface Matchable<TYPE>{
-	static interface TailRecSupplier<T> extends Supplier<T>{}
+	
+    /**
+     * Match on the supplied Object
+     * 
+     * <pre>
+     * {@code 
+     * Matchable.matchable(100)
+                 .matches(c->c.is(when(greaterThan(50)), ()->"large"), ()->"small");
+       
+       //Eval["large"]
+     * }
+     * </pre>
+     * 
+     * For a structural equivalent, matching on a single object @see {@link Matchables#match(Object)}
+     * 
+     * 
+     * @param o
+     * @return
+     */
+    public static<T> MTuple1<T> matchable(T o){
+        return of(o);
+    }
+    
+    /**
+     * Create a new matchable that will match on the fields of the provided Object
+     * 
+     * <pre>
+     * {@code 
+     * import static com.aol.cyclops.util.function.Predicates.__;
+     * import static com.aol.cyclops.control.Matchable.whenGuard;
+     * import static com.aol.cyclops.util.function.Predicates.has;
+     * 
+     * Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null))) 
+                 .matches(cases->cases.is(whenGuard(1,__,has(3,4,__)),then("2")),otherwise("4"))
+     * 
+     * }</pre>
+     * 
+     * @param o Object to match on it's fields
+     * @return new Matchable
+     */
+    public static<T> MTuple1<T> of(T o){
+      
+        return Matchables.match(o);
+    }
+   
+     /**
+     * Create a new matchable that will match on the fields of the provided Stream
+     * 
+     * @param o Object to match on it's fields
+     * @return new Matchable
+     */
+    public static <T> MatchableObject<T> of(Stream<T> o){
+        return AsMatchable.asMatchable(o.collect(Collectors.toList()));
+    }
+    
+	/**
+	 * Matchable DSL operator for outcomes
+	 * 
+	 * @param value
+	 * @return
+	 */
 	public static <T,R> Supplier<? extends R> then(R value){
 		return ()-> value;
 	}
@@ -87,9 +150,6 @@ public interface Matchable<TYPE>{
 		return fn;
 	}
 	
-	public static <R> Xor<Eval<? extends R>,Supplier<? extends R>> tailRec(Eval<? extends R> value){
-        return Xor.secondary(Eval.narrow(value));
-    }
 	public static <R> Supplier< R> otherwise(R value){
 		return ()-> value;
 	}
@@ -97,11 +157,17 @@ public interface Matchable<TYPE>{
 		return (Supplier<R>)s;
 	}
 	@SafeVarargs
-	public static <T,V>  Iterable<Predicate<? super T>> whenGuard(V... values){
+	public static <T,V>  Iterable<Predicate<? super T>> whenGuard2(V... values){
 		return (Iterable)()->ReactiveSeq.of(values)
 						  			.map(v->ADTPredicateBuilder.convertToPredicateTyped(v))
 						  			.iterator();
 	}
+	@SafeVarargs
+	public static <T,V>  MTuple1<Predicate<? super T>> whenGuard(V... values){
+        return ()->Tuple.tuple((T in)-> ReactiveSeq.of(values)
+                                    .map(v->ADTPredicateBuilder.convertToPredicateTyped(v))
+                                    .allMatch(p->p.test(in)));
+    }
 	public static <T1> Iterable<Predicate<? super T1>> whenValues(T1... t1){
         
         return (List)ReactiveSeq.of(t1).map(Predicates::eq).toList();
@@ -215,119 +281,12 @@ public interface Matchable<TYPE>{
     	
 	}
 	
-	/**
-	 * Create a new matchable that will match on the fields of the provided Object
-	 * 
-	 * @param o Object to match on it's fields
-	 * @return new Matchable
-	 */
-	public static<T> MatchableObject<T> of(T o){
-		if(o instanceof Stream)
-			return of((Stream)o);
-		
-		
-		return AsMatchable.asMatchable(o);
-	}
-	public static<T> MatchableIterable<T> of(Iterable<T> o){
-	    return ()->o;
-	}
+
+
+   
 	
-	public static<T> MatchableOptional<T> of(Optional<T> o){
-		return  Maybe.fromOptional(o);
-	}
-	public static<T> MXor<T,Throwable>  of(CompletableFuture<T> future){
-	   return  Matchables.future(future);
-		
-	}
-	public static <T> MXor<AnyMValue<T>,AnyMSeq<T>> of(AnyM<T> anyM){
-	        return Matchables.anyM(anyM);
-	}
-	public static <T> Matchable.MatchableOptional<T> of(Maybe<T> opt){
-	        return Matchables.maybe(opt);
-	}
-	public static<T, X extends Throwable> MXor<T,X>  of(Try<T,X> match){
-	       return  Matchables.tryMatch(match);
-	        
-	}
 	
-	public static<T> MatchableObject<T> fromOptional(Optional<T> o){
-		return AsMatchable.asMatchable(o);
-	}
-	/**
-	public static<T> MatchableObject<Value<T>> fromValue(Value<T> o){
-		return AsMatchable.asMatchable(o);
-	}
-	**/
-	/**
-	 * Create a new matchable that will match on the fields of the provided Stream
-	 * 
-	 * @param o Object to match on it's fields
-	 * @return new Matchable
-	 */
-	public static <T> MatchableObject<T> of(Stream<T> o){
-		return AsMatchable.asMatchable(o.collect(Collectors.toList()));
-	}
-	/**
-	 * Create a new matchable that will match on the fields of the provided Decomposable
-	 * 
-	 * @param o Decomposable to match on it's fields
-	 * @return new Matchable
-	 */
-	public static <T extends Decomposable> MatchableObject<T> ofDecomposable(Decomposable o){
-		return AsMatchable.asMatchable(o);
-	}
 	
-	/**
-	 * Create a matchable that matches on the provided Objects
-	 * 
-	 * @param o Objects to match on
-	 * @return new Matchable
-	 */
-	public static <T>  MatchableObject<T> listOfValues(T... o){
-		return AsMatchable.asMatchable(Arrays.asList(o));
-	}
-	public static <T> MatchableIterable<T> fromIterable(Iterable<T> it){
-		return ()->it;
-	}
-	
-	public static <TYPE, T1 extends TYPE> MTuple1<T1> from(Supplier<T1> s1){
-		
-		return ()-> Tuple.tuple(s1.get());
-	}
-	public static <TYPE, T1 extends TYPE> MTuple1<T1> from(Tuple1<T1> t2){
-		return ()-> t2;
-	}
-	public static <T1 , T2> MTuple2<T1,T2> from(Supplier<T1> s1, Supplier<T2> s2){
-		return ()-> Tuple.tuple(s1.get(),s2.get());
-	}
-	public static <T1,T2> MTuple2<T1,T2> from(Tuple2<T1,T2> t2){
-		return ()-> t2;
-	}
-	public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE> MTuple3<T1,T2,T3> from(Tuple3<T1,T2,T3> t3){
-		return ()-> t3;
-	}
-	public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE> MTuple3<T1,T2,T3> from(Supplier<T1> s1, Supplier<T2> s2, Supplier<T3> s3){
-		return()-> Tuple.tuple(s1.get(),s2.get(),s3.get());
-	}
-	public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE,T4 extends TYPE> MTuple4<T1,T2,T3,T4> from(Tuple4<T1,T2,T3,T4> t4){
-		return ()-> t4;
-	}
-	public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE,T4 extends TYPE> MTuple4<T1,T2,T3,T4> from(Supplier<T1> s1, Supplier<T2> s2, 
-												Supplier<T3> s3,Supplier<T4> s4){
-		return()-> Tuple.tuple(s1.get(),s2.get(),s3.get(),s4.get());
-	}
-	public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE,T4 extends TYPE,T5 extends TYPE> MTuple5<T1,T2,T3,T4,T5> from(Tuple5<T1,T2,T3,T4,T5> t5){
-		return ()-> t5;
-	}
-	public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE,T4 extends TYPE,T5 extends TYPE> MTuple5<T1,T2,T3,T4,T5> from(Supplier<T1> s1, Supplier<T2> s2, 
-												Supplier<T3> s3,Supplier<T4> s4,Supplier<T5> s5){
-		return()-> Tuple.tuple(s1.get(),s2.get(),s3.get(),s4.get(),s5.get());
-	}
-	
-	public static  MatchableIterable<Character> fromCharSequence(CharSequence chars){
-		Iterable<Character> it = ()->chars.chars().boxed().map(i ->Character.toChars(i)[0]).iterator();
-		return ()-> it;
-	}
 	
 	@AllArgsConstructor
 	public static class AutoCloseableMatchableIterable<TYPE> implements MatchableIterable<TYPE>,AutoCloseable{
@@ -969,7 +928,19 @@ public interface Matchable<TYPE>{
         private final Class<T> clazz;
         protected final MatchableCase<R> simplerCase;
 
-        
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        public final <V> CheckValueOpt<T,R> isEmpty(Supplier<? extends R> then) {
+
+            Predicate predicate = it -> Maybe.ofNullable(it)
+                    .map(v -> v.getClass().isAssignableFrom(clazz))
+                    .orElse(false);
+            // add wildcard support
+            
+            Predicate<V>[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
+            return new CheckValueOpt(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->then.get(),
+                    predicates)));
+            
+        }
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public final CheckValueOpt<T,R> is(MTuple1<Predicate<? super T>> when,Supplier<? extends R> then) {       
             return isWhere(then,when.getMatchable().v1);

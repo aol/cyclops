@@ -67,6 +67,7 @@ dependencies {
 	compile "org.jooq:jool:${joolVersion}"
 	compile 'uk.co.real-logic:Agrona:'+agronaVersion
 	compile 'org.reactivestreams:reactive-streams:'+reactiveStreamsVersion
+    
 	provided group: 'org.hamcrest', name: 'hamcrest-all', version:hamcrestVersion
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.7.13'

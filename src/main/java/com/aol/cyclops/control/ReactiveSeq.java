@@ -46,7 +46,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
@@ -58,7 +58,6 @@ import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableFilterable;
-import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -3196,7 +3195,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	
 	@Override
 	default <R> ReactiveSeq<R> patternMatch(
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (ReactiveSeq<R>)ZippingApplicativable.super.patternMatch(case1,otherwise);
 	}

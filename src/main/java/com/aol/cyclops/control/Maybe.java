@@ -7,9 +7,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.junit.Test;
-
-import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -208,7 +205,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 	}
 	@Override
 	default <R> Maybe<R> patternMatch(
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (Maybe<R>)Applicativable.super.patternMatch(case1,otherwise);
 	}

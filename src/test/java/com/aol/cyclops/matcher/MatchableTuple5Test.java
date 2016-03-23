@@ -21,7 +21,7 @@ public class MatchableTuple5Test {
     Matchable.MTuple5<String,Integer,Character,Long,String> t;
     @Before
     public void setup(){
-        t= Matchable.from( ()->"hello",()->10,()->'c',()->-2l,()->"world");
+        t= Matchables.supplier5( ()->"hello",()->10,()->'c',()->-2l,()->"world");
     }
 
     @Test

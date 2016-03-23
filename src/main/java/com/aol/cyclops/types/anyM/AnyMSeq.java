@@ -29,7 +29,7 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
@@ -37,11 +37,9 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.Sequential;
-import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -130,7 +128,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 */
 	@Override
 	default <R> AnyMSeq<R> patternMatch(
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (AnyMSeq<R>)ZippingApplicativable.super.patternMatch(case1,otherwise);
 	}

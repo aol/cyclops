@@ -25,7 +25,7 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
@@ -743,7 +743,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 */
 	@Override
 	default <R> PStackX<R> patternMatch(
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (PStackX<R>)PersistentCollectionX.super.patternMatch(case1,otherwise);
 	}

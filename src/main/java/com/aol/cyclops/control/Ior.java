@@ -11,21 +11,16 @@ import java.util.function.Supplier;
 
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
-import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.matcher2.MatchableCase;
-import com.aol.cyclops.internal.matcher2.MatchingInstance;
-import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
@@ -99,7 +94,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	}
 	@Override
 	default <R> Xor<ST,R> patternMatch(
-			Function<CheckValues<PT, R>, CheckValues<PT, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (Xor<ST,R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
@@ -121,7 +116,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
         if(isPrimary())
             return visit(primary,()->null);
         
-        return Matchable.from(both().get()).visit((a,b)-> both.apply(a, b));
+        return Matchables.tuple2(both().get()).visit((a,b)-> both.apply(a, b));
     }
 	default <R1,R2> Ior<R1,R2> visitIor(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){

@@ -181,7 +181,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	}
 	@Override
 	default <R> Xor<ST,R> patternMatch(
-			Function<CheckValues<PT, R>, CheckValues<PT, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (Xor<ST,R>)Applicativable.super.patternMatch(case1,otherwise);
 	}

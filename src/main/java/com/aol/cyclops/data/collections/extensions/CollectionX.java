@@ -1,14 +1,10 @@
 package com.aol.cyclops.data.collections.extensions;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -24,7 +20,7 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.For;
-import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -35,12 +31,10 @@ import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Sequential;
-import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.types.stream.future.FutureOperations;
+import com.aol.cyclops.types.stream.HeadAndTail;
 
 //pattern match, for comprehensions
 public interface CollectionX<T> extends ExtendedTraversable<T>,
@@ -457,7 +451,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 */
 	@Override
 	default <R> CollectionX<R> patternMatch(
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (CollectionX<R>)ZippingApplicativable.super.patternMatch( case1,otherwise);
 	}

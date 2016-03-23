@@ -1,23 +1,21 @@
 package com.aol.cyclops.matcher;
 
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple1;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.junit.Before;
-import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+
+import org.jooq.lambda.tuple.Tuple;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Matchable.MTuple1;
-import com.aol.cyclops.control.Matchable.MTuple2;
 
 public class MatchableTuple3Test {
 
     Matchable.MTuple3<String,Integer,Character> t;
     @Before
     public void setup(){
-        t= Matchable.from( ()->"hello",()->10,()->'c');
+        t= Matchables.supplier3( ()->"hello",()->10,()->'c');
     }
     
     @Test
