@@ -28,6 +28,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -80,7 +81,7 @@ public interface ListX<T> extends List<T>,
      * 
      * @return
      */
-    public ListX<T> immutable();
+    public CollectionX<T> immutable();
 	/* Returns this
 	 * 
 	 * (non-Javadoc)
@@ -190,8 +191,8 @@ public interface ListX<T> extends List<T>,
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#from(java.util.Collection)
 	 */
-	@Override
-	<T1> ListX<T1> from(Collection<T1> c);
+	//@Override
+	//<T1> ListX<T1> from(Collection<T1> c);
 	
 	
 	
@@ -448,8 +449,9 @@ public interface ListX<T> extends List<T>,
 	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#peek(java.util.function.Consumer)
 	 */
 	@Override
-	ListX<T> peek(Consumer<? super T> c);
-
+	default ListX<T> peek(Consumer<? super T> c) {
+        return (ListX<T>)MutableCollectionX.super.peek(c);
+    }
 	
 
 

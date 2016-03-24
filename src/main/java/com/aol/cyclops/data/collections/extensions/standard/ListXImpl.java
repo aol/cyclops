@@ -383,7 +383,7 @@ public class ListXImpl<T> extends AbstractMutableCollectionX<T> implements ListX
 	    return new ListXImpl<X>(stream);
 	}
     @Override
-    public ListX<T> immutable(){
+    public CollectionX<T> immutable(){
         return new ListXImpl<>(Collections.unmodifiableList(getList()),ListX.immutableCollector());
     }
     /* (non-Javadoc)
@@ -632,6 +632,38 @@ public class ListXImpl<T> extends AbstractMutableCollectionX<T> implements ListX
      */
     @Override
     public ListX<T> minusAll(Collection<?> list) {
+       
+        return (ListX<T>)super.minusAll(list);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.ListX#plusLazy(java.lang.Object)
+     */
+    @Override
+    public ListX<T> plusLazy(T e) {
+       
+        return (ListX<T>)super.plus(e);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.ListX#plusAllLazy(java.util.Collection)
+     */
+    @Override
+    public ListX<T> plusAllLazy(Collection<? extends T> list) {
+       
+        return (ListX<T>)super.plusAll(list);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.ListX#minusLazy(java.lang.Object)
+     */
+    @Override
+    public ListX<T> minusLazy(Object e) {
+       
+        return (ListX<T>)super.minus(e);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.ListX#minusAllLazy(java.util.Collection)
+     */
+    @Override
+    public ListX<T> minusAllLazy(Collection<?> list) {
        
         return (ListX<T>)super.minusAll(list);
     }
@@ -1033,6 +1065,17 @@ public class ListXImpl<T> extends AbstractMutableCollectionX<T> implements ListX
         return this;
     }
     
-    
+    @Override
+    public <R> ListX<R> unit(Collection<R> col){
+        return ListX.fromIterable(col);
+    }
+    @Override
+    public  <R> ListX<R> unit(R value){
+        return ListX.singleton(value);
+    }
+    @Override
+    public <R> ListX<R> unitIterator(Iterator<R> it){
+        return ListX.fromIterable(()->it);
+    }
 
 }

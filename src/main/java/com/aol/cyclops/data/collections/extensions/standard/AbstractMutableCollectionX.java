@@ -28,23 +28,46 @@ import com.aol.cyclops.util.stream.StreamUtils;
 public abstract class AbstractMutableCollectionX<T> implements MutableCollectionX<T>{
     abstract ReactiveSeq<T> streamInternal();
     @Override
-    public MutableCollectionX<T> plus(T e){
+    public MutableCollectionX<T> plusLazy(T e){
         return stream(streamInternal().append(e));
         
     }
     @Override
+    public MutableCollectionX<T> plus(T e){
+        add(e);
+        return this;
+    }
+    
+    @Override
     public MutableCollectionX<T> plusAll(Collection<? extends T> list){
-        return stream(streamInternal().appendStream((Stream<T>)list.stream()));
+        addAll(list);
+        return this;
     }
     
     @Override
     public MutableCollectionX<T> minus(Object e){
+        remove(e);
+        return this;
+    }
+    
+    @Override
+    public MutableCollectionX<T> minusAll(Collection<?> list){
+        removeAll(list);
+        return this;
+    }
+    @Override
+    public MutableCollectionX<T> plusAllLazy(Collection<? extends T> list){
+        return stream(streamInternal().appendStream((Stream<T>)list.stream()));
+    }
+    
+    @Override
+    public MutableCollectionX<T> minusLazy(Object e){
         
         return stream(streamInternal().filterNot(t-> Objects.equals(t,e)));
         
     }
     @Override
-    public MutableCollectionX<T> minusAll(Collection<?> list){
+    public MutableCollectionX<T> minusAllLazy(Collection<?> list){
         return stream(streamInternal().removeAll((Collection)list));
       
     }

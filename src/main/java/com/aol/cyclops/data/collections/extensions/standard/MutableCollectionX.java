@@ -215,6 +215,25 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		removeAll(list);
 		return this;
 	}
+	default MutableCollectionX<T> plusLazy(T e){
+        add(e);
+        return this;
+    }
+    
+    default MutableCollectionX<T> plusAllLazy(Collection<? extends T> list){
+        addAll(list);
+        return this;
+    }
+    
+    default MutableCollectionX<T> minusLazy(Object e){
+        remove(e);
+        return this;
+    }
+    
+    default MutableCollectionX<T> minusAllLazy(Collection<?> list){
+        removeAll(list);
+        return this;
+    }
 
 
 

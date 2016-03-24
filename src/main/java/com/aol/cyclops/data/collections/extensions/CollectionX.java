@@ -72,7 +72,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	default T head(){
 		return iterator().next();
 	}
-	<T1> CollectionX<T1> from(Collection<T1> c);
+	
 	CollectionX<T> reverse();
 	/**
 	 * <pre>
