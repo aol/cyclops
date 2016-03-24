@@ -52,7 +52,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
             return ReactiveSeq.fromIterable(list);
         }
     }
-    public CollectionX<T> immutable();
+  //  public CollectionX<T> immutable();
 	<X> MutableCollectionX<X> stream(Stream<X> stream);
 	@Override
 	default MutableCollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){

@@ -613,7 +613,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
      * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-     <C extends Collection<? super T>> ListX<C> groupedWhile(Predicate<? super T> predicate,
+     <C extends Collection<? super T>> DequeX<C> groupedWhile(Predicate<? super T> predicate,
                 Supplier<C> factory);
 
 
