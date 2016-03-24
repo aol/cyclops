@@ -29,6 +29,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -81,7 +82,7 @@ public interface ListX<T> extends List<T>,
      * 
      * @return
      */
-    public CollectionX<T> immutable();
+    public FluentCollectionX<T> immutable();
 	/* Returns this
 	 * 
 	 * (non-Javadoc)

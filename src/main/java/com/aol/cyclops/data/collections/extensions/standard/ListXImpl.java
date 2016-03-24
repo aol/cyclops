@@ -30,6 +30,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,7 +53,7 @@ public class ListXImpl<T> extends AbstractMutableCollectionX<T> implements ListX
 		this.collector = ListX.defaultCollector();
 		this.lazy = new LazyCollection<T,List<T>>(list,null,collector);
 	}
-	private ListXImpl(Stream<T> stream){
+	ListXImpl(Stream<T> stream){
         
         this.collector = ListX.defaultCollector();
         this.lazy = new LazyCollection<>(null,stream,collector);
@@ -383,7 +384,7 @@ public class ListXImpl<T> extends AbstractMutableCollectionX<T> implements ListX
 	    return new ListXImpl<X>(stream);
 	}
     @Override
-    public CollectionX<T> immutable(){
+    public FluentCollectionX<T> immutable(){
         return new ListXImpl<>(Collections.unmodifiableList(getList()),ListX.immutableCollector());
     }
     /* (non-Javadoc)

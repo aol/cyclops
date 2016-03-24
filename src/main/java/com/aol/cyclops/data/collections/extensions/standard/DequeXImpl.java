@@ -1,7 +1,6 @@
 package com.aol.cyclops.data.collections.extensions.standard;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
@@ -26,7 +25,6 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

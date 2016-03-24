@@ -196,15 +196,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
 	public  Stream<T> parallelStream() {
 		return delegate.parallelStream();
 	}
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.CollectionX#from(java.util.Collection)
-	 */
-	@Override
-	public <T1> CollectionX<T1> from(Collection<T1> c) {
-		if(c instanceof CollectionX)
-			return (CollectionX)c;
-		return new CollectionXImpl(c);
-	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterator(java.util.Iterator)
 	 */
