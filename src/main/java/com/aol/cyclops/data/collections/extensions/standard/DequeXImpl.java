@@ -23,6 +23,8 @@ import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.data.collections.extensions.AbstractFluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 
@@ -33,9 +35,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @EqualsAndHashCode(of={"deque"})
-public class DequeXImpl<T> extends AbstractMutableCollectionX<T> implements DequeX<T> {
+public class DequeXImpl<T> extends AbstractFluentCollectionX<T> implements DequeX<T> {
 	
-    private final LazyCollection<T,Deque<T>> lazy;
+    private final  LazyFluentCollection<T,Deque<T>> lazy;
 
 	@Getter
 	private final Collector<T,?,Deque<T>> collector;

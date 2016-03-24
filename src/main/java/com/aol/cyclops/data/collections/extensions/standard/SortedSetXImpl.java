@@ -26,6 +26,7 @@ import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.data.collections.extensions.AbstractFluentCollectionX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 
@@ -34,7 +35,7 @@ import lombok.Getter;
 
 
 @AllArgsConstructor
-public class SortedSetXImpl<T> extends AbstractMutableCollectionX<T> implements SortedSetX<T> {
+public class SortedSetXImpl<T> extends AbstractFluentCollectionX<T> implements SortedSetX<T> {
 	
     private final LazyCollection<T,SortedSet<T>> lazy;
 	@Getter
@@ -450,9 +451,9 @@ public class SortedSetXImpl<T> extends AbstractMutableCollectionX<T> implements 
      * @see com.aol.cyclops.data.collections.extensions.standard.SortedSetX#grouped(java.util.function.Function)
      */
     @Override
-    public <K> SortedSetX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
-       
-        return (SortedSetX)super.grouped(classifier);
+    public <K> SortedSetX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
+        
+        return (SortedSetX)stream(stream().grouped(classifier).map(t->t.map2(Comparables::comparable)));     
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.standard.SortedSetX#zip(java.lang.Iterable)

@@ -23,13 +23,14 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.AllArgsConstructor;
 
 public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     @AllArgsConstructor
-    static class LazyCollection<T,C extends Collection<T>>{
+    static class LazyCollection<T,C extends Collection<T>> implements LazyFluentCollection<T,C>{
         private volatile C list;
         private volatile Stream<T> seq;
         private final Collector<T,?,C> collector;

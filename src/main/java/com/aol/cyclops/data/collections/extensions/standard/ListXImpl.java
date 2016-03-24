@@ -29,17 +29,19 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.AbstractFluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.LazyFluentCollection;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
 
-public class ListXImpl<T> extends AbstractMutableCollectionX<T> implements ListX<T> {
+public class ListXImpl<T> extends AbstractFluentCollectionX<T> implements ListX<T> {
 	
-	private final LazyCollection<T,List<T>> lazy;
+	private final  LazyFluentCollection<T,List<T>> lazy;
 	@Getter
 	private final Collector<T,?,List<T>> collector;
 	
@@ -53,7 +55,7 @@ public class ListXImpl<T> extends AbstractMutableCollectionX<T> implements ListX
 		this.collector = ListX.defaultCollector();
 		this.lazy = new LazyCollection<T,List<T>>(list,null,collector);
 	}
-	ListXImpl(Stream<T> stream){
+	public ListXImpl(Stream<T> stream){
         
         this.collector = ListX.defaultCollector();
         this.lazy = new LazyCollection<>(null,stream,collector);

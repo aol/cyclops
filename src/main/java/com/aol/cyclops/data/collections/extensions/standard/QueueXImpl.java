@@ -23,6 +23,7 @@ import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.data.collections.extensions.AbstractFluentCollectionX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 
@@ -31,7 +32,7 @@ import lombok.Getter;
 
 
 @AllArgsConstructor
-public class QueueXImpl<T> extends AbstractMutableCollectionX<T> implements QueueX<T> {
+public class QueueXImpl<T> extends AbstractFluentCollectionX<T> implements QueueX<T> {
 	
     private final LazyCollection<T,Queue<T>> lazy;
 	@Getter
