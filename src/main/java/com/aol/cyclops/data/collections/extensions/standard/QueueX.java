@@ -322,7 +322,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 */
 	@Override
     default <R> QueueX<R> patternMatch(
-            Function<CheckValue1<T, R>, CheckValues1<T, R>> case1,Supplier<? extends R> otherwise) {
+            Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
         return (QueueX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
     }
 	
