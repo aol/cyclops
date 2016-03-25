@@ -24,7 +24,6 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
@@ -51,12 +50,15 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 										CyclopsCollectable<T>{
 	
 	static <T> CollectionX<T> fromCollection(Collection<T> col){
-		return new ListXImpl<>(col.stream());
+		return new CollectionXImpl(col);
 	}
 	
 	
 	@Override
-	ReactiveSeq<T> stream();
+	default ReactiveSeq<T> stream(){
+		
+		return ReactiveSeq.fromIterable(this);
+	}
 	@Override
 	default CyclopsCollectable<T> collectable(){
 		return stream();
@@ -73,7 +75,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	default T head(){
 		return iterator().next();
 	}
-	
+	<T1> CollectionX<T1> from(Collection<T1> c);
 	CollectionX<T> reverse();
 	/**
 	 * <pre>
@@ -291,7 +293,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, Iterable<R1>> stream1,
 			Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction){
-		return For.stream(stream())
+		return For.iterable(stream())
 				.iterable(stream1)
 				.iterable(stream2)
 				.yield(yieldingFunction)
@@ -334,7 +336,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 			Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
 			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction){
-		return For.stream(stream())
+		return For.iterable(stream())
 				.iterable(stream1)
 				.iterable(stream2)
 				.filter(filterFunction)
@@ -368,7 +370,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, Iterable<R1>> stream1,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction){
 		
-		return For.stream(stream())
+		return For.iterable(stream())
 				.iterable(stream1)
 				.yield(yieldingFunction).unwrap();
 	}
@@ -402,7 +404,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, Iterable<R1>> stream1, 
 			Function<? super T, Function<? super R1, Boolean>> filterFunction,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction){
-		return For.stream(stream())
+		return For.iterable(stream())
 				.iterable(stream1)
 				.filter(filterFunction)
 				.yield(yieldingFunction).unwrap();

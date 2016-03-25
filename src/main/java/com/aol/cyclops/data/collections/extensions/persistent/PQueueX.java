@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -23,14 +22,14 @@ import org.pcollections.PQueue;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
-public interface PQueueX<T> extends PQueue<T>, FluentCollectionX<T> {
+public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
 
     public static <T> PQueueX<T> of(T... values) {
         PQueue<T> result = empty();
@@ -84,560 +83,882 @@ public interface PQueueX<T> extends PQueue<T>, FluentCollectionX<T> {
         return Reducers.<T>toPQueueX().mapReduce(stream);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
-     */
-    @Override
-    <R> PQueueX<R> unit(Collection<R> col);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
-     */
-    @Override
-    <R> PQueueX<R> unit(R value);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
-     */
-    @Override
-    <R> PQueueX<R> unitIterator(Iterator<R> it);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    <R> PQueueX<R> patternMatch(
-            Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise);
-    
-    /* (non-Javadoc)
-     * @see java.util.Collection#stream()
-     */
-    @Override
-    ReactiveSeq<T> stream();
-
-
-    
-    
-    
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#reverse()
-     */
-    @Override
-    PQueueX<T> reverse();
     /**
-     * Combine two adjacent elements in a PQueueX using the supplied BinaryOperator
-     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
-     * with it's neighbor
+     * Combine two adjacent elements in a PQueueX using the supplied
+     * BinaryOperator This is a stateful grouping & reduction operation. The
+     * output of a combination may in turn be combined with it's neighbor
+     * 
      * <pre>
      * {@code 
      *  PQueueX.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .toPQueueX()
+                   .toListX()
                    
-     *  //PQueueX(3,4) 
-     * }</pre>
+     *  //ListX(3,4) 
+     * }
+     * </pre>
      * 
-     * @param predicate Test to see if two neighbors should be joined
-     * @param op Reducer to combine neighbors
+     * @param predicate
+     *            Test to see if two neighbors should be joined
+     * @param op
+     *            Reducer to combine neighbors
      * @return Combined / Partially Reduced PQueueX
      */
-    @Override
-    PQueueX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op);
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#filter(java.util.function.Predicate)
-     */
-    @Override
-    PQueueX<T> filter(Predicate<? super T> pred);
+    default PQueueX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+        return (PQueueX<T>) PersistentCollectionX.super.combine(predicate, op);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#map(java.util.function.Function)
-     */
     @Override
-    <R> PQueueX<R> map(Function<? super T, ? extends R> mapper);
+    default PQueueX<T> toPQueueX() {
+        return this;
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#flatMap(java.util.function.Function)
-     */
     @Override
-    <R> PQueueX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
+    default <R> PQueueX<R> unit(Collection<R> col) {
+        return fromCollection(col);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#limit(long)
-     */
     @Override
-    PQueueX<T> limit(long num);
+    default <R> PQueueX<R> unit(R value) {
+        return singleton(value);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#skip(long)
-     */
     @Override
-    PQueueX<T> skip(long num);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#takeRight(int)
-     */
-    @Override
-    PQueueX<T> takeRight(int num);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#dropRight(int)
-     */
-    @Override
-    PQueueX<T> dropRight(int num);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    PQueueX<T> takeWhile(Predicate<? super T> p);
+    default <R> PQueueX<R> unitIterator(Iterator<R> it) {
+        return fromIterable(() -> it);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#dropWhile(java.util.function.Predicate)
-     */
     @Override
-    PQueueX<T> dropWhile(Predicate<? super T> p);
+    default <R> PQueueX<R> emptyUnit() {
+        return empty();
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#takeUntil(java.util.function.Predicate)
-     */
     @Override
-    PQueueX<T> takeUntil(Predicate<? super T> p);
+    default ReactiveSeq<T> stream() {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    PQueueX<T> dropUntil(Predicate<? super T> p);
+        return ReactiveSeq.fromIterable(this);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#trampoline(java.util.function.Function)
-     */
-    @Override
-    <R> PQueueX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper);
+    default PQueue<T> toPSet() {
+        return this;
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#slice(long, long)
-     */
-    @Override
-    PQueueX<T> slice(long from, long to);
+    default <X> PQueueX<X> from(Collection<X> col) {
+        return  fromCollection(col);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#sorted(java.util.function.Function)
-     */
-    @Override
-    <U extends Comparable<? super U>> PQueueX<T> sorted(Function<? super T, ? extends U> function);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(int)
-     */
-    @Override
-    PQueueX<ListX<T>> grouped(int groupSize);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.stream.Collector)
-     */
-    @Override 
-    <K, A, D> PQueueX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function)
-     */
-    @Override
-    <K> PQueueX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable)
-     */
-    @Override
-    <U> PQueueX<Tuple2<T, U>> zip(Iterable<U> other);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
-    @Override
-    <U, R> PQueueX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
+    default <T> Reducer<PQueue<T>> monoid() {
+        return Reducers.toPQueue();
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sliding(int)
-     */
-    @Override
-    PQueueX<ListX<T>> sliding(int windowSize);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sliding(int, int)
-     */
-    @Override
-    PQueueX<ListX<T>> sliding(int windowSize, int increment);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanLeft(com.aol.cyclops.Monoid)
-     */
-    @Override
-    PQueueX<T> scanLeft(Monoid<T> monoid);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
-     */
-    @Override
-    <U> PQueueX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanRight(com.aol.cyclops.Monoid)
-     */
-    @Override
-    PQueueX<T> scanRight(Monoid<T> monoid);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
-     */
-    @Override
-    <U> PQueueX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner);
-    
-
-    /* Lazy operation
-     * 
-     * (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#plus(java.lang.Object)
-     */
-    @Override
-    PQueueX<T> plus(T e);
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#plusAll(java.util.Collection)
-     */
-    @Override
-    PQueueX<T> plusAll(Collection<? extends T> list);
-    
-
-    
     /*
      * (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#minus(java.lang.Object)
+     * 
+     * @see org.pcollections.PSet#plus(java.lang.Object)
      */
-    PQueueX<T> minus(Object e);
-    
-    /* 
+    @Override
+    public PQueueX<T> plus(T e);
+
+    /*
      * (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#minusAll(java.util.Collection)
-     */
-    PQueueX<T> minusAll(Collection<?> list);
-    
-
-
-    @Override
-    int size();
-
-   
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#peek(java.util.function.Consumer)
+     * 
+     * @see org.pcollections.PSet#plusAll(java.util.Collection)
      */
     @Override
-    default PQueueX<T> peek(Consumer<? super T> c) {
-        return (PQueueX<T>)FluentCollectionX.super.peek(c);
+    public PQueueX<T> plusAll(Collection<? extends T> list);
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.pcollections.PSet#minus(java.lang.Object)
+     */
+    @Override
+    public PQueueX<T> minus(Object e);
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.pcollections.PSet#minusAll(java.util.Collection)
+     */
+    @Override
+    public PQueueX<T> minusAll(Collection<?> list);
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * reverse()
+     */
+    @Override
+    default PQueueX<T> reverse() {
+        return (PQueueX<T>) PersistentCollectionX.super.reverse();
     }
-    
 
-
-
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#cycle(int)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * filter(java.util.function.Predicate)
      */
     @Override
-    PQueueX<T> cycle(int times);
+    default PQueueX<T> filter(Predicate<? super T> pred) {
+        return (PQueueX<T>) PersistentCollectionX.super.filter(pred);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.Monoid, int)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * map(java.util.function.Function)
      */
     @Override
-    PQueueX<T> cycle(Monoid<T> m, int times);
+    default <R> PQueueX<R> map(Function<? super T, ? extends R> mapper) {
+        return (PQueueX<R>) PersistentCollectionX.super.map(mapper);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#cycleWhile(java.util.function.Predicate)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * flatMap(java.util.function.Function)
      */
     @Override
-    PQueueX<T> cycleWhile(Predicate<? super T> predicate);
+    default <R> PQueueX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (PQueueX<R>) PersistentCollectionX.super.flatMap(mapper);
+    }
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#cycleUntil(java.util.function.Predicate)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * limit(long)
      */
     @Override
-    PQueueX<T> cycleUntil(Predicate<? super T> predicate) ;
+    default PQueueX<T> limit(long num) {
+        return (PQueueX<T>) PersistentCollectionX.super.limit(num);
+    }
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zipStream(java.util.stream.Stream)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * skip(long)
      */
     @Override
-    <U> PQueueX<Tuple2<T, U>> zipStream(Stream<U> other);
+    default PQueueX<T> skip(long num) {
+        return (PQueueX<T>) PersistentCollectionX.super.skip(num);
+    }
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zip(org.jooq.lambda.Seq)
+    default PQueueX<T> takeRight(int num) {
+        return (PQueueX<T>) PersistentCollectionX.super.takeRight(num);
+    }
+
+    default PQueueX<T> dropRight(int num) {
+        return (PQueueX<T>) PersistentCollectionX.super.dropRight(num);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * takeWhile(java.util.function.Predicate)
      */
     @Override
-    <U> PQueueX<Tuple2<T, U>> zip(Seq<U> other) ;
+    default PQueueX<T> takeWhile(Predicate<? super T> p) {
+        return (PQueueX<T>) PersistentCollectionX.super.takeWhile(p);
+    }
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * dropWhile(java.util.function.Predicate)
      */
     @Override
-    <S, U> PQueueX<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third);
+    default PQueueX<T> dropWhile(Predicate<? super T> p) {
+        return (PQueueX<T>) PersistentCollectionX.super.dropWhile(p);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * takeUntil(java.util.function.Predicate)
      */
     @Override
-    <T2, T3, T4> PQueueX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-            Stream<T4> fourth) ;
+    default PQueueX<T> takeUntil(Predicate<? super T> p) {
+        return (PQueueX<T>) PersistentCollectionX.super.takeUntil(p);
+    }
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zipWithIndex()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * dropUntil(java.util.function.Predicate)
      */
     @Override
-    PQueueX<Tuple2<T, Long>> zipWithIndex();
+    default PQueueX<T> dropUntil(Predicate<? super T> p) {
+        return (PQueueX<T>) PersistentCollectionX.super.dropUntil(p);
+    }
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sorted()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * trampoline(java.util.function.Function)
      */
     @Override
-    PQueueX<T> sorted();
+    default <R> PQueueX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (PQueueX<R>) PersistentCollectionX.super.trampoline(mapper);
+    }
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sorted(java.util.Comparator)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * slice(long, long)
      */
     @Override
-    PQueueX<T> sorted(Comparator<? super T> c);
+    default PQueueX<T> slice(long from, long to) {
+        return (PQueueX<T>) PersistentCollectionX.super.slice(from, to);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#skipWhile(java.util.function.Predicate)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * sorted(java.util.function.Function)
      */
     @Override
-    PQueueX<T> skipWhile(Predicate<? super T> p);
-    
+    default <U extends Comparable<? super U>> PQueueX<T> sorted(Function<? super T, ? extends U> function) {
+        return (PQueueX<T>) PersistentCollectionX.super.sorted(function);
+    }
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#skipUntil(java.util.function.Predicate)
+    default PQueueX<ListX<T>> grouped(int groupSize) {
+        return (PQueueX<ListX<T>>) PersistentCollectionX.super.grouped(groupSize);
+    }
+
+    default <K, A, D> PQueueX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier,
+            Collector<? super T, A, D> downstream) {
+        return (PQueueX) PersistentCollectionX.super.grouped(classifier, downstream);
+    }
+
+    default <K> PQueueX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+        return (PQueueX) PersistentCollectionX.super.grouped(classifier);
+    }
+
+    default <U> PQueueX<Tuple2<T, U>> zip(Iterable<U> other) {
+        return (PQueueX<Tuple2<T, U>>) PersistentCollectionX.super.zip(other);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    PQueueX<T> skipUntil(Predicate<? super T> p);
+    default <U, R> PQueueX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#shuffle()
+        return (PQueueX<R>) PersistentCollectionX.super.zip(other, zipper);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * permutations()
      */
     @Override
-    PQueueX<T> shuffle();
+    default PQueueX<ReactiveSeq<T>> permutations() {
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#skipLast(int)
+        return (PQueueX<ReactiveSeq<T>>) PersistentCollectionX.super.permutations();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * combinations(int)
      */
     @Override
-    PQueueX<T> skipLast(int num) ;
+    default PQueueX<ReactiveSeq<T>> combinations(int size) {
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#shuffle(java.util.Random)
+        return (PQueueX<ReactiveSeq<T>>) PersistentCollectionX.super.combinations(size);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * combinations()
      */
     @Override
-    PQueueX<T> shuffle(Random random);
+    default PQueueX<ReactiveSeq<T>> combinations() {
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#permutations()
+        return (PQueueX<ReactiveSeq<T>>) PersistentCollectionX.super.combinations();
+    }
+
+    default PQueueX<ListX<T>> sliding(int windowSize) {
+        return (PQueueX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize);
+    }
+
+    default PQueueX<ListX<T>> sliding(int windowSize, int increment) {
+        return (PQueueX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
+    }
+
+    default PQueueX<T> scanLeft(Monoid<T> monoid) {
+        return (PQueueX<T>) PersistentCollectionX.super.scanLeft(monoid);
+    }
+
+    default <U> PQueueX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+        return (PQueueX<U>) PersistentCollectionX.super.scanLeft(seed, function);
+    }
+
+    default PQueueX<T> scanRight(Monoid<T> monoid) {
+        return (PQueueX<T>) PersistentCollectionX.super.scanRight(monoid);
+    }
+
+    default <U> PQueueX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+        return (PQueueX<U>) PersistentCollectionX.super.scanRight(identity, combiner);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * plusInOrder(java.lang.Object)
      */
     @Override
-    PQueueX<ReactiveSeq<T>> permutations();
+    default PQueueX<T> plusInOrder(T e) {
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#combinations(int)
+        return (PQueueX<T>) PersistentCollectionX.super.plusInOrder(e);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * cycle(int)
      */
     @Override
-    PQueueX<ReactiveSeq<T>> combinations(int size);
+    default PQueueX<T> cycle(int times) {
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#combinations()
+        return (PQueueX<T>) PersistentCollectionX.super.cycle(times);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    PQueueX<ReactiveSeq<T>> combinations();
-    
+    default PQueueX<T> cycle(Monoid<T> m, int times) {
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#cast(java.lang.Class)
+        return (PQueueX<T>) PersistentCollectionX.super.cycle(m, times);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * cycleWhile(java.util.function.Predicate)
      */
     @Override
-    public <U> PQueueX<U> cast(Class<U> type);
+    default PQueueX<T> cycleWhile(Predicate<? super T> predicate) {
 
-    
+        return (PQueueX<T>) PersistentCollectionX.super.cycleWhile(predicate);
+    }
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#distinct()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * cycleUntil(java.util.function.Predicate)
      */
     @Override
-    PQueueX<T> distinct();
+    default PQueueX<T> cycleUntil(Predicate<? super T> predicate) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#limitWhile(java.util.function.Predicate)
+        return (PQueueX<T>) PersistentCollectionX.super.cycleUntil(predicate);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * zipStream(java.util.stream.Stream)
      */
     @Override
-    PQueueX<T> limitWhile(Predicate<? super T> p);
+    default <U> PQueueX<Tuple2<T, U>> zipStream(Stream<U> other) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#limitUntil(java.util.function.Predicate)
+        return (PQueueX<Tuple2<T, U>>) PersistentCollectionX.super.zipStream(other);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * zip(org.jooq.lambda.Seq)
      */
     @Override
-    PQueueX<T> limitUntil(Predicate<? super T> p);
+    default <U> PQueueX<Tuple2<T, U>> zip(Seq<U> other) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#intersperse(java.lang.Object)
+        return (PQueueX<Tuple2<T, U>>) PersistentCollectionX.super.zip(other);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    PQueueX<T> intersperse(T value);
+    default <S, U> PQueueX<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#limitLast(int)
+        return (PQueueX) PersistentCollectionX.super.zip3(second, third);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * zip4(java.util.stream.Stream, java.util.stream.Stream,
+     * java.util.stream.Stream)
      */
     @Override
-    PQueueX<T> limitLast(int num);
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmpty(java.lang.Object)
+    default <T2, T3, T4> PQueueX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third, Stream<T4> fourth) {
+
+        return (PQueueX<Tuple4<T, T2, T3, T4>>) PersistentCollectionX.super.zip4(second, third, fourth);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * zipWithIndex()
      */
     @Override
-    PQueueX<T> onEmpty(T value);
-    
+    default PQueueX<Tuple2<T, Long>> zipWithIndex() {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyGet(java.util.function.Supplier)
+        return (PQueueX<Tuple2<T, Long>>) PersistentCollectionX.super.zipWithIndex();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * distinct()
      */
     @Override
-    PQueueX<T> onEmptyGet(Supplier<T> supplier);
+    default PQueueX<T> distinct() {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyThrow(java.util.function.Supplier)
+        return (PQueueX<T>) PersistentCollectionX.super.distinct();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * sorted()
      */
     @Override
-    <X extends Throwable> PQueueX<T> onEmptyThrow(Supplier<X> supplier);
+    default PQueueX<T> sorted() {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
+        return (PQueueX<T>) PersistentCollectionX.super.sorted();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * sorted(java.util.Comparator)
      */
     @Override
-    <U> PQueueX<U> ofType(Class<U> type);
+    default PQueueX<T> sorted(Comparator<? super T> c) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#filterNot(java.util.function.Predicate)
+        return (PQueueX<T>) PersistentCollectionX.super.sorted(c);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * skipWhile(java.util.function.Predicate)
      */
     @Override
-    PQueueX<T> filterNot(Predicate<? super T> fn);
+    default PQueueX<T> skipWhile(Predicate<? super T> p) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#notNull()
+        return (PQueueX<T>) PersistentCollectionX.super.skipWhile(p);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * skipUntil(java.util.function.Predicate)
      */
     @Override
-    PQueueX<T> notNull();
+    default PQueueX<T> skipUntil(Predicate<? super T> p) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.util.stream.Stream)
+        return (PQueueX<T>) PersistentCollectionX.super.skipUntil(p);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * limitWhile(java.util.function.Predicate)
      */
     @Override
-    PQueueX<T> removeAll(Stream<T> stream);
+    default PQueueX<T> limitWhile(Predicate<? super T> p) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
+        return (PQueueX<T>) PersistentCollectionX.super.limitWhile(p);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * limitUntil(java.util.function.Predicate)
      */
     @Override
-    PQueueX<T> removeAll(Iterable<T> it);
+    default PQueueX<T> limitUntil(Predicate<? super T> p) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Object[])
+        return (PQueueX<T>) PersistentCollectionX.super.limitUntil(p);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * intersperse(java.lang.Object)
      */
     @Override
-    PQueueX<T> removeAll(T... values);
+    default PQueueX<T> intersperse(T value) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Iterable)
+        return (PQueueX<T>) PersistentCollectionX.super.intersperse(value);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * shuffle()
      */
     @Override
-    PQueueX<T> retainAll(Iterable<T> it);
+    default PQueueX<T> shuffle() {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.util.stream.Stream)
+        return (PQueueX<T>) PersistentCollectionX.super.shuffle();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * skipLast(int)
      */
     @Override
-    PQueueX<T> retainAll(Stream<T> stream);
+    default PQueueX<T> skipLast(int num) {
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Object[])
+        return (PQueueX<T>) PersistentCollectionX.super.skipLast(num);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * limitLast(int)
      */
     @Override
-    PQueueX<T> retainAll(T... values);
+    default PQueueX<T> limitLast(int num) {
 
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(int, java.util.function.Supplier)
+        return (PQueueX<T>) PersistentCollectionX.super.limitLast(num);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * onEmpty(java.lang.Object)
      */
     @Override
-     <C extends Collection<? super T>> PQueueX<C> grouped(int size, Supplier<C> supplier);
+    default PQueueX<T> onEmpty(T value) {
 
-     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate)
+        return (PQueueX<T>) PersistentCollectionX.super.onEmpty(value);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * onEmptyGet(java.util.function.Supplier)
      */
     @Override
-     PQueueX<ListX<T>> groupedUntil(Predicate<? super T> predicate);
+    default PQueueX<T> onEmptyGet(Supplier<T> supplier) {
 
+        return (PQueueX<T>) PersistentCollectionX.super.onEmptyGet(supplier);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-     PQueueX<ListX<T>> groupedWhile(Predicate<? super T> predicate);
+    default <X extends Throwable> PQueueX<T> onEmptyThrow(Supplier<X> supplier) {
 
+        return (PQueueX<T>) PersistentCollectionX.super.onEmptyThrow(supplier);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * shuffle(java.util.Random)
      */
     @Override
-     <C extends Collection<? super T>> PQueueX<C> groupedWhile(Predicate<? super T> predicate,
-                Supplier<C> factory);
+    default PQueueX<T> shuffle(Random random) {
 
+        return (PQueueX<T>) PersistentCollectionX.super.shuffle(random);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * ofType(java.lang.Class)
      */
     @Override
-     <C extends Collection<? super T>> PQueueX<C> groupedUntil(Predicate<? super T> predicate,
-                Supplier<C> factory);
+    default <U> PQueueX<U> ofType(Class<U> type) {
 
+        return (PQueueX<U>) PersistentCollectionX.super.ofType(type);
+    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyWhile(java.util.function.BiPredicate)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * filterNot(java.util.function.Predicate)
      */
     @Override
-    PQueueX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate);
-        
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#removeAll(org.jooq.lambda.Seq)
+    default PQueueX<T> filterNot(Predicate<? super T> fn) {
+
+        return (PQueueX<T>) PersistentCollectionX.super.filterNot(fn);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * notNull()
      */
     @Override
-    PQueueX<T> removeAll(Seq<T> stream);
+    default PQueueX<T> notNull() {
 
+        return (PQueueX<T>) PersistentCollectionX.super.notNull();
+    }
 
-     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#retainAll(org.jooq.lambda.Seq)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * removeAll(java.util.stream.Stream)
      */
     @Override
-     PQueueX<T> retainAll(Seq<T> stream);
+    default PQueueX<T> removeAll(Stream<T> stream) {
+
+        return (PQueueX<T>) PersistentCollectionX.super.removeAll(stream);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * removeAll(java.lang.Iterable)
+     */
+    @Override
+    default PQueueX<T> removeAll(Iterable<T> it) {
+
+        return (PQueueX<T>) PersistentCollectionX.super.removeAll(it);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * removeAll(java.lang.Object[])
+     */
+    @Override
+    default PQueueX<T> removeAll(T... values) {
+
+        return (PQueueX<T>) PersistentCollectionX.super.removeAll(values);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * retainAll(java.lang.Iterable)
+     */
+    @Override
+    default PQueueX<T> retainAll(Iterable<T> it) {
+
+        return (PQueueX<T>) PersistentCollectionX.super.retainAll(it);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * retainAll(java.util.stream.Stream)
+     */
+    @Override
+    default PQueueX<T> retainAll(Stream<T> stream) {
+
+        return (PQueueX<T>) PersistentCollectionX.super.retainAll(stream);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * retainAll(java.lang.Object[])
+     */
+    @Override
+    default PQueueX<T> retainAll(T... values) {
+
+        return (PQueueX<T>) PersistentCollectionX.super.retainAll(values);
+    }
+
+ 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * cast(java.lang.Class)
+     */
+    @Override
+    default <U> PQueueX<U> cast(Class<U> type) {
+
+        return (PQueueX<U>) PersistentCollectionX.super.cast(type);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
+     * patternMatch(java.lang.Object, java.util.function.Function)
+     */
+    @Override
+    default <R> PQueueX<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+
+        return (PQueueX<R>) PersistentCollectionX.super.patternMatch(case1, otherwise);
+    }
+
+    @Override
+    default <C extends Collection<? super T>> PQueueX<C> grouped(int size, Supplier<C> supplier) {
+
+        return (PQueueX<C>) PersistentCollectionX.super.grouped(size, supplier);
+    }
+
+    @Override
+    default PQueueX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+
+        return (PQueueX<ListX<T>>) PersistentCollectionX.super.groupedUntil(predicate);
+    }
+
+    @Override
+    default PQueueX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+
+        return (PQueueX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyWhile(predicate);
+    }
+
+    @Override
+    default PQueueX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+
+        return (PQueueX<ListX<T>>) PersistentCollectionX.super.groupedWhile(predicate);
+    }
+
+    @Override
+    default <C extends Collection<? super T>> PQueueX<C> groupedWhile(Predicate<? super T> predicate,
+            Supplier<C> factory) {
+
+        return (PQueueX<C>) PersistentCollectionX.super.groupedWhile(predicate, factory);
+    }
+
+    @Override
+    default <C extends Collection<? super T>> PQueueX<C> groupedUntil(Predicate<? super T> predicate,
+            Supplier<C> factory) {
+
+        return (PQueueX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
+    }
+
+    @Override
+    default PQueueX<T> removeAll(Seq<T> stream) {
+
+        return (PQueueX<T>) PersistentCollectionX.super.removeAll(stream);
+    }
+
+    @Override
+    default PQueueX<T> retainAll(Seq<T> stream) {
+
+        return (PQueueX<T>) PersistentCollectionX.super.retainAll(stream);
+    }
+
 }
