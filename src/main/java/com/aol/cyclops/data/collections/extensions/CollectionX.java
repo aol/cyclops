@@ -24,6 +24,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
@@ -50,7 +51,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 										CyclopsCollectable<T>{
 	
 	static <T> CollectionX<T> fromCollection(Collection<T> col){
-		return new CollectionXImpl(col);
+		return new ListXImpl<>(col.stream());
 	}
 	
 	

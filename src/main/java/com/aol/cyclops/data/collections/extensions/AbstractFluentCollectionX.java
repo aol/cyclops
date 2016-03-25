@@ -19,13 +19,60 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.util.stream.StreamUtils;
 
+import lombok.AllArgsConstructor;
+
 public abstract class AbstractFluentCollectionX<T> implements FluentCollectionX<T>{
+    @AllArgsConstructor
+    public static class LazyCollection<T,C extends Collection<T>> implements LazyFluentCollection<T,C>{
+        private volatile C list;
+        private volatile Stream<T> seq;
+        private final Collector<T,?,C> collector;
+        public C get(){
+            if( seq!=null){
+               list =  seq.collect(collector);
+               seq = null;
+            }
+              
+            return list;
+            
+        }
+        
+        public ReactiveSeq<T> stream(){
+            if(seq!=null){
+               ReactiveSeq<T> result =  ReactiveSeq.fromStream(seq);
+               seq=null;
+               return result;
+            }
+            return ReactiveSeq.fromIterable(list);
+        }
+    }
+    @AllArgsConstructor
+    public static class PersistentLazyCollection<T,C extends Collection<T>>  implements LazyFluentCollection<T,C>{
+        private volatile C list;
+        private volatile Stream<T> seq;
+        private final Reducer<C> reducer;
+        public C get(){
+            if( seq!=null){
+               list =  reducer.mapReduce(seq);
+               seq = null;
+            }
+              
+            return list;
+            
+        }
+        public ReactiveSeq<T> stream(){
+            if(seq!=null)
+                return ReactiveSeq.fromStream(seq);
+            return ReactiveSeq.fromIterable(list);
+        }
+    }
     abstract public ReactiveSeq<T> streamInternal();
     abstract public <X> FluentCollectionX<X> stream(Stream<X> stream);
     @Override

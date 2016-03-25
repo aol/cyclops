@@ -38,10 +38,10 @@ public class PBagXImpl<T> extends AbstractFluentCollectionX<T> implements PBagX<
 	
 	private final  LazyFluentCollection<T,PBag<T>> lazy;
 	public PBagXImpl(PBag<T> bag){
-	    this.lazy = new PersistentCollectionX.PersistentLazyCollection<>(bag,null,Reducers.toPBag());
+	    this.lazy = new PersistentLazyCollection<>(bag,null,Reducers.toPBag());
 	}
 	public PBagXImpl(Stream<T> stream){
-        this.lazy = new PersistentCollectionX.PersistentLazyCollection<>(null,stream,Reducers.toPBag());
+        this.lazy = new PersistentLazyCollection<>(null,stream,Reducers.toPBag());
     }
 	/**
 	 * @param action

@@ -28,7 +28,6 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -62,7 +61,7 @@ import com.aol.cyclops.util.stream.StreamUtils;
  * @param <T>
  */
 public interface ListX<T> extends List<T>, 
-                                  MutableCollectionX<T>, 
+                                  FluentCollectionX<T>, 
                                   MutableSequenceX<T>, 
                                   Comparable<T>,
                                   IterableFunctor<T>,
@@ -451,7 +450,7 @@ public interface ListX<T> extends List<T>,
 	 */
 	@Override
 	default ListX<T> peek(Consumer<? super T> c) {
-        return (ListX<T>)MutableCollectionX.super.peek(c);
+        return (ListX<T>)MutableSequenceX.super.peek(c);
     }
 	
 

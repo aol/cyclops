@@ -23,10 +23,10 @@ import org.jooq.lambda.tuple.Tuple4;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.data.collections.extensions.AbstractFluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.AbstractFluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.LazyFluentCollection;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

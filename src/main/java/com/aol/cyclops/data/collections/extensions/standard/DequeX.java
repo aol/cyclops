@@ -27,9 +27,10 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
+public interface DequeX<T> extends Deque<T>, FluentCollectionX<T> {
 	
 	static <T> Collector<T,?,Deque<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new ArrayDeque<>());
@@ -338,7 +339,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
      */
     @Override
     default DequeX<T> peek(Consumer<? super T> c) {
-        return (DequeX<T>)MutableCollectionX.super.peek(c);
+        return (DequeX<T>)FluentCollectionX.super.peek(c);
     }
     
 

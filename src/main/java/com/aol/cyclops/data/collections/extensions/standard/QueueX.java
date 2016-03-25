@@ -28,9 +28,10 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
+public interface QueueX<T> extends Queue<T>, FluentCollectionX<T> {
 	
 	static <T> Collector<T,?,Queue<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new LinkedList<>());
@@ -331,7 +332,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
      */
     @Override
     default QueueX<T> peek(Consumer<? super T> c) {
-        return (QueueX<T>)MutableCollectionX.super.peek(c);
+        return (QueueX<T>)FluentCollectionX.super.peek(c);
     }
     
 

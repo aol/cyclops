@@ -28,7 +28,6 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.AbstractFluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.LazyFluentCollection;
-import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX.PersistentLazyCollection;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 

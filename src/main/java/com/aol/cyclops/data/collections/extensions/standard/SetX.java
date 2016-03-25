@@ -26,12 +26,12 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
+public interface SetX<T> extends Set<T>, FluentCollectionX<T> {
 	static <T> Collector<T,?,Set<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new HashSet<>());
 	}
@@ -339,7 +339,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
      */
     @Override
     default SetX<T> peek(Consumer<? super T> c) {
-        return (SetX<T>)MutableCollectionX.super.peek(c);
+        return (SetX<T>)FluentCollectionX.super.peek(c);
     }
     
 

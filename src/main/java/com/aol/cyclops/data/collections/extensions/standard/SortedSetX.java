@@ -1,12 +1,9 @@
 package com.aol.cyclops.data.collections.extensions.standard;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -31,9 +28,10 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
+public interface SortedSetX<T> extends SortedSet<T>, FluentCollectionX<T> {
 	static <T> Collector<T,?,SortedSet<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new TreeSet<T>((Comparator)Comparator.<Comparable>naturalOrder()));
 	}
@@ -334,7 +332,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
      */
     @Override
     default SortedSetX<T> peek(Consumer<? super T> c) {
-        return (SortedSetX<T>)MutableCollectionX.super.peek(c);
+        return (SortedSetX<T>)FluentCollectionX.super.peek(c);
     }
     
 
