@@ -58,10 +58,15 @@ public class EvalT<T> {
      * @return MaybeT with peek call
      */
     public EvalT<T> peek(Consumer<? super T> peek) {
-        return of(run.peek(opt -> opt.map(a -> {
+        
+        return map(a -> {
             peek.accept(a);
             return a;
-        })));
+        });
+    }
+    public <T> T print(T in){
+        System.out.println("peek " +in);
+        return in;
     }
 
     /**
