@@ -77,12 +77,7 @@ public abstract class AbstractCollectionXTest {
 	public static final LazyReact r = new LazyReact(10,10);
 	
 	int captured=-1;
-    @Test
-    public void confirmLazy(){
-        captured = -1;
-        of(1,2,3).peek(a->captured=a);
-        assertEquals(captured,-1);
-    }
+   
     
 	@Test
     public void mergePublisherFlux() throws InterruptedException{

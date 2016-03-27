@@ -305,7 +305,7 @@ public class MatchableTest implements Printable{
 	@Test 
 	public void emptyList(){
 		
-		assertThat(Matchable.of(Arrays.asList()).matches(c->c.isEmpty(then("hello")),otherwise("world")),equalTo(Eval.now("hello")));
+		assertThat(Matchables.iterable(Arrays.asList()).matches(c->c.isEmpty(then("hello")),otherwise("world")),equalTo(Eval.now("hello")));
 	}
 	@Test 
 	public void emptyStream(){
@@ -376,7 +376,7 @@ public class MatchableTest implements Printable{
 		assertThat(Matchables.optional(Optional.empty())
 		                        .matches(c->c.is(when(some()),then("goodbye")),
 		                                otherwise("hello")).get(),equalTo("goodbye"));
-		assertThat(Matchable.of(Optional.empty()).visit(i->"some", ()->"none"),equalTo("none"));
+		assertThat(Matchables.optional(Optional.empty()).visit(i->"some", ()->"none"),equalTo("none"));
 	}
 	@Test
 	public void emptyOptionalMultiple2Maybe(){

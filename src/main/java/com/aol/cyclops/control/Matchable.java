@@ -496,23 +496,23 @@ public interface Matchable<TYPE>{
             } 
 	        default <R> Eval<R>  matches(Function<CheckValueOpt<T,R>,CheckValueOpt<T,R>> some,Supplier<? extends R> otherwise){
 	            Optional<T> opt = toOptional();
-	            if(opt.isPresent()){
+	           // if(opt.isPresent()){
 	                
-	               if(otherwise instanceof Eval){
+	               if(otherwise instanceof Eval){ //tail call optimization
 	                   Eval<R> tailRec = (Eval<R>)otherwise;
 	                   return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( some.apply( (CheckValueOpt)
                                new MatchableCase(new PatternMatcher()).withTypeOpt(Tuple1.class)).getPatternMatcher()))
-                               .match(Tuple.tuple(opt.get())).orElse(UNSET.VOID)).flatMap(i-> i==UNSET.VOID? tailRec : Eval.now(i));
+                               .match(Tuple.tuple(opt.orElse(null))).orElse(UNSET.VOID)).flatMap(i-> i==UNSET.VOID? tailRec : Eval.now(i));
 	                }
 	                     
 	                 
 	                return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( some.apply( (CheckValueOpt)
 	                            new MatchableCase(new PatternMatcher()).withTypeOpt(Tuple1.class)).getPatternMatcher()))
-	                            .match(Tuple.tuple(opt.get())).orElseGet(otherwise));
+	                            .match(Tuple.tuple(opt.orElse(null))).orElseGet(otherwise));
 	                 
 	               
-	            }
-	            return Eval.later(()->otherwise.get());
+	          //  }
+	           // return Eval.later(()->otherwise.get());
 	        }
 	    }
 	
@@ -941,6 +941,7 @@ public interface Matchable<TYPE>{
                     predicates)));
             
         }
+        
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public final CheckValueOpt<T,R> is(MTuple1<Predicate<? super T>> when,Supplier<? extends R> then) {       
             return isWhere(then,when.getMatchable().v1);
@@ -948,7 +949,7 @@ public interface Matchable<TYPE>{
         
          @SuppressWarnings({ "rawtypes", "unchecked" })
         private final  CheckValueOpt<T,R> isWhere(Supplier<? extends R> result,Predicate<? super T> value){
-            Predicate predicate = it -> Optional.of(it)
+            Predicate predicate = it -> it!=null && Optional.of(it)
                     .map(v -> v.getClass().isAssignableFrom(clazz))
                     .orElse(false);
             // add wildcard support
@@ -997,20 +998,6 @@ public interface Matchable<TYPE>{
 		
 		
 		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public final <V> CheckValue1<T,R> isEmpty(Supplier<? extends R> then) {
-
-			Predicate predicate = it -> Maybe.ofNullable(it)
-			                                 .map(v -> v.getClass().isAssignableFrom(clazz))
-			                                 .orElse(false);
-			// add wildcard support
-			
-			Predicate<V>[] predicates = new Predicate[]{i->i==SeqUtils.EMPTY};
-
-			return new CheckValue1(clazz,new MatchableCase(this.getPatternMatcher().inCaseOfManyType(predicate,i->then.get(),
-					predicates)));
-		}
-
 
 		PatternMatcher getPatternMatcher() {
 			return simplerCase.getPatternMatcher();
