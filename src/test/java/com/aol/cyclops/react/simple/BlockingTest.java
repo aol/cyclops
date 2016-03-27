@@ -2,12 +2,13 @@ package com.aol.cyclops.react.simple;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -142,11 +143,11 @@ public class BlockingTest {
 		assertThat(results.size(), is(0));
 		assertThat(error[0], instanceOf(RuntimeException.class));
 	}
-	volatile int count =0;
+	AtomicInteger count = new AtomicInteger(0);
 	@Test
 	public void testBreakoutExceptionTimes() throws InterruptedException,
 			ExecutionException {
-		count =0;
+	    count = new AtomicInteger(0);
 		List<Integer> results = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
@@ -154,16 +155,16 @@ public class BlockingTest {
 
 					throw new RuntimeException("boo!");
 
-				}).capture(e -> count++)
+				}).capture(e -> count.incrementAndGet())
 				.block(status -> status.getCompleted() >= 1);
 
 		assertThat(results.size(), is(0));
-		assertThat(count, is(3));
+		assertThat(count.get(), is(3));
 	}
 	@Test
 	public void testBreakoutAllCompleted() throws InterruptedException,
 			ExecutionException {
-		count =0;
+	    count = new AtomicInteger(0);
 		List<Integer> results = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
@@ -174,16 +175,16 @@ public class BlockingTest {
 						sleep(it);
 					return it;
 
-				}).capture(e -> count++)
+				}).capture(e -> count.incrementAndGet())
 				.block(status -> status.getAllCompleted() >0);
 
 		assertThat(results.size(), is(0));
-		assertThat(count, is(1));
+		assertThat(count.get(), is(1));
 	}
 	@Test
 	public void testBreakoutAllCompletedStrings() throws InterruptedException,
 			ExecutionException {
-		count =0;
+		count = new AtomicInteger(0);
 		List<String> strings = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
@@ -194,17 +195,18 @@ public class BlockingTest {
 						sleep(it);
 					return it;
 
-				}).capture(e -> count++)
+				})
 				.then( it -> "*" + it)
+				.capture(e -> count.incrementAndGet())
 				.block(status -> status.getAllCompleted() >0);
 
 		assertThat(strings.size(), is(0));
-		assertThat(count, is(1));
+		assertThat(count.get(), is(1));
 	}
 	@Test
 	public void testBreakoutAllCompletedAndTime() throws InterruptedException,
 			ExecutionException {
-			count =0;
+	        count = new AtomicInteger(0);
 			List<Integer> result = new SimpleReact()
 					.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 					.then(it -> it * 100)
@@ -212,11 +214,11 @@ public class BlockingTest {
 						sleep(it);
 						return it;
 	
-					}).capture(e -> count++)
+					}).capture(e -> count.incrementAndGet())
 					.block(status -> status.getAllCompleted() >1 && status.getElapsedMillis()>20);
 	
 			assertThat(result.size(), is(2));
-			assertThat(count, is(0));
+			assertThat(count.get(), is(0));
 	}
 	
 

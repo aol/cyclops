@@ -163,13 +163,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	public static <ST,PT> Xor<?,ST> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Semigroup<ST> reducer){
 			return sequenceSecondary(xors).map(s->s.reduce(reducer.reducer()).get());
 	}
-	default <R> R visit(Function<? super ST,? extends R> secondary, 
-            Function<? super PT,? extends R> primary){
-	    
-        if(isSecondary())
-            return swap().visit(secondary,()->null);
-        return visit(primary,()->null);
-    }
+	<R> R visit(Function<? super ST,? extends R> secondary, 
+            Function<? super PT,? extends R> primary);
 	
 	default <R1,R2> Xor<R1,R2> visitXor(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
@@ -356,7 +351,11 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
         public Ior<ST, PT> toIor() {
            return Ior.primary(value);
         }
-
+        @Override
+        public <R> R visit(Function<? super ST,? extends R> secondary, 
+                Function<? super PT,? extends R> primary){
+            return primary.apply(value);
+        }
         @Override
         public <R> Eval<R> matches(
                 Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> secondary,
@@ -454,6 +453,11 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 			stAction.accept(value);
 			
 		}
+		@Override
+        public <R> R visit(Function<? super ST,? extends R> secondary, 
+                Function<? super PT,? extends R> primary){
+            return secondary.apply(value);
+        }
 		
 		public Maybe<PT> toMaybe(){
 			return Maybe.none();

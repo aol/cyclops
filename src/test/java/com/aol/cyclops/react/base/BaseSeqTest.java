@@ -460,7 +460,7 @@ public abstract class BaseSeqTest {
 	    			.cast(Integer.class)
 	    				.peek(it ->System.out.println(it)).toList();
 	    	
-	    	assertThat(ex.getCause().getClass(),equalTo(ClassCastException.class));
+	    	assertThat(ex.getClass(),equalTo(ClassCastException.class));
 	    }
 	    @Test
 	    public void testCastExceptionOnFail() {
