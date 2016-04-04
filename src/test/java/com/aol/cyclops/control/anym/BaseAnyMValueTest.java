@@ -188,10 +188,6 @@ public abstract class BaseAnyMValueTest {
 		assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
 	}
 
-	@Test
-	public void testGetMatchable() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
 
 	@Test
 	public void testIterate() {
@@ -681,10 +677,7 @@ public abstract class BaseAnyMValueTest {
 		assertThat(cf.join(),equalTo(10));
 	}
 
-	@Test
-	public void testGetMatchable1() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
+	
 
 	@Test
     public void testMatches() {

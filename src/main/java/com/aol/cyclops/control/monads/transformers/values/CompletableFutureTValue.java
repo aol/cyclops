@@ -38,7 +38,7 @@ import lombok.val;
  *
  * @param <T>
  */
-public class CompletableFutureT<A> implements MonadicValue<A>,
+public class CompletableFutureTValue<A> implements MonadicValue<A>,
                                                 Supplier<A>, 
                                                 ConvertableFunctor<A>, 
                                                 Filterable<A>,
@@ -53,7 +53,7 @@ public class CompletableFutureT<A> implements MonadicValue<A>,
    public AnyMValue<CompletableFuture<A>> unwrap(){
 	   return run;
    }
-   private CompletableFutureT(final AnyMValue<CompletableFuture<A>> run){
+   private CompletableFutureTValue(final AnyMValue<CompletableFuture<A>> run){
        this.run = run;
    }
    
@@ -73,8 +73,8 @@ public class CompletableFutureT<A> implements MonadicValue<A>,
     *            Predicate to filter the wrapped Maybe
     * @return MaybeT that applies the provided filter
     */
-   public MaybeT<A> filter(Predicate<? super A> test) {
-       return MaybeT.of(run.map(opt -> FutureW.of(opt).filter(test)));
+   public MaybeTValue<A> filter(Predicate<? super A> test) {
+       return MaybeTValue.of(run.map(opt -> FutureW.of(opt).filter(test)));
    }
    /**
 	 * Peek at the current value of the CompletableFuture
@@ -90,7 +90,7 @@ public class CompletableFutureT<A> implements MonadicValue<A>,
 	 * @param peek  Consumer to accept current value of CompletableFuture
 	 * @return CompletableFutureT with peek call
 	 */
-   public CompletableFutureT<A> peek(Consumer<? super A> peek){
+   public CompletableFutureTValue<A> peek(Consumer<? super A> peek){
 	  
        return of(run.peek(future-> future.thenApply(a->{peek.accept(a); return a;})));
    }
@@ -110,8 +110,8 @@ public class CompletableFutureT<A> implements MonadicValue<A>,
 	 * @param f Mapping function for the wrapped CompletableFuture
 	 * @return CompletableFutureT that applies the map function to the wrapped CompletableFuture
 	 */   
-   public <B> CompletableFutureT<B> map(Function<? super A,? extends B> f){
-       return new CompletableFutureT<B>(run.map(o-> o.thenApply(f)));
+   public <B> CompletableFutureTValue<B> map(Function<? super A,? extends B> f){
+       return new CompletableFutureTValue<B>(run.map(o-> o.thenApply(f)));
    }
    /**
 	 * Flat Map the wrapped CompletableFuture
@@ -128,13 +128,13 @@ public class CompletableFutureT<A> implements MonadicValue<A>,
 	 * @return CompletableFutureT that applies the flatMap function to the wrapped CompletableFuture
 	 */
 
-   public <B> CompletableFutureT<B> flatMapT(Function<? super A,CompletableFutureT<B>> f){
+   public <B> CompletableFutureTValue<B> flatMapT(Function<? super A,CompletableFutureTValue<B>> f){
 	   return of(run.map(future-> future.thenCompose(a-> f.apply(a).run.stream().toList().get(0))));
    }
    private static  <B> AnyMValue<CompletableFuture<B>> narrow(AnyMValue<CompletableFuture<? extends B>> run){
        return (AnyMValue)run;
    }
-   public <B> CompletableFutureT<B> flatMap(Function<? super A,? extends MonadicValue<? extends B>> f){
+   public <B> CompletableFutureTValue<B> flatMap(Function<? super A,? extends MonadicValue<? extends B>> f){
       
        AnyMValue<CompletableFuture<? extends B>> mapped=  run.map(o -> FutureW.of(o).flatMap(f).getFuture());
        return of(narrow(mapped));
@@ -169,7 +169,7 @@ public class CompletableFutureT<A> implements MonadicValue<A>,
 	 * @param fn Function to enhance with functionality from CompletableFuture and another monad type
 	 * @return Function that accepts and returns an CompletableFutureT
 	 */   
-   public static <U, R> Function<CompletableFutureT<U>, CompletableFutureT<R>> lift(Function<? super U,? extends R> fn) {
+   public static <U, R> Function<CompletableFutureTValue<U>, CompletableFutureTValue<R>> lift(Function<? super U,? extends R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));
 	}
    /**
@@ -202,7 +202,7 @@ public class CompletableFutureT<A> implements MonadicValue<A>,
   	 * @param fn BiFunction to enhance with functionality from CompletableFuture and another monad type
   	 * @return Function that accepts and returns an CompletableFutureT
   	 */
-	public static <U1, U2, R> BiFunction<CompletableFutureT<U1>, CompletableFutureT<U2>, CompletableFutureT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
+	public static <U1, U2, R> BiFunction<CompletableFutureTValue<U1>, CompletableFutureTValue<U2>, CompletableFutureTValue<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
 		return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 	/**
@@ -212,7 +212,7 @@ public class CompletableFutureT<A> implements MonadicValue<A>,
 	 * @param anyM AnyM that doesn't contain a monad wrapping an CompletableFuture
 	 * @return CompletableFutureT
 	 */
-   public static <A> CompletableFutureT<A> fromAnyM(AnyMValue<A> anyM){
+   public static <A> CompletableFutureTValue<A> fromAnyM(AnyMValue<A> anyM){
 	   return of(anyM.map(CompletableFuture::completedFuture));
    }
    /**
@@ -221,11 +221,11 @@ public class CompletableFutureT<A> implements MonadicValue<A>,
 	 * @param monads AnyM that contains a monad wrapping an CompletableFuture
 	 * @return CompletableFutureT
 	 */   
-   public static <A> CompletableFutureT<A> of(AnyMValue<CompletableFuture<A>> monads){
-	   return new CompletableFutureT<>(monads);
+   public static <A> CompletableFutureTValue<A> of(AnyMValue<CompletableFuture<A>> monads){
+	   return new CompletableFutureTValue<>(monads);
    }
    
-   public static <A,V extends MonadicValue<CompletableFuture<A>>> CompletableFutureT<A> fromValue(V monadicValue){
+   public static <A,V extends MonadicValue<CompletableFuture<A>>> CompletableFutureTValue<A> fromValue(V monadicValue){
        return of(AnyM.ofValue(monadicValue));
    }
    
@@ -272,10 +272,10 @@ public class CompletableFutureT<A> implements MonadicValue<A>,
       
     }
     
-    public <R> CompletableFutureT<R> unit(R value){
+    public <R> CompletableFutureTValue<R> unit(R value){
        return of(run.unit(CompletableFuture.completedFuture(value)));
     }
-    public <R> CompletableFutureT<R> empty(){
+    public <R> CompletableFutureTValue<R> empty(){
         return of(run.unit(new CompletableFuture<R>()));
      }
  

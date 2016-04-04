@@ -7,15 +7,14 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 
 import lombok.AccessLevel;
@@ -92,6 +91,23 @@ public interface Maybe<T> extends MonadicValue<T>,
 	
 	
 	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> Maybe<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+        return (Maybe<R>)MonadicValue.super.coflatMap(mapper);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    default Maybe<MonadicValue<T>> nest() {
+       
+        return (Maybe<MonadicValue<T>>)MonadicValue.super.nest();
+    }
+
+    /* (non-Javadoc)
 	 * @see com.aol.cyclops.value.Value#toMaybe()
 	 */
 	@Override
@@ -175,7 +191,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 	}
 	@Override
 	default <R> Maybe<R> patternMatch(
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (Maybe<R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
@@ -352,10 +368,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 		public boolean isPresent(){
 			return false;
 		}
-		@Override
-		public T getMatchable() {
-			return (T)this;
-		}
+		
 		
 	}
 	

@@ -4,28 +4,28 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.values.MaybeT;
+import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class MaybeTComprehender implements ValueComprehender<MaybeT> {
+public class MaybeTComprehender implements ValueComprehender<MaybeTValue> {
 	public Class getTargetClass(){
-		return MaybeT.class;
+		return MaybeTValue.class;
 	}
 	@Override
-	public Object filter(MaybeT o,Predicate p) {
+	public Object filter(MaybeTValue o,Predicate p) {
 		return o.filter(p);
 	}
 
 	@Override
-	public Object map(MaybeT o,Function fn) {
+	public Object map(MaybeTValue o,Function fn) {
 		return o.map(fn);
 	}
 	@Override
-	public Object executeflatMap(MaybeT t, Function fn){
+	public Object executeflatMap(MaybeTValue t, Function fn){
         return flatMap(t,input -> Comprehender.unwrapOtherMonadTypes(buildComprehender(t),fn.apply(input)));
     }
-	private Comprehender buildComprehender( MaybeT t) {
+	private Comprehender buildComprehender( MaybeTValue t) {
 	    Comprehender delegate = this;
         return new ValueComprehender() {
 
@@ -58,7 +58,7 @@ public class MaybeTComprehender implements ValueComprehender<MaybeT> {
         };
     }
     @Override
-	public MaybeT flatMap(MaybeT o,Function fn) {
+	public MaybeTValue flatMap(MaybeTValue o,Function fn) {
 		return o.flatMap(fn);
 	}
 
@@ -68,15 +68,15 @@ public class MaybeTComprehender implements ValueComprehender<MaybeT> {
 	}
 
 	@Override
-	public MaybeT of(Object o) {
+	public MaybeTValue of(Object o) {
 	    throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public MaybeT empty() {
+	public MaybeTValue empty() {
 	    throw new UnsupportedOperationException();
 	}
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,MaybeT apply){
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,MaybeTValue apply){
 		if(apply.isPresent())
 			return comp.of(apply.get());
 		else

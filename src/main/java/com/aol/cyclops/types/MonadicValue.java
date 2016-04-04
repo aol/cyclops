@@ -13,9 +13,12 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>,Functor<T> {
     default AnyMValue<T> anyM(){
         return AnyM.ofValue(this);
     }
-    default <R> MonadicValue<R> coflatMap(Function< MonadicValue<? extends T>,R> mapper){
+    default <R> MonadicValue<R> coflatMap(Function<? super MonadicValue<T>,R> mapper){
         return mapper.andThen(r->unit(r)).apply(this);
     }
     
-       
+    default  MonadicValue<MonadicValue<T>> nest(){
+        return unit(this);
+    }
+    
 }

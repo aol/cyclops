@@ -39,7 +39,7 @@ import com.aol.cyclops.util.stream.StreamUtils;
  *
  * @param <T> The type contained on the Optional within
  */
-public class OptionalT<T> implements MonadicValue<T>,
+public class OptionalTValue<T> implements MonadicValue<T>,
                                     Supplier<T>, 
                                     ConvertableFunctor<T>, 
                                     Filterable<T>,
@@ -50,7 +50,7 @@ public class OptionalT<T> implements MonadicValue<T>,
    private final AnyMValue<Optional<T>> run;
    
    
-   private OptionalT(final AnyMValue<Optional<T>> run){
+   private OptionalTValue(final AnyMValue<Optional<T>> run){
        this.run = run;
    }
    
@@ -76,7 +76,7 @@ public class OptionalT<T> implements MonadicValue<T>,
 	 * @param peek  Consumer to accept current value of Optional
 	 * @return OptionalT with peek call
 	 */
-	public OptionalT<T> peek(Consumer<? super T> peek) {
+	public OptionalTValue<T> peek(Consumer<? super T> peek) {
 		return of(run.peek(opt -> opt.map(a -> {
 			peek.accept(a);
 			return a;
@@ -96,7 +96,7 @@ public class OptionalT<T> implements MonadicValue<T>,
 	 * @param test Predicate to filter the wrapped Optional
 	 * @return OptionalT that applies the provided filter
 	 */
-	public OptionalT<T> filter(Predicate<? super T> test) {
+	public OptionalTValue<T> filter(Predicate<? super T> test) {
 		return of(run.map(opt -> opt.filter(test)));
 	}
 
@@ -116,8 +116,8 @@ public class OptionalT<T> implements MonadicValue<T>,
 	 * @param f Mapping function for the wrapped Optional
 	 * @return OptionalT that applies the map function to the wrapped Optional
 	 */
-	public <B> OptionalT<B> map(Function<? super T,? extends B> f) {
-		return new OptionalT<B>(run.map(o -> o.map(f)));
+	public <B> OptionalTValue<B> map(Function<? super T,? extends B> f) {
+		return new OptionalTValue<B>(run.map(o -> o.map(f)));
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class OptionalT<T> implements MonadicValue<T>,
 	 * @param f FlatMap function
 	 * @return OptionalT that applies the flatMap function to the wrapped Optional
 	 */
-	public <B> OptionalT<B> flatMapT(Function<? super T, OptionalT<? extends B>> f) {
+	public <B> OptionalTValue<B> flatMapT(Function<? super T, OptionalTValue<? extends B>> f) {
 
 		return of(run.bind(opt -> {
 			if (opt.isPresent())
@@ -146,7 +146,7 @@ public class OptionalT<T> implements MonadicValue<T>,
 	private static  <B> AnyMValue<Optional<B>> narrow(AnyMValue<Optional<? extends B>> run){
 	       return (AnyMValue)run;
 	}
-	public <B> OptionalT<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f) {
+	public <B> OptionalTValue<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f) {
 	     AnyMValue<Optional<? extends B>> mapped=  run.map(o -> Maybe.fromOptional(o).flatMap(f).toOptional());
 	     return of(narrow(mapped));
 	}
@@ -179,7 +179,7 @@ public class OptionalT<T> implements MonadicValue<T>,
 	 * @param fn Function to enhance with functionality from Optional and another monad type
 	 * @return Function that accepts and returns an OptionalT
 	 */
-	public static <U, R> Function<OptionalT<U>, OptionalT<R>> lift(Function<U, R> fn) {
+	public static <U, R> Function<OptionalTValue<U>, OptionalTValue<R>> lift(Function<U, R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));
 	}
 
@@ -213,7 +213,7 @@ public class OptionalT<T> implements MonadicValue<T>,
 	 * @param fn BiFunction to enhance with functionality from Optional and another monad type
 	 * @return Function that accepts and returns an OptionalT
 	 */
-	public static <U1, U2, R> BiFunction<OptionalT<U1>, OptionalT<U2>, OptionalT<R>> lift2(BiFunction<? super U1, ? super U2,? extends R> fn) {
+	public static <U1, U2, R> BiFunction<OptionalTValue<U1>, OptionalTValue<U2>, OptionalTValue<R>> lift2(BiFunction<? super U1, ? super U2,? extends R> fn) {
 		return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 
@@ -224,7 +224,7 @@ public class OptionalT<T> implements MonadicValue<T>,
 	 * @param anyM AnyM that doesn't contain a monad wrapping an Optional
 	 * @return OptionalT
 	 */
-	public static <A> OptionalT<A> fromAnyM(AnyMValue<A> anyM) {
+	public static <A> OptionalTValue<A> fromAnyM(AnyMValue<A> anyM) {
 		return of(anyM.map(Optional::ofNullable));
 	}
    
@@ -234,10 +234,10 @@ public class OptionalT<T> implements MonadicValue<T>,
 	 * @param monads AnyM that contains a monad wrapping an Optional
 	 * @return OptionalT
 	 */
-	public static <A> OptionalT<A> of(AnyMValue<Optional<A>> monads) {
-		return new OptionalT<>(monads);
+	public static <A> OptionalTValue<A> of(AnyMValue<Optional<A>> monads) {
+		return new OptionalTValue<>(monads);
 	}
-	public static <A,V extends MonadicValue<Optional<A>>> OptionalT<A> fromValue(V monadicValue){
+	public static <A,V extends MonadicValue<Optional<A>>> OptionalTValue<A> fromValue(V monadicValue){
 	        return of(AnyM.ofValue(monadicValue));
 	}
 	/*
@@ -279,11 +279,11 @@ public class OptionalT<T> implements MonadicValue<T>,
         return Maybe.fromOptional(run.orElse(Optional.empty())).test(t);
     }
 
-    public <R> OptionalT<R> unit(R value) {
+    public <R> OptionalTValue<R> unit(R value) {
         return of(run.unit(Optional.of(value)));
     }
 
-    public <R> OptionalT<R> empty() {
+    public <R> OptionalTValue<R> empty() {
         return of(run.unit(Optional.empty()));
     }
 }

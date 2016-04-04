@@ -92,10 +92,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 
 	
 
-	@Override
-	public T getMatchable() {
-		return get();
-	}
+
 
 	@Override
 	public ReactiveSeq<T> stream() {

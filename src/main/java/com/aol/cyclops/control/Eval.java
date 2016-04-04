@@ -63,7 +63,21 @@ public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filte
 	
 	
 	
-	public T get();
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> Eval<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+        return (Eval<R>)MonadicValue.super.coflatMap(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    default Eval<MonadicValue<T>> nest() {
+        return (Eval<MonadicValue<T>>)MonadicValue.super.nest();
+    }
+    public T get();
 	
 	
 	@Override

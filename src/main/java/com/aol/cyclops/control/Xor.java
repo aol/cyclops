@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.MatchableCase;
@@ -16,7 +17,6 @@ import com.aol.cyclops.internal.matcher2.MatchingInstance;
 import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -185,7 +185,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	}
 	@Override
 	default <R> Xor<ST,R> patternMatch(
-			Function<CheckValues<PT, R>, CheckValues<PT, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (Xor<ST,R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
@@ -369,8 +369,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,
                 Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn1,
                 Supplier<? extends R> s) {
             return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
-                    new MatchableCase(new PatternMatcher()).withType1(getMatchable().getClass())).getPatternMatcher()))
-                        .match(getMatchable()).orElseGet(s));
+                    new MatchableCase(new PatternMatcher()).withType1(value.getClass())).getPatternMatcher()))
+                        .match(value).orElseGet(s));
         }
         
         

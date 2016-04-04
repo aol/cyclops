@@ -46,7 +46,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
@@ -58,7 +58,6 @@ import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableFilterable;
-import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -82,8 +81,11 @@ import lombok.val;
 
 
 public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T>,
-                                                IterableFilterable<T>,FilterableFunctor<T>, ExtendedTraversable<T>,
-												Foldable<T>,CyclopsCollectable<T>,
+                                                IterableFilterable<T>,
+                                                FilterableFunctor<T>, 
+                                                ExtendedTraversable<T>,
+												Foldable<T>,
+												CyclopsCollectable<T>,
 												JoolWindowing<T>, 
 												
 												Seq<T>,  Iterable<T>, Publisher<T>,
@@ -1936,7 +1938,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+	 *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
 	 * 											.hotStream(exec)
 	 * 											
 	 * 		
@@ -1961,7 +1963,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	  * <pre>
 	 * {@code 
-	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+	 *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
 											.hotStream(exec)
 											
 		
@@ -1982,7 +1984,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * The generated HotStream is pausable, for a unpausable HotStream (slightly faster execution) @see {@link ReactiveSeq#hotStream(Executor)}.
 	 * <pre>
 	 * {@code 
-	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+	 *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
 											.hotStream(exec)
 											
 		
@@ -2007,7 +2009,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	  * <pre>
 	 * {@code 
-	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+	 *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
 											.hotStream(exec)
 											
 		
@@ -2184,7 +2186,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * <pre>
 	 * {@code
-	 *     SeqSubscriber<Integer> sub = SequenceM.subscriber();
+	 *     SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
 	 * 		ReactiveSeq.of(1,2,3).subscribe(sub);
 	 * 		sub.stream().forEach(System.out::println);
 	 * 		
@@ -2699,7 +2701,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.iterate("", last -> "next")
+	 * ReactiveSeq.iterate("", last -> "next")
 	 * 				.limit(100)
 	 * 				.batchBySize(10)
 	 * 				.onePer(1, TimeUnit.MICROSECONDS)
@@ -3196,7 +3198,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	
 	@Override
 	default <R> ReactiveSeq<R> patternMatch(
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (ReactiveSeq<R>)ZippingApplicativable.super.patternMatch(case1,otherwise);
 	}

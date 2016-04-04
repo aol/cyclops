@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -19,7 +18,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -27,13 +25,11 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicative;
-import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface ListX<T> extends List<T>, 
@@ -111,7 +107,7 @@ public interface ListX<T> extends List<T>,
 	
 	@Override
     default <R> ListX<R> patternMatch(
-            Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+            Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
         return (ListX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
     }
 	@Override

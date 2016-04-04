@@ -4,28 +4,28 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.values.XorT;
+import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class XorTComprehender implements ValueComprehender<XorT> {
+public class XorTComprehender implements ValueComprehender<XorTValue> {
 	public Class getTargetClass(){
-		return XorT.class;
+		return XorTValue.class;
 	}
 	@Override
-	public Object filter(XorT o,Predicate p) {
+	public Object filter(XorTValue o,Predicate p) {
 		return o.filter(p);
 	}
 
 	@Override
-	public Object map(XorT o,Function fn) {
+	public Object map(XorTValue o,Function fn) {
 		return o.map(fn);
 	}
 	@Override
-	public Object executeflatMap(XorT t, Function fn){
+	public Object executeflatMap(XorTValue t, Function fn){
         return flatMap(t,input -> Comprehender.unwrapOtherMonadTypes(buildComprehender(t),fn.apply(input)));
     }
-	private Comprehender buildComprehender( XorT t) {
+	private Comprehender buildComprehender( XorTValue t) {
 	    Comprehender delegate = this;
         return new ValueComprehender() {
 
@@ -58,7 +58,7 @@ public class XorTComprehender implements ValueComprehender<XorT> {
         };
     }
     @Override
-	public XorT flatMap(XorT o,Function fn) {
+	public XorTValue flatMap(XorTValue o,Function fn) {
 		return o.flatMapT(fn);
 	}
 
@@ -68,15 +68,15 @@ public class XorTComprehender implements ValueComprehender<XorT> {
 	}
 
 	@Override
-	public XorT of(Object o) {
+	public XorTValue of(Object o) {
 	    throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public XorT empty() {
+	public XorTValue empty() {
 	    throw new UnsupportedOperationException();
 	}
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,XorT apply){
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,XorTValue apply){
 		if(apply.isPrimary())
 			return comp.of(apply.get());
 		else

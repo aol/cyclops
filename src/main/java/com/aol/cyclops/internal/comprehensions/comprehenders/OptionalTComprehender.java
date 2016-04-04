@@ -4,28 +4,28 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.values.OptionalT;
+import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class OptionalTComprehender implements ValueComprehender<OptionalT> {
+public class OptionalTComprehender implements ValueComprehender<OptionalTValue> {
 	public Class getTargetClass(){
-		return OptionalT.class;
+		return OptionalTValue.class;
 	}
 	@Override
-	public Object filter(OptionalT o,Predicate p) {
+	public Object filter(OptionalTValue o,Predicate p) {
 		return o.filter(p);
 	}
 
 	@Override
-	public Object map(OptionalT o,Function fn) {
+	public Object map(OptionalTValue o,Function fn) {
 		return o.map(fn);
 	}
 	@Override
-	public Object executeflatMap(OptionalT t, Function fn){
+	public Object executeflatMap(OptionalTValue t, Function fn){
         return flatMap(t,input -> Comprehender.unwrapOtherMonadTypes(buildComprehender(t),fn.apply(input)));
     }
-	private Comprehender buildComprehender( OptionalT t) {
+	private Comprehender buildComprehender( OptionalTValue t) {
 	    Comprehender delegate = this;
         return new ValueComprehender() {
 
@@ -58,7 +58,7 @@ public class OptionalTComprehender implements ValueComprehender<OptionalT> {
         };
     }
     @Override
-	public OptionalT flatMap(OptionalT o,Function fn) {
+	public OptionalTValue flatMap(OptionalTValue o,Function fn) {
 		return o.flatMapT(fn);
 	}
 
@@ -68,15 +68,15 @@ public class OptionalTComprehender implements ValueComprehender<OptionalT> {
 	}
 
 	@Override
-	public OptionalT of(Object o) {
+	public OptionalTValue of(Object o) {
 	    throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public OptionalT empty() {
+	public OptionalTValue empty() {
 	    throw new UnsupportedOperationException();
 	}
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,OptionalT apply){
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,OptionalTValue apply){
 		if(apply.isPresent())
 			return comp.of(apply.get());
 		else

@@ -14,7 +14,7 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
     default AnyMValue<T> anyM(){
         return AnyM.ofValue(this);
     }
-    default <R> MonadicValue<R> coflatMap(Function< MonadicValue<? extends T>,R> mapper){
+    default <R> MonadicValue<R> coflatMap(Function< ? super MonadicValue<T>,R> mapper){
         return mapper.andThen(r->unit(r)).apply(this);
     }
     

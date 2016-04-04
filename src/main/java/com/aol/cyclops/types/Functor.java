@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Trampoline;
 
 
@@ -93,9 +93,9 @@ public interface Functor<T> {
      * @param otherwise Value if supplied case doesn't match
      * @return CollectionX where elements are transformed by pattern matching
      */
-    default <R> Functor<R> patternMatch(Function<CheckValues<T,R>,CheckValues<T,R>> case1,Supplier<? extends R> otherwise){
+    default <R> Functor<R> patternMatch(Function<CheckValue1<T,R>,CheckValue1<T,R>> case1,Supplier<? extends R> otherwise){
       
-        return  map(u-> Matchable.of(u).matches(case1,otherwise).get());
+        return  map(u-> Matchable.from(()->u).matches(case1,otherwise).get());
     }
 
 	

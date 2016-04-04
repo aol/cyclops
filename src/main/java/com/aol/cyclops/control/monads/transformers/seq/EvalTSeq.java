@@ -1,23 +1,38 @@
-package com.aol.cyclops.control.monads.transformers.values;
+package com.aol.cyclops.control.monads.transformers.seq;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.jooq.lambda.Collectable;
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.ConvertableFunctor;
+import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.types.stream.ConvertableSequence;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
+
+import lombok.val;
 
 /**
  * Monad transformer for JDK Maybe
@@ -25,7 +40,7 @@ import com.aol.cyclops.types.applicative.Applicativable;
  * MaybeT consists of an AnyM instance that in turns wraps anoter Monad type
  * that contains an Maybe
  * 
- * MaybeT<AnyMValue<*SOME_MONAD_TYPE*<Maybe<T>>>>
+ * MaybeT<AnyMSeq<*SOME_MONAD_TYPE*<Maybe<T>>>>
  * 
  * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested
  * /contained context
@@ -36,25 +51,25 @@ import com.aol.cyclops.types.applicative.Applicativable;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class MaybeT<T> implements MonadicValue<T>,
-                                    Supplier<T>, 
-                                    ConvertableFunctor<T>, 
-                                    Filterable<T>,
-                                    Applicativable<T>,
-                                    Matchable.ValueAndOptionalMatcher<T>
-                                    {
+public class EvalTSeq<T> implements ConvertableSequence<T>,
+                                    ExtendedTraversable<T>,
+                                    Sequential<T>,
+                                    CyclopsCollectable<T>,
+                                    IterableCollectable<T>,
+                                    FilterableFunctor<T>,
+                                    ZippingApplicativable<T>,
+                                    Publisher<T>{
 
-    
-    private final AnyMValue<Maybe<T>> run;
+    private final AnyMSeq<Eval<T>> run;
 
-    private MaybeT(final AnyMValue<Maybe<T>> run) {
+    private EvalTSeq(final AnyMSeq<Eval<T>> run) {
         this.run = run;
     }
 
     /**
      * @return The wrapped AnyM
      */
-    public AnyMValue<Maybe<T>> unwrap() {
+    public AnyMSeq<Eval<T>> unwrap() {
         return run;
     }
 
@@ -74,7 +89,7 @@ public class MaybeT<T> implements MonadicValue<T>,
      *            Consumer to accept current value of Maybe
      * @return MaybeT with peek call
      */
-    public MaybeT<T> peek(Consumer<? super T> peek) {
+    public EvalTSeq<T> peek(Consumer<? super T> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
             return a;
@@ -89,7 +104,7 @@ public class MaybeT<T> implements MonadicValue<T>,
      *    MaybeT.of(AnyM.fromStream(Maybe.of(10))
      *             .filter(t->t!=10);
      *             
-     *     //MaybeT<AnyMValue<Stream<Maybe.empty>>>
+     *     //MaybeT<AnyMSeq<Stream<Maybe.empty>>>
      * }
      * </pre>
      * 
@@ -97,10 +112,9 @@ public class MaybeT<T> implements MonadicValue<T>,
      *            Predicate to filter the wrapped Maybe
      * @return MaybeT that applies the provided filter
      */
-    public MaybeT<T> filter(Predicate<? super T> test) {
-        return of(run.map(opt -> opt.filter(test)));
+    public MaybeTSeq<T> filter(Predicate<? super T> test) {
+        return MaybeTSeq.of(run.map(opt -> opt.filter(test)));
     }
-
     /**
      * Map the wrapped Maybe
      * 
@@ -110,7 +124,7 @@ public class MaybeT<T> implements MonadicValue<T>,
      *             .map(t->t=t+1);
      *  
      *  
-     *  //MaybeT<AnyMValue<Stream<Maybe[11]>>>
+     *  //MaybeT<AnyMSeq<Stream<Maybe[11]>>>
      * }
      * </pre>
      * 
@@ -118,8 +132,8 @@ public class MaybeT<T> implements MonadicValue<T>,
      *            Mapping function for the wrapped Maybe
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
-    public <B> MaybeT<B> map(Function<? super T, ? extends B> f) {
-        return new MaybeT<B>(run.map(o -> o.map(f)));
+    public <B> EvalTSeq<B> map(Function<? super T, ? extends B> f) {
+        return new EvalTSeq<B>(run.map(o -> o.map(f)));
     }
 
     /**
@@ -131,7 +145,7 @@ public class MaybeT<T> implements MonadicValue<T>,
     *             .flatMap(t->Maybe.empty();
     *  
     *  
-    *  //MaybeT<AnyMValue<Stream<Maybe.empty>>>
+    *  //MaybeT<AnyMSeq<Stream<Maybe.empty>>>
     * }
      * </pre>
      * 
@@ -139,18 +153,18 @@ public class MaybeT<T> implements MonadicValue<T>,
      *            FlatMap function
      * @return MaybeT that applies the flatMap function to the wrapped Maybe
      */
-    public <B> MaybeT<B> flatMapT(Function<? super T, MaybeT<? extends B>> f) {
+    public <B> EvalTSeq<B> flatMapT(Function<? super T, EvalTSeq<? extends B>> f) {
 
         return of(run.bind(opt -> {
-            if (opt.isPresent())
+            
                 return f.apply(opt.get()).run.unwrap();
-            return run.unit(Maybe.<B> none()).unwrap();
+           
         }));
 
     }
-    public <B> MaybeT<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f) {
+    public <B> EvalTSeq<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f) {
 
-        return new MaybeT<B>(run.map(o -> o.flatMap(f)));
+        return new EvalTSeq<B>(run.map(o -> o.flatMap(f)));
 
     }
 
@@ -169,8 +183,8 @@ public class MaybeT<T> implements MonadicValue<T>,
      *     Function<MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift(add2);
      * 
      *     Stream<Integer> withNulls = Stream.of(1, 2, null);
-     *     AnyMValue<Integer> stream = AnyM.ofMonad(withNulls);
-     *     AnyMValue<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
+     *     AnyMSeq<Integer> stream = AnyM.ofMonad(withNulls);
+     *     AnyMSeq<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
      *     List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt)).unwrap().<Stream<Maybe<Integer>>> unwrap()
      *             .filter(Maybe::isPresent).map(Maybe::get).collect(Collectors.toList());
      * 
@@ -185,7 +199,7 @@ public class MaybeT<T> implements MonadicValue<T>,
      *            monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U, R> Function<MaybeT<U>, MaybeT<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<EvalTSeq<U>, EvalTSeq<R>> lift(Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -204,11 +218,11 @@ public class MaybeT<T> implements MonadicValue<T>,
      *     BiFunction<MaybeT<Integer>, MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift2(add);
      * 
      *     Stream<Integer> withNulls = Stream.of(1, 2, null);
-     *     AnyMValue<Integer> stream = AnyM.ofMonad(withNulls);
-     *     AnyMValue<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
+     *     AnyMSeq<Integer> stream = AnyM.ofMonad(withNulls);
+     *     AnyMSeq<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
      * 
      *     CompletableFuture<Maybe<Integer>> two = CompletableFuture.supplyAsync(() -> Maybe.of(2));
-     *     AnyMValue<Maybe<Integer>> future = AnyM.ofMonad(two);
+     *     AnyMSeq<Maybe<Integer>> future = AnyM.ofMonad(two);
      *     List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt), MaybeT.of(future)).unwrap()
      *             .<Stream<Maybe<Integer>>> unwrap().filter(Maybe::isPresent).map(Maybe::get)
      *             .collect(Collectors.toList());
@@ -221,12 +235,10 @@ public class MaybeT<T> implements MonadicValue<T>,
      *            another monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U1, U2, R> BiFunction<MaybeT<U1>, MaybeT<U2>, MaybeT<R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
+    public static <U1, U2, R> BiFunction<EvalTSeq<U1>, EvalTSeq<U2>, EvalTSeq<R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
-    public static <A,V extends MonadicValue<Maybe<A>>> MaybeT<A> fromValue(V monadicValue){
-        return of(AnyM.ofValue(monadicValue));
-    }
+
     /**
      * Construct an MaybeT from an AnyM that contains a monad type that contains
      * type other than Maybe The values in the underlying monad will be mapped
@@ -236,8 +248,8 @@ public class MaybeT<T> implements MonadicValue<T>,
      *            AnyM that doesn't contain a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <A> MaybeT<A> fromAnyM(AnyMValue<A> anyM) {
-        return of(anyM.map(Maybe::ofNullable));
+    public static <A> EvalTSeq<A> fromAnyM(AnyMSeq<A> anyM) {
+        return of(anyM.map(a->Eval.later(()->a)));
     }
 
     /**
@@ -247,11 +259,10 @@ public class MaybeT<T> implements MonadicValue<T>,
      *            AnyM that contains a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <A> MaybeT<A> of(AnyMValue<Maybe<A>> monads) {
-        
-        return new MaybeT<>(monads);
+    public static <A> EvalTSeq<A> of(AnyMSeq<Eval<A>> monads) {
+        return new EvalTSeq<>(monads);
     }
-
+   
     /*
      * (non-Javadoc)
      * 
@@ -261,43 +272,40 @@ public class MaybeT<T> implements MonadicValue<T>,
         return run.toString();
     }
 
-    @Override
-    public T get() {
-        return run.get().get();
-    }
+   
     
-    
-    
-    public boolean isPresent(){
-        return run.orElse(Maybe.none()).isPresent();
-    }
+   
 
     @Override
     public ReactiveSeq<T> stream() {
-      return run.orElse(Maybe.none()).stream();
+        return run.stream().map(e->e.get());
     }
 
     @Override
     public Iterator<T> iterator() {
-       return run.orElse(Maybe.none()).iterator();
+       return stream().iterator();
     }
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-        run.orElse(Maybe.none()).subscribe(s);
-        
+       run.forEach(e->e.subscribe(s));   
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
+     */
     @Override
-    public boolean test(T t) {
-       return run.get().test(t);
+    public Collectable<T> collectable() {
+       return this;
+    } 
+    public <R> EvalTSeq<R> unitIterator(Iterator<R> it){
+        return of(run.unitIterator(it).map(i->Eval.now(i)));
     }
-    
-    public <R> MaybeT<R> unit(R value){
-       return of(run.unit(Maybe.of(value)));
+    public <R> EvalTSeq<R> unit(R value){
+       return of(run.unit(Eval.now(value)));
     }
-    public <R> MaybeT<R> empty(){
-        return of(run.unit(Maybe.none()));
+    public <R> EvalTSeq<R> empty(){
+        return of(run.unit(Eval.later(()->null)));
      }
  
 }

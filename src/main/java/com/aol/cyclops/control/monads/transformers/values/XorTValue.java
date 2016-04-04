@@ -38,7 +38,7 @@ import com.aol.cyclops.types.applicative.Applicativable;
  * @param <T>
  *            The type contained on the Xor within
  */
-public class XorT<ST,T> implements MonadicValue2<ST,T>,
+public class XorTValue<ST,T> implements MonadicValue2<ST,T>,
                                 Supplier<T>, 
                                 ConvertableFunctor<T>, 
                                 Filterable<T>,
@@ -48,7 +48,7 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
 
     private final AnyMValue<Xor<ST,T>> run;
 
-    private XorT(final AnyMValue<Xor<ST,T>> run) {
+    private XorTValue(final AnyMValue<Xor<ST,T>> run) {
         this.run = run;
     }
 
@@ -75,7 +75,7 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
      *            Consumer to accept current value of Xor
      * @return XorT with peek call
      */
-    public XorT<ST,T> peek(Consumer<? super T> peek) {
+    public XorTValue<ST,T> peek(Consumer<? super T> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
             return a;
@@ -98,8 +98,8 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
      *            Predicate to filter the wrapped Xor
      * @return XorT that applies the provided filter
      */
-    public XorT<ST,T> filter(Predicate<? super T> test) {
-        return XorT.of(run.map(opt -> opt.filter(test)));
+    public XorTValue<ST,T> filter(Predicate<? super T> test) {
+        return XorTValue.of(run.map(opt -> opt.filter(test)));
     }
     /**
      * Map the wrapped Xor
@@ -118,8 +118,8 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
      *            Mapping function for the wrapped Xor
      * @return XorT that applies the map function to the wrapped Xor
      */
-    public <B> XorT<ST,B> map(Function<? super T, ? extends B> f) {
-        return new XorT<ST,B>(run.map(o -> o.map(f)));
+    public <B> XorTValue<ST,B> map(Function<? super T, ? extends B> f) {
+        return new XorTValue<ST,B>(run.map(o -> o.map(f)));
     }
 
     /**
@@ -139,7 +139,7 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
      *            FlatMap function
      * @return XorT that applies the flatMap function to the wrapped Xor
      */
-    public <ST2,B> XorT<ST,B> flatMapT(Function<? super T, XorT<ST2,? extends B>> f) {
+    public <ST2,B> XorTValue<ST,B> flatMapT(Function<? super T, XorTValue<ST2,? extends B>> f) {
 
         return of(run.bind(opt -> {
             if (opt.isPrimary())
@@ -148,10 +148,10 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
         }));
 
     }
-    public <ST2,B> XorT<ST2,B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST2,? extends B>> f) {
+    public <ST2,B> XorTValue<ST2,B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST2,? extends B>> f) {
         
          
-        return new XorT<ST2,B>(run.map(o -> o.flatMap(f)));
+        return new XorTValue<ST2,B>(run.map(o -> o.flatMap(f)));
 
     }
 
@@ -186,7 +186,7 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
      *            monad type
      * @return Function that accepts and returns an XorT
      */
-    public static <ST,U, R> Function<XorT<ST,U>, XorT<ST,R>> lift(Function<? super U, ? extends R> fn) {
+    public static <ST,U, R> Function<XorTValue<ST,U>, XorTValue<ST,R>> lift(Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -222,7 +222,7 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
      *            another monad type
      * @return Function that accepts and returns an XorT
      */
-    public static <ST,U1, U2, R> BiFunction<XorT<ST,U1>, XorT<ST,U2>, XorT<ST,R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
+    public static <ST,U1, U2, R> BiFunction<XorTValue<ST,U1>, XorTValue<ST,U2>, XorTValue<ST,R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -235,7 +235,7 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
      *            AnyM that doesn't contain a monad wrapping an Xor
      * @return XorT
      */
-    public static <ST,A> XorT<ST,A> fromAnyM(AnyMValue<A> anyM) {
+    public static <ST,A> XorTValue<ST,A> fromAnyM(AnyMValue<A> anyM) {
         return of(anyM.map(Xor::primary));
     }
 
@@ -246,10 +246,10 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
      *            AnyM that contains a monad wrapping an Xor
      * @return XorT
      */
-    public static <ST,A> XorT<ST,A> of(AnyMValue<Xor<ST,A>> monads) {
-        return new XorT<>(monads);
+    public static <ST,A> XorTValue<ST,A> of(AnyMValue<Xor<ST,A>> monads) {
+        return new XorTValue<>(monads);
     }
-    public static <A,ST,V extends MonadicValue<Xor<ST,A>>> XorT<ST,A> fromValue(V monadicValue){
+    public static <A,ST,V extends MonadicValue<Xor<ST,A>>> XorTValue<ST,A> fromValue(V monadicValue){
         return of(AnyM.ofValue(monadicValue));
     }
     /*
@@ -309,10 +309,10 @@ public class XorT<ST,T> implements MonadicValue2<ST,T>,
 
    
     
-    public <R> XorT<ST,R> unit(R value){
+    public <R> XorTValue<ST,R> unit(R value){
        return of(run.unit(Xor.primary(value)));
     }
-    public <R> XorT<ST,R> empty(){
+    public <R> XorTValue<ST,R> empty(){
         return of(run.unit(Xor.secondary(null)));
      }
  

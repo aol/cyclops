@@ -174,11 +174,7 @@ public class FutureWTest {
 		assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
 	}
 
-	@Test
-	public void testGetMatchable() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
-
+	
 	@Test
 	public void testIterate() {
 		assertThat(just.iterate(i->i+1).limit(10).sum(),equalTo(Optional.of(145)));
@@ -661,10 +657,7 @@ public class FutureWTest {
 		assertThat(cf.join(),equalTo(10));
 	}
 
-	@Test
-	public void testGetMatchable1() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
+	
 
 	@Test
     public void testMatches() {

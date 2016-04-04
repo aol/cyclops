@@ -24,7 +24,7 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -905,7 +905,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * patternMatch(java.lang.Object, java.util.function.Function)
      */
     @Override
-    default <R> PQueueX<R> patternMatch(Function<CheckValues<T, R>, CheckValues<T, R>> case1,
+    default <R> PQueueX<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
             Supplier<? extends R> otherwise) {
 
         return (PQueueX<R>) PersistentCollectionX.super.patternMatch(case1, otherwise);

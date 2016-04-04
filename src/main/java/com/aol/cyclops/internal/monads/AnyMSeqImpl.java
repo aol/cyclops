@@ -57,7 +57,7 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
 	 * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
 	 */
 	@Override
-	public <U> IterableFunctor<U> unitIterator(Iterator<U> it) {
+	public <U> AnyMSeq<U> unitIterator(Iterator<U> it) {
 		return AnyM.fromIterable(()->it);
 	}
 

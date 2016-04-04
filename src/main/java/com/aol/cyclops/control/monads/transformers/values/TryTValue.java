@@ -40,7 +40,7 @@ import com.aol.cyclops.control.ReactiveSeq;
  *
  * @param <T> The type contained on the Try within
  */
-public class TryT<T,X extends Throwable> implements MonadicValue<T>,
+public class TryTValue<T,X extends Throwable> implements MonadicValue<T>,
                                                     Supplier<T>, 
                                                     ConvertableFunctor<T>, 
                                                     Filterable<T>,
@@ -51,7 +51,7 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
    private final AnyMValue<Try<T,X>> run;
    
    
-   private TryT(final AnyMValue<Try<T,X>> run){
+   private TryTValue(final AnyMValue<Try<T,X>> run){
        this.run = run;
    }
    
@@ -77,7 +77,7 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
 	 * @param peek  Consumer to accept current value of Try
 	 * @return TryT with peek call
 	 */
-	public TryT<T,X> peek(Consumer<? super T> peek) {
+	public TryTValue<T,X> peek(Consumer<? super T> peek) {
 		return of(run.peek(opt -> opt.map(a -> {
 			peek.accept(a);
 			return a;
@@ -97,8 +97,8 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
 	 * @param test Predicate to filter the wrapped Try
 	 * @return OptionalT that applies the provided filter
 	 */
-	public MaybeT<T> filter(Predicate<? super T> test) {
-		return MaybeT.of(run.map(opt -> opt.filter(test)));
+	public MaybeTValue<T> filter(Predicate<? super T> test) {
+		return MaybeTValue.of(run.map(opt -> opt.filter(test)));
 	}
 
 	/**
@@ -117,8 +117,8 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
 	 * @param f Mapping function for the wrapped Try
 	 * @return TryT that applies the map function to the wrapped Try
 	 */
-	public <B> TryT<B,X> map(Function<? super T,? extends B> f) {
-		return new TryT<B,X>(run.map(o -> o.map(f)));
+	public <B> TryTValue<B,X> map(Function<? super T,? extends B> f) {
+		return new TryTValue<B,X>(run.map(o -> o.map(f)));
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
 	 * @param f FlatMap function
 	 * @return TryT that applies the flatMap function to the wrapped Try
 	 */
-	public <B> TryT<B,X> flatMapT(Function<? super T, TryT<B,X>> f) {
+	public <B> TryTValue<B,X> flatMapT(Function<? super T, TryTValue<B,X>> f) {
 
 		return of(run.bind(opt -> {
 			if (opt.isSuccess())
@@ -146,9 +146,9 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
 
 	}
 	
-    public <B> TryT<B,X> flatMap(Function<? super T, ? extends Try<B,X>> f) {
+    public <B> TryTValue<B,X> flatMap(Function<? super T, ? extends Try<B,X>> f) {
 
-        return new TryT<B,X>(run.map(o -> o.flatMap(f)));
+        return new TryTValue<B,X>(run.map(o -> o.flatMap(f)));
 
     }
 	/**
@@ -180,7 +180,7 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
 	 * @param fn Function to enhance with functionality from Try and another monad type
 	 * @return Function that accepts and returns an TryT
 	 */
-	public static <U, R, X extends Throwable> Function<TryT<U,X>, TryT<R,X>> lift(Function<? super U,? extends R> fn) {
+	public static <U, R, X extends Throwable> Function<TryTValue<U,X>, TryTValue<R,X>> lift(Function<? super U,? extends R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));
 	}
 
@@ -214,7 +214,7 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
 	 * @param fn BiFunction to enhance with functionality from Try and another monad type
 	 * @return Function that accepts and returns an TryT
 	 */
-	public static <U1, U2, R, X extends Throwable> BiFunction<TryT<U1,X>, TryT<U2,X>, TryT<R,X>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
+	public static <U1, U2, R, X extends Throwable> BiFunction<TryTValue<U1,X>, TryTValue<U2,X>, TryTValue<R,X>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
 		return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 
@@ -226,8 +226,8 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
 	 * @return TryT
 	 */
 	@SuppressWarnings("unchecked")
-	public static <A, X extends Throwable> TryT<A,X> fromAnyM(AnyMValue<A> anyM) {
-		return (TryT<A, X>) of(anyM.map(Success::of));
+	public static <A, X extends Throwable> TryTValue<A,X> fromAnyM(AnyMValue<A> anyM) {
+		return (TryTValue<A, X>) of(anyM.map(Success::of));
 	}
    
 	/**
@@ -236,11 +236,11 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
 	 * @param monads AnyM that contains a monad wrapping an Try
 	 * @return TryT
 	 */
-	public static <A,X extends Throwable> TryT<A,X> of(AnyMValue<Try<A,X>> monads) {
-		return new TryT<>(monads);
+	public static <A,X extends Throwable> TryTValue<A,X> of(AnyMValue<Try<A,X>> monads) {
+		return new TryTValue<>(monads);
 	}
 
-    public static <A, X extends Throwable, V extends MonadicValue<Try<A,X>>> TryT<A,X> fromValue(V monadicValue) {
+    public static <A, X extends Throwable, V extends MonadicValue<Try<A,X>>> TryTValue<A,X> fromValue(V monadicValue) {
         return of(AnyM.ofValue(monadicValue));
     }
 	/*
@@ -300,10 +300,10 @@ public class TryT<T,X extends Throwable> implements MonadicValue<T>,
 
    
     
-    public <R> TryT<R,X> unit(R value){
+    public <R> TryTValue<R,X> unit(R value){
        return of(run.unit(Try.success(value)));
     }
-    public <R> TryT<R,X> empty(){
+    public <R> TryTValue<R,X> empty(){
         return of(run.unit(Try.failure(null)));
      }
  

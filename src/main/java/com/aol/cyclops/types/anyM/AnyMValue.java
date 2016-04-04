@@ -20,6 +20,7 @@ import org.jooq.lambda.function.Function5;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -86,7 +87,7 @@ public interface AnyMValue<T> extends AnyM<T>,
     }
 
     @Override
-    default <R> AnyMValue<R> patternMatch(Function<CheckValues<T, R>, CheckValues<T, R>> case1,
+    default <R> AnyMValue<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
             Supplier<? extends R> otherwise) {
         
         return (AnyMValue<R>)AnyM.super.patternMatch(case1, otherwise);

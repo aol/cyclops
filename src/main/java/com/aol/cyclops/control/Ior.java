@@ -16,6 +16,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.Matchable.CheckValue2;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.MatchableCase;
@@ -53,7 +54,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 									Filterable<PT>,
 									Applicativable<PT>{
 
-	public static <ST,PT> Ior<ST,PT> primary(PT primary){
+	public static <ST,PT> Ior<ST,PT> primary(PT primary){ 
 		return new Primary<>(primary);
 	}
 	public static <ST,PT> Ior<ST,PT> secondary(ST secondary){
@@ -99,7 +100,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	}
 	@Override
 	default <R> Xor<ST,R> patternMatch(
-			Function<CheckValues<PT, R>, CheckValues<PT, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (Xor<ST,R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
@@ -382,8 +383,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
                 Supplier<? extends R> otherwise) {
            
             return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
-                    new MatchableCase(new PatternMatcher()).withType1(getMatchable().getClass())).getPatternMatcher()))
-                    .match(getMatchable()).orElseGet(otherwise));
+                    new MatchableCase(new PatternMatcher()).withType1(value.getClass())).getPatternMatcher()))
+                    .match(value).orElseGet(otherwise));
         }
 		
 		

@@ -12,10 +12,17 @@ import lombok.Setter;
 public class ReversingRangeLongSpliterator implements Spliterator.OfLong, ReversableSpliterator {
   
     private long index;
+    private final long min;
     private final long max;
     @Getter @Setter
     private boolean reverse;
    
+    public ReversingRangeLongSpliterator(long min, long max, boolean reverse) {
+        this.min = Math.min(min,max)-1;
+        this.max = Math.max(min,max);
+        this.reverse = this.max >= this.min ? reverse : !reverse;
+        this.index = Math.min(min,max);
+    }
     public ReversableSpliterator invert(){
 		setReverse(!isReverse());
 		index = max-1;
@@ -26,13 +33,13 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     public boolean tryAdvance(LongConsumer consumer) {
         Objects.requireNonNull(consumer);
         if(!reverse){
-        	if(index<max && index>-1){
+        	if(index<max && index>min){
         		consumer.accept(index++);
         		return true;
         	}
         }
         if(reverse){
-        	if(index>-1 && index<max){
+        	if(index>min && index<max){
         		consumer.accept(index--);
         		return true;
         	}
@@ -56,14 +63,6 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     public Spliterator.OfLong trySplit() {
         return this;
     }
-
-
-
-	
-
-
-	
-
 
 	@Override
 	public ReversableSpliterator copy() {

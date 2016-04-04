@@ -1,23 +1,29 @@
 package com.aol.cyclops.internal.stream.spliterators;
 
-import java.util.Comparator;
 import java.util.Objects;
 import java.util.Spliterator;
-import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@AllArgsConstructor
+
 public class ReversingRangeIntSpliterator implements Spliterator.OfInt, ReversableSpliterator {
   
-    private int index;
+    private final int min;
     private final int max;
+    private int index;
+    
     @Getter @Setter
     private boolean reverse;
    
+    public ReversingRangeIntSpliterator(int min, int max, boolean reverse) {
+        this.min = Math.min(min,max)-1;
+        this.max = Math.max(min,max);
+        this.reverse = this.max >= this.min ? reverse : !reverse;
+        this.index = Math.min(min,max);
+    }
     public ReversableSpliterator invert(){
 		setReverse(!isReverse());
 		index = max-1;
@@ -28,13 +34,13 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     public boolean tryAdvance(IntConsumer consumer) {
         Objects.requireNonNull(consumer);
         if(!reverse){
-        	if(index<max && index>-1){
+        	if(index<max && index>min){
         		consumer.accept(index++);
         		return true;
         	}
         }
         if(reverse){
-        	if(index>-1 && index<max){
+        	if(index>min && index<max){
         		consumer.accept(index--);
         		return true;
         	}
@@ -71,6 +77,8 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
 	public ReversableSpliterator copy() {
 		return new ReversingRangeIntSpliterator(index, max, reverse);
 	}
+
+   
 
     
 }
