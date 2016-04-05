@@ -1,31 +1,34 @@
-package com.aol.cyclops.internal.comprehensions.comprehenders;
+package com.aol.cyclops.internal.comprehensions.comprehenders.transformers;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
+import com.aol.cyclops.control.monads.transformers.MaybeT;
+import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
+import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class OptionalTComprehender implements ValueComprehender<OptionalTValue> {
+public class MaybeTComprehender implements ValueComprehender<MaybeT> {
 	public Class getTargetClass(){
-		return OptionalTValue.class;
+		return MaybeT.class;
 	}
 	@Override
-	public Object filter(OptionalTValue o,Predicate p) {
+	public Object filter(MaybeT o,Predicate p) {
 		return o.filter(p);
 	}
 
 	@Override
-	public Object map(OptionalTValue o,Function fn) {
+	public Object map(MaybeT o,Function fn) {
 		return o.map(fn);
 	}
 	@Override
-	public Object executeflatMap(OptionalTValue t, Function fn){
+	public Object executeflatMap(MaybeT t, Function fn){
         return flatMap(t,input -> Comprehender.unwrapOtherMonadTypes(buildComprehender(t),fn.apply(input)));
     }
-	private Comprehender buildComprehender( OptionalTValue t) {
+	private Comprehender buildComprehender( MaybeT t) {
 	    Comprehender delegate = this;
         return new ValueComprehender() {
 
@@ -58,8 +61,8 @@ public class OptionalTComprehender implements ValueComprehender<OptionalTValue> 
         };
     }
     @Override
-	public OptionalTValue flatMap(OptionalTValue o,Function fn) {
-		return o.flatMapT(fn);
+	public MaybeT flatMap(MaybeT o,Function fn) {
+		return o.bind(fn);
 	}
 
 	@Override
@@ -68,19 +71,26 @@ public class OptionalTComprehender implements ValueComprehender<OptionalTValue> 
 	}
 
 	@Override
-	public OptionalTValue of(Object o) {
+	public MaybeT of(Object o) {
 	    throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public OptionalTValue empty() {
+	public MaybeT empty() {
 	    throw new UnsupportedOperationException();
 	}
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,OptionalTValue apply){
-		if(apply.isPresent())
-			return comp.of(apply.get());
-		else
-			return comp.empty();
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,MaybeT<Object> apply){
+	    
+	    return Matchables.maybeT(apply)
+	            .visit(v->resolveValueForCrossTypeFlatMap(comp,v),
+	                   s->comp.of(s.toCollection(MaterializedList::new)));
+		
+	}
+	private Object resolveValueForCrossTypeFlatMap(Comprehender comp,MaybeTValue<Object> apply){
+	    if(apply.isPresent())
+            return comp.of(apply.get());
+        else
+            return comp.empty();
 	}
 
 }

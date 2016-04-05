@@ -1,7 +1,8 @@
 package com.aol.cyclops.streams.monad.transformers;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.junit.Test;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.monads.transformers.MaybeT;
+import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
 public class MaybeTTest {
 
 	String result = null;
@@ -91,9 +93,9 @@ public class MaybeTTest {
 	}
 	@Test
 	public void flatMap() {
-		MaybeT<Integer> optionT = MaybeT.of(AnyM.ofSeq(Stream.of(Maybe.of(10))));
+		MaybeTSeq<Integer> optionT = MaybeT.fromAnyMSeq(AnyM.ofSeq(Stream.of(Maybe.of(10))));
 		
-		assertThat(optionT.flatMap(num->MaybeT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMapT(num->MaybeT.fromAnyMSeq(AnyM.ofSeq(Stream.of("hello world"+num))))
 				.unwrap().<Stream<Maybe<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Maybe.of("hello world10")));
 	}

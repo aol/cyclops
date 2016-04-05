@@ -5,7 +5,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -18,6 +17,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.monads.transformers.EvalT;
+import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 public class EvalTTest {
 
 	String result = null;
@@ -95,9 +95,9 @@ public class EvalTTest {
 	}
 	@Test
 	public void flatMap() {
-		EvalT<Integer> optionT = EvalT.of(AnyM.ofSeq(Stream.of(Eval.now(10))));
+		EvalTSeq<Integer> optionT = EvalT.fromAnyMSeq(AnyM.ofSeq(Stream.of(Eval.now(10))));
 		
-		assertThat(optionT.flatMap(num->EvalT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMapT(num->EvalT.fromAnyMSeq(AnyM.ofSeq(Stream.of("hello world"+num))))
 				.unwrap().<Stream<Eval<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Eval.now("hello world10")));
 	}

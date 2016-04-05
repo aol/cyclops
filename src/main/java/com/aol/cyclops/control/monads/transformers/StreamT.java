@@ -1,15 +1,22 @@
 package com.aol.cyclops.control.monads.transformers;
 
 
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.monads.transformers.seq.StreamTSeq;
 import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 
 /**
@@ -146,6 +153,45 @@ public interface StreamT<T> {
        return Matchables.anyM(monads).visit(v-> StreamTValue.of(v), s->StreamTSeq.of(s));
    }
    
-   
+
+   public static <A> StreamTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+       return StreamTValue.fromAnyM(anyM);
+   }
+
+   public static <A> StreamTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+       return StreamTSeq.fromAnyM(anyM);
+   }
+
+   public static <A> StreamTSeq<A> fromIterable(
+           Iterable<Stream<A>> iterableOfStreams) {
+       return StreamTSeq.of(AnyM.fromIterable(iterableOfStreams));
+   }
+
+   public static <A> StreamTSeq<A> fromStream(Stream<Stream<A>> streamOfStreams) {
+       return StreamTSeq.of(AnyM.fromStream(streamOfStreams));
+   }
+
+   public static <A> StreamTSeq<A> fromPublisher(
+           Publisher<Stream<A>> publisherOfStreams) {
+       return StreamTSeq.of(AnyM.fromPublisher(publisherOfStreams));
+   }
+
+   public static <A, V extends MonadicValue<Stream<A>>> StreamTValue<A> fromValue(
+           V monadicValue) {
+       return StreamTValue.fromValue(monadicValue);
+   }
+
+   public static <A> StreamTValue<A> fromOptional(Optional<Stream<A>> optional) {
+       return StreamTValue.of(AnyM.fromOptional(optional));
+   }
+
+   public static <A> StreamTValue<A> fromFuture(CompletableFuture<Stream<A>> future) {
+       return StreamTValue.of(AnyM.fromCompletableFuture(future));
+   }
+
+   public static <A> StreamTValue<A> fromIterableValue(
+           Iterable<Stream<A>> iterableOfStreams) {
+       return StreamTValue.of(AnyM.fromIterableValue(iterableOfStreams));
+   }
    
 }

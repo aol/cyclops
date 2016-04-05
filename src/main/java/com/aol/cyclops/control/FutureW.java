@@ -34,6 +34,9 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 											FlatMap<T>,
 											Filterable<T>{
 
+    public static <T> FutureW<T> empty(){
+        return new FutureW(CompletableFuture.completedFuture(null));
+    }
 	public static <T> FutureW<T> of(CompletableFuture<T> f){
 		return new FutureW<>(f);
 	}

@@ -1,15 +1,23 @@
 package com.aol.cyclops.control.monads.transformers;
 
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 /**
  * Monad transformer for JDK Maybe
@@ -215,7 +223,47 @@ public interface EvalT<T> {
         return Matchables.anyM(monads).visit(v-> EvalTValue.of(v), s->EvalTSeq.of(s));
 
     }
+ 
 
+    public static <A> EvalTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+        return EvalTValue.fromAnyM(anyM);
+    }
+
+    public static <A> EvalTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return EvalTSeq.fromAnyM(anyM);
+    }
+
+    public static <A> EvalTSeq<A> fromIterable(
+            Iterable<Eval<A>> iterableOfEvals) {
+        return EvalTSeq.of(AnyM.fromIterable(iterableOfEvals));
+    }
+
+    public static <A> EvalTSeq<A> fromStream(Stream<Eval<A>> streamOfEvals) {
+        return EvalTSeq.of(AnyM.fromStream(streamOfEvals));
+    }
+
+    public static <A> EvalTSeq<A> fromPublisher(
+            Publisher<Eval<A>> publisherOfEvals) {
+        return EvalTSeq.of(AnyM.fromPublisher(publisherOfEvals));
+    }
+
+    public static <A, V extends MonadicValue<Eval<A>>> EvalTValue<A> fromValue(
+            V monadicValue) {
+        return EvalTValue.fromValue(monadicValue);
+    }
+
+    public static <A> EvalTValue<A> fromOptional(Optional<Eval<A>> optional) {
+        return EvalTValue.of(AnyM.fromOptional(optional));
+    }
+
+    public static <A> EvalTValue<A> fromFuture(CompletableFuture<Eval<A>> future) {
+        return EvalTValue.of(AnyM.fromCompletableFuture(future));
+    }
+
+    public static <A> EvalTValue<A> fromIterableValue(
+            Iterable<Eval<A>> iterableOfEvals) {
+        return EvalTValue.of(AnyM.fromIterableValue(iterableOfEvals));
+    }
    
 
 }

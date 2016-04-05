@@ -227,7 +227,6 @@ public interface StreamableT<T> {
    public static <A> StreamableT<A> fromStream(AnyM<Stream<A>> monads){
 	   return of(monads.map(Streamable::fromStream));
    }
-   
-   
+  
   
 }

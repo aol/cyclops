@@ -12,8 +12,10 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
+import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
+import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -31,11 +33,11 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface CompletableFutureT<A> extends Unit<A>{
+public interface FutureWT<A> extends Unit<A>{
    
-   default <B> CompletableFutureT<B> bind(Function<? super A, CompletableFutureT<? extends B>> f) {
+   default <B> FutureWT<B> bind(Function<? super A, FutureWT<? extends B>> f) {
         return of(unwrap().bind(opt -> {
-                return f.apply(opt.join()).unwrap().unwrap();
+                return f.apply(opt.get()).unwrap().unwrap();
         }));
     }
    
@@ -46,16 +48,16 @@ public interface CompletableFutureT<A> extends Unit<A>{
     *            AnyM that contains a monad wrapping an Maybe
     * @return MaybeT
     */
-   public static <A> CompletableFutureT<A> of(AnyM<CompletableFuture<A>> monads) {
+   public static <A> FutureWT<A> of(AnyM<FutureW<A>> monads) {
      
-       return Matchables.anyM(monads).visit(v-> CompletableFutureTValue.of(v), s->CompletableFutureTSeq.of(s));
+       return Matchables.anyM(monads).visit(v-> FutureWTValue.of(v), s->FutureWTSeq.of(s));
        
    }
    
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyM<CompletableFuture<A>> unwrap();
+   public AnyM<FutureW<A>> unwrap();
   
    /**
 	 * Peek at the current value of the CompletableFuture
@@ -71,7 +73,7 @@ public interface CompletableFutureT<A> extends Unit<A>{
 	 * @param peek  Consumer to accept current value of CompletableFuture
 	 * @return CompletableFutureT with peek call
 	 */
-   public CompletableFutureT<A> peek(Consumer<? super A> peek);
+   public FutureWT<A> peek(Consumer<? super A> peek);
    /**
 	 * Map the wrapped CompletableFuture
 	 * 
@@ -88,10 +90,10 @@ public interface CompletableFutureT<A> extends Unit<A>{
 	 * @param f Mapping function for the wrapped CompletableFuture
 	 * @return CompletableFutureT that applies the map function to the wrapped CompletableFuture
 	 */   
-   public <B> CompletableFutureT<B> map(Function<? super A,? extends B> f);
+   public <B> FutureWT<B> map(Function<? super A,? extends B> f);
    
 
-   public <B> CompletableFutureT<B> flatMap(Function<? super A,? extends MonadicValue<? extends B>> f);
+   public <B> FutureWT<B> flatMap(Function<? super A,? extends MonadicValue<? extends B>> f);
    
    /**
 	 * Lift a function into one that accepts and returns an CompletableFutureT
@@ -122,7 +124,7 @@ public interface CompletableFutureT<A> extends Unit<A>{
 	 * @param fn Function to enhance with functionality from CompletableFuture and another monad type
 	 * @return Function that accepts and returns an CompletableFutureT
 	 */   
-   public static <U, R> Function<CompletableFutureT<U>, CompletableFutureT<R>> lift(Function<? super U,? extends R> fn) {
+   public static <U, R> Function<FutureWT<U>, FutureWT<R>> lift(Function<? super U,? extends R> fn) {
 		return optTu -> optTu.map(input -> fn.apply(input));
 	}
    /**
@@ -155,52 +157,52 @@ public interface CompletableFutureT<A> extends Unit<A>{
   	 * @param fn BiFunction to enhance with functionality from CompletableFuture and another monad type
   	 * @return Function that accepts and returns an CompletableFutureT
   	 */
-	public static <U1, U2, R> BiFunction<CompletableFutureT<U1>, CompletableFutureT<U2>, CompletableFutureT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
+	public static <U1, U2, R> BiFunction<FutureWT<U1>, FutureWT<U2>, FutureWT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
 		return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 
-    public static <A> CompletableFutureT<A> fromAnyM(AnyM<A> anyM) {
-        return of(anyM.map(CompletableFuture::completedFuture));
+    public static <A> FutureWT<A> fromAnyM(AnyM<A> anyM) {
+        return of(anyM.map(FutureW::ofResult));
     }
 
-    public static <A> CompletableFutureTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
-        return CompletableFutureTValue.fromAnyM(anyM);
+    public static <A> FutureWTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+        return FutureWTValue.fromAnyM(anyM);
     }
 
-    public static <A> CompletableFutureTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
-        return CompletableFutureTSeq.fromAnyM(anyM);
+    public static <A> FutureWTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return FutureWTSeq.fromAnyM(anyM);
     }
 
-    public static <A> CompletableFutureTSeq<A> fromIterable(
-            Iterable<CompletableFuture<A>> iterableOfCompletableFutures) {
-        return CompletableFutureTSeq.of(AnyM.fromIterable(iterableOfCompletableFutures));
+    public static <A> FutureWTSeq<A> fromIterable(
+            Iterable<FutureW<A>> iterableOfCompletableFutures) {
+        return FutureWTSeq.of(AnyM.fromIterable(iterableOfCompletableFutures));
     }
 
-    public static <A> CompletableFutureTSeq<A> fromStream(Stream<CompletableFuture<A>> streamOfCompletableFutures) {
-        return CompletableFutureTSeq.of(AnyM.fromStream(streamOfCompletableFutures));
+    public static <A> FutureWTSeq<A> fromStream(Stream<FutureW<A>> streamOfCompletableFutures) {
+        return FutureWTSeq.of(AnyM.fromStream(streamOfCompletableFutures));
     }
 
-    public static <A> CompletableFutureTSeq<A> fromPublisher(
-            Publisher<CompletableFuture<A>> publisherOfCompletableFutures) {
-        return CompletableFutureTSeq.of(AnyM.fromPublisher(publisherOfCompletableFutures));
+    public static <A> FutureWTSeq<A> fromPublisher(
+            Publisher<FutureW<A>> publisherOfCompletableFutures) {
+        return FutureWTSeq.of(AnyM.fromPublisher(publisherOfCompletableFutures));
     }
 
-    public static <A, V extends MonadicValue<CompletableFuture<A>>> CompletableFutureTValue<A> fromValue(
+    public static <A, V extends MonadicValue<FutureW<A>>> FutureWTValue<A> fromValue(
             V monadicValue) {
-        return CompletableFutureTValue.fromValue(monadicValue);
+        return FutureWTValue.fromValue(monadicValue);
     }
 
-    public static <A> CompletableFutureTValue<A> fromOptional(Optional<CompletableFuture<A>> optional) {
-        return CompletableFutureTValue.of(AnyM.fromOptional(optional));
+    public static <A> FutureWTValue<A> fromOptional(Optional<FutureW<A>> optional) {
+        return FutureWTValue.of(AnyM.fromOptional(optional));
     }
 
-    public static <A> CompletableFutureTValue<A> fromFuture(CompletableFuture<CompletableFuture<A>> future) {
-        return CompletableFutureTValue.of(AnyM.fromCompletableFuture(future));
+    public static <A> FutureWTValue<A> fromFuture(CompletableFuture<FutureW<A>> future) {
+        return FutureWTValue.of(AnyM.fromCompletableFuture(future));
     }
 
-    public static <A> CompletableFutureTValue<A> fromIterableValue(
-            Iterable<CompletableFuture<A>> iterableOfCompletableFutures) {
-        return CompletableFutureTValue.of(AnyM.fromIterableValue(iterableOfCompletableFutures));
+    public static <A> FutureWTValue<A> fromIterableValue(
+            Iterable<FutureW<A>> iterableOfCompletableFutures) {
+        return FutureWTValue.of(AnyM.fromIterableValue(iterableOfCompletableFutures));
     }
 
 }

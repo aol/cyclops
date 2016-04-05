@@ -1,31 +1,31 @@
-package com.aol.cyclops.internal.comprehensions.comprehenders;
+package com.aol.cyclops.internal.comprehensions.comprehenders.transformers;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.values.XorTValue;
+import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class XorTComprehender implements ValueComprehender<XorTValue> {
+public class OptionalTComprehender implements ValueComprehender<OptionalTValue> {
 	public Class getTargetClass(){
-		return XorTValue.class;
+		return OptionalTValue.class;
 	}
 	@Override
-	public Object filter(XorTValue o,Predicate p) {
+	public Object filter(OptionalTValue o,Predicate p) {
 		return o.filter(p);
 	}
 
 	@Override
-	public Object map(XorTValue o,Function fn) {
+	public Object map(OptionalTValue o,Function fn) {
 		return o.map(fn);
 	}
 	@Override
-	public Object executeflatMap(XorTValue t, Function fn){
+	public Object executeflatMap(OptionalTValue t, Function fn){
         return flatMap(t,input -> Comprehender.unwrapOtherMonadTypes(buildComprehender(t),fn.apply(input)));
     }
-	private Comprehender buildComprehender( XorTValue t) {
+	private Comprehender buildComprehender( OptionalTValue t) {
 	    Comprehender delegate = this;
         return new ValueComprehender() {
 
@@ -58,7 +58,7 @@ public class XorTComprehender implements ValueComprehender<XorTValue> {
         };
     }
     @Override
-	public XorTValue flatMap(XorTValue o,Function fn) {
+	public OptionalTValue flatMap(OptionalTValue o,Function fn) {
 		return o.flatMapT(fn);
 	}
 
@@ -68,16 +68,16 @@ public class XorTComprehender implements ValueComprehender<XorTValue> {
 	}
 
 	@Override
-	public XorTValue of(Object o) {
+	public OptionalTValue of(Object o) {
 	    throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public XorTValue empty() {
+	public OptionalTValue empty() {
 	    throw new UnsupportedOperationException();
 	}
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,XorTValue apply){
-		if(apply.isPrimary())
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,OptionalTValue apply){
+		if(apply.isPresent())
 			return comp.of(apply.get());
 		else
 			return comp.empty();

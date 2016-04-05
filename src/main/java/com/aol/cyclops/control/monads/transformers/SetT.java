@@ -2,8 +2,10 @@ package com.aol.cyclops.control.monads.transformers;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -11,11 +13,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.seq.SetTSeq;
 import com.aol.cyclops.control.monads.transformers.values.SetTValue;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 
 
@@ -202,7 +209,46 @@ public interface SetT<T> {
 		return of(monads.map(s -> s.collect(Collectors.toSet())));
 	}
    
-  
+    
+    public static <A> SetTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+        return SetTValue.fromAnyM(anyM);
+    }
+
+    public static <A> SetTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return SetTSeq.fromAnyM(anyM);
+    }
+
+    public static <A> SetTSeq<A> fromIterable(
+            Iterable<Set<A>> iterableOfSets) {
+        return SetTSeq.of(AnyM.fromIterable(iterableOfSets));
+    }
+
+    public static <A> SetTSeq<A> fromStream(Stream<Set<A>> streamOfSets) {
+        return SetTSeq.of(AnyM.fromStream(streamOfSets));
+    }
+
+    public static <A> SetTSeq<A> fromPublisher(
+            Publisher<Set<A>> publisherOfSets) {
+        return SetTSeq.of(AnyM.fromPublisher(publisherOfSets));
+    }
+
+    public static <A, V extends MonadicValue<Set<A>>> SetTValue<A> fromValue(
+            V monadicValue) {
+        return SetTValue.fromValue(monadicValue);
+    }
+
+    public static <A> SetTValue<A> fromOptional(Optional<Set<A>> optional) {
+        return SetTValue.of(AnyM.fromOptional(optional));
+    }
+
+    public static <A> SetTValue<A> fromFuture(CompletableFuture<Set<A>> future) {
+        return SetTValue.of(AnyM.fromCompletableFuture(future));
+    }
+
+    public static <A> SetTValue<A> fromIterableValue(
+            Iterable<Set<A>> iterableOfSets) {
+        return SetTValue.of(AnyM.fromIterableValue(iterableOfSets));
+    }
 
    
  

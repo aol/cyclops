@@ -22,6 +22,7 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
+import com.aol.cyclops.types.stream.ToStream;
 
 /**
  * Monad transformer for JDK Maybe
@@ -40,7 +41,8 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class MaybeTSeq<T>  implements  MaybeT<T>, 
+public class MaybeTSeq<T>  implements  MaybeT<T>,
+                                    ToStream<T>,
                                     ConvertableSequence<T>,
                                     ExtendedTraversable<T>,
                                     Sequential<T>,
@@ -51,6 +53,10 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
                                     Publisher<T>{
 
     
+    public AnyMSeq<T> anyM(){
+        
+        return null;
+    }
     private final AnyMSeq<Maybe<T>> run;
 
     private MaybeTSeq(final AnyMSeq<Maybe<T>> run) {

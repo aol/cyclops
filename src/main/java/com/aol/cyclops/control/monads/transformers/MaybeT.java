@@ -13,9 +13,13 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
+import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 /**
  * Monad transformer for JDK Maybe
@@ -37,7 +41,9 @@ import com.aol.cyclops.types.MonadicValue;
 public interface MaybeT<T> {
 
    
-
+   
+    public <R> MaybeT<R> unit(R value);
+    public <R> MaybeT<R> empty();
     /**
      * @return The wrapped AnyM
      */
@@ -208,6 +214,13 @@ public interface MaybeT<T> {
      */
     public static <A> MaybeT<A> fromAnyM(AnyM<A> anyM) {
         return of(anyM.map(Maybe::ofNullable));
+    }
+    public static <A> MaybeTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+        return MaybeTValue.fromAnyM(anyM);
+    }
+
+    public static <A> MaybeTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return MaybeTSeq.fromAnyM(anyM);
     }
     public static <A> MaybeTSeq<A> fromIterable(Iterable<Maybe<A>> iterableOfMaybes){
         return MaybeTSeq.of(AnyM.fromIterable(iterableOfMaybes));

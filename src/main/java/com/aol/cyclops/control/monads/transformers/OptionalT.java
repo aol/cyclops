@@ -1,16 +1,22 @@
 package com.aol.cyclops.control.monads.transformers;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 
 /**
@@ -200,6 +206,45 @@ public interface OptionalT<T> {
 	    return Matchables.anyM(monads).visit(v-> OptionalTValue.of(v), s->OptionalTSeq.of(s));
 	}
 
-	
+   
+    public static <A> OptionalTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+        return OptionalTValue.fromAnyM(anyM);
+    }
+
+    public static <A> OptionalTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return OptionalTSeq.fromAnyM(anyM);
+    }
+
+    public static <A> OptionalTSeq<A> fromIterable(
+            Iterable<Optional<A>> iterableOfOptionals) {
+        return OptionalTSeq.of(AnyM.fromIterable(iterableOfOptionals));
+    }
+
+    public static <A> OptionalTSeq<A> fromStream(Stream<Optional<A>> streamOfOptionals) {
+        return OptionalTSeq.of(AnyM.fromStream(streamOfOptionals));
+    }
+
+    public static <A> OptionalTSeq<A> fromPublisher(
+            Publisher<Optional<A>> publisherOfOptionals) {
+        return OptionalTSeq.of(AnyM.fromPublisher(publisherOfOptionals));
+    }
+
+    public static <A, V extends MonadicValue<Optional<A>>> OptionalTValue<A> fromValue(
+            V monadicValue) {
+        return OptionalTValue.fromValue(monadicValue);
+    }
+
+    public static <A> OptionalTValue<A> fromOptional(Optional<Optional<A>> optional) {
+        return OptionalTValue.of(AnyM.fromOptional(optional));
+    }
+
+    public static <A> OptionalTValue<A> fromFuture(CompletableFuture<Optional<A>> future) {
+        return OptionalTValue.of(AnyM.fromCompletableFuture(future));
+    }
+
+    public static <A> OptionalTValue<A> fromIterablOptionalue(
+            Iterable<Optional<A>> iterableOfOptionals) {
+        return OptionalTValue.of(AnyM.fromIterableValue(iterableOfOptionals));
+    }
  
 }

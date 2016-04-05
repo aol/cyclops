@@ -41,6 +41,9 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.monads.transformers.MaybeT;
+import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
+import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.data.async.Adapter;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.Topic;
@@ -160,6 +163,9 @@ public class Matchables {
  
     public static <T> MXor<AnyMValue<T>,AnyMSeq<T>> anyM(AnyM<T> anyM){
         return ()-> anyM instanceof AnyMValue ?  Xor.secondary((AnyMValue<T>)anyM) : Xor.primary((AnyMSeq<T>)anyM);
+    }
+    public static <T> MXor<MaybeTValue<T>,MaybeTSeq<T>> maybeT(MaybeT<T> transformer){
+        return ()-> transformer instanceof MaybeTValue ?  Xor.secondary((MaybeTValue<T>)transformer) : Xor.primary((MaybeTSeq<T>)transformer);
     }
 	public static<X extends Throwable> MTuple4<Class,String,Throwable,MatchableIterable<StackTraceElement>> throwable(X t){
 		return supplier4(()->(Class)t.getClass(),

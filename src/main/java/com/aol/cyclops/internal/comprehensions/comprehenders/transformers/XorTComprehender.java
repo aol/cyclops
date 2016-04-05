@@ -1,34 +1,31 @@
-package com.aol.cyclops.internal.comprehensions.comprehenders;
+package com.aol.cyclops.internal.comprehensions.comprehenders.transformers;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.MaybeT;
-import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
-import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
+import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class MaybeTComprehender implements ValueComprehender<MaybeTValue> {
+public class XorTComprehender implements ValueComprehender<XorTValue> {
 	public Class getTargetClass(){
-		return MaybeTValue.class;
+		return XorTValue.class;
 	}
 	@Override
-	public Object filter(MaybeTValue o,Predicate p) {
+	public Object filter(XorTValue o,Predicate p) {
 		return o.filter(p);
 	}
 
 	@Override
-	public Object map(MaybeTValue o,Function fn) {
+	public Object map(XorTValue o,Function fn) {
 		return o.map(fn);
 	}
 	@Override
-	public Object executeflatMap(MaybeTValue t, Function fn){
+	public Object executeflatMap(XorTValue t, Function fn){
         return flatMap(t,input -> Comprehender.unwrapOtherMonadTypes(buildComprehender(t),fn.apply(input)));
     }
-	private Comprehender buildComprehender( MaybeTValue t) {
+	private Comprehender buildComprehender( XorTValue t) {
 	    Comprehender delegate = this;
         return new ValueComprehender() {
 
@@ -61,7 +58,7 @@ public class MaybeTComprehender implements ValueComprehender<MaybeTValue> {
         };
     }
     @Override
-	public MaybeTValue flatMap(MaybeTValue o,Function fn) {
+	public XorTValue flatMap(XorTValue o,Function fn) {
 		return o.flatMapT(fn);
 	}
 
@@ -71,16 +68,16 @@ public class MaybeTComprehender implements ValueComprehender<MaybeTValue> {
 	}
 
 	@Override
-	public MaybeTValue of(Object o) {
+	public XorTValue of(Object o) {
 	    throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public MaybeTValue empty() {
+	public XorTValue empty() {
 	    throw new UnsupportedOperationException();
 	}
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,MaybeTValue apply){
-		if(apply.isPresent()) //Optional[get]
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,XorTValue apply){
+		if(apply.isPrimary())
 			return comp.of(apply.get());
 		else
 			return comp.empty();

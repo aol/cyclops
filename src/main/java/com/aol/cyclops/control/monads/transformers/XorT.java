@@ -1,16 +1,24 @@
 package com.aol.cyclops.control.monads.transformers;
 
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 /**
  * Monad transformer for JDK Xor
@@ -217,5 +225,44 @@ public interface XorT<ST,T> {
     }
 
     
+    public static <ST,A> XorTValue<ST,A> fromAnyMValue(AnyMValue<A> anyM) {
+        return XorTValue.fromAnyM(anyM);
+    }
+
+    public static <ST,A> XorTSeq<ST,A> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return XorTSeq.fromAnyM(anyM);
+    }
+
+    public static <ST,A> XorTSeq<ST,A> fromIterable(
+            Iterable<Xor<ST,A>> iterableOfXors) {
+        return XorTSeq.of(AnyM.fromIterable(iterableOfXors));
+    }
+
+    public static <ST,A> XorTSeq<ST,A> fromStream(Stream<Xor<ST,A>> streamOfXors) {
+        return XorTSeq.of(AnyM.fromStream(streamOfXors));
+    }
+
+    public static <ST,A> XorTSeq<ST,A> fromPublisher(
+            Publisher<Xor<ST,A>> publisherOfXors) {
+        return XorTSeq.of(AnyM.fromPublisher(publisherOfXors));
+    }
+
+    public static <A, ST, V extends MonadicValue<Xor<ST,A>>> XorTValue<ST,A> fromValue(
+            V monadicValue) {
+        return XorTValue.fromValue(monadicValue);
+    }
+
+    public static <ST,A> XorTValue<ST,A> fromOptional(Optional<Xor<ST,A>> optional) {
+        return XorTValue.of(AnyM.fromOptional(optional));
+    }
+
+    public static <ST,A> XorTValue<ST,A> fromFuture(CompletableFuture<Xor<ST,A>> future) {
+        return XorTValue.of(AnyM.fromCompletableFuture(future));
+    }
+
+    public static <ST,A> XorTValue<ST,A> fromIterablXorue(
+            Iterable<Xor<ST,A>> iterableOfXors) {
+        return XorTValue.of(AnyM.fromIterableValue(iterableOfXors));
+    }
 
 }

@@ -2,6 +2,8 @@ package com.aol.cyclops.control.monads.transformers;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -9,13 +11,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.function.Function1;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.values.ListTValue;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 
 
@@ -198,7 +203,45 @@ public interface ListT<T> {
 		return of(monads.map(s -> s.collect(Collectors.toList())));
 	}
    
-  
-   
+ 
+    public static <A> ListTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+        return ListTValue.fromAnyM(anyM);
+    }
+
+    public static <A> ListTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return ListTSeq.fromAnyM(anyM);
+    }
+
+    public static <A> ListTSeq<A> fromIterable(
+            Iterable<List<A>> iterableOfLists) {
+        return ListTSeq.of(AnyM.fromIterable(iterableOfLists));
+    }
+
+    public static <A> ListTSeq<A> fromStream(Stream<List<A>> streamOfLists) {
+        return ListTSeq.of(AnyM.fromStream(streamOfLists));
+    }
+
+    public static <A> ListTSeq<A> fromPublisher(
+            Publisher<List<A>> publisherOfLists) {
+        return ListTSeq.of(AnyM.fromPublisher(publisherOfLists));
+    }
+
+    public static <A, V extends MonadicValue<List<A>>> ListTValue<A> fromValue(
+            V monadicValue) {
+        return ListTValue.fromValue(monadicValue);
+    }
+
+    public static <A> ListTValue<A> fromOptional(Optional<List<A>> optional) {
+        return ListTValue.of(AnyM.fromOptional(optional));
+    }
+
+    public static <A> ListTValue<A> fromFuture(CompletableFuture<List<A>> future) {
+        return ListTValue.of(AnyM.fromCompletableFuture(future));
+    }
+
+    public static <A> ListTValue<A> fromIterablListue(
+            Iterable<List<A>> iterableOfLists) {
+        return ListTValue.of(AnyM.fromIterableValue(iterableOfLists));
+    }
  
 }

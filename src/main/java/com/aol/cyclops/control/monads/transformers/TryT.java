@@ -1,17 +1,24 @@
 package com.aol.cyclops.control.monads.transformers;
 
 
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
 import com.aol.cyclops.control.monads.transformers.values.TryTValue;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 
 /**
@@ -188,7 +195,7 @@ public interface TryT<T,X extends Throwable> {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <A, X extends Throwable> TryT<A,X> fromAnyM(AnyM<A> anyM) {
-		return (TryT<A, X>) of(anyM.map(Success::of));
+		return (TryT<A, X>) of(anyM.map(Try::success));
 	}
    
 	/**
@@ -201,6 +208,46 @@ public interface TryT<T,X extends Throwable> {
 	    return Matchables.anyM(monads).visit(v-> TryTValue.of(v), s->TryTSeq.of(s));
 	}
 
-	
+   
+
+    public static <A,X extends Throwable> TryTValue<A,X> fromAnyMValue(AnyMValue<A> anyM) {
+        return TryTValue.fromAnyM(anyM);
+    }
+
+    public static <A,X extends Throwable> TryTSeq<A,X> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return TryTSeq.fromAnyM(anyM);
+    }
+
+    public static <A,X extends Throwable> TryTSeq<A,X> fromIterable(
+            Iterable<Try<A,X>> iterableOfTrys) {
+        return TryTSeq.of(AnyM.fromIterable(iterableOfTrys));
+    }
+
+    public static <A,X extends Throwable> TryTSeq<A,X> fromStream(Stream<Try<A,X>> streamOfTrys) {
+        return TryTSeq.of(AnyM.fromStream(streamOfTrys));
+    }
+
+    public static <A,X extends Throwable> TryTSeq<A,X> fromPublisher(
+            Publisher<Try<A,X>> publisherOfTrys) {
+        return TryTSeq.of(AnyM.fromPublisher(publisherOfTrys));
+    }
+
+    public static <A, X extends Throwable,V extends MonadicValue<Try<A,X>>> TryTValue<A,X> fromValue(
+            V monadicValue) {
+        return TryTValue.fromValue(monadicValue);
+    }
+
+    public static <A,X extends Throwable> TryTValue<A,X> fromOptional(Optional<Try<A,X>> optional) {
+        return TryTValue.of(AnyM.fromOptional(optional));
+    }
+
+    public static <A,X extends Throwable> TryTValue<A,X> fromFuture(CompletableFuture<Try<A,X>> future) {
+        return TryTValue.of(AnyM.fromCompletableFuture(future));
+    }
+
+    public static <A,X extends Throwable> TryTValue<A,X> fromIterablTryue(
+            Iterable<Try<A,X>> iterableOfTrys) {
+        return TryTValue.of(AnyM.fromIterableValue(iterableOfTrys));
+    }
  
 }
