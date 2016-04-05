@@ -22,7 +22,39 @@ import lombok.AllArgsConstructor;
 
 
 /**
- * Totally lazy more powerful general Option type
+ * Totally lazy more powerful general Option(al) type. Maybe is lazy like a Java 8 Stream that
+ * represents 0 or 1 values rather than eager like a Java 8 Optional. map / peek/ filter and flatMap build the execution chaing,
+ * but are not executed until the value inside the Maybe is required.
+ * 
+ * Maybe is tail recursive
+ * 
+ * <pre>
+ * {@code 
+ * @Test
+    public void odd() {
+        System.out.println(even(Maybe.just(200000)).get());
+    }
+
+    public Maybe<String> odd(Maybe<Integer> n) {
+
+        return n.flatMap(x -> even(Maybe.just(x - 1)));
+    }
+
+    public Maybe<String> even(Maybe<Integer> n) {
+        return n.flatMap(x -> {
+            return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
+        });
+    }
+ * 
+ * }
+ * </pre>
+ * 
+ * Maybe is a functor (map) monad (flatMap) and an applicative (ap)
+ * 
+ * Maybe has pattern matching built in (visit, matches, patternMatch)
+ * 
+ * Maybe is convertable to all cyclops-react data types.
+ * 
  * 
  * @author johnmcclean
  *
@@ -255,6 +287,9 @@ public interface Maybe<T> extends MonadicValue<T>,
 		public boolean equals(Object obj) {
 			if(obj instanceof Just)
 				return Objects.equals(lazy.get(),((Just)obj).get());
+			else if(obj instanceof Lazy){
+			    return Objects.equals(get(),((Lazy)obj).get());
+			}
 			return false;
 		}
 		

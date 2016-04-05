@@ -241,6 +241,9 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         }
         
     }
+    public static <T> FutureW<T> ofSupplier(Supplier<T> s) {
+       return FutureW.of(CompletableFuture.supplyAsync(s));
+    }
    
     
 	

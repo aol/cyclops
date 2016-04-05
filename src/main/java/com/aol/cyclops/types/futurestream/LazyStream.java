@@ -17,7 +17,6 @@ import com.aol.cyclops.internal.react.exceptions.SimpleReactProcessingException;
 import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.internal.react.stream.MissingValue;
 import com.aol.cyclops.internal.react.stream.Runner;
-import com.aol.cyclops.react.ParallelReductionConfig;
 import com.aol.cyclops.react.collectors.lazy.EmptyCollector;
 import com.aol.cyclops.react.collectors.lazy.IncrementalReducer;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
@@ -32,7 +31,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 	
 	
 	Optional<Consumer<Throwable>> getErrorHandler();
-	 ParallelReductionConfig getParallelReduction();
+	
 	 MaxActive getMaxActive();
 	 
 	 public Iterator<U> iterator();
@@ -145,8 +144,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			return;
 		}
 	
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
-				getParallelReduction());
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this);
 		try {
 			this.getLastActive().operation(f-> f.peek(c)).injectFutures().forEach( next -> {
 				
@@ -177,8 +175,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		
 		}
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
-			getParallelReduction());
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this);
 		Optional[] result =  {Optional.empty()};
 		try {
 			this.getLastActive().injectFutures().forEach(next -> {
@@ -213,8 +210,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		
 		}
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
-			getParallelReduction());
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this);
 		Object[] result =  {identity};
 		try {
 			this.getLastActive().injectFutures().forEach(next -> {
@@ -246,8 +242,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		}
 		
 		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this,
-			getParallelReduction());
+		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this);
 		Object[] result =  {identity};
 		try {
 			this.getLastActive().injectFutures().forEach(next -> {

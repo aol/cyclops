@@ -7,6 +7,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.jooq.lambda.tuple.Tuple;
+
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
@@ -169,13 +171,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	public static <ST,PT> Xor<?,ST> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Semigroup<ST> reducer){
 			return sequenceSecondary(xors).map(s->s.reduce(reducer.reducer()).get());
 	}
-	default <R> R visit(Function<? super ST,? extends R> secondary, 
-            Function<? super PT,? extends R> primary){
-	    
-        if(isSecondary())
-            return swap().visit(secondary,()->null);
-        return visit(primary,()->null);
-    }
+	<R> R visit(Function<? super ST,? extends R> secondary, 
+            Function<? super PT,? extends R> primary);
 	
 	default <R1,R2> Xor<R1,R2> visitXor(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
@@ -362,15 +359,19 @@ public interface Xor<ST,PT> extends Supplier<PT>,
         public Ior<ST, PT> toIor() {
            return Ior.primary(value);
         }
-
+        @Override
+        public <R> R visit(Function<? super ST,? extends R> secondary, 
+                Function<? super PT,? extends R> primary){
+            return primary.apply(value);
+        }
         @Override
         public <R> Eval<R> matches(
                 Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> secondary,
-                Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn1,
-                Supplier<? extends R> s) {
-            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
-                    new MatchableCase(new PatternMatcher()).withType1(value.getClass())).getPatternMatcher()))
-                        .match(value).orElseGet(s));
+                Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> primary,
+                Supplier<? extends R> otherwise) {
+                Matchable.MTuple1<PT> mt1 = ()->Tuple.tuple(value);
+                return mt1.matches(primary, otherwise);
+
         }
         
         
@@ -392,12 +393,11 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 		
 		@Override
         public <R> Eval<R> matches(
-                Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> fn1,
+                Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> secondary,
                 Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> primary,
-                Supplier<? extends R> s) {
-            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
-                    new MatchableCase(new PatternMatcher()).withType1(value.getClass())).getPatternMatcher()))
-                        .match(value).orElseGet(s));
+                Supplier<? extends R> otherwise) {
+		    Matchable.MTuple1<ST> mt1 = ()->Tuple.tuple(value);
+            return mt1.matches(secondary, otherwise);
         }
 		@Override
 		public Xor<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn) {
@@ -460,6 +460,11 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 			stAction.accept(value);
 			
 		}
+		@Override
+        public <R> R visit(Function<? super ST,? extends R> secondary, 
+                Function<? super PT,? extends R> primary){
+            return secondary.apply(value);
+        }
 		
 		public Maybe<PT> toMaybe(){
 			return Maybe.none();

@@ -46,6 +46,11 @@ public  class BaseStreamableTest {
 		nonEmpty = of(1);
 	}
 
+	@Test
+    public void testContains() {
+        assertThat(Streamable.of(1, 2, 3, 4, 5).contains(3), equalTo(true));
+        assertThat(Streamable.of(1, 2, 3, 4, 5).contains(6), equalTo(false));
+    }
 	
 	protected Object value() {
 		

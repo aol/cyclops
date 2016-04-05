@@ -7,12 +7,12 @@ import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
+import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.ComprehensionData;
+import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.Foreach;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Assignment;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Entry;
 import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
-import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.internal.comprehensions.ForComprehensions;
-import com.aol.cyclops.internal.comprehensions.ComprehensionsModule.ComprehensionData;
 import com.aol.cyclops.types.Unwrapable;
 
 import lombok.AllArgsConstructor;
@@ -31,7 +31,8 @@ public abstract class DoComp {
 	}
 	
 	protected <T> T yieldInternal(Function f){
-		return (T)ForComprehensions.foreachX(c->build(c,f));
+	    return Foreach.<T>foreach(c->(T)build(c,f));
+		
 	}
 	
 	 @SuppressWarnings({"rawtypes","unchecked"})

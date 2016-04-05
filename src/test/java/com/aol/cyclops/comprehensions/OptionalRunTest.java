@@ -8,7 +8,7 @@ import java.util.function.BiFunction;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 
 
 
@@ -28,9 +28,9 @@ public class OptionalRunTest {
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 	
-		Optional<Integer> result =  Do.add(two)
-										.add(four)
-										.add(three)
+		Optional<Integer> result =  For.optional(two)
+										.optional(a->four)
+										.optional(a->b->three)
 										.yield(v1->v2->v3-> f2.apply(v1, v2)).unwrap();
 		
 		assertThat(result.get(),equalTo(8));
@@ -44,7 +44,7 @@ public class OptionalRunTest {
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 		
-		Optional<Integer> result  = Do.add(one)
+		Optional<Integer> result  = For.optional(one)
 								.yield(v-> f2.apply(v, 10)).unwrap();
 
 		assertThat(result.get(),equalTo(10));

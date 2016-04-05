@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 
 //import fj.data.Option;
 import lombok.val;
@@ -32,7 +32,7 @@ public class ForComprehensionTest {
 		@Test
 		public void intstream() {
 			
-			Stream<Integer> res =Do.addStream(IntStream.range(1,3).boxed()) 
+			Stream<Integer> res =For.stream(IntStream.range(1,3).boxed()) 
 										 .yield( v1-> v1 + 1)
 										 .unwrap();
 			List<Integer> expected = Arrays.asList(2,3);
@@ -44,7 +44,7 @@ public class ForComprehensionTest {
 		@Test
 		public void intstream4() {
 			
-			Stream<Integer> res = Do.times(4) 
+			Stream<Integer> res = For.stream(IntStream.range(0,4)) 
 								.yield( v1 -> v1 + 1).unwrap();
 			List<Integer> expected = Arrays.asList(1,2,3,4);
 			
@@ -57,8 +57,8 @@ public class ForComprehensionTest {
 			
 			
 			
-			Stream<Long> res = Do.addStream(LongStream.range(1l,30l).boxed())
-								.addBaseStream(()-> LongStream.range(6l,10l))
+			Stream<Long> res = For.stream(LongStream.range(1l,30l).boxed())
+								.stream(a-> LongStream.range(6l,10l))
 								.yield(  v1->v2 ->  v1 * v2 + 1l)
 								.unwrap();
 			
@@ -82,9 +82,9 @@ public class ForComprehensionTest {
 		public void doubleStream() {
 			
 			
-			Stream<Double> res =Do.addStream( DoubleStream.of(10.00,20.00).boxed())
-										.addBaseStream(()->DoubleStream.of(2.00,3.50))
-										.addBaseStream(()->DoubleStream.of(25.50))
+			Stream<Double> res =For.stream( DoubleStream.of(10.00,20.00).boxed())
+										.stream(a->DoubleStream.of(2.00,3.50))
+										.stream(a->b->DoubleStream.of(25.50))
 										.yield( v1->v2->v3-> ( v1 * v2 * v3 )).unwrap();
 			
 			List<Double> expected = Arrays.asList(510.0, 892.5, 1020.0, 1785.0);
@@ -98,7 +98,7 @@ public class ForComprehensionTest {
 		public void simpleLists() {
 		
 			
-			Stream<Integer> res =Do.add(Arrays.asList(1,2))
+			Stream<Integer> res =For.iterable(Arrays.asList(1,2))
 										.yield(v1 -> v1+1)
 										.stream();
 			
@@ -108,56 +108,6 @@ public class ForComprehensionTest {
 			
 		}
 		
-		/**
-		@Test
-		public void test5() {
-			
-			val some = some(1);
-			Supplier<Option<Integer>> s = ()->some;
-			List<Option<Integer>> list = Arrays.<Option<Integer>>asList(some(0), some(1),  none(),some(2), some(10));
-			List<Option<Integer>> res =Do.add(list)
-											.filter(v1 -> v1.filter( it -> it > 1).isSome())
-											.yield( v1-> v1.map(it->it+3) )
-											.unwrap();
-				
-				
-			
-			List<Option> expected = Arrays.asList( some(5), some(13));
-			//println res
-			assertThat(res, equalTo(expected));
 		
-	}
-		
-		@Test
-		public void optionTest(){
-			Option<Integer> one = Option.some(1);
-			Option<Integer> empty = Option.none();
-			BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
-			
-			Option result =  Do.add(one)
-								.add(empty)
-								.filter(v1-> v2-> v1>2)
-								.yield(v1-> v2->f2.apply(v1, 10)).unwrap();
-			
-			System.out.println(result);
-			assertTrue(result.isNone());
-
-		}
-		@Test
-		public void optionTestLessTyping(){
-			Option<Integer> one = Option.some(1);
-			Option<Integer> empty = Option.none();
-			BiFunction<Integer,Integer,Integer> f2 = (a,b) -> a *b; 
-			
-			Option<Integer> result =  Do.add(one)
-							.add(empty)
-							.filter(v1->v2->v1>2)
-							.yield(v1->v2->f2.apply(v1, 10)).unwrap();
-			
-			System.out.println(result);
-			assertTrue(result.isNone());
-
-		}
-		**/
 	
 }

@@ -60,9 +60,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	public T get();
 	
 	
-	default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
-		return Maybe.fromOptional(toOptional()).visit(present, absent);
-	}
+	
 	
 	
 	default T orElseGet(Supplier<? extends T> value){

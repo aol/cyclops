@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
@@ -36,7 +36,10 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 	}
 	
 	
+	public <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn) {
+        return with(super.flatMapInternal(fn));
 
+    }
 	@Override
 	public ReactiveSeq<T> reactiveSeq() {
 		return stream();
@@ -121,8 +124,8 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 	@Override
 	public <R1, R> AnyMValue<R> forEach2(Function<? super T, ? extends AnyMValue<R1>> monad,
 			                    Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-	    return AnyM.ofValue(Do.add((AnyM<T>)this)
-	                          .withAnyM(u -> monad.apply(u))
+	    return AnyM.ofValue(For.anyM((AnyM<T>)this)
+	                          .anyM(u -> monad.apply(u))
 	                          .yield(yieldingFunction).unwrap());
 	}
 
@@ -130,8 +133,8 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 	public <R1, R> AnyMValue<R> forEach2(Function<? super T, ? extends AnyMValue<R1>> monad,
 			Function<? super T, Function<? super R1, Boolean>> filterFunction,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-	    return AnyM.ofValue(Do.add((AnyM<T>)this)
-                .withAnyM(u -> monad.apply(u))
+	    return AnyM.ofValue(For.anyM((AnyM<T>)this)
+                   .anyM(u -> monad.apply(u))
                 .filter(filterFunction)
                 .yield(yieldingFunction).unwrap());
 		
@@ -143,9 +146,9 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 			Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
 	    
-	    return AnyM.ofValue(Do.add((AnyM<T>)this)
-	                          .withAnyM(u -> monad1.apply(u))
-	                          .withAnyM(a -> b -> monad2.apply(a).apply(b))
+	    return AnyM.ofValue(For.anyM((AnyM<T>)this)
+	                          .anyM(u -> monad1.apply(u))
+	                          .anyM(a -> b -> monad2.apply(a).apply(b))
 	                          .filter(filterFunction)
 	                          .yield(yieldingFunction).unwrap());
 	}
@@ -154,9 +157,9 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 	public <R1, R2, R> AnyMValue<R> forEach3(Function<? super T, ? extends AnyMValue<R1>> monad1,
 			Function<? super T, Function<? super R1, ? extends AnyMValue<R2>>> monad2,
 			Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-	    return AnyM.ofValue(Do.add((AnyM<T>)this)
-                .withAnyM(u -> monad1.apply(u))
-                .withAnyM(a -> b -> monad2.apply(a).apply(b))
+	    return AnyM.ofValue(For.anyM((AnyM<T>)this)
+                .anyM(u -> monad1.apply(u))
+                .anyM(a -> b -> monad2.apply(a).apply(b))
                 .yield(yieldingFunction).unwrap());
 	}
 

@@ -8,7 +8,7 @@ import java.util.function.BiFunction;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.AnyM;
 
 //import fj.data.Option;

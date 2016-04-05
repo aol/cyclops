@@ -1,5 +1,7 @@
 package com.aol.cyclops.control.monads.transformers;
 
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -215,6 +217,18 @@ public interface MaybeT<T> {
     }
     public static <A> MaybeTSeq<A> fromPublisher(Publisher<Maybe<A>> publisherOfMaybes){
         return MaybeTSeq.of(AnyM.fromPublisher(publisherOfMaybes));
+    }
+    public static <A,V extends MonadicValue<Maybe<A>>> MaybeTValue<A> fromValue(V monadicValue){
+        return MaybeTValue.fromValue(monadicValue);
+    }
+    public static <A> MaybeTValue<A> fromOptional(Optional<Maybe<A>> optional){
+        return MaybeTValue.of(AnyM.fromOptional(optional));
+    }
+    public static <A> MaybeTValue<A> fromFuture(CompletableFuture<Maybe<A>> future){
+        return MaybeTValue.of(AnyM.fromCompletableFuture(future));
+    }
+    public static <A> MaybeTValue<A> fromIterableValue(Iterable<Maybe<A>> iterableOfMaybes){
+        return MaybeTValue.of(AnyM.fromIterableValue(iterableOfMaybes));
     }
 
     /**

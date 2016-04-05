@@ -80,10 +80,11 @@ public class EvalTTest {
 	}
 	@Test
 	public void peek() {
+
 		result = null;
 		EvalT<Integer> optionT = EvalT.of(AnyM.ofSeq(Stream.of(Eval.now(10))));
-		optionT.peek(num->result = "hello world"+num)
-				.unwrap().<Stream<Eval<String>>>unwrap().collect(Collectors.toList());
+		optionT.peek(num->result = "hello world"+num).map(i->i+2)
+				.unwrap().<Stream<Eval<String>>>unwrap().forEach(System.out::println);
 		assertThat(result,  equalTo("hello world10"));
 	}
 	@Test

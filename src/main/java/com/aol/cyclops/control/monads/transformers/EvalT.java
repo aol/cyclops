@@ -10,7 +10,6 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
-import com.aol.cyclops.types.MonadicValue;
 
 /**
  * Monad transformer for JDK Maybe
@@ -119,7 +118,7 @@ public interface EvalT<T> {
 
     }
     
-    public <B> EvalT<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
+    public <B> EvalT<B> flatMap(Function<? super T, ? extends Eval<? extends B>> f);
 
     /**
      * Lift a function into one that accepts and returns an MaybeT This allows

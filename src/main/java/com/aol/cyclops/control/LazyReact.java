@@ -18,7 +18,11 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+
+import com.aol.cyclops.data.async.Adapter;
+
 import org.reactivestreams.Publisher;
+
 
 import com.aol.cyclops.internal.react.LazyFutureStreamImpl;
 import com.aol.cyclops.internal.react.stream.InfiniteClosingSpliteratorFromSupplier;
@@ -582,6 +586,10 @@ public class LazyReact implements ReactBuilder {
 
 	}
 	
+	public <U> LazyFutureStream<U> fromAdapter(Adapter<U> adapter){
+	    Subscription sub = new Subscription();
+	    return this.construct(adapter.stream(sub));
+	}
 	/**
 	 * Generate an infinite Stream
 	 * 

@@ -26,6 +26,7 @@ import org.junit.Test;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
@@ -288,9 +289,12 @@ public class SequenceMTest {
 	}
 	@Test
 	public void testLazy(){
-		Collection<Integer> col = LazyFutureStream.of(1,2,3,4,5)
+		CollectionX<Integer> col = LazyFutureStream.of(1,2,3,4,5)
 											.peek(System.out::println)
 											.toLazyCollection();
+		
+		
+		assertThat(col.map(i->"hello"+i).toList().size(),equalTo(5));
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));

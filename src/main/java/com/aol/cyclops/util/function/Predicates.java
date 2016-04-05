@@ -273,7 +273,7 @@ public class Predicates {
 	
 	
 	@SafeVarargs
-	public static <T1> Predicate<? super T1> in(T1... values){
+	public static <T1> Predicate<T1> in(T1... values){
 		return test ->Arrays.asList(values).contains(test);
 	}
 	public static <T1 extends Comparable<T1>> Predicate<? super T1> greaterThan(T1 v){

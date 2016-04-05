@@ -56,6 +56,25 @@ import com.aol.cyclops.util.stream.Streamable;
 /**
  * 
  * Wrapper for Any Monad type
+ * 
+ * There are two subsclass of AnyM - @see {@link AnyMValue} and  @see {@link AnyMSeq}. 
+ * AnyMValue is used to represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Xor}, {@link Try}, {@link Ior}, {@link FeatureToggle}
+ * AnyMSeq is used to represent Monads that wrap an aggregation of values such as {@link Stream}, {@link LazyFutureStream}, {@link List}, {@link Set}, {@link Streamable}
+ * 
+ * Use AnyM to create your monad wrapper.
+ * AnyM.fromXXXX methods can create the appropriate AnyM type for a range of known monad types.
+ * 
+ * <pre>
+ * {@code 
+ *    AnyMValue<String> monad1 = AnyM.fromOptional(Optional.of("hello"));
+ *    
+ *    AnyMSeq<String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
+ *  
+ * }
+ * </pre>
+ * 
+ * Wrapped monads can be unwrapped via the unwrap method, or converted to the desired type via toXXXX methods
+ * 
  *
  * 
  * @author johnmcclean
@@ -70,7 +89,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	
 	
     Xor<AnyMValue<T>,AnyMSeq<T>> matchable();
-    
+    <R> AnyM<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn);
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
      */
@@ -428,7 +447,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 		return AnyMFactory.instance.seq(Stream.of(streamData));
 	}
 	public static <T> AnyMSeq<T> fromPublisher(Publisher<T> publisher){
-	    return AnyMFactory.instance.seq(publisher);
+	    return AnyMFactory.instance.convertSeq(publisher);
 	}
 	/**
 	 * Create an AnyM instance that wraps a Stream
@@ -548,16 +567,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 		Objects.requireNonNull(future);
 		return AnyMFactory.instance.value(future);
 	}
-	/**
-	 * Create an AnyM instance that wraps a Collection
-	 * 
-	 * @param stream Collection to wrap
-	 * @return AnyM that wraps the provided Collection
-	 */
-	public static <T> AnyMSeq<T> fromCollection(Collection<T> collection){
-		Objects.requireNonNull(collection);
-		return AnyMFactory.instance.convertSeq(collection);
-	}
+	
 	/**
 	 * Create an AnyM instance that wraps an Iterable
 	 * 
@@ -569,25 +579,18 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 		return AnyMFactory.instance.convertSeq(iterable);
 	}
 	/**
-	 * Create an AnyM instance that wraps an textual Stream from a file
+	 * Use this method to create an AnyMValue from an Iterable.
+	 * This exists as many monadic value types in Java libraries implement iterable (such 
+	 * as Optional in Javaslang or FunctionalJava).
 	 * 
-	 * @param stream File to generate text / line Stream from, and to wrap
-	 * @return AnyM that wraps the Stream generated from the provided file
+	 * @param iterable
+	 * @return
 	 */
-	public static AnyMSeq<String> fromFile(File file){
-		Objects.requireNonNull(file);
-		return AnyMFactory.instance.convertSeq(file);
-	}
-	/**
-	 * Create an AnyM instance that wraps an textual Stream from a URL
-	 * 
-	 * @param stream URL to generate text / line Stream from, and to wrap
-	 * @return AnyM that wraps the Stream generated from the provided url
-	 */
-	public static AnyMSeq<String> fromURL(URL url){
-		Objects.requireNonNull(url);
-		return AnyMFactory.instance.convertSeq(url);
-	}
+	public static <T> AnyMValue<T> fromIterableValue(Iterable<T> iterable){
+        Objects.requireNonNull(iterable);
+        return AnyMFactory.instance.value(iterable);
+    }
+	
 	
 	/**
 	 * Take the supplied object and always attempt to convert it to a Monad type
@@ -699,21 +702,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> List<AnyMSeq<T>> listFromIterable(Iterable<Iterable<T>> anyM){
 		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromIterable(i)).collect(Collectors.toList());
 	}
-	/**
-	 * Take an iterable containing Streamables and convert them into a List of AnyMs
-	 * e.g.
-	 * {@code 
-	 *     List<AnyM<Integer>> anyMs = AnyM.listFromStreamable(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(10,20,30));
-	 *     
-	 *     //List[AnyM[List[1,2,3],List[10,20,30]]]
-	 * }
-	 * 
-	 * @param anyM Iterable containing Collections
-	 * @return List of AnyMs
-	 */
-	public static <T> List<AnyMSeq<T>> listFromCollection(Iterable<Collection<T>> anyM){
-		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromCollection(i)).collect(Collectors.toList());
-	}
+	
 	
 	public static  <ST,T> List<AnyMValue<T>> listFromXor(Iterable<Xor<ST,T>> anyM){
 		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromXor(i)).collect(Collectors.toList());

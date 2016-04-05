@@ -79,10 +79,10 @@ public class EvalTValue<T> implements EvalT<T>,
      * @return MaybeT with peek call
      */
     public EvalTValue<T> peek(Consumer<? super T> peek) {
-        return of(run.peek(opt -> opt.map(a -> {
+        return map(a -> {
             peek.accept(a);
             return a;
-        })));
+        });
     }
 
     /**
@@ -151,7 +151,7 @@ public class EvalTValue<T> implements EvalT<T>,
         }));
 
     }
-    public <B> EvalTValue<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f) {
+    public <B> EvalTValue<B> flatMap(Function<? super T, ? extends Eval<? extends B>> f) {
 
         return new EvalTValue<B>(run.map(o -> o.flatMap(f)));
 

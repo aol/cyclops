@@ -85,7 +85,7 @@ public class AllOfTest {
 	public void testAllOfCompletableFilter(){
 		List<String> urls = Arrays.asList("hello","world","2");
 		List<String> result = new SimpleReact().fromStream(urls.stream()
-				.<CompletableFuture<String>>map(it ->  handle(it)))
+				.map(it ->  handle(it)))
 				.onFail(it ->"hello")
 				.filter(it-> !"2".equals(it))
 				.capture(e -> 
@@ -96,6 +96,7 @@ public class AllOfTest {
 					System.out.println(data);
 						return data; }).block().firstValue();
 		
+		System.out.println(result);
 		assertThat(result.size(),is(2));
 		assertThat(result,hasItem("hello"));
 		assertThat(result,hasItem("world"));

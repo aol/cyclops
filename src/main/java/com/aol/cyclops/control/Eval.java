@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -11,6 +12,8 @@ import java.util.function.Supplier;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
@@ -18,29 +21,31 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.Memoize;
 
-
-
-
-
 /**
- * Represents a computation that can be defered, cached or immediate
+ * Represents a computation that can be defered, cached or immediate.
+ * Supports tail recursion via map / flatMap.
  * 
  * @author johnmcclean
  *
  * @param <T>
  */
-public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filterable<T>, Applicativable<T>,Matchable.ValueAndOptionalMatcher<T>{
+public interface Eval<T> extends Supplier<T>, 
+                                 MonadicValue<T>, 
+                                 Functor<T>, 
+                                 Filterable<T>, 
+                                 Applicativable<T>,
+                                 Matchable.ValueAndOptionalMatcher<T>{
 
-    
 	public static<T> Eval<T> now(T value){
-		return new Now<T>(value);
+	    return always(()->value);
+		
 	}
 	public static<T> Eval<T> later(Supplier<T> value){
 		
-		return new Later<T>(in->value.get());
+		return new Module.Later<T>(in->value.get());
 	}
 	public static<T> Eval<T> always(Supplier<T> value){
-		return new Always<T>(in->value.get());
+		return new Module.Always<T>(in->value.get());
 	}
 	
 	public static <T> Eval<ListX<T>> sequence(CollectionX<Eval<T>> evals){
@@ -58,8 +63,11 @@ public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filte
     }
 	public <T> Eval<T> unit(T unit);
 	public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
-	public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
+	public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper);
 	
+	default PVectorX<Function<Object,Object>> steps(){
+	    return PVectorX.of(__->get());
+	}
 	
 	
 	
@@ -143,159 +151,168 @@ public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filte
     static <R> Eval<R> narrow(Eval<? extends R> broad){
 		return (Eval<R>)broad;
 	}
-	public static class Now<T> implements Eval<T>{
-		private final T value;
-		Now(T value){
-			this.value = value;
-		}
-		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
-			return new Now<>(mapper.apply(value));
-		}
-		public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper){
-			return narrow(mapper.apply(value).toEvalNow());
-		}
-		@Override
-		public T get() {
-			return value;
-		}
-		@Override
-		public <T> Eval<T> unit(T unit) {
-			return Eval.now(unit);
-		}
-		/* (non-Javadoc)
-		 * @see com.aol.cyclops.value.Value#toEvalNow()
-		 */
-		@Override
-		public Eval<T> toEvalNow() {
-			return this;
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
-		@Override
-		public int hashCode() {
-			return get().hashCode();
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object obj) {
-			if(!(obj instanceof Eval))
-				return false;
-			return Objects.equals(get(), ((Eval)obj).get());
-		}
-		
-		@Override
-		public String toString(){
-			return mkString();
-		}
-		
+
+	
+    
+	static class Module{
+	    public static class Later<T> extends Rec<T> implements Eval<T>{
+	        
+	        
+	        Later(Function <Object,? extends T> s){
+	            super(PVectorX.of(Rec.raw(Memoize.memoizeFunction(s))));    
+	        }
+	        Later(PVectorX<Function<Object,Object>> s){
+	            super(s);
+	          
+	        }
+	        public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
+	            
+	            return new Later<R>(super.fns.plus(Rec.raw(Memoize.memoizeFunction(mapper))));
+	        }
+	        public <R>  Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper){
+	            RecFunction s = __ -> mapper.apply(super.apply()).steps();
+	            return  new Later<R>(PVectorX.of(s));
+	            
+	        }
+	        @Override
+	        public T get() {
+	            return super.get();
+	        }
+	        /* (non-Javadoc)
+	         * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
+	         */
+	        @Override
+	        public <T> Eval<T> unit(T unit) {
+	            return Eval.later(()->unit);
+	        }
+	        /* (non-Javadoc)
+	         * @see com.aol.cyclops.value.Value#toEvalLater()
+	         */
+	        @Override
+	        public Eval<T> toEvalLater() {
+	            return this;
+	        }
+	        /* (non-Javadoc)
+	         * @see java.lang.Object#hashCode()
+	         */
+	        @Override
+	        public int hashCode() {
+	            return get().hashCode();
+	        }
+	        /* (non-Javadoc)
+	         * @see java.lang.Object#equals(java.lang.Object)
+	         */
+	        @Override
+	        public boolean equals(Object obj) {
+	            if(!(obj instanceof Eval))
+	                return false;
+	            return Objects.equals(get(), ((Eval)obj).get());
+	        }
+	        @Override
+	        public String toString(){
+	            return mkString();
+	        }
+	        
+	        
+	        
+	    }
+	    public static class Always<T> extends Rec<T> implements Eval<T>{
+	        //private final Function<Object,? extends T> s;
+	        Always(Function <Object,? extends T> s){
+	            super(PVectorX.of(Rec.raw(s)));   
+	        }
+	        Always(PVectorX<Function<Object,Object>> s){
+	            super(s);
+	          
+	        }
+	        public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
+	            
+	            return new Always<R>(fns.plus(Rec.raw(mapper)));
+	            
+	        }
+	        public <R>  Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper){
+	            RecFunction s = __ -> mapper.apply(apply()).steps();
+	            return  new Always<R>(PVectorX.of(s));
+	        }
+	        @Override
+	        public T get() {
+	            return super.get();
+	        }
+	        @Override
+	        public <T> Eval<T> unit(T unit) {
+	            return Eval.always(()->unit);
+	        }
+	        /* (non-Javadoc)
+	         * @see com.aol.cyclops.value.Value#toEvalAlways()
+	         */
+	        @Override
+	        public Eval<T> toEvalAlways() {
+	            return this;
+	        }
+	        /* (non-Javadoc)
+	         * @see java.lang.Object#hashCode()
+	         */
+	        @Override
+	        public int hashCode() {
+	            return get().hashCode();
+	        }
+	        /* (non-Javadoc)
+	         * @see java.lang.Object#equals(java.lang.Object)
+	         */
+	        @Override
+	        public boolean equals(Object obj) {
+	            if(!(obj instanceof Eval))
+	                return false;
+	            return Objects.equals(get(), ((Eval)obj).get());
+	        }
+	        @Override
+	        public String toString(){
+	            return mkString();
+	        }
+	        
+	    }
+	private static class Rec<T> {
+        final PVectorX<Function<Object,Object>> fns;
+        private final static Object VOID = new Object();
+       
+        Rec(PVectorX<Function<Object,Object>> s){
+           fns =s;
+        }
+        
+        private static Function<Object,Object> raw(Function<?,?> fn){
+            return (Function<Object,Object>)fn;
+        }
+        static interface RecFunction extends Function<Object,Object>{
+            
+        }
+        public PVectorX<Function<Object,Object>> steps(){
+            return fns;
+        }
+        T apply(){
+            Object input = VOID;
+            for(Function<Object,Object> n : fns){
+                DequeX<Function<Object,Object>> newFns = DequeX.of(n);
+                while(newFns.size()>0){
+                    Function<Object,Object> next =newFns.pop();
+                    if(next instanceof RecFunction){
+                        newFns.plusAll((List)((RecFunction)next).apply(VOID));
+                    }
+                    else 
+                        input = next.apply(input);
+                    
+                }    
+            }
+            return (T)input;
+        }
+       
+        public T get() {
+            return apply();
+        }
+        
+       
+        
+    }
+
 	}
 	
-	public static class Later<T> implements Eval<T>{
-		private final Function<Object,? extends T> s;
-		private final static Object VOID = new Object();
-		Later(Function <Object,? extends T> s){
-			this.s = Memoize.memoizeFunction(s);
-		}
-		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
-			return new Later<R>(mapper.compose(s));
-		}
-		public <R>  Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper){
-			
-			return  Eval.later(()->mapper.compose(s).apply(VOID).toEvalLater().get());
-		}
-		@Override
-		public T get() {
-			return s.apply(VOID);
-		}
-		/* (non-Javadoc)
-		 * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
-		 */
-		@Override
-		public <T> Eval<T> unit(T unit) {
-			return Eval.later(()->unit);
-		}
-		/* (non-Javadoc)
-		 * @see com.aol.cyclops.value.Value#toEvalLater()
-		 */
-		@Override
-		public Eval<T> toEvalLater() {
-			return this;
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
-		@Override
-		public int hashCode() {
-			return get().hashCode();
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object obj) {
-			if(!(obj instanceof Eval))
-				return false;
-			return Objects.equals(get(), ((Eval)obj).get());
-		}
-		@Override
-		public String toString(){
-			return mkString();
-		}
-		
-		
-		
-	}
-	public static class Always<T> implements Eval<T>{
-		private final Function<Object,? extends T> s;
-		Always(Function <Object,? extends T> s){
-			this.s = s;
-		}
-		public <R> Eval<R> map(Function<? super T, ? extends R> mapper){
-			
-			return new Always<R>(mapper.compose(s));
-			
-		}
-		public <R>  Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper){
-			return  Eval.always(()->mapper.compose(s).apply(null).toEvalAlways().get());
-		}
-		@Override
-		public T get() {
-			return s.apply(null);
-		}
-		@Override
-		public <T> Eval<T> unit(T unit) {
-			return Eval.always(()->unit);
-		}
-		/* (non-Javadoc)
-		 * @see com.aol.cyclops.value.Value#toEvalAlways()
-		 */
-		@Override
-		public Eval<T> toEvalAlways() {
-			return this;
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
-		@Override
-		public int hashCode() {
-			return get().hashCode();
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object obj) {
-			if(!(obj instanceof Eval))
-				return false;
-			return Objects.equals(get(), ((Eval)obj).get());
-		}
-		@Override
-		public String toString(){
-			return mkString();
-		}
-		
-	}
 }

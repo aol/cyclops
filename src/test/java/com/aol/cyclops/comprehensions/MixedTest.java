@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 
 import lombok.val;
 
@@ -25,8 +25,8 @@ public class MixedTest {
 		val opt = Optional.of("cool");
 		
 		
-		List<String> results = Do.add(strs)
-									.add(opt)
+		List<String> results = For.iterable(strs)
+									.optional(i->opt)
 									.yield(v1->v2 -> v1 + v2).unwrap();
 										 
 		
@@ -40,8 +40,8 @@ public class MixedTest {
 		val opt = Optional.of("cool");
 		
 		
-		Stream<String> results = Do.addStream(strs)
-									.add(opt)
+		Stream<String> results = For.stream(strs)
+									.optional(i->opt)
 									.yield(v1->v2 -> v1 + v2).unwrap();
 										 
 		
@@ -55,8 +55,8 @@ public class MixedTest {
 		val opt = Optional.empty();
 		
 		
-		List<String> results = Do.add(strs)
-								.add(opt)
+		List<String> results = For.iterable(strs)
+								.optional(i->opt)
 								.yield( v1->v2 -> v1+ v2)
 								.stream()
 								.toList();
@@ -74,8 +74,8 @@ public class MixedTest {
 		val opt = Optional.of("cool");
 		
 		
-		Optional<String> results = Do.add(opt)
-											.add(strs)
+		Optional<String> results = For.optional(opt)
+											.iterable(i->strs)
 											.yield(v1->v2 -> v1+ v2)
 											.unwrap();
 		
@@ -88,8 +88,8 @@ public class MixedTest {
 		val opt = Optional.empty();
 		
 		
-		Optional<List<String>> results = Do.add(opt)
-											.add(strs)
+		Optional<List<String>> results = For.optional(opt)
+											.iterable(i->strs)
 											.yield(v1->v2 -> v1 + v2)
 											.unwrap();
 		
@@ -102,8 +102,8 @@ public class MixedTest {
 		val opt = Optional.of("cool");
 		
 		
-		Optional<String> results = Do.add(opt)
-										 .add(str)
+		Optional<String> results = For.optional(opt)
+										 .future(i->str)
 										 .yield(v1->v2 -> v1+v2)
 										 .unwrap();
 		

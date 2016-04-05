@@ -499,7 +499,7 @@ public interface LazySimpleReactStream<U> extends
 	 *         the dataflow
 	 */
 	@SuppressWarnings("unchecked")
-	default LazySimpleReactStream<U> capture(final Consumer<? extends Throwable> errorHandler) {
+	default LazySimpleReactStream<U> capture(final Consumer<Throwable> errorHandler) {
 		return this.withErrorHandler(Optional
 				.of((Consumer<Throwable>) errorHandler));
 	}

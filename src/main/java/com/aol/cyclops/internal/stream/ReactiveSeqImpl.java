@@ -48,7 +48,7 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Do;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -2052,9 +2052,9 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	public <R1,R2,R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
 											Function<? super T,Function<? super R1,? extends BaseStream<R2,?>>> stream2,
 												Function<? super T,Function<? super R1,Function<? super R2,? extends R>>> yieldingFunction ){
-		return Do.add(this)
-				  .withBaseStream(u->stream1.apply(u))
-				  .withBaseStream(u->r1->stream2.apply(u).apply(r1))
+		return For.stream(this)
+				  .stream(u->stream1.apply(u))
+				  .stream(u->r1->stream2.apply(u).apply(r1))
 				  .yield(yieldingFunction).unwrap();
 			
 	}
@@ -2078,9 +2078,9 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 					Function<? super T,Function<? super R1,Function<? super R2,Boolean>>> filterFunction,
 			Function<? super T,Function<? super R1,Function<? super R2,? extends R>>> yieldingFunction ){
 		
-		 return Do.add(this)
-				  .withBaseStream(u->stream1.apply(u))
-				  .withBaseStream(u->r1->stream2.apply(u).apply(r1))
+		 return For.stream(this)
+				  .stream(u->stream1.apply(u))
+				  .stream(u->r1->stream2.apply(u).apply(r1))
 				  .filter(filterFunction)
 				  .yield(yieldingFunction).unwrap();
 			
@@ -2111,8 +2111,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 */
 	public <R1,R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
 											Function<? super T,Function<? super R1,? extends R>> yieldingFunction ){
-		 return Do.add(this)
-				  .withBaseStream(u->stream1.apply(u))
+		 return For.stream(this)
+				  .stream(u->stream1.apply(u))
 				  .yield(yieldingFunction).unwrap();
 			
 	}
@@ -2140,8 +2140,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	public <R1,R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1,?>> stream1, 
 			Function<? super T, Function<? super R1, Boolean>> filterFunction,
 					Function<? super T,Function<? super R1,? extends R>> yieldingFunction ){
-		 return Do.add(this)
-				  .withBaseStream(u->stream1.apply(u))
+		 return For.stream(this)
+				  .stream(u->stream1.apply(u))
 				  .filter(filterFunction)
 				  .yield(yieldingFunction).unwrap();
 			

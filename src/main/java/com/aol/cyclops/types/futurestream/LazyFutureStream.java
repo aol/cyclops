@@ -46,6 +46,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.LazyReact;
@@ -68,7 +69,6 @@ import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops.internal.stream.LazyFutureStreamFutureOpterationsImpl;
-import com.aol.cyclops.react.ParallelReductionConfig;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.aol.cyclops.react.ThreadPools;
@@ -97,7 +97,7 @@ import lombok.val;
  *
  */
 
-public interface LazyFutureStream<U> extends  Functor<U>,
+public interface LazyFutureStream<U> extends Functor<U>,
                                             Filterable<U>,   
                                             LazySimpleReactStream<U>,
                                             LazyStream<U>,
@@ -345,7 +345,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
     @Override
     default <R> LazyFutureStream<R> patternMatch(Function<CheckValue1<U,R>,CheckValue1< U,R>> case1,Supplier<? extends R> otherwise){
 
-        return  map(u-> Matchable.from(()->u).matches(case1,otherwise).get());
+        return  map(u-> Matchables.supplier(()->u).matches(case1,otherwise).get());
     }
 
     /**
@@ -1455,7 +1455,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      */
     @Override
     default LazyFutureStream<U> capture(
-            final Consumer<? extends Throwable> errorHandler) {
+            final Consumer<Throwable> errorHandler) {
         return (LazyFutureStream) LazySimpleReactStream.super.capture(errorHandler);
     }
 
@@ -3260,10 +3260,9 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      
 	
 
-	/** END SEQUENCEM **/
+	/** END REACTIVESEQ **/
 
-    LazyFutureStream<U> withParallelReduction(
-            ParallelReductionConfig parallelReductionConfig);
+   
 
     /**
      * Construct an parallel LazyFutureStream from specified array, using the configured

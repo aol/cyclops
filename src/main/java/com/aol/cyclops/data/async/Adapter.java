@@ -9,6 +9,7 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.react.async.subscription.Continueable;
+import com.aol.cyclops.react.async.subscription.Subscription;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 /**
@@ -38,7 +39,7 @@ public interface Adapter<T> {
 	 */
 	public boolean fromStream(Stream<T> stream);
 	default LazyFutureStream<T> futureStream(LazyReact reactor){
-	       return reactor.fromStream(stream());
+	    return reactor.fromStream(stream());
 	}
 	default LazyFutureStream<T> futureStream(){
 	   return new LazyReact().fromStream(stream());

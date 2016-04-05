@@ -20,6 +20,7 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.EvalT;
+import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
@@ -92,10 +93,10 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @return MaybeT with peek call
      */
     public EvalTSeq<T> peek(Consumer<? super T> peek) {
-        return of(run.peek(opt -> opt.map(a -> {
+        return map(a -> {
             peek.accept(a);
             return a;
-        })));
+        });
     }
 
     /**
@@ -164,7 +165,7 @@ public class EvalTSeq<T> implements EvalT<T>,
         }));
 
     }
-    public <B> EvalTSeq<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f) {
+    public <B> EvalTSeq<B> flatMap(Function<? super T, ? extends Eval<? extends B>> f) {
 
         return new EvalTSeq<B>(run.map(o -> o.flatMap(f)));
 

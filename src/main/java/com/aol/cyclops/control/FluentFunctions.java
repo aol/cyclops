@@ -20,6 +20,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.data.MutableInt;
 import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
@@ -197,12 +198,13 @@ public class FluentFunctions {
 	 * @param action Consumer
 	 * @return FluentFunction
 	 */
-	public static <T> FluentFunctions.FluentFunction<T,T> expression(Consumer<T> action){
+	public static <T> FluentFunctions.FluentFunction<T,T> expression(Consumer<? super T> action){
 		return FluentFunctions.of(t->{
 			action.accept(t);
 			return t;
 		});
 	}
+	
 	/**
 	 * Convert a checked statement (e.g. a method or Consumer with no return value that throws a Checked Exception) to a 
 	 * fluent expression (FluentFunction).  The input is returned as output
@@ -242,7 +244,7 @@ public class FluentFunctions {
 	 * @param action BiConsumer
 	 * @return FluentBiFunction
 	 */
-	public static <T1,T2> FluentFunctions.FluentBiFunction<T1,T2,Tuple2<T1,T2>> expression(BiConsumer<T1,T2> action){
+	public static <T1,T2> FluentFunctions.FluentBiFunction<T1,T2,Tuple2<T1,T2>> expression(BiConsumer<? super T1,? super T2> action){
 		return FluentFunctions.of((t1,t2)->{
 			action.accept(t1,t2);
 			return Tuple.tuple(t1,t2);
@@ -391,7 +393,7 @@ public class FluentFunctions {
 			
 		}
 		
-		public <R1 >FluentSupplier<R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1,Supplier<? extends R1> otherwise){
+		public <R1 >FluentSupplier<R1> matches(Function<CheckValue1<R,R1>,CheckValue1<R,R1>> case1,Supplier<? extends R1> otherwise){
 			return FluentFunctions.of(()->Matchable.of(fn.get()).matches(case1,otherwise).get());
 		}
 		
@@ -537,7 +539,7 @@ public class FluentFunctions {
 			});
 			
 		}
-		public <R1> FluentFunction<T,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1, Supplier<? extends R1> otherwise){
+		public <R1> FluentFunction<T,R1> matches(Function<CheckValue1<R,R1>,CheckValue1<R,R1>> case1, Supplier<? extends R1> otherwise){
 		
 			return FluentFunctions.of(t->Matchable.of(fn.apply(t)).matches(case1,otherwise).get());
 		}
@@ -589,6 +591,23 @@ public class FluentFunctions {
 		public CompletableFuture<FluentFunction<T,R>> async(Executor ex){
 			return CompletableFuture.supplyAsync(()->FluentFunctions.of(fn),ex);
 		}
+        /* (non-Javadoc)
+         * @see java.util.function.Function#compose(java.util.function.Function)
+         */
+        @Override
+        public <V> Function<V, R> compose(Function<? super V, ? extends T> before) {
+            
+            return FluentFunctions.of(Reader.super.compose(before));
+        }
+        /* (non-Javadoc)
+         * @see java.util.function.Function#andThen(java.util.function.Function)
+         */
+        @Override
+        public <V> Function<T, V> andThen(Function<? super R, ? extends V> after) {
+            
+            return FluentFunctions.of(Reader.super.andThen(after));
+        }
+		
 		
 	}
 	@Wither(AccessLevel.PRIVATE)
@@ -705,7 +724,7 @@ public class FluentFunctions {
 			});
 			
 		}
-		public <R1> FluentBiFunction<T1,T2,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1, Supplier<? extends R1> otherwise){
+		public <R1> FluentBiFunction<T1,T2,R1> matches(Function<CheckValue1<R,R1>,CheckValue1<R,R1>> case1, Supplier<? extends R1> otherwise){
 			return FluentFunctions.of((t1,t2)->Matchable.of(fn.apply(t1,t2)).matches(case1,otherwise).get());
 		}
 		
@@ -736,6 +755,13 @@ public class FluentFunctions {
 		public CompletableFuture<FluentBiFunction<T1,T2,R>> async(Executor ex){
 			return CompletableFuture.supplyAsync(()->FluentFunctions.of(fn),ex);
 		}
+        /* (non-Javadoc)
+         * @see java.util.function.BiFunction#andThen(java.util.function.Function)
+         */
+        @Override
+        public <V> FluentBiFunction<T1, T2, V> andThen(Function<? super R, ? extends V> after) {
+            return FluentFunctions.of(BiFunction.super.andThen(after));
+        }
 		
 	}
 	@Wither(AccessLevel.PRIVATE)
@@ -855,7 +881,7 @@ public class FluentFunctions {
 			});
 			
 		}
-		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(Function<CheckValues<R,R1>,CheckValues<R,R1>> case1, Supplier<? extends R1> otherwise){
+		public <R1> FluentTriFunction<T1,T2,T3,R1> matches(Function<CheckValue1<R,R1>,CheckValue1<R,R1>> case1, Supplier<? extends R1> otherwise){
 			return FluentFunctions.of((t1,t2,t3)->Matchable.of(fn.apply(t1,t2,t3)).matches(case1,otherwise).get());
 		}
 		

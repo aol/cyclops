@@ -121,7 +121,7 @@ public class RetryTest {
 
 		
 		assertThat(result.size(), is(0));
-		assertThat(((SimpleReactFailedStageException)error).getCause().getMessage(), is("DONT PANIC"));
+		assertThat(error.getMessage(), is("DONT PANIC"));
 
 	}
 
@@ -162,8 +162,8 @@ public class RetryTest {
 		assertThat(result.size(), is(0));
 
 		error.printStackTrace();
-		assertThat(error.getCause(), instanceOf(IllegalArgumentException.class));
-		assertThat(error.getCause().getMessage(), is("DONT PANIC"));
+		assertThat(error, instanceOf(IllegalArgumentException.class));
+		assertThat(error.getMessage(), is("DONT PANIC"));
 	}
 
 	

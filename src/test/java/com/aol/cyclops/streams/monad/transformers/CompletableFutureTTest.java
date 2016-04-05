@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
+import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
 import com.aol.cyclops.control.AnyM;
 public class CompletableFutureTTest {
 
@@ -76,9 +77,9 @@ public class CompletableFutureTTest {
 	}
 	@Test
 	public void flatMap() {
-		CompletableFutureT<Integer> optionT = CompletableFutureT.of(AnyM.fromStream(Stream.of(CompletableFuture.completedFuture(10))));
+		CompletableFutureTSeq<Integer> optionT = CompletableFutureT.fromStream(Stream.of(CompletableFuture.completedFuture(10)));
 		
-		assertThat(optionT.flatMap(num->CompletableFutureT.fromAnyM(AnyM.fromStream(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMapT(num->CompletableFutureT.fromStream(Stream.of(CompletableFuture.completedFuture("hello world"+num))))
 				.unwrap().<Stream<CompletableFuture<String>>>unwrap()
 						.collect(Collectors.toList()).get(0).join(),  equalTo("hello world10"));
 	}

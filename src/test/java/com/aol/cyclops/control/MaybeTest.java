@@ -54,6 +54,22 @@ public class MaybeTest {
 		just = Maybe.of(10);
 		none = Maybe.none();
 	}
+	
+    @Test
+    public void odd() {
+        System.out.println(even(Maybe.just(200000)).get());
+    }
+
+    public Maybe<String> odd(Maybe<Integer> n) {
+
+        return n.flatMap(x -> even(Maybe.just(x - 1)));
+    }
+
+    public Maybe<String> even(Maybe<Integer> n) {
+        return n.flatMap(x -> {
+            return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
+        });
+    }
 
 	@Test
 	public void testFiltering(){
@@ -202,17 +218,17 @@ public class MaybeTest {
 	}
 
 	@Test
-	public void testConvertTo() {
-		Stream<Integer> toStream = just.convertTo(m->Stream.of((int)m.get()));
-		assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
-	}
+    public void testConvertTo() {
+        Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
+        assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
+    }
 
-	@Test
-	public void testConvertToAsync() {
-		FutureW<Stream<Integer>> async = just.convertToAsync(f->f.thenApply(i->Stream.of((int)i)));
-		
-		assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
-	}
+    @Test
+    public void testConvertToAsync() {
+        FutureW<Stream<Integer>> async = FutureW.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
+        
+        assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
+    }
 
 
 
@@ -529,6 +545,7 @@ public class MaybeTest {
 	}
 	@Test
 	public void testAp4() {
+	   
 		assertThat(Maybe.of(1).ap4(this::add4)
 						.ap(Optional.of(3))
 						.ap(Maybe.of(4))

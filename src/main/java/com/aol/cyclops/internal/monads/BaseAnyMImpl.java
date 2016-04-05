@@ -41,7 +41,6 @@ public abstract class BaseAnyMImpl<T> {
 	
 	
 	
-	
 
 	public Monad monad(){
 		return (Monad)monad;

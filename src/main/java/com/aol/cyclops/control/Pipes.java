@@ -1,6 +1,5 @@
 package com.aol.cyclops.control;
 
-import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -13,10 +12,10 @@ import java.util.concurrent.Executor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.async.Adapter;
 import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
@@ -24,10 +23,12 @@ import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.val;
 
 /**
  * Store for Pipes for cross-thread communication
+ * 
+ * Connected Streams will not be able to complete collect or reduce style methods unless the underlying Adapter for data transfer is closed.
+ * I.e. connected Streams remain connected until either the Adapter is closed, or they disconnect (due to a limit for example).
  * 
  * @author johnmcclean
  *
@@ -78,6 +79,7 @@ public class Pipes<K,V> {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public  Maybe<LazyFutureStream<V>> futureStream(K key, LazyReact reactor){
+        
         return get(key).map(a->a.futureStream(reactor));
     }
     /**
@@ -145,10 +147,16 @@ public class Pipes<K,V> {
      */
     public  Eval<Maybe<V>> nextValue(K key){
         ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+        LazyImmutable<Boolean> requested = LazyImmutable.def();
         return get(key).peek(a->a.stream().subscribe(sub))
                         .map(a-> Eval.always(()->{
+                            if(requested.isSet()){
+                                sub.requestOne();
+                            }else{
+                                requested.setOnce(true);
+                            }
                             Maybe<V> res = sub.toMaybe();
-                            sub.requestOne();
+                            
                             return res;
                         }))
                         
@@ -164,10 +172,16 @@ public class Pipes<K,V> {
      */
     public  Eval<V> nextOrNull(K key){
         ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+        LazyImmutable<Boolean> requested = LazyImmutable.def();
         return get(key).peek(a->a.stream().subscribe(sub))
                         .map(a-> Eval.always(()->{
+                            if(requested.isSet()){
+                                sub.requestOne();
+                            }else{
+                                requested.setOnce(true);
+                            }
                             Maybe<V> res = sub.toMaybe();
-                            sub.requestOne();
+                          
                             return res.orElse(null);
                         }))
                         
@@ -238,5 +252,10 @@ public class Pipes<K,V> {
 		SequentialElasticPools.simpleReact.react(er->er.of(publisher)
 								.peek(p->publishTo(key,p)));
 	}
+    public void close(String key) {
+        Optional.ofNullable(registered.get(key))
+                .ifPresent(a->a.close());
+        
+    }
 	
 }

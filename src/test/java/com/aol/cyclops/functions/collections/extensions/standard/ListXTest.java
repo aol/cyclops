@@ -1,7 +1,7 @@
 package com.aol.cyclops.functions.collections.extensions.standard;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
@@ -18,6 +18,16 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
 public class ListXTest extends CollectionXTestsWithNulls{
 
+    @Test
+    public void multipaths(){
+       ListX<Integer> list =  ListX.of(1,2,3);
+       ListX<Integer> by10 = list.map(i->i*10);
+       ListX<Integer> plus2 = list.map(i->i+2);
+       ListX<Integer> by10Plus2 = by10.map(i->i+2);
+       assertThat(by10,equalTo(Arrays.asList(10,20,30)));
+       assertThat(plus2,equalTo(Arrays.asList(3,4,5)));
+       assertThat(by10Plus2,equalTo(Arrays.asList(12,22,32)));
+    }
 	@Override
 	public <T> FluentCollectionX<T> of(T... values) {
 		return ListX.of(values);
@@ -37,8 +47,10 @@ public class ListXTest extends CollectionXTestsWithNulls{
                         .limit(300_000)
                         .toListX(),equalTo(Arrays.asList(1,2,3)));
         }
+       
         
     }
+	
 	 
 	@Test
 	public void when(){
