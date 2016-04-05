@@ -6,11 +6,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.jooq.lambda.function.Function1;
-
+import com.aol.cyclops.Matchables;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Success;
-import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
+import com.aol.cyclops.control.monads.transformers.values.TryTValue;
 
 
 /**
@@ -27,21 +28,14 @@ import com.aol.cyclops.control.AnyM;
  *
  * @param <T> The type contained on the Try within
  */
-public class TryT<T,X extends Throwable> {
+public interface TryT<T,X extends Throwable> {
    
-   private final AnyM<Try<T,X>> run;
-   
-   
-   private TryT(final AnyM<Try<T,X>> run){
-       this.run = run;
-   }
-   
+  
+    public <B> TryT<B,X> flatMap(Function<? super T, ? extends Try<B,X>> f);
 	/**
 	 * @return The wrapped AnyM
 	 */
-	public AnyM<Try<T,X>> unwrap() {
-		return run;
-	}
+	AnyM<Try<T,X>> unwrap();
 
    
 	/**
@@ -58,12 +52,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param peek  Consumer to accept current value of Try
 	 * @return TryT with peek call
 	 */
-	public TryT<T,X> peek(Consumer<? super T> peek) {
-		return of(run.peek(opt -> opt.map(a -> {
-			peek.accept(a);
-			return a;
-		})));
-	}
+	public TryT<T,X> peek(Consumer<? super T> peek);
    
 	/**
 	 * Filter the wrapped Try
@@ -78,9 +67,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param test Predicate to filter the wrapped Try
 	 * @return OptionalT that applies the provided filter
 	 */
-	public MaybeT<T> filter(Predicate<? super T> test) {
-		return MaybeT.of(run.map(opt -> opt.filter(test)));
-	}
+	public MaybeT<T> filter(Predicate<? super T> test);
 
 	/**
 	 * Map the wrapped Try
@@ -98,9 +85,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param f Mapping function for the wrapped Try
 	 * @return TryT that applies the map function to the wrapped Try
 	 */
-	public <B> TryT<B,X> map(Function<? super T,? extends B> f) {
-		return new TryT<B,X>(run.map(o -> o.map(f)));
-	}
+	public <B> TryT<B,X> map(Function<? super T,? extends B> f);
 
 	/**
 	 * Flat Map the wrapped Try
@@ -116,13 +101,13 @@ public class TryT<T,X extends Throwable> {
 	 * @param f FlatMap function
 	 * @return TryT that applies the flatMap function to the wrapped Try
 	 */
-	public <B> TryT<B,X> flatMap(Function<? super T, TryT<B,X>> f) {
+	default <B> TryT<B,X> bind(Function<? super T, TryT<B,X>> f) {
 
-		return of(run.bind(opt -> {
+		return of(unwrap().bind(opt -> {
 			if (opt.isSuccess())
-				return f.apply(opt.get()).run.unwrap();
+				return f.apply(opt.get()).unwrap().unwrap();
 			Try<B,X> ret = (Try)opt;
-			return run.unit(ret).unwrap();
+			return unwrap().unit(ret).unwrap();
 		}));
 
 	}
@@ -191,7 +176,7 @@ public class TryT<T,X extends Throwable> {
 	 * @return Function that accepts and returns an TryT
 	 */
 	public static <U1, U2, R, X extends Throwable> BiFunction<TryT<U1,X>, TryT<U2,X>, TryT<R,X>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
-		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+		return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 
 	/**
@@ -213,16 +198,9 @@ public class TryT<T,X extends Throwable> {
 	 * @return TryT
 	 */
 	public static <A,X extends Throwable> TryT<A,X> of(AnyM<Try<A,X>> monads) {
-		return new TryT<>(monads);
+	    return Matchables.anyM(monads).visit(v-> TryTValue.of(v), s->TryTSeq.of(s));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return run.toString();
-	}
+	
  
 }

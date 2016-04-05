@@ -1,17 +1,15 @@
 package com.aol.cyclops.control.monads.transformers;
 
 
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.function.Function1;
-
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.monads.transformers.seq.StreamTSeq;
+import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
 
 
 /**
@@ -26,19 +24,14 @@ import com.aol.cyclops.control.AnyM;
  *
  * @param <T>
  */
-public class StreamT<T> {
+public interface StreamT<T> {
   
-   final AnyM<Stream<T>> run;
-
-   private StreamT(final AnyM<Stream<T>> run){
-       this.run = run;
-   }
+   
+   public <B> StreamT<B> flatMap(Function<? super T, ? extends Stream<? extends B>> f);
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyM<Stream<T>> unwrap(){
-	   return run;
-   }
+   public AnyM<Stream<T>> unwrap();
    /**
   	 * Peek at the current value of the Stream
   	 * <pre>
@@ -53,9 +46,7 @@ public class StreamT<T> {
   	 * @param peek  Consumer to accept current value of Stream
   	 * @return StreamT with peek call
   	 */
-   public StreamT<T> peek(Consumer<? super T> peek){
-	   return map(a-> {peek.accept(a); return a;});
-   }
+   public StreamT<T> peek(Consumer<? super T> peek);
    /**
  	 * Filter the wrapped Stream
  	 * <pre>
@@ -69,9 +60,7 @@ public class StreamT<T> {
  	 * @param test Predicate to filter the wrapped Stream
  	 * @return StreamT that applies the provided filter
  	 */
-   public StreamT<T> filter(Predicate<? super T> test){
-       return of(run.map(stream-> stream.filter(test)));
-   }
+   public StreamT<T> filter(Predicate<? super T> test);
    /**
 	 * Map the wrapped Stream
 	 * 
@@ -88,9 +77,7 @@ public class StreamT<T> {
 	 * @param f Mapping function for the wrapped Stream
 	 * @return StreamT that applies the map function to the wrapped Stream
 	 */
-   public <B> StreamT<B> map(Function<? super T,? extends B> f){
-       return new StreamT<B>(run.map(o-> o.map(f)));
-   }
+   public <B> StreamT<B> map(Function<? super T,? extends B> f);
    /**
 	 * Flat Map the wrapped Stream
 	  * <pre>
@@ -105,8 +92,8 @@ public class StreamT<T> {
 	 * @param f FlatMap function
 	 * @return StreamT that applies the flatMap function to the wrapped Stream
 	 */
-   public <B> StreamT<B> flatMap(Function<? super T,StreamT<? extends B>> f){
-	   return of(run.map(stream-> stream.flatMap(a-> f.apply(a).run.stream())
+   default <B> StreamT<B> bind(Function<? super T,StreamT<? extends B>> f){
+	   return of(unwrap().map(stream-> stream.flatMap(a-> f.apply(a).unwrap().stream())
 			   							.<B>flatMap(a->a)));
    }
    /**
@@ -156,17 +143,9 @@ public class StreamT<T> {
 	 * @return
 	 */
    public static <A> StreamT<A> of(AnyM<Stream<A>> monads){
-	   return new StreamT<>(monads);
+       return Matchables.anyM(monads).visit(v-> StreamTValue.of(v), s->StreamTSeq.of(s));
    }
    
    
-   /*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-   public String toString() {
-		return run.toString();
-	}
- 
+   
 }

@@ -15,6 +15,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
@@ -39,7 +40,8 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T>
  */
-public class ListTSeq<T> implements ConvertableSequence<T>,
+public class ListTSeq<T> implements ListT<T>,
+                                ConvertableSequence<T>,
                                 ExtendedTraversable<T>,
                                 Sequential<T>,
                                 CyclopsCollectable<T>,
@@ -56,6 +58,7 @@ public class ListTSeq<T> implements ConvertableSequence<T>,
    /**
 	 * @return The wrapped AnyM
 	 */
+   @Override
    public AnyMSeq<List<T>> unwrap(){
 	   return run;
    }
@@ -73,6 +76,7 @@ public class ListTSeq<T> implements ConvertableSequence<T>,
 	 * @param peek  Consumer to accept current value of List
 	 * @return ListT with peek call
 	 */
+   @Override
    public ListTSeq<T> peek(Consumer<? super T> peek){
 	   return map(a-> {peek.accept(a); return a;});
      
@@ -90,6 +94,7 @@ public class ListTSeq<T> implements ConvertableSequence<T>,
 	 * @param test Predicate to filter the wrapped List
 	 * @return ListT that applies the provided filter
 	 */
+   @Override
    public ListTSeq<T> filter(Predicate<? super T> test){
        return of(run.map(stream-> ReactiveSeq.fromList(stream).filter(test).toList()));
    }
@@ -109,9 +114,11 @@ public class ListTSeq<T> implements ConvertableSequence<T>,
 	 * @param f Mapping function for the wrapped List
 	 * @return ListT that applies the map function to the wrapped List
 	 */
+   @Override
    public <B> ListTSeq<B> map(Function<? super T,? extends B> f){
        return of(run.map(o-> (List<B>)ReactiveSeq.fromList(o).map(f).toList()));
    }
+   @Override
    public <B> ListTSeq<B> flatMap(Function<? super T, ? extends Iterable<? extends B>> f) {
        return new ListTSeq<B>(run.map(o -> ListX.fromIterable(o).flatMap(f)));
 

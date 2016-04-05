@@ -11,9 +11,9 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
@@ -38,7 +38,8 @@ import com.aol.cyclops.types.applicative.Applicativable;
  * @param <T>
  *            The type contained on the Xor within
  */
-public class XorTValue<ST,T> implements MonadicValue2<ST,T>,
+public class XorTValue<ST,T> implements XorT<ST,T>,
+                                MonadicValue2<ST,T>,
                                 Supplier<T>, 
                                 ConvertableFunctor<T>, 
                                 Filterable<T>,
@@ -58,7 +59,13 @@ public class XorTValue<ST,T> implements MonadicValue2<ST,T>,
     public AnyMValue<Xor<ST,T>> unwrap() {
         return run;
     }
-
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.XorT#swap()
+     */
+    @Override
+    public XorTValue<T, ST> swap() {
+       return of(run.map(xor->xor.swap()));
+    }
     /**
      * Peek at the current value of the Xor
      * 

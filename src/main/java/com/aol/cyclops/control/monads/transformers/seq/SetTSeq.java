@@ -16,15 +16,12 @@ import org.jooq.lambda.Collectable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
-import com.aol.cyclops.types.IterableFunctor;
-import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -45,7 +42,8 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T>
  */
-public class SetTSeq<T>  implements ConvertableSequence<T>,
+public class SetTSeq<T>  implements SetT<T>,
+                                    ConvertableSequence<T>,
                                     ExtendedTraversable<T>,
                                     Sequential<T>,
                                     CyclopsCollectable<T>,

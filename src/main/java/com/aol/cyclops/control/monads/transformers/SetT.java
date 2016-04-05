@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Set;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -13,13 +11,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import lombok.Getter;
-
-import org.jooq.lambda.function.Function1;
-
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.util.stream.Streamable;
+import com.aol.cyclops.control.monads.transformers.seq.SetTSeq;
+import com.aol.cyclops.control.monads.transformers.values.SetTValue;
 
 
 
@@ -35,19 +31,14 @@ import com.aol.cyclops.util.stream.Streamable;
  *
  * @param <T>
  */
-public class SetT<T> {
+public interface SetT<T> {
    
-   final AnyM<Set<T>> run;
-
-   private SetT(final AnyM<Set<T>> run){
-       this.run = run;
-   }
+   
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyM<Set<T>> unwrap(){
-	   return run;
-   }
+   AnyM<Set<T>> unwrap();
+   public <B> SetT<B> flatMap(Function<? super T, ? extends Iterable<? extends B>> f);
    /**
 	 * Peek at the current value of the Set
 	 * <pre>
@@ -62,10 +53,8 @@ public class SetT<T> {
 	 * @param peek  Consumer to accept current value of Set
 	 * @return SetT with peek call
 	 */
-   public SetT<T> peek(Consumer<? super T> peek){
-	   return map(a-> {peek.accept(a); return a;});
-     
-   }
+   public SetT<T> peek(Consumer<? super T> peek);
+   
    /**
 	 * Filter the wrapped Set
 	 * <pre>
@@ -79,9 +68,7 @@ public class SetT<T> {
 	 * @param test Predicate to filter the wrapped Set
 	 * @return SetT that applies the provided filter
 	 */
-   public SetT<T> filter(Predicate<? super T> test){
-       return of(run.map(stream-> ReactiveSeq.fromIterable(stream).filter(test).toSet()));
-   }
+   public SetT<T> filter(Predicate<? super T> test);
    /**
 	 * Map the wrapped Set
 	 * 
@@ -98,9 +85,8 @@ public class SetT<T> {
 	 * @param f Mapping function for the wrapped Set
 	 * @return SetT that applies the map function to the wrapped Set
 	 */
-   public <B> SetT<B> map(Function<? super T,? extends B> f){
-       return of(run.map(o-> (Set<B>)ReactiveSeq.fromIterable(o).map(f).toSet()));
-   }
+   public <B> SetT<B> map(Function<? super T,? extends B> f);
+   
    /**
 	 * Flat Map the wrapped Set
 	  * <pre>
@@ -115,9 +101,9 @@ public class SetT<T> {
 	 * @param f FlatMap function
 	 * @return SetT that applies the flatMap function to the wrapped Set
 	 */
-   public <B> SetT<B> flatMap(Function<? super T,SetT<B>> f){
+   default <B> SetT<B> bind(Function<? super T,SetT<B>> f){
 	  
-	   return of( run.map(stream-> ReactiveSeq.fromIterable(stream).flatMap(a-> f.apply(a).run.stream()).flatMap(a->a.stream())
+	   return of( unwrap().map(stream-> ReactiveSeq.fromIterable(stream).flatMap(a-> f.apply(a).unwrap().stream()).flatMap(a->a.stream())
 			   .toSet()));
    }
    /**
@@ -180,7 +166,7 @@ public class SetT<T> {
 	 * @return Function that accepts and returns an SetT
 	 */
 	public static <U1, U2, R> BiFunction<SetT<U1>, SetT<U2>, SetT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
-		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+		return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 	/**
 	 * Construct an SetT from an AnyM that contains a monad type that contains type other than Set
@@ -193,7 +179,7 @@ public class SetT<T> {
 	   return of(anyM.map(SetT::asSet));
    }
    
-   private static <T> Set<T> asSet(T... elements){
+  static <T> Set<T> asSet(T... elements){
 	   	return new HashSet<T>(Arrays.asList(elements));
    }
    /**
@@ -203,7 +189,7 @@ public class SetT<T> {
 	 * @return SetT
 	 */
    public static <A> SetT<A> of(AnyM<Set<A>> monads){
-	   return new SetT<>(monads);
+       return Matchables.anyM(monads).visit(v-> SetTValue.of(v), s->SetTSeq.of(s));
    }
 
 	/**
@@ -217,15 +203,7 @@ public class SetT<T> {
 	}
    
   
-   
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return run.toString();
-	}
+
    
  
 }

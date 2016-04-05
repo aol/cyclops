@@ -6,7 +6,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import org.jooq.lambda.Collectable;
 import org.reactivestreams.Publisher;
@@ -16,6 +15,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Success;
+import com.aol.cyclops.control.monads.transformers.TryT;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
@@ -40,7 +40,8 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T> The type contained on the Try within
  */
-public class TryTSeq<T,X extends Throwable> implements ConvertableSequence<T>,
+public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
+                                                    ConvertableSequence<T>,
                                                     ExtendedTraversable<T>,
                                                     Sequential<T>,
                                                     CyclopsCollectable<T>,
@@ -59,6 +60,7 @@ public class TryTSeq<T,X extends Throwable> implements ConvertableSequence<T>,
 	/**
 	 * @return The wrapped AnyM
 	 */
+   @Override
 	public AnyMSeq<Try<T,X>> unwrap() {
 		return run;
 	}
@@ -78,6 +80,7 @@ public class TryTSeq<T,X extends Throwable> implements ConvertableSequence<T>,
 	 * @param peek  Consumer to accept current value of Try
 	 * @return TryT with peek call
 	 */
+   @Override
 	public TryTSeq<T,X> peek(Consumer<? super T> peek) {
 		return of(run.peek(opt -> opt.map(a -> {
 			peek.accept(a);
@@ -98,6 +101,7 @@ public class TryTSeq<T,X extends Throwable> implements ConvertableSequence<T>,
 	 * @param test Predicate to filter the wrapped Try
 	 * @return OptionalT that applies the provided filter
 	 */
+   @Override
 	public MaybeTSeq<T> filter(Predicate<? super T> test) {
 		return MaybeTSeq.of(run.map(opt -> opt.filter(test)));
 	}
@@ -118,6 +122,7 @@ public class TryTSeq<T,X extends Throwable> implements ConvertableSequence<T>,
 	 * @param f Mapping function for the wrapped Try
 	 * @return TryT that applies the map function to the wrapped Try
 	 */
+   @Override
 	public <B> TryTSeq<B,X> map(Function<? super T,? extends B> f) {
 		return new TryTSeq<B,X>(run.map(o -> o.map(f)));
 	}
@@ -146,7 +151,7 @@ public class TryTSeq<T,X extends Throwable> implements ConvertableSequence<T>,
 		}));
 
 	}
-	
+	@Override
     public <B> TryTSeq<B,X> flatMap(Function<? super T, ? extends Try<B,X>> f) {
 
         return new TryTSeq<B,X>(run.map(o -> o.flatMap(f)));

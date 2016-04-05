@@ -12,6 +12,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
@@ -34,7 +35,8 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T>
  */
-public class StreamTSeq<T> implements ConvertableSequence<T>,
+public class StreamTSeq<T> implements StreamT<T>,
+                                    ConvertableSequence<T>,
                                     ExtendedTraversable<T>,
                                     Sequential<T>,
                                     CyclopsCollectable<T>,

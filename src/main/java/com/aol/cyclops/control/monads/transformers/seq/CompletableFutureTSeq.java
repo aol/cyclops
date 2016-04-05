@@ -20,6 +20,7 @@ import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
@@ -47,7 +48,8 @@ import lombok.val;
  *
  * @param <T>
  */
-public class CompletableFutureTSeq<A> implements ConvertableSequence<A>,
+public class CompletableFutureTSeq<A> implements CompletableFutureT<A>, 
+                                                 ConvertableSequence<A>,
                                                 ExtendedTraversable<A>,
                                                 Sequential<A>,
                                                 CyclopsCollectable<A>,

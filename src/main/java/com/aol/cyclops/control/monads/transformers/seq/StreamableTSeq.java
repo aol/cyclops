@@ -13,18 +13,15 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
-import com.aol.cyclops.types.IterableFunctor;
-import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 
@@ -40,7 +37,8 @@ import com.aol.cyclops.util.stream.Streamable;
  *
  * @param <T>
  */
-public class StreamableTSeq<T>  implements ConvertableSequence<T>,
+public class StreamableTSeq<T>  implements StreamableT<T>,
+                                        ConvertableSequence<T>,
                                         ExtendedTraversable<T>,
                                         Sequential<T>,
                                         CyclopsCollectable<T>,
@@ -131,9 +129,9 @@ public class StreamableTSeq<T>  implements ConvertableSequence<T>,
 	   return of(run.map(stream-> stream.flatMap(a-> Streamable.fromStream(f.apply(a).run.stream()))
 			   							.<B>flatMap(a->a)));
    }
-   public <B> StreamableTSeq<B> flatMap(Function<? super T, Streamable<? extends B>> f) {
+   public <B> StreamableTSeq<B> flatMap(Function<? super T, ? extends Iterable<? extends B>> f) {
 
-       return new StreamableTSeq<B>(run.map(o -> o.flatMap(f)));
+       return new StreamableTSeq<B>(run.map(o -> o.flatMapIterable(f)));
 
    }
    /**

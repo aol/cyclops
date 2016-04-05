@@ -1281,7 +1281,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * @param fn
 	 * @return
 	 */
-	public final <R> ReactiveSeq<R> flatMapIterable(Function<? super T,Iterable<? extends R>> fn) {
+	public final <R> ReactiveSeq<R> flatMapIterable(Function<? super T,? extends Iterable<? extends R>> fn) {
 		return StreamUtils.reactiveSeq(StreamUtils.flatMapIterable(stream,fn),Optional.empty());
 		
 	}

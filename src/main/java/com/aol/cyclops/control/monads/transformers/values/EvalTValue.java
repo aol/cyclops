@@ -13,8 +13,8 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.EvalT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
@@ -40,7 +40,8 @@ import lombok.val;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class EvalTValue<T> implements MonadicValue<T>,
+public class EvalTValue<T> implements EvalT<T>,
+                                    MonadicValue<T>,
                                     Supplier<T>, 
                                     ConvertableFunctor<T>, 
                                     Filterable<T>,

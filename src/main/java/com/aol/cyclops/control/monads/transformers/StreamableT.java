@@ -6,9 +6,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.function.Function1;
-
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
+import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
 import com.aol.cyclops.util.stream.Streamable;
 
 
@@ -24,19 +25,15 @@ import com.aol.cyclops.util.stream.Streamable;
  *
  * @param <T>
  */
-public class StreamableT<T> {
+public interface StreamableT<T> {
    
-   final AnyM<Streamable<T>> run;
-
-   private StreamableT(final AnyM<Streamable<T>> run){
-       this.run = run;
-   }
+  
+   public <B> StreamableT<B> flatMap(Function<? super T, ? extends Iterable<? extends B>> f);
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyM<Streamable<T>> unwrap(){
-	   return run;
-   }
+   AnyM<Streamable<T>> unwrap();
+   
    /**
 	 * Peek at the current value of the Streamable
 	 * <pre>
@@ -51,10 +48,8 @@ public class StreamableT<T> {
 	 * @param peek  Consumer to accept current value of Streamable
 	 * @return StreamableT with peek call
 	 */
-   public StreamableT<T> peek(Consumer<? super T> peek){
-	   return map(a-> {peek.accept(a); return a;});
-     
-   }
+   public StreamableT<T> peek(Consumer<? super T> peek);
+   
    /**
   	 * Filter the wrapped Streamable
   	 * <pre>
@@ -68,9 +63,8 @@ public class StreamableT<T> {
   	 * @param test Predicate to filter the wrapped Streamable
   	 * @return StreamableT that applies the provided filter
   	 */
-   public StreamableT<T> filter(Predicate<? super T> test){
-       return of(run.map(stream-> stream.filter(test)));
-   }
+   public StreamableT<T> filter(Predicate<? super T> test);
+   
    /**
 	 * Map the wrapped Streamable
 	 * 
@@ -87,9 +81,8 @@ public class StreamableT<T> {
 	 * @param f Mapping function for the wrapped Streamable
 	 * @return StreamableT that applies the map function to the wrapped Streamable
 	 */
-   public <B> StreamableT<B> map(Function<? super T,? extends B> f){
-       return new StreamableT<B>(run.map(o-> o.map(f)));
-   }
+   public <B> StreamableT<B> map(Function<? super T,? extends B> f);
+   
    /**
 	 * Flat Map the wrapped Streamable
 	  * <pre>
@@ -104,8 +97,8 @@ public class StreamableT<T> {
 	 * @param f FlatMap function
 	 * @return StreamableT that applies the flatMap function to the wrapped Streamable
 	 */
-   public <B> StreamableT<B> flatMap(Function<? super T,StreamableT<? extends B>> f){
-	   return of(run.map(stream-> stream.flatMap(a-> Streamable.fromStream(f.apply(a).run.stream()))
+   default <B> StreamableT<B> bind(Function<? super T,StreamableT<? extends B>> f){
+	   return of(unwrap().map(stream-> stream.flatMap(a-> Streamable.fromStream(f.apply(a).unwrap().stream()))
 			   							.<B>flatMap(a->a)));
    }
    /**
@@ -170,7 +163,7 @@ public class StreamableT<T> {
   	 * @return Function that accepts and returns an StreamableT
   	 */
 	public static <U1, U2, R> BiFunction<StreamableT<U1>, StreamableT<U2>, StreamableT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
-		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+		return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 	/**
 	 * Construct an StreamableT from an AnyM that contains a monad type that contains type other than Streamable
@@ -189,7 +182,7 @@ public class StreamableT<T> {
 	 * @return StreamableT
 	 */
    public static <A> StreamableT<A> of(AnyM<Streamable<A>> monads){
-	   return new StreamableT<>(monads);
+       return Matchables.anyM(monads).visit(v-> StreamableTValue.of(v), s->StreamableTSeq.of(s));
    }
    /**
 	 * Create a StreamableT from an AnyM that wraps a monad containing a Stream
@@ -198,17 +191,9 @@ public class StreamableT<T> {
 	 * @return
 	 */
    public static <A> StreamableT<A> fromStream(AnyM<Stream<A>> monads){
-	   return new StreamableT<>(monads.map(Streamable::fromStream));
+	   return of(monads.map(Streamable::fromStream));
    }
    
    
-   /*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return run.toString();
-	}
- 
+  
 }

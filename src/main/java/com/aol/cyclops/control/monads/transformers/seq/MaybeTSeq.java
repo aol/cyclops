@@ -5,26 +5,20 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import org.jooq.lambda.Collectable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.ConvertableFunctor;
+import com.aol.cyclops.control.monads.transformers.MaybeT;
 import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -46,7 +40,8 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class MaybeTSeq<T>  implements ConvertableSequence<T>,
+public class MaybeTSeq<T>  implements  MaybeT<T>, 
+                                    ConvertableSequence<T>,
                                     ExtendedTraversable<T>,
                                     Sequential<T>,
                                     CyclopsCollectable<T>,
@@ -65,6 +60,7 @@ public class MaybeTSeq<T>  implements ConvertableSequence<T>,
     /**
      * @return The wrapped AnyM
      */
+    @Override
     public AnyMSeq<Maybe<T>> unwrap() {
         return run;
     }
@@ -85,6 +81,7 @@ public class MaybeTSeq<T>  implements ConvertableSequence<T>,
      *            Consumer to accept current value of Maybe
      * @return MaybeT with peek call
      */
+    @Override
     public MaybeTSeq<T> peek(Consumer<? super T> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
@@ -108,6 +105,7 @@ public class MaybeTSeq<T>  implements ConvertableSequence<T>,
      *            Predicate to filter the wrapped Maybe
      * @return MaybeT that applies the provided filter
      */
+    @Override
     public MaybeTSeq<T> filter(Predicate<? super T> test) {
         return of(run.map(opt -> opt.filter(test)));
     }
@@ -129,6 +127,7 @@ public class MaybeTSeq<T>  implements ConvertableSequence<T>,
      *            Mapping function for the wrapped Maybe
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
+    @Override
     public <B> MaybeTSeq<B> map(Function<? super T, ? extends B> f) {
         return new MaybeTSeq<B>(run.map(o -> o.map(f)));
     }
@@ -159,6 +158,7 @@ public class MaybeTSeq<T>  implements ConvertableSequence<T>,
         }));
 
     }
+    @Override
     public <B> MaybeTSeq<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f) {
 
         return new MaybeTSeq<B>(run.map(o -> o.flatMap(f)));

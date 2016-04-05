@@ -1540,7 +1540,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     	 * @param fn
     	 * @return
     	 */
-    	default <R> Streamable<R> flatMapIterable(Function<? super T,Iterable<? extends R>> fn){
+    	default <R> Streamable<R> flatMapIterable(Function<? super T,? extends Iterable<? extends R>> fn){
     		 return fromStream(reactiveSeq().flatMapIterable(fn));
     	}
     	/**

@@ -6,9 +6,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.jooq.lambda.function.Function1;
-
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
+import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
+import com.aol.cyclops.types.MonadicValue;
 
 
 /**
@@ -25,21 +27,15 @@ import com.aol.cyclops.control.AnyM;
  *
  * @param <T> The type contained on the Optional within
  */
-public class OptionalT<T> {
+public interface OptionalT<T> {
    
-   private final AnyM<Optional<T>> run;
+  
    
-   
-   private OptionalT(final AnyM<Optional<T>> run){
-       this.run = run;
-   }
    
 	/**
 	 * @return The wrapped AnyM
 	 */
-	public AnyM<Optional<T>> unwrap() {
-		return run;
-	}
+	public AnyM<Optional<T>> unwrap();
 
    
 	/**
@@ -56,12 +52,7 @@ public class OptionalT<T> {
 	 * @param peek  Consumer to accept current value of Optional
 	 * @return OptionalT with peek call
 	 */
-	public OptionalT<T> peek(Consumer<? super T> peek) {
-		return of(run.peek(opt -> opt.map(a -> {
-			peek.accept(a);
-			return a;
-		})));
-	}
+	public OptionalT<T> peek(Consumer<? super T> peek);
    
 	/**
 	 * Filter the wrapped Optional
@@ -76,9 +67,7 @@ public class OptionalT<T> {
 	 * @param test Predicate to filter the wrapped Optional
 	 * @return OptionalT that applies the provided filter
 	 */
-	public OptionalT<T> filter(Predicate<? super T> test) {
-		return of(run.map(opt -> opt.filter(test)));
-	}
+	public OptionalT<T> filter(Predicate<? super T> test);
 
 	/**
 	 * Map the wrapped Optional
@@ -96,9 +85,7 @@ public class OptionalT<T> {
 	 * @param f Mapping function for the wrapped Optional
 	 * @return OptionalT that applies the map function to the wrapped Optional
 	 */
-	public <B> OptionalT<B> map(Function<? super T,? extends B> f) {
-		return new OptionalT<B>(run.map(o -> o.map(f)));
-	}
+	public <B> OptionalT<B> map(Function<? super T,? extends B> f);
 
 	/**
 	 * Flat Map the wrapped Optional
@@ -114,15 +101,16 @@ public class OptionalT<T> {
 	 * @param f FlatMap function
 	 * @return OptionalT that applies the flatMap function to the wrapped Optional
 	 */
-	public <B> OptionalT<B> flatMap(Function<? super T, OptionalT<? extends B>> f) {
+	default <B> OptionalT<B> bind(Function<? super T, OptionalT<? extends B>> f) {
 
-		return of(run.bind(opt -> {
+		return of(unwrap().bind(opt -> {
 			if (opt.isPresent())
-				return f.apply(opt.get()).run.unwrap();
-			return run.unit(Optional.<B> empty()).unwrap();
+				return f.apply(opt.get()).unwrap().unwrap();
+			return unwrap().unit(Optional.<B> empty()).unwrap();
 		}));
 
 	}
+	public <B> OptionalT<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
 
 	/**
 	 * Lift a function into one that accepts and returns an OptionalT
@@ -188,7 +176,7 @@ public class OptionalT<T> {
 	 * @return Function that accepts and returns an OptionalT
 	 */
 	public static <U1, U2, R> BiFunction<OptionalT<U1>, OptionalT<U2>, OptionalT<R>> lift2(BiFunction<? super U1, ? super U2,? extends R> fn) {
-		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+		return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 
 	/**
@@ -209,16 +197,9 @@ public class OptionalT<T> {
 	 * @return OptionalT
 	 */
 	public static <A> OptionalT<A> of(AnyM<Optional<A>> monads) {
-		return new OptionalT<>(monads);
+	    return Matchables.anyM(monads).visit(v-> OptionalTValue.of(v), s->OptionalTSeq.of(s));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return run.toString();
-	}
+	
  
 }

@@ -11,8 +11,11 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.function.Function1;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
+import com.aol.cyclops.control.monads.transformers.values.ListTValue;
 
 
 
@@ -28,19 +31,13 @@ import com.aol.cyclops.control.ReactiveSeq;
  *
  * @param <T>
  */
-public class ListT<T> {
+public interface ListT<T> {
    
-   final AnyM<List<T>> run;
-
-   private ListT(final AnyM<List<T>> run){
-       this.run = run;
-   }
+   
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyM<List<T>> unwrap(){
-	   return run;
-   }
+   public AnyM<List<T>> unwrap();
    /**
 	 * Peek at the current value of the List
 	 * <pre>
@@ -55,10 +52,8 @@ public class ListT<T> {
 	 * @param peek  Consumer to accept current value of List
 	 * @return ListT with peek call
 	 */
-   public ListT<T> peek(Consumer<? super T> peek){
-	   return map(a-> {peek.accept(a); return a;});
-     
-   }
+   public ListT<T> peek(Consumer<? super T> peek);
+   
    /**
 	 * Filter the wrapped List
 	 * <pre>
@@ -72,9 +67,8 @@ public class ListT<T> {
 	 * @param test Predicate to filter the wrapped List
 	 * @return ListT that applies the provided filter
 	 */
-   public ListT<T> filter(Predicate<? super T> test){
-       return of(run.map(stream-> ReactiveSeq.fromList(stream).filter(test).toList()));
-   }
+   public ListT<T> filter(Predicate<? super T> test);
+   
    /**
 	 * Map the wrapped List
 	 * 
@@ -91,9 +85,8 @@ public class ListT<T> {
 	 * @param f Mapping function for the wrapped List
 	 * @return ListT that applies the map function to the wrapped List
 	 */
-   public <B> ListT<B> map(Function<? super T,? extends B> f){
-       return of(run.map(o-> (List<B>)ReactiveSeq.fromList(o).map(f).toList()));
-   }
+   public <B> ListT<B> map(Function<? super T,? extends B> f);
+   public <B> ListT<B> flatMap(Function<? super T, ? extends Iterable<? extends B>> f);
    /**
 	 * Flat Map the wrapped List
 	  * <pre>
@@ -108,9 +101,9 @@ public class ListT<T> {
 	 * @param f FlatMap function
 	 * @return ListT that applies the flatMap function to the wrapped List
 	 */
-   public <B> ListT<B> flatMap(Function1<? super T,ListT<B>> f){
+   default <B> ListT<B> bind(Function<? super T,ListT<B>> f){
 	  
-	   return of( run.map(stream-> ReactiveSeq.fromList(stream).flatMap(a-> f.apply(a).run.stream()).flatMap(a->a.stream())
+	   return of( unwrap().map(stream-> ReactiveSeq.fromList(stream).flatMap(a-> f.apply(a).unwrap().stream()).flatMap(a->a.stream())
 			   .toList()));
    }
    /**
@@ -173,7 +166,7 @@ public class ListT<T> {
 	 * @return Function that accepts and returns an ListT
 	 */
 	public static <U1, U2, R> BiFunction<ListT<U1>, ListT<U2>, ListT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
-		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+		return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 	/**
 	 * Construct an ListT from an AnyM that contains a monad type that contains type other than List
@@ -192,7 +185,7 @@ public class ListT<T> {
 	 * @return ListT
 	 */
    public static <A> ListT<A> of(AnyM<List<A>> monads){
-	   return new ListT<>(monads);
+       return Matchables.anyM(monads).visit(v-> ListTValue.of(v), s->ListTSeq.of(s));
    }
 
 	/**
@@ -206,15 +199,6 @@ public class ListT<T> {
 	}
    
   
-   
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return run.toString();
-	}
    
  
 }

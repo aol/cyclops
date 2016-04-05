@@ -29,6 +29,7 @@ import java.util.stream.StreamSupport;
 import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -426,7 +427,9 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> AnyMSeq<T> streamOf(T... streamData){
 		return AnyMFactory.instance.seq(Stream.of(streamData));
 	}
-	
+	public static <T> AnyMSeq<T> fromPublisher(Publisher<T> publisher){
+	    return AnyMFactory.instance.seq(publisher);
+	}
 	/**
 	 * Create an AnyM instance that wraps a Stream
 	 * 
@@ -563,7 +566,6 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromIterable(Iterable<T> iterable){
 		Objects.requireNonNull(iterable);
-		
 		return AnyMFactory.instance.convertSeq(iterable);
 	}
 	/**
@@ -1039,5 +1041,9 @@ static AnyMFactory instance = new AnyMFactory();
 		return new AnyMonads();
 	}
 }
+
+
+
+
 	
 }

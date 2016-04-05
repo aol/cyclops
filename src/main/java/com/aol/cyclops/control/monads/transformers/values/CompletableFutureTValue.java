@@ -13,11 +13,10 @@ import java.util.function.Supplier;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
@@ -38,7 +37,8 @@ import lombok.val;
  *
  * @param <T>
  */
-public class CompletableFutureTValue<A> implements MonadicValue<A>,
+public class CompletableFutureTValue<A> implements CompletableFutureT<A>, 
+                                                MonadicValue<A>,
                                                 Supplier<A>, 
                                                 ConvertableFunctor<A>, 
                                                 Filterable<A>,

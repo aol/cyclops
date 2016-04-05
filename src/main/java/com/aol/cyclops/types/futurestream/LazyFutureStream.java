@@ -2799,7 +2799,7 @@ public interface LazyFutureStream<U> extends  Functor<U>,
      */
     @Override
     default <R> LazyFutureStream<R> flatMapIterable(
-            Function<? super U, Iterable<? extends R>> fn) {
+            Function<? super U, ? extends Iterable<? extends R>> fn) {
         return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                 .flatMapIterable(fn));
     }

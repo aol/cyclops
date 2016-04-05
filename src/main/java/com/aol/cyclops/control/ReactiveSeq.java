@@ -1536,7 +1536,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * @param fn
 	 * @return
 	 */
-	<R> ReactiveSeq<R> flatMapIterable(Function<? super T, Iterable<? extends R>> fn);
+	<R> ReactiveSeq<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> fn);
 
 	/**
 	 * flatMap operation

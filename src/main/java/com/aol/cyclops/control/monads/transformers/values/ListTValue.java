@@ -15,6 +15,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
@@ -41,7 +42,8 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T>
  */
-public class ListTValue<T> implements ConvertableSequence<T>,
+public class ListTValue<T> implements ListT<T>,
+                                ConvertableSequence<T>,
                                 ExtendedTraversable<T>,
                                 Sequential<T>,
                                 CyclopsCollectable<T>,

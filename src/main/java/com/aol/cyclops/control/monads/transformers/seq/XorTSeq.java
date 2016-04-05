@@ -13,6 +13,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
@@ -41,7 +42,8 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T>
  *            The type contained on the Xor within
  */
-public class XorTSeq<ST,T> implements ConvertableSequence<T>,
+public class XorTSeq<ST,T> implements XorT<ST,T>,
+                                    ConvertableSequence<T>,
                                     ExtendedTraversable<T>,
                                     Sequential<T>,
                                     CyclopsCollectable<T>,
@@ -59,6 +61,7 @@ public class XorTSeq<ST,T> implements ConvertableSequence<T>,
     /**
      * @return The wrapped AnyM
      */
+    @Override
     public AnyMSeq<Xor<ST,T>> unwrap() {
         return run;
     }
@@ -79,6 +82,7 @@ public class XorTSeq<ST,T> implements ConvertableSequence<T>,
      *            Consumer to accept current value of Xor
      * @return XorT with peek call
      */
+    @Override
     public XorTSeq<ST,T> peek(Consumer<? super T> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
@@ -102,6 +106,7 @@ public class XorTSeq<ST,T> implements ConvertableSequence<T>,
      *            Predicate to filter the wrapped Xor
      * @return XorT that applies the provided filter
      */
+    @Override
     public XorTSeq<ST,T> filter(Predicate<? super T> test) {
         return XorTSeq.of(run.map(opt -> opt.filter(test)));
     }
@@ -122,6 +127,7 @@ public class XorTSeq<ST,T> implements ConvertableSequence<T>,
      *            Mapping function for the wrapped Xor
      * @return XorT that applies the map function to the wrapped Xor
      */
+    @Override
     public <B> XorTSeq<ST,B> map(Function<? super T, ? extends B> f) {
         return new XorTSeq<ST,B>(run.map(o -> o.map(f)));
     }
@@ -152,6 +158,16 @@ public class XorTSeq<ST,T> implements ConvertableSequence<T>,
         }));
 
     }
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.XorT#swap()
+     */
+    @Override
+    public XorTSeq<T, ST> swap() {
+       return of(run.map(xor->xor.swap()));
+    }
+
+    @Override
     public <ST2,B> XorTSeq<ST2,B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST2,? extends B>> f) {
         
          

@@ -5,9 +5,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
+import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
+import com.aol.cyclops.types.MonadicValue;
 
 /**
  * Monad transformer for JDK Maybe
@@ -26,20 +29,14 @@ import com.aol.cyclops.control.Maybe;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class EvalT<T> {
+public interface EvalT<T> {
 
-    private final AnyM<Eval<T>> run;
-
-    private EvalT(final AnyM<Eval<T>> run) {
-        this.run = run;
-    }
+    
 
     /**
      * @return The wrapped AnyM
      */
-    public AnyM<Eval<T>> unwrap() {
-        return run;
-    }
+    public AnyM<Eval<T>> unwrap() ;
 
     /**
      * Peek at the current value of the Maybe
@@ -57,12 +54,7 @@ public class EvalT<T> {
      *            Consumer to accept current value of Maybe
      * @return MaybeT with peek call
      */
-    public EvalT<T> peek(Consumer<? super T> peek) {
-        return of(run.peek(opt -> opt.map(a -> {
-            peek.accept(a);
-            return a;
-        })));
-    }
+    public EvalT<T> peek(Consumer<? super T> peek);
 
     /**
      * Filter the wrapped Maybe
@@ -80,9 +72,7 @@ public class EvalT<T> {
      *            Predicate to filter the wrapped Maybe
      * @return MaybeT that applies the provided filter
      */
-    public MaybeT<T> filter(Predicate<? super T> test) {
-        return MaybeT.of(run.map(opt -> opt.filter(test)));
-    }
+    public MaybeT<T> filter(Predicate<? super T> test) ;
     /**
      * Map the wrapped Maybe
      * 
@@ -100,9 +90,7 @@ public class EvalT<T> {
      *            Mapping function for the wrapped Maybe
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
-    public <B> EvalT<B> map(Function<? super T, ? extends B> f) {
-        return new EvalT<B>(run.map(o -> o.map(f)));
-    }
+    public <B> EvalT<B> map(Function<? super T, ? extends B> f) ;
 
     /**
      * Flat Map the wrapped Maybe
@@ -110,7 +98,7 @@ public class EvalT<T> {
      * <pre>
     * {@code 
     *  MaybeT.of(AnyM.fromStream(Maybe.of(10))
-    *             .flatMap(t->Maybe.empty();
+    *             .bind(t->Maybe.empty();
     *  
     *  
     *  //MaybeT<AnyM<Stream<Maybe.empty>>>
@@ -121,15 +109,17 @@ public class EvalT<T> {
      *            FlatMap function
      * @return MaybeT that applies the flatMap function to the wrapped Maybe
      */
-    public <B> EvalT<B> flatMap(Function<? super T, EvalT<? extends B>> f) {
+    default <B> EvalT<B> bind(Function<? super T, EvalT<? extends B>> f) {
 
-        return of(run.bind(opt -> {
+        return of(unwrap().bind(opt -> {
             
-                return f.apply(opt.get()).run.unwrap();
+                return f.apply(opt.get()).unwrap().unwrap();
            
         }));
 
     }
+    
+    public <B> EvalT<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
 
     /**
      * Lift a function into one that accepts and returns an MaybeT This allows
@@ -199,7 +189,7 @@ public class EvalT<T> {
      * @return Function that accepts and returns an MaybeT
      */
     public static <U1, U2, R> BiFunction<EvalT<U1>, EvalT<U2>, EvalT<R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
-        return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+        return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
     /**
@@ -223,16 +213,10 @@ public class EvalT<T> {
      * @return MaybeT
      */
     public static <A> EvalT<A> of(AnyM<Eval<A>> monads) {
-        return new EvalT<>(monads);
+        return Matchables.anyM(monads).visit(v-> EvalTValue.of(v), s->EvalTSeq.of(s));
+
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return run.toString();
-    }
+   
 
 }

@@ -2,28 +2,25 @@ package com.aol.cyclops.control.monads.transformers.values;
 
 
 import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.jooq.lambda.function.Function1;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.Try.Success;
+import com.aol.cyclops.control.monads.transformers.TryT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
 
 
 /**
@@ -40,7 +37,8 @@ import com.aol.cyclops.control.ReactiveSeq;
  *
  * @param <T> The type contained on the Try within
  */
-public class TryTValue<T,X extends Throwable> implements MonadicValue<T>,
+public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
+                                                    MonadicValue<T>,
                                                     Supplier<T>, 
                                                     ConvertableFunctor<T>, 
                                                     Filterable<T>,

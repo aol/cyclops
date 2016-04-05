@@ -13,6 +13,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.MaybeT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
@@ -36,7 +37,8 @@ import com.aol.cyclops.types.applicative.Applicativable;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class MaybeTValue<T> implements MonadicValue<T>,
+public class MaybeTValue<T> implements MaybeT<T>, 
+                                    MonadicValue<T>,
                                     Supplier<T>, 
                                     ConvertableFunctor<T>, 
                                     Filterable<T>,

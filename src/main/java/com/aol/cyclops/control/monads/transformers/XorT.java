@@ -5,8 +5,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
+import com.aol.cyclops.control.monads.transformers.values.XorTValue;
+import com.aol.cyclops.types.MonadicValue2;
 
 /**
  * Monad transformer for JDK Xor
@@ -25,20 +29,15 @@ import com.aol.cyclops.control.Xor;
  * @param <T>
  *            The type contained on the Xor within
  */
-public class XorT<T> {
+public interface XorT<ST,T> {
 
-    private final AnyM<Xor<?,T>> run;
-
-    private XorT(final AnyM<Xor<?,T>> run) {
-        this.run = run;
-    }
+    
+    <ST2,B> XorT<ST2,B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST2,? extends B>> f);
 
     /**
      * @return The wrapped AnyM
      */
-    public AnyM<Xor<?,T>> unwrap() {
-        return run;
-    }
+    AnyM<Xor<ST,T>> unwrap();
 
     /**
      * Peek at the current value of the Xor
@@ -56,12 +55,7 @@ public class XorT<T> {
      *            Consumer to accept current value of Xor
      * @return XorT with peek call
      */
-    public XorT<T> peek(Consumer<? super T> peek) {
-        return of(run.peek(opt -> opt.map(a -> {
-            peek.accept(a);
-            return a;
-        })));
-    }
+    public XorT<ST,T> peek(Consumer<? super T> peek);
 
     /**
      * Filter the wrapped Xor
@@ -79,9 +73,7 @@ public class XorT<T> {
      *            Predicate to filter the wrapped Xor
      * @return XorT that applies the provided filter
      */
-    public XorT<T> filter(Predicate<? super T> test) {
-        return XorT.of(run.map(opt -> opt.filter(test)));
-    }
+    public XorT<ST,T> filter(Predicate<? super T> test);
     /**
      * Map the wrapped Xor
      * 
@@ -99,9 +91,7 @@ public class XorT<T> {
      *            Mapping function for the wrapped Xor
      * @return XorT that applies the map function to the wrapped Xor
      */
-    public <B> XorT<B> map(Function<? super T, ? extends B> f) {
-        return new XorT<B>(run.map(o -> o.map(f)));
-    }
+    public <B> XorT<ST,B> map(Function<? super T, ? extends B> f);
 
     /**
      * Flat Map the wrapped Xor
@@ -120,16 +110,17 @@ public class XorT<T> {
      *            FlatMap function
      * @return XorT that applies the flatMap function to the wrapped Xor
      */
-    public <B> XorT<B> flatMap(Function<? super T, XorT<? extends B>> f) {
+    default <B> XorT<ST,B> bind(Function<? super T, XorT<ST,? extends B>> f) {
 
-        return of(run.bind(opt -> {
+        return of(unwrap().bind(opt -> {
             if (opt.isPrimary())
-                return f.apply(opt.get()).run.unwrap();
+                return f.apply(opt.get()).unwrap().unwrap();
             return this;
         }));
 
     }
 
+    XorT<T,ST> swap();
     /**
      * Lift a function into one that accepts and returns an XorT This allows
      * multiple monad types to add functionality to existing functions and
@@ -161,7 +152,7 @@ public class XorT<T> {
      *            monad type
      * @return Function that accepts and returns an XorT
      */
-    public static <U, R> Function<XorT<U>, XorT<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <ST,U, R> Function<XorT<ST,U>, XorT<ST,R>> lift(Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -197,8 +188,8 @@ public class XorT<T> {
      *            another monad type
      * @return Function that accepts and returns an XorT
      */
-    public static <U1, U2, R> BiFunction<XorT<U1>, XorT<U2>, XorT<R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
-        return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+    public static <ST,U1, U2, R> BiFunction<XorT<ST,U1>, XorT<ST,U2>, XorT<ST,R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
+        return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
     /**
@@ -210,7 +201,7 @@ public class XorT<T> {
      *            AnyM that doesn't contain a monad wrapping an Xor
      * @return XorT
      */
-    public static <A> XorT<A> fromAnyM(AnyM<A> anyM) {
+    public static <ST,A> XorT<ST,A> fromAnyM(AnyM<A> anyM) {
         return of(anyM.map(Xor::primary));
     }
 
@@ -221,17 +212,10 @@ public class XorT<T> {
      *            AnyM that contains a monad wrapping an Xor
      * @return XorT
      */
-    public static <A> XorT<A> of(AnyM<Xor<?,A>> monads) {
-        return new XorT<>(monads);
+    public static <ST,A> XorT<ST,A> of(AnyM<Xor<ST,A>> monads) {
+        return Matchables.anyM(monads).visit(v-> XorTValue.of(v), s->XorTSeq.of(s));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return run.toString();
-    }
+    
 
 }

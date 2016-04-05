@@ -19,6 +19,7 @@ import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.EvalT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
@@ -51,7 +52,8 @@ import lombok.val;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class EvalTSeq<T> implements ConvertableSequence<T>,
+public class EvalTSeq<T> implements EvalT<T>,
+                                    ConvertableSequence<T>,
                                     ExtendedTraversable<T>,
                                     Sequential<T>,
                                     CyclopsCollectable<T>,

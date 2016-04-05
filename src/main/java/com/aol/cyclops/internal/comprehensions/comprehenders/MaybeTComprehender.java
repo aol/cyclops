@@ -2,8 +2,11 @@ package com.aol.cyclops.internal.comprehensions.comprehenders;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.monads.transformers.MaybeT;
+import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
@@ -59,7 +62,7 @@ public class MaybeTComprehender implements ValueComprehender<MaybeTValue> {
     }
     @Override
 	public MaybeTValue flatMap(MaybeTValue o,Function fn) {
-		return o.flatMap(fn);
+		return o.flatMapT(fn);
 	}
 
 	@Override
@@ -77,7 +80,7 @@ public class MaybeTComprehender implements ValueComprehender<MaybeTValue> {
 	    throw new UnsupportedOperationException();
 	}
 	public Object resolveForCrossTypeFlatMap(Comprehender comp,MaybeTValue apply){
-		if(apply.isPresent())
+		if(apply.isPresent()) //Optional[get]
 			return comp.of(apply.get());
 		else
 			return comp.empty();

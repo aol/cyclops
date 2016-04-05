@@ -19,6 +19,7 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
@@ -48,7 +49,8 @@ import com.aol.cyclops.util.stream.StreamUtils;
  *
  * @param <T> The type contained on the Optional within
  */
-public class OptionalTSeq<T> implements ConvertableSequence<T>,
+public class OptionalTSeq<T> implements OptionalT<T>,
+                                        ConvertableSequence<T>,
                                         ExtendedTraversable<T>,
                                         Sequential<T>,
                                         CyclopsCollectable<T>,
@@ -126,6 +128,7 @@ public class OptionalTSeq<T> implements ConvertableSequence<T>,
 	 * @param f Mapping function for the wrapped Optional
 	 * @return OptionalT that applies the map function to the wrapped Optional
 	 */
+	@Override
 	public <B> OptionalTSeq<B> map(Function<? super T,? extends B> f) {
 		return new OptionalTSeq<B>(run.map(o -> o.map(f)));
 	}
@@ -156,6 +159,7 @@ public class OptionalTSeq<T> implements ConvertableSequence<T>,
 	private static  <B> AnyMSeq<Optional<B>> narrow(AnyMSeq<Optional<? extends B>> run){
 	       return (AnyMSeq)run;
 	}
+	@Override
 	public <B> OptionalTSeq<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f) {
 	     AnyMSeq<Optional<? extends B>> mapped=  run.map(o -> Maybe.fromOptional(o).flatMap(f).toOptional());
 	     return of(narrow(mapped));
