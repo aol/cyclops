@@ -135,13 +135,8 @@ public interface Value<T> extends Supplier<T>,
 		}
 	 }
 	 
-	 default <R> R convertTo(Function<? super Maybe<? super T>,? extends R> convertTo){
-		 return convertTo.apply(this.toMaybe());
-	 }
-	 default<R> FutureW<R> convertToAsync(Function<? super CompletableFuture<? super T>,? extends CompletableFuture<R>> convertTo){
-		 CompletableFuture<T> future =  this.toCompletableFuture();
-		 return FutureW.of(future.<R>thenCompose(t->convertTo.apply(future)));
-	 }
+	 
+
 	 
 	default ReactiveSeq<T> stream() {
 			return ReactiveSeq.of(Try.withCatch(()->get(),NoSuchElementException.class)).filter(Try::isSuccess).map(Try::get);

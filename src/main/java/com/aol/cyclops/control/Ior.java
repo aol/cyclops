@@ -11,21 +11,16 @@ import java.util.function.Supplier;
 
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
-import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.matcher2.MatchableCase;
-import com.aol.cyclops.internal.matcher2.MatchingInstance;
-import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
@@ -36,6 +31,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 /**
+ * An Either or Union type, but right biased. Primary and Secondary are used instead of Right & Left.
  * 'Right' (or primary type) biased disjunct union.
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *  
@@ -98,7 +94,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	}
 	@Override
 	default <R> Xor<ST,R> patternMatch(
-			Function<CheckValues<PT, R>, CheckValues<PT, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (Xor<ST,R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
@@ -120,7 +116,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
         if(isPrimary())
             return visit(primary,()->null);
         
-        return Matchable.from(both().get()).visit((a,b)-> both.apply(a, b));
+        return Matchables.tuple2(both().get()).visit((a,b)-> both.apply(a, b));
     }
 	default <R1,R2> Ior<R1,R2> visitIor(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
@@ -385,9 +381,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
                 Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
                 Supplier<? extends R> otherwise) {
            
-            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn1.apply( (CheckValue1)
-                    new MatchableCase(new PatternMatcher()).withType1(getMatchable().getClass())).getPatternMatcher()))
-                    .match(getMatchable()).orElseGet(otherwise));
+            Matchable.MTuple1<PT> mt1 = ()->Tuple.tuple(value);
+            return mt1.matches(fn2, otherwise);
         }
 		
 		
@@ -517,10 +512,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
                 Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn2,
                 Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
                 Supplier<? extends R> otherwise) {
-           
-            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn2.apply( (CheckValue1)
-                    new MatchableCase(new PatternMatcher()).withType1(value.getClass())).getPatternMatcher()))
-                    .match(value).orElseGet(otherwise));
+           Matchable.MTuple1<ST> mt1 = ()->Tuple.tuple(value);
+           return mt1.matches(fn1, otherwise);
+          
         }
 	}
 	@AllArgsConstructor(access=AccessLevel.PACKAGE)
@@ -658,10 +652,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
                 Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn2,
                 Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
                 Supplier<? extends R> otherwise) {
+		        Matchable.MTuple2<ST,PT> mt2 = ()->Tuple.tuple(secondary.secondaryGet(),primary.get());
+	           return mt2.matches(fn3, otherwise);
            
-            return  Eval.later(()->(R)new MatchingInstance(new MatchableCase( fn3.apply( (CheckValue2)
-                    new MatchableCase(new PatternMatcher()).withType2(Tuple2.class)).getPatternMatcher()))
-                    .match(both().get()).orElseGet(otherwise));
         }
 	}
 }

@@ -27,7 +27,6 @@ import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest.X;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -279,6 +278,15 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 	}
 	@Test
 	public void zap4(){
+	    
+	   ReactiveSeq.of("a","b","c")
+                  .ap4(this::concat4)
+                  .ap(of("1","2","3"))
+                  .ap(of(".","?","!"))
+                  .ap(of("R","R","R"))
+                  .toListX();
+	   //List["a1.R","b2?R","c3!R"]
+	   
 		assertThat(of("a","b","c")
 				  .ap4(this::concat4)
 				  .ap(of("1","2","3"))

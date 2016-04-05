@@ -75,6 +75,10 @@ public abstract class AbstractCollectionXTest {
 	public abstract <T> FluentCollectionX<T> empty();
 	public abstract <T> FluentCollectionX<T> of(T... values);
 	public static final LazyReact r = new LazyReact(10,10);
+	
+	int captured=-1;
+   
+    
 	@Test
     public void mergePublisherFlux() throws InterruptedException{
       
@@ -1120,7 +1124,7 @@ public abstract class AbstractCollectionXTest {
 
 	@Test(expected=ClassCastException.class)
 	public void testCastPast() {
-		of(1, "a", 2, "b", 3).cast(Date.class).map(d -> d.getTime());
+		of(1, "a", 2, "b", 3).cast(Date.class).map(d -> d.getTime()).join();
 	
 
 
@@ -1129,7 +1133,7 @@ public abstract class AbstractCollectionXTest {
 	
 	@Test(expected=ClassCastException.class)
 	public void cast(){
-		of(1,2,3).cast(String.class).toListX();
+		of(1,2,3).cast(String.class).join();
 	}
 	@Test
 	public void xMatch(){

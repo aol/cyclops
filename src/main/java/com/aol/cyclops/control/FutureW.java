@@ -63,7 +63,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	}
 	@Override
 	public <R> FutureW<R> patternMatch(
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (FutureW<R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
@@ -240,6 +240,9 @@ public class FutureW<T> implements ConvertableFunctor<T>,
             return Optional.empty();
         }
         
+    }
+    public static <T> FutureW<T> ofSupplier(Supplier<T> s) {
+       return FutureW.of(CompletableFuture.supplyAsync(s));
     }
    
     

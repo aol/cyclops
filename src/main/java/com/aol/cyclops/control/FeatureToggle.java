@@ -7,7 +7,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
@@ -68,7 +67,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	
 	@Override
 	default <R> FeatureToggle<R> patternMatch(
-			Function<CheckValues<F, R>, CheckValues<F, R>> case1, Supplier<? extends R> otherwise) {
+			Function<CheckValue1<F, R>, CheckValue1<F, R>> case1, Supplier<? extends R> otherwise) {
 		
 		return (FeatureToggle<R>)Applicativable.super.patternMatch(case1,otherwise);
 	}

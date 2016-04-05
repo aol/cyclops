@@ -86,7 +86,7 @@ public interface AnyMValue<T> extends AnyM<T>,
     }
 
     @Override
-    default <R> AnyMValue<R> patternMatch(Function<CheckValues<T, R>, CheckValues<T, R>> case1,
+    default <R> AnyMValue<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
             Supplier<? extends R> otherwise) {
         
         return (AnyMValue<R>)AnyM.super.patternMatch(case1, otherwise);

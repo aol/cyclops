@@ -11,6 +11,20 @@ import org.junit.Test;
 import com.aol.cyclops.types.ConvertableFunctor;
 public class EvalTest {
 
+    @Test
+    public void odd(){
+        System.out.println(even(Eval.now(200000)).get());
+    }
+    public Eval<String> odd(Eval<Integer> n )  {
+       
+       return n.flatMap(x->even(Eval.now(x-1)));
+    }
+    public Eval<String> even(Eval<Integer> n )  {
+        return n.flatMap(x->{
+            return x<=0 ? Eval.now("done") : odd(Eval.now(x-1));
+        });
+     }
+   
 	@Test
 	public void now(){
 		assertThat(Eval.now(1).map(i->i+2).get(),equalTo(3));

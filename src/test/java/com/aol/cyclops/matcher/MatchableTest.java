@@ -9,9 +9,11 @@ import static com.aol.cyclops.util.function.Predicates.__;
 import static com.aol.cyclops.util.function.Predicates.any;
 import static com.aol.cyclops.util.function.Predicates.decons;
 import static com.aol.cyclops.util.function.Predicates.eq;
+import static com.aol.cyclops.util.function.Predicates.greaterThan;
 import static com.aol.cyclops.util.function.Predicates.has;
 import static com.aol.cyclops.util.function.Predicates.in;
 import static com.aol.cyclops.util.function.Predicates.lessThan;
+import static com.aol.cyclops.util.function.Predicates.lessThanOrEquals;
 import static com.aol.cyclops.util.function.Predicates.not;
 import static com.aol.cyclops.util.function.Predicates.some;
 import static com.aol.cyclops.util.function.Predicates.type;
@@ -25,6 +27,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple2;
@@ -33,6 +36,7 @@ import com.aol.cyclops.control.Matchable.MatchSelf;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Decomposable;
+import com.aol.cyclops.types.mixins.Printable;
 import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AccessLevel;
@@ -40,7 +44,34 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
-public class MatchableTest {
+public class MatchableTest implements Printable{
+    
+    Eval<Long> fibonacci(int i){
+        return fibonacci(i,1,0);
+    }
+    Eval<Long> fibonacci(int n, long a, long b) {
+        return n == 0 ? Eval.now(b) : Eval.later( ()->fibonacci(n-1, a+b, a)).flatMap(i->i);
+    }
+    
+    
+    
+    @Test
+    public void odd(){
+        System.out.println(even(Eval.now(200000)).get());
+    }
+    public Eval<String> odd(Eval<Integer> n )  {
+       
+       return n.flatMap(x->even(Eval.now(x-1)));
+    }
+    public Eval<String> even(Eval<Integer> n )  {
+        return n.flatMap(x->{
+            return Matchable.of(x)
+                            .matches(c->c.is(when(lessThanOrEquals(0)), then(()->"done")), 
+                                                    odd(Eval.now(x-1)));
+        });
+     }
+   
+    
     private String doA(){
         return "hello";
     }
@@ -104,14 +135,14 @@ public class MatchableTest {
 	}
 	@Test
 	public void tuple2(){
-		Eval<String> result = Matchable.from(()->"hello",()->2) 
+		Eval<String> result = Matchables.supplier2(()->"hello",()->2) 
 										.matches(c->c.is(when("hello",5), then("hello")),otherwise("hello"));
 		
 		result.get();
 	}
 	@Test
 	public void tuple2Predicates(){
-		 Matchable.from(()->"hello",()->2)
+		 Matchables.supplier2(()->"hello",()->2)
  			.matches(c->c.is(when(s->s=="hello",t->(int)t>5),then(()->"hello")),otherwise("world"));
 	}
 	@Test
@@ -120,7 +151,7 @@ public class MatchableTest {
 		Matchable.of("hello")
 		         .matches(c->c.is(when("hello"),then("world")),otherwise("boo!"));
 		
-		Matchable.from(()->"hello",()->ListX.of(1,2,3))
+		Matchables.supplier2(()->"hello",()->ListX.of(1,2,3))
 	 			    .visit((num,list)-> just(list).orElse(ListX.empty())
 	 											  .visit((x,xs)-> xs.toList()));
 	 			     
@@ -188,7 +219,7 @@ public class MatchableTest {
 		String city;
 		
 		public MTuple3<Integer,String,String> match(){
-			return Matchable.from(()->house,()->street,()->city);
+			return Matchables.supplier3(()->house,()->street,()->city);
 		}
 	}
 	@AllArgsConstructor
@@ -196,7 +227,7 @@ public class MatchableTest {
 		String name;
 		Address address;
 		public MTuple2<String,MTuple3<Integer,String,String>> match(){
-			return Matchable.from(()->name,()->Maybe.ofNullable(address).map(a->a.match()).orElseGet(()->null));
+			return Matchables.supplier2(()->name,()->Maybe.ofNullable(address).map(a->a.match()).orElseGet(()->null));
 		}
 	}
 	@Test
@@ -215,7 +246,7 @@ public class MatchableTest {
 					.matches(c->c.is(whenGuard(t->t.equals(1),Predicates.__,t->t.equals(3)),then("2")),otherwise("-2"));
 		
 		Matchable.of(Arrays.asList(1,2,3))
-					.matches(c->c.is(when(eq(1),any(Integer.class),eq(4)),then("2")),otherwise("45"));
+					.matches(c->c.is(whenGuard(eq(1),any(Integer.class),eq(4)),then("2")),otherwise("45"));
 		
 		
 		
@@ -234,14 +265,14 @@ public class MatchableTest {
 	}
 	@Test
 	public void singleCase(){
-		Eval<Integer> result = Matchable.of(Optional.of(1))
+		Eval<Integer> result = Matchables.optional(Optional.of(1))
 										.matches(c->c.is(when(1),then(2)),otherwise(3));
 		
 		assertThat(result,equalTo(Eval.now(2)));
 	}
 	@Test
 	public void singleCaseFail(){
-		Eval<Integer> result =  Matchable.of(Optional.of(1))
+		Eval<Integer> result =  Matchables.optional(Optional.of(1))
 				   						 .matches(c->c.is(when(2),then(2)),otherwise(1));
 		assertThat(result, equalTo(Eval.always(()->1)));
 		
@@ -249,7 +280,7 @@ public class MatchableTest {
 	}
 	@Test
 	public void cases2(){
-		Eval<String> result = Matchable.listOfValues(1,2)
+		Eval<String> result = Matchables.listOfValues(1,2)
 										.matches(c->c.has(when(1,3),then("2"))
 											         .has(when(1,2),then("3")),otherwise("8"));
 		
@@ -257,7 +288,7 @@ public class MatchableTest {
 	}
 	@Test 
 	public void matchable(){
-		Eval<Integer> result = Matchable.of(Optional.of(1))
+		Eval<Integer> result = Matchables.optional(Optional.of(1))
 											.matches(c->c.is(when(2),then(2)),otherwise(3));
 	
 		assertThat(result
@@ -274,7 +305,7 @@ public class MatchableTest {
 	@Test 
 	public void emptyList(){
 		
-		assertThat(Matchable.of(Arrays.asList()).matches(c->c.isEmpty(then("hello")),otherwise("world")),equalTo(Eval.now("hello")));
+		assertThat(Matchables.iterable(Arrays.asList()).matches(c->c.isEmpty(then("hello")),otherwise("world")),equalTo(Eval.now("hello")));
 	}
 	@Test 
 	public void emptyStream(){
@@ -284,12 +315,12 @@ public class MatchableTest {
 	@Test 
 	public void emptyOptional(){
 		
-		assertThat(Matchable.fromOptional(Optional.empty()).matches(c->c.isEmpty(then("hello")),otherwise("n/a")),equalTo(Eval.now("hello")));
+		assertThat(Matchables.optional(Optional.empty()).matches(c->c.isEmpty(then("hello")),otherwise("n/a")),equalTo(Eval.now("hello")));
 	}
 	@Test
 	public void emptyOptionalMultiple2(){
-		assertThat(Matchable.of(Optional.empty())
-				            .matches(
+		assertThat(Matchables.optional(Optional.empty())
+				             .matches(
 				            			o-> 
 				            			     o.is(when(1),then("2")),otherwise("world")
 				            		)
@@ -299,9 +330,8 @@ public class MatchableTest {
 	}
 	@Test
 	public void emptyOptionalMultiple3(){
-		assertThat(Matchable.of(Optional.empty())
-							
-				            .matches(
+		assertThat(Matchables.optional(Optional.empty())
+							 .matches(
 				            			o-> o
 				            			     .is(when(1),then(""+2))
 				            			     .is(when(2),then(""+3))
@@ -325,11 +355,11 @@ public class MatchableTest {
 	}
 	@Test
 	public void emptyOptionalMultiple4(){
-	    Matchable.fromOptional(Optional.of(3)).matches(o-> o.isEmpty(then("none"))
+	    Matchables.optional(Optional.of(3)).matches(o-> o.isEmpty(then("none"))
                 .is(when(1),then("one"))
                 .is(when(2),then("two"))
                 .is(when(lessThan(0)), then("negative")),otherwise("many"));
-		assertThat(Matchable.of(Optional.of(3))
+		assertThat(Matchables.optional(Optional.of(3))
 							 .matches(
 				            		o-> o.is(when(1),then("2"))
 		            			      	 .is(when(2),then("3"))
@@ -343,17 +373,16 @@ public class MatchableTest {
 	@Test 
 	public void emptyOptionalMaybe(){
 		
-		assertThat(Matchable.fromOptional(Optional.empty())
+		assertThat(Matchables.optional(Optional.empty())
 		                        .matches(c->c.is(when(some()),then("goodbye")),
 		                                otherwise("hello")).get(),equalTo("goodbye"));
-		assertThat(Matchable.of(Optional.empty()).visit(i->"some", ()->"none"),equalTo("none"));
+		assertThat(Matchables.optional(Optional.empty()).visit(i->"some", ()->"none"),equalTo("none"));
 	}
 	@Test
 	public void emptyOptionalMultiple2Maybe(){
-		assertThat(Matchable.fromOptional(Optional.empty())
+		assertThat(Matchables.optional(Optional.empty())
 				            .matches(
-				            			o-> o.isEmpty(then("hello"))
-				            				 .is(when(Optional.of(2)),then("3")),otherwise("miss")
+				            			o->o.is(when(Optional.of(2)),then("3")),otherwise("hello")
 				            		).get()
 				            		,equalTo("hello"));
 		
@@ -361,7 +390,7 @@ public class MatchableTest {
 	}
 	@Test
 	public void emptyOptionalMultiple3Maybe(){
-		assertThat(Matchable.fromOptional(Optional.empty())
+		assertThat(Matchables.optional(Optional.empty())
 				            .matches(
 				            			o-> o.isEmpty(then("hello"))
 				            			      .is(when(1),then("2"))
@@ -373,7 +402,7 @@ public class MatchableTest {
 	}
 	@Test
 	public void emptyOptionalMultiple4Maybe(){
-		assertThat(Matchable.of(Optional.of(3))
+		assertThat(Matchables.optional(Optional.of(3))
 				            .matches(
 				            			o-> o.is(when(1),then("2"))
 				            			     .is(when(2),then("3"))
@@ -385,7 +414,10 @@ public class MatchableTest {
 		
 		
 	}
-	
+	public void matchGreaterThan(){
+	    Matchable.matchable(100)
+	             .matches(c->c.is(when(greaterThan(50)), ()->"large"), ()->"small");
+	}
 	public void matchByType(){
 		
 		assertThat(Matchable.of(1)
@@ -393,14 +425,14 @@ public class MatchableTest {
 				                    equalTo("hello"));
 	}
 	public void matchListOfValues(){
-		assertThat(Matchable.listOfValues(1,2,3)
+		assertThat(Matchables.listOfValues(1,2,3)
 							        .matches(c->c.is(when((Object i)->(i instanceof Integer)),then(2)),otherwise(-1)),
 							        equalTo(2));
 		
 	}
 	@Test
 	public void recursive(){
-		Eval<String> result = Matchable.listOfValues(1,new MyCase(4,5,6))
+		Eval<String> result = Matchables.listOfValues(1,new MyCase(4,5,6))
 				 				.matches(c->c.is(when(__,Predicates.has(4,5,6)),then("rec")),otherwise("n/a"));
 		
 		assertThat(result.get(),equalTo("rec"));

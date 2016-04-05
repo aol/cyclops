@@ -15,17 +15,28 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple1;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
+import org.jooq.lambda.tuple.Tuple5;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Matchable.AsMatchable;
+import com.aol.cyclops.control.Matchable.MTuple1;
 import com.aol.cyclops.control.Matchable.MTuple2;
 import com.aol.cyclops.control.Matchable.MTuple3;
 import com.aol.cyclops.control.Matchable.MTuple4;
 import com.aol.cyclops.control.Matchable.MTuple5;
 import com.aol.cyclops.control.Matchable.MXor;
 import com.aol.cyclops.control.Matchable.MatchableIterable;
+import com.aol.cyclops.control.Matchable.MatchableObject;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
@@ -35,12 +46,94 @@ import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.Topic;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Decomposable;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.ExceptionSoftener;
 
+/**
+ * This class contains static methods for Structural Pattern matching
+ * 
+ * @author johnmcclean
+ *
+ */
 public class Matchables {
+    
+    public static <T1> MTuple1<T1> match(T1 v){
+        return ()-> Tuple.tuple(v); 
+    }
+    public static <T1,T2> MTuple2<T1,T2> match2(T1 t1,T2 t2){
+        return ()-> Tuple.tuple(t1,t2);
+    }
+    public static <T1,T2,T3> MTuple3<T1,T2,T3> match3(T1 t1,T2 t2,T3 t3){
+        return ()-> Tuple.tuple(t1,t2,t3);
+    }
+    public static <T1,T2,T3,T4> MTuple4<T1,T2,T3,T4> match4(T1 t1,T2 t2,T3 t3,T4 t4){
+        return ()-> Tuple.tuple(t1,t2,t3,t4);
+    }
+    public static <T1> MTuple1<T1> supplier(Supplier<T1> s1){
+        
+        return ()-> Tuple.tuple(s1.get());
+    }
+    public static <T1> MTuple1<T1> tuple1(Tuple1<T1> t2){
+        return ()-> t2;
+    }
+    public static <T1 , T2> MTuple2<T1,T2> supplier2(Supplier<T1> s1, Supplier<T2> s2){
+        return ()-> Tuple.tuple(s1.get(),s2.get());
+    }
+    public static <T1,T2> MTuple2<T1,T2> tuple2(Tuple2<T1,T2> t2){
+        return ()-> t2;
+    }
+    public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE> MTuple3<T1,T2,T3> tuple3(Tuple3<T1,T2,T3> t3){
+        return ()-> t3;
+    }
+    public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE> MTuple3<T1,T2,T3> supplier3(Supplier<T1> s1, Supplier<T2> s2, Supplier<T3> s3){
+        return()-> Tuple.tuple(s1.get(),s2.get(),s3.get());
+    }
+    public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE,T4 extends TYPE> MTuple4<T1,T2,T3,T4> tuple4(Tuple4<T1,T2,T3,T4> t4){
+        return ()-> t4;
+    }
+    public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE,T4 extends TYPE> MTuple4<T1,T2,T3,T4> supplier4(Supplier<T1> s1, Supplier<T2> s2, 
+                                                Supplier<T3> s3,Supplier<T4> s4){
+        return()-> Tuple.tuple(s1.get(),s2.get(),s3.get(),s4.get());
+    }
+    public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE,T4 extends TYPE,T5 extends TYPE> MTuple5<T1,T2,T3,T4,T5> tuple5(Tuple5<T1,T2,T3,T4,T5> t5){
+        return ()-> t5;
+    }
+    public static <TYPE, T1 extends TYPE, T2 extends TYPE,T3 extends TYPE,T4 extends TYPE,T5 extends TYPE> MTuple5<T1,T2,T3,T4,T5> supplier5(Supplier<T1> s1, Supplier<T2> s2, 
+                                                Supplier<T3> s3,Supplier<T4> s4,Supplier<T5> s5){
+        return()-> Tuple.tuple(s1.get(),s2.get(),s3.get(),s4.get(),s5.get());
+    }
+    
+    public static<T> MatchableIterable<T> iterable(Iterable<T> o){
+        return ()->o;
+    }
+    
+   
+   
+    /**
+     * Create a new matchable that will match on the fields of the provided Decomposable
+     * 
+     * @param o Decomposable to match on it's fields
+     * @return new Matchable
+     */
+    public static <T extends Decomposable> MatchableObject<T> decomposable(Decomposable o){
+        return AsMatchable.asMatchable(o);
+    }
+    
+    /**
+     * Create a matchable that matches on the provided Objects
+     * 
+     * @param o Objects to match on
+     * @return new Matchable
+     */
+    public static <T>  MatchableObject<T> listOfValues(T... o){
+        return AsMatchable.asMatchable(Arrays.asList(o));
+    }
+   
+    
     
     public static <T> MXor<Queue<T>,Topic<T>> adapter(Adapter<T> adapter){
         return adapter.matches();
@@ -58,6 +151,9 @@ public class Matchables {
     public static <T> Matchable.MatchableOptional<T> maybe(Maybe<T> opt){
         return opt;
     }
+    public static <T> Matchable.MatchableOptional<T> maybe(Value<T> opt){
+        return ()->opt.toOptional();
+    }
     public static <T> Matchable.MatchableOptional<T> optional(Optional<T> opt){
         return Maybe.fromOptional(opt);
     }
@@ -66,10 +162,10 @@ public class Matchables {
         return ()-> anyM instanceof AnyMValue ?  Xor.secondary((AnyMValue<T>)anyM) : Xor.primary((AnyMSeq<T>)anyM);
     }
 	public static<X extends Throwable> MTuple4<Class,String,Throwable,MatchableIterable<StackTraceElement>> throwable(X t){
-		return Matchable.from(()->(Class)t.getClass(),
+		return supplier4(()->(Class)t.getClass(),
 							  ()->t.getMessage(),
 							  ()->t.getCause(),
-							  ()->Matchable.fromIterable(Arrays.asList(t.getStackTrace())));
+							  ()->iterable(Arrays.asList(t.getStackTrace())));
 	}
 	
 	/**
@@ -80,7 +176,7 @@ public class Matchables {
 	 * @return
 	 */
 	public static MTuple5<String,String,Integer,String,String> url(URL url){
-		return Matchable.from(()->url.getProtocol(),
+		return supplier5(()->url.getProtocol(),
 							  ()->url.getHost(),
 							  ()->url.getPort(),
 							  ()->url.getPath(),
@@ -116,21 +212,22 @@ public class Matchables {
 		return new Matchable.AutoCloseableMatchableIterable<>(stream ,()->stream.iterator() );	
 	}
 	public static MatchableIterable<String> words(CharSequence seq){
-		return Matchable.fromIterable(Arrays.asList(seq.toString().split(" ")));
+		return iterable(Arrays.asList(seq.toString().split(" ")));
 	}
-	public static MatchableIterable<Character> chars(CharSequence seq){
-		return Matchable.fromCharSequence(seq);
+	public static MatchableIterable<Character> chars(CharSequence chars){
+	    Iterable<Character> it = ()->chars.chars().boxed().map(i ->Character.toChars(i)[0]).iterator();
+        return ()-> it;
 	}
 	public static <ST,PT> MXor<ST,PT> xor(Xor<ST,PT> xor){
 	    return ()->xor;
 	}
 	public static <T> MTuple2<Maybe<T>,ListX<T>> headAndTail(Collection<T> col){
 		HeadAndTail<T> ht = CollectionX.fromCollection(col).headAndTail();
-		return Matchable.from(()->ht.headMaybe(),()->ht.tail().toListX());
+		return supplier2(()->ht.headMaybe(),()->ht.tail().toListX());
 	}
 	public static <K,V> ReactiveSeq<MTuple2<K,V>> keysAndValues(Map<K,V> map){
 		return ReactiveSeq.fromIterable(map.entrySet()).map(entry ->
-		                    (MTuple2<K,V>)Matchable.from(()->entry.getKey(),()->entry.getValue()));
+		                    (MTuple2<K,V>)supplier2(()->entry.getKey(),()->entry.getValue()));
 	}
 	public static MTuple3<Integer,Integer,Integer> dateDDMMYYYY(Date date){
 		Date input = new Date();
@@ -143,10 +240,10 @@ public class Matchables {
 		return localDateMMDDYYYY(local);
 	}
 	public static MTuple3<Integer,Integer,Integer> localDateDDMMYYYY(LocalDate date){
-		return Matchable.from(()->date.getDayOfMonth(),()->date.getMonth().getValue(),()->date.getYear());
+		return supplier3(()->date.getDayOfMonth(),()->date.getMonth().getValue(),()->date.getYear());
 	}
 	public static MTuple3<Integer,Integer,Integer> localDateMMDDYYYY(LocalDate date){
-		return Matchable.from(()->date.getMonth().getValue(),()->date.getDayOfMonth(),()->date.getYear());
+		return supplier3(()->date.getMonth().getValue(),()->date.getDayOfMonth(),()->date.getYear());
 	}
 	public static MTuple3<Integer,Integer,Integer> dateHMS(Date date){
 		Date input = new Date();
@@ -154,6 +251,6 @@ public class Matchables {
 		return localTimeHMS(local);
 	}
 	public static MTuple3<Integer,Integer,Integer> localTimeHMS(LocalTime time){
-		return Matchable.from(()->time.getHour(),()->time.getMinute(),()->time.getSecond());
+		return supplier3(()->time.getHour(),()->time.getMinute(),()->time.getSecond());
 	}
 }

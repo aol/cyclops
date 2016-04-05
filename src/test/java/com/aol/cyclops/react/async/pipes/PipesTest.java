@@ -6,8 +6,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -18,13 +20,18 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Pipes;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.async.Queue;
+import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
+
+import lombok.val;
+import reactor.core.publisher.Flux;
 public class PipesTest {
     Pipes<String,String> pipes;
    
@@ -32,6 +39,152 @@ public class PipesTest {
 	public void setup() {
 		pipes = Pipes.of(new HashMap<>());
 	}
+	
+	@Test
+	public void evalIssue(){
+	    
+        Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        val ev = bus.nextOrNull("reactor");
+        List results = new ArrayList();
+       
+        results.add(ev.get());
+        results.add(ev.get());
+        results.add(ev.get());
+        
+        assertThat(results,equalTo(ListX.of(10,20,30)));
+        
+      
+        //finished!
+           
+        
+     
+        
+	}
+	@Test
+    public void nextValueFinished(){
+        
+        Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        val ev = bus.nextValue("reactor");
+        List results = new ArrayList();
+        
+        results.add(ev.get());
+        results.add(ev.get());
+        results.add(ev.get());
+        
+        assertThat(results,equalTo(ListX.of(Maybe.of(10),Maybe.of(20),Maybe.of(30))));
+           
+        
+     
+        
+    }
+	@Test
+    public void oneOrErrorFinishes(){
+        
+        Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        List results = new ArrayList();
+        
+        results.add(bus.oneOrError("reactor").get());
+        results.add(bus.oneOrError("reactor").get());
+        results.add(bus.oneOrError("reactor").get());
+        
+        assertThat(results,equalTo(ListX.of(10,20,30)));       
+     
+         
+    }
+	@Test
+    public void futureStreamTest(){
+        
+        Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        bus.close("reactor");
+        
+        
+       
+      System.out.println(Thread.currentThread().getId());
+       List<String> res =  bus.futureStream("reactor", new LazyReact())
+            .get()
+           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .toList();
+          System.out.println(res);
+       
+       assertThat(res.size(),equalTo(3));
+           
+        
+     
+        
+    }
+	@Test
+    public void futureStreamCustomTest(){
+        
+        Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        bus.close("reactor");
+        
+        
+       
+      System.out.println(Thread.currentThread().getId());
+       List<String> res =  bus.futureStream("reactor", new LazyReact(10,10))
+            .get()
+           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .toList();
+          System.out.println(res);
+       
+       assertThat(res.size(),equalTo(3));
+           
+        
+     
+        
+    }
+	@Test
+    public void publishToTest(){
+	    
+        Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        bus.publishTo("reactor",Flux.just(10,20,30));
+        
+        bus.close("reactor");
+        
+        
+       
+      System.out.println(Thread.currentThread().getId());
+       List<String> res =  bus.futureStream("reactor", new LazyReact())
+            .get()
+           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .toList();
+          System.out.println(res);
+       
+       assertThat(res.size(),equalTo(3));
+           
+        
+     
+        
+    }
+	
 	@Test
 	public void testGetAbsent() {
 		

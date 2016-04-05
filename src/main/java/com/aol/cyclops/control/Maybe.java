@@ -7,7 +7,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -22,7 +21,39 @@ import lombok.AllArgsConstructor;
 
 
 /**
- * Totally lazy more powerful general Option type
+ * Totally lazy more powerful general Option(al) type. Maybe is lazy like a Java 8 Stream that
+ * represents 0 or 1 values rather than eager like a Java 8 Optional. map / peek/ filter and flatMap build the execution chaing,
+ * but are not executed until the value inside the Maybe is required.
+ * 
+ * Maybe is tail recursive
+ * 
+ * <pre>
+ * {@code 
+ * @Test
+    public void odd() {
+        System.out.println(even(Maybe.just(200000)).get());
+    }
+
+    public Maybe<String> odd(Maybe<Integer> n) {
+
+        return n.flatMap(x -> even(Maybe.just(x - 1)));
+    }
+
+    public Maybe<String> even(Maybe<Integer> n) {
+        return n.flatMap(x -> {
+            return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
+        });
+    }
+ * 
+ * }
+ * </pre>
+ * 
+ * Maybe is a functor (map) monad (flatMap) and an applicative (ap)
+ * 
+ * Maybe has pattern matching built in (visit, matches, patternMatch)
+ * 
+ * Maybe is convertable to all cyclops-react data types.
+ * 
  * 
  * @author johnmcclean
  *
@@ -174,7 +205,7 @@ public interface Maybe<T> extends MonadicValue<T>,
 	}
 	@Override
 	default <R> Maybe<R> patternMatch(
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (Maybe<R>)Applicativable.super.patternMatch(case1,otherwise);
 	}
@@ -238,6 +269,9 @@ public interface Maybe<T> extends MonadicValue<T>,
 		public boolean equals(Object obj) {
 			if(obj instanceof Just)
 				return Objects.equals(lazy.get(),((Just)obj).get());
+			else if(obj instanceof Lazy){
+			    return Objects.equals(get(),((Lazy)obj).get());
+			}
 			return false;
 		}
 		

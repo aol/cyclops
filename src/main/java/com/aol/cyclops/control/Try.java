@@ -142,7 +142,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 	}
 	@Override
 	default <R> Try<R,X> patternMatch(
-			Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
 		return (Try<R,X>)Applicativable.super.patternMatch(case1,otherwise);
 	}

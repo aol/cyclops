@@ -55,6 +55,25 @@ import com.aol.cyclops.util.stream.Streamable;
 /**
  * 
  * Wrapper for Any Monad type
+ * 
+ * There are two subsclass of AnyM - @see {@link AnyMValue} and  @see {@link AnyMSeq}. 
+ * AnyMValue is used to represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Xor}, {@link Try}, {@link Ior}, {@link FeatureToggle}
+ * AnyMSeq is used to represent Monads that wrap an aggregation of values such as {@link Stream}, {@link LazyFutureStream}, {@link List}, {@link Set}, {@link Streamable}
+ * 
+ * Use AnyM to create your monad wrapper.
+ * AnyM.fromXXXX methods can create the appropriate AnyM type for a range of known monad types.
+ * 
+ * <pre>
+ * {@code 
+ *    AnyMValue<String> monad1 = AnyM.fromOptional(Optional.of("hello"));
+ *    
+ *    AnyMSeq<String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
+ *  
+ * }
+ * </pre>
+ * 
+ * Wrapped monads can be unwrapped via the unwrap method, or converted to the desired type via toXXXX methods
+ * 
  *
  * 
  * @author johnmcclean
@@ -69,7 +88,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	
 	
     Xor<AnyMValue<T>,AnyMSeq<T>> matchable();
-    
+    <R> AnyM<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn);
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
      */

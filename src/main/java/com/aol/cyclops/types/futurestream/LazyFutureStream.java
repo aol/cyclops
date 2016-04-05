@@ -50,7 +50,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Trampoline;
@@ -68,7 +68,6 @@ import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import com.aol.cyclops.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops.internal.stream.LazyFutureStreamFutureOpterationsImpl;
-import com.aol.cyclops.react.ParallelReductionConfig;
 import com.aol.cyclops.react.RetryBuilder;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.aol.cyclops.react.ThreadPools;
@@ -343,7 +342,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * @return LazyFutureStream where elements are transformed by pattern matching
      */
     @Override
-    default <R> LazyFutureStream<R> patternMatch(Function<CheckValues<U,R>,CheckValues< U,R>> case1,Supplier<? extends R> otherwise){
+    default <R> LazyFutureStream<R> patternMatch(Function<CheckValue1<U,R>,CheckValue1< U,R>> case1,Supplier<? extends R> otherwise){
 
         return  map(u-> Matchable.of(u).matches(case1,otherwise).get());
     }
@@ -3260,10 +3259,9 @@ public interface LazyFutureStream<U> extends Functor<U>,
      
 	
 
-	/** END SEQUENCEM **/
+	/** END REACTIVESEQ **/
 
-    LazyFutureStream<U> withParallelReduction(
-            ParallelReductionConfig parallelReductionConfig);
+   
 
     /**
      * Construct an parallel LazyFutureStream from specified array, using the configured

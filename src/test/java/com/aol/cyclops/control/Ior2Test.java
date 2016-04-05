@@ -169,18 +169,17 @@ public class Ior2Test {
 	}
 
 	@Test
-	public void testConvertTo() {
-		Stream<Integer> toStream = just.convertTo(m->Stream.of((int)m.get()));
-		assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
-	}
+    public void testConvertTo() {
+        Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
+        assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
+    }
 
-	@Test
-	public void testConvertToAsync() {
-		FutureW<Stream<Integer>> async = just.convertToAsync(f->f.thenApply(i->Stream.of((int)i)));
-		
-		assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
-	}
-
+    @Test
+    public void testConvertToAsync() {
+        FutureW<Stream<Integer>> async = FutureW.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
+        
+        assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
+    }
 	@Test
 	public void testGetMatchable() {
 		assertThat(just.getMatchable(),equalTo(10));
@@ -682,7 +681,7 @@ public class Ior2Test {
                                         c->c.is(when(instanceOf(Integer.class)), then("error")),
                                         c->c.is(when("10",10), then("boo!")),
                                             otherwise("miss")).toMaybe(),
-                                            equalTo(Maybe.of("miss")));
+                                            equalTo(Maybe.of("error")));
 	}
 	@Test
     public void testMatches2() {     
@@ -690,7 +689,7 @@ public class Ior2Test {
                                     c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
                                     c->c.is(when("10",10), then("boo!")),
                                         otherwise("miss")).toMaybe(),
-                                            equalTo(Maybe.of("miss")));
+                                            equalTo(Maybe.of("error")));
 	}
     @Test
     public void testMatches3() {     
@@ -700,7 +699,7 @@ public class Ior2Test {
                                      .is(when("3"),then(()->"hello")),
                                      c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
                                      c->c.is(when("10",10), then("boo!")),
-                                     otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
+                                     otherwise("miss")).toMaybe(),equalTo(Maybe.just("error")));
             
     }
     @Test

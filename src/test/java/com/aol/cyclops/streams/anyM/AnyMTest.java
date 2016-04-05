@@ -51,8 +51,19 @@ public class AnyMTest {
 		stream.map(i->i+2);
 	}
 	**/
+    @Test
+    public void listTest(){
+        List<String> l = AnyM.fromList(Arrays.asList(1,2,3))
+                .map(i->"hello"+i)
+                .unwrap();
+        assertThat(l,equalTo(Arrays.asList("hello1","hello2","hello3")));
+    }
 	@Test
 	public void multiReturnBind(){
+
+	  
+	   
+	   
 		AnyM<List<Integer>> stream = AnyM.fromOptional(Optional.of(1))
 										 .bind(i->Stream.of(1,2,i));
 		

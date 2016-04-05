@@ -25,7 +25,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.Matchable.CheckValues;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -322,7 +322,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 */
 	@Override
     default <R> QueueX<R> patternMatch(
-            Function<CheckValues<T, R>, CheckValues<T, R>> case1,Supplier<? extends R> otherwise) {
+            Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
         return (QueueX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
     }
 	
