@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
@@ -16,6 +17,7 @@ import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
+import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -34,7 +36,11 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  */
 public interface FutureWT<A> extends Unit<A>{
-   
+    
+    MaybeT<A> filter(Predicate<? super A> test);
+    
+    public <R> FutureWT<R> empty();
+    
    default <B> FutureWT<B> bind(Function<? super A, FutureWT<? extends B>> f) {
         return of(unwrap().bind(opt -> {
                 return f.apply(opt.get()).unwrap().unwrap();

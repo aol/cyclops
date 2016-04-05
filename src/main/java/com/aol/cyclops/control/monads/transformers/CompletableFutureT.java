@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
@@ -33,6 +34,8 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  */
 public interface CompletableFutureT<A> extends Unit<A>{
    
+    public <R> CompletableFutureT<R> empty();
+    MaybeT<A> filter(Predicate<? super A> test);
    default <B> CompletableFutureT<B> bind(Function<? super A, CompletableFutureT<? extends B>> f) {
         return of(unwrap().bind(opt -> {
                 return f.apply(opt.join()).unwrap().unwrap();

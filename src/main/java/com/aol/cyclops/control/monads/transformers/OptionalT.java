@@ -36,7 +36,8 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 public interface OptionalT<T> {
    
   
-   
+    public <R> OptionalT<R> unit(R value);
+    public <R> OptionalT<R> empty();
    
 	/**
 	 * @return The wrapped AnyM

@@ -5,30 +5,30 @@ import java.util.function.Predicate;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.OptionalT;
-import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
+import com.aol.cyclops.control.monads.transformers.FutureWT;
+import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class OptionalTComprehender implements ValueComprehender<OptionalT> {
+public class FutureWTComprehender implements ValueComprehender<FutureWT> {
 	public Class getTargetClass(){
-		return OptionalT.class;
+		return FutureWT.class;
 	}
 	@Override
-	public Object filter(OptionalT o,Predicate p) {
+	public Object filter(FutureWT o,Predicate p) {
 		return o.filter(p);
 	}
 
 	@Override
-	public Object map(OptionalT o,Function fn) {
+	public Object map(FutureWT o,Function fn) {
 		return o.map(fn);
 	}
 	@Override
-	public Object executeflatMap(OptionalT t, Function fn){
+	public Object executeflatMap(FutureWT t, Function fn){
         return flatMap(t,input -> Comprehender.unwrapOtherMonadTypes(buildComprehender(t),fn.apply(input)));
     }
-	private Comprehender buildComprehender( OptionalT t) {
+	private Comprehender buildComprehender( FutureWT t) {
 	    Comprehender delegate = this;
         return new ValueComprehender() {
 
@@ -61,7 +61,7 @@ public class OptionalTComprehender implements ValueComprehender<OptionalT> {
         };
     }
     @Override
-	public OptionalT flatMap(OptionalT o,Function fn) {
+	public FutureWT flatMap(FutureWT o,Function fn) {
 		return o.bind(fn);
 	}
 
@@ -71,26 +71,24 @@ public class OptionalTComprehender implements ValueComprehender<OptionalT> {
 	}
 
 	@Override
-	public OptionalT of(Object o) {
+	public FutureWT of(Object o) {
 	    throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public OptionalT empty() {
+	public FutureWT empty() {
 	    throw new UnsupportedOperationException();
 	}
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,OptionalT<Object> apply){
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,FutureWT<Object> apply){
 	    
-	    return Matchables.optionalT(apply)
+	    return Matchables.futureWT(apply)
 	            .visit(v->resolveValueForCrossTypeFlatMap(comp,v),
 	                   s->comp.of(s.toCollection(MaterializedList::new)));
 		
 	}
-	private Object resolveValueForCrossTypeFlatMap(Comprehender comp,OptionalTValue<Object> apply){
-	    if(apply.isPresent())
-            return comp.of(apply.get());
-        else
-            return comp.empty();
+	private Object resolveValueForCrossTypeFlatMap(Comprehender comp,FutureWTValue<Object> apply){
+	    return comp.of(apply.get());
+        
 	}
 
 }

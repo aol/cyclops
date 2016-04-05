@@ -13,8 +13,11 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Reader;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.ReaderTSeq;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
+import com.aol.cyclops.control.monads.transformers.values.ReaderTValue;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -36,15 +39,14 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public interface EvalT<T> {
+public interface ReaderT<T,R> {
 
-    public <R> EvalT<R> unit(R value);
-    public <R> EvalT<R> empty();
+    
 
     /**
      * @return The wrapped AnyM
      */
-    public AnyM<Eval<T>> unwrap() ;
+    public AnyM<Reader<T,R>> unwrap() ;
 
     /**
      * Peek at the current value of the Maybe
@@ -62,7 +64,7 @@ public interface EvalT<T> {
      *            Consumer to accept current value of Maybe
      * @return MaybeT with peek call
      */
-    public EvalT<T> peek(Consumer<? super T> peek);
+    public ReaderTValue<T,R> peek(Consumer<? super R> peek);
 
     /**
      * Filter the wrapped Maybe
@@ -80,7 +82,8 @@ public interface EvalT<T> {
      *            Predicate to filter the wrapped Maybe
      * @return MaybeT that applies the provided filter
      */
-    public MaybeT<T> filter(Predicate<? super T> test) ;
+    public ReaderT<T,R> filter(Predicate<? super R> test) ;
+    
     /**
      * Map the wrapped Maybe
      * 
@@ -98,7 +101,7 @@ public interface EvalT<T> {
      *            Mapping function for the wrapped Maybe
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
-    public <B> EvalT<B> map(Function<? super T, ? extends B> f) ;
+    public <B> ReaderT<T,B> map(Function<? super R, ? extends B> f) ;
 
     /**
      * Flat Map the wrapped Maybe
@@ -117,17 +120,13 @@ public interface EvalT<T> {
      *            FlatMap function
      * @return MaybeT that applies the flatMap function to the wrapped Maybe
      */
-    default <B> EvalT<B> bind(Function<? super T, EvalT<? extends B>> f) {
+    default <B> ReaderT<T,B> bind(Function<? super R, ReaderT<? extends T,B>> f) {
 
-        return of(unwrap().bind(opt -> {
-            
-                return f.apply(opt.get()).unwrap().unwrap();
-           
-        }));
+        return of(unwrap().bind(reader -> reader.flatMap(r->f.apply(r).unwrap().unwrap())));
 
     }
     
-    public <B> EvalT<B> flatMap(Function<? super T, ? extends Eval<? extends B>> f);
+    public <B> ReaderT<B,R> flatMap(Function<? super T, ? extends Reader<? extends B,R>> f);
 
     /**
      * Lift a function into one that accepts and returns an MaybeT This allows
@@ -160,7 +159,7 @@ public interface EvalT<T> {
      *            monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U, R> Function<EvalT<U>, EvalT<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <T,U, R> Function<ReaderT<T,U>, ReaderT<T,R>> lift(Function<? super U, ? extends R> fn){
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -196,22 +195,11 @@ public interface EvalT<T> {
      *            another monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U1, U2, R> BiFunction<EvalT<U1>, EvalT<U2>, EvalT<R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
+    public static <T,U1, U2, R> BiFunction<ReaderT<T,U1>, ReaderT<T,U2>, ReaderT<T,R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
-    /**
-     * Construct an MaybeT from an AnyM that contains a monad type that contains
-     * type other than Maybe The values in the underlying monad will be mapped
-     * to Maybe<A>
-     * 
-     * @param anyM
-     *            AnyM that doesn't contain a monad wrapping an Maybe
-     * @return MaybeT
-     */
-    public static <A> EvalT<A> fromAnyM(AnyM<A> anyM) {
-        return of(anyM.map(a->Eval.later(()->a)));
-    }
+    
 
     /**
      * Construct an MaybeT from an AnyM that wraps a monad containing Maybes
@@ -220,50 +208,44 @@ public interface EvalT<T> {
      *            AnyM that contains a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <A> EvalT<A> of(AnyM<Eval<A>> monads) {
-        return Matchables.anyM(monads).visit(v-> EvalTValue.of(v), s->EvalTSeq.of(s));
+    public static <A,R> ReaderT<A,R> of(AnyM<Reader<A,R>> monads) {
+        return (ReaderT<A, R>) Matchables.anyM(monads).visit(v-> ReaderTValue.<A,R>of(v), s->ReaderTSeq.<A,R>of(s));
 
     }
  
 
-    public static <A> EvalTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
-        return EvalTValue.fromAnyM(anyM);
+    
+
+    public static <A,R> ReaderTSeq<A,R> fromIterable(
+            Iterable<Reader<A,R>> iterableOfEvals) {
+        return ReaderTSeq.of(AnyM.fromIterable(iterableOfEvals));
     }
 
-    public static <A> EvalTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
-        return EvalTSeq.fromAnyM(anyM);
+    public static <A,R> ReaderTSeq<A,R> fromStream(Stream<Reader<A,R>> streamOfEvals) {
+        return ReaderTSeq.of(AnyM.fromStream(streamOfEvals));
     }
 
-    public static <A> EvalTSeq<A> fromIterable(
-            Iterable<Eval<A>> iterableOfEvals) {
-        return EvalTSeq.of(AnyM.fromIterable(iterableOfEvals));
+    public static <A,R> ReaderTSeq<A,R> fromPublisher(
+            Publisher<Reader<A,R>> publisherOfEvals) {
+        return ReaderTSeq.of(AnyM.fromPublisher(publisherOfEvals));
     }
 
-    public static <A> EvalTSeq<A> fromStream(Stream<Eval<A>> streamOfEvals) {
-        return EvalTSeq.of(AnyM.fromStream(streamOfEvals));
-    }
-
-    public static <A> EvalTSeq<A> fromPublisher(
-            Publisher<Eval<A>> publisherOfEvals) {
-        return EvalTSeq.of(AnyM.fromPublisher(publisherOfEvals));
-    }
-
-    public static <A, V extends MonadicValue<Eval<A>>> EvalTValue<A> fromValue(
+    public static <A, R,V extends MonadicValue<Reader<A,R>>> ReaderTValue<A,R> fromValue(
             V monadicValue) {
-        return EvalTValue.fromValue(monadicValue);
+        return ReaderTValue.fromValue(monadicValue);
     }
 
-    public static <A> EvalTValue<A> fromOptional(Optional<Eval<A>> optional) {
-        return EvalTValue.of(AnyM.fromOptional(optional));
+    public static <A,R> ReaderTValue<A,R> fromOptional(Optional<Reader<A,R>> optional) {
+        return ReaderTValue.of(AnyM.fromOptional(optional));
     }
 
-    public static <A> EvalTValue<A> fromFuture(CompletableFuture<Eval<A>> future) {
-        return EvalTValue.of(AnyM.fromCompletableFuture(future));
+    public static <A,R> ReaderTValue<A,R> fromFuture(CompletableFuture<Reader<A,R>> future) {
+        return ReaderTValue.of(AnyM.fromCompletableFuture(future));
     }
 
-    public static <A> EvalTValue<A> fromIterableValue(
-            Iterable<Eval<A>> iterableOfEvals) {
-        return EvalTValue.of(AnyM.fromIterableValue(iterableOfEvals));
+    public static <A,R> ReaderTValue<A,R> fromIterableValue(
+            Iterable<Reader<A,R>> iterableOfEvals) {
+        return ReaderTValue.of(AnyM.fromIterableValue(iterableOfEvals));
     }
    
 

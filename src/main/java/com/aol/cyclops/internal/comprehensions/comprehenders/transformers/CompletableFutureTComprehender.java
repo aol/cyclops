@@ -3,29 +3,32 @@ package com.aol.cyclops.internal.comprehensions.comprehenders.transformers;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.values.XorTValue;
+import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
+import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
+import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class XorTComprehender implements ValueComprehender<XorTValue> {
+public class CompletableFutureTComprehender implements ValueComprehender<CompletableFutureT> {
 	public Class getTargetClass(){
-		return XorTValue.class;
+		return CompletableFutureT.class;
 	}
 	@Override
-	public Object filter(XorTValue o,Predicate p) {
+	public Object filter(CompletableFutureT o,Predicate p) {
 		return o.filter(p);
 	}
 
 	@Override
-	public Object map(XorTValue o,Function fn) {
+	public Object map(CompletableFutureT o,Function fn) {
 		return o.map(fn);
 	}
 	@Override
-	public Object executeflatMap(XorTValue t, Function fn){
+	public Object executeflatMap(CompletableFutureT t, Function fn){
         return flatMap(t,input -> Comprehender.unwrapOtherMonadTypes(buildComprehender(t),fn.apply(input)));
     }
-	private Comprehender buildComprehender( XorTValue t) {
+	private Comprehender buildComprehender( CompletableFutureT t) {
 	    Comprehender delegate = this;
         return new ValueComprehender() {
 
@@ -58,8 +61,8 @@ public class XorTComprehender implements ValueComprehender<XorTValue> {
         };
     }
     @Override
-	public XorTValue flatMap(XorTValue o,Function fn) {
-		return o.flatMapT(fn);
+	public CompletableFutureT flatMap(CompletableFutureT o,Function fn) {
+		return o.bind(fn);
 	}
 
 	@Override
@@ -68,19 +71,24 @@ public class XorTComprehender implements ValueComprehender<XorTValue> {
 	}
 
 	@Override
-	public XorTValue of(Object o) {
+	public CompletableFutureT of(Object o) {
 	    throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public XorTValue empty() {
+	public CompletableFutureT empty() {
 	    throw new UnsupportedOperationException();
 	}
-	public Object resolveForCrossTypeFlatMap(Comprehender comp,XorTValue apply){
-		if(apply.isPrimary())
-			return comp.of(apply.get());
-		else
-			return comp.empty();
+	public Object resolveForCrossTypeFlatMap(Comprehender comp,CompletableFutureT<Object> apply){
+	    
+	    return Matchables.completableFutureT(apply)
+	            .visit(v->resolveValueForCrossTypeFlatMap(comp,v),
+	                   s->comp.of(s.toCollection(MaterializedList::new)));
+		
+	}
+	private Object resolveValueForCrossTypeFlatMap(Comprehender comp,CompletableFutureTValue<Object> apply){
+	    return comp.of(apply.get());
+        
 	}
 
 }
