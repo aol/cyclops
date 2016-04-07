@@ -2840,9 +2840,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 */
 	default <R> ReactiveSeq<R> retry(Function<? super T, ? extends R> fn) {
+		return retry(fn, 7, 2, TimeUnit.SECONDS);
+	}
+	
+	default <R> ReactiveSeq<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
 		Function<T, R> retry = t -> {
-			int count = 7;
-			int[] sleep = { 2000 };
+			int count = retries;
+			long[] sleep = { delay };
 			Throwable exception = null;
 			while (count-- > 0) {
 				try {
@@ -2850,7 +2854,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 				} catch (Throwable e) {
 					exception = e;
 				}
-				ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep[0]));
+				ExceptionSoftener.softenRunnable(() -> timeUnit.sleep(sleep[0]));
 
 				sleep[0] = sleep[0] * 2;
 			}
@@ -2859,6 +2863,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 		};
 		return map(retry);
 	}
+	
 
 	/**
 	 * Remove all occurances of the specified element from the SequenceM
