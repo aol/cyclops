@@ -36,7 +36,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public interface EvalT<T> {
+public interface EvalT<T>  extends Publisher<T>{
 
     public <R> EvalT<R> unit(R value);
     public <R> EvalT<R> empty();

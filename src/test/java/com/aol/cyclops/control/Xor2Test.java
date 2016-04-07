@@ -56,6 +56,7 @@ public class Xor2Test {
 
 	@Test
 	public void visit(){
+	    
 	    assertThat(just.visit(secondary->"no", primary->"yes"),equalTo("yes"));
 	    assertThat(none.visit(secondary->"no", primary->"yes"),equalTo("no"));
 	}
@@ -515,6 +516,14 @@ public class Xor2Test {
 				.ap(Ior.primary(6))
 				.ap(Ior.primary(10)).toMaybe(),equalTo(Ior.primary(24).toMaybe()));
 	}
+	@Test
+    public void testAp5Secondary() {
+        assertThat(Ior.<Integer,Integer>secondary(1).ap5(this::add5)
+                .ap(Optional.of(3))
+                .ap(Ior.primary(4))
+                .ap(Ior.primary(6))
+                .ap(Ior.primary(10)).toMaybe(),equalTo(Ior.secondary(null).toMaybe()));
+    }
 
 	
 

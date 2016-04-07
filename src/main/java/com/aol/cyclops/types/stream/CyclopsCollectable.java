@@ -14,7 +14,7 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 
-import org.hamcrest.Matcher;
+
 import org.jooq.lambda.Collectable;
 
 
@@ -235,12 +235,7 @@ public interface CyclopsCollectable<T> extends Collectable<T> {
 	default <U> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
 		return collectable().percentileBy(percentile, function, comparator);
 	}
-	default boolean allMatch(Matcher<? super T> m){
-		return collectable().allMatch(t->m.matches(t));
-	}
-	default boolean noneMatch(Matcher<? super T> m){
-		return collectable().noneMatch(t->m.matches(t));
-	}
+	
 	
 	/**
 	 * True if predicate matches all elements when Monad converted to a Stream

@@ -32,7 +32,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface CompletableFutureT<A> extends Unit<A>{
+public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>{
    
     public <R> CompletableFutureT<R> empty();
     MaybeT<A> filter(Predicate<? super A> test);

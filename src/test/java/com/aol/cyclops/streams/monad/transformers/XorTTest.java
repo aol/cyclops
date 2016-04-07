@@ -94,9 +94,9 @@ public class XorTTest {
 	}
 	@Test
 	public void flatMap() {
-		XorTSeq<RuntimeException,Integer> optionT = XorT.fromAnyMSeq(AnyM.ofSeq(Stream.of(Xor.primary(10))));
+		XorTSeq<RuntimeException,Integer> optionT = XorT.fromStream(Stream.of(Xor.primary(10)));
 		
-		assertThat(optionT.flatMapT(num->XorT.fromAnyMSeq(AnyM.ofSeq(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMapT(num->XorT.fromStream(Stream.of(Xor.primary("hello world"+num))))
 				.unwrap().<Stream<Xor<String,RuntimeException>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Xor.primary("hello world10")));
 	}

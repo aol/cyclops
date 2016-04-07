@@ -35,7 +35,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> The type contained on the Try within
  */
-public interface TryT<T,X extends Throwable> {
+public interface TryT<T,X extends Throwable>  extends Publisher<T> {
    
   
     public <B> TryT<B,X> flatMap(Function<? super T, ? extends Try<B,X>> f);

@@ -261,7 +261,7 @@ public class SetTValue<T>  implements SetT<T>,
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    public <U> IterableFunctor<U> unitIterator(Iterator<U> u) {
+    public <U> SetTValue<U> unitIterator(Iterator<U> u) {
         return of(run.unit(SetX.fromIterable(()->u)));
     }
     /* (non-Javadoc)
@@ -285,5 +285,8 @@ public class SetTValue<T>  implements SetT<T>,
         return ReactiveSeq.fromStream(stream);
     }
     
- 
+    @Override
+    public <R> SetTValue<R> empty() {
+       return of(run.empty());
+    }
 }

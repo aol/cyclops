@@ -90,9 +90,9 @@ public class OptionTTest {
 	}
 	@Test
 	public void flatMap() {
-		OptionalTSeq<Integer> optionT = OptionalT.fromAnyMSeq(AnyM.ofSeq(Stream.of(Optional.of(10))));
+		OptionalTSeq<Integer> optionT = OptionalT.fromStream(Stream.of(Optional.of(10)));
 		
-		assertThat(optionT.flatMapT(num->OptionalT.fromAnyMSeq(AnyM.ofSeq(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMapT(num->OptionalT.fromStream(Stream.of(Optional.of("hello world"+num))))
 				.unwrap().<Stream<Optional<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Optional.of("hello world10")));
 	}

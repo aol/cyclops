@@ -35,7 +35,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -80,15 +79,16 @@ import com.aol.cyclops.util.stream.Streamable;
 import lombok.val;
 
 
-public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T>,
-                                                IterableFilterable<T>,
-                                                FilterableFunctor<T>, 
-                                                ExtendedTraversable<T>,
-												Foldable<T>,
-												CyclopsCollectable<T>,
-												JoolWindowing<T>, 
-												
-												Seq<T>,  Iterable<T>, Publisher<T>,
+public interface ReactiveSeq<T> extends Unwrapable, 
+                                        Stream<T>,
+                                        JoolManipulation<T>,
+                                        IterableFilterable<T>,
+                                        FilterableFunctor<T>, 
+                                        ExtendedTraversable<T>,
+                                        Foldable<T>,
+										CyclopsCollectable<T>,
+										JoolWindowing<T>, 
+										Seq<T>,  Iterable<T>, Publisher<T>,
 												ReactiveStreamsTerminalOperations<T>,
 												ZippingApplicativable<T>, Unit<T>,
 												ConvertableSequence<T>{
@@ -3511,23 +3511,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 		return CyclopsCollectable.super.percentileBy(percentile, function, comparator);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#allMatch(org.hamcrest.Matcher)
-	 */
-	@Override
-	default boolean allMatch(Matcher<? super T> m) {
-		
-		return CyclopsCollectable.super.allMatch(m);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#noneMatch(org.hamcrest.Matcher)
-	 */
-	@Override
-	default boolean noneMatch(Matcher<? super T> m) {
-		return CyclopsCollectable.super.noneMatch(m);
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toList(java.util.function.Supplier)
 	 */

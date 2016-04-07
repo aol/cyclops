@@ -17,6 +17,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.ExtendedTraversable;
@@ -278,6 +279,9 @@ public class SetTSeq<T>  implements SetT<T>,
     public <R> SetTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->SetX.of(i)));
     }
-    
+    @Override
+    public <R> SetTSeq<R> empty() {
+       return of(run.empty());
+    }
  
 }

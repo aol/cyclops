@@ -12,6 +12,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
@@ -223,6 +224,9 @@ public class StreamTSeq<T> implements StreamT<T>,
     public <R> StreamTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Stream.of(i)));
     }
-    
+    @Override
+    public <R> StreamT<R> empty() {
+       return of(run.empty());
+    }
  
 }

@@ -97,7 +97,7 @@ public class EvalTTest {
 	public void flatMap() {
 		EvalTSeq<Integer> optionT = EvalT.fromAnyMSeq(AnyM.ofSeq(Stream.of(Eval.now(10))));
 		
-		assertThat(optionT.flatMapT(num->EvalT.fromAnyMSeq(AnyM.ofSeq(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMapT(num->EvalT.fromStream(Stream.of(Eval.now("hello world"+num))))
 				.unwrap().<Stream<Eval<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Eval.now("hello world10")));
 	}

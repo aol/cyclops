@@ -117,8 +117,26 @@ public class ForEachSequenceMTest {
 			throw new RuntimeException();
 		return ints;
 	}
+	private String process(int process){
+	    return "processed " + process;
+	}
+	@Test
+	public void forEachXWithErrorExample(){
+	    
+	   
+	    Subscription s = ReactiveSeq.of(10,20,30)
+                                    .map(this::process)
+                                    .forEachXWithError( 2,System.out::println, System.err::println);
+        
+        System.out.println("Completed 2");
+        s.request(1);
+        System.out.println("Finished all!");
+        
+	}
 	@Test
 	public void forEachXWithErrors(){
+	    
+	    
 	
 		List<Integer> list = new ArrayList<>();
 		

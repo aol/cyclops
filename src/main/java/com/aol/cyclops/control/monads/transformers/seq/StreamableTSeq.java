@@ -270,5 +270,9 @@ public class StreamableTSeq<T>  implements StreamableT<T>,
     public <R> StreamableTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Streamable.of(i)));
     }
+    @Override
+    public <R> StreamableTSeq<R> empty() {
+       return of(run.empty());
+    }
     
 }

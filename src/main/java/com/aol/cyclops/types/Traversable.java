@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -28,20 +27,19 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.monads.transformers.ListT;
+import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
-import com.aol.cyclops.types.stream.lazy.LazyCollectable;
 import com.aol.cyclops.types.stream.lazy.LazyOperations;
-import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
-import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 
@@ -334,6 +332,13 @@ public interface Traversable<T> extends Foldable<T>,
 	default Traversable<ListX<T>> sliding(int windowSize, int increment){
 		return stream().sliding(windowSize, increment);
 	}
+	default ListTSeq<T> slidingT(int windowSize, int increment){
+        return ListT.fromStream(stream().sliding(windowSize, increment));
+    }
+	default ListTSeq<T> slidingT(int windowSize){
+        return ListT.fromStream(stream().sliding(windowSize));
+    }
+
 	
   
 
@@ -380,6 +385,9 @@ public interface Traversable<T> extends Foldable<T>,
     default Traversable<ListX<T>> groupedUntil(Predicate<? super T> predicate){
         return stream().groupedUntil(predicate);
     }
+    default ListTSeq<T> groupedUntilT(Predicate<? super T> predicate){
+        return ListT.fromStream(stream().groupedUntil(predicate));
+    }
     /**
      * Create SequenceM of Streamables (replayable Streams / Sequences) where
      * each Streamable is populated while the supplied bipredicate holds. The
@@ -402,6 +410,9 @@ public interface Traversable<T> extends Foldable<T>,
     default Traversable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate){
         return stream().groupedStatefullyWhile(predicate); 
     }
+    default ListTSeq<T> groupedStatefullyWhileT(BiPredicate<ListX<? super T>, ? super T> predicate){
+      return ListT.fromStream(stream().groupedStatefullyWhile(predicate)); 
+    }
     /**
      * Create a SequenceM batched by List, where each batch is populated while
      * the predicate holds
@@ -421,6 +432,9 @@ public interface Traversable<T> extends Foldable<T>,
      */
     default Traversable<ListX<T>> groupedWhile(Predicate<? super T> predicate){
         return stream().groupedUntil(predicate);
+    }
+    default ListTSeq<T> groupedWhileT(Predicate<? super T> predicate){
+        return ListT.fromStream(stream().groupedUntil(predicate));
     }
 
     /**
@@ -492,6 +506,9 @@ public interface Traversable<T> extends Foldable<T>,
 	default Traversable<ListX<T>> grouped(int groupSize){
 		return stream().grouped(groupSize);
 	}
+	default ListTSeq<T> groupedT(int groupSize){
+        return ListT.fromStream(stream().grouped(groupSize));
+    }
 
 	default <K, A, D> Traversable<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
 		return stream().grouped(classifier,downstream);
@@ -1198,7 +1215,7 @@ public interface Traversable<T> extends Foldable<T>,
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
+	 * 	HotStream&lt;Data&gt; dataStream = ReactiveSeq.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
 	 * 			.schedule(&quot;0 20 * * *&quot;, Executors.newScheduledThreadPool(1));
 	 * 
 	 * 	data.connect().forEach(this::logToDB);

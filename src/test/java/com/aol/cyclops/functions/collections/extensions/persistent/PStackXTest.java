@@ -3,11 +3,14 @@ package com.aol.cyclops.functions.collections.extensions.persistent;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
+
+import reactor.core.publisher.Flux;
 
 public class PStackXTest extends CollectionXTestsWithNulls{
 
@@ -45,10 +48,18 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 	                                   .toPSetX();
 	    
 	                        
-	                              
+	                             
 	    
 	    
+	}
+	
+	@Test
+	public void remove(){
 	    
+	    PStackX.of(1,2,3)
+	            .minusAll(PBagX.of(2,3))
+                .flatMapPublisher(i->Flux.just(10+i,20+i,30+i));
+
 	    
 	}
 }

@@ -1,6 +1,7 @@
 package com.aol.cyclops.control.monads.transformers;
 
 
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -31,8 +32,11 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface StreamT<T> {
+public interface StreamT<T> extends Publisher<T> {
   
+    public <R> StreamT<R> unitIterator(Iterator<R> it);
+    public <R> StreamT<R> unit(R t);
+    public <R> StreamT<R> empty();
    
    public <B> StreamT<B> flatMap(Function<? super T, ? extends Stream<? extends B>> f);
    /**

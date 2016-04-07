@@ -35,7 +35,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface FutureWT<A> extends Unit<A>{
+public interface FutureWT<A> extends Unit<A>, Publisher<A>{
     
     MaybeT<A> filter(Predicate<? super A> test);
     

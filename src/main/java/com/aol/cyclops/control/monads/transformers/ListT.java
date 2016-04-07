@@ -1,6 +1,7 @@
 package com.aol.cyclops.control.monads.transformers;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -36,8 +37,10 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface ListT<T> {
-   
+public interface ListT<T>  extends Publisher<T>{
+    public <R> ListT<R> unitIterator(Iterator<R> it);
+    public <R> ListT<R> unit(R t);
+    public <R> ListT<R> empty();
    
    /**
 	 * @return The wrapped AnyM
@@ -199,7 +202,7 @@ public interface ListT<T> {
 	 * @param monads
 	 * @return
 	 */
-	public static <A> ListT<A> fromStream(AnyM<Stream<A>> monads) {
+	public static <A> ListT<A> fromStreamAnyM(AnyM<Stream<A>> monads) {
 		return of(monads.map(s -> s.collect(Collectors.toList())));
 	}
    
@@ -217,7 +220,7 @@ public interface ListT<T> {
         return ListTSeq.of(AnyM.fromIterable(iterableOfLists));
     }
 
-    public static <A> ListTSeq<A> fromStream(Stream<List<A>> streamOfLists) {
+    public static <A> ListTSeq<A> fromStream(Stream<? extends List<A>> streamOfLists) {
         return ListTSeq.of(AnyM.fromStream(streamOfLists));
     }
 

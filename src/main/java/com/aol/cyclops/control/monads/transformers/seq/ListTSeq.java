@@ -52,8 +52,8 @@ public class ListTSeq<T> implements ListT<T>,
                                    
    final AnyMSeq<List<T>> run;
 
-   private ListTSeq(final AnyMSeq<List<T>> run){
-       this.run = run;
+   private ListTSeq(final AnyMSeq<? extends List<T>> run){
+       this.run = (AnyMSeq<List<T>>)run;
    }
    /**
 	 * @return The wrapped AnyM
@@ -220,7 +220,7 @@ public class ListTSeq<T> implements ListT<T>,
 	 * @param monads AnyM that contains a monad wrapping an List
 	 * @return ListT
 	 */
-   public static <A> ListTSeq<A> of(AnyMSeq<List<A>> monads){
+   public static <A> ListTSeq<A> of(AnyMSeq<? extends List<A>> monads){
 	   return new ListTSeq<>(monads);
    }
 
@@ -277,5 +277,10 @@ public class ListTSeq<T> implements ListT<T>,
     public <R> ListTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->ListX.of(i)));
     }
+    @Override
+    public <R> ListT<R> empty() {
+       return of(run.empty());
+    }
+    
     
 }

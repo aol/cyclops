@@ -95,7 +95,7 @@ public class MaybeTTest {
 	public void flatMap() {
 		MaybeTSeq<Integer> optionT = MaybeT.fromAnyMSeq(AnyM.ofSeq(Stream.of(Maybe.of(10))));
 		
-		assertThat(optionT.flatMapT(num->MaybeT.fromAnyMSeq(AnyM.ofSeq(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMapT(num->MaybeT.fromStream(Stream.of(Maybe.just("hello world"+num))))
 				.unwrap().<Stream<Maybe<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Maybe.of("hello world10")));
 	}

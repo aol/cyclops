@@ -207,7 +207,7 @@ public class StreamTValue<T> implements StreamT<T>,
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    public <U> IterableFunctor<U> unitIterator(Iterator<U> u) {
+    public <U> StreamTValue<U> unitIterator(Iterator<U> u) {
         return of(run.unit(StreamUtils.stream(u)));
     }
     /* (non-Javadoc)
@@ -230,6 +230,9 @@ public class StreamTValue<T> implements StreamT<T>,
         Stream<T> stream =  run.unwrap();
         return ReactiveSeq.fromStream(stream);
     }
-    
+    @Override
+    public <R> StreamTValue<R> empty() {
+       return of(run.empty());
+    }
  
 }

@@ -39,11 +39,49 @@ import lombok.val;
 public class MatchablesTest {
     @Test
     public void cFuture(){
+        
         Eval<Integer> result = Matchables.future(CompletableFuture.completedFuture(10))
-                                         .matches(c-> c.is( when(some(10)), then(20)), 
-                                                      c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+                                         .matches(c-> 
+                                                     c.is( when(some(10)), then(20)),  //success
+                                                      
+                                                     c->c.is(when(instanceOf(RuntimeException.class)), then(2)), //failure
+                                                      
+                                                     otherwise(3) //no match
+                                                 );
         
         assertThat(result,equalTo(Eval.now(20)));
+    
+    
+    }
+    
+    private String loadData(){
+        return "";
+    }
+    private boolean validData(String data){
+        return true;
+    }
+    private int save(String data){
+        return 1;
+    }
+    private final  int IO_ERROR = -1;
+    private final  int UNEXPECTED_RESULT = 0;
+    private final  int SUCCESS = 1;
+    @Test
+    public void futurePatternMatching(){
+        
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(this::loadData);
+        Eval<Integer> result = Matchables.future(future)
+                                         .matches(c-> 
+                                                     c.is( when(this::validData), then(()->save(future.join()))),  //success
+                                                      
+                                                     c->c.is(when(instanceOf(IOException.class)), then(IO_ERROR)), //failure
+                                                      
+                                                     otherwise(UNEXPECTED_RESULT) //no match
+                                                 );
+        
+        assertThat(result,equalTo(Eval.now(SUCCESS)));
+    
+    
     }
     @Test
     public void cFutureFail(){

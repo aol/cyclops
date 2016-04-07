@@ -3,15 +3,21 @@ package com.aol.cyclops;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.MapXs;
+import com.aol.cyclops.data.collections.extensions.standard.QueueX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +29,61 @@ public class ClojureOrJava8 {
     static class Person{
         int age;
     }
+    public void cyclopsReactTransformList(){
+        
+        ListX<Integer> org = ListX.of(10,20,30);
+        List<Integer> mapped = org.map(i->i*2);
     
+    }
+    
+    public void java8TransformList(){
+        
+        
+        List<Integer> org = Arrays.asList(10,20,30);
+        List<Integer> mapped = org.stream()
+                                    .map(i->i*2)
+                                    .collect(Collectors.toList());
+        
+        
+    }
+    private String loadData(int d){
+        return "";
+    }
+    
+    @Test
+    public void listT(){
+       
+        
+        ReactiveSeq.of(10,20,30)
+                   .sliding(2,1)
+                   .map(list->list.map(i->i*2)
+                                  .map(this::loadData))
+                   .forEach(list->System.out.println("next list " + list));
+        
+        ReactiveSeq.of(10,20,30,40,50)
+                   .slidingT(2,1)  //create a sliding view, returns a List Transformer
+                   .map(i->i*2)  //we now have a Stream of Lists, but still operate on each individual integer
+                   .map(this::loadData)
+                   .unwrap()
+                   .forEach(list->System.out.println("next list " + list));
+    
+    
+    }
+    public String processJob(String job){
+        return job;
+        
+    }
+    @Test
+    public void groupedSet(){
+        
+        
+        
+        SetX.of(10,20,30,40,50)
+            .grouped(2)
+            .printOut();
+        
+        
+    }
     
     public MapX<Integer, List<Person>> cyclopsJava8(ListX<Person> people){
         
@@ -34,7 +94,7 @@ public class ClojureOrJava8 {
     
     public Map<Integer, List<Person>> plainJava8(List<Person> people){
         return people.stream()
-              .collect(Collectors.groupingBy(Person::getAge));   
+                     .collect(Collectors.groupingBy(Person::getAge));   
     }
     
     

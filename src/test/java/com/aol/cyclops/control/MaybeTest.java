@@ -41,11 +41,12 @@ import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.Applicativable.Applicatives;
+import com.aol.cyclops.types.mixins.Printable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 
 
-public class MaybeTest {
+public class MaybeTest implements Printable {
 
 	Maybe<Integer> just;
 	Maybe<Integer> none;
@@ -53,6 +54,17 @@ public class MaybeTest {
 	public void setUp() throws Exception {
 		just = Maybe.of(10);
 		none = Maybe.none();
+	}
+	
+	@Test
+	public void optionalVMaybe(){
+	    
+	    Optional.of(10)
+	            .map(i->print("optional " + (i+10)));
+	            
+	    Maybe.just(10)
+	         .map(i->print("maybe " + (i+10)));
+	    
 	}
 	
     @Test
@@ -538,7 +550,15 @@ public class MaybeTest {
 	}
 	@Test
 	public void testAp3() {
-		assertThat(Maybe.of(1).ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
+	    
+	    
+	    Maybe.of(1)
+	         .ap3(this::add3)
+	         .ap(Optional.of(3))
+	         .ap(Maybe.of(4));
+	    
+		
+	    assertThat(Maybe.of(1).ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
 	}
 	private int add4(int a, int b, int c,int d){
 		return a+b+c+d;
@@ -628,6 +648,13 @@ public class MaybeTest {
 	
 	@Test
 	public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
+	    
+	    
+	    String match = Maybe.just("data is present")
+	                        .visit(present->"hello", ()->"missing");
+	    
+	    
+	    
 		assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
 		assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
 	}

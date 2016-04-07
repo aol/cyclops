@@ -38,7 +38,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public interface MaybeT<T> {
+public interface MaybeT<T>  extends Publisher<T>{
 
    
    

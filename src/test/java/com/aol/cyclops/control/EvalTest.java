@@ -10,7 +10,23 @@ import org.junit.Test;
 
 import com.aol.cyclops.types.ConvertableFunctor;
 public class EvalTest {
+    
+    @Test
+    public void laterExample(){
+        
+      Eval<Integer> delayed =   Eval.later(()->loadData())
+                                    .map(this::process);
+        
+        
+    }
 
+    private String loadData(){
+        return "data";
+    }
+    private Integer process(String process){
+        return 2;
+    }
+    
     @Test
     public void odd(){
         System.out.println(even(Eval.now(200000)).get());

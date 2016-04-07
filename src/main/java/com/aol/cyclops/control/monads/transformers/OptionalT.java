@@ -33,7 +33,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> The type contained on the Optional within
  */
-public interface OptionalT<T> {
+public interface OptionalT<T>  extends Publisher<T>{
    
   
     public <R> OptionalT<R> unit(R value);
@@ -230,8 +230,8 @@ public interface OptionalT<T> {
         return OptionalTSeq.of(AnyM.fromPublisher(publisherOfOptionals));
     }
 
-    public static <A, V extends MonadicValue<Optional<A>>> OptionalTValue<A> fromValue(
-            V monadicValue) {
+    public static <A> OptionalTValue<A> fromValue(
+            MonadicValue<Optional<A>> monadicValue) {
         return OptionalTValue.fromValue(monadicValue);
     }
 

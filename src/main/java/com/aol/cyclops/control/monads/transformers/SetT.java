@@ -2,6 +2,7 @@ package com.aol.cyclops.control.monads.transformers;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Set;
@@ -38,8 +39,11 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface SetT<T> {
+public interface SetT<T>  extends Publisher<T>{
    
+    public <R> SetT<R> unitIterator(Iterator<R> it);
+    public <R> SetT<R> unit(R t);
+    public <R> SetT<R> empty();
    
    /**
 	 * @return The wrapped AnyM

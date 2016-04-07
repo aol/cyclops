@@ -39,7 +39,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public interface ReaderT<T,R> {
+public interface ReaderT<T,R>  extends Publisher<T>{
 
     
 

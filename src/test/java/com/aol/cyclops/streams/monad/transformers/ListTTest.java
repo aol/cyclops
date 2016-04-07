@@ -32,7 +32,7 @@ public class ListTTest {
 		Stream<Integer> nums = Stream.of(1,2);
 		AnyM<Stream<Integer>> stream = AnyM.ofSeq(Optional.of(nums));
 		
-		List<Integer> results = optTAdd2.apply(ListT.fromStream(stream))
+		List<Integer> results = optTAdd2.apply(ListT.fromStreamAnyM(stream))
 										.unwrap()
 										.<Optional<List<Integer>>>unwrap().get();
 		

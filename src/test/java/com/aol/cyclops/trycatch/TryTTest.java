@@ -96,9 +96,9 @@ public class TryTTest {
 	}
 	@Test
 	public void flatMap() {
-		TryTSeq<Integer,RuntimeException> optionT = TryT.fromAnyMSeq(AnyM.ofSeq(Stream.of(Try.of(10))));
+		TryTSeq<Integer,RuntimeException> optionT = TryT.fromStream(Stream.of(Try.of(10)));
 		
-		assertThat(optionT.flatMapT(num->TryT.fromAnyMSeq(AnyM.ofSeq(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMapT(num->TryT.fromStream(Stream.of(Try.success("hello world"+num))))
 				.unwrap().<Stream<Try<String,RuntimeException>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Try.of("hello world10")));
 	}

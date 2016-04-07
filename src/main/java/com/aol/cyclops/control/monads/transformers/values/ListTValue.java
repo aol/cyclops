@@ -256,7 +256,7 @@ public class ListTValue<T> implements ListT<T>,
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    public <U> IterableFunctor<U> unitIterator(Iterator<U> u) {
+    public <U> ListTValue<U> unitIterator(Iterator<U> u) {
         return of(run.unit(ListX.fromIterable(()->u)));
     }
     /* (non-Javadoc)
@@ -279,5 +279,8 @@ public class ListTValue<T> implements ListT<T>,
         Stream<T> stream =  run.unwrap();
         return ReactiveSeq.fromStream(stream);
     }
-    
+    @Override
+    public <R> ListTValue<R> empty() {
+       return of(run.empty());
+    }
 }
