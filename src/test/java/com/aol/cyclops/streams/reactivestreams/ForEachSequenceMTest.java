@@ -29,6 +29,11 @@ public class ForEachSequenceMTest {
 	}
 	volatile int times = 0;
 	@Test
+	public void emptyOnComplete(){
+	    ReactiveSeq.empty().forEachEvent(e->{}, e->{}, ()->complete=true);
+	    assertTrue(complete);
+	}
+	@Test
 	public void onComplete(){
         ReactiveSeq.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .map(this::load)

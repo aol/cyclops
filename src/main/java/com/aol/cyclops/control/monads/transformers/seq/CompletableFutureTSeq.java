@@ -21,6 +21,7 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
@@ -264,9 +265,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
 
     @Override
     public void subscribe(Subscriber<? super A> s) {
-        run.forEach(e-> FutureW.of(e).subscribe(s));
-       
-        
+        run.forEachEvent(e->FutureW.of(e).subscribe(s),e->s.onError(e),()->s.onComplete()); 
     }
 
     /* (non-Javadoc)

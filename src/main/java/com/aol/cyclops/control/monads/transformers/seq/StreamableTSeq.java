@@ -14,6 +14,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
@@ -257,7 +258,7 @@ public class StreamableTSeq<T>  implements StreamableT<T>,
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-       run.forEach(e->e.subscribe(s));   
+        run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete()); 
     }
 
     /* (non-Javadoc)

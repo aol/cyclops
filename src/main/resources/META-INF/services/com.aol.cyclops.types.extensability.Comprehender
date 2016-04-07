@@ -13,3 +13,4 @@ com.aol.cyclops.internal.comprehensions.comprehenders.XorComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.IorComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.SimpleReactStreamComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.FutureFunctorComprehender
+

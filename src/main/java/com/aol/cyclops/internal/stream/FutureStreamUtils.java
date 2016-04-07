@@ -233,7 +233,7 @@ public class FutureStreamUtils {
 			Iterator<T> it = stream.iterator();
 			Object UNSET = new Object();
 			StreamUtils.stream(new Iterator<T>(){
-				boolean errored = true;
+				boolean errored = false;
 				@Override
 				public boolean hasNext() {
 					boolean result = false;

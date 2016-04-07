@@ -19,6 +19,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
@@ -266,7 +267,7 @@ public class SetTSeq<T>  implements SetT<T>,
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-       run.forEach(e->SetX.fromIterable(e).subscribe(s));   
+        run.forEachEvent(e->SetX.fromIterable(e).subscribe(s),e->s.onError(e),()->s.onComplete());
     }
 
     /* (non-Javadoc)

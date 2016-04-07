@@ -21,6 +21,7 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.EvalT;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
@@ -291,7 +292,7 @@ public class EvalTSeq<T> implements EvalT<T>,
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-       run.forEach(e->e.subscribe(s));   
+        run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete()); 
     }
 
     /* (non-Javadoc)

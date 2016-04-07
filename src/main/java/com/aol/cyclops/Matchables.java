@@ -51,6 +51,8 @@ import com.aol.cyclops.control.monads.transformers.ReaderT;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
+import com.aol.cyclops.control.monads.transformers.TryT;
+import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
@@ -61,6 +63,8 @@ import com.aol.cyclops.control.monads.transformers.seq.ReaderTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.SetTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.StreamTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
@@ -71,6 +75,8 @@ import com.aol.cyclops.control.monads.transformers.values.ReaderTValue;
 import com.aol.cyclops.control.monads.transformers.values.SetTValue;
 import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
 import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
+import com.aol.cyclops.control.monads.transformers.values.TryTValue;
+import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.async.Adapter;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.Topic;
@@ -199,6 +205,12 @@ public class Matchables {
     }
     public static <T> MXor<EvalTValue<T>,EvalTSeq<T>> evalT(EvalT<T> transformer){
         return ()-> transformer instanceof EvalTValue ?  Xor.secondary((EvalTValue<T>)transformer) : Xor.primary((EvalTSeq<T>)transformer);
+    }
+    public static <ST,T> MXor<XorTValue<ST,T>,XorTSeq<ST,T>> xorT(XorT<ST,T> transformer){
+        return ()-> transformer instanceof XorTValue ?  Xor.secondary((XorTValue<ST,T>)transformer) : Xor.primary((XorTSeq<ST,T>)transformer);
+    }
+    public static <T,X extends Throwable> MXor<TryTValue<T,X>,TryTSeq<T,X>> tryT(TryT<T,X> transformer){
+        return ()-> transformer instanceof TryTValue ?  Xor.secondary((TryTValue<T,X>)transformer) : Xor.primary((TryTSeq<T,X>)transformer);
     }
     public static <T> MXor<FutureWTValue<T>,FutureWTSeq<T>> futureWT(FutureWT<T> transformer){
         return ()-> transformer instanceof FutureWTValue ?  Xor.secondary((FutureWTValue<T>)transformer) : Xor.primary((FutureWTSeq<T>)transformer);

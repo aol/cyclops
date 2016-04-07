@@ -58,8 +58,8 @@ import com.aol.cyclops.util.stream.StreamUtils;
 
 public abstract class BaseAnyMValueTest {
 
-	AnyMValue<Integer> just;
-	AnyMValue<Integer> none;
+	protected AnyMValue<Integer> just;
+	protected AnyMValue<Integer> none;
 	
 
 	@Test

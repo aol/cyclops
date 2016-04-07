@@ -2,8 +2,6 @@ package com.aol.cyclops.control;
 
 
 
-import java.io.File;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +30,8 @@ import org.jooq.lambda.function.Function5;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.monads.transformers.EvalT;
+import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
@@ -47,6 +47,7 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
@@ -567,6 +568,11 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 		Objects.requireNonNull(future);
 		return AnyMFactory.instance.value(future);
 	}
+	
+	public static <T> AnyMValue<T> fromEvalTValue(EvalTValue<T> evalT){
+        Objects.requireNonNull(evalT);
+        return AnyMFactory.instance.value(evalT);
+    }
 	
 	/**
 	 * Create an AnyM instance that wraps an Iterable

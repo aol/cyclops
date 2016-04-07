@@ -37,7 +37,8 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  */
 public interface TryT<T,X extends Throwable>  extends Publisher<T> {
    
-  
+    public <R> TryT<R,X> unit(R value);
+    public <R> TryT<R,X> empty();
     public <B> TryT<B,X> flatMap(Function<? super T, ? extends Try<B,X>> f);
 	/**
 	 * @return The wrapped AnyM

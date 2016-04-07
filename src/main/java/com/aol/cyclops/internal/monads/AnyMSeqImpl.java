@@ -10,6 +10,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import org.reactivestreams.Subscription;
+
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 
@@ -23,6 +25,7 @@ import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
@@ -232,5 +235,54 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
     public <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
         return super.toSequence(fn);
     }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations#forEachX(long, java.util.function.Consumer)
+     */
+    @Override
+    public <X extends Throwable> Subscription forEachX(long numberOfElements, Consumer<? super T> consumer) {
+        return this.stream().forEachX(numberOfElements, consumer);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations#forEachXWithError(long, java.util.function.Consumer, java.util.function.Consumer)
+     */
+    @Override
+    public <X extends Throwable> Subscription forEachXWithError(long numberOfElements, Consumer<? super T> consumer,
+            Consumer<? super Throwable> consumerError) {
+       return this.stream().forEachXWithError(numberOfElements, consumer, consumerError);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations#forEachXEvents(long, java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
+     */
+    @Override
+    public <X extends Throwable> Subscription forEachXEvents(long numberOfElements, Consumer<? super T> consumer,
+            Consumer<? super Throwable> consumerError, Runnable onComplete) {
+       return this.stream().forEachXEvents(numberOfElements, consumer, consumerError, onComplete);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations#forEachWithError(java.util.function.Consumer, java.util.function.Consumer)
+     */
+    @Override
+    public <X extends Throwable> void forEachWithError(Consumer<? super T> consumerElement,
+            Consumer<? super Throwable> consumerError) {
+       this.stream().forEachWithError(consumerElement, consumerError);
+        
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations#forEachEvent(java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
+     */
+    @Override
+    public <X extends Throwable> void forEachEvent(Consumer<? super T> consumerElement,
+            Consumer<? super Throwable> consumerError, Runnable onComplete) {
+        this.stream().forEachEvent(consumerElement, consumerError, onComplete);
+       
+        
+    }
+    
+    
 	
 }

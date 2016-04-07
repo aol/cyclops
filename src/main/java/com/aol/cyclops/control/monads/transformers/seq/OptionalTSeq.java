@@ -20,6 +20,7 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
@@ -284,7 +285,7 @@ public class OptionalTSeq<T> implements OptionalT<T>,
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-       run.forEach(e->Maybe.fromOptional(e).subscribe(s));   
+        run.forEachEvent(e->Maybe.fromOptional(e).subscribe(s),e->s.onError(e),()->s.onComplete());
     }
 
     /* (non-Javadoc)

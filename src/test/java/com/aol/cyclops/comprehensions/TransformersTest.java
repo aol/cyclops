@@ -13,6 +13,7 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.control.monads.transformers.EvalT;
@@ -23,6 +24,7 @@ import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
+import com.aol.cyclops.control.monads.transformers.TryT;
 import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.SetTSeq;
@@ -33,6 +35,7 @@ import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
+import com.aol.cyclops.control.monads.transformers.values.TryTValue;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
@@ -61,6 +64,7 @@ public class TransformersTest {
         ListTSeq<Integer> list = ListT.fromStream(Stream.of(ListX.of(11,22)));
         assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
     }
+   
     @Test
     public void evalTAndListT(){
         
@@ -79,6 +83,13 @@ public class TransformersTest {
     public void xorTAndListT(){
         
         XorTValue<?,Integer> opt =XorT.fromValue(Eval.now(Xor.primary(10)));
+        ListTSeq<Integer> list = ListT.fromStream(Stream.of(ListX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+    }
+    @Test
+    public void tryTAndListT(){
+        
+        TryTValue<Integer,Throwable> opt =TryT.fromValue(Eval.now(Try.success(10)));
         ListTSeq<Integer> list = ListT.fromStream(Stream.of(ListX.of(11,22)));
         assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
     }

@@ -264,7 +264,8 @@ public class ListTSeq<T> implements ListT<T>,
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-       run.forEach(e->ListX.fromIterable(e).subscribe(s));   
+       run.forEachEvent(e->ListX.fromIterable(e).subscribe(s),e->s.onError(e),()->s.onComplete());
+      
     }
 
     /* (non-Javadoc)

@@ -14,6 +14,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
@@ -251,7 +252,7 @@ public class FutureWTSeq<A> implements FutureWT<A>,
 
     @Override
     public void subscribe(Subscriber<? super A> s) {
-        run.forEach(e-> e.subscribe(s));
+        run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete());
        
         
     }

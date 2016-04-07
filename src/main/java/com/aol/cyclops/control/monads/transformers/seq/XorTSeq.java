@@ -319,7 +319,7 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-       run.forEach(e->ListX.fromIterable(e).subscribe(s));   
+        run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete());
     }
 
     /* (non-Javadoc)

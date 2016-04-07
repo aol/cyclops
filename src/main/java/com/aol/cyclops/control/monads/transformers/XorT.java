@@ -38,7 +38,8 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *            The type contained on the Xor within
  */
 public interface XorT<ST,T>  extends Publisher<T>{
-
+    public <R> XorT<ST,R> unit(R value);
+    public <R> XorT<ST,R> empty();
     
     <ST2,B> XorT<ST2,B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST2,? extends B>> f);
 

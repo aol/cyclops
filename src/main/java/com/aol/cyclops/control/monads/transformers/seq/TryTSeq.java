@@ -16,6 +16,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.control.monads.transformers.TryT;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
@@ -297,7 +298,8 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-       run.forEach(e->e.subscribe(s));   
+        run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete());
+      
     }
 
     /* (non-Javadoc)

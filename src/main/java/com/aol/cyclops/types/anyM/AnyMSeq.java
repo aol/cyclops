@@ -46,6 +46,7 @@ import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuild
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
@@ -61,6 +62,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 									IterableCollectable<T>,
 									FilterableFunctor<T>,
 									ZippingApplicativable<T>,
+									ReactiveStreamsTerminalOperations<T>,
 									Publisher<T>{
     @Override
     default <R, A> R collect(Collector<? super T, A, R> collector){
