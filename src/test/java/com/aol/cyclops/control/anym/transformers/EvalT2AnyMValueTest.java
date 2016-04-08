@@ -18,7 +18,7 @@ public class EvalT2AnyMValueTest extends BaseAnyMValueTest {
     public void setUp() throws Exception {
         just = AnyM.fromEvalTValue(EvalT.fromValue(Maybe.just(Eval.now(10))));
         
-        none = AnyM.fromEvalTValue(EvalT.fromValue(Maybe.none()));
+        none = AnyM.fromEvalTValue(EvalT.emptyMaybe());
     }
     @Test
     public void testPeek() {

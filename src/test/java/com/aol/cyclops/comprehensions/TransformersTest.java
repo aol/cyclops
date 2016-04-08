@@ -69,8 +69,8 @@ public class TransformersTest {
     public void evalTAndListT(){
         
         EvalTValue<Integer> opt =EvalT.fromValue(Eval.now(Eval.now(10)));
-        ListTSeq<Integer> list = ListT.fromStream(Stream.of(ListX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        ListTSeq<Integer> list = ListT.fromIterable(ListX.of(ListX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void futureWTAndListT(){
@@ -118,8 +118,8 @@ public class TransformersTest {
     public void evalTAndSetT(){
         
         EvalTValue<Integer> opt =EvalT.fromValue(Eval.now(Eval.now(10)));
-        SetTSeq<Integer> Set = SetT.fromStream(Stream.of(SetX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->Set , (a,b)->a+b).toSet(),equalTo(SetX.of(21,32)));
+        SetTSeq<Integer> Set = SetT.fromIterable(ListX.of(SetX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->Set , (a,b)->a+b).toSet().size(),equalTo(1));
     }
     @Test
     public void futureWTAndSetT(){
@@ -160,8 +160,8 @@ public class TransformersTest {
     public void evalTAndStreamableT(){
         
         EvalTValue<Integer> opt =EvalT.fromValue(Eval.now(Eval.now(10)));
-        StreamableTSeq<Integer> streamable = StreamableT.fromStream(Stream.of(Streamable.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        StreamableTSeq<Integer> streamable = StreamableT.fromIterable(ListX.of(Streamable.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void futureWTAndStreamableT(){
@@ -203,8 +203,8 @@ public class TransformersTest {
     public void evalTAndStreamT(){
         
         EvalTValue<Integer> opt =EvalT.fromValue(Eval.now(Eval.now(10)));
-        StreamTSeq<Integer> list = StreamT.fromStream(Stream.of(Stream.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+      
+        assertThat(For.Publishers.each2(opt, a->StreamT.fromIterable(ListX.of(Stream.of(11,22))) , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void futureWTAndStreamT(){

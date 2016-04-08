@@ -10,15 +10,15 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.anym.BaseAnyMValueTest;
-import com.aol.cyclops.control.monads.transformers.EvalT;
+import com.aol.cyclops.control.monads.transformers.MaybeT;
 import com.aol.cyclops.data.Mutable;
 
-public class EvalTAnyMValueTest extends BaseAnyMValueTest {
+public class MaybeTAnyMValueTest extends BaseAnyMValueTest {
     @Before
     public void setUp() throws Exception {
-        just = AnyM.fromEvalTValue(EvalT.fromValue(Maybe.just(Eval.now(10))));
+        just = AnyM.fromMaybeTValue(MaybeT.fromValue(Maybe.just(Maybe.just(10))));
         
-        none = AnyM.fromEvalTValue(EvalT.fromValue(Maybe.just(Eval.later(()->null))));
+        none = AnyM.fromMaybeTValue(MaybeT.emptyMaybe());
     }
     @Test
     public void testPeek() {

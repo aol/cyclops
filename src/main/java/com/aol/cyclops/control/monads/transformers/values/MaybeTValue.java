@@ -253,6 +253,10 @@ public class MaybeTValue<T> implements MaybeT<T>,
         
         return new MaybeTValue<>(monads);
     }
+    public static <A> MaybeTValue<A> of(Maybe<A> maybe) {
+        
+        return fromValue(Maybe.just(maybe));
+    }
 
     /*
      * (non-Javadoc)
@@ -301,5 +305,9 @@ public class MaybeTValue<T> implements MaybeT<T>,
     public <R> MaybeTValue<R> empty(){
         return of(run.unit(Maybe.none()));
      }
+
+    public static<T>  MaybeTValue<T> emptyMaybe() {
+        return fromValue(Maybe.none());
+    }
  
 }

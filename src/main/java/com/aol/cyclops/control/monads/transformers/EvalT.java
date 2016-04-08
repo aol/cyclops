@@ -13,6 +13,7 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.types.MonadicValue;
@@ -265,6 +266,9 @@ public interface EvalT<T>  extends Publisher<T>{
             Iterable<Eval<A>> iterableOfEvals) {
         return EvalTValue.of(AnyM.fromIterableValue(iterableOfEvals));
     }
+    public static <T> EvalTValue<T> emptyMaybe() {
+        return fromValue(Maybe.none());
+     }
    
 
 }

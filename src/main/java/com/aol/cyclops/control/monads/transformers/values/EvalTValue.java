@@ -13,6 +13,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.EvalT;
 import com.aol.cyclops.types.ConvertableFunctor;
@@ -268,6 +269,9 @@ public class EvalTValue<T> implements EvalT<T>,
         return run.get().get();
     }
     
+    public boolean isEvalPresent(){
+        return !run.isEmpty();
+    }
     
     
     @Override
@@ -302,5 +306,13 @@ public class EvalTValue<T> implements EvalT<T>,
     public <R> EvalTValue<R> empty(){
         return of(run.unit(Eval.later(()->null)));
      }
+
+    public static <T> EvalTValue<T> of(Eval<T> eval) {
+       return fromValue(Maybe.just(eval));
+    }
+
+    public static <T> EvalTValue<T> emptyMaybe() {
+       return fromValue(Maybe.none());
+    }
  
 }
