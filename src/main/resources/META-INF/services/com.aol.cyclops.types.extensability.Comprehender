@@ -15,3 +15,5 @@ com.aol.cyclops.internal.comprehensions.comprehenders.SimpleReactStreamComprehen
 com.aol.cyclops.internal.comprehensions.comprehenders.FutureFunctorComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.EvalTValueComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.MaybeTValueComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.CompletableFutureTValueComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.OptionalTValueComprehender

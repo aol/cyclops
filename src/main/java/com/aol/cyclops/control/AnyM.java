@@ -30,8 +30,10 @@ import org.jooq.lambda.function.Function5;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
+import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
@@ -576,6 +578,14 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> AnyMValue<T> fromMaybeTValue(MaybeTValue<T> maybeT){
         Objects.requireNonNull(maybeT);
         return AnyMFactory.instance.value(maybeT);
+    }
+	public static <T> AnyMValue<T> fromOptionalTValue(OptionalTValue<T> optionalT){
+        Objects.requireNonNull(optionalT);
+        return AnyMFactory.instance.value(optionalT);
+    }
+	public static <T> AnyMValue<T> fromCompletableFutureTValue(CompletableFutureTValue<T> futureT){
+        Objects.requireNonNull(futureT);
+        return AnyMFactory.instance.value(futureT);
     }
 	
 	/**

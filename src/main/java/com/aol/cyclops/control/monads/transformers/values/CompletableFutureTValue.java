@@ -3,6 +3,7 @@ package com.aol.cyclops.control.monads.transformers.values;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -15,6 +16,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.types.ConvertableFunctor;
@@ -114,20 +116,19 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
        return new CompletableFutureTValue<B>(run.map(o-> o.thenApply(f)));
    }
    /**
-	 * Flat Map the wrapped CompletableFuture
-	  * <pre>
-	 * {@code 
-	 *  CompletableFutureT.of(AnyM.fromStream(Arrays.asCompletableFuture(10))
-	 *             .flatMap(t->CompletableFuture.completedFuture(20));
-	 *  
-	 *  
-	 *  //CompletableFutureT<AnyMValue<Stream<CompletableFuture[20]>>>
-	 * }
-	 * </pre>
-	 * @param f FlatMap function
-	 * @return CompletableFutureT that applies the flatMap function to the wrapped CompletableFuture
-	 */
-
+	* Flat Map the wrapped CompletableFuture
+	* <pre>
+	* {@code 
+    *  CompletableFutureT.of(AnyM.fromStream(Arrays.asCompletableFuture(10))
+	*             .flatMap(t->CompletableFuture.completedFuture(20));
+	*  
+	*  
+	*  //CompletableFutureT<AnyMValue<Stream<CompletableFuture[20]>>>
+	* }
+	* </pre>
+	* @param f FlatMap function
+	* @return CompletableFutureT that applies the flatMap function to the wrapped CompletableFuture
+    */
    public <B> CompletableFutureTValue<B> flatMapT(Function<? super A,CompletableFutureTValue<B>> f){
 	   return of(run.map(future-> future.thenCompose(a-> f.apply(a).run.stream().toList().get(0))));
    }
@@ -224,6 +225,10 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
    public static <A> CompletableFutureTValue<A> of(AnyMValue<CompletableFuture<A>> monads){
 	   return new CompletableFutureTValue<>(monads);
    }
+   public static <A> CompletableFutureTValue<A> of(CompletableFuture<A> maybe) {
+       
+       return CompletableFutureT.fromOptional(Optional.of(maybe));
+   }
    
    public static <A,V extends MonadicValue<CompletableFuture<A>>> CompletableFutureTValue<A> fromValue(V monadicValue){
        return of(AnyM.ofValue(monadicValue));
@@ -264,7 +269,10 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
        
         
     }
-
+    public boolean isFuturePresent(){
+        return !run.isEmpty();
+        
+    }
     @Override
     public boolean test(A t) {
         val maybeEval = run.toMaybe();
@@ -278,6 +286,9 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
     public <R> CompletableFutureTValue<R> empty(){
         return of(run.unit(new CompletableFuture<R>()));
      }
+    public static<T>  CompletableFutureTValue<T> emptyMaybe() {
+        return CompletableFutureT.fromOptional(Optional.empty());
+    }
  
  
 }

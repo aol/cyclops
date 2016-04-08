@@ -247,5 +247,8 @@ public interface OptionalT<T>  extends Publisher<T>{
             Iterable<Optional<A>> iterableOfOptionals) {
         return OptionalTValue.of(AnyM.fromIterableValue(iterableOfOptionals));
     }
+    public static <T> OptionalTValue<T> emptyMaybe(){
+        return OptionalTValue.emptyMaybe();
+    }
  
 }

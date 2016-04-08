@@ -15,6 +15,7 @@ import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
+import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -204,6 +205,9 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>{
     public static <A> CompletableFutureTValue<A> fromIterableValue(
             Iterable<CompletableFuture<A>> iterableOfCompletableFutures) {
         return CompletableFutureTValue.of(AnyM.fromIterableValue(iterableOfCompletableFutures));
+    }
+    public static <T> CompletableFutureTValue<T> emptyMaybe(){
+        return CompletableFutureTValue.emptyMaybe();
     }
 
 }

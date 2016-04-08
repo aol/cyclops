@@ -236,6 +236,10 @@ public class OptionalTValue<T> implements OptionalT<T>,
 	public static <A> OptionalTValue<A> of(AnyMValue<Optional<A>> monads) {
 		return new OptionalTValue<>(monads);
 	}
+	 public static <A> OptionalTValue<A> of(Optional<A> maybe) {
+	        
+	        return fromValue(Maybe.just(maybe));
+	    }
 	public static <A,V extends MonadicValue<Optional<A>>> OptionalTValue<A> fromValue(V monadicValue){
 	        return of(AnyM.ofValue(monadicValue));
 	}
@@ -284,5 +288,8 @@ public class OptionalTValue<T> implements OptionalT<T>,
 
     public <R> OptionalTValue<R> empty() {
         return of(run.unit(Optional.empty()));
+    }
+    public static<T>  OptionalTValue<T> emptyMaybe() {
+        return fromValue(Maybe.none());
     }
 }
