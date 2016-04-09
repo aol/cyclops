@@ -286,7 +286,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
     public <R> CompletableFutureTValue<R> empty(){
         return of(run.unit(new CompletableFuture<R>()));
      }
-    public static<T>  CompletableFutureTValue<T> emptyMaybe() {
+    public static<T>  CompletableFutureTValue<T> emptyOptional() {
         return CompletableFutureT.fromOptional(Optional.empty());
     }
  

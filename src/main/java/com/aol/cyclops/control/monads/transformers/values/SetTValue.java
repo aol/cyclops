@@ -3,6 +3,8 @@ package com.aol.cyclops.control.monads.transformers.values;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -17,12 +19,12 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
-import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -226,7 +228,15 @@ public class SetTValue<T>  implements SetT<T>,
    public static <A> SetTValue<A> of(AnyMValue<Set<A>> monads){
 	   return new SetTValue<>(monads);
    }
-
+   public static <A> SetTValue<A> of(Set<A> monads){
+       return SetT.fromOptional(Optional.of(monads));
+   }
+   public boolean isSetPresent() {
+       return !run.isEmpty();
+   }
+   public Set<T> get(){
+       return run.get();
+   }
 	/**
 	 * Create a SetT from an AnyM that wraps a monad containing a Stream
 	 * 
@@ -254,8 +264,8 @@ public class SetTValue<T>  implements SetT<T>,
      */
     @Override
     public Iterator<T> iterator() {
-        Stream<T> stream =  run.unwrap();
-        return stream.iterator();
+       
+        return stream().iterator();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
@@ -276,17 +286,19 @@ public class SetTValue<T>  implements SetT<T>,
      */
     @Override
     public Collectable<T> collectable() {
-        Stream<T> stream =  run.unwrap();
-        return ReactiveSeq.fromStream(stream);
+        return stream();
     }
     @Override
     public ReactiveSeq<T> stream() {
-        Stream<T> stream =  run.unwrap();
-        return ReactiveSeq.fromStream(stream);
+        return run.stream().flatMap(i->i.stream());    
     }
     
     @Override
     public <R> SetTValue<R> empty() {
        return of(run.empty());
+    }
+    
+    public static<T>  SetTValue<T> emptyOptional() {
+        return SetT.fromOptional(Optional.empty());
     }
 }

@@ -46,8 +46,6 @@ public interface IterableFunctor<T> extends Iterable<T>,Functor<T>, Foldable<T>,
         c.active.set(publishers.size()+1);
         QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory,c,publishers.size());
        
-       
-        Executor e = Executors.newFixedThreadPool(1);
         Supplier<Continuation> sp = ()->{
               subscribe(init);
               for(Publisher next : publishers){

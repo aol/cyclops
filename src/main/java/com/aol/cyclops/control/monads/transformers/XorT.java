@@ -265,5 +265,8 @@ public interface XorT<ST,T>  extends Publisher<T>{
             Iterable<Xor<ST,A>> iterableOfXors) {
         return XorTValue.of(AnyM.fromIterableValue(iterableOfXors));
     }
+    public static<ST,PT>  XorTValue<ST,PT> emptyOptional() {
+        return XorT.fromOptional(Optional.empty());
+    }
 
 }

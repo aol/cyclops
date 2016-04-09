@@ -1,6 +1,7 @@
 package com.aol.cyclops.control.monads.transformers.values;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -9,10 +10,12 @@ import java.util.function.Supplier;
 
 import org.reactivestreams.Subscriber;
 
+
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
@@ -256,6 +259,9 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
     public static <ST,A> XorTValue<ST,A> of(AnyMValue<Xor<ST,A>> monads) {
         return new XorTValue<>(monads);
     }
+    public static <ST,A> XorTValue<ST,A> of(Xor<ST,A> monads) {
+        return XorT.fromOptional(Optional.of(monads));
+    }
     public static <A,ST,V extends MonadicValue<Xor<ST,A>>> XorTValue<ST,A> fromValue(V monadicValue){
         return of(AnyM.ofValue(monadicValue));
     }
@@ -275,7 +281,7 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
     
     
     public boolean isPrimary(){
-        return run.orElseGet(Xor.secondary(null)).isPrimary();
+        return run.orElse(Xor.secondary(null)).isPrimary();
     }
     public boolean isSecondary(){
         return run.orElseGet(Xor.primary(null)).isSecondary();
@@ -288,7 +294,7 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
 
     @Override
     public Iterator<T> iterator() {
-       return run.orElseGet(Xor.secondary(null)).iterator();
+       return run.orElse(Xor.secondary(null)).iterator();
     }
 
     @Override
@@ -311,10 +317,6 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
         return visit(primary,()->null);
     }
     
-   
-    
-
-   
     
     public <R> XorTValue<ST,R> unit(R value){
        return of(run.unit(Xor.primary(value)));
@@ -322,5 +324,9 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
     public <R> XorTValue<ST,R> empty(){
         return of(run.unit(Xor.secondary(null)));
      }
+    
+    public static<ST,PT>  XorTValue<ST,PT> emptyOptional() {
+        return XorT.fromOptional(Optional.empty());
+    }
  
 }

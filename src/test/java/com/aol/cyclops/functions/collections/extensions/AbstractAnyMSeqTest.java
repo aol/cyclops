@@ -71,6 +71,11 @@ public abstract class AbstractAnyMSeqTest {
 	public abstract <T> AnyMSeq<T> of(T... values);
 
     public static final LazyReact r = new LazyReact(10,10);
+    @Test
+    public void stream(){
+       
+        assertThat(of(1,2,3).stream().collect(Collectors.toList()),hasItems(1,2,3));
+    }
 	@Test
     public void mergePublisher() throws InterruptedException{
       
@@ -224,6 +229,7 @@ public abstract class AbstractAnyMSeqTest {
 	}
 	@Test
 	public void filter(){
+	   // System.out.println( (Object) of(1,2,3,4,5).filter(i->i<3).unwrap());
 		assertThat(of(1,2,3,4,5).filter(i->i<3).toList(),hasItems(1,2));
 	}
 	@Test

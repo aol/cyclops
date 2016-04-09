@@ -33,8 +33,12 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
+import com.aol.cyclops.control.monads.transformers.values.ListTValue;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
+import com.aol.cyclops.control.monads.transformers.values.SetTValue;
+import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
+import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
@@ -591,6 +595,22 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> AnyMValue<T> fromFutureWTValue(FutureWTValue<T> futureT){
         Objects.requireNonNull(futureT);
         return AnyMFactory.instance.value(futureT);
+    }
+	public static <ST,PT> AnyMValue<PT> fromXorTValue(XorTValue<ST,PT> xorT){
+        Objects.requireNonNull(xorT);
+        return AnyMFactory.instance.value(xorT);
+    }
+	public static <T> AnyMSeq<T> fromListTValue(ListTValue<T> listT){
+        Objects.requireNonNull(listT);
+        return AnyMFactory.instance.seq(listT);
+    }
+	public static <T> AnyMSeq<T> fromStreamTValue(StreamTValue<T> streamT){
+        Objects.requireNonNull(streamT);
+        return AnyMFactory.instance.seq(streamT);
+    }
+	public static <T> AnyMSeq<T> fromSetTValue(SetTValue<T> setT){
+        Objects.requireNonNull(setT);
+        return AnyMFactory.instance.seq(setT);
     }
 	
 	/**

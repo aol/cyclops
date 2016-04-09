@@ -1,6 +1,7 @@
 package com.aol.cyclops.control.monads.transformers.values;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -299,6 +300,33 @@ public class MaybeTValue<T> implements MaybeT<T>,
        return run.get().test(t);
     }
     
+    
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    public <U> MaybeTValue<U> ofType(Class<U> type) {
+        return (MaybeTValue<U>)Filterable.super.ofType(type);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    public MaybeTValue<T> filterNot(Predicate<? super T> fn) {
+       
+        return (MaybeTValue<T>)Filterable.super.filterNot(fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    public MaybeTValue<T> notNull() {
+        return (MaybeTValue<T>)Filterable.super.notNull();
+    }
+
     public <R> MaybeTValue<R> unit(R value){
        return of(run.unit(Maybe.of(value)));
     }
@@ -306,8 +334,8 @@ public class MaybeTValue<T> implements MaybeT<T>,
         return of(run.unit(Maybe.none()));
      }
 
-    public static<T>  MaybeTValue<T> emptyMaybe() {
-        return fromValue(Maybe.none());
+    public static<T>  MaybeTValue<T> emptyOptional() {
+        return MaybeT.fromOptional(Optional.empty());
     }
  
 }

@@ -2,6 +2,8 @@ package com.aol.cyclops.control.monads.transformers.values;
 
 
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -16,7 +18,6 @@ import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
-import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -183,9 +184,18 @@ public class StreamTValue<T> implements StreamT<T>,
    public static <A> StreamTValue<A> of(AnyMValue<Stream<A>> monads){
 	   return new StreamTValue<>(monads);
    }
+   public static <A> StreamTValue<A> of(Stream<A> monads){
+       return StreamT.fromOptional(Optional.of(monads));
+   }
    
    public static <A,V extends MonadicValue<Stream<A>>> StreamTValue<A> fromValue(V monadicValue){
        return of(AnyM.ofValue(monadicValue));
+   }
+   public boolean isStreamPresent() {
+       return !run.isEmpty();
+   }
+   public Stream<T> get(){
+       return run.get();
    }
    /*
 	 * (non-Javadoc)
@@ -200,8 +210,7 @@ public class StreamTValue<T> implements StreamT<T>,
      */
     @Override
     public Iterator<T> iterator() {
-        Stream<T> stream =  run.unwrap();
-        return stream.iterator();
+       return stream().iterator();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
@@ -222,17 +231,19 @@ public class StreamTValue<T> implements StreamT<T>,
      */
     @Override
     public Collectable<T> collectable() {
-        Stream<T> stream =  run.unwrap();
-        return ReactiveSeq.fromStream(stream);
+       return stream();
     }
     @Override
     public ReactiveSeq<T> stream() {
-        Stream<T> stream =  run.unwrap();
-        return ReactiveSeq.fromStream(stream);
+        return run.stream().peek(i->{
+           System.out.println("peek!");
+        } ).flatMap(i->i);  
     }
     @Override
     public <R> StreamTValue<R> empty() {
        return of(run.empty());
     }
- 
+    public static<T>  StreamTValue<T> emptyOptional() {
+        return StreamT.fromOptional(Optional.empty());
+    }
 }

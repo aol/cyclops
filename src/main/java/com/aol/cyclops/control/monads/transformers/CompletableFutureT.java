@@ -207,7 +207,7 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>{
         return CompletableFutureTValue.of(AnyM.fromIterableValue(iterableOfCompletableFutures));
     }
     public static <T> CompletableFutureTValue<T> emptyMaybe(){
-        return CompletableFutureTValue.emptyMaybe();
+        return CompletableFutureTValue.emptyOptional();
     }
 
 }

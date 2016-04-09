@@ -246,5 +246,8 @@ public interface ListT<T>  extends Publisher<T>{
             Iterable<List<A>> iterableOfLists) {
         return ListTValue.of(AnyM.fromIterableValue(iterableOfLists));
     }
+    public static <T> ListTValue<T> emptyOptional(){
+        return ListTValue.emptyOptional();
+    }
  
 }

@@ -41,7 +41,7 @@ public class CompletableFutureTValueComprehender implements ValueComprehender<Co
 
 	@Override
 	public CompletableFutureTValue empty() {
-		return CompletableFutureTValue.emptyMaybe();
+		return CompletableFutureTValue.emptyOptional();
 	}
 
 	@Override

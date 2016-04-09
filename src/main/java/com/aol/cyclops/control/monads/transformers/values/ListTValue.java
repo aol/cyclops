@@ -3,6 +3,7 @@ package com.aol.cyclops.control.monads.transformers.values;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -20,7 +21,6 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
-import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -43,14 +43,14 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T>
  */
 public class ListTValue<T> implements ListT<T>,
-                                ConvertableSequence<T>,
-                                ExtendedTraversable<T>,
-                                Sequential<T>,
-                                CyclopsCollectable<T>,
-                                IterableCollectable<T>,
-                                FilterableFunctor<T>,
-                                ZippingApplicativable<T>,
-                                Publisher<T>{
+                                      ConvertableSequence<T>,
+                                      ExtendedTraversable<T>,
+                                      Sequential<T>,
+                                      CyclopsCollectable<T>,
+                                      IterableCollectable<T>,
+                                      FilterableFunctor<T>,
+                                      ZippingApplicativable<T>,
+                                      Publisher<T>{
    
    final AnyMValue<List<T>> run;
 
@@ -220,6 +220,9 @@ public class ListTValue<T> implements ListT<T>,
    public static <A> ListTValue<A> of(AnyMValue<List<A>> monads){
 	   return new ListTValue<>(monads);
    }
+   public static <A> ListTValue<A> of(List<A> monads){
+       return ListT.fromOptional(Optional.of(monads));
+   }
 
 	/**
 	 * Create a ListT from an AnyM that wraps a monad containing a Stream
@@ -249,8 +252,8 @@ public class ListTValue<T> implements ListT<T>,
      */
     @Override
     public Iterator<T> iterator() {
-        Stream<T> stream =  run.unwrap();
-        return stream.iterator();
+        
+        return stream().iterator();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
@@ -271,16 +274,25 @@ public class ListTValue<T> implements ListT<T>,
      */
     @Override
     public Collectable<T> collectable() {
-        Stream<T> stream =  run.unwrap();
-        return ReactiveSeq.fromStream(stream);
+        
+        return stream();
     }
     @Override
     public ReactiveSeq<T> stream() {
-        Stream<T> stream =  run.unwrap();
-        return ReactiveSeq.fromStream(stream);
+       return run.stream().flatMap(i->i.stream());
     }
     @Override
     public <R> ListTValue<R> empty() {
        return of(run.empty());
+    }
+    public static<T>  ListTValue<T> emptyOptional() {
+        return ListT.fromOptional(Optional.empty());
+    }
+    public boolean isListPresent() {
+      return !run.isEmpty();
+    }
+    
+    public List<T> get(){
+        return run.get();
     }
 }

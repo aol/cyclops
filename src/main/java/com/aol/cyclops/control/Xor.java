@@ -104,6 +104,9 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 		return Xor.primary(unit);
 	}
 	
+	default Optional<PT> toOptional(){
+	   return isPrimary() ? Optional.of(get()) : Optional.empty();
+	}
 	
 	Xor<ST,PT> filter(Predicate<? super PT> test);
 	

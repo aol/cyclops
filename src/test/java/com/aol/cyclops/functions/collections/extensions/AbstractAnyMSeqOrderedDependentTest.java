@@ -30,12 +30,14 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
+import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMSeqTest {
+    
     @Test
     public void sortedComparator() {
         assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),is(Arrays.asList(5,4,3,2,1)));

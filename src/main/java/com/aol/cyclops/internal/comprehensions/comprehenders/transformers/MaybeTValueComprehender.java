@@ -40,7 +40,7 @@ public class MaybeTValueComprehender implements ValueComprehender<MaybeTValue>, 
 
 	@Override
 	public MaybeTValue empty() {
-		return MaybeTValue.emptyMaybe();
+		return MaybeTValue.emptyOptional();
 	}
 
 	@Override
