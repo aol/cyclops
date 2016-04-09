@@ -3,6 +3,7 @@ package com.aol.cyclops.control.monads.transformers.values;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -16,6 +17,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
@@ -224,6 +226,9 @@ public class FutureWTValue<A> implements FutureWT<A>,
    public static <A> FutureWTValue<A> of(AnyMValue<FutureW<A>> monads){
 	   return new FutureWTValue<>(monads);
    }
+   public static <A> FutureWTValue<A> of(FutureW<A> monads){
+       return FutureWT.fromOptional(Optional.of(monads));
+   }
    
    public static <A,V extends MonadicValue<FutureW<A>>> FutureWTValue<A> fromValue(V monadicValue){
        return of(AnyM.ofValue(monadicValue));
@@ -264,6 +269,10 @@ public class FutureWTValue<A> implements FutureWT<A>,
        
         
     }
+    public boolean isFuturePresent(){
+        return !run.isEmpty();
+        
+    }
 
     @Override
     public boolean test(A t) {
@@ -278,6 +287,8 @@ public class FutureWTValue<A> implements FutureWT<A>,
     public <R> FutureWTValue<R> empty(){
         return of(run.unit(FutureW.empty()));
      }
- 
+    public static<T>  FutureWTValue<T> emptyOptional() {
+        return FutureWT.fromOptional(Optional.empty());
+    }
  
 }

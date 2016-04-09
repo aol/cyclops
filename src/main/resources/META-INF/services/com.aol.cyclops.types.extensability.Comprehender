@@ -17,3 +17,4 @@ com.aol.cyclops.internal.comprehensions.comprehenders.transformers.EvalTValueCom
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.MaybeTValueComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.CompletableFutureTValueComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.OptionalTValueComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.FutureWTValueComprehender

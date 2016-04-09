@@ -32,6 +32,7 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
+import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -584,6 +585,10 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
         return AnyMFactory.instance.value(optionalT);
     }
 	public static <T> AnyMValue<T> fromCompletableFutureTValue(CompletableFutureTValue<T> futureT){
+        Objects.requireNonNull(futureT);
+        return AnyMFactory.instance.value(futureT);
+    }
+	public static <T> AnyMValue<T> fromFutureWTValue(FutureWTValue<T> futureT){
         Objects.requireNonNull(futureT);
         return AnyMFactory.instance.value(futureT);
     }

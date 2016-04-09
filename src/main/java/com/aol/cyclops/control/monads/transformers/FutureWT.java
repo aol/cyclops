@@ -211,4 +211,8 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>{
         return FutureWTValue.of(AnyM.fromIterableValue(iterableOfCompletableFutures));
     }
 
+    public static<T>  FutureWTValue<T> emptyOptional() {
+        return FutureWTValue.emptyOptional();
+    }
+
 }
