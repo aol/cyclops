@@ -295,7 +295,8 @@ public class ListTSeq<T> implements ListT<T>,
     }
     @Override
     public <T>ListTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
-        return of((AnyMSeq)traversable); //bit of a hack for now
+        
+        return of((AnyMSeq)traversable.map(t->ListX.fromIterable(t)));
     }
     @Override
     public AnyMSeq<? extends Traversable<T>> transformerStream() {

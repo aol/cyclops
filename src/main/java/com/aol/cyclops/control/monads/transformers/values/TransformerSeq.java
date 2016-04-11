@@ -546,11 +546,7 @@ public interface TransformerSeq<T> extends  NestedFoldable<T>,
     }
 
 
-    @Override
-    default ReactiveSeq<T> stream() {
-      
-        return Traversable.super.stream();
-    }
+   
 
 
     

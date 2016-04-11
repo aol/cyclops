@@ -43,15 +43,13 @@ import com.aol.cyclops.types.stream.lazy.LazyOperations;
 import com.aol.cyclops.util.stream.Streamable;
 
 
-public interface Traversable<T> extends //Foldable<T>, 
-                                        Iterable<T>, 
-                                       // ConvertableSequence<T>,
+public interface Traversable<T> extends Iterable<T>, 
                                         Publisher<T>{
 	
    
     
     default void subscribe(Subscriber<? super T> s){
-        stream().subscribe(s);
+        traversable().subscribe(s);
     }
     /**
      * Combine two adjacent elements in a traversable using the supplied BinaryOperator
@@ -71,7 +69,7 @@ public interface Traversable<T> extends //Foldable<T>,
      * @return Combined / Partially Reduced Traversable
      */
     default Traversable<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
-        return stream().combine(predicate, op);
+        return traversable().combine(predicate, op);
     }
 	
 	
@@ -98,7 +96,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Stream with values repeated
 	 */
 	default Traversable<T> cycle(int times){
-		return stream().cycle(times);
+		return traversable().cycle(times);
 	}
 	
 	/**
@@ -121,7 +119,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Stream with reduced values repeated
 	 */
 	default Traversable<T> cycle(Monoid<T> m, int times){
-		return stream().cycle(m,times);
+		return traversable().cycle(m,times);
 	}
 	
 	/**
@@ -142,7 +140,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Repeating Stream
 	 */
 	default Traversable<T> cycleWhile(Predicate<? super T> predicate){
-		return stream().cycleWhile(predicate);
+		return traversable().cycleWhile(predicate);
 	}
 
 	/**
@@ -165,11 +163,11 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Repeating Stream
 	 */
 	default Traversable<T> cycleUntil(Predicate<? super T> predicate){
-		return stream().cycleUntil(predicate);
+		return traversable().cycleUntil(predicate);
 	}
 
 	default <U, R> Traversable<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return stream().zip(other,zipper);
+        return traversable().zip(other,zipper);
     }
 	/**
 	 * Zip 2 streams into one
@@ -184,7 +182,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * 
 	 */
 	default <U> Traversable<Tuple2<T, U>> zipStream(Stream<U> other){
-		return stream().zipStream(other);
+		return traversable().zipStream(other);
 	}
 
 	/**
@@ -200,7 +198,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * 
 	 */
 	default <U> Traversable<Tuple2<T, U>> zip(Seq<U> other){
-		return stream().zip(other);
+		return traversable().zip(other);
 	}
 
 	/**
@@ -217,7 +215,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * </pre>
 	 */
 	default <S, U> Traversable<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third){
-		return stream().zip3(second, third);
+		return traversable().zip3(second, third);
 	}
 
 	/**
@@ -234,7 +232,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * </pre>
 	 */
 	default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third, Stream<T4> fourth){
-		return stream().zip4(second, third, fourth);
+		return traversable().zip4(second, third, fourth);
 	}
 
 	/**
@@ -247,7 +245,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * </pre>
 	 */
 	default Traversable<Tuple2<T, Long>> zipWithIndex(){
-		return stream().zipWithIndex();
+		return traversable().zipWithIndex();
 	}
 	
 	/**
@@ -270,7 +268,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return SequenceM with sliding view
 	 */
 	default Traversable<ListX<T>> sliding(int windowSize){
-		return stream().sliding(windowSize);
+		return traversable().sliding(windowSize);
 	}
 
 	/**
@@ -295,7 +293,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return SequenceM with sliding view
 	 */
 	default Traversable<ListX<T>> sliding(int windowSize, int increment){
-		return stream().sliding(windowSize, increment);
+		return traversable().sliding(windowSize, increment);
 	}
 	
 
@@ -320,7 +318,7 @@ public interface Traversable<T> extends //Foldable<T>,
      * @return SequenceM batched into collection types by size
      */
     default <C extends Collection<? super T>> Traversable<C> grouped(int size, Supplier<C> supplier){
-        return stream().grouped(size,supplier);
+        return traversable().grouped(size,supplier);
     }
 
     
@@ -343,7 +341,7 @@ public interface Traversable<T> extends //Foldable<T>,
      * @return SequenceM batched into lists determined by the predicate supplied
      */
     default Traversable<ListX<T>> groupedUntil(Predicate<? super T> predicate){
-        return stream().groupedUntil(predicate);
+        return traversable().groupedUntil(predicate);
     }
     
     /**
@@ -366,7 +364,7 @@ public interface Traversable<T> extends //Foldable<T>,
      * @return Traversable windowed while predicate holds
      */
     default Traversable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate){
-        return stream().groupedStatefullyWhile(predicate); 
+        return traversable().groupedStatefullyWhile(predicate); 
     }
     
     /**
@@ -387,7 +385,7 @@ public interface Traversable<T> extends //Foldable<T>,
      * @return SequenceM batched into lists determined by the predicate supplied
      */
     default Traversable<ListX<T>> groupedWhile(Predicate<? super T> predicate){
-        return stream().groupedWhile(predicate);
+        return traversable().groupedWhile(predicate);
     }
     
 
@@ -412,7 +410,7 @@ public interface Traversable<T> extends //Foldable<T>,
      *         supplied
      */
     default <C extends Collection<? super T>> Traversable<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory){
-        return stream().groupedWhile(predicate,factory);
+        return traversable().groupedWhile(predicate,factory);
     }
 
     /**
@@ -437,7 +435,7 @@ public interface Traversable<T> extends //Foldable<T>,
      *         supplied
      */
     default <C extends Collection<? super T>> Traversable<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory){
-        return stream().groupedUntil(predicate,factory);
+        return traversable().groupedUntil(predicate,factory);
     }
 	/**
 	 * Group elements in a Stream
@@ -458,16 +456,16 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Stream with elements grouped by size
 	 */
 	default Traversable<ListX<T>> grouped(int groupSize){
-		return stream().grouped(groupSize);
+		return traversable().grouped(groupSize);
 	}
 	
 
 	default <K, A, D> Traversable<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
-		return stream().grouped(classifier,downstream);
+		return traversable().grouped(classifier,downstream);
 	}
 
 	default <K> Traversable<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
-		return stream().grouped(classifier);
+		return traversable().grouped(classifier);
 	}
 	
 
@@ -480,7 +478,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * .collect(Collectors.toList()); }</pre>
 	 */
 	default Traversable<T> distinct(){
-		return stream().distinct();
+		return traversable().distinct();
 	}
 	
 	/**
@@ -499,7 +497,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return
 	 */
 	default Traversable<T> scanLeft(Monoid<T> monoid){
-		return stream().scanLeft(monoid);
+		return traversable().scanLeft(monoid);
 	}
 
 	/**
@@ -513,7 +511,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * </pre>
 	 */
 	default <U> Traversable<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
-		return stream().scanLeft(seed,function);
+		return traversable().scanLeft(seed,function);
 	}
 
 	/**
@@ -527,7 +525,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * </pre>
 	 */
 	default Traversable<T> scanRight(Monoid<T> monoid){
-		return stream().scanRight(monoid);
+		return traversable().scanRight(monoid);
 	}
 
 	/**
@@ -542,7 +540,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * </pre>
 	 */
 	default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
-		return stream().scanRight(identity,combiner);
+		return traversable().scanRight(identity,combiner);
 	}
 
 	/**
@@ -552,7 +550,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * 
 	 */
 	default Traversable<T> sorted(){
-		return stream().sorted();
+		return traversable().sorted();
 	}
 
 	/**
@@ -567,7 +565,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Sorted Stream
 	 */
 	default Traversable<T> sorted(Comparator<? super T> c){
-		return stream().sorted(c);
+		return traversable().sorted(c);
 	}
     default Traversable<T> takeWhile(Predicate<? super T> p){
         return limitWhile(p);
@@ -599,7 +597,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Stream with specified number of elements skipped
 	 */
 	default Traversable<T> skip(long num){
-		return stream().skip(num);
+		return traversable().skip(num);
 	}
 
 	/**
@@ -618,7 +616,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Stream with elements skipped while predicate holds
 	 */
 	default Traversable<T> skipWhile(Predicate<? super T> p){
-		return stream().skipWhile(p);
+		return traversable().skipWhile(p);
 	}
 
 	/**
@@ -635,7 +633,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Stream with elements skipped until predicate holds
 	 */
 	default Traversable<T> skipUntil(Predicate<? super T> p){
-		return stream().skipUntil(p);
+		return traversable().skipUntil(p);
 	}
 	
 	/**
@@ -650,7 +648,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Monad converted to Stream with elements up to num
 	 */
 	default Traversable<T> limit(long num){
-		return stream().limit(num);
+		return traversable().limit(num);
 	}
 
 	/**
@@ -666,7 +664,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Stream with limited elements
 	 */
 	default Traversable<T> limitWhile(Predicate<? super T> p){
-		return stream().limitWhile(p);
+		return traversable().limitWhile(p);
 	}
 
 	/**
@@ -682,7 +680,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Stream with limited elements
 	 */
 	default Traversable<T> limitUntil(Predicate<? super T> p){
-		return stream().limitUntil(p);
+		return traversable().limitUntil(p);
 	}
 	
 
@@ -696,7 +694,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * 
 	 */
 	default Traversable<T> intersperse(T value){
-		return stream().intersperse(value);
+		return traversable().intersperse(value);
 	}
 
 	
@@ -717,7 +715,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * equalTo(asList(3, 2, 1))); } </pre>
 	 */
 	default Traversable<T> reverse(){
-		return stream().reverse();
+		return traversable().reverse();
 	}
 	
 	/*
@@ -726,7 +724,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @see org.jooq.lambda.Seq#shuffle()
 	 */
 	default Traversable<T> shuffle(){
-		return stream().shuffle();
+		return traversable().shuffle();
 	}
 	/**
 	 * Access asynchronous terminal operations (each returns a Future)
@@ -736,7 +734,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Async Future Terminal Operations
 	 */
 	default FutureOperations<T> futureOperations(Executor exec){
-		return stream().futureOperations(exec);
+		return traversable().futureOperations(exec);
 	}
 	/**
 	 * Access a set of Lazy terminal operations (each returns an Eval)
@@ -744,7 +742,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return Lazy Terminal Operations
 	 */
 	default LazyOperations<T> lazyOperations(){
-		return new LazyOperations<T>(stream());
+		return new LazyOperations<T>(ReactiveSeq.fromIterable(traversable()));
 	}
 	
 	/**
@@ -755,7 +753,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return
 	 */
 	default Traversable<T> skipLast(int num){
-		return stream().skipLast(num);
+		return traversable().skipLast(num);
 	}
 
 	/**
@@ -773,7 +771,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @return SequenceM limited to last num elements
 	 */
 	default Traversable<T> limitLast(int num){
-		return stream().limitLast(num);
+		return traversable().limitLast(num);
 	}
 	
 
@@ -784,7 +782,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
 	 */
 	default Traversable<T> onEmpty(T value){
-		return stream().onEmpty(value);
+		return traversable().onEmpty(value);
 	}
 
 	/*
@@ -793,7 +791,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
 	 */
 	default Traversable<T> onEmptyGet(Supplier<T> supplier){
-		return stream().onEmptyGet(supplier);
+		return traversable().onEmptyGet(supplier);
 	}
 
 	/*
@@ -802,7 +800,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
 	 */
 	 default <X extends Throwable> Traversable<T> onEmptyThrow(Supplier<X> supplier){
-		 return stream().onEmptyThrow(supplier);
+		 return traversable().onEmptyThrow(supplier);
 	 }
 	/*
 	 * (non-Javadoc)
@@ -810,7 +808,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @see org.jooq.lambda.Seq#shuffle(java.util.Random)
 	 */
 	default Traversable<T> shuffle(Random random){
-		return stream().shuffle(random);
+		return traversable().shuffle(random);
 	}
 
 	/*
@@ -819,7 +817,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @see org.jooq.lambda.Seq#slice(long, long)
 	 */
 	default Traversable<T> slice(long from, long to){
-		return stream().slice(from, to);
+		return traversable().slice(from, to);
 	}
 
 	/*
@@ -828,7 +826,7 @@ public interface Traversable<T> extends //Foldable<T>,
 	 * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
 	 */
 	default <U extends Comparable<? super U>> Traversable<T> sorted(Function<? super T, ? extends U> function){
-		return stream().sorted(function);
+		return traversable().sorted(function);
 	}
 	
 	
@@ -837,7 +835,7 @@ public interface Traversable<T> extends //Foldable<T>,
 
 
 	
-	default ReactiveSeq<T> stream() {
+	default Traversable<T> traversable() {
 		return ReactiveSeq.fromIterable(this);
 	}
 	

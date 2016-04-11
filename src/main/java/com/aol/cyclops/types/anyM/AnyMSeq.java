@@ -71,6 +71,15 @@ public interface AnyMSeq<T> extends AnyM<T>,
         
     }
     
+    default Traversable<T> traversable(){
+        Object o = unwrap();
+        if(o instanceof Traversable){
+            return (Traversable)o;
+        }
+        return stream();
+    }
+    
+    
     
    
     /* (non-Javadoc)

@@ -41,6 +41,7 @@ import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
 import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.internal.monads.AnyMFunctions;
@@ -626,6 +627,10 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromIterable(Iterable<T> iterable){
 		Objects.requireNonNull(iterable);
+		if(iterable instanceof List)
+		    iterable = ListX.fromIterable(iterable);
+		if(iterable instanceof Set)
+            iterable = SetX.fromIterable(iterable);
 		return AnyMFactory.instance.convertSeq(iterable);
 	}
 	/**
