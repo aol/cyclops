@@ -41,6 +41,7 @@ import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -69,7 +70,85 @@ public interface AnyMSeq<T> extends AnyM<T>,
         return stream().collect(collector);
         
     }
+    
+    
    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#limit(long)
+     */
+    @Override
+    default AnyMSeq<T> limit(long num) {
+       
+        return (AnyMSeq<T>)ExtendedTraversable.super.limit(num);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#limitWhile(java.util.function.Predicate)
+     */
+    @Override
+    default AnyMSeq<T> limitWhile(Predicate<? super T> p) {
+       
+        return (AnyMSeq<T>)ExtendedTraversable.super.limitWhile(p);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#limitUntil(java.util.function.Predicate)
+     */
+    @Override
+    default AnyMSeq<T> limitUntil(Predicate<? super T> p) {
+        
+        return (AnyMSeq<T>)ExtendedTraversable.super.limitUntil(p);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#limitLast(int)
+     */
+    @Override
+    default AnyMSeq<T> limitLast(int num) {
+        
+        return (AnyMSeq<T>)ExtendedTraversable.super.limitLast(num);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#onEmpty(java.lang.Object)
+     */
+    @Override
+    default AnyMSeq<T> onEmpty(T value) {
+       return (AnyMSeq<T>)ExtendedTraversable.super.onEmpty(value);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#onEmptyGet(java.util.function.Supplier)
+     */
+    @Override
+    default AnyMSeq<T> onEmptyGet(Supplier<T> supplier) {
+       
+        return (AnyMSeq<T>)ExtendedTraversable.super.onEmptyGet(supplier);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#onEmptyThrow(java.util.function.Supplier)
+     */
+    @Override
+    default <X extends Throwable> AnyMSeq<T> onEmptyThrow(Supplier<X> supplier) {
+       
+        return (AnyMSeq<T>)ExtendedTraversable.super.onEmptyThrow(supplier);
+    }
+
+
+
     @Override 
     default <R> ApplyingZippingApplicativeBuilder<T,R,ZippingApplicativable<R>> applicatives(){
         Streamable<T> streamable = toStreamable();
@@ -484,17 +563,17 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	@Override
     default AnyMSeq<ReactiveSeq<T>> permutations() {
         
-        return AnyM.fromIterable(Sequential.super.permutations());
+        return AnyM.fromIterable(ExtendedTraversable.super.permutations());
     }
     @Override
     default AnyMSeq<ReactiveSeq<T>> combinations(int size) {
         
-        return AnyM.fromIterable(Sequential.super.combinations(size));
+        return AnyM.fromIterable(ExtendedTraversable.super.combinations(size));
     }
     @Override
     default AnyMSeq<ReactiveSeq<T>> combinations() {
         
-        return AnyM.fromIterable(Sequential.super.combinations());
+        return AnyM.fromIterable(ExtendedTraversable.super.combinations());
     }
     
     

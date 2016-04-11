@@ -153,7 +153,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 	@Test
 	public void testIntersperse() {
 		
-		assertThat(((Traversable<Integer>)of(1,2,3).intersperse(0)).toListX(),equalTo(Arrays.asList(1,0,2,0,3)));
+		assertThat((of(1,2,3).intersperse(0)).toListX(),equalTo(Arrays.asList(1,0,2,0,3)));
 	
 
 

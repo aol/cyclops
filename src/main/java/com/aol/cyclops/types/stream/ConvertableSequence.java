@@ -1,6 +1,5 @@
 package com.aol.cyclops.types.stream;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;

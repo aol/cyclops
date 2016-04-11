@@ -43,9 +43,9 @@ import com.aol.cyclops.types.stream.lazy.LazyOperations;
 import com.aol.cyclops.util.stream.Streamable;
 
 
-public interface Traversable<T> extends Foldable<T>, 
+public interface Traversable<T> extends //Foldable<T>, 
                                         Iterable<T>, 
-                                        ConvertableSequence<T>,
+                                       // ConvertableSequence<T>,
                                         Publisher<T>{
 	
    
@@ -75,41 +75,6 @@ public interface Traversable<T> extends Foldable<T>,
     }
 	
 	
-	/**
-	 * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
-	 * whenStream may be more efficient (as it is guaranteed to be lazy).
-	 * 
-	 * <pre>
-	 * {@code 
-	 * ListX.of(1,2,3,4,5,6,7,8,9)
-			 .dropRight(5)
-			 .plus(10)
-			 .visit((x,xs) ->
-				 xs.join(x.>2?"hello":"world")),()->"NIL"
-			 );
-	 * 
-	 * }
-	 * //2world3world4
-	 * 
-	 * </pre>
-	 * 
-	 * 
-	 * @param match
-	 * @return
-	 */
-	default <R> R visit(BiFunction<? super T,? super ReactiveSeq<T>,? extends R> match, Supplier<? extends R> ifEmpty){
-		
-		HeadAndTail<T> ht = this.headAndTail();
-		if(ht.isHeadPresent())
-		    return match.apply(ht.head(),ht.tail());
-		return ifEmpty.get();
-		
-	}
-	default <R> R visit(BiFunction<? super Maybe<T>,? super ReactiveSeq<T>,? extends R> match){
-        HeadAndTail<T> ht = this.headAndTail();
-       return match.apply(ht.headMaybe(),ht.tail());
-        
-    }
 	
 	
 	
@@ -332,12 +297,7 @@ public interface Traversable<T> extends Foldable<T>,
 	default Traversable<ListX<T>> sliding(int windowSize, int increment){
 		return stream().sliding(windowSize, increment);
 	}
-	default ListTSeq<T> slidingT(int windowSize, int increment){
-        return ListT.fromStream(stream().sliding(windowSize, increment));
-    }
-	default ListTSeq<T> slidingT(int windowSize){
-        return ListT.fromStream(stream().sliding(windowSize));
-    }
+	
 
 	
   
@@ -366,13 +326,13 @@ public interface Traversable<T> extends Foldable<T>,
     
 
     /**
-     * Create a SequenceM batched by List, where each batch is populated until
+     * Create a Traversable batched by List, where each batch is populated until
      * the predicate holds
      * 
      * <pre>
      * {@code 
      *  assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .batchUntil(i->i%3==0)
+     *              .groupedUntil(i->i%3==0)
      *              .toList()
      *              .size(),equalTo(2));
      * }
@@ -385,42 +345,38 @@ public interface Traversable<T> extends Foldable<T>,
     default Traversable<ListX<T>> groupedUntil(Predicate<? super T> predicate){
         return stream().groupedUntil(predicate);
     }
-    default ListTSeq<T> groupedUntilT(Predicate<? super T> predicate){
-        return ListT.fromStream(stream().groupedUntil(predicate));
-    }
+    
     /**
-     * Create SequenceM of Streamables (replayable Streams / Sequences) where
-     * each Streamable is populated while the supplied bipredicate holds. The
-     * bipredicate recieves the Streamable from the last window as well as the
+     * Create Travesable of Lists where
+     * each List is populated while the supplied bipredicate holds. The
+     * bipredicate recieves the List from the last window as well as the
      * current value and can choose to aggregate the current value or create a
      * new window
      * 
      * <pre>
      * {@code 
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .windowStatefullyWhile((s,i)->s.sequenceM().toList().contains(4) ? true : false)
+     *              .groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
      *              .toList().size(),equalTo(5));
      * }
      * </pre>
      * 
      * @param predicate
      *            Window while true
-     * @return SequenceM windowed while predicate holds
+     * @return Traversable windowed while predicate holds
      */
     default Traversable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate){
         return stream().groupedStatefullyWhile(predicate); 
     }
-    default ListTSeq<T> groupedStatefullyWhileT(BiPredicate<ListX<? super T>, ? super T> predicate){
-      return ListT.fromStream(stream().groupedStatefullyWhile(predicate)); 
-    }
+    
     /**
-     * Create a SequenceM batched by List, where each batch is populated while
+     * Create a Traversable batched by List, where each batch is populated while
      * the predicate holds
      * 
      * <pre>
      * {@code 
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .batchWhile(i->i%3!=0)
+     *              .groupedWhile(i->i%3!=0)
      *              .toList().size(),equalTo(2));
      *  
      * }
@@ -431,11 +387,9 @@ public interface Traversable<T> extends Foldable<T>,
      * @return SequenceM batched into lists determined by the predicate supplied
      */
     default Traversable<ListX<T>> groupedWhile(Predicate<? super T> predicate){
-        return stream().groupedUntil(predicate);
+        return stream().groupedWhile(predicate);
     }
-    default ListTSeq<T> groupedWhileT(Predicate<? super T> predicate){
-        return ListT.fromStream(stream().groupedUntil(predicate));
-    }
+    
 
     /**
      * Create a SequenceM batched by a Collection, where each batch is populated
@@ -506,9 +460,7 @@ public interface Traversable<T> extends Foldable<T>,
 	default Traversable<ListX<T>> grouped(int groupSize){
 		return stream().grouped(groupSize);
 	}
-	default ListTSeq<T> groupedT(int groupSize){
-        return ListT.fromStream(stream().grouped(groupSize));
-    }
+	
 
 	default <K, A, D> Traversable<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
 		return stream().grouped(classifier,downstream);
@@ -519,24 +471,7 @@ public interface Traversable<T> extends Foldable<T>,
 	}
 	
 
-	/**
-	 * Use classifier function to group elements in this Sequence into a Map
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	Map&lt;Integer, List&lt;Integer&gt;&gt; map1 = of(1, 2, 3, 4).groupBy(i -&gt; i % 2);
-	 * 	assertEquals(asList(2, 4), map1.get(0));
-	 * 	assertEquals(asList(1, 3), map1.get(1));
-	 * 	assertEquals(2, map1.size());
-	 * 
-	 * }
-	 * 
-	 * </pre>
-	 */
-	default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier){
-		return stream().groupBy(classifier);
-	}
+
 
 	/*
 	 * Return the distinct Stream of elements
@@ -750,306 +685,7 @@ public interface Traversable<T> extends Foldable<T>,
 		return stream().limitUntil(p);
 	}
 	
-	
-	/**
-	 * <pre>
-	 * {@code
-	 *  assertEquals("123".length(),ReactiveSeq.of(1, 2, 3).join().length());
-	 * }
-	 * </pre>
-	 * 
-	 * @return Stream as concatenated String
-	 */
-	default String join(){
-		return stream().join();
-	}
 
-	/**
-	 * <pre>
-	 * {@code
-	 * assertEquals("1, 2, 3".length(), ReactiveSeq.of(1, 2, 3).join(", ").length());
-	 * }
-	 * </pre>
-	 * 
-	 * @return Stream as concatenated String
-	 */
-	default String join(String sep){
-		return stream().join(sep);
-	}
-
-	/**
-	 * <pre>
-	 * {@code 
-	 * assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").length());
-	 * }
-	 * </pre>
-	 * 
-	 * @return Stream as concatenated String
-	 */
-	default String join(String sep, String start, String end){
-		return stream().join(sep,start,end);
-	}
-
-	
-
-	/**
-	 * extract head and tail together, where head is expected to be present
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	SequenceM&lt;String&gt; helloWorld = ReactiveSeq.of(&quot;hello&quot;, &quot;world&quot;, &quot;last&quot;);
-	 * 	HeadAndTail&lt;String&gt; headAndTail = helloWorld.headAndTail();
-	 * 	String head = headAndTail.head();
-	 * 	assertThat(head, equalTo(&quot;hello&quot;));
-	 * 
-	 * 	SequenceM&lt;String&gt; tail = headAndTail.tail();
-	 * 	assertThat(tail.headAndTail().head(), equalTo(&quot;world&quot;));
-	 * }
-	 * </pre>
-	 * 
-	 * @return
-	 */
-	default HeadAndTail<T> headAndTail(){
-		return stream().headAndTail();
-	}
-	
-	/**
-	 * @return First matching element in sequential order
-	 * 
-	 *         <pre>
-	 * {@code
-	 * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
-	 * 
-	 * //3
-	 * }
-	 * </pre>
-	 * 
-	 *         (deterministic)
-	 * 
-	 */
-	default Optional<T> findFirst(){
-		return stream().findFirst();
-	}
-
-	/**
-	 * @return first matching element, but order is not guaranteed
-	 * 
-	 *         <pre>
-	 * {@code
-	 * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
-	 * 
-	 * //3
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 *         (non-deterministic)
-	 */
-	default Optional<T> findAny(){
-		return stream().findAny();
-	}
-	
-	/**
-	 * 
-	 * <pre>
-	 * {@code 
-	 *  assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
-	 * }
-	 * </pre>
-	 * 
-	 * @param iterable
-	 * @return True if Monad starts with Iterable sequence of data
-	 */
-	default boolean startsWithIterable(Iterable<T> iterable){
-		return stream().startsWithIterable(iterable);
-	}
-
-	/**
-	 * <pre>
-	 * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
-	 * </pre>
-	 * 
-	 * @param iterator
-	 * @return True if Monad starts with Iterators sequence of data
-	 */
-	default boolean startsWith(Iterator<T> iterator){
-		return stream().startsWith(iterator);
-	}
-	/**
-	 * <pre>
-	 * {@code
-	 *  assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-	 * 				.endsWith(Arrays.asList(5,6)));
-	 * 
-	 * }
-	 * 
-	 * @param iterable Values to check
-	 * @return true if SequenceM ends with values in the supplied iterable
-	 */
-	default boolean endsWithIterable(Iterable<T> iterable){
-		return stream().endsWithIterable(iterable);
-	}
-
-	/**
-	 * <pre>
-	 * {@code
-	 * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-	 * 				.endsWith(Stream.of(5,6))); 
-	 * }
-	 * </pre>
-	 * 
-	 * @param stream
-	 *            Values to check
-	 * @return true if SequenceM endswith values in the supplied Stream
-	 */
-	default boolean endsWith(Stream<T> stream){
-		return stream().endsWith(stream);
-	}
-	
-	/**
-	 * Lazily converts this SequenceM into a Collection. This does not trigger
-	 * the Stream. E.g. Collection is not thread safe on the first iteration.
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
-	 * 
-	 * 	col.forEach(System.out::println);
-	 * }
-	 * 
-	 * // Will print out &quot;first!&quot; before anything else
-	 * </pre>
-	 * 
-	 * @return
-	 */
-	default CollectionX<T> toLazyCollection(){
-		return stream().toLazyCollection();
-	}
-
-	/**
-	 * Lazily converts this SequenceM into a Collection. This does not trigger
-	 * the Stream. E.g.
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
-	 * 
-	 * 	col.forEach(System.out::println);
-	 * }
-	 * 
-	 * // Will print out &quot;first!&quot; before anything else
-	 * </pre>
-	 * 
-	 * @return
-	 */
-	default CollectionX<T> toConcurrentLazyCollection(){
-		return stream().toConcurrentLazyCollection();
-	}
-
-	/**
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	Streamable&lt;Integer&gt; repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -&gt; i + 2).toConcurrentLazyStreamable();
-	 * 
-	 * 	assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-	 * 	assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-	 * }
-	 * </pre>
-	 * 
-	 * @return Streamable that replay this SequenceM, populated lazily and can
-	 *         be populated across threads
-	 */
-	default Streamable<T> toConcurrentLazyStreamable(){
-		return stream().toConcurrentLazyStreamable();
-	}
-	
-	/**
-	 * <pre>
-	 * {@code 
-	 * 	assertThat(ReactiveSeq.of(1,2,3,4)
-	 * 					.map(u->{throw new RuntimeException();})
-	 * 					.recover(e->"hello")
-	 * 					.firstValue(),equalTo("hello"));
-	 * }
-	 * </pre>
-	 * 
-	 * @return first value in this Stream
-	 */
-	default T firstValue(){
-		return stream().firstValue();
-	}
-
-	/**
-	 * <pre>
-	 * {@code 
-	 *    
-	 *    //1
-	 *    ReactiveSeq.of(1).single(); 
-	 *    
-	 *    //UnsupportedOperationException
-	 *    ReactiveSeq.of().single();
-	 *     
-	 *     //UnsupportedOperationException
-	 *    ReactiveSeq.of(1,2,3).single();
-	 * }
-	 * </pre>
-	 * 
-	 * @return a single value or an UnsupportedOperationException if 0/1 values
-	 *         in this Stream
-	 */
-	default T single() {
-		return stream().single();
-
-	}
-
-	default T single(Predicate<? super T> predicate){
-		return stream().single(predicate);
-	}
-
-	/**
-	 * <pre>
-	 * {@code 
-	 *    
-	 *    //Optional[1]
-	 *    ReactiveSeq.of(1).singleOptional(); 
-	 *    
-	 *    //Optional.empty
-	 *    ReactiveSeq.of().singleOpional();
-	 *     
-	 *     //Optional.empty
-	 *    ReactiveSeq.of(1,2,3).singleOptional();
-	 * }
-	 * </pre>
-	 * 
-	 * @return An Optional with single value if this Stream has exactly one
-	 *         element, otherwise Optional Empty
-	 */
-	default Optional<T> singleOptional() {
-		return stream().singleOptional();
-
-	}
-
-	/**
-	 * Return the elementAt index or Optional.empty
-	 * 
-	 * <pre>
-	 * {@code
-	 * 	assertThat(ReactiveSeq.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
-	 * }
-	 * </pre>
-	 * 
-	 * @param index
-	 *            to extract element from
-	 * @return elementAt index
-	 */
-	default Optional<T> get(long index){
-		return stream().get(index);
-	}
-	
 	
 	/**
 	 * Returns a stream with a given value interspersed between any two values
@@ -1198,127 +834,16 @@ public interface Traversable<T> extends Foldable<T>,
 	
 	
 
-	/**
-	 * Execute this Stream on a schedule
-	 * 
-	 * <pre>
-	 * {@code
-	 *  //run at 8PM every night
-	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
-	 *            .map(this::processJob)
-	 *            .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
-	 * }
-	 * </pre>
-	 * 
-	 * Connect to the Scheduled Stream
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	HotStream&lt;Data&gt; dataStream = ReactiveSeq.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-	 * 			.schedule(&quot;0 20 * * *&quot;, Executors.newScheduledThreadPool(1));
-	 * 
-	 * 	data.connect().forEach(this::logToDB);
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * 
-	 * @param cron
-	 *            Expression that determines when each job will run
-	 * @param ex
-	 *            ScheduledExecutorService
-	 * @return Connectable HotStream of output from scheduled Stream
-	 */
-	default HotStream<T> schedule(String cron, ScheduledExecutorService ex){
-		return stream().schedule(cron, ex);
-	}
 
-	/**
-	 * Execute this Stream on a schedule
-	 * 
-	 * <pre>
-	 * {@code
-	 *  //run every 60 seconds after last job completes
-	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
-	 *            .map(this::processJob)
-	 *            .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
-	 * }
-	 * </pre>
-	 * 
-	 * Connect to the Scheduled Stream
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-	 * 			.scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
-	 * 
-	 * 	data.connect().forEach(this::logToDB);
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * @param delay
-	 *            Between last element completes passing through the Stream
-	 *            until the next one starts
-	 * @param ex
-	 *            ScheduledExecutorService
-	 * @return Connectable HotStream of output from scheduled Stream
-	 */
-	default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
-		return stream().scheduleFixedDelay(delay, ex);
-	}
 
-	/**
-	 * Execute this Stream on a schedule
-	 * 
-	 * <pre>
-	 * {@code
-	 *  //run every 60 seconds
-	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
-	 *            .map(this::processJob)
-	 *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
-	 * }
-	 * </pre>
-	 * 
-	 * Connect to the Scheduled Stream
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-	 * 			.scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
-	 * 
-	 * 	data.connect().forEach(this::logToDB);
-	 * }
-	 * </pre>
-	 * 
-	 * @param rate
-	 *            Time in millis between job runs
-	 * @param ex
-	 *            ScheduledExecutorService
-	 * @return Connectable HotStream of output from scheduled Stream
-	 */
-	default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
-		return stream().scheduleFixedRate(rate, ex);
-	}
-
-	@Override
+	
 	default ReactiveSeq<T> stream() {
-		return ConvertableSequence.super.stream();
+		return ReactiveSeq.fromIterable(this);
 	}
 	
 
 
-	default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(Validator<T, S, F> validator) {
-
-		ReactiveSeq<Xor<F, S>> xors = stream().<Xor<F, S>> flatMap(s -> validator.accumulate(s).toXors().stream());
-		MapX<Boolean, List<Xor<F, S>>> map = xors.groupBy(s -> s.isPrimary());
-
-		return Ior.both(ReactiveSeq.fromStream(map.get(false).stream().map(x -> x.secondaryGet())),
-				ReactiveSeq.fromStream(map.get(true).stream().map(x -> x.get())));
-	}
+	
 
 
 }

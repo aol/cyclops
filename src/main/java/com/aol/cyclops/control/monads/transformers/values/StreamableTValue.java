@@ -1,6 +1,7 @@
 package com.aol.cyclops.control.monads.transformers.values;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -16,7 +17,6 @@ import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
-import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -218,6 +218,9 @@ public class StreamableTValue<T> implements StreamableT<T>,
    public static <A> StreamableTValue<A> of(AnyMValue<Streamable<A>> monads){
 	   return new StreamableTValue<>(monads);
    }
+   public static <A> StreamableTValue<A> of(Streamable<A> monads){
+       return StreamableT.fromOptional(Optional.of(monads));
+   }
    /**
 	 * Create a StreamableT from an AnyM that wraps a monad containing a Stream
 	 * 
@@ -244,8 +247,7 @@ public class StreamableTValue<T> implements StreamableT<T>,
      */
     @Override
     public Iterator<T> iterator() {
-        Stream<T> stream =  run.unwrap();
-        return stream.iterator();
+       return stream().iterator();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
@@ -266,16 +268,23 @@ public class StreamableTValue<T> implements StreamableT<T>,
      */
     @Override
     public Collectable<T> collectable() {
-        Stream<T> stream =  run.unwrap();
-        return ReactiveSeq.fromStream(stream);
+        return stream();
     }
     @Override
     public ReactiveSeq<T> stream() {
-        Stream<T> stream =  run.unwrap();
-        return ReactiveSeq.fromStream(stream);
+        return run.stream().flatMap(i->i.stream());
     }
     @Override
     public <R> StreamableTValue<R> empty() {
        return of(run.empty());
+    }
+    public static<T>  StreamableTValue<T> emptyOptional() {
+        return StreamableT.fromOptional(Optional.empty());
+    }
+    public boolean isStreamablePresent() {
+        return !run.isEmpty();
+    }
+    public Streamable<T> get(){
+        return run.get();
     }
 }

@@ -215,8 +215,9 @@ public interface ListT<T>  extends Publisher<T>{
         return ListTSeq.fromAnyM(anyM);
     }
 
+    
     public static <A> ListTSeq<A> fromIterable(
-            Iterable<List<A>> iterableOfLists) {
+            Iterable<? extends List<A>> iterableOfLists) {
         return ListTSeq.of(AnyM.fromIterable(iterableOfLists));
     }
 
@@ -229,7 +230,7 @@ public interface ListT<T>  extends Publisher<T>{
         return ListTSeq.of(AnyM.fromPublisher(publisherOfLists));
     }
 
-    public static <A, V extends MonadicValue<List<A>>> ListTValue<A> fromValue(
+    public static <A, V extends MonadicValue<? extends List<A>>> ListTValue<A> fromValue(
             V monadicValue) {
         return ListTValue.fromValue(monadicValue);
     }

@@ -126,6 +126,9 @@ public interface Xor<ST,PT> extends Supplier<PT>,
     default Xor<ST,PT> toXor(){
         return this;
     }
+	default <ST2> Xor<ST2,PT> toXor(ST2 secondary){
+      return visit (s-> secondary(secondary), p-> primary(p));
+    }
    
 	public static <ST,PT> Xor<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Xor<ST,PT>> xors){
 		return AnyM.sequence(AnyM.listFromXor(xors.map(Xor::swap))).unwrap();

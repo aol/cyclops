@@ -172,6 +172,21 @@ public interface Value<T> extends Supplier<T>,
 	     return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(new NoSuchElementException());
 		
 	 }
+	 /**
+      * Convert to an Xor where the secondary value will be used if no primary value is present
+      * 
+     * @param secondary Value to use in case no primary value is present
+     * @return
+     */
+    default <ST> Xor<ST,T> toXor(ST secondary){
+         Optional<T> o = toOptional();
+         return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(secondary);
+     }
+     default <X extends Throwable> Try<T,X> toTry(X throwable){
+         return toXor().visit(secondary->Try.failure(throwable),
+                              primary->Try.success(primary));
+         
+      }
 	 
 	 default Try<T,Throwable> toTry(){
 	    return toXor().visit(secondary->Try.failure(new NoSuchElementException()),
@@ -185,7 +200,7 @@ public interface Value<T> extends Supplier<T>,
 	     if(this instanceof Ior)
              return (Ior)this;
          Optional<T> o = toOptional();
-         return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(null);
+         return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(new NoSuchElementException());
 	 }
 	 default FeatureToggle<T> toFeatureToggle(){
 	       Optional<T> opt = toOptional();

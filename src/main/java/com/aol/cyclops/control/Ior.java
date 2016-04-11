@@ -73,7 +73,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	Ior<ST,PT> filter(Predicate<? super PT> test);
 	Xor<ST,PT> toXor(); //drop ST
 	Xor<ST,PT> toXorDropPrimary(); //drop ST
-	
+	default <ST2> Xor<ST2,PT> toXor(ST2 secondary){
+	      return visit (s-> Xor.secondary(secondary), p-> Xor.primary(p),(s,p)->Xor.primary(p));
+	    }
     
 	@Override
 	default Ior<ST,PT> toIor(){

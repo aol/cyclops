@@ -5,7 +5,11 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 
 
 
-public interface ExtendedTraversable<T> extends Traversable<T>,Foldable<T>, Iterable<T>, ConvertableSequence<T> {
+public interface ExtendedTraversable<T> extends Traversable<T>,
+                                                TransformerTraversable<T>,
+                                                Foldable<T>, 
+                                                Iterable<T>, 
+                                                ConvertableSequence<T> {
 	
 	
 	/**
@@ -55,6 +59,13 @@ public interface ExtendedTraversable<T> extends Traversable<T>,Foldable<T>, Iter
 	 default ExtendedTraversable<ReactiveSeq<T>> combinations(){
 		 return stream().combinations();
 	 }
+
+
+    @Override
+    default ReactiveSeq<T> stream() {
+      
+        return ConvertableSequence.super.stream();
+    }
 
 	
 }

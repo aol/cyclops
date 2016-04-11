@@ -4,8 +4,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.aol.cyclops.control.ReactiveSeq;
 
-public interface Sequential<T> extends ExtendedTraversable<T>{
+public interface Sequential<T>{
     
+    ReactiveSeq<T> stream();
     /**
      * emit x elements per time period
      * 

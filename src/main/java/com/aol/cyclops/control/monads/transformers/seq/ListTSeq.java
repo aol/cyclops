@@ -14,13 +14,17 @@ import org.jooq.lambda.Collectable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
@@ -41,26 +45,27 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T>
  */
 public class ListTSeq<T> implements ListT<T>,
-                                ConvertableSequence<T>,
-                                ExtendedTraversable<T>,
-                                Sequential<T>,
-                                CyclopsCollectable<T>,
-                                IterableCollectable<T>,
-                                FilterableFunctor<T>,
-                                ZippingApplicativable<T>,
+                                    TransformerSeq<T>,
+                              //  ConvertableSequence<T>,
+                              //  ExtendedTraversable<T>,
+                             //   Sequential<T>,
+                             //   CyclopsCollectable<T>,
+                             //   IterableCollectable<T>,
+                             //   FilterableFunctor<T>,
+                             //   ZippingApplicativable<T>,
                                 Publisher<T>{
                                    
-   final AnyMSeq<List<T>> run;
+   final AnyMSeq<ListX<T>> run;
 
    private ListTSeq(final AnyMSeq<? extends List<T>> run){
-       this.run = (AnyMSeq<List<T>>)run;
+       this.run = run.map(l->ListX.fromIterable(l));
    }
    /**
 	 * @return The wrapped AnyM
 	 */
    @Override
    public AnyMSeq<List<T>> unwrap(){
-	   return run;
+	   return (AnyMSeq)run;
    }
    /**
 	 * Peek at the current value of the List
@@ -214,6 +219,7 @@ public class ListTSeq<T> implements ListT<T>,
    public static <A> ListTSeq<A> fromAnyM(AnyMSeq<A> anyM){
 	   return of(anyM.map(Arrays::asList));
    }
+   
    /**
 	 * Construct an ListT from an AnyM that wraps a monad containing  Lists
 	 * 
@@ -270,17 +276,31 @@ public class ListTSeq<T> implements ListT<T>,
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
+     
     @Override
     public Collectable<T> collectable() {
        return this;
-    } 
+    } */
     public <R> ListTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->ListX.of(i)));
     }
     @Override
     public <R> ListT<R> empty() {
        return of(run.empty());
+    }
+    @Override
+    public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public <T>ListTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        return of((AnyMSeq)traversable); //bit of a hack for now
+    }
+    @Override
+    public AnyMSeq<? extends Traversable<T>> transformerStream() {
+        
+        return run;
     }
     
     

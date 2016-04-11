@@ -234,7 +234,7 @@ public class ListTValue<T> implements ListT<T>,
 		return of(monads.map(s -> s.collect(Collectors.toList())));
 	}
    
-	 public static <A,V extends MonadicValue<List<A>>> ListTValue<A> fromValue(V monadicValue){
+	 public static <A,V extends MonadicValue<? extends List<A>>> ListTValue<A> fromValue(V monadicValue){
 	       return of(AnyM.ofValue(monadicValue));
 	   }
    

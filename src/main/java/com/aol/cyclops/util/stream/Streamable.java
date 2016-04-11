@@ -77,7 +77,166 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
 	  
 		return Seq.seq(stream());
 	}
-	/**
+	
+	
+	
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     */
+    @Override
+    default Streamable<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+        
+        return (Streamable<T>)ZippingApplicativable.super.combine(predicate, op);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    default <U, R> Streamable<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+       
+        return ( Streamable<R>)ZippingApplicativable.super.zip(other, zipper);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
+     */
+    @Override
+    default <U> Streamable<Tuple2<T, U>> zipStream(Stream<U> other) {
+       
+        return (Streamable<Tuple2<T, U>>)ZippingApplicativable.super.zipStream(other);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     */
+    @Override
+    default <S, U> Streamable<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
+       
+        return (Streamable)ZippingApplicativable.super.zip3(second, third);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     */
+    @Override
+    default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
+            Stream<T4> fourth) {
+       
+        return (Streamable<Tuple4<T, T2, T3, T4>>)ZippingApplicativable.super.zip4(second, third, fourth);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     */
+    @Override
+    default Streamable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+       
+        return (Streamable<ListX<T>>)ZippingApplicativable.super.groupedStatefullyWhile(predicate);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
+     */
+    @Override
+    default <K, A, D> Streamable<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier,
+            Collector<? super T, A, D> downstream) {
+       
+        return (Streamable)ZippingApplicativable.super.grouped(classifier, downstream);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function)
+     */
+    @Override
+    default <K> Streamable<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+       
+        return (Streamable)ZippingApplicativable.super.grouped(classifier);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#takeWhile(java.util.function.Predicate)
+     */
+    @Override
+    default Streamable<T> takeWhile(Predicate<? super T> p) {
+       
+        return (Streamable<T>)ZippingApplicativable.super.takeWhile(p);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)
+     */
+    @Override
+    default Streamable<T> dropWhile(Predicate<? super T> p) {
+       
+        return (Streamable<T>)ZippingApplicativable.super.dropWhile(p);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#takeUntil(java.util.function.Predicate)
+     */
+    @Override
+    default Streamable<T> takeUntil(Predicate<? super T> p) {
+       
+        return (Streamable<T>)ZippingApplicativable.super.takeUntil(p);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#dropUntil(java.util.function.Predicate)
+     */
+    @Override
+    default Streamable<T> dropUntil(Predicate<? super T> p) {
+       
+        return (Streamable<T>)ZippingApplicativable.super.dropUntil(p);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#dropRight(int)
+     */
+    @Override
+    default Streamable<T> dropRight(int num) {
+       
+        return (Streamable<T>)ZippingApplicativable.super.dropRight(num);
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#takeRight(int)
+     */
+    @Override
+    default Streamable<T> takeRight(int num) {
+       
+        return (Streamable<T>)ZippingApplicativable.super.takeRight(num);
+    }
+
+
+
+    /**
      * Construct a LazyFutureStream from an Publisher
      * 
      * @param publisher

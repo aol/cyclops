@@ -235,9 +235,7 @@ public class StreamTValue<T> implements StreamT<T>,
     }
     @Override
     public ReactiveSeq<T> stream() {
-        return run.stream().peek(i->{
-           System.out.println("peek!");
-        } ).flatMap(i->i);  
+        return run.stream().flatMap(i->i);  
     }
     @Override
     public <R> StreamTValue<R> empty() {
