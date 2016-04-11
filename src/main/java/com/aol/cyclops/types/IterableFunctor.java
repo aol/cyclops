@@ -18,7 +18,10 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber.Counter;
 
-public interface IterableFunctor<T> extends Iterable<T>,Functor<T>, Foldable<T>, Traversable<T>,
+public interface IterableFunctor<T> extends Iterable<T>,
+                                            Functor<T>, 
+                                            Foldable<T>, 
+                                            Traversable<T>,
 											ConvertableSequence<T>{
   
     /**

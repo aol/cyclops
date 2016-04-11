@@ -16,15 +16,19 @@ import org.jooq.lambda.Collectable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
@@ -46,23 +50,18 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  */
 public class SetTSeq<T>  implements SetT<T>,
                                     ConvertableSequence<T>,
-                                    ExtendedTraversable<T>,
-                                    Sequential<T>,
-                                    CyclopsCollectable<T>,
-                                    IterableCollectable<T>,
-                                    FilterableFunctor<T>,
-                                    ZippingApplicativable<T>,
+                                    TransformerSeq<T>,
                                     Publisher<T>{
    
-   final AnyMSeq<Set<T>> run;
+   final AnyMSeq<SetX<T>> run;
 
-   private SetTSeq(final AnyMSeq<Set<T>> run){
-       this.run = run;
+   private SetTSeq(final AnyMSeq<? extends Set<T>> run){
+       this.run = run.map(s->SetX.fromIterable(s));
    }
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyMSeq<Set<T>> unwrap(){
+   public AnyMSeq<SetX<T>> unwrap(){
 	   return run;
    }
    /**
@@ -223,7 +222,7 @@ public class SetTSeq<T>  implements SetT<T>,
 	 * @param monads AnyM that contains a monad wrapping an Set
 	 * @return SetT
 	 */
-   public static <A> SetTSeq<A> of(AnyMSeq<Set<A>> monads){
+   public static <A> SetTSeq<A> of(AnyMSeq<? extends Set<A>> monads){
 	   return new SetTSeq<>(monads);
    }
 
@@ -270,19 +269,33 @@ public class SetTSeq<T>  implements SetT<T>,
         run.forEachEvent(e->SetX.fromIterable(e).subscribe(s),e->s.onError(e),()->s.onComplete());
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<T> collectable() {
-       return this;
-    } 
+    
     public <R> SetTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->SetX.of(i)));
     }
     @Override
     public <R> SetTSeq<R> empty() {
        return of(run.empty());
+    }
+    @Override
+    public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
+        return run;
+       
+    }
+    @Override
+    public <T>SetTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMSeq)traversable.map(t->SetX.fromIterable(t)));
+    }
+    @Override
+    public AnyMSeq<? extends Traversable<T>> transformerStream() {
+        
+        return run;
     }
  
 }

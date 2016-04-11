@@ -31,7 +31,10 @@ import com.aol.cyclops.util.stream.Streamable;
 
 public interface Foldable<T> {
 
-	public ReactiveSeq<T> stream();
+    ReactiveSeq<T> stream();
+	default Foldable<T> foldable(){
+	    return stream();
+	}
 	/**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
      * whenStream may be more efficient (as it is guaranteed to be lazy).
@@ -56,14 +59,14 @@ public interface Foldable<T> {
      */
     default <R> R visit(BiFunction<? super T,? super ReactiveSeq<T>,? extends R> match, Supplier<? extends R> ifEmpty){
         
-        HeadAndTail<T> ht = stream().headAndTail();
+        HeadAndTail<T> ht = foldable().headAndTail();
         if(ht.isHeadPresent())
             return match.apply(ht.head(),ht.tail());
         return ifEmpty.get();
         
     }
     default <R> R visit(BiFunction<? super Maybe<T>,? super ReactiveSeq<T>,? extends R> match){
-        HeadAndTail<T> ht = stream().headAndTail();
+        HeadAndTail<T> ht = foldable().headAndTail();
        return match.apply(ht.headMaybe(),ht.tail());
         
     }
@@ -85,7 +88,7 @@ public interface Foldable<T> {
 	 * @return Reduce result
 	 */
 	default <R> R mapReduce(Reducer<R> reducer){
-		return stream().mapReduce(reducer);
+		return foldable().mapReduce(reducer);
 	}
 
 	/**
@@ -120,7 +123,7 @@ public interface Foldable<T> {
 	 * @return Reduce result
 	 */
 	default <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer){
-		return stream().mapReduce(mapper,reducer);
+		return foldable().mapReduce(mapper,reducer);
 	}
 	/**
 	 * <pre>
@@ -136,7 +139,7 @@ public interface Foldable<T> {
 	 * @return reduced values
 	 */
 	default T reduce(Monoid<T> reducer){
-		return stream().reduce(reducer);
+		return foldable().reduce(reducer);
 	}
 
 	/*
@@ -144,7 +147,7 @@ public interface Foldable<T> {
 	 * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
 	 */
 	default Optional<T> reduce(BinaryOperator<T> accumulator){
-		return stream().reduce(accumulator);
+		return foldable().reduce(accumulator);
 	}
 
 	/*
@@ -154,10 +157,10 @@ public interface Foldable<T> {
 	 * java.util.function.BinaryOperator)
 	 */
 	default T reduce(T identity, BinaryOperator<T> accumulator){
-		return stream().reduce(identity, accumulator);
+		return foldable().reduce(identity, accumulator);
 	}
 	default <U> U reduce(U identity, BiFunction<U, ? super T,U> accumulator){
-        return ((Seq<T>)stream()).foldLeft(identity,accumulator);
+        return ((Seq<T>)foldable()).foldLeft(identity,accumulator);
     }
 
 	/*
@@ -167,7 +170,7 @@ public interface Foldable<T> {
 	 * java.util.function.BiFunction, java.util.function.BinaryOperator)
 	 */
 	default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner){
-		return stream().reduce(identity,accumulator,combiner);
+		return foldable().reduce(identity,accumulator,combiner);
 	}
 
 	/**
@@ -181,7 +184,7 @@ public interface Foldable<T> {
 	 * 	&#064;code
 	 * 	Monoid&lt;Integer&gt; sum = Monoid.of(0, (a, b) -&gt; a + b);
 	 * 	Monoid&lt;Integer&gt; mult = Monoid.of(1, (a, b) -&gt; a * b);
-	 * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).stream());
+	 * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).foldable());
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
 	 * 
@@ -193,7 +196,7 @@ public interface Foldable<T> {
 	 * @return
 	 */
 	default ListX<T> reduce(Stream<? extends Monoid<T>> reducers){
-		return stream().reduce(reducers);
+		return foldable().reduce(reducers);
 	}
 
 	/**
@@ -219,7 +222,7 @@ public interface Foldable<T> {
 	 * @return
 	 */
 	default ListX<T> reduce(Iterable<? extends Monoid<T>> reducers){
-		return stream().reduce(reducers);
+		return foldable().reduce(reducers);
 	}
 
 
@@ -238,7 +241,7 @@ public interface Foldable<T> {
 	 * @return Reduced result
 	 */
 	default T foldRight(Monoid<T> reducer){
-		return stream().foldRight(reducer);
+		return foldable().foldRight(reducer);
 	}
 
 	/**
@@ -255,10 +258,10 @@ public interface Foldable<T> {
 	 * @return
 	 */
 	default T foldRight(T identity, BinaryOperator<T> accumulator){
-		return stream().foldRight(identity,accumulator);
+		return foldable().foldRight(identity,accumulator);
 	}
 	default <U> U foldRight(U identity, BiFunction<? super T, U,U> accumulator){
-        return ((Seq<T>)stream()).foldRight(identity,accumulator);
+        return ((Seq<T>)foldable()).foldRight(identity,accumulator);
     }
 
 	/**
@@ -279,7 +282,7 @@ public interface Foldable<T> {
 	 * @return Reduce result
 	 */
 	default <T> T foldRightMapToType(Reducer<T> reducer){
-		return stream().foldRightMapToType(reducer);
+		return foldable().foldRightMapToType(reducer);
 	}
 	/**
      * <pre>
@@ -292,7 +295,7 @@ public interface Foldable<T> {
      */
     default String join(){
         
-        return stream().join();
+        return foldable().join();
     }
 
     /**
@@ -305,7 +308,7 @@ public interface Foldable<T> {
      * @return Stream as concatenated String
      */
     default String join(String sep){
-        return stream().join(sep);
+        return foldable().join(sep);
     }
 
     /**
@@ -318,20 +321,20 @@ public interface Foldable<T> {
      * @return Stream as concatenated String
      */
     default String join(String sep, String start, String end){
-        return stream().join(sep,start,end);
+        return foldable().join(sep,start,end);
     }
     
     default void print(PrintStream str){
-        stream().print(str);
+        foldable().print(str);
     }
     default void print(PrintWriter writer){
-        stream().print(writer);
+        foldable().print(writer);
     }
     default void printOut(){
-        stream().printOut();
+        foldable().printOut();
     }
     default void printErr(){
-        stream().printErr();
+        foldable().printErr();
     }
     
     
@@ -352,7 +355,7 @@ public interface Foldable<T> {
      * </pre>
      */
     default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier){
-        return stream().groupBy(classifier);
+        return foldable().groupBy(classifier);
     }
     
 
@@ -375,7 +378,7 @@ public interface Foldable<T> {
      * @return
      */
     default HeadAndTail<T> headAndTail(){
-        return stream().headAndTail();
+        return foldable().headAndTail();
     }
     
     /**
@@ -393,7 +396,7 @@ public interface Foldable<T> {
      * 
      */
     default Optional<T> findFirst(){
-        return stream().findFirst();
+        return foldable().findFirst();
     }
 
     /**
@@ -411,7 +414,7 @@ public interface Foldable<T> {
      *         (non-deterministic)
      */
     default Optional<T> findAny(){
-        return stream().findAny();
+        return foldable().findAny();
     }
     
     /**
@@ -426,7 +429,7 @@ public interface Foldable<T> {
      * @return True if Monad starts with Iterable sequence of data
      */
     default boolean startsWithIterable(Iterable<T> iterable){
-        return stream().startsWithIterable(iterable);
+        return foldable().startsWithIterable(iterable);
     }
 
     /**
@@ -438,7 +441,7 @@ public interface Foldable<T> {
      * @return True if Monad starts with Iterators sequence of data
      */
     default boolean startsWith(Iterator<T> iterator){
-        return stream().startsWith(iterator);
+        return foldable().startsWith(iterator);
     }
     /**
      * <pre>
@@ -452,7 +455,7 @@ public interface Foldable<T> {
      * @return true if SequenceM ends with values in the supplied iterable
      */
     default boolean endsWithIterable(Iterable<T> iterable){
-        return stream().endsWithIterable(iterable);
+        return foldable().endsWithIterable(iterable);
     }
 
     /**
@@ -468,7 +471,7 @@ public interface Foldable<T> {
      * @return true if SequenceM endswith values in the supplied Stream
      */
     default boolean endsWith(Stream<T> stream){
-        return stream().endsWith(stream);
+        return foldable().endsWith(stream);
     }
     
     /**
@@ -489,7 +492,7 @@ public interface Foldable<T> {
      * @return
      */
     default CollectionX<T> toLazyCollection(){
-        return stream().toLazyCollection();
+        return foldable().toLazyCollection();
     }
 
     /**
@@ -510,7 +513,7 @@ public interface Foldable<T> {
      * @return
      */
     default CollectionX<T> toConcurrentLazyCollection(){
-        return stream().toConcurrentLazyCollection();
+        return foldable().toConcurrentLazyCollection();
     }
 
     /**
@@ -528,7 +531,7 @@ public interface Foldable<T> {
      *         be populated across threads
      */
     default Streamable<T> toConcurrentLazyStreamable(){
-        return stream().toConcurrentLazyStreamable();
+        return foldable().toConcurrentLazyStreamable();
     }
     
     /**
@@ -544,7 +547,7 @@ public interface Foldable<T> {
      * @return first value in this Stream
      */
     default T firstValue(){
-        return stream().firstValue();
+        return foldable().firstValue();
     }
 
     /**
@@ -566,12 +569,12 @@ public interface Foldable<T> {
      *         in this Stream
      */
     default T single() {
-        return stream().single();
+        return foldable().single();
 
     }
 
     default T single(Predicate<? super T> predicate){
-        return stream().single(predicate);
+        return foldable().single(predicate);
     }
 
     /**
@@ -593,7 +596,7 @@ public interface Foldable<T> {
      *         element, otherwise Optional Empty
      */
     default Optional<T> singleOptional() {
-        return stream().singleOptional();
+        return foldable().singleOptional();
 
     }
 
@@ -611,7 +614,7 @@ public interface Foldable<T> {
      * @return elementAt index
      */
     default Optional<T> get(long index){
-        return stream().get(index);
+        return foldable().get(index);
     }
     
     
@@ -648,7 +651,7 @@ public interface Foldable<T> {
      * @return Connectable HotStream of output from scheduled Stream
      */
     default HotStream<T> schedule(String cron, ScheduledExecutorService ex){
-        return stream().schedule(cron, ex);
+        return foldable().schedule(cron, ex);
     }
 
     /**
@@ -684,7 +687,7 @@ public interface Foldable<T> {
      * @return Connectable HotStream of output from scheduled Stream
      */
     default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
-        return stream().scheduleFixedDelay(delay, ex);
+        return foldable().scheduleFixedDelay(delay, ex);
     }
 
     /**
@@ -718,7 +721,7 @@ public interface Foldable<T> {
      * @return Connectable HotStream of output from scheduled Stream
      */
     default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
-        return stream().scheduleFixedRate(rate, ex);
+        return foldable().scheduleFixedRate(rate, ex);
     }
    
     default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(Validator<T, S, F> validator) {

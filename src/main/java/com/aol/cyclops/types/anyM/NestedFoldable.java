@@ -11,6 +11,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.Matchables;
@@ -23,6 +24,8 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
+import com.aol.cyclops.control.monads.transformers.SetT;
+import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
@@ -37,6 +40,7 @@ import com.aol.cyclops.util.stream.Streamable;
 
 public interface NestedFoldable<T> {
     public AnyM<? extends Foldable<T>> nestedFoldables();
+   
     /**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
      * whenStream may be more efficient (as it is guaranteed to be lazy).

@@ -10,7 +10,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Collectable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -19,15 +18,9 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
-import com.aol.cyclops.types.IterableCollectable;
-import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 
@@ -46,14 +39,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  */
 public class ListTSeq<T> implements ListT<T>,
                                     TransformerSeq<T>,
-                              //  ConvertableSequence<T>,
-                              //  ExtendedTraversable<T>,
-                             //   Sequential<T>,
-                             //   CyclopsCollectable<T>,
-                             //   IterableCollectable<T>,
-                             //   FilterableFunctor<T>,
-                             //   ZippingApplicativable<T>,
-                                Publisher<T>{
+                                    Publisher<T>{
                                    
    final AnyMSeq<ListX<T>> run;
 
@@ -64,8 +50,8 @@ public class ListTSeq<T> implements ListT<T>,
 	 * @return The wrapped AnyM
 	 */
    @Override
-   public AnyMSeq<List<T>> unwrap(){
-	   return (AnyMSeq)run;
+   public AnyMSeq<ListX<T>> unwrap(){
+	   return run;
    }
    /**
 	 * Peek at the current value of the List
@@ -290,6 +276,11 @@ public class ListTSeq<T> implements ListT<T>,
     }
     @Override
     public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
         return run;
        
     }

@@ -30,6 +30,10 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
+    
+    static <T> Collector<T,?,SetX<T>> setXCollector(){
+        return Collectors.toCollection(()-> SetX.of());
+    }
 	static <T> Collector<T,?,Set<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new HashSet<>());
 	}

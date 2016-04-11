@@ -12,9 +12,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.StreamT;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableCollectable;
@@ -49,8 +47,8 @@ public class StreamTSeq<T> implements StreamT<T>,
   
     private final AnyMSeq<Stream<T>> run;
 
-   private StreamTSeq(final AnyMSeq<Stream<T>> run){
-       this.run = run;
+   private StreamTSeq(final AnyMSeq<? extends Stream<T>> run){
+       this.run = run.map(s->ReactiveSeq.fromStream(s));
    }
    /**
 	 * @return The wrapped AnyM
@@ -179,7 +177,7 @@ public class StreamTSeq<T> implements StreamT<T>,
 	 * @param monads
 	 * @return
 	 */
-   public static <A> StreamTSeq<A> of(AnyMSeq<Stream<A>> monads){
+   public static <A> StreamTSeq<A> of(AnyMSeq<? extends Stream<A>> monads){
 	   return new StreamTSeq<>(monads);
    }
    

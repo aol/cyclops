@@ -180,7 +180,7 @@ public interface StreamT<T> extends Publisher<T> {
        return StreamTSeq.of(AnyM.fromPublisher(publisherOfStreams));
    }
 
-   public static <A, V extends MonadicValue<Stream<A>>> StreamTValue<A> fromValue(
+   public static <A, V extends MonadicValue<? extends Stream<A>>> StreamTValue<A> fromValue(
            V monadicValue) {
        return StreamTValue.fromValue(monadicValue);
    }

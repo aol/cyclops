@@ -188,7 +188,7 @@ public class StreamTValue<T> implements StreamT<T>,
        return StreamT.fromOptional(Optional.of(monads));
    }
    
-   public static <A,V extends MonadicValue<Stream<A>>> StreamTValue<A> fromValue(V monadicValue){
+   public static <A,V extends MonadicValue<? extends Stream<A>>> StreamTValue<A> fromValue(V monadicValue){
        return of(AnyM.ofValue(monadicValue));
    }
    public boolean isStreamPresent() {

@@ -19,6 +19,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.values.ListTValue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -45,7 +46,7 @@ public interface ListT<T>  extends Publisher<T>{
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyM<List<T>> unwrap();
+   public AnyM<ListX<T>> unwrap();
    /**
 	 * Peek at the current value of the List
 	 * <pre>

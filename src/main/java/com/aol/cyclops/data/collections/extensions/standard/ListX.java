@@ -50,7 +50,9 @@ public interface ListX<T> extends List<T>,
 	}
 
 	
-	
+	static <T> Collector<T,?,ListX<T>> listXCollector(){
+        return Collectors.toCollection(()-> ListX.of());
+    }
 	static <T> Collector<T,?,List<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new ArrayList<>());
 	}

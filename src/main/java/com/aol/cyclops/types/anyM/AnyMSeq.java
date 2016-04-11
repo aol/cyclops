@@ -39,6 +39,7 @@ import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
@@ -75,6 +76,13 @@ public interface AnyMSeq<T> extends AnyM<T>,
         Object o = unwrap();
         if(o instanceof Traversable){
             return (Traversable)o;
+        }
+        return stream();
+    }
+    default Foldable<T> foldable(){
+        Object o = unwrap();
+        if(o instanceof Traversable){
+            return (Foldable)o;
         }
         return stream();
     }

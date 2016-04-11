@@ -19,7 +19,7 @@ import org.jooq.lambda.Collectable;
 
 
 
-public interface CyclopsCollectable<T> extends Collectable<T> {
+public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
 	
 
 	

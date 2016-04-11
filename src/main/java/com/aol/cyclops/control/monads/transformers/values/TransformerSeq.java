@@ -28,7 +28,7 @@ import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.NestedCollectable;
 import com.aol.cyclops.types.anyM.NestedFoldable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -37,11 +37,12 @@ import com.aol.cyclops.types.stream.lazy.LazyOperations;
 import com.aol.cyclops.util.stream.Streamable;
 
 public interface TransformerSeq<T> extends  NestedFoldable<T>,
+                                            NestedCollectable<T>,
+                                            ConvertableSequence<T>,
                                             Traversable<T>,
                                             Sequential<T>,                                
                                             Iterable<T>,
                                             FilterableFunctor<T>,
-                                            
                                             Publisher<T> {
     
   
@@ -79,6 +80,7 @@ public interface TransformerSeq<T> extends  NestedFoldable<T>,
      */
     @Override
     default void subscribe(Subscriber<? super T> s) {
+        
         transformerStream().forEach(n->n.subscribe(s));
         
     }
@@ -543,6 +545,12 @@ public interface TransformerSeq<T> extends  NestedFoldable<T>,
     @Override
     default <U extends Comparable<? super U>> Traversable<T> sorted(Function<? super T, ? extends U> function) {
         return unitAnyM(transformerStream().map(s->s.sorted(function)));
+    }
+
+
+    @Override
+    default ReactiveSeq<T> stream() {
+        return ConvertableSequence.super.stream();
     }
 
 

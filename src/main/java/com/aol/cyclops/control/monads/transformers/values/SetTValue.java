@@ -21,12 +21,15 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
@@ -48,23 +51,18 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  */
 public class SetTValue<T>  implements SetT<T>,
                                     ConvertableSequence<T>,
-                                    ExtendedTraversable<T>,
-                                    Sequential<T>,
-                                    CyclopsCollectable<T>,
-                                    IterableCollectable<T>,
-                                    FilterableFunctor<T>,
-                                    ZippingApplicativable<T>,
+                                    TransformerSeq<T>,
                                     Publisher<T>{
    
-   final AnyMValue<Set<T>> run;
+   final AnyMValue<SetX<T>> run;
 
-   private SetTValue(final AnyMValue<Set<T>> run){
-       this.run = run;
+   private SetTValue(final AnyMValue<? extends Set<T>> run){
+       this.run = run.map(s->SetX.fromIterable(s));
    }
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyMValue<Set<T>> unwrap(){
+   public AnyMValue<SetX<T>> unwrap(){
 	   return run;
    }
    /**
@@ -225,7 +223,7 @@ public class SetTValue<T>  implements SetT<T>,
 	 * @param monads AnyM that contains a monad wrapping an Set
 	 * @return SetT
 	 */
-   public static <A> SetTValue<A> of(AnyMValue<Set<A>> monads){
+   public static <A> SetTValue<A> of(AnyMValue<? extends Set<A>> monads){
 	   return new SetTValue<>(monads);
    }
    public static <A> SetTValue<A> of(Set<A> monads){
@@ -247,7 +245,7 @@ public class SetTValue<T>  implements SetT<T>,
 		return of(monads.map(s -> s.collect(Collectors.toSet())));
 	}
    
-	public static <A,V extends MonadicValue<Set<A>>> SetTValue<A> fromValue(V monadicValue){
+	public static <A,V extends MonadicValue<? extends Set<A>>> SetTValue<A> fromValue(V monadicValue){
 	       return of(AnyM.ofValue(monadicValue));
 	 }
    
@@ -281,13 +279,7 @@ public class SetTValue<T>  implements SetT<T>,
     public <T> SetTValue<T> unit(T unit) {
         return of(run.unit(SetX.of(unit)));
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<T> collectable() {
-        return stream();
-    }
+    
     @Override
     public ReactiveSeq<T> stream() {
         return run.stream().flatMap(i->i.stream());    
@@ -300,5 +292,25 @@ public class SetTValue<T>  implements SetT<T>,
     
     public static<T>  SetTValue<T> emptyOptional() {
         return SetT.fromOptional(Optional.empty());
+    }
+    @Override
+    public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
+        return run;
+       
+    }
+    @Override
+    public <T> SetTValue<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMValue)traversable.map(t->ListX.fromIterable(t)));
+    }
+    @Override
+    public AnyM<? extends Traversable<T>> transformerStream() {
+        
+        return run;
     }
 }
