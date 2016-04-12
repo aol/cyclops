@@ -19,6 +19,7 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.SetTSeq;
 import com.aol.cyclops.control.monads.transformers.values.SetTValue;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
@@ -254,7 +255,9 @@ public interface SetT<T>  extends Publisher<T>{
             Iterable<Set<A>> iterableOfSets) {
         return SetTValue.of(AnyM.fromIterableValue(iterableOfSets));
     }
-
+    public static <T> SetTSeq<T> emptySet(){
+        return SetTSeq.emptySet();
+    }
    
  
 }

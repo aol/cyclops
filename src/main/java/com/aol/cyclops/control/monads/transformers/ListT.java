@@ -255,5 +255,8 @@ public interface ListT<T>  extends ConvertableSequence<T>,
     public static <T> ListTValue<T> emptyOptional(){
         return ListTValue.emptyOptional();
     }
+    public static <T> ListTSeq<T> emptyList(){
+        return ListTSeq.emptyList();
+    }
  
 }

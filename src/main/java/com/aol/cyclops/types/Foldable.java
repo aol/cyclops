@@ -732,4 +732,18 @@ public interface Foldable<T> {
         return Ior.both(ReactiveSeq.fromStream(map.get(false).stream().map(x -> x.secondaryGet())),
                 ReactiveSeq.fromStream(map.get(true).stream().map(x -> x.get())));
     }
+    /**
+     * Check that there are specified number of matches of predicate in the
+     * Stream
+     * 
+     * <pre>
+     * {@code 
+     *  assertTrue(ReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+     * }
+     * </pre>
+     * 
+     */
+    default boolean xMatch(int num, Predicate<? super T> c){
+        return foldable().xMatch(num, c);
+    }
 }

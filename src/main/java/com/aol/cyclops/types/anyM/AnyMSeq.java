@@ -40,7 +40,6 @@ import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
-import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
@@ -61,7 +60,6 @@ public interface AnyMSeq<T> extends AnyM<T>,
 									ExtendedTraversable<T>,
 									Sequential<T>,
 									CyclopsCollectable<T>,
-									IterableCollectable<T>,
 									FilterableFunctor<T>,
 									ZippingApplicativable<T>,
 									ReactiveStreamsTerminalOperations<T>,

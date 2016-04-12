@@ -47,6 +47,9 @@ public interface Traversable<T> extends Iterable<T>,
                                         Publisher<T>{
 	
    
+    default ReactiveSeq<T> stream(){
+        return ReactiveSeq.fromIterable(this);
+    }
     
     default void subscribe(Subscriber<? super T> s){
         traversable().subscribe(s);
@@ -836,7 +839,7 @@ public interface Traversable<T> extends Iterable<T>,
 
 	
 	default Traversable<T> traversable() {
-		return ReactiveSeq.fromIterable(this);
+		return stream();
 	}
 	
 

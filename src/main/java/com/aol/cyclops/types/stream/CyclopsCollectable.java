@@ -236,7 +236,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
 		return collectable().percentileBy(percentile, function, comparator);
 	}
 	
-	
+
 	/**
 	 * True if predicate matches all elements when Monad converted to a Stream
 	 * 

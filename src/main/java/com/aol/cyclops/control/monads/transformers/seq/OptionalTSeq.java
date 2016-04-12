@@ -2,41 +2,23 @@ package com.aol.cyclops.control.monads.transformers.seq;
 
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
-import org.jooq.lambda.Collectable;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.ConvertableFunctor;
-import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
-import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.applicative.Applicativable;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 
 /**

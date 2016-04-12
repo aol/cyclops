@@ -7,8 +7,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.jooq.lambda.Collectable;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
@@ -18,17 +16,9 @@ import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.control.monads.transformers.TryT;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
-import com.aol.cyclops.types.IterableCollectable;
-import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 

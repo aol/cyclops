@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -29,11 +30,9 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
-import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Sequential;
-import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -41,7 +40,6 @@ import com.aol.cyclops.types.stream.HeadAndTail;
 
 //pattern match, for comprehensions
 public interface CollectionX<T> extends ExtendedTraversable<T>,
-										IterableCollectable<T>,
 										Iterable<T>,
 										Sequential<T>,
 										IterableFunctor<T>, 

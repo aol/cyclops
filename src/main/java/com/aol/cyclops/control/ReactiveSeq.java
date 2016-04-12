@@ -2582,7 +2582,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 *            Supplier that will generate the alternative Stream
 	 * @return SequenceM that will switch to an alternative Stream if empty
 	 */
-	default ReactiveSeq<T> onEmptySwitch(Supplier<Stream<T>> switchTo) {
+	default ReactiveSeq<T> onEmptySwitch(Supplier<? extends Stream<T>> switchTo) {
 		AtomicBoolean called = new AtomicBoolean(false);
 		return ReactiveSeq.fromStream(onEmptyGet((Supplier) () -> {
 			called.set(true);

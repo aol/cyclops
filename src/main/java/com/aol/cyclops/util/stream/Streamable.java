@@ -86,7 +86,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     @Override
     default Streamable<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
         
-        return (Streamable<T>)ZippingApplicativable.super.combine(predicate, op);
+        return Streamable.fromIterable(ZippingApplicativable.super.combine(predicate, op));
     }
 
 
@@ -97,7 +97,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     @Override
     default <U, R> Streamable<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
        
-        return ( Streamable<R>)ZippingApplicativable.super.zip(other, zipper);
+        return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
     }
 
 
@@ -108,7 +108,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     @Override
     default <U> Streamable<Tuple2<T, U>> zipStream(Stream<U> other) {
        
-        return (Streamable<Tuple2<T, U>>)ZippingApplicativable.super.zipStream(other);
+        return Streamable.fromIterable(ZippingApplicativable.super.zipStream(other));
     }
 
 
@@ -119,7 +119,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     @Override
     default <S, U> Streamable<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
        
-        return (Streamable)ZippingApplicativable.super.zip3(second, third);
+        return Streamable.fromIterable(ZippingApplicativable.super.zip3(second, third));
     }
 
 
@@ -131,7 +131,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
             Stream<T4> fourth) {
        
-        return (Streamable<Tuple4<T, T2, T3, T4>>)ZippingApplicativable.super.zip4(second, third, fourth);
+        return Streamable.fromIterable(ZippingApplicativable.super.zip4(second, third, fourth));
     }
 
 
@@ -153,8 +153,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     @Override
     default <K, A, D> Streamable<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier,
             Collector<? super T, A, D> downstream) {
-       
-        return (Streamable)ZippingApplicativable.super.grouped(classifier, downstream);
+       return Streamable.fromIterable(ZippingApplicativable.super.grouped(classifier, downstream));
     }
 
 
@@ -165,7 +164,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     @Override
     default <K> Streamable<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
        
-        return (Streamable)ZippingApplicativable.super.grouped(classifier);
+        return Streamable.fromIterable(ZippingApplicativable.super.grouped(classifier));
     }
 
 
