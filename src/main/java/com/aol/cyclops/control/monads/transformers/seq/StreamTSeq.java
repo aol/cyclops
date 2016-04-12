@@ -11,12 +11,16 @@ import org.jooq.lambda.Collectable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.StreamT;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
@@ -35,17 +39,9 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T>
  */
-public class StreamTSeq<T> implements StreamT<T>,
-                                    ConvertableSequence<T>,
-                                    ExtendedTraversable<T>,
-                                    Sequential<T>,
-                                    CyclopsCollectable<T>,
-                                    IterableCollectable<T>,
-                                    FilterableFunctor<T>,
-                                    ZippingApplicativable<T>,
-                                    Publisher<T>{
+public class StreamTSeq<T> implements StreamT<T>{
   
-    private final AnyMSeq<Stream<T>> run;
+    private final AnyMSeq<ReactiveSeq<T>> run;
 
    private StreamTSeq(final AnyMSeq<? extends Stream<T>> run){
        this.run = run.map(s->ReactiveSeq.fromStream(s));
@@ -53,7 +49,7 @@ public class StreamTSeq<T> implements StreamT<T>,
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyMSeq<Stream<T>> unwrap(){
+   public AnyMSeq<ReactiveSeq<T>> unwrap(){
 	   return run;
    }
    /**
@@ -213,19 +209,33 @@ public class StreamTSeq<T> implements StreamT<T>,
         run.forEachEvent(e->ReactiveSeq.fromStream(e).subscribe(s),e->s.onError(e),()->s.onComplete());  
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<T> collectable() {
-       return this;
-    } 
+   
     public <R> StreamTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Stream.of(i)));
     }
     @Override
     public <R> StreamT<R> empty() {
        return of(run.empty());
+    }
+    @Override
+    public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
+        return run;
+       
+    }
+    @Override
+    public <T> StreamTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMSeq)traversable.map(t->ReactiveSeq.fromIterable(t)));
+    }
+    @Override
+    public AnyMSeq<? extends Traversable<T>> transformerStream() {
+        
+        return run;
     }
  
 }

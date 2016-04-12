@@ -60,6 +60,10 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
                                                     Applicativable<T> {
     
     
+    public static <T,X extends Throwable> Try<T,X> fromIterable(Iterable<T> iterable){
+        Iterator<T> it = iterable.iterator();
+        return Try.success(it.hasNext() ? it.next() : null);
+    }
     default Try<T,Throwable> toTry(){
         return (Try<T,Throwable>)this;
         

@@ -13,11 +13,14 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.seq.StreamTSeq;
 import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.stream.ConvertableSequence;
 
 
 /**
@@ -32,7 +35,9 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface StreamT<T> extends Publisher<T> {
+public interface StreamT<T> extends  ConvertableSequence<T>, 
+                                     TransformerSeq<T>,
+                                     Publisher<T> {
   
     public <R> StreamT<R> unitIterator(Iterator<R> it);
     public <R> StreamT<R> unit(R t);
@@ -42,7 +47,7 @@ public interface StreamT<T> extends Publisher<T> {
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyM<Stream<T>> unwrap();
+   public AnyM<ReactiveSeq<T>> unwrap();
    /**
   	 * Peek at the current value of the Stream
   	 * <pre>
@@ -153,7 +158,7 @@ public interface StreamT<T> extends Publisher<T> {
 	 * @param monads
 	 * @return
 	 */
-   public static <A> StreamT<A> of(AnyM<Stream<A>> monads){
+   public static <A> StreamT<A> of(AnyM<? extends Stream<A>> monads){
        return Matchables.anyM(monads).visit(v-> StreamTValue.of(v), s->StreamTSeq.of(s));
    }
    

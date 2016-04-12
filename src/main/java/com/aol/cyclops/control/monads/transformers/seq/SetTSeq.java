@@ -288,7 +288,7 @@ public class SetTSeq<T>  implements SetT<T>,
        
     }
     @Override
-    public <T>SetTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+    public <T> SetTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
         
         return of((AnyMSeq)traversable.map(t->SetX.fromIterable(t)));
     }

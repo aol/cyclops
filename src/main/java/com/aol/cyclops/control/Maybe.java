@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -75,7 +76,9 @@ public interface Maybe<T> extends MonadicValue<T>,
 	static <T> Maybe<T> none(){
 		return  EMPTY;
 	}
-	
+	static <T> Maybe<T> fromIterable(Iterable<T> iterable){
+        return Maybe.fromEvalOf(Eval.fromIterable(iterable));
+    }
 	static <T> Maybe<T> fromOptional(Optional<T> opt){
 		if(opt.isPresent())
 			return Maybe.of(opt.get());

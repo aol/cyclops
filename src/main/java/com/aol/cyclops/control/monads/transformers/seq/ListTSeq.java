@@ -21,6 +21,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 
@@ -38,6 +39,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T>
  */
 public class ListTSeq<T> implements ListT<T>,
+                                    ConvertableSequence<T>,
                                     TransformerSeq<T>,
                                     Publisher<T>{
                                    
@@ -294,6 +296,8 @@ public class ListTSeq<T> implements ListT<T>,
         
         return run;
     }
+    
+    
     
     
 }

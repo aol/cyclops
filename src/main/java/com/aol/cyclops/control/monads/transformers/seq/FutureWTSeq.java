@@ -8,21 +8,18 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jooq.lambda.Collectable;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.FilterableFunctor;
-import com.aol.cyclops.types.IterableCollectable;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
@@ -38,14 +35,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T>
  */
 public class FutureWTSeq<A> implements FutureWT<A>, 
-                                                 ConvertableSequence<A>,
-                                                ExtendedTraversable<A>,
-                                                Sequential<A>,
-                                                CyclopsCollectable<A>,
-                                                IterableCollectable<A>,
-                                                FilterableFunctor<A>,
-                                                ZippingApplicativable<A>,
-                                                Publisher<A>{
+                                       TransformerSeq<A>{
                                                 
    
    private final AnyMSeq<FutureW<A>> run;
@@ -257,13 +247,7 @@ public class FutureWTSeq<A> implements FutureWT<A>,
         
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<A> collectable() {
-       return this;
-    } 
+    
     public <R> FutureWTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->FutureW.ofResult(i)));
     }
@@ -274,6 +258,27 @@ public class FutureWTSeq<A> implements FutureWT<A>,
     public <R> FutureWTSeq<R> empty(){
         return of(run.unit(FutureW.empty()));
      }
+    
+    @Override
+    public AnyM<? extends Foldable<A>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<A>> nestedCollectables() {
+        return run.map(e->e.toListX());
+       
+    }
+    @Override
+    public <T> FutureWTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMSeq)traversable.map(t->FutureW.fromIterable(t)));
+    }
+    @Override
+    public AnyMSeq<? extends Traversable<A>> transformerStream() {
+        
+        return run.map(e->e.toListX());
+    }
  
  
 }

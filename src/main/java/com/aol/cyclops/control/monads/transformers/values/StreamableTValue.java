@@ -16,9 +16,11 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
@@ -38,15 +40,7 @@ import com.aol.cyclops.util.stream.Streamable;
  *
  * @param <T>
  */
-public class StreamableTValue<T> implements StreamableT<T>,
-                                        ConvertableSequence<T>,
-                                        ExtendedTraversable<T>,
-                                        Sequential<T>,
-                                        CyclopsCollectable<T>,
-                                        IterableCollectable<T>,
-                                        FilterableFunctor<T>,
-                                        ZippingApplicativable<T>,
-                                        Publisher<T>{
+public class StreamableTValue<T> implements StreamableT<T>{
    
    final AnyMValue<Streamable<T>> run;
 
@@ -263,13 +257,7 @@ public class StreamableTValue<T> implements StreamableT<T>,
     public <T> StreamableTValue<T> unit(T unit) {
         return of(run.unit(Streamable.of(unit)));
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<T> collectable() {
-        return stream();
-    }
+    
     @Override
     public ReactiveSeq<T> stream() {
         return run.stream().flatMap(i->i.stream());
@@ -286,5 +274,25 @@ public class StreamableTValue<T> implements StreamableT<T>,
     }
     public Streamable<T> get(){
         return run.get();
+    }
+    @Override
+    public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
+        return run;
+       
+    }
+    @Override
+    public <T>StreamableTValue<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMValue)traversable.map(t->Streamable.fromIterable(t)));
+    }
+    @Override
+    public AnyM<? extends Traversable<T>> transformerStream() {
+        
+        return run;
     }
 }

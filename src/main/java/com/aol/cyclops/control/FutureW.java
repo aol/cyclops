@@ -37,6 +37,10 @@ public class FutureW<T> implements ConvertableFunctor<T>,
     public static <T> FutureW<T> empty(){
         return new FutureW(CompletableFuture.completedFuture(null));
     }
+    public static <T> FutureW<T> fromIterable(Iterable<T> iterable){
+        Iterator<T> it = iterable.iterator();
+        return FutureW.ofResult(Eval.fromIterable(iterable)).map(e->e.get());
+    }
 	public static <T> FutureW<T> of(CompletableFuture<T> f){
 		return new FutureW<>(f);
 	}

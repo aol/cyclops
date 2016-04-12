@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -72,6 +73,10 @@ public interface Xor<ST,PT> extends Supplier<PT>,
                                     Filterable<PT>,
                                     Applicativable<PT>{
 
+    public static <ST,T> Xor<ST,T> fromIterable(Iterable<T> iterable){
+        Iterator<T> it = iterable.iterator();
+        return Xor.primary(it.hasNext() ? it.next() : null);
+    }
 	/**
 	 * Create an instance of the secondary type. Most methods are biased to the primary type,
 	 * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value

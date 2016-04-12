@@ -20,14 +20,17 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -51,14 +54,7 @@ import com.aol.cyclops.util.stream.StreamUtils;
  * @param <T> The type contained on the Optional within
  */
 public class OptionalTSeq<T> implements OptionalT<T>,
-                                        ConvertableSequence<T>,
-                                        ExtendedTraversable<T>,
-                                        Sequential<T>,
-                                        CyclopsCollectable<T>,
-                                        IterableCollectable<T>,
-                                        FilterableFunctor<T>,
-                                        ZippingApplicativable<T>,
-                                        Publisher<T>{
+                                        TransformerSeq<T>{
    
    private final AnyMSeq<Optional<T>> run;
    
@@ -288,14 +284,28 @@ public class OptionalTSeq<T> implements OptionalT<T>,
         run.forEachEvent(e->Maybe.fromOptional(e).subscribe(s),e->s.onError(e),()->s.onComplete());
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<T> collectable() {
-       return this;
-    } 
+   
     public <R> OptionalTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Optional.of(i)));
+    }
+    @Override
+    public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run.map(f->Maybe.fromOptional(f));
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
+        return run.map(f->Maybe.fromOptional(f).toListX());
+       
+    }
+    @Override
+    public <T> OptionalTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMSeq)traversable.map(t->Maybe.fromIterable(t).toOptional()));
+    }
+    @Override
+    public AnyMSeq<? extends Traversable<T>> transformerStream() {
+        
+        return run.map(f->Maybe.fromOptional(f).toListX());
     }
 }

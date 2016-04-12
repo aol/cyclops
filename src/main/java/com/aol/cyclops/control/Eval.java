@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -36,6 +37,10 @@ public interface Eval<T> extends Supplier<T>,
                                  Applicativable<T>,
                                  Matchable.ValueAndOptionalMatcher<T>{
 
+    public static <T> Eval<T> fromIterable(Iterable<T> iterable){
+        Iterator<T> it = iterable.iterator();
+        return Eval.later(()->it.hasNext() ? it.next() : null);
+    }
 	public static<T> Eval<T> now(T value){
 	    return always(()->value);
 		

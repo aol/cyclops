@@ -12,15 +12,20 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.control.monads.transformers.TryT;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
@@ -42,14 +47,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T> The type contained on the Try within
  */
 public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
-                                                    ConvertableSequence<T>,
-                                                    ExtendedTraversable<T>,
-                                                    Sequential<T>,
-                                                    CyclopsCollectable<T>,
-                                                    IterableCollectable<T>,
-                                                    FilterableFunctor<T>,
-                                                    ZippingApplicativable<T>,
-                                                    Publisher<T>{
+                                                    TransformerSeq<T>{
                                                        
    private final AnyMSeq<Try<T,X>> run;
    
@@ -302,15 +300,28 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
       
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<T> collectable() {
-       return this;
-    } 
     public <R> TryTSeq<R,X> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Try.success(i)));
+    }
+    @Override
+    public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
+        return  run.map(t->t.toListX());
+       
+    }
+    @Override
+    public <T> TryTSeq<T,X> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMSeq)traversable.map(t->Try.fromIterable(t)));
+    }
+    @Override
+    public AnyMSeq<? extends Traversable<T>> transformerStream() {
+        
+        return run.map(t->t.toListX());
     }
     
 }

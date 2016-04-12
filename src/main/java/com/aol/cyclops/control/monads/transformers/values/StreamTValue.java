@@ -15,11 +15,14 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.StreamT;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
@@ -39,25 +42,17 @@ import com.aol.cyclops.util.stream.StreamUtils;
  *
  * @param <T>
  */
-public class StreamTValue<T> implements StreamT<T>,
-                                    ConvertableSequence<T>,
-                                    ExtendedTraversable<T>,
-                                    Sequential<T>,
-                                    CyclopsCollectable<T>,
-                                    IterableCollectable<T>,
-                                    FilterableFunctor<T>,
-                                    ZippingApplicativable<T>,
-                                    Publisher<T>{
+public class StreamTValue<T> implements StreamT<T>{
   
-    private final AnyMValue<Stream<T>> run;
+    private final AnyMValue<ReactiveSeq<T>> run;
 
-   private StreamTValue(final AnyMValue<Stream<T>> run){
-       this.run = run;
+   private StreamTValue(final AnyMValue<? extends Stream<T>> run){
+       this.run = run.map(s->ReactiveSeq.fromStream(s));
    }
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyMValue<Stream<T>> unwrap(){
+   public AnyMValue<ReactiveSeq<T>> unwrap(){
 	   return run;
    }
    /**
@@ -181,7 +176,7 @@ public class StreamTValue<T> implements StreamT<T>,
 	 * @param monads
 	 * @return
 	 */
-   public static <A> StreamTValue<A> of(AnyMValue<Stream<A>> monads){
+   public static <A> StreamTValue<A> of(AnyMValue<? extends Stream<A>> monads){
 	   return new StreamTValue<>(monads);
    }
    public static <A> StreamTValue<A> of(Stream<A> monads){
@@ -226,13 +221,7 @@ public class StreamTValue<T> implements StreamT<T>,
     public <T> StreamTValue<T> unit(T unit) {
         return of(run.unit(Stream.of(unit)));
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<T> collectable() {
-       return stream();
-    }
+    
     @Override
     public ReactiveSeq<T> stream() {
         return run.stream().flatMap(i->i);  
@@ -243,5 +232,25 @@ public class StreamTValue<T> implements StreamT<T>,
     }
     public static<T>  StreamTValue<T> emptyOptional() {
         return StreamT.fromOptional(Optional.empty());
+    }
+    @Override
+    public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
+        return run;
+       
+    }
+    @Override
+    public <T>StreamTValue<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMValue)traversable.map(t->ReactiveSeq.fromIterable(t)));
+    }
+    @Override
+    public AnyM<? extends Traversable<T>> transformerStream() {
+        
+        return run;
     }
 }

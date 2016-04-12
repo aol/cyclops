@@ -7,22 +7,19 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jooq.lambda.Collectable;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.XorT;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.FilterableFunctor;
-import com.aol.cyclops.types.IterableCollectable;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue2;
-import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
@@ -43,14 +40,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *            The type contained on the Xor within
  */
 public class XorTSeq<ST,T> implements XorT<ST,T>,
-                                    ConvertableSequence<T>,
-                                    ExtendedTraversable<T>,
-                                    Sequential<T>,
-                                    CyclopsCollectable<T>,
-                                    IterableCollectable<T>,
-                                    FilterableFunctor<T>,
-                                    ZippingApplicativable<T>,
-                                    Publisher<T>{
+                                        TransformerSeq<T>{
 
     private final AnyMSeq<Xor<ST,T>> run;
 
@@ -322,15 +312,28 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
         run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete());
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<T> collectable() {
-       return this;
-    } 
+    
     public <R> XorTSeq<ST,R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Xor.primary(i)));
     }
- 
+    @Override
+    public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
+        return  run.map(t->t.toListX());
+       
+    }
+    @Override
+    public <T> XorTSeq<ST,T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMSeq)traversable.map(t->Xor.fromIterable(t)));
+    }
+    @Override
+    public AnyMSeq<? extends Traversable<T>> transformerStream() {
+        
+        return run.map(t->t.toListX());
+    }
 }

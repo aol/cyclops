@@ -19,10 +19,12 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.values.ListTValue;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.stream.ConvertableSequence;
 
 
 
@@ -38,7 +40,9 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface ListT<T>  extends Publisher<T>{
+public interface ListT<T>  extends ConvertableSequence<T>, 
+                                    TransformerSeq<T>,
+                                    Publisher<T>{
     public <R> ListT<R> unitIterator(Iterator<R> it);
     public <R> ListT<R> unit(R t);
     public <R> ListT<R> empty();

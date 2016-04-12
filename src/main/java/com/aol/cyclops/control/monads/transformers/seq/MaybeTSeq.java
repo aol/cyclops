@@ -10,15 +10,20 @@ import org.jooq.lambda.Collectable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.MaybeT;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
@@ -43,15 +48,7 @@ import com.aol.cyclops.types.stream.ToStream;
  *            The type contained on the Maybe within
  */
 public class MaybeTSeq<T>  implements  MaybeT<T>,
-                                    ToStream<T>,
-                                    ConvertableSequence<T>,
-                                    ExtendedTraversable<T>,
-                                    Sequential<T>,
-                                    CyclopsCollectable<T>,
-                                    IterableCollectable<T>,
-                                    FilterableFunctor<T>,
-                                    ZippingApplicativable<T>,
-                                    Publisher<T>{
+                                        TransformerSeq<T>{
 
     
     public AnyMSeq<T> anyM(){
@@ -306,15 +303,30 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
         run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete());   
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<T> collectable() {
-       return this;
-    } 
     public <R> MaybeTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Maybe.just(i)));
     }
+    
+    @Override
+    public AnyM<? extends Foldable<T>> nestedFoldables() {
+        return run;
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
+        return run.map(e->e.toListX());
+       
+    }
+    @Override
+    public <T> MaybeTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMSeq)traversable.map(t->Maybe.fromIterable(t)));
+    }
+    @Override
+    public AnyMSeq<? extends Traversable<T>> transformerStream() {
+        
+        return run.map(e->e.toListX());
+    }
+ 
  
 }

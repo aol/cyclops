@@ -32,6 +32,7 @@ import com.aol.cyclops.types.anyM.NestedCollectable;
 import com.aol.cyclops.types.anyM.NestedFoldable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
+import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyOperations;
 import com.aol.cyclops.util.stream.Streamable;
@@ -43,6 +44,7 @@ public interface TransformerSeq<T> extends  NestedFoldable<T>,
                                             Sequential<T>,                                
                                             Iterable<T>,
                                             FilterableFunctor<T>,
+                                            ToStream<T>,
                                             Publisher<T> {
     
   

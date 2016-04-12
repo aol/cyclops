@@ -15,9 +15,11 @@ import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
 import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.util.stream.Streamable;
 
 
@@ -33,7 +35,9 @@ import com.aol.cyclops.util.stream.Streamable;
  *
  * @param <T>
  */
-public interface StreamableT<T>  extends Publisher<T>{
+public interface StreamableT<T>  extends  ConvertableSequence<T>, 
+                                          TransformerSeq<T>,  
+                                          Publisher<T>{
    
     public <R> StreamableT<R> unitIterator(Iterator<R> it);
     public <R> StreamableT<R> unit(R t);

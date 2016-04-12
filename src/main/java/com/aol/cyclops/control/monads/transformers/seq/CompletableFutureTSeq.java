@@ -21,14 +21,17 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FilterableFunctor;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -50,14 +53,7 @@ import lombok.val;
  * @param <T>
  */
 public class CompletableFutureTSeq<A> implements CompletableFutureT<A>, 
-                                                 ConvertableSequence<A>,
-                                                ExtendedTraversable<A>,
-                                                Sequential<A>,
-                                                CyclopsCollectable<A>,
-                                                IterableCollectable<A>,
-                                                FilterableFunctor<A>,
-                                                ZippingApplicativable<A>,
-                                                Publisher<A>{
+                                                 TransformerSeq<A>{
                                                 
    
    private final AnyMSeq<CompletableFuture<A>> run;
@@ -268,13 +264,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
         run.forEachEvent(e->FutureW.of(e).subscribe(s),e->s.onError(e),()->s.onComplete()); 
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
-     */
-    @Override
-    public Collectable<A> collectable() {
-       return this;
-    } 
+    
     public <R> CompletableFutureTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->CompletableFuture.completedFuture(i)));
     }
@@ -286,5 +276,25 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
         return of(run.unit(new CompletableFuture<R>()));
      }
  
+    @Override
+    public AnyM<? extends Foldable<A>> nestedFoldables() {
+        return run.map(f->FutureW.of(f));
+       
+    }
+    @Override
+    public AnyM<? extends CyclopsCollectable<A>> nestedCollectables() {
+        return run.map(f->FutureW.of(f).toListX());
+       
+    }
+    @Override
+    public <T> CompletableFutureTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMSeq)traversable.map(t->FutureW.fromIterable(t).toCompletableFuture()));
+    }
+    @Override
+    public AnyMSeq<? extends Traversable<A>> transformerStream() {
+        
+        return run.map(f->FutureW.of(f).toListX());
+    }
  
 }
