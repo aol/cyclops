@@ -36,7 +36,6 @@ public class FutureWTValueComprehender implements ValueComprehender<FutureWTValu
 
 	@Override
 	public FutureWTValue of(Object o) {
-	    System.out.println("of " + o);
 		return FutureWTValue.of(FutureW.ofResult(o));
 	}
 

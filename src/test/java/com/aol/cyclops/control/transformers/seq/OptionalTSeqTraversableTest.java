@@ -1,22 +1,24 @@
 package com.aol.cyclops.control.transformers.seq;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.StreamT;
+import java.util.Optional;
+
+import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.AbstractTraversableTest;
 import com.aol.cyclops.types.Traversable;
 
 
-public class StreamTSeqTraversableTest extends AbstractTraversableTest {
+public class OptionalTSeqTraversableTest extends AbstractTraversableTest {
 
     @Override
     public <T> Traversable<T> of(T... elements) {
-        return StreamT.fromIterable(ListX.of(ReactiveSeq.of(elements)));
+        
+        return OptionalT.fromIterable(ListX.of(elements).map(Optional::of));
     }
 
     @Override
     public <T> Traversable<T> empty() {
-        return StreamT.emptyStream();
+        return OptionalT.emptyList();
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jooq.lambda.Collectable;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
@@ -17,8 +18,10 @@ import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.control.monads.transformers.TryT;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 
@@ -37,7 +40,11 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T> The type contained on the Try within
  */
 public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
-                                                    TransformerSeq<T>{
+                                                        Traversable<T>,
+                                                        Foldable<T>,
+                                                        ConvertableSequence<T>,
+                                                        CyclopsCollectable<T>,
+                                                        Sequential<T>{
                                                        
    private final AnyMSeq<Try<T,X>> run;
    
@@ -284,34 +291,16 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
        return stream().iterator();
     }
 
-    @Override
-    public void subscribe(Subscriber<? super T> s) {
-        run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete());
-      
-    }
-
+   
     public <R> TryTSeq<R,X> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Try.success(i)));
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
+     */
     @Override
-    public AnyM<? extends Foldable<T>> nestedFoldables() {
-        return run;
-       
-    }
-    @Override
-    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
-        return  run.map(t->t.toListX());
-       
-    }
-    @Override
-    public <T> TryTSeq<T,X> unitAnyM(AnyM<Traversable<T>> traversable) {
-        
-        return of((AnyMSeq)traversable.map(t->Try.fromIterable(t)));
-    }
-    @Override
-    public AnyMSeq<? extends Traversable<T>> transformerStream() {
-        
-        return run.map(t->t.toListX());
+    public Collectable<T> collectable() {
+        return stream();
     }
     
 }

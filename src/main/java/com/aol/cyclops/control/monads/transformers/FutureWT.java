@@ -15,9 +15,11 @@ import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -213,6 +215,9 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>{
 
     public static<T>  FutureWTValue<T> emptyOptional() {
         return FutureWTValue.emptyOptional();
+    }
+    public static <T> FutureWTSeq<T> emptyList(){
+        return FutureWT.fromIterable(ListX.of());
     }
 
 }

@@ -16,6 +16,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
 import com.aol.cyclops.control.monads.transformers.values.TryTValue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -250,5 +251,9 @@ public interface TryT<T,X extends Throwable>  extends Publisher<T> {
             Iterable<Try<A,X>> iterableOfTrys) {
         return TryTValue.of(AnyM.fromIterableValue(iterableOfTrys));
     }
+    public static <T,X extends Throwable> TryTSeq<T,X> emptyList(){
+        return TryT.fromIterable(ListX.of());
+    }
+
  
 }

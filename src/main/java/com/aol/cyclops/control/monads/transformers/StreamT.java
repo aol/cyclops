@@ -15,12 +15,14 @@ import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.seq.StreamTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
 import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.ConvertableSequence;
+import com.aol.cyclops.util.stream.Streamable;
 
 
 /**
@@ -201,6 +203,9 @@ public interface StreamT<T> extends  ConvertableSequence<T>,
    public static <A> StreamTValue<A> fromIterableValue(
            Iterable<Stream<A>> iterableOfStreams) {
        return StreamTValue.of(AnyM.fromIterableValue(iterableOfStreams));
+   }
+   public static<T>  StreamTSeq<T> emptyStream() {
+       return StreamT.fromIterable(ReactiveSeq.empty());
    }
    
 }

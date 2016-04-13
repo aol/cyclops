@@ -176,7 +176,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      *            Supplier that will generate the alternative Stream
      * @return SequenceM that will switch to an alternative Stream if empty
      */
-    default LazyFutureStream<U> onEmptySwitch(Supplier<Stream<U>> switchTo){
+    default LazyFutureStream<U> onEmptySwitch(Supplier<? extends Stream<U>> switchTo){
         return fromStream(ReactiveSeq.fromStream(stream()).onEmptySwitch(switchTo));
     }
     /**

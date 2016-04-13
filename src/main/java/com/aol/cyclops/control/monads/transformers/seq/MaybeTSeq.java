@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jooq.lambda.Collectable;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
@@ -15,8 +16,10 @@ import com.aol.cyclops.control.monads.transformers.MaybeT;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
@@ -37,7 +40,11 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *            The type contained on the Maybe within
  */
 public class MaybeTSeq<T>  implements  MaybeT<T>,
-                                        TransformerSeq<T>{
+                                        Traversable<T>,
+                                        Foldable<T>,
+                                        ConvertableSequence<T>,
+                                        CyclopsCollectable<T>,
+                                        Sequential<T>{  
 
     
     public AnyMSeq<T> anyM(){
@@ -296,25 +303,12 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
         return of(run.unitIterator(it).map(i->Maybe.just(i)));
     }
     
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
+     */
     @Override
-    public AnyM<? extends Foldable<T>> nestedFoldables() {
-        return run;
-       
-    }
-    @Override
-    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
-        return run.map(e->e.toListX());
-       
-    }
-    @Override
-    public <T> MaybeTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
-        
-        return of((AnyMSeq)traversable.map(t->Maybe.fromIterable(t)));
-    }
-    @Override
-    public AnyMSeq<? extends Traversable<T>> transformerStream() {
-        
-        return run.map(e->e.toListX());
+    public Collectable<T> collectable() {
+        return stream();
     }
  
  

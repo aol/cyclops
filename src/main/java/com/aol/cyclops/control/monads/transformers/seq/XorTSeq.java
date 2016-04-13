@@ -18,8 +18,10 @@ import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue2;
+import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
@@ -40,7 +42,11 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *            The type contained on the Xor within
  */
 public class XorTSeq<ST,T> implements XorT<ST,T>,
-                                        TransformerSeq<T>{
+                                        Traversable<T>,
+                                        Foldable<T>,
+                                        ConvertableSequence<T>,
+                                        CyclopsCollectable<T>,
+                                        Sequential<T>{
 
     private final AnyMSeq<Xor<ST,T>> run;
 
@@ -307,33 +313,14 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
        return stream().iterator();
     }
 
-    @Override
-    public void subscribe(Subscriber<? super T> s) {
-        run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete());
-    }
-
-    
     public <R> XorTSeq<ST,R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Xor.primary(i)));
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
+     */
     @Override
-    public AnyM<? extends Foldable<T>> nestedFoldables() {
-        return run;
-       
-    }
-    @Override
-    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
-        return  run.map(t->t.toListX());
-       
-    }
-    @Override
-    public <T> XorTSeq<ST,T> unitAnyM(AnyM<Traversable<T>> traversable) {
-        
-        return of((AnyMSeq)traversable.map(t->Xor.fromIterable(t)));
-    }
-    @Override
-    public AnyMSeq<? extends Traversable<T>> transformerStream() {
-        
-        return run.map(t->t.toListX());
+    public Collectable<T> collectable() {
+        return stream();
     }
 }

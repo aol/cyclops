@@ -14,6 +14,7 @@ import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -250,5 +251,7 @@ public interface OptionalT<T>  extends Publisher<T>{
     public static <T> OptionalTValue<T> emptyMaybe(){
         return OptionalTValue.emptyMaybe();
     }
- 
+    public static <T> OptionalTSeq<T> emptyList(){
+        return OptionalT.fromIterable(ListX.of());
+    }
 }

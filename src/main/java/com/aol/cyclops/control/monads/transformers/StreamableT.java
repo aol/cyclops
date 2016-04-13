@@ -235,5 +235,10 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
 	   return of(monads.map(Streamable::fromStream));
    }
   
-  
+   public static<T>  StreamableTValue<T> emptyOptional() {
+       return StreamableT.fromOptional(Optional.empty());
+   }
+   public static<T>  StreamableTSeq<T> emptyStreamable() {
+       return StreamableT.fromIterable(Streamable.empty());
+   }
 }

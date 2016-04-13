@@ -15,6 +15,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -267,6 +268,9 @@ public interface XorT<ST,T>  extends Publisher<T>{
     }
     public static<ST,PT>  XorTValue<ST,PT> emptyOptional() {
         return XorT.fromOptional(Optional.empty());
+    }
+    public static <ST,T> XorTSeq<ST,T> emptyList(){
+        return XorT.fromIterable(ListX.of());
     }
 
 }

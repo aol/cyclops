@@ -18,8 +18,10 @@ import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
@@ -35,7 +37,11 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T>
  */
 public class FutureWTSeq<A> implements FutureWT<A>, 
-                                       TransformerSeq<A>{
+                                        Traversable<A>,
+                                        Foldable<A>,
+                                        ConvertableSequence<A>,
+                                        CyclopsCollectable<A>,
+                                        Sequential<A>{
                                                 
    
    private final AnyMSeq<FutureW<A>> run;
@@ -259,25 +265,12 @@ public class FutureWTSeq<A> implements FutureWT<A>,
         return of(run.unit(FutureW.empty()));
      }
     
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
+     */
     @Override
-    public AnyM<? extends Foldable<A>> nestedFoldables() {
-        return run;
-       
-    }
-    @Override
-    public AnyM<? extends CyclopsCollectable<A>> nestedCollectables() {
-        return run.map(e->e.toListX());
-       
-    }
-    @Override
-    public <T> FutureWTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
-        
-        return of((AnyMSeq)traversable.map(t->FutureW.fromIterable(t)));
-    }
-    @Override
-    public AnyMSeq<? extends Traversable<A>> transformerStream() {
-        
-        return run.map(e->e.toListX());
+    public Collectable<A> collectable() {
+        return stream();
     }
  
  

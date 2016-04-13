@@ -6,16 +6,16 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.reactivestreams.Subscriber;
+import org.jooq.lambda.Collectable;
 
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.EvalT;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
@@ -36,8 +36,11 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *            The type contained on the Maybe within
  */
 public class EvalTSeq<T> implements EvalT<T>,
-                                    TransformerSeq<T>
-                                    {
+                                    Traversable<T>,
+                                    Foldable<T>,
+                                    ConvertableSequence<T>,
+                                    CyclopsCollectable<T>,
+                                    Sequential<T>{
 
     private final AnyMSeq<Eval<T>> run;
 
@@ -265,12 +268,6 @@ public class EvalTSeq<T> implements EvalT<T>,
        return stream().iterator();
     }
 
-    @Override
-    public void subscribe(Subscriber<? super T> s) {
-        run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete()); 
-    }
-
-    
     public <R> EvalTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Eval.now(i)));
     }
@@ -280,26 +277,17 @@ public class EvalTSeq<T> implements EvalT<T>,
     public <R> EvalTSeq<R> empty(){
         return of(run.unit(Eval.later(()->null)));
      }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
+     */
+    @Override
+    public Collectable<T> collectable() {
+        return stream();
+    }
     
-    @Override
-    public AnyM<? extends Foldable<T>> nestedFoldables() {
-        return run;
-       
-    }
-    @Override
-    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
-        return run.map(e->e.toListX());
-       
-    }
-    @Override
-    public <T> EvalTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
-        
-        return of((AnyMSeq)traversable.map(t->Eval.fromIterable(t)));
-    }
-    @Override
-    public AnyMSeq<? extends Traversable<T>> transformerStream() {
-        
-        return run.map(e->e.toListX());
-    }
+    
+    
+    
  
 }

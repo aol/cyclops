@@ -258,7 +258,7 @@ public class StreamableTValue<T> implements StreamableT<T>{
        return of(run.empty());
     }
     public static<T>  StreamableTValue<T> emptyOptional() {
-        return StreamableT.fromOptional(Optional.empty());
+        return StreamableT.emptyOptional();
     }
     public boolean isStreamablePresent() {
         return !run.isEmpty();

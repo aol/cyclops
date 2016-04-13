@@ -16,6 +16,8 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -37,7 +39,8 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public interface EvalT<T>  extends Publisher<T>{
+public interface EvalT<T>  extends Publisher<T>,
+                                   Functor<T>{
 
     public <R> EvalT<R> unit(R value);
     public <R> EvalT<R> empty();
@@ -269,6 +272,9 @@ public interface EvalT<T>  extends Publisher<T>{
     public static <T> EvalTValue<T> emptyMaybe() {
         return fromValue(Maybe.none());
      }
+    public static <T> EvalTSeq<T> emptyList(){
+        return EvalT.fromIterable(ListX.of());
+    }
    
 
 }
