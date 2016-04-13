@@ -19,5 +19,7 @@ com.aol.cyclops.internal.comprehensions.comprehenders.transformers.CompletableFu
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.OptionalTValueComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.FutureWTValueComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.XorTValueComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.TryTValueComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.ListTValueComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.StreamTValueComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.ListTSeqComprehender

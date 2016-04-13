@@ -33,7 +33,7 @@ public class XorTValueComprehender implements ValueComprehender<XorTValue>, Prin
 
 	@Override
 	public XorTValue of(Object o) {
-	    System.out.println("of " + o);
+	   
 		return XorTValue.of(Xor.primary(o));
 	}
 

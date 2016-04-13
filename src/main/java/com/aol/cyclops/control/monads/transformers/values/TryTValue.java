@@ -2,6 +2,7 @@ package com.aol.cyclops.control.monads.transformers.values;
 
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -237,6 +238,9 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	public static <A,X extends Throwable> TryTValue<A,X> of(AnyMValue<Try<A,X>> monads) {
 		return new TryTValue<>(monads);
 	}
+	 public static <A,X extends Throwable> TryTValue<A,X> of(Try<A,X> monads) {
+	        return TryT.fromOptional(Optional.of(monads));
+	    }
 
     public static <A, X extends Throwable, V extends MonadicValue<Try<A,X>>> TryTValue<A,X> fromValue(V monadicValue) {
         return of(AnyM.ofValue(monadicValue));
@@ -257,10 +261,10 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
     
     
     public boolean isSuccess(){
-        return run.orElseGet(Try.failure(null)).isSuccess();
+        return run.orElse(Try.failure(null)).isSuccess();
     }
     public boolean isFailure(){
-        return run.orElseGet(Try.success(null)).isFailure();
+        return run.orElse(Try.success(null)).isFailure();
     }
 
     @Override
@@ -270,12 +274,12 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 
     @Override
     public Iterator<T> iterator() {
-       return run.orElseGet(Try.failure(null)).iterator();
+       return run.orElse(Try.failure(null)).iterator();
     }
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-        run.orElseGet(Try.failure(null)).subscribe(s);
+        run.orElse(Try.failure(null)).subscribe(s);
         
     }
 
@@ -305,4 +309,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
         return of(run.unit(Try.failure(null)));
      }
  
+    public static<T,X extends Throwable>  TryTValue<T,X> emptyOptional() {
+        return TryT.fromOptional(Optional.empty());
+    }
 }

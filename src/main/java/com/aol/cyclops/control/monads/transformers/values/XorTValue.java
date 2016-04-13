@@ -299,7 +299,7 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-        run.orElseGet(Xor.secondary(null)).subscribe(s);
+        run.orElse(Xor.secondary(null)).subscribe(s);
         
     }
 

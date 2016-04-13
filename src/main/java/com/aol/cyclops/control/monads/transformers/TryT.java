@@ -255,6 +255,9 @@ public interface TryT<T,X extends Throwable>  extends Publisher<T>, Functor<T> {
     public static <T,X extends Throwable> TryTSeq<T,X> emptyList(){
         return TryT.fromIterable(ListX.of());
     }
+    public static <A,X extends Throwable> TryTValue<A,X>  emptyOptional(){
+        return TryTValue.emptyOptional();
+    }
 
  
 }

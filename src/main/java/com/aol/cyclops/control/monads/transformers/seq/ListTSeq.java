@@ -3,7 +3,6 @@ package com.aol.cyclops.control.monads.transformers.seq;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -17,7 +16,6 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.control.monads.transformers.values.ListTValue;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
@@ -219,7 +217,9 @@ public class ListTSeq<T> implements ListT<T>,
    public static <A> ListTSeq<A> of(AnyMSeq<? extends List<A>> monads){
 	   return new ListTSeq<>(monads);
    }
-
+   public static <A> ListTSeq<A> of(List<A> monads){
+       return ListT.fromIterable(ListX.of(monads));
+   }
 	/**
 	 * Create a ListT from an AnyM that wraps a monad containing a Stream
 	 * 
@@ -301,6 +301,9 @@ public class ListTSeq<T> implements ListT<T>,
     
     public static <T> ListTSeq<T> emptyList(){
         return ListT.fromIterable(ListX.empty());
+    }
+    public boolean isListPresent() {
+      return !run.isEmpty();
     }
     
     

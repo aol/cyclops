@@ -16,7 +16,6 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.types.ConvertableFunctor;
@@ -40,6 +39,7 @@ import lombok.val;
  * @param <T>
  */
 public class CompletableFutureTValue<A> implements CompletableFutureT<A>, 
+                                                TransformerValue<A>,
                                                 MonadicValue<A>,
                                                 Supplier<A>, 
                                                 ConvertableFunctor<A>, 
@@ -57,6 +57,12 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
    }
    private CompletableFutureTValue(final AnyMValue<CompletableFuture<A>> run){
        this.run = run;
+   }
+   public MonadicValue<A> value(){
+       return FutureW.of(run.get());
+   }
+   public boolean isValuePresent(){
+       return !run.isEmpty();
    }
    
    /**

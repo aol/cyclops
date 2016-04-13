@@ -30,6 +30,7 @@ import org.jooq.lambda.function.Function5;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
@@ -39,6 +40,7 @@ import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.control.monads.transformers.values.SetTValue;
 import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
 import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
+import com.aol.cyclops.control.monads.transformers.values.TryTValue;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
@@ -602,10 +604,15 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
         Objects.requireNonNull(xorT);
         return AnyMFactory.instance.value(xorT);
     }
-	public static <T> AnyMSeq<T> fromListTValue(ListTValue<T> listT){
+	public static <T,X extends Throwable> AnyMValue<T> fromTryTValue(TryTValue<T,X> tryT){
+        Objects.requireNonNull(tryT);
+        return AnyMFactory.instance.value(tryT);
+    }
+	public static <T> AnyMSeq<T> fromListTValue(ListT<T> listT){
         Objects.requireNonNull(listT);
         return AnyMFactory.instance.seq(listT);
     }
+	
 	public static <T> AnyMSeq<T> fromStreamTValue(StreamTValue<T> streamT){
         Objects.requireNonNull(streamT);
         return AnyMFactory.instance.seq(streamT);
