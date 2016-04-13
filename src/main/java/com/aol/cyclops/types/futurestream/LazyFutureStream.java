@@ -2762,7 +2762,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * @see com.aol.cyclops.control.ReactiveSeq#startsWith(java.util.Iterator)
      */
     @Override
-    default boolean startsWith(Iterator<U> iterator) {
+    default boolean startsWith(Stream<U> iterator) {
         return  ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                 .startsWith(iterator);
     }

@@ -333,16 +333,16 @@ public interface NestedFoldable<T> {
     ReactiveSeq<T> stream();
     
     default void print(PrintStream str){
-        nestedFoldables().print(str);
+        nestedFoldables().peek(s->s.print(str)).forEach(c->{});
     }
     default void print(PrintWriter writer){
-        nestedFoldables().print(writer);
+        nestedFoldables().peek(s->s.print(writer)).forEach(c->{});
     }
     default void printOut(){
-        nestedFoldables().printOut();
+        nestedFoldables().peek(s->s.printOut()).forEach(c->{});
     }
     default void printErr(){
-        nestedFoldables().printErr();
+        nestedFoldables().peek(s->s.printErr()).forEach(c->{});
     }
     
     
@@ -435,8 +435,9 @@ public interface NestedFoldable<T> {
      * @param iterator
      * @return True if Monad starts with Iterators sequence of data
      */
-    default AnyM<Boolean> startsWith(Iterator<T> iterator){
-        return nestedFoldables().map(s->s.startsWith(iterator));
+    default AnyM<Boolean> startsWith(Stream<T> stream){
+        Streamable<T> streamable = Streamable.fromStream(stream);
+        return nestedFoldables().map(s->s.startsWith(streamable.stream()));
     }
     /**
      * <pre>

@@ -7,7 +7,7 @@ import com.aol.cyclops.types.AbstractFoldableTest;
 import com.aol.cyclops.types.Foldable;
 
 
-public class TryTSeqTraversableTest extends AbstractFoldableTest {
+public class TryTSeqFoldableTest extends AbstractFoldableTest {
 
     @Override
     public <T> Foldable<T> of(T... elements) {

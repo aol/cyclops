@@ -16,6 +16,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -38,7 +39,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Xor within
  */
-public interface XorT<ST,T>  extends Publisher<T>{
+public interface XorT<ST,T>  extends Publisher<T>, Functor<T>{
     public <R> XorT<ST,R> unit(R value);
     public <R> XorT<ST,R> empty();
     

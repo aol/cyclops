@@ -434,14 +434,14 @@ public interface Foldable<T> {
 
     /**
      * <pre>
-     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
+     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
      * </pre>
      * 
      * @param iterator
      * @return True if Monad starts with Iterators sequence of data
      */
-    default boolean startsWith(Iterator<T> iterator){
-        return foldable().startsWith(iterator);
+    default boolean startsWith(Stream<T> stream){
+        return foldable().startsWith(stream);
     }
     /**
      * <pre>

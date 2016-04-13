@@ -1203,8 +1203,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
-	public final boolean startsWith(Iterator<T> iterator){
-		return StreamUtils.startsWith(stream,iterator);
+	public final boolean startsWith(Stream<T> stream2){
+		return StreamUtils.startsWith(stream,stream2);
 		
 	}
 	

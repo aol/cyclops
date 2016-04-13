@@ -17,6 +17,7 @@ import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
 import com.aol.cyclops.control.monads.transformers.values.TryTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -36,7 +37,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> The type contained on the Try within
  */
-public interface TryT<T,X extends Throwable>  extends Publisher<T> {
+public interface TryT<T,X extends Throwable>  extends Publisher<T>, Functor<T> {
    
     public <R> TryT<R,X> unit(R value);
     public <R> TryT<R,X> empty();

@@ -1,4 +1,4 @@
-package com.aol.cyclops.control.anym.transformers.values;
+package com.aol.cyclops.control.transformers;
 
 import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
@@ -108,9 +108,14 @@ public class MaybeTTest implements Printable {
     }
 	@Test
 	public void testToMaybe() {
-		assertThat(just.toMaybe(),equalTo(just));
-		assertThat(none.toMaybe(),equalTo(none));
+		assertThat(just.toMaybe(),equalTo(just.value()));
+		assertThat(none.toMaybe().isPresent(),equalTo(false));
 	}
+	@Test
+    public void testToOptional2() {
+        assertThat(just.toOptional(),equalTo(Optional.of(10)));
+       
+    }
 
 	private int add1(int i){
 		return i+1;
@@ -123,15 +128,8 @@ public class MaybeTTest implements Printable {
 
 	
 
-	@Test
-	public void testFromOptional() {
-		assertThat(Maybe.fromOptional(Optional.of(10)),equalTo(just));
-	}
-
-	@Test
-	public void testFromEvalSome() {
-		assertThat(Maybe.fromEvalOf(Eval.now(10)),equalTo(just));
-	}
+	
+	
 
 	@Test
 	public void testOfT() {
@@ -156,7 +154,7 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20),equalTo(Maybe.of(20)));
+		assertThat(just.unit(20).value(),equalTo(Maybe.of(20)));
 	}
 
 	
@@ -171,15 +169,15 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5),equalTo(Maybe.of(15)));
-		assertThat(none.map(i->i+5),equalTo(Maybe.none()));
+		assertThat(just.map(i->i+5).get(),equalTo(15));
+		assertThat(none.map(i->i+5).isPresent(),equalTo(false));
 	}
 
 	@Test
 	public void testFlatMap() {
 	    
-		assertThat(just.flatMap(i->Maybe.of(i+5)),equalTo(Maybe.of(15)));
-		assertThat(none.flatMap(i->Maybe.of(i+5)),equalTo(Maybe.none()));
+		assertThat(just.flatMap(i->Maybe.of(i+5)).value(),equalTo(Maybe.of(15)));
+		assertThat(none.flatMap(i->Maybe.of(i+5)).isPresent(),equalTo(false));
 	}
 	
 	@Test
@@ -435,8 +433,8 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Just[10]"));
-		assertThat(none.mkString(),equalTo("Nothing[]"));
+		assertThat(just.mkString(),equalTo("MaybeTValue[10]"));
+		assertThat(none.mkString(),equalTo("MaybeTValue[]"));
 	}
 	LazyReact react = new LazyReact();
 	@Test
@@ -761,14 +759,15 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5),equalTo(Maybe.of(15)));
+		assertThat(just.map(i->i+5).value(),equalTo(Maybe.of(15)));
 	}
 	
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
-		just = just.peek(c->capture.set(c));
+		just = just.peek(c->capture.set(c)).map(i->i+2);
 		assertNull(capture.get());
+		
 		
 		just.get();
 		assertThat(capture.get(),equalTo(10));
@@ -779,14 +778,14 @@ public class MaybeTTest implements Printable {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Maybe.of(65)));
+		assertThat(just.trampoline(n ->sum(10,n)).value(),equalTo(Maybe.of(65)));
 	}
 
 	
 
 	@Test
 	public void testUnitT1() {
-		assertThat(none.unit(10),equalTo(just));
+		assertThat(none.unit(10).value(),equalTo(just.value()));
 	}
 
 }

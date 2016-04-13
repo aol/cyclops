@@ -5,12 +5,18 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.internal.stream.ReversedIterator;
 import com.aol.cyclops.internal.stream.SeqUtils;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public interface ToStream<T> extends Iterable<T>,ConvertableToReactiveSeq<T>{
     
+    
+    default LazyFutureStream<T> futureStream(LazyReact react){
+        return react.fromIterable(this);
+    }
     default ReactiveSeq<T> reactiveSeq(){
         return ReactiveSeq.fromStream(StreamSupport.stream(getStreamable().spliterator(), false));
     }

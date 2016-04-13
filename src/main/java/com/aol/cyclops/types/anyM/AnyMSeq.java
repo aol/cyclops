@@ -79,7 +79,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     }
     default Foldable<T> foldable(){
         Object o = unwrap();
-        if(o instanceof Traversable){
+        if(o instanceof Foldable){
             return (Foldable)o;
         }
         return stream();
@@ -94,7 +94,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     @Override
     default AnyMSeq<T> limit(long num) {
        
-        return (AnyMSeq<T>)ExtendedTraversable.super.limit(num);
+        return AnyM.ofSeq(ExtendedTraversable.super.limit(num));
     }
 
 
@@ -105,7 +105,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     @Override
     default AnyMSeq<T> limitWhile(Predicate<? super T> p) {
        
-        return (AnyMSeq<T>)ExtendedTraversable.super.limitWhile(p);
+        return AnyM.ofSeq(ExtendedTraversable.super.limitWhile(p));
     }
 
 
@@ -116,7 +116,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     @Override
     default AnyMSeq<T> limitUntil(Predicate<? super T> p) {
         
-        return (AnyMSeq<T>)ExtendedTraversable.super.limitUntil(p);
+        return AnyM.ofSeq(ExtendedTraversable.super.limitUntil(p));
     }
 
 
@@ -127,7 +127,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     @Override
     default AnyMSeq<T> limitLast(int num) {
         
-        return (AnyMSeq<T>)ExtendedTraversable.super.limitLast(num);
+        return AnyM.ofSeq(ExtendedTraversable.super.limitLast(num));
     }
 
 
@@ -137,7 +137,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
      */
     @Override
     default AnyMSeq<T> onEmpty(T value) {
-       return (AnyMSeq<T>)ExtendedTraversable.super.onEmpty(value);
+       return AnyM.ofSeq(ExtendedTraversable.super.onEmpty(value));
     }
 
 
@@ -148,7 +148,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     @Override
     default AnyMSeq<T> onEmptyGet(Supplier<T> supplier) {
        
-        return (AnyMSeq<T>)ExtendedTraversable.super.onEmptyGet(supplier);
+        return AnyM.ofSeq(ExtendedTraversable.super.onEmptyGet(supplier));
     }
 
 
@@ -159,7 +159,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     @Override
     default <X extends Throwable> AnyMSeq<T> onEmptyThrow(Supplier<X> supplier) {
        
-        return (AnyMSeq<T>)ExtendedTraversable.super.onEmptyThrow(supplier);
+        return AnyM.ofSeq(ExtendedTraversable.super.onEmptyThrow(supplier));
     }
 
 

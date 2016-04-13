@@ -21,6 +21,7 @@ import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.stream.ToStream;
 
 /**
  * Monad transformer for JDK Maybe
@@ -40,7 +41,8 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *            The type contained on the Maybe within
  */
 public interface EvalT<T>  extends Publisher<T>,
-                                   Functor<T>{
+                                   Functor<T>,
+                                   ToStream<T>{
 
     public <R> EvalT<R> unit(R value);
     public <R> EvalT<R> empty();

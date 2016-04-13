@@ -78,18 +78,7 @@ public class ListTOptionalTest extends AbstractAnyMSeqOrderedDependentTest{
 		assertThat(res,equalTo("2world3"));
 	}
 	
-	/**
-	 *
-		Eval e;
-		//int cost = ReactiveSeq.of(1,2).when((head,tail)-> head.when(h-> (int)h>5, h-> 0 )
-		//		.flatMap(h-> head.when());
-		
-		ht.headMaybe().when(some-> Matchable.of(some).matches(
-											c->c.hasValues(1,2,3).then(i->"hello world"),
-											c->c.hasValues('b','b','c').then(i->"boo!")
-									),()->"hello");
-									**/
-	 
+	
 
 }
 

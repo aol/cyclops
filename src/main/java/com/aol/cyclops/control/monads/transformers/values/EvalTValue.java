@@ -13,11 +13,14 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.EvalT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
@@ -42,6 +45,7 @@ import lombok.val;
  *            The type contained on the Maybe within
  */
 public class EvalTValue<T> implements EvalT<T>,
+                                    TransformerValue<T>,
                                     MonadicValue<T>,
                                     Supplier<T>, 
                                     ConvertableFunctor<T>, 
@@ -54,6 +58,9 @@ public class EvalTValue<T> implements EvalT<T>,
 
     private EvalTValue(final AnyMValue<Eval<T>> run) {
         this.run = run;
+    } 
+    public MonadicValue<T> value(){
+        return run.get();
     }
 
     /**
@@ -269,7 +276,7 @@ public class EvalTValue<T> implements EvalT<T>,
         return run.get().get();
     }
     
-    public boolean isEvalPresent(){
+    public boolean isValuePresent(){
         return !run.isEmpty();
     }
     
@@ -313,6 +320,55 @@ public class EvalTValue<T> implements EvalT<T>,
 
     public static <T> EvalTValue<T> emptyMaybe() {
        return fromValue(Maybe.none());
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    public <U> EvalTValue<U> cast(Class<U> type) {
+       
+        return (EvalTValue<U>)TransformerValue.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    public <R> EvalTValue<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+       
+        return (EvalTValue<R>)TransformerValue.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    public <R> EvalTValue<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+       
+        return (EvalTValue<R>)TransformerValue.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    public <U> MaybeTValue<U> ofType(Class<U> type) {
+       
+        return (MaybeTValue<U>)TransformerValue.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    public MaybeTValue<T> filterNot(Predicate<? super T> fn) {
+       
+        return (MaybeTValue<T>)TransformerValue.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    public MaybeTValue<T> notNull() {
+       
+        return (MaybeTValue<T>)TransformerValue.super.notNull();
     }
  
 }

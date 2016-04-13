@@ -40,9 +40,8 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
  *
  * @param <T>
  */
-public interface ListT<T>  extends ConvertableSequence<T>, 
-                                    TransformerSeq<T>,
-                                    Publisher<T>{
+public interface ListT<T>  extends  TransformerSeq<T> {
+    
     public <R> ListT<R> unitIterator(Iterator<R> it);
     public <R> ListT<R> unit(R t);
     public <R> ListT<R> empty();
@@ -240,16 +239,16 @@ public interface ListT<T>  extends ConvertableSequence<T>,
         return ListTValue.fromValue(monadicValue);
     }
 
-    public static <A> ListTValue<A> fromOptional(Optional<List<A>> optional) {
+    public static <A> ListTValue<A> fromOptional(Optional<? extends List<A>> optional) {
         return ListTValue.of(AnyM.fromOptional(optional));
     }
 
-    public static <A> ListTValue<A> fromFuture(CompletableFuture<List<A>> future) {
+    public static <A> ListTValue<A> fromFuture(CompletableFuture<? extends List<A>> future) {
         return ListTValue.of(AnyM.fromCompletableFuture(future));
     }
 
     public static <A> ListTValue<A> fromIterablListue(
-            Iterable<List<A>> iterableOfLists) {
+            Iterable<? extends List<A>> iterableOfLists) {
         return ListTValue.of(AnyM.fromIterableValue(iterableOfLists));
     }
     public static <T> ListTValue<T> emptyOptional(){

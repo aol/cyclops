@@ -1457,13 +1457,13 @@ public interface ReactiveSeq<T> extends Unwrapable,
 
 	/**
 	 * <pre>
-	 * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
+	 * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
 	 * </pre>
 	 * 
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
-	boolean startsWith(Iterator<T> iterator);
+	boolean startsWith(Stream<T> stream);
 
 	/**
 	 * @return this SequenceM converted to AnyM format

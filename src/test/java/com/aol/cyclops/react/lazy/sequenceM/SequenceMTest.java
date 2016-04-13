@@ -39,7 +39,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void startsWithIterator(){
-		assertTrue(LazyFutureStream.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator()));
+		assertTrue(LazyFutureStream.of(1,2,3,4).startsWith(Stream.of(1,2,3)));
 	}
 	@Test
 	public void onEmptySwitchEmpty(){

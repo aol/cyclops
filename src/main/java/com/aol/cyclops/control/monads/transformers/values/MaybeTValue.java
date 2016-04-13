@@ -39,6 +39,7 @@ import com.aol.cyclops.types.applicative.Applicativable;
  *            The type contained on the Maybe within
  */
 public class MaybeTValue<T> implements MaybeT<T>, 
+                                    TransformerValue<T>,
                                     MonadicValue<T>,
                                     Supplier<T>, 
                                     ConvertableFunctor<T>, 
@@ -54,6 +55,12 @@ public class MaybeTValue<T> implements MaybeT<T>,
         this.run = run;
     }
 
+    public MonadicValue<T> value(){
+        return run.get();
+    }
+    public boolean isValuePresent(){
+        return !run.isEmpty();
+    }
     /**
      * @return The wrapped AnyM
      */
@@ -78,10 +85,11 @@ public class MaybeTValue<T> implements MaybeT<T>,
      * @return MaybeT with peek call
      */
     public MaybeTValue<T> peek(Consumer<? super T> peek) {
-        return of(run.peek(opt -> opt.map(a -> {
-            peek.accept(a);
-            return a;
-        })));
+        return map(in->{
+            peek.accept(in);
+            return in;
+        });
+       
     }
 
     /**
@@ -307,7 +315,7 @@ public class MaybeTValue<T> implements MaybeT<T>,
      */
     @Override
     public <U> MaybeTValue<U> ofType(Class<U> type) {
-        return (MaybeTValue<U>)Filterable.super.ofType(type);
+        return (MaybeTValue<U>)MaybeT.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -316,7 +324,7 @@ public class MaybeTValue<T> implements MaybeT<T>,
     @Override
     public MaybeTValue<T> filterNot(Predicate<? super T> fn) {
        
-        return (MaybeTValue<T>)Filterable.super.filterNot(fn);
+        return (MaybeTValue<T>)MaybeT.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
@@ -324,7 +332,7 @@ public class MaybeTValue<T> implements MaybeT<T>,
      */
     @Override
     public MaybeTValue<T> notNull() {
-        return (MaybeTValue<T>)Filterable.super.notNull();
+        return (MaybeTValue<T>)MaybeT.super.notNull();
     }
 
     public <R> MaybeTValue<R> unit(R value){

@@ -8,7 +8,7 @@ import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
@@ -1266,7 +1266,7 @@ public abstract class AbstractAnyMSeqTest {
                 assertThat(of(1,2,3,4,5,6)
                         .groupedWhile(i->true)
                         .toListX()
-                        .size(),equalTo(6));
+                        .size(),anyOf(equalTo(1),equalTo(6)));
                
             }
             @Test

@@ -1650,12 +1650,12 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     		 return reactiveSeq().startsWithIterable(iterable);
     	}	
     	/**
-    	 * 	<pre>{@code assertTrue(Streamable.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }</pre>
+    	 * 	<pre>{@code assertTrue(Streamable.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }</pre>
 
     	 * @param iterator
     	 * @return True if Monad starts with Iterators sequence of data
     	 */
-    	default boolean startsWith(Iterator<T> iterator){
+    	default boolean startsWith(Stream<T> iterator){
     		 return reactiveSeq().startsWith(iterator);
     	}
     	

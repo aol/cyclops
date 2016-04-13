@@ -16,7 +16,7 @@ public class EvalTValueComprehender implements ValueComprehender<EvalTValue>, Pr
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, EvalTValue apply) {
 	  
-		return apply.isEvalPresent() ? comp.of(apply.get()) : comp.empty();
+		return apply.isValuePresent() ? comp.of(apply.get()) : comp.empty();
 	}
 	@Override
     public Object filter(EvalTValue t, Predicate p){

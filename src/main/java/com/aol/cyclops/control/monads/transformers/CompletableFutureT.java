@@ -16,10 +16,12 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.stream.ToStream;
 
 /**
  * Monad Transformer for Java  CompletableFutures
@@ -33,10 +35,15 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>{
+public interface CompletableFutureT<A> extends Unit<A>, 
+                                               Publisher<A>,
+                                               Functor<A>,
+                                               ToStream<A>{
    
     public <R> CompletableFutureT<R> empty();
+   
     MaybeT<A> filter(Predicate<? super A> test);
+    
    default <B> CompletableFutureT<B> bind(Function<? super A, CompletableFutureT<? extends B>> f) {
         return of(unwrap().bind(opt -> {
                 return f.apply(opt.join()).unwrap().unwrap();

@@ -74,7 +74,6 @@ import com.aol.cyclops.internal.stream.operators.SkipWhileOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileTimeOperator;
 import com.aol.cyclops.internal.stream.operators.WindowStatefullyWhileOperator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
-import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.NonPausableHotStream;
@@ -1522,6 +1521,9 @@ public class StreamUtils{
 		});
 		return startsWith(list.stream(),compare1.iterator());
 		
+	}
+	public final static <T> boolean startsWith(Stream<T> stream,Stream<T> stream2){
+	    return startsWith(stream,stream2.iterator());
 	}
 	/**
 	 * 	<pre>

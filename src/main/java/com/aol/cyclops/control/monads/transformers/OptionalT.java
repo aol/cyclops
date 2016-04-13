@@ -12,9 +12,12 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -34,9 +37,12 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> The type contained on the Optional within
  */
-public interface OptionalT<T>  extends Publisher<T>{
+public interface OptionalT<T>  extends Publisher<T>, 
+                                       Functor<T>,
+                                       Filterable<T>{
    
-  
+    
+    public ReactiveSeq<T> stream();
     public <R> OptionalT<R> unit(R value);
     public <R> OptionalT<R> empty();
    

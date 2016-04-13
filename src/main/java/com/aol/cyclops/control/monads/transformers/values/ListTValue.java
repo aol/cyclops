@@ -206,7 +206,7 @@ public class ListTValue<T> implements ListT<T>,
 	 * @param monads AnyM that contains a monad wrapping an List
 	 * @return ListT
 	 */
-   public static <A> ListTValue<A> of(AnyMValue<List<A>> monads){
+   public static <A> ListTValue<A> of(AnyMValue<? extends List<A>> monads){
 	   return new ListTValue<>(monads);
    }
    public static <A> ListTValue<A> of(List<A> monads){
@@ -219,7 +219,7 @@ public class ListTValue<T> implements ListT<T>,
 	 * @param monads
 	 * @return
 	 */
-	public static <A> ListTValue<A> fromStream(AnyMValue<Stream<A>> monads) {
+	public static <A> ListTValue<A> fromStream(AnyMValue<? extends Stream<A>> monads) {
 		return of(monads.map(s -> s.collect(Collectors.toList())));
 	}
    
