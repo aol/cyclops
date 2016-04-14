@@ -8,13 +8,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jooq.lambda.Collectable;
-import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
@@ -237,7 +235,9 @@ public class OptionalTSeq<T> implements OptionalT<T>,
 	public static <A> OptionalTSeq<A> of(AnyMSeq<Optional<A>> monads) {
 		return new OptionalTSeq<>(monads);
 	}
-	
+	public static <A> OptionalTSeq<A> of(Optional<A> monads){
+        return OptionalT.fromIterable(ListX.of(monads));
+    }
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -280,4 +280,10 @@ public class OptionalTSeq<T> implements OptionalT<T>,
     public Collectable<T> collectable() {
         return stream();
     }
+    public boolean isSeqPresent() {
+        return !run.isEmpty();
+     }
+     public static <T> OptionalTSeq<T> emptyList() {
+         return OptionalT.fromIterable(ListX.of());
+     }
 }

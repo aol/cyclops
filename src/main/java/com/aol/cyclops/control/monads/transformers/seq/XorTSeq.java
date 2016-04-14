@@ -7,15 +7,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jooq.lambda.Collectable;
-import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.XorT;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Sequential;
@@ -265,7 +262,9 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
     public static <ST,A> XorTSeq<ST,A> of(AnyMSeq<Xor<ST,A>> monads) {
         return new XorTSeq<>(monads);
     }
-    
+    public static <ST,A> XorTSeq<ST,A> of(Xor<ST,A> monads){
+        return XorT.fromIterable(ListX.of(monads));
+    }
     /*
      * (non-Javadoc)
      * 
@@ -323,4 +322,10 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
     public Collectable<T> collectable() {
         return stream();
     }
+    public boolean isSeqPresent() {
+        return !run.isEmpty();
+     }
+     public static <ST,T> XorTSeq<ST,T> emptyList() {
+         return XorT.fromIterable(ListX.of());
+     }
 }

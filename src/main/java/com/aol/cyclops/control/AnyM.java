@@ -34,7 +34,13 @@ import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
+import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
@@ -596,6 +602,38 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
         Objects.requireNonNull(futureT);
         return AnyMFactory.instance.value(futureT);
     }
+	public static <ST,PT> AnyMValue<PT> fromXorTValue(XorTValue<ST,PT> xorT){
+        Objects.requireNonNull(xorT);
+        return AnyMFactory.instance.value(xorT);
+    }
+    public static <T,X extends Throwable> AnyMValue<T> fromTryTValue(TryTValue<T,X> tryT){
+        Objects.requireNonNull(tryT);
+        return AnyMFactory.instance.value(tryT);
+    }
+    public static <ST,PT> AnyMSeq<PT> fromXorTSeq(XorTSeq<ST,PT> xorT){
+        Objects.requireNonNull(xorT);
+        return AnyMFactory.instance.seq(xorT);
+    }
+    public static <T,X extends Throwable> AnyMSeq<T> fromTryTSeq(TryTSeq<T,X> tryT){
+        Objects.requireNonNull(tryT);
+        return AnyMFactory.instance.seq(tryT);
+    }
+	public static <T> AnyMSeq<T> fromEvalTSeq(EvalTSeq<T> evalT){
+        Objects.requireNonNull(evalT);
+        return AnyMFactory.instance.seq(evalT);
+    }
+	   public static <T> AnyMSeq<T> fromMaybeTSeq(MaybeTSeq<T> maybeT){
+	        Objects.requireNonNull(maybeT);
+	        return AnyMFactory.instance.seq(maybeT);
+	    }
+	    public static <T> AnyMSeq<T> fromOptionalTSeq(OptionalTSeq<T> optionalT){
+	        Objects.requireNonNull(optionalT);
+	        return AnyMFactory.instance.seq(optionalT);
+	    }
+	    public static <T> AnyMSeq<T> fromCompletableFutureTSeq(CompletableFutureTSeq<T> futureT){
+	        Objects.requireNonNull(futureT);
+	        return AnyMFactory.instance.seq(futureT);
+	    }
 	public static <T> AnyMValue<T> fromFutureWTValue(FutureWTValue<T> futureT){
         Objects.requireNonNull(futureT);
         return AnyMFactory.instance.value(futureT);
@@ -604,14 +642,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
         Objects.requireNonNull(futureT);
         return AnyMFactory.instance.seq(futureT);
     }
-	public static <ST,PT> AnyMValue<PT> fromXorTValue(XorTValue<ST,PT> xorT){
-        Objects.requireNonNull(xorT);
-        return AnyMFactory.instance.value(xorT);
-    }
-	public static <T,X extends Throwable> AnyMValue<T> fromTryTValue(TryTValue<T,X> tryT){
-        Objects.requireNonNull(tryT);
-        return AnyMFactory.instance.value(tryT);
-    }
+	
 	public static <T> AnyMSeq<T> fromListT(ListT<T> listT){
         Objects.requireNonNull(listT);
         return AnyMFactory.instance.seq(listT);

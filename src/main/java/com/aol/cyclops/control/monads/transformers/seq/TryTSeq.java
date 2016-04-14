@@ -8,15 +8,15 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jooq.lambda.Collectable;
-import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Success;
+import com.aol.cyclops.control.monads.transformers.EvalT;
 import com.aol.cyclops.control.monads.transformers.TryT;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
@@ -241,7 +241,9 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
 	public static <A,X extends Throwable> TryTSeq<A,X> of(AnyMSeq<Try<A,X>> monads) {
 		return new TryTSeq<>(monads);
 	}
-
+	public static <A,X extends Throwable> TryTSeq<A,X> of(Try<A,X> monads){
+        return TryT.fromIterable(ListX.of(monads));
+    }
    
 	/*
 	 * (non-Javadoc)
@@ -302,5 +304,11 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
     public Collectable<T> collectable() {
         return stream();
     }
+    public boolean isSeqPresent() {
+        return !run.isEmpty();
+     }
+     public static <T,X extends Throwable> TryTSeq<T,X> emptyList() {
+         return TryT.fromIterable(ListX.of());
+     }
     
 }

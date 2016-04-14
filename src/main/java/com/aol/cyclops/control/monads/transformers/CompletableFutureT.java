@@ -271,5 +271,7 @@ public interface CompletableFutureT<A> extends Unit<A>,
        
         return (MaybeT<A>)Filterable.super.notNull();
     }
+    
+    
 
 }

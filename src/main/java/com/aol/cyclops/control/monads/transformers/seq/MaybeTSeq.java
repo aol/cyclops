@@ -9,11 +9,10 @@ import java.util.function.Predicate;
 import org.jooq.lambda.Collectable;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.MaybeT;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
@@ -260,6 +259,9 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
         
         return new MaybeTSeq<>(monads);
     }
+    public static <A> MaybeTSeq<A> of(Maybe<A> monads){
+        return MaybeT.fromIterable(ListX.of(monads));
+    }
 
     /*
      * (non-Javadoc)
@@ -311,5 +313,10 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
         return stream();
     }
  
- 
+    public boolean isSeqPresent() {
+        return !run.isEmpty();
+     }
+     public static <T> MaybeTSeq<T> emptyList() {
+         return MaybeT.fromIterable(ListX.of());
+     }
 }

@@ -11,6 +11,7 @@ import org.jooq.lambda.Collectable;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.EvalT;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
@@ -244,7 +245,9 @@ public class EvalTSeq<T> implements EvalT<T>,
     public static <A> EvalTSeq<A> of(AnyMSeq<Eval<A>> monads) {
         return new EvalTSeq<>(monads);
     }
-   
+    public static <A> EvalTSeq<A> of(Eval<A> monads){
+        return EvalT.fromIterable(ListX.of(monads));
+    }
     /*
      * (non-Javadoc)
      * 
@@ -285,7 +288,12 @@ public class EvalTSeq<T> implements EvalT<T>,
     public Collectable<T> collectable() {
         return stream();
     }
-    
+    public boolean isSeqPresent() {
+        return !run.isEmpty();
+     }
+     public static <T> EvalTSeq<T> emptyList() {
+         return EvalT.fromIterable(ListX.of());
+     }
     
     
     

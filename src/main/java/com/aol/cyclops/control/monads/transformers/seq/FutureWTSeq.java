@@ -246,12 +246,6 @@ public class FutureWTSeq<A> implements FutureWT<A>,
        return stream().iterator();
     }
 
-    @Override
-    public void subscribe(Subscriber<? super A> s) {
-        run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete());
-       
-        
-    }
 
     
     public <R> FutureWTSeq<R> unitIterator(Iterator<R> it){

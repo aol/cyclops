@@ -9,13 +9,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jooq.lambda.Collectable;
-import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
@@ -223,6 +221,9 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
 	   return new CompletableFutureTSeq<>(monads);
    }
    
+   public static <A> CompletableFutureTSeq<A> of(CompletableFuture<A> monads){
+       return CompletableFutureT.fromIterable(ListX.of(monads));
+   }
    
    
    
@@ -268,5 +269,11 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
     public Collectable<A> collectable() {
         return stream();
     }
+    public boolean isSeqPresent() {
+        return !run.isEmpty();
+     }
+     public static <T> CompletableFutureTSeq<T> emptyList() {
+         return CompletableFutureT.fromIterable(ListX.of());
+     }
  
 }

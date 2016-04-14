@@ -27,3 +27,9 @@ com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.SetTSeqCo
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.StreamTSeqComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.StreamableTSeqComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.FutureWTSeqComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.CompletableFutureTSeqComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.MaybeTSeqComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.OptionalTSeqComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.EvalTSeqComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.TryTSeqComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.XorTSeqComprehender
