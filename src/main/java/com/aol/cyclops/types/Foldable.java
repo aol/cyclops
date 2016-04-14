@@ -160,7 +160,8 @@ public interface Foldable<T> {
 		return foldable().reduce(identity, accumulator);
 	}
 	default <U> U reduce(U identity, BiFunction<U, ? super T,U> accumulator){
-        return ((Seq<T>)foldable()).foldLeft(identity,accumulator);
+	    Object foldable = foldable();
+        return (foldable()).reduce(identity,accumulator);
     }
 
 	/*
@@ -261,7 +262,7 @@ public interface Foldable<T> {
 		return foldable().foldRight(identity,accumulator);
 	}
 	default <U> U foldRight(U identity, BiFunction<? super T, U,U> accumulator){
-        return ((Seq<T>)foldable()).foldRight(identity,accumulator);
+        return (foldable()).foldRight(identity,accumulator);
     }
 
 	/**

@@ -162,8 +162,8 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testIsPresent() {
-		assertTrue(just.isPresent());
-		assertFalse(none.isPresent());
+		assertTrue(just.isValuePresent());
+		assertFalse(none.isValuePresent());
 	}
 
 	
@@ -171,14 +171,14 @@ public class CompletableFutureTTest implements Printable {
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5).get(),equalTo(15));
-		assertThat(none.map(i->i+5).isPresent(),equalTo(false));
+		assertThat(none.map(i->i+5).isValuePresent(),equalTo(false));
 	}
 
 	@Test
 	public void testFlatMap() {
 	    
 		assertThat(just.flatMap(i->Maybe.of(i+5)).value(),equalTo(Maybe.of(15)));
-		assertThat(none.flatMap(i->Maybe.of(i+5)).isPresent(),equalTo(false));
+		assertThat(none.flatMap(i->Maybe.of(i+5)).isValuePresent(),equalTo(false));
 	}
 	
 	@Test
@@ -483,24 +483,24 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testOfType() {
-		assertFalse(just.ofType(String.class).isPresent());
-		assertTrue(just.ofType(Integer.class).isPresent());
-		assertFalse(none.ofType(String.class).isPresent());
-		assertFalse(none.ofType(Integer.class).isPresent());
+		assertFalse(just.ofType(String.class).isValuePresent());
+		assertTrue(just.ofType(Integer.class).isValuePresent());
+		assertFalse(none.ofType(String.class).isValuePresent());
+		assertFalse(none.ofType(Integer.class).isValuePresent());
 	}
 
 	@Test
 	public void testFilterNot() {
-		assertTrue(just.filterNot(i->i<5).isPresent());
-		assertFalse(just.filterNot(i->i>5).isPresent());
-		assertFalse(none.filterNot(i->i<5).isPresent());
-		assertFalse(none.filterNot(i->i>5).isPresent());
+		assertTrue(just.filterNot(i->i<5).isValuePresent());
+		assertFalse(just.filterNot(i->i>5).isValuePresent());
+		assertFalse(none.filterNot(i->i<5).isValuePresent());
+		assertFalse(none.filterNot(i->i>5).isValuePresent());
 	}
 
 	@Test
 	public void testNotNull() {
-		assertTrue(just.notNull().isPresent());
-		assertFalse(none.notNull().isPresent());
+		assertTrue(just.notNull().isValuePresent());
+		assertFalse(none.notNull().isValuePresent());
 		
 	}
 

@@ -6,16 +6,20 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
@@ -39,7 +43,9 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Xor within
  */
-public interface XorT<ST,T>  extends Publisher<T>, Functor<T>{
+public interface XorT<ST,T>  extends Publisher<T>, 
+                                     Functor<T>,
+                                     Filterable<T>{
     public <R> XorT<ST,R> unit(R value);
     public <R> XorT<ST,R> empty();
     
@@ -273,5 +279,50 @@ public interface XorT<ST,T>  extends Publisher<T>, Functor<T>{
     public static <ST,T> XorTSeq<ST,T> emptyList(){
         return XorT.fromIterable(ListX.of());
     }
-
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    default <U> XorT<ST,U> cast(Class<U> type) {
+        return (XorT<ST,U>)Functor.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    default <R> XorT<ST,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (XorT<ST,R>)Functor.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    default <R> XorT<ST,R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (XorT<ST,R>)Functor.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    default <U> XorT<ST,U> ofType(Class<U> type) {
+        
+        return (XorT<ST,U>)Filterable.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    default XorT<ST,T> filterNot(Predicate<? super T> fn) {
+       
+        return (XorT<ST,T>)Filterable.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    default XorT<ST,T> notNull() {
+       
+        return (XorT<ST,T>)Filterable.super.notNull();
+    }
 }

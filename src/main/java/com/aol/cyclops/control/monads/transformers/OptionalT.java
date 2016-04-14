@@ -6,13 +6,16 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -259,5 +262,51 @@ public interface OptionalT<T>  extends Publisher<T>,
     }
     public static <T> OptionalTSeq<T> emptyList(){
         return OptionalT.fromIterable(ListX.of());
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    default <U> OptionalT<U> cast(Class<U> type) {
+        return (OptionalT<U>)Functor.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    default <R> OptionalT<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (OptionalT<R>)Functor.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    default <R> OptionalT<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (OptionalT<R>)Functor.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    default <U> OptionalT<U> ofType(Class<U> type) {
+        
+        return (OptionalT<U>)Filterable.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    default OptionalT<T> filterNot(Predicate<? super T> fn) {
+       
+        return (OptionalT<T>)Filterable.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    default OptionalT<T> notNull() {
+       
+        return (OptionalT<T>)Filterable.super.notNull();
     }
 }

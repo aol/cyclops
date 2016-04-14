@@ -66,7 +66,7 @@ import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>{
-	private final Stream<T> stream;
+	private final Seq<T> stream;
 	private final Optional<ReversableSpliterator> reversable;
 	
 	public ReactiveSeqImpl(Stream<T> stream){
@@ -83,7 +83,9 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 		
 	}
 	
-	
+	public <U> U reduce(U identity, BiFunction<U, ? super T,U> accumulator){
+	    return stream.foldLeft(identity, accumulator);
+	}
 	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)

@@ -7,16 +7,20 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
 import com.aol.cyclops.control.monads.transformers.values.TryTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -37,7 +41,9 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> The type contained on the Try within
  */
-public interface TryT<T,X extends Throwable>  extends Publisher<T>, Functor<T> {
+public interface TryT<T,X extends Throwable>  extends Publisher<T>, 
+                                                      Functor<T>,
+                                                      Filterable<T>{
    
     public <R> TryT<R,X> unit(R value);
     public <R> TryT<R,X> empty();
@@ -258,6 +264,51 @@ public interface TryT<T,X extends Throwable>  extends Publisher<T>, Functor<T> {
     public static <A,X extends Throwable> TryTValue<A,X>  emptyOptional(){
         return TryTValue.emptyOptional();
     }
-
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    default <U> TryT<U,X> cast(Class<U> type) {
+        return (TryT<U,X>)Functor.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    default <R> TryT<R,X> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (TryT<R,X>)Functor.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    default <R> TryT<R,X> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (TryT<R,X>)Functor.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    default <U> TryT<U,X> ofType(Class<U> type) {
+        
+        return (TryT<U,X>)Filterable.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    default TryT<T,X> filterNot(Predicate<? super T> fn) {
+       
+        return (TryT<T,X>)Filterable.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    default TryT<T,X> notNull() {
+       
+        return (TryT<T,X>)Filterable.super.notNull();
+    }
  
 }

@@ -13,7 +13,9 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.control.monads.transformers.TryT;
@@ -311,5 +313,51 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
  
     public static<T,X extends Throwable>  TryTValue<T,X> emptyOptional() {
         return TryT.fromOptional(Optional.empty());
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    public <U> TryTValue<U,X> cast(Class<U> type) {
+        return (TryTValue<U,X>)TryT.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    public <R> TryTValue<R,X> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (TryTValue<R,X>)TryT.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    public <R> TryTValue<R,X> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (TryTValue<R,X>)TryT.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    public <U> TryTValue<U,X> ofType(Class<U> type) {
+        
+        return (TryTValue<U,X>)TryT.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    public TryTValue<T,X> filterNot(Predicate<? super T> fn) {
+       
+        return (TryTValue<T,X>)TryT.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    public TryTValue<T,X> notNull() {
+       
+        return (TryTValue<T,X>)TryT.super.notNull();
     }
 }

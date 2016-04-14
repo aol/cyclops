@@ -26,7 +26,10 @@ import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface MutableCollectionX<T> extends FluentCollectionX<T> {
-	
+	@Override
+    default <U> U reduce(U identity, BiFunction<U, ? super T,U> accumulator){
+	    return stream().reduce(identity,accumulator);
+	}
 	<X> MutableCollectionX<X> fromStream(Stream<X> stream);
 	@Override
 	default MutableCollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){

@@ -350,9 +350,9 @@ public class EvalTValue<T> implements EvalT<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> MaybeTValue<U> ofType(Class<U> type) {
+    public <U> EvalTValue<U> ofType(Class<U> type) {
        
-        return (MaybeTValue<U>)TransformerValue.super.ofType(type);
+        return (EvalTValue<U>)EvalT.super.ofType(type);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
@@ -360,7 +360,7 @@ public class EvalTValue<T> implements EvalT<T>,
     @Override
     public MaybeTValue<T> filterNot(Predicate<? super T> fn) {
        
-        return (MaybeTValue<T>)TransformerValue.super.filterNot(fn);
+        return (MaybeTValue<T>)EvalT.super.filterNot(fn);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
@@ -368,7 +368,7 @@ public class EvalTValue<T> implements EvalT<T>,
     @Override
     public MaybeTValue<T> notNull() {
        
-        return (MaybeTValue<T>)TransformerValue.super.notNull();
+        return (MaybeTValue<T>)EvalT.super.notNull();
     }
  
 }

@@ -7,6 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
@@ -14,9 +15,12 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Unit;
@@ -39,6 +43,7 @@ import com.aol.cyclops.types.stream.ToStream;
 public interface FutureWT<A> extends Unit<A>, 
                                      Publisher<A>, 
                                      Functor<A>,
+                                     Filterable<A>,
                                      ToStream<A>{
     
     MaybeT<A> filter(Predicate<? super A> test);
@@ -221,5 +226,52 @@ public interface FutureWT<A> extends Unit<A>,
     public static <T> FutureWTSeq<T> emptyList(){
         return FutureWT.fromIterable(ListX.of());
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    default <U> FutureWT<U> cast(Class<U> type) {
+        return (FutureWT<U>)Functor.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    default <R> FutureWT<R> trampoline(Function<? super A, ? extends Trampoline<? extends R>> mapper) {
+        return (FutureWT<R>)Functor.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    default <R> FutureWT<R> patternMatch(Function<CheckValue1<A, R>, CheckValue1<A, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (FutureWT<R>)Functor.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    default <U> FutureWT<U> ofType(Class<U> type) {
+        
+        return (FutureWT<U>)Filterable.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    default FutureWT<A> filterNot(Predicate<? super A> fn) {
+       
+        return (FutureWT<A>)Filterable.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    default FutureWT<A> notNull() {
+       
+        return (FutureWT<A>)Filterable.super.notNull();
+    }
+
 
 }

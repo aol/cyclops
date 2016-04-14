@@ -7,22 +7,23 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.seq.StreamTSeq;
-import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
 import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.util.stream.Streamable;
 
 
 /**
@@ -207,5 +208,50 @@ public interface StreamT<T> extends  ConvertableSequence<T>,
    public static<T>  StreamTSeq<T> emptyStream() {
        return StreamT.fromIterable(ReactiveSeq.empty());
    }
-   
+   /* (non-Javadoc)
+  * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+  */
+ @Override
+ default <U> StreamT<U> cast(Class<U> type) {
+     return (StreamT<U>)TransformerSeq.super.cast(type);
+ }
+ /* (non-Javadoc)
+  * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+  */
+ @Override
+ default <R> StreamT<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+     return (StreamT<R>)TransformerSeq.super.trampoline(mapper);
+ }
+ /* (non-Javadoc)
+  * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+  */
+ @Override
+ default <R> StreamT<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+         Supplier<? extends R> otherwise) {
+    return (StreamT<R>)TransformerSeq.super.patternMatch(case1, otherwise);
+ }
+ /* (non-Javadoc)
+  * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+  */
+ @Override
+ default <U> StreamT<U> ofType(Class<U> type) {
+     
+     return (StreamT<U>)TransformerSeq.super.ofType(type);
+ }
+ /* (non-Javadoc)
+  * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+  */
+ @Override
+ default StreamT<T> filterNot(Predicate<? super T> fn) {
+    
+     return (StreamT<T>)TransformerSeq.super.filterNot(fn);
+ }
+ /* (non-Javadoc)
+  * @see com.aol.cyclops.types.Filterable#notNull()
+  */
+ @Override
+ default StreamT<T> notNull() {
+    
+     return (StreamT<T>)TransformerSeq.super.notNull();
+ }
 }

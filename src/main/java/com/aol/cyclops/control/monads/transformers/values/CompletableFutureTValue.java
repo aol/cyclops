@@ -16,10 +16,13 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
@@ -295,6 +298,53 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
     public static<T>  CompletableFutureTValue<T> emptyOptional() {
         return CompletableFutureT.fromOptional(Optional.empty());
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    public <U> CompletableFutureTValue<U> cast(Class<U> type) {
+        return (CompletableFutureTValue<U>)TransformerValue.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    public <R> CompletableFutureTValue<R> trampoline(Function<? super A, ? extends Trampoline<? extends R>> mapper) {
+        return (CompletableFutureTValue<R>)TransformerValue.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    public <R> CompletableFutureTValue<R> patternMatch(Function<CheckValue1<A, R>, CheckValue1<A, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (CompletableFutureTValue<R>)TransformerValue.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    public <U> MaybeTValue<U> ofType(Class<U> type) {
+        
+        return (MaybeTValue<U>)CompletableFutureT.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    public MaybeTValue<A> filterNot(Predicate<? super A> fn) {
+       
+        return (MaybeTValue<A>)CompletableFutureT.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    public MaybeTValue<A> notNull() {
+       
+        return (MaybeTValue<A>)CompletableFutureT.super.notNull();
+    }
+    
  
  
 }

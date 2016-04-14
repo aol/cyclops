@@ -6,6 +6,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
@@ -13,10 +14,13 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -42,6 +46,7 @@ import com.aol.cyclops.types.stream.ToStream;
  */
 public interface EvalT<T>  extends Publisher<T>,
                                    Functor<T>,
+                                   Filterable<T>,
                                    ToStream<T>{
 
     public <R> EvalT<R> unit(R value);
@@ -277,6 +282,52 @@ public interface EvalT<T>  extends Publisher<T>,
     public static <T> EvalTSeq<T> emptyList(){
         return EvalT.fromIterable(ListX.of());
     }
-   
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    default <U> EvalT<U> cast(Class<U> type) {
+        return (EvalT<U>)Functor.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    default <R> EvalT<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (EvalT<R>)Functor.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    default <R> EvalT<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (EvalT<R>)Functor.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    default <U> EvalT<U> ofType(Class<U> type) {
+        
+        return (EvalT<U>)Filterable.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    default MaybeT<T> filterNot(Predicate<? super T> fn) {
+       
+        return (MaybeT<T>)Filterable.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    default MaybeT<T> notNull() {
+       
+        return (MaybeT<T>)Filterable.super.notNull();
+    }
+
 
 }

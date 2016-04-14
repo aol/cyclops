@@ -11,6 +11,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,10 +19,12 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.seq.SetTSeq;
 import com.aol.cyclops.control.monads.transformers.values.SetTValue;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -41,7 +44,8 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface SetT<T>  extends Publisher<T>{
+public interface SetT<T>  extends Publisher<T>, 
+                                  TransformerSeq<T>{
    
     public <R> SetT<R> unitIterator(Iterator<R> it);
     public <R> SetT<R> unit(R t);
@@ -258,6 +262,52 @@ public interface SetT<T>  extends Publisher<T>{
     public static <T> SetTSeq<T> emptySet(){
         return SetTSeq.emptySet();
     }
+    /* (non-Javadoc)
+   * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+   */
+  @Override
+  default <U> SetT<U> cast(Class<U> type) {
+      return (SetT<U>)TransformerSeq.super.cast(type);
+  }
+  /* (non-Javadoc)
+   * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+   */
+  @Override
+  default <R> SetT<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+      return (SetT<R>)TransformerSeq.super.trampoline(mapper);
+  }
+  /* (non-Javadoc)
+   * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+   */
+  @Override
+  default <R> SetT<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+          Supplier<? extends R> otherwise) {
+     return (SetT<R>)TransformerSeq.super.patternMatch(case1, otherwise);
+  }
+  /* (non-Javadoc)
+   * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+   */
+  @Override
+  default <U> SetT<U> ofType(Class<U> type) {
+      
+      return (SetT<U>)TransformerSeq.super.ofType(type);
+  }
+  /* (non-Javadoc)
+   * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+   */
+  @Override
+  default SetT<T> filterNot(Predicate<? super T> fn) {
+     
+      return (SetT<T>)TransformerSeq.super.filterNot(fn);
+  }
+  /* (non-Javadoc)
+   * @see com.aol.cyclops.types.Filterable#notNull()
+   */
+  @Override
+  default SetT<T> notNull() {
+     
+      return (SetT<T>)TransformerSeq.super.notNull();
+  }
    
  
 }

@@ -14,7 +14,9 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.types.ConvertableFunctor;
@@ -327,6 +329,52 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
     
     public static<ST,PT>  XorTValue<ST,PT> emptyOptional() {
         return XorT.fromOptional(Optional.empty());
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    public <U> XorTValue<ST,U> cast(Class<U> type) {
+        return (XorTValue<ST,U>)XorT.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    public <R> XorTValue<ST,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (XorTValue<ST,R>)XorT.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    public <R> XorTValue<ST,R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (XorTValue<ST,R>)XorT.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    public <U> XorTValue<ST,U> ofType(Class<U> type) {
+        
+        return (XorTValue<ST,U>)XorT.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    public XorTValue<ST,T> filterNot(Predicate<? super T> fn) {
+       
+        return (XorTValue<ST,T>)XorT.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    public XorTValue<ST,T> notNull() {
+       
+        return (XorTValue<ST,T>)XorT.super.notNull();
     }
  
 }
