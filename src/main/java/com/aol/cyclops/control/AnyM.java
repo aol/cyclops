@@ -34,6 +34,7 @@ import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
+import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
@@ -598,6 +599,10 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> AnyMValue<T> fromFutureWTValue(FutureWTValue<T> futureT){
         Objects.requireNonNull(futureT);
         return AnyMFactory.instance.value(futureT);
+    }
+	public static <T> AnyMSeq<T> fromFutureWTSeq(FutureWTSeq<T> futureT){
+        Objects.requireNonNull(futureT);
+        return AnyMFactory.instance.seq(futureT);
     }
 	public static <ST,PT> AnyMValue<PT> fromXorTValue(XorTValue<ST,PT> xorT){
         Objects.requireNonNull(xorT);

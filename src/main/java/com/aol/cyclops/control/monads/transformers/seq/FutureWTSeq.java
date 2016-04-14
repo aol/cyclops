@@ -10,12 +10,10 @@ import java.util.function.Predicate;
 import org.jooq.lambda.Collectable;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
@@ -222,7 +220,9 @@ public class FutureWTSeq<A> implements FutureWT<A>,
 	   return new FutureWTSeq<>(monads);
    }
    
-   
+   public static <A> FutureWTSeq<A> of(FutureW<A> monads){
+       return FutureWT.fromIterable(ListX.of(monads));
+   }
    
    
    /*
@@ -271,6 +271,12 @@ public class FutureWTSeq<A> implements FutureWT<A>,
     @Override
     public Collectable<A> collectable() {
         return stream();
+    }
+    public boolean isSeqPresent() {
+       return !run.isEmpty();
+    }
+    public static <T> FutureWTSeq<T> emptyList() {
+        return FutureWT.fromIterable(ListX.of());
     }
  
  
