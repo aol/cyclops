@@ -19,7 +19,7 @@ public class OptionalTAnyMValueTest extends BaseAnyMValueTest {
     public void setUp() throws Exception {
         just = AnyM.fromOptionalTValue(OptionalT.fromValue(Maybe.just(Optional.of(10))));
         
-        none = AnyM.fromOptionalTValue(OptionalT.emptyMaybe());
+        none = AnyM.fromOptionalTValue(OptionalT.emptyOptional());
     }
     @Test
     public void testPeek() {

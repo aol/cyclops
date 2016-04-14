@@ -16,7 +16,7 @@ public class ListTSeqComprehender implements Comprehender<ListTSeq>, Printable{
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, ListTSeq apply) {
 	  
-		return apply.isListPresent() ? comp.of(apply.stream().toListX()) : comp.empty();
+		return apply.isSeqPresent() ? comp.of(apply.stream().toListX()) : comp.empty();
 	}
 	@Override
     public Object filter(ListTSeq t, Predicate p){

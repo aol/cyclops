@@ -25,7 +25,7 @@ public class StreamableTOptionalTest extends AbstractAnyMSeqOrderedDependentTest
 
 	@Override
 	public <T> AnyMSeq<T> of(T... values) {
-		return AnyM.fromStreamableTValue(StreamableT.fromOptional(Optional.of(Streamable.of(values))));
+		return AnyM.fromStreamableT(StreamableT.fromOptional(Optional.of(Streamable.of(values))));
 	}
 	
 	@Test

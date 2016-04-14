@@ -290,25 +290,25 @@ public interface TryT<T,X extends Throwable>  extends Publisher<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> TryT<U,X> ofType(Class<U> type) {
+    default <U> MaybeT<U> ofType(Class<U> type) {
         
-        return (TryT<U,X>)Filterable.super.ofType(type);
+        return (MaybeT<U>)Filterable.super.ofType(type);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default TryT<T,X> filterNot(Predicate<? super T> fn) {
+    default MaybeT<T> filterNot(Predicate<? super T> fn) {
        
-        return (TryT<T,X>)Filterable.super.filterNot(fn);
+        return (MaybeT<T>)Filterable.super.filterNot(fn);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
      */
     @Override
-    default TryT<T,X> notNull() {
+    default MaybeT<T> notNull() {
        
-        return (TryT<T,X>)Filterable.super.notNull();
+        return (MaybeT<T>)Filterable.super.notNull();
     }
  
 }

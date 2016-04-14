@@ -258,11 +258,7 @@ public class ListTSeq<T> implements ListT<T>,
        return stream().iterator();
     }
 
-    @Override
-    public void subscribe(Subscriber<? super T> s) {
-       run.forEachEvent(e->ListX.fromIterable(e).subscribe(s),e->s.onError(e),()->s.onComplete());
-      
-    }
+    
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
@@ -302,7 +298,7 @@ public class ListTSeq<T> implements ListT<T>,
     public static <T> ListTSeq<T> emptyList(){
         return ListT.fromIterable(ListX.empty());
     }
-    public boolean isListPresent() {
+    public boolean isSeqPresent() {
       return !run.isEmpty();
     }
     

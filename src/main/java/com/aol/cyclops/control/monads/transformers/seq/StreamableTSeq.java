@@ -7,7 +7,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Collectable;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
@@ -38,6 +37,9 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
 
    private StreamableTSeq(final AnyMSeq<Streamable<T>> run){
        this.run = run;
+   }
+   public boolean isSeqPresent() {
+       return !run.isEmpty();
    }
    /**
 	 * @return The wrapped AnyM
@@ -204,6 +206,9 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
    public static <A> StreamableTSeq<A> of(AnyMSeq<Streamable<A>> monads){
 	   return new StreamableTSeq<>(monads);
    }
+   public static <A> StreamableTSeq<A> of(Streamable<A> monads){
+       return StreamableT.fromIterable(Streamable.of(monads));
+   }
    /**
 	 * Create a StreamableT from an AnyM that wraps a monad containing a Stream
 	 * 
@@ -242,10 +247,7 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
        return stream().iterator();
     }
 
-    @Override
-    public void subscribe(Subscriber<? super T> s) {
-        run.forEachEvent(e->e.subscribe(s),e->s.onError(e),()->s.onComplete()); 
-    }
+  
 
    
     public <R> StreamableTSeq<R> unitIterator(Iterator<R> it){
@@ -274,6 +276,9 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
     public AnyMSeq<? extends Traversable<T>> transformerStream() {
         
         return run;
+    }
+    public static <T> StreamableTSeq<T> emptyStreamable(){
+        return StreamableT.fromIterable(Streamable.empty());
     }
     
 }

@@ -23,3 +23,6 @@ com.aol.cyclops.internal.comprehensions.comprehenders.transformers.TryTValueComp
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.ListTValueComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.StreamTValueComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.ListTSeqComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.SetTSeqComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.StreamTSeqComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.StreamableTSeqComprehender

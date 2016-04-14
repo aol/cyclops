@@ -20,7 +20,7 @@ public class SetTOptionalTest extends AbstractAnyMSeqTest{
 
 	@Override
 	public <T> AnyMSeq<T> of(T... values) {
-		return AnyM.fromSetTValue(SetT.fromOptional(Optional.of(SetX.of(values))));
+		return AnyM.fromSetT(SetT.fromOptional(Optional.of(SetX.of(values))));
 	}
 	@Test
     public void stream(){

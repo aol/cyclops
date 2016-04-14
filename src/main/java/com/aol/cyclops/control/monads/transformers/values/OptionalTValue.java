@@ -55,7 +55,7 @@ public class OptionalTValue<T> implements OptionalT<T>,
    private OptionalTValue(final AnyMValue<Optional<T>> run){
        this.run = run;
    }
-   public MonadicValue<T> value(){
+   public Maybe<T> value(){
        return Maybe.fromOptional(run.get());
    }
    public boolean isValuePresent(){
@@ -297,7 +297,7 @@ public class OptionalTValue<T> implements OptionalT<T>,
     public <R> OptionalTValue<R> empty() {
         return of(run.unit(Optional.empty()));
     }
-    public static<T>  OptionalTValue<T> emptyMaybe() {
+    public static<T>  OptionalTValue<T> emptyOptional() {
         return fromValue(Maybe.none());
     }
     /* (non-Javadoc)

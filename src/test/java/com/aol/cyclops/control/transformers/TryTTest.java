@@ -65,7 +65,7 @@ public class TryTTest implements Printable {
 	TryTValue<Integer,Throwable> none;
 	@Before
 	public void setUp() throws Exception {
-		just = TryTValue.of(Maybe.just(10));
+		just = TryTValue.of(Try.success(10));
 		none = TryT.emptyOptional();
 	}
 	
@@ -108,7 +108,7 @@ public class TryTTest implements Printable {
     }
 	@Test
 	public void testToMaybe() {
-		assertThat(just.toMaybe(),equalTo(just.value()));
+		assertThat(just.toTry(),equalTo(just.value()));
 		assertThat(none.toMaybe().isPresent(),equalTo(false));
 	}
 	@Test
@@ -154,15 +154,15 @@ public class TryTTest implements Printable {
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20).value(),equalTo(Maybe.of(20)));
+		assertThat(just.unit(20).toMaybe(),equalTo(Maybe.of(20)));
 	}
 
 	
 
 	@Test
 	public void testIsPresent() {
-		assertTrue(just.isPresent());
-		assertFalse(none.isPresent());
+		assertTrue(just.isSuccess());
+		assertFalse(none.isSuccess());
 	}
 
 	
@@ -170,14 +170,14 @@ public class TryTTest implements Printable {
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5).get(),equalTo(15));
-		assertThat(none.map(i->i+5).isPresent(),equalTo(false));
+		assertThat(none.map(i->i+5).isSuccess(),equalTo(false));
 	}
 
 	@Test
 	public void testFlatMap() {
 	    
-		assertThat(just.flatMap(i->Maybe.of(i+5)).value(),equalTo(Maybe.of(15)));
-		assertThat(none.flatMap(i->Maybe.of(i+5)).isPresent(),equalTo(false));
+		assertThat(just.flatMap(i->Try.success(i+5)).toMaybe(),equalTo(Maybe.of(15)));
+		assertThat(none.flatMap(i->Try.success(i+5)).isSuccess(),equalTo(false));
 	}
 	
 	@Test
@@ -759,14 +759,14 @@ public class TryTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5).value(),equalTo(Maybe.of(15)));
+		assertThat(just.map(i->i+5).toMaybe(),equalTo(Maybe.of(15)));
 	}
 	
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c)).map(i->i+2);
-		assertNull(capture.get());
+		
 		
 		
 		just.get();

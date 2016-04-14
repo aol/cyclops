@@ -17,10 +17,8 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Traversable;
@@ -219,7 +217,9 @@ public class SetTSeq<T>  implements SetT<T>,
    public static <A> SetTSeq<A> of(AnyMSeq<? extends Set<A>> monads){
 	   return new SetTSeq<>(monads);
    }
-
+   public static <A> SetTSeq<A> of(Set<A> monads){
+       return SetT.fromIterable(SetX.of(monads));
+   }
 	/**
 	 * Create a SetT from an AnyM that wraps a monad containing a Stream
 	 * 
@@ -258,10 +258,7 @@ public class SetTSeq<T>  implements SetT<T>,
        return stream().iterator();
     }
 
-    @Override
-    public void subscribe(Subscriber<? super T> s) {
-        run.forEachEvent(e->SetX.fromIterable(e).subscribe(s),e->s.onError(e),()->s.onComplete());
-    }
+  
 
     
     public <R> SetTSeq<R> unitIterator(Iterator<R> it){
@@ -293,5 +290,8 @@ public class SetTSeq<T>  implements SetT<T>,
     }
     public static <T> SetTSeq<T> emptySet(){
         return SetT.fromIterable(SetX.empty());
+    }
+    public boolean isSeqPresent() {
+        return !run.isEmpty();
     }
 }

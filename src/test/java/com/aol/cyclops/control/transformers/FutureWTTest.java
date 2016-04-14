@@ -1,9 +1,9 @@
 package com.aol.cyclops.control.transformers;
 
 import static com.aol.cyclops.control.Matchable.otherwise;
+import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
-import static com.aol.cyclops.control.Matchable.otherwise;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -39,7 +39,6 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
-import com.aol.cyclops.control.monads.transformers.MaybeT;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.Mutable;
@@ -66,7 +65,7 @@ public class FutureWTTest implements Printable {
 	FutureWTValue<Integer> none;
 	@Before
 	public void setUp() throws Exception {
-		just = FutureWTValue.of(Maybe.just(10));
+		just = FutureWTValue.of(FutureW.ofResult(10));
 		none = FutureWT.emptyOptional();
 	}
 	
@@ -109,7 +108,7 @@ public class FutureWTTest implements Printable {
     }
 	@Test
 	public void testToMaybe() {
-		assertThat(just.toMaybe(),equalTo(just.value()));
+		assertThat(just.toMaybe(),equalTo(Maybe.just(10)));
 		assertThat(none.toMaybe().isPresent(),equalTo(false));
 	}
 	@Test
@@ -155,7 +154,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20).value(),equalTo(Maybe.of(20)));
+		assertThat(just.unit(20).toMaybe(),equalTo(Maybe.of(20)));
 	}
 
 	
@@ -177,7 +176,7 @@ public class FutureWTTest implements Printable {
 	@Test
 	public void testFlatMap() {
 	    
-		assertThat(just.flatMap(i->Maybe.of(i+5)).value(),equalTo(Maybe.of(15)));
+		assertThat(just.flatMap(i->Maybe.of(i+5)).toMaybe(),equalTo(Maybe.of(15)));
 		assertThat(none.flatMap(i->Maybe.of(i+5)).isValuePresent(),equalTo(false));
 	}
 	
@@ -483,8 +482,8 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testOfType() {
-		assertFalse(just.ofType(String.class).isValuePresent());
-		assertTrue(just.ofType(Integer.class).isValuePresent());
+		assertFalse(just.ofType(String.class).isPresent());
+		assertTrue(just.ofType(Integer.class).isPresent());
 		assertFalse(none.ofType(String.class).isPresent());
 		assertFalse(none.ofType(Integer.class).isPresent());
 	}
@@ -760,14 +759,14 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5).value(),equalTo(Maybe.of(15)));
+		assertThat(just.map(i->i+5).toMaybe(),equalTo(Maybe.of(15)));
 	}
 	
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c)).map(i->i+2);
-		assertNull(capture.get());
+		
 		
 		
 		just.get();
@@ -779,14 +778,14 @@ public class FutureWTTest implements Printable {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).value(),equalTo(Maybe.of(65)));
+		assertThat(just.trampoline(n ->sum(10,n)).toMaybe(),equalTo(Maybe.of(65)));
 	}
 
 	
 
 	@Test
 	public void testUnitT1() {
-		assertThat(none.unit(10).value(),equalTo(just.value()));
+		assertThat(none.unit(10).toMaybe(),equalTo(just.value().toMaybe()));
 	}
 
 }

@@ -229,16 +229,16 @@ public interface SetT<T>  extends Publisher<T>,
     }
 
     public static <A> SetTSeq<A> fromIterable(
-            Iterable<Set<A>> iterableOfSets) {
+            Iterable<? extends Set<A>> iterableOfSets) {
         return SetTSeq.of(AnyM.fromIterable(iterableOfSets));
     }
 
-    public static <A> SetTSeq<A> fromStream(Stream<Set<A>> streamOfSets) {
+    public static <A> SetTSeq<A> fromStream(Stream<? extends Set<A>> streamOfSets) {
         return SetTSeq.of(AnyM.fromStream(streamOfSets));
     }
 
     public static <A> SetTSeq<A> fromPublisher(
-            Publisher<Set<A>> publisherOfSets) {
+            Publisher<? extends Set<A>> publisherOfSets) {
         return SetTSeq.of(AnyM.fromPublisher(publisherOfSets));
     }
 
@@ -247,7 +247,7 @@ public interface SetT<T>  extends Publisher<T>,
         return SetTValue.fromValue(monadicValue);
     }
 
-    public static <A> SetTValue<A> fromOptional(Optional<Set<A>> optional) {
+    public static <A> SetTValue<A> fromOptional(Optional<? extends Set<A>> optional) {
         return SetTValue.of(AnyM.fromOptional(optional));
     }
 
@@ -256,7 +256,7 @@ public interface SetT<T>  extends Publisher<T>,
     }
 
     public static <A> SetTValue<A> fromIterableValue(
-            Iterable<Set<A>> iterableOfSets) {
+            Iterable<? extends Set<A>> iterableOfSets) {
         return SetTValue.of(AnyM.fromIterableValue(iterableOfSets));
     }
     public static <T> SetTSeq<T> emptySet(){

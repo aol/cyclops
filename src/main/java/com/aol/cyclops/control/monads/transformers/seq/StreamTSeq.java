@@ -37,6 +37,9 @@ public class StreamTSeq<T> implements StreamT<T>{
    private StreamTSeq(final AnyMSeq<? extends Stream<T>> run){
        this.run = run.map(s->ReactiveSeq.fromStream(s));
    }
+   public boolean isSeqPresent() {
+       return !run.isEmpty();
+     }
    /**
 	 * @return The wrapped AnyM
 	 */
@@ -167,6 +170,9 @@ public class StreamTSeq<T> implements StreamT<T>{
    public static <A> StreamTSeq<A> of(AnyMSeq<? extends Stream<A>> monads){
 	   return new StreamTSeq<>(monads);
    }
+   public static <A> StreamTSeq<A> of(Stream<A> monads){
+       return StreamT.fromIterable(ReactiveSeq.of(monads));
+   }
    
    /*
 	 * (non-Javadoc)
@@ -195,11 +201,7 @@ public class StreamTSeq<T> implements StreamT<T>{
        return stream().iterator();
     }
 
-    @Override
-    public void subscribe(Subscriber<? super T> s) {
-        run.forEachEvent(e->ReactiveSeq.fromStream(e).subscribe(s),e->s.onError(e),()->s.onComplete());  
-    }
-
+    
    
     public <R> StreamTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Stream.of(i)));
@@ -228,5 +230,8 @@ public class StreamTSeq<T> implements StreamT<T>{
         
         return run;
     }
- 
+    public static <T> StreamTSeq<T> emptyStream(){
+        return StreamT.fromIterable(ReactiveSeq.empty());
+    }
+    
 }

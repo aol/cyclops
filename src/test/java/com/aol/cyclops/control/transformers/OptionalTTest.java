@@ -65,7 +65,7 @@ public class OptionalTTest implements Printable {
 	OptionalTValue<Integer> none;
 	@Before
 	public void setUp() throws Exception {
-		just = OptionalTValue.of(Maybe.just(10));
+		just = OptionalTValue.of(Optional.of(10));
 		none = OptionalT.emptyOptional();
 	}
 	

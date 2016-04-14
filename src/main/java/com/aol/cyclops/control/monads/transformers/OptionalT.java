@@ -257,12 +257,13 @@ public interface OptionalT<T>  extends Publisher<T>,
             Iterable<Optional<A>> iterableOfOptionals) {
         return OptionalTValue.of(AnyM.fromIterableValue(iterableOfOptionals));
     }
-    public static <T> OptionalTValue<T> emptyMaybe(){
-        return OptionalTValue.emptyMaybe();
+    public static <T> OptionalTValue<T> emptyOptional(){
+        return OptionalTValue.emptyOptional();
     }
     public static <T> OptionalTSeq<T> emptyList(){
         return OptionalT.fromIterable(ListX.of());
     }
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */

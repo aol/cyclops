@@ -46,6 +46,9 @@ public class StreamTValue<T> implements StreamT<T>{
    public AnyMValue<ReactiveSeq<T>> unwrap(){
 	   return run;
    }
+   public boolean isSeqPresent(){
+       return !run.isEmpty();
+   }
    /**
   	 * Peek at the current value of the Stream
   	 * <pre>

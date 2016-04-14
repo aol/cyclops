@@ -50,6 +50,9 @@ public class SetTValue<T>  implements SetT<T>,
    private SetTValue(final AnyMValue<? extends Set<T>> run){
        this.run = run.map(s->SetX.fromIterable(s));
    }
+   public boolean isSeqPresent(){
+       return !run.isEmpty();
+   }
    /**
 	 * @return The wrapped AnyM
 	 */

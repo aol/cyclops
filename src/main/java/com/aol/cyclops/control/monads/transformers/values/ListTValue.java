@@ -46,6 +46,9 @@ public class ListTValue<T> implements ListT<T>,
    private ListTValue(final AnyMValue<? extends List<T>> run){
        this.run = run.map(s->ListX.fromIterable(s));
    }
+   public boolean isSeqPresent(){
+       return !run.isEmpty();
+   }
    /**
 	 * @return The wrapped AnyM
 	 */

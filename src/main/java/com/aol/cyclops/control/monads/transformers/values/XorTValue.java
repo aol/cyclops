@@ -10,14 +10,13 @@ import java.util.function.Supplier;
 
 import org.reactivestreams.Subscriber;
 
-
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
@@ -45,6 +44,7 @@ import com.aol.cyclops.types.applicative.Applicativable;
  */
 public class XorTValue<ST,T> implements XorT<ST,T>,
                                 MonadicValue2<ST,T>,
+                                TransformerValue<T>,
                                 Supplier<T>, 
                                 ConvertableFunctor<T>, 
                                 Filterable<T>,
@@ -57,6 +57,13 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
     private XorTValue(final AnyMValue<Xor<ST,T>> run) {
         this.run = run;
     }
+    public Xor<ST,T> value(){
+        return run.get();
+    }
+    public boolean isValuePresent(){
+        return !run.isEmpty();
+    }
+    
 
     /**
      * @return The wrapped AnyM

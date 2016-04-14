@@ -350,9 +350,9 @@ public class EvalTValue<T> implements EvalT<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> EvalTValue<U> ofType(Class<U> type) {
+    public <U> MaybeTValue<U> ofType(Class<U> type) {
        
-        return (EvalTValue<U>)EvalT.super.ofType(type);
+        return (MaybeTValue<U>)EvalT.super.ofType(type);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)

@@ -308,9 +308,9 @@ public interface EvalT<T>  extends Publisher<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> EvalT<U> ofType(Class<U> type) {
+    default <U> MaybeT<U> ofType(Class<U> type) {
         
-        return (EvalT<U>)Filterable.super.ofType(type);
+        return (MaybeT<U>)Filterable.super.ofType(type);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)

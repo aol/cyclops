@@ -39,7 +39,7 @@ public class OptionalTValueComprehender implements ValueComprehender<OptionalTVa
 
 	@Override
 	public OptionalTValue empty() {
-		return OptionalTValue.emptyMaybe();
+		return OptionalTValue.emptyOptional();
 	}
 
 	@Override

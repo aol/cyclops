@@ -31,15 +31,14 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.monads.transformers.ListT;
+import com.aol.cyclops.control.monads.transformers.SetT;
+import com.aol.cyclops.control.monads.transformers.StreamT;
+import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
-import com.aol.cyclops.control.monads.transformers.values.ListTValue;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
-import com.aol.cyclops.control.monads.transformers.values.SetTValue;
-import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
-import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
 import com.aol.cyclops.control.monads.transformers.values.TryTValue;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -608,20 +607,20 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
         Objects.requireNonNull(tryT);
         return AnyMFactory.instance.value(tryT);
     }
-	public static <T> AnyMSeq<T> fromListTValue(ListT<T> listT){
+	public static <T> AnyMSeq<T> fromListT(ListT<T> listT){
         Objects.requireNonNull(listT);
         return AnyMFactory.instance.seq(listT);
     }
 	
-	public static <T> AnyMSeq<T> fromStreamTValue(StreamTValue<T> streamT){
+	public static <T> AnyMSeq<T> fromStreamT(StreamT<T> streamT){
         Objects.requireNonNull(streamT);
         return AnyMFactory.instance.seq(streamT);
     }
-	public static <T> AnyMSeq<T> fromStreamableTValue(StreamableTValue<T> streamT){
+	public static <T> AnyMSeq<T> fromStreamableT(StreamableT<T> streamT){
         Objects.requireNonNull(streamT);
         return AnyMFactory.instance.seq(streamT);
     }
-	public static <T> AnyMSeq<T> fromSetTValue(SetTValue<T> setT){
+	public static <T> AnyMSeq<T> fromSetT(SetT<T> setT){
         Objects.requireNonNull(setT);
         return AnyMFactory.instance.seq(setT);
     }

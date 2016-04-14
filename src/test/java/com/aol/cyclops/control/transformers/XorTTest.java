@@ -65,7 +65,7 @@ public class XorTTest implements Printable {
 	XorTValue<Throwable,Integer> none;
 	@Before
 	public void setUp() throws Exception {
-		just = XorTValue.of(Maybe.just(10));
+		just = XorTValue.of(Xor.primary(10));
 		none = XorT.emptyOptional();
 	}
 	
@@ -161,8 +161,8 @@ public class XorTTest implements Printable {
 
 	@Test
 	public void testIsPresent() {
-		assertTrue(just.isPresent());
-		assertFalse(none.isPresent());
+		assertTrue(just.isPrimary());
+		assertFalse(none.isPrimary());
 	}
 
 	
@@ -170,14 +170,14 @@ public class XorTTest implements Printable {
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5).get(),equalTo(15));
-		assertThat(none.map(i->i+5).isPresent(),equalTo(false));
+		assertThat(none.map(i->i+5).isPrimary(),equalTo(false));
 	}
 
 	@Test
 	public void testFlatMap() {
 	    
-		assertThat(just.flatMap(i->Maybe.of(i+5)).value(),equalTo(Maybe.of(15)));
-		assertThat(none.flatMap(i->Maybe.of(i+5)).isPresent(),equalTo(false));
+		assertThat(just.flatMap(i->Xor.primary(i+5)).toMaybe(),equalTo(Maybe.of(15)));
+		assertThat(none.flatMap(i->Xor.primary(i+5)).isPrimary(),equalTo(false));
 	}
 	
 	@Test
@@ -473,33 +473,33 @@ public class XorTTest implements Printable {
 
 	@Test
 	public void testFilter() {
-		assertFalse(just.filter(i->i<5).isPresent());
-		assertTrue(just.filter(i->i>5).isPresent());
-		assertFalse(none.filter(i->i<5).isPresent());
-		assertFalse(none.filter(i->i>5).isPresent());
+		assertFalse(just.filter(i->i<5).isPrimary());
+		assertTrue(just.filter(i->i>5).isPrimary());
+		assertFalse(none.filter(i->i<5).isPrimary());
+		assertFalse(none.filter(i->i>5).isPrimary());
 		
 	}
 
 	@Test
 	public void testOfType() {
-		assertFalse(just.ofType(String.class).isPresent());
-		assertTrue(just.ofType(Integer.class).isPresent());
-		assertFalse(none.ofType(String.class).isPresent());
-		assertFalse(none.ofType(Integer.class).isPresent());
+		assertFalse(just.ofType(String.class).isPrimary());
+		assertTrue(just.ofType(Integer.class).isPrimary());
+		assertFalse(none.ofType(String.class).isPrimary());
+		assertFalse(none.ofType(Integer.class).isPrimary());
 	}
 
 	@Test
 	public void testFilterNot() {
-		assertTrue(just.filterNot(i->i<5).isPresent());
-		assertFalse(just.filterNot(i->i>5).isPresent());
-		assertFalse(none.filterNot(i->i<5).isPresent());
-		assertFalse(none.filterNot(i->i>5).isPresent());
+		assertTrue(just.filterNot(i->i<5).isPrimary());
+		assertFalse(just.filterNot(i->i>5).isPrimary());
+		assertFalse(none.filterNot(i->i<5).isPrimary());
+		assertFalse(none.filterNot(i->i>5).isPrimary());
 	}
 
 	@Test
 	public void testNotNull() {
-		assertTrue(just.notNull().isPresent());
-		assertFalse(none.notNull().isPresent());
+		assertTrue(just.notNull().isPrimary());
+		assertFalse(none.notNull().isPrimary());
 		
 	}
 

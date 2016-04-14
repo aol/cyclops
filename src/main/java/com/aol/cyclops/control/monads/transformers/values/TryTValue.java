@@ -41,6 +41,7 @@ import com.aol.cyclops.types.applicative.Applicativable;
  * @param <T> The type contained on the Try within
  */
 public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
+                                                    TransformerValue<T>,
                                                     MonadicValue<T>,
                                                     Supplier<T>, 
                                                     ConvertableFunctor<T>, 
@@ -54,6 +55,12 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
    
    private TryTValue(final AnyMValue<Try<T,X>> run){
        this.run = run;
+   }
+   public Try<T,X> value(){
+       return run.get();
+   }
+   public boolean isValuePresent(){
+       return !run.isEmpty();
    }
    
 	/**
@@ -340,24 +347,24 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> TryTValue<U,X> ofType(Class<U> type) {
+    public <U> MaybeTValue<U> ofType(Class<U> type) {
         
-        return (TryTValue<U,X>)TryT.super.ofType(type);
+        return (MaybeTValue<U>)TryT.super.ofType(type);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    public TryTValue<T,X> filterNot(Predicate<? super T> fn) {
+    public MaybeTValue<T> filterNot(Predicate<? super T> fn) {
        
-        return (TryTValue<T,X>)TryT.super.filterNot(fn);
+        return (MaybeTValue<T>)TryT.super.filterNot(fn);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
      */
     @Override
-    public TryTValue<T,X> notNull() {
+    public MaybeTValue<T> notNull() {
        
-        return (TryTValue<T,X>)TryT.super.notNull();
+        return (MaybeTValue<T>)TryT.super.notNull();
     }
 }

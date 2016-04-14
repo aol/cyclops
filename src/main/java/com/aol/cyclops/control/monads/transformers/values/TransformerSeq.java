@@ -51,7 +51,7 @@ public interface TransformerSeq<T> extends  NestedFoldable<T>,
     default <X extends CyclopsCollectable<T> & Foldable<T> & ConvertableSequence<T>> X flattened(){
         return (X)stream();
     }
-    
+    public boolean isSeqPresent();
     
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)

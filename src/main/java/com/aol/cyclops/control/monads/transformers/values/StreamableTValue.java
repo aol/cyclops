@@ -46,6 +46,9 @@ public class StreamableTValue<T> implements StreamableT<T>{
    public AnyM<Streamable<T>> unwrap(){
 	   return run;
    }
+   public boolean isSeqPresent(){
+       return !run.isEmpty();
+   }
    /**
 	 * Peek at the current value of the Streamable
 	 * <pre>

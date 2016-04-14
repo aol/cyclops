@@ -19,7 +19,7 @@ public class ListTOptionalTest extends AbstractAnyMSeqOrderedDependentTest{
 
 	@Override
 	public <T> AnyMSeq<T> of(T... values) {
-		return AnyM.fromListTValue(ListT.fromOptional(Optional.of(ListX.of(values))));
+		return AnyM.fromListT(ListT.fromOptional(Optional.of(ListX.of(values))));
 	}
 	@Test
     public void stream(){

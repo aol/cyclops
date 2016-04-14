@@ -261,7 +261,7 @@ public interface MaybeT<T>  extends Publisher<T>,
         return Matchables.anyM(monads).visit(v-> MaybeTValue.of(v), s->MaybeTSeq.of(s));
     }
     public static<T>  MaybeTValue<T> emptyOptional() {
-        return fromValue(Maybe.none());
+        return fromOptional(Optional.empty());
     }
     public static <T> MaybeTSeq<T> emptyList(){
         return MaybeT.fromIterable(ListX.of());

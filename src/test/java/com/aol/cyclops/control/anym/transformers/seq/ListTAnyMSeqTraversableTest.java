@@ -13,12 +13,12 @@ public class ListTAnyMSeqTraversableTest extends AbstractTraversableTest {
 
     @Override
     public <T> Traversable<T> of(T... elements) {
-        return AnyM.fromListTValue(ListT.fromIterable(ListX.of(Arrays.asList(elements))));
+        return AnyM.fromListT(ListT.fromIterable(ListX.of(Arrays.asList(elements))));
     }
 
     @Override
     public <T> Traversable<T> empty() {
-        return AnyM.fromListTValue(ListT.emptyList());
+        return AnyM.fromListT(ListT.emptyList());
     }
 
 }

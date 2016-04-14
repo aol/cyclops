@@ -23,7 +23,7 @@ public class StreamTOptionalTest extends AbstractAnyMSeqOrderedDependentTest{
 
 	@Override
 	public <T> AnyMSeq<T> of(T... values) {
-		return AnyM.fromStreamTValue(StreamT.fromOptional(Optional.of(ReactiveSeq.of(values))));
+		return AnyM.fromStreamT(StreamT.fromOptional(Optional.of(ReactiveSeq.of(values))));
 	}
 	
 	@Test
