@@ -4,7 +4,6 @@ package com.aol.cyclops.control.monads.transformers.values;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -16,8 +15,9 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
@@ -40,6 +40,7 @@ import lombok.val;
  * @param <T>
  */
 public class FutureWTValue<A> implements FutureWT<A>, 
+                                         TransformerValue<A>,
                                                 MonadicValue<A>,
                                                 Supplier<A>, 
                                                 ConvertableFunctor<A>, 
@@ -58,7 +59,12 @@ public class FutureWTValue<A> implements FutureWT<A>,
    private FutureWTValue(final AnyMValue<FutureW<A>> run){
        this.run = run;
    }
-   
+   public MonadicValue<A> value(){
+       return run.get();
+   }
+   public boolean isValuePresent(){
+       return !run.isEmpty();
+   }
    /**
     * Filter the wrapped Maybe
     * 
@@ -291,4 +297,50 @@ public class FutureWTValue<A> implements FutureWT<A>,
         return FutureWT.fromOptional(Optional.empty());
     }
  
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    public <U> FutureWTValue<U> cast(Class<U> type) {
+        return (FutureWTValue<U>)TransformerValue.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    public <R> FutureWTValue<R> trampoline(Function<? super A, ? extends Trampoline<? extends R>> mapper) {
+        return (FutureWTValue<R>)TransformerValue.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    public <R> FutureWTValue<R> patternMatch(Function<CheckValue1<A, R>, CheckValue1<A, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (FutureWTValue<R>)TransformerValue.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    public <U> MaybeTValue<U> ofType(Class<U> type) {
+        
+        return (MaybeTValue<U>)FutureWT.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    public MaybeTValue<A> filterNot(Predicate<? super A> fn) {
+       
+        return (MaybeTValue<A>)FutureWT.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    public MaybeTValue<A> notNull() {
+       
+        return (MaybeTValue<A>)FutureWT.super.notNull();
+    }
 }

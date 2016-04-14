@@ -1,9 +1,9 @@
 package com.aol.cyclops.control.transformers;
 
 import static com.aol.cyclops.control.Matchable.otherwise;
+import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
-import static com.aol.cyclops.control.Matchable.otherwise;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -38,7 +38,7 @@ import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.control.monads.transformers.MaybeT;
+import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.Mutable;
@@ -66,7 +66,7 @@ public class OptionalTTest implements Printable {
 	@Before
 	public void setUp() throws Exception {
 		just = OptionalTValue.of(Maybe.just(10));
-		none = MaybeT.emptyOptional();
+		none = OptionalT.emptyOptional();
 	}
 	
 	@Test

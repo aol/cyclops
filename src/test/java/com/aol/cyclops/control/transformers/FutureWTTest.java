@@ -38,6 +38,7 @@ import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.control.monads.transformers.MaybeT;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
 import com.aol.cyclops.data.LazyImmutable;
@@ -66,7 +67,7 @@ public class FutureWTTest implements Printable {
 	@Before
 	public void setUp() throws Exception {
 		just = FutureWTValue.of(Maybe.just(10));
-		none = MaybeT.emptyOptional();
+		none = FutureWT.emptyOptional();
 	}
 	
 	@Test
@@ -161,8 +162,8 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testIsPresent() {
-		assertTrue(just.isPresent());
-		assertFalse(none.isPresent());
+		assertTrue(just.isValuePresent());
+		assertFalse(none.isValuePresent());
 	}
 
 	
@@ -170,14 +171,14 @@ public class FutureWTTest implements Printable {
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5).get(),equalTo(15));
-		assertThat(none.map(i->i+5).isPresent(),equalTo(false));
+		assertThat(none.map(i->i+5).isValuePresent(),equalTo(false));
 	}
 
 	@Test
 	public void testFlatMap() {
 	    
 		assertThat(just.flatMap(i->Maybe.of(i+5)).value(),equalTo(Maybe.of(15)));
-		assertThat(none.flatMap(i->Maybe.of(i+5)).isPresent(),equalTo(false));
+		assertThat(none.flatMap(i->Maybe.of(i+5)).isValuePresent(),equalTo(false));
 	}
 	
 	@Test
@@ -482,8 +483,8 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testOfType() {
-		assertFalse(just.ofType(String.class).isPresent());
-		assertTrue(just.ofType(Integer.class).isPresent());
+		assertFalse(just.ofType(String.class).isValuePresent());
+		assertTrue(just.ofType(Integer.class).isValuePresent());
 		assertFalse(none.ofType(String.class).isPresent());
 		assertFalse(none.ofType(Integer.class).isPresent());
 	}

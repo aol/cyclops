@@ -252,25 +252,25 @@ public interface FutureWT<A> extends Unit<A>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> FutureWT<U> ofType(Class<U> type) {
+    default <U> MaybeT<U> ofType(Class<U> type) {
         
-        return (FutureWT<U>)Filterable.super.ofType(type);
+        return (MaybeT<U>)Filterable.super.ofType(type);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default FutureWT<A> filterNot(Predicate<? super A> fn) {
+    default MaybeT<A> filterNot(Predicate<? super A> fn) {
        
-        return (FutureWT<A>)Filterable.super.filterNot(fn);
+        return (MaybeT<A>)Filterable.super.filterNot(fn);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
      */
     @Override
-    default FutureWT<A> notNull() {
+    default MaybeT<A> notNull() {
        
-        return (FutureWT<A>)Filterable.super.notNull();
+        return (MaybeT<A>)Filterable.super.notNull();
     }
 
 
