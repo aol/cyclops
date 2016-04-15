@@ -57,7 +57,7 @@ public class MaybeTValue<T> implements MaybeT<T>,
         this.run = run;
     }
 
-    public MonadicValue<T> value(){
+    public Maybe<T> value(){
         return run.get();
     }
     public boolean isValuePresent(){

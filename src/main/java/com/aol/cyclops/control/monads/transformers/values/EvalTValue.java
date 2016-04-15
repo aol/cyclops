@@ -59,7 +59,7 @@ public class EvalTValue<T> implements EvalT<T>,
     private EvalTValue(final AnyMValue<Eval<T>> run) {
         this.run = run;
     } 
-    public MonadicValue<T> value(){
+    public Eval<T> value(){
         return run.get();
     }
 

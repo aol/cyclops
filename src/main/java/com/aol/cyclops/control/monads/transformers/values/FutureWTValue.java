@@ -59,7 +59,7 @@ public class FutureWTValue<A> implements FutureWT<A>,
    private FutureWTValue(final AnyMValue<FutureW<A>> run){
        this.run = run;
    }
-   public MonadicValue<A> value(){
+   public FutureW<A> value(){
        return run.get();
    }
    public boolean isValuePresent(){

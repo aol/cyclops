@@ -61,7 +61,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
    private CompletableFutureTValue(final AnyMValue<CompletableFuture<A>> run){
        this.run = run;
    }
-   public MonadicValue<A> value(){
+   public FutureW<A> value(){
        return FutureW.of(run.get());
    }
    public boolean isValuePresent(){
