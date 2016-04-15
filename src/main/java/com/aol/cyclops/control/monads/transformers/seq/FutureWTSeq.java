@@ -1,15 +1,27 @@
 package com.aol.cyclops.control.monads.transformers.seq;
 
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import org.jooq.lambda.Collectable;
-import org.reactivestreams.Subscriber;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
@@ -271,6 +283,428 @@ public class FutureWTSeq<A> implements FutureWT<A>,
     }
     public static <T> FutureWTSeq<T> emptyList() {
         return FutureWT.fromIterable(ListX.of());
+    }
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     */
+    @Override
+    public FutureWTSeq<A> combine(BiPredicate<? super A, ? super A> predicate, BinaryOperator<A> op) {
+       
+        return (FutureWTSeq<A>)Traversable.super.combine(predicate, op);
+    }
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(int)
+     */
+    @Override
+    public FutureWTSeq<A> cycle(int times) {
+       
+        return (FutureWTSeq<A>)Traversable.super.cycle(times);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(com.aol.cyclops.Monoid, int)
+     */
+    @Override
+    public FutureWTSeq<A> cycle(Monoid<A> m, int times) {
+       
+        return (FutureWTSeq<A>)Traversable.super.cycle(m, times);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleWhile(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<A> cycleWhile(Predicate<? super A> predicate) {
+       
+        return (FutureWTSeq<A>)Traversable.super.cycleWhile(predicate);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleUntil(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<A> cycleUntil(Predicate<? super A> predicate) {
+       
+        return (FutureWTSeq<A>)Traversable.super.cycleUntil(predicate);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> FutureWTSeq<R> zip(Iterable<U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+       
+        return (FutureWTSeq<R>)Traversable.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
+     */
+    @Override
+    public <U> FutureWTSeq<Tuple2<A, U>> zipStream(Stream<U> other) {
+       
+        return (FutureWTSeq<Tuple2<A, U>>)Traversable.super.zipStream(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
+     */
+    @Override
+    public <U> FutureWTSeq<Tuple2<A, U>> zip(Seq<U> other) {
+       
+        return (FutureWTSeq<Tuple2<A, U>>)Traversable.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     */
+    @Override
+    public <S, U> FutureWTSeq<Tuple3<A, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
+       
+        return (FutureWTSeq)Traversable.super.zip3(second, third);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     */
+    @Override
+    public <T2, T3, T4> FutureWTSeq<Tuple4<A, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
+            Stream<T4> fourth) {
+       
+        return (FutureWTSeq<Tuple4<A, T2, T3, T4>>)Traversable.super.zip4(second, third, fourth);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipWithIndex()
+     */
+    @Override
+    public FutureWTSeq<Tuple2<A, Long>> zipWithIndex() {
+       
+        return (FutureWTSeq<Tuple2<A, Long>>)Traversable.super.zipWithIndex();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int)
+     */
+    @Override
+    public FutureWTSeq<ListX<A>> sliding(int windowSize) {
+       
+        return (FutureWTSeq<ListX<A>>)Traversable.super.sliding(windowSize);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int, int)
+     */
+    @Override
+    public FutureWTSeq<ListX<A>> sliding(int windowSize, int increment) {
+       
+        return (FutureWTSeq<ListX<A>>)Traversable.super.sliding(windowSize, increment);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int, java.util.function.Supplier)
+     */
+    @Override
+    public <C extends Collection<? super A>> FutureWTSeq<C> grouped(int size, Supplier<C> supplier) {
+       
+        return (FutureWTSeq<C> )Traversable.super.grouped(size, supplier);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<ListX<A>> groupedUntil(Predicate<? super A> predicate) {
+       
+        return (FutureWTSeq<ListX<A>>)Traversable.super.groupedUntil(predicate);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     */
+    @Override
+    public FutureWTSeq<ListX<A>> groupedStatefullyWhile(BiPredicate<ListX<? super A>, ? super A> predicate) {
+       
+        return (FutureWTSeq<ListX<A>>)Traversable.super.groupedStatefullyWhile(predicate);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<ListX<A>> groupedWhile(Predicate<? super A> predicate) {
+       
+        return (FutureWTSeq<ListX<A>>)Traversable.super.groupedWhile(predicate);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     */
+    @Override
+    public <C extends Collection<? super A>> FutureWTSeq<C> groupedWhile(Predicate<? super A> predicate,
+            Supplier<C> factory) {
+       
+        return (FutureWTSeq<C>)Traversable.super.groupedWhile(predicate, factory);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     */
+    @Override
+    public <C extends Collection<? super A>> FutureWTSeq<C> groupedUntil(Predicate<? super A> predicate,
+            Supplier<C> factory) {
+       
+        return (FutureWTSeq<C>)Traversable.super.groupedUntil(predicate, factory);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int)
+     */
+    @Override
+    public FutureWTSeq<ListX<A>> grouped(int groupSize) {
+       
+        return ( FutureWTSeq<ListX<A>>)Traversable.super.grouped(groupSize);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
+     */
+    @Override
+    public <K, T, D> FutureWTSeq<Tuple2<K, D>> grouped(Function<? super A, ? extends K> classifier,
+            Collector<? super A, T, D> downstream) {
+       
+        return (FutureWTSeq)Traversable.super.grouped(classifier, downstream);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function)
+     */
+    @Override
+    public <K> FutureWTSeq<Tuple2<K, Seq<A>>> grouped(Function<? super A, ? extends K> classifier) {
+       
+        return (FutureWTSeq)Traversable.super.grouped(classifier);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#distinct()
+     */
+    @Override
+    public FutureWTSeq<A> distinct() {
+       
+        return (FutureWTSeq<A>)Traversable.super.distinct();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(com.aol.cyclops.Monoid)
+     */
+    @Override
+    public FutureWTSeq<A> scanLeft(Monoid<A> monoid) {
+       
+        return (FutureWTSeq<A>)Traversable.super.scanLeft(monoid);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
+     */
+    @Override
+    public <U> FutureWTSeq<U> scanLeft(U seed, BiFunction<U, ? super A, U> function) {
+       
+        return (FutureWTSeq<U>)Traversable.super.scanLeft(seed, function);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(com.aol.cyclops.Monoid)
+     */
+    @Override
+    public FutureWTSeq<A> scanRight(Monoid<A> monoid) {
+       
+        return (FutureWTSeq<A>)Traversable.super.scanRight(monoid);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
+     */
+    @Override
+    public <U> FutureWTSeq<U> scanRight(U identity, BiFunction<? super A, U, U> combiner) {
+       
+        return (FutureWTSeq<U>)Traversable.super.scanRight(identity, combiner);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted()
+     */
+    @Override
+    public FutureWTSeq<A> sorted() {
+       
+        return (FutureWTSeq<A>)Traversable.super.sorted();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.Comparator)
+     */
+    @Override
+    public FutureWTSeq<A> sorted(Comparator<? super A> c) {
+       
+        return (FutureWTSeq<A>)Traversable.super.sorted(c);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeWhile(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<A> takeWhile(Predicate<? super A> p) {
+       
+        return (FutureWTSeq<A>)Traversable.super.takeWhile(p);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropWhile(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<A> dropWhile(Predicate<? super A> p) {
+       
+        return (FutureWTSeq<A>)Traversable.super.dropWhile(p);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeUntil(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<A> takeUntil(Predicate<? super A> p) {
+       
+        return (FutureWTSeq<A>)Traversable.super.takeUntil(p);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropUntil(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<A> dropUntil(Predicate<? super A> p) {
+       
+        return (FutureWTSeq<A>)Traversable.super.dropUntil(p);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropRight(int)
+     */
+    @Override
+    public FutureWTSeq<A> dropRight(int num) {
+       
+        return (FutureWTSeq<A>)Traversable.super.dropRight(num);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeRight(int)
+     */
+    @Override
+    public FutureWTSeq<A> takeRight(int num) {
+       
+        return (FutureWTSeq<A>)Traversable.super.takeRight(num);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skip(long)
+     */
+    @Override
+    public FutureWTSeq<A> skip(long num) {
+       
+        return (FutureWTSeq<A>)Traversable.super.skip(num);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipWhile(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<A> skipWhile(Predicate<? super A> p) {
+       
+        return (FutureWTSeq<A>)Traversable.super.skipWhile(p);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipUntil(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<A> skipUntil(Predicate<? super A> p) {
+       
+        return (FutureWTSeq<A>)Traversable.super.skipUntil(p);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limit(long)
+     */
+    @Override
+    public FutureWTSeq<A> limit(long num) {
+       
+        return (FutureWTSeq<A>)Traversable.super.limit(num);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitWhile(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<A> limitWhile(Predicate<? super A> p) {
+       
+        return (FutureWTSeq<A>)Traversable.super.limitWhile(p);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitUntil(java.util.function.Predicate)
+     */
+    @Override
+    public FutureWTSeq<A> limitUntil(Predicate<? super A> p) {
+       
+        return (FutureWTSeq<A>)Traversable.super.limitUntil(p);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#intersperse(java.lang.Object)
+     */
+    @Override
+    public FutureWTSeq<A> intersperse(A value) {
+       
+        return (FutureWTSeq<A>)Traversable.super.intersperse(value);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#reverse()
+     */
+    @Override
+    public FutureWTSeq<A> reverse() {
+       
+        return (FutureWTSeq<A>)Traversable.super.reverse();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle()
+     */
+    @Override
+    public FutureWTSeq<A> shuffle() {
+       
+        return (FutureWTSeq<A>)Traversable.super.shuffle();
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipLast(int)
+     */
+    @Override
+    public FutureWTSeq<A> skipLast(int num) {
+       
+        return (FutureWTSeq<A>)Traversable.super.skipLast(num);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitLast(int)
+     */
+    @Override
+    public FutureWTSeq<A> limitLast(int num) {
+       
+        return (FutureWTSeq<A>)Traversable.super.limitLast(num);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmpty(java.lang.Object)
+     */
+    @Override
+    public FutureWTSeq<A> onEmpty(A value) {
+       
+        return (FutureWTSeq<A>)Traversable.super.onEmpty(value);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
+     */
+    @Override
+    public FutureWTSeq<A> onEmptyGet(Supplier<A> supplier) {
+       
+        return (FutureWTSeq<A>)Traversable.super.onEmptyGet(supplier);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
+     */
+    @Override
+    public <X extends Throwable> FutureWTSeq<A> onEmptyThrow(Supplier<X> supplier) {
+       
+        return (FutureWTSeq<A>)Traversable.super.onEmptyThrow(supplier);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle(java.util.Random)
+     */
+    @Override
+    public FutureWTSeq<A> shuffle(Random random) {
+       
+        return (FutureWTSeq<A>)Traversable.super.shuffle(random);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#slice(long, long)
+     */
+    @Override
+    public FutureWTSeq<A> slice(long from, long to) {
+       
+        return (FutureWTSeq<A>)Traversable.super.slice(from, to);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.function.Function)
+     */
+    @Override
+    public <U extends Comparable<? super U>> FutureWTSeq<A> sorted(Function<? super A, ? extends U> function) {
+        return (FutureWTSeq)Traversable.super.sorted(function);
     }
  
  
