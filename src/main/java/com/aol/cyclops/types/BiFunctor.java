@@ -1,16 +1,9 @@
 package com.aol.cyclops.types;
 
-import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
-
-import org.hamcrest.Matcher;
 
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.internal.matcher2.Case;
-import com.aol.cyclops.internal.matcher2.Cases;
 
 
 /* 

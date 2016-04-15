@@ -63,7 +63,7 @@ public class StreamTSeq<T> implements StreamT<T>{
   	 * Peek at the current value of the Stream
   	 * <pre>
   	 * {@code 
-  	 *    StreamT.of(AnyM.fromStream(Arrays.asStream(10))
+  	 *    StreamT.fromIterable(ListX.of(Stream.of(10))
   	 *             .peek(System.out::println);
   	 *             
   	 *     //prints 10        
@@ -80,10 +80,10 @@ public class StreamTSeq<T> implements StreamT<T>{
  	 * Filter the wrapped Stream
  	 * <pre>
  	 * {@code 
- 	 *    StreamT.of(AnyM.fromStream(Arrays.asStream(10,11))
- 	 *             .filter(t->t!=10);
+ 	 *   StreamT.fromIterable(ListX.of(Stream.of(10,11))
+ 	 *          .filter(t->t!=10);
  	 *             
- 	 *     //StreamT<AnyM<Stream<Stream[11]>>>
+ 	 *     //StreamT<[11]>>
  	 * }
  	 * </pre>
  	 * @param test Predicate to filter the wrapped Stream
@@ -214,8 +214,7 @@ public class StreamTSeq<T> implements StreamT<T>{
        return stream().iterator();
     }
 
-    
-   
+
     public <R> StreamTSeq<R> unitIterator(Iterator<R> it){
         return of(run.unitIterator(it).map(i->Stream.of(i)));
     }

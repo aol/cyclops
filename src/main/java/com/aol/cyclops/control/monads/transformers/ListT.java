@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -25,7 +24,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
@@ -34,18 +32,15 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
+import com.aol.cyclops.control.monads.transformers.values.FoldableTransformerSeq;
 import com.aol.cyclops.control.monads.transformers.values.ListTValue;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.types.stream.future.FutureOperations;
-import com.aol.cyclops.types.stream.lazy.LazyOperations;
 
 
 
@@ -61,7 +56,7 @@ import com.aol.cyclops.types.stream.lazy.LazyOperations;
  *
  * @param <T>
  */
-public interface ListT<T>  extends  TransformerSeq<T> {
+public interface ListT<T>  extends  FoldableTransformerSeq<T> {
     
     public <R> ListT<R> unitIterator(Iterator<R> it);
     public <R> ListT<R> unit(R t);
@@ -283,14 +278,14 @@ public interface ListT<T>  extends  TransformerSeq<T> {
      */
     @Override
     default <U> ListT<U> cast(Class<U> type) {
-        return (ListT<U>)TransformerSeq.super.cast(type);
+        return (ListT<U>)FoldableTransformerSeq.super.cast(type);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
     default <R> ListT<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (ListT<R>)TransformerSeq.super.trampoline(mapper);
+        return (ListT<R>)FoldableTransformerSeq.super.trampoline(mapper);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
@@ -298,7 +293,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <R> ListT<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
             Supplier<? extends R> otherwise) {
-       return (ListT<R>)TransformerSeq.super.patternMatch(case1, otherwise);
+       return (ListT<R>)FoldableTransformerSeq.super.patternMatch(case1, otherwise);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
@@ -306,7 +301,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <U> ListT<U> ofType(Class<U> type) {
         
-        return (ListT<U>)TransformerSeq.super.ofType(type);
+        return (ListT<U>)FoldableTransformerSeq.super.ofType(type);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
@@ -314,7 +309,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> filterNot(Predicate<? super T> fn) {
        
-        return (ListT<T>)TransformerSeq.super.filterNot(fn);
+        return (ListT<T>)FoldableTransformerSeq.super.filterNot(fn);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
@@ -322,16 +317,9 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> notNull() {
        
-        return (ListT<T>)TransformerSeq.super.notNull();
+        return (ListT<T>)FoldableTransformerSeq.super.notNull();
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#flattened()
-     */
-    @Override
-    default <X extends CyclopsCollectable<T> & Foldable<T> & ConvertableSequence<T>> X flattened() {
-       
-        return TransformerSeq.super.flattened();
-    }
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#isSeqPresent()
      */
@@ -348,7 +336,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
        
-        return (ListT<T>)TransformerSeq.super.combine(predicate, op);
+        return (ListT<T>)FoldableTransformerSeq.super.combine(predicate, op);
     }
     
     /* (non-Javadoc)
@@ -357,7 +345,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> cycle(int times) {
        
-        return (ListT<T>)TransformerSeq.super.cycle(times);
+        return (ListT<T>)FoldableTransformerSeq.super.cycle(times);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#cycle(com.aol.cyclops.Monoid, int)
@@ -365,7 +353,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> cycle(Monoid<T> m, int times) {
        
-        return (ListT<T>)TransformerSeq.super.cycle(m, times);
+        return (ListT<T>)FoldableTransformerSeq.super.cycle(m, times);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#cycleWhile(java.util.function.Predicate)
@@ -373,7 +361,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> cycleWhile(Predicate<? super T> predicate) {
        
-        return (ListT<T>)TransformerSeq.super.cycleWhile(predicate);
+        return (ListT<T>)FoldableTransformerSeq.super.cycleWhile(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#cycleUntil(java.util.function.Predicate)
@@ -381,7 +369,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> cycleUntil(Predicate<? super T> predicate) {
        
-        return (ListT<T>)TransformerSeq.super.cycleUntil(predicate);
+        return (ListT<T>)FoldableTransformerSeq.super.cycleUntil(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -389,7 +377,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <U, R> ListT<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
        
-        return (ListT<R>)TransformerSeq.super.zip(other, zipper);
+        return (ListT<R>)FoldableTransformerSeq.super.zip(other, zipper);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zipStream(java.util.stream.Stream)
@@ -397,7 +385,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <U> ListT<Tuple2<T, U>> zipStream(Stream<U> other) {
        
-        return (ListT<Tuple2<T, U>>)TransformerSeq.super.zipStream(other);
+        return (ListT<Tuple2<T, U>>)FoldableTransformerSeq.super.zipStream(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip(org.jooq.lambda.Seq)
@@ -405,7 +393,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <U> ListT<Tuple2<T, U>> zip(Seq<U> other) {
        
-        return (ListT<Tuple2<T, U>>)TransformerSeq.super.zip(other);
+        return (ListT<Tuple2<T, U>>)FoldableTransformerSeq.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -413,7 +401,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <S, U> ListT<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
        
-        return (ListT)TransformerSeq.super.zip3(second, third);
+        return (ListT)FoldableTransformerSeq.super.zip3(second, third);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
@@ -422,7 +410,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     default <T2, T3, T4> ListT<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
             Stream<T4> fourth) {
        
-        return (ListT<Tuple4<T, T2, T3, T4>>)TransformerSeq.super.zip4(second, third, fourth);
+        return (ListT<Tuple4<T, T2, T3, T4>>)FoldableTransformerSeq.super.zip4(second, third, fourth);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zipWithIndex()
@@ -430,7 +418,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<Tuple2<T, Long>> zipWithIndex() {
        
-        return (ListT<Tuple2<T, Long>>)TransformerSeq.super.zipWithIndex();
+        return (ListT<Tuple2<T, Long>>)FoldableTransformerSeq.super.zipWithIndex();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#sliding(int)
@@ -438,7 +426,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<ListX<T>> sliding(int windowSize) {
        
-        return (ListT<ListX<T>>)TransformerSeq.super.sliding(windowSize);
+        return (ListT<ListX<T>>)FoldableTransformerSeq.super.sliding(windowSize);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#sliding(int, int)
@@ -446,7 +434,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<ListX<T>> sliding(int windowSize, int increment) {
        
-        return (ListT<ListX<T>>)TransformerSeq.super.sliding(windowSize, increment);
+        return (ListT<ListX<T>>)FoldableTransformerSeq.super.sliding(windowSize, increment);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#grouped(int, java.util.function.Supplier)
@@ -454,7 +442,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <C extends Collection<? super T>> ListT<C> grouped(int size, Supplier<C> supplier) {
        
-        return (ListT<C> )TransformerSeq.super.grouped(size, supplier);
+        return (ListT<C> )FoldableTransformerSeq.super.grouped(size, supplier);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedUntil(java.util.function.Predicate)
@@ -462,7 +450,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
        
-        return (ListT<ListX<T>>)TransformerSeq.super.groupedUntil(predicate);
+        return (ListT<ListX<T>>)FoldableTransformerSeq.super.groupedUntil(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedStatefullyWhile(java.util.function.BiPredicate)
@@ -470,7 +458,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
        
-        return (ListT<ListX<T>>)TransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (ListT<ListX<T>>)FoldableTransformerSeq.super.groupedStatefullyWhile(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedWhile(java.util.function.Predicate)
@@ -478,7 +466,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
        
-        return (ListT<ListX<T>>)TransformerSeq.super.groupedWhile(predicate);
+        return (ListT<ListX<T>>)FoldableTransformerSeq.super.groupedWhile(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
@@ -487,7 +475,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     default <C extends Collection<? super T>> ListT<C> groupedWhile(Predicate<? super T> predicate,
             Supplier<C> factory) {
        
-        return (ListT<C>)TransformerSeq.super.groupedWhile(predicate, factory);
+        return (ListT<C>)FoldableTransformerSeq.super.groupedWhile(predicate, factory);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
@@ -496,7 +484,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     default <C extends Collection<? super T>> ListT<C> groupedUntil(Predicate<? super T> predicate,
             Supplier<C> factory) {
        
-        return (ListT<C>)TransformerSeq.super.groupedUntil(predicate, factory);
+        return (ListT<C>)FoldableTransformerSeq.super.groupedUntil(predicate, factory);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#grouped(int)
@@ -504,7 +492,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<ListX<T>> grouped(int groupSize) {
        
-        return ( ListT<ListX<T>>)TransformerSeq.super.grouped(groupSize);
+        return ( ListT<ListX<T>>)FoldableTransformerSeq.super.grouped(groupSize);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#grouped(java.util.function.Function, java.util.stream.Collector)
@@ -513,7 +501,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     default <K, A, D> ListT<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier,
             Collector<? super T, A, D> downstream) {
        
-        return (ListT)TransformerSeq.super.grouped(classifier, downstream);
+        return (ListT)FoldableTransformerSeq.super.grouped(classifier, downstream);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#grouped(java.util.function.Function)
@@ -521,7 +509,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <K> ListT<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
        
-        return (ListT)TransformerSeq.super.grouped(classifier);
+        return (ListT)FoldableTransformerSeq.super.grouped(classifier);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#distinct()
@@ -529,7 +517,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> distinct() {
        
-        return (ListT<T>)TransformerSeq.super.distinct();
+        return (ListT<T>)FoldableTransformerSeq.super.distinct();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#scanLeft(com.aol.cyclops.Monoid)
@@ -537,7 +525,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> scanLeft(Monoid<T> monoid) {
        
-        return (ListT<T>)TransformerSeq.super.scanLeft(monoid);
+        return (ListT<T>)FoldableTransformerSeq.super.scanLeft(monoid);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#scanLeft(java.lang.Object, java.util.function.BiFunction)
@@ -545,7 +533,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <U> ListT<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
        
-        return (ListT<U>)TransformerSeq.super.scanLeft(seed, function);
+        return (ListT<U>)FoldableTransformerSeq.super.scanLeft(seed, function);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#scanRight(com.aol.cyclops.Monoid)
@@ -553,7 +541,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> scanRight(Monoid<T> monoid) {
        
-        return (ListT<T>)TransformerSeq.super.scanRight(monoid);
+        return (ListT<T>)FoldableTransformerSeq.super.scanRight(monoid);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#scanRight(java.lang.Object, java.util.function.BiFunction)
@@ -561,7 +549,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <U> ListT<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
        
-        return (ListT<U>)TransformerSeq.super.scanRight(identity, combiner);
+        return (ListT<U>)FoldableTransformerSeq.super.scanRight(identity, combiner);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#sorted()
@@ -569,7 +557,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> sorted() {
        
-        return (ListT<T>)TransformerSeq.super.sorted();
+        return (ListT<T>)FoldableTransformerSeq.super.sorted();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#sorted(java.util.Comparator)
@@ -577,7 +565,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> sorted(Comparator<? super T> c) {
        
-        return (ListT<T>)TransformerSeq.super.sorted(c);
+        return (ListT<T>)FoldableTransformerSeq.super.sorted(c);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#takeWhile(java.util.function.Predicate)
@@ -585,7 +573,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> takeWhile(Predicate<? super T> p) {
        
-        return (ListT<T>)TransformerSeq.super.takeWhile(p);
+        return (ListT<T>)FoldableTransformerSeq.super.takeWhile(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#dropWhile(java.util.function.Predicate)
@@ -593,7 +581,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> dropWhile(Predicate<? super T> p) {
        
-        return (ListT<T>)TransformerSeq.super.dropWhile(p);
+        return (ListT<T>)FoldableTransformerSeq.super.dropWhile(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#takeUntil(java.util.function.Predicate)
@@ -601,7 +589,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> takeUntil(Predicate<? super T> p) {
        
-        return (ListT<T>)TransformerSeq.super.takeUntil(p);
+        return (ListT<T>)FoldableTransformerSeq.super.takeUntil(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#dropUntil(java.util.function.Predicate)
@@ -609,7 +597,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> dropUntil(Predicate<? super T> p) {
        
-        return (ListT<T>)TransformerSeq.super.dropUntil(p);
+        return (ListT<T>)FoldableTransformerSeq.super.dropUntil(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#dropRight(int)
@@ -617,7 +605,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> dropRight(int num) {
        
-        return (ListT<T>)TransformerSeq.super.dropRight(num);
+        return (ListT<T>)FoldableTransformerSeq.super.dropRight(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#takeRight(int)
@@ -625,7 +613,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> takeRight(int num) {
        
-        return (ListT<T>)TransformerSeq.super.takeRight(num);
+        return (ListT<T>)FoldableTransformerSeq.super.takeRight(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#skip(long)
@@ -633,7 +621,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> skip(long num) {
        
-        return (ListT<T>)TransformerSeq.super.skip(num);
+        return (ListT<T>)FoldableTransformerSeq.super.skip(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#skipWhile(java.util.function.Predicate)
@@ -641,7 +629,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> skipWhile(Predicate<? super T> p) {
        
-        return (ListT<T>)TransformerSeq.super.skipWhile(p);
+        return (ListT<T>)FoldableTransformerSeq.super.skipWhile(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#skipUntil(java.util.function.Predicate)
@@ -649,7 +637,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> skipUntil(Predicate<? super T> p) {
        
-        return (ListT<T>)TransformerSeq.super.skipUntil(p);
+        return (ListT<T>)FoldableTransformerSeq.super.skipUntil(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#limit(long)
@@ -657,7 +645,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> limit(long num) {
        
-        return (ListT<T>)TransformerSeq.super.limit(num);
+        return (ListT<T>)FoldableTransformerSeq.super.limit(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#limitWhile(java.util.function.Predicate)
@@ -665,7 +653,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> limitWhile(Predicate<? super T> p) {
        
-        return (ListT<T>)TransformerSeq.super.limitWhile(p);
+        return (ListT<T>)FoldableTransformerSeq.super.limitWhile(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#limitUntil(java.util.function.Predicate)
@@ -673,7 +661,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> limitUntil(Predicate<? super T> p) {
        
-        return (ListT<T>)TransformerSeq.super.limitUntil(p);
+        return (ListT<T>)FoldableTransformerSeq.super.limitUntil(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#intersperse(java.lang.Object)
@@ -681,7 +669,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> intersperse(T value) {
        
-        return (ListT<T>)TransformerSeq.super.intersperse(value);
+        return (ListT<T>)FoldableTransformerSeq.super.intersperse(value);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#reverse()
@@ -689,7 +677,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> reverse() {
        
-        return (ListT<T>)TransformerSeq.super.reverse();
+        return (ListT<T>)FoldableTransformerSeq.super.reverse();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#shuffle()
@@ -697,7 +685,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> shuffle() {
        
-        return (ListT<T>)TransformerSeq.super.shuffle();
+        return (ListT<T>)FoldableTransformerSeq.super.shuffle();
     }
 
     /* (non-Javadoc)
@@ -706,7 +694,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> skipLast(int num) {
        
-        return (ListT<T>)TransformerSeq.super.skipLast(num);
+        return (ListT<T>)FoldableTransformerSeq.super.skipLast(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#limitLast(int)
@@ -714,7 +702,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> limitLast(int num) {
        
-        return (ListT<T>)TransformerSeq.super.limitLast(num);
+        return (ListT<T>)FoldableTransformerSeq.super.limitLast(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#onEmpty(java.lang.Object)
@@ -722,7 +710,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> onEmpty(T value) {
        
-        return (ListT<T>)TransformerSeq.super.onEmpty(value);
+        return (ListT<T>)FoldableTransformerSeq.super.onEmpty(value);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#onEmptyGet(java.util.function.Supplier)
@@ -730,7 +718,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> onEmptyGet(Supplier<T> supplier) {
        
-        return (ListT<T>)TransformerSeq.super.onEmptyGet(supplier);
+        return (ListT<T>)FoldableTransformerSeq.super.onEmptyGet(supplier);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#onEmptyThrow(java.util.function.Supplier)
@@ -738,7 +726,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default <X extends Throwable> ListT<T> onEmptyThrow(Supplier<X> supplier) {
        
-        return (ListT<T>)TransformerSeq.super.onEmptyThrow(supplier);
+        return (ListT<T>)FoldableTransformerSeq.super.onEmptyThrow(supplier);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#shuffle(java.util.Random)
@@ -746,7 +734,7 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> shuffle(Random random) {
        
-        return (ListT<T>)TransformerSeq.super.shuffle(random);
+        return (ListT<T>)FoldableTransformerSeq.super.shuffle(random);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#slice(long, long)
@@ -754,14 +742,14 @@ public interface ListT<T>  extends  TransformerSeq<T> {
     @Override
     default ListT<T> slice(long from, long to) {
        
-        return (ListT<T>)TransformerSeq.super.slice(from, to);
+        return (ListT<T>)FoldableTransformerSeq.super.slice(from, to);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> ListT<T> sorted(Function<? super T, ? extends U> function) {
-        return (ListT)TransformerSeq.super.sorted(function);
+        return (ListT)FoldableTransformerSeq.super.sorted(function);
     }
    
     

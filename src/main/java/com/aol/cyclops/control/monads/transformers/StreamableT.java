@@ -28,13 +28,12 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
+import com.aol.cyclops.control.monads.transformers.values.FoldableTransformerSeq;
 import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.util.stream.Streamable;
 
 
@@ -50,9 +49,7 @@ import com.aol.cyclops.util.stream.Streamable;
  *
  * @param <T>
  */
-public interface StreamableT<T>  extends  ConvertableSequence<T>, 
-                                          TransformerSeq<T>,  
-                                          Publisher<T>{
+public interface StreamableT<T>  extends  FoldableTransformerSeq<T>{
    
     public <R> StreamableT<R> unitIterator(Iterator<R> it);
     public <R> StreamableT<R> unit(R t);
@@ -261,14 +258,14 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
    */
   @Override
   default <U> StreamableT<U> cast(Class<U> type) {
-      return (StreamableT<U>)TransformerSeq.super.cast(type);
+      return (StreamableT<U>)FoldableTransformerSeq.super.cast(type);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
    */
   @Override
   default <R> StreamableT<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-      return (StreamableT<R>)TransformerSeq.super.trampoline(mapper);
+      return (StreamableT<R>)FoldableTransformerSeq.super.trampoline(mapper);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
@@ -276,7 +273,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <R> StreamableT<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
           Supplier<? extends R> otherwise) {
-     return (StreamableT<R>)TransformerSeq.super.patternMatch(case1, otherwise);
+     return (StreamableT<R>)FoldableTransformerSeq.super.patternMatch(case1, otherwise);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
@@ -284,7 +281,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <U> StreamableT<U> ofType(Class<U> type) {
       
-      return (StreamableT<U>)TransformerSeq.super.ofType(type);
+      return (StreamableT<U>)FoldableTransformerSeq.super.ofType(type);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
@@ -292,7 +289,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> filterNot(Predicate<? super T> fn) {
      
-      return (StreamableT<T>)TransformerSeq.super.filterNot(fn);
+      return (StreamableT<T>)FoldableTransformerSeq.super.filterNot(fn);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.types.Filterable#notNull()
@@ -300,7 +297,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> notNull() {
      
-      return (StreamableT<T>)TransformerSeq.super.notNull();
+      return (StreamableT<T>)FoldableTransformerSeq.super.notNull();
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
@@ -308,7 +305,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
      
-      return (StreamableT<T>)TransformerSeq.super.combine(predicate, op);
+      return (StreamableT<T>)FoldableTransformerSeq.super.combine(predicate, op);
   }
   
   /* (non-Javadoc)
@@ -317,7 +314,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> cycle(int times) {
      
-      return (StreamableT<T>)TransformerSeq.super.cycle(times);
+      return (StreamableT<T>)FoldableTransformerSeq.super.cycle(times);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#cycle(com.aol.cyclops.Monoid, int)
@@ -325,7 +322,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> cycle(Monoid<T> m, int times) {
      
-      return (StreamableT<T>)TransformerSeq.super.cycle(m, times);
+      return (StreamableT<T>)FoldableTransformerSeq.super.cycle(m, times);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#cycleWhile(java.util.function.Predicate)
@@ -333,7 +330,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> cycleWhile(Predicate<? super T> predicate) {
      
-      return (StreamableT<T>)TransformerSeq.super.cycleWhile(predicate);
+      return (StreamableT<T>)FoldableTransformerSeq.super.cycleWhile(predicate);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#cycleUntil(java.util.function.Predicate)
@@ -341,7 +338,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> cycleUntil(Predicate<? super T> predicate) {
      
-      return (StreamableT<T>)TransformerSeq.super.cycleUntil(predicate);
+      return (StreamableT<T>)FoldableTransformerSeq.super.cycleUntil(predicate);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -349,7 +346,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <U, R> StreamableT<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
      
-      return (StreamableT<R>)TransformerSeq.super.zip(other, zipper);
+      return (StreamableT<R>)FoldableTransformerSeq.super.zip(other, zipper);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zipStream(java.util.stream.Stream)
@@ -357,7 +354,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <U> StreamableT<Tuple2<T, U>> zipStream(Stream<U> other) {
      
-      return (StreamableT<Tuple2<T, U>>)TransformerSeq.super.zipStream(other);
+      return (StreamableT<Tuple2<T, U>>)FoldableTransformerSeq.super.zipStream(other);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip(org.jooq.lambda.Seq)
@@ -365,7 +362,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <U> StreamableT<Tuple2<T, U>> zip(Seq<U> other) {
      
-      return (StreamableT<Tuple2<T, U>>)TransformerSeq.super.zip(other);
+      return (StreamableT<Tuple2<T, U>>)FoldableTransformerSeq.super.zip(other);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -373,7 +370,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <S, U> StreamableT<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
      
-      return (StreamableT)TransformerSeq.super.zip3(second, third);
+      return (StreamableT)FoldableTransformerSeq.super.zip3(second, third);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
@@ -382,7 +379,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   default <T2, T3, T4> StreamableT<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
           Stream<T4> fourth) {
      
-      return (StreamableT<Tuple4<T, T2, T3, T4>>)TransformerSeq.super.zip4(second, third, fourth);
+      return (StreamableT<Tuple4<T, T2, T3, T4>>)FoldableTransformerSeq.super.zip4(second, third, fourth);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zipWithIndex()
@@ -390,7 +387,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<Tuple2<T, Long>> zipWithIndex() {
      
-      return (StreamableT<Tuple2<T, Long>>)TransformerSeq.super.zipWithIndex();
+      return (StreamableT<Tuple2<T, Long>>)FoldableTransformerSeq.super.zipWithIndex();
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#sliding(int)
@@ -398,7 +395,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<ListX<T>> sliding(int windowSize) {
      
-      return (StreamableT<ListX<T>>)TransformerSeq.super.sliding(windowSize);
+      return (StreamableT<ListX<T>>)FoldableTransformerSeq.super.sliding(windowSize);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#sliding(int, int)
@@ -406,7 +403,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<ListX<T>> sliding(int windowSize, int increment) {
      
-      return (StreamableT<ListX<T>>)TransformerSeq.super.sliding(windowSize, increment);
+      return (StreamableT<ListX<T>>)FoldableTransformerSeq.super.sliding(windowSize, increment);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#grouped(int, java.util.function.Supplier)
@@ -414,7 +411,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <C extends Collection<? super T>> StreamableT<C> grouped(int size, Supplier<C> supplier) {
      
-      return (StreamableT<C> )TransformerSeq.super.grouped(size, supplier);
+      return (StreamableT<C> )FoldableTransformerSeq.super.grouped(size, supplier);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedUntil(java.util.function.Predicate)
@@ -422,7 +419,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
      
-      return (StreamableT<ListX<T>>)TransformerSeq.super.groupedUntil(predicate);
+      return (StreamableT<ListX<T>>)FoldableTransformerSeq.super.groupedUntil(predicate);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedStatefullyWhile(java.util.function.BiPredicate)
@@ -430,7 +427,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
      
-      return (StreamableT<ListX<T>>)TransformerSeq.super.groupedStatefullyWhile(predicate);
+      return (StreamableT<ListX<T>>)FoldableTransformerSeq.super.groupedStatefullyWhile(predicate);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedWhile(java.util.function.Predicate)
@@ -438,7 +435,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
      
-      return (StreamableT<ListX<T>>)TransformerSeq.super.groupedWhile(predicate);
+      return (StreamableT<ListX<T>>)FoldableTransformerSeq.super.groupedWhile(predicate);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
@@ -447,7 +444,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   default <C extends Collection<? super T>> StreamableT<C> groupedWhile(Predicate<? super T> predicate,
           Supplier<C> factory) {
      
-      return (StreamableT<C>)TransformerSeq.super.groupedWhile(predicate, factory);
+      return (StreamableT<C>)FoldableTransformerSeq.super.groupedWhile(predicate, factory);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
@@ -456,7 +453,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   default <C extends Collection<? super T>> StreamableT<C> groupedUntil(Predicate<? super T> predicate,
           Supplier<C> factory) {
      
-      return (StreamableT<C>)TransformerSeq.super.groupedUntil(predicate, factory);
+      return (StreamableT<C>)FoldableTransformerSeq.super.groupedUntil(predicate, factory);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#grouped(int)
@@ -464,7 +461,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<ListX<T>> grouped(int groupSize) {
      
-      return ( StreamableT<ListX<T>>)TransformerSeq.super.grouped(groupSize);
+      return ( StreamableT<ListX<T>>)FoldableTransformerSeq.super.grouped(groupSize);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#grouped(java.util.function.Function, java.util.stream.Collector)
@@ -473,7 +470,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   default <K, A, D> StreamableT<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier,
           Collector<? super T, A, D> downstream) {
      
-      return (StreamableT)TransformerSeq.super.grouped(classifier, downstream);
+      return (StreamableT)FoldableTransformerSeq.super.grouped(classifier, downstream);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#grouped(java.util.function.Function)
@@ -481,7 +478,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <K> StreamableT<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
      
-      return (StreamableT)TransformerSeq.super.grouped(classifier);
+      return (StreamableT)FoldableTransformerSeq.super.grouped(classifier);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#distinct()
@@ -489,7 +486,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> distinct() {
      
-      return (StreamableT<T>)TransformerSeq.super.distinct();
+      return (StreamableT<T>)FoldableTransformerSeq.super.distinct();
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#scanLeft(com.aol.cyclops.Monoid)
@@ -497,7 +494,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> scanLeft(Monoid<T> monoid) {
      
-      return (StreamableT<T>)TransformerSeq.super.scanLeft(monoid);
+      return (StreamableT<T>)FoldableTransformerSeq.super.scanLeft(monoid);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#scanLeft(java.lang.Object, java.util.function.BiFunction)
@@ -505,7 +502,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <U> StreamableT<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
      
-      return (StreamableT<U>)TransformerSeq.super.scanLeft(seed, function);
+      return (StreamableT<U>)FoldableTransformerSeq.super.scanLeft(seed, function);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#scanRight(com.aol.cyclops.Monoid)
@@ -513,7 +510,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> scanRight(Monoid<T> monoid) {
      
-      return (StreamableT<T>)TransformerSeq.super.scanRight(monoid);
+      return (StreamableT<T>)FoldableTransformerSeq.super.scanRight(monoid);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#scanRight(java.lang.Object, java.util.function.BiFunction)
@@ -521,7 +518,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <U> StreamableT<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
      
-      return (StreamableT<U>)TransformerSeq.super.scanRight(identity, combiner);
+      return (StreamableT<U>)FoldableTransformerSeq.super.scanRight(identity, combiner);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#sorted()
@@ -529,7 +526,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> sorted() {
      
-      return (StreamableT<T>)TransformerSeq.super.sorted();
+      return (StreamableT<T>)FoldableTransformerSeq.super.sorted();
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#sorted(java.util.Comparator)
@@ -537,7 +534,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> sorted(Comparator<? super T> c) {
      
-      return (StreamableT<T>)TransformerSeq.super.sorted(c);
+      return (StreamableT<T>)FoldableTransformerSeq.super.sorted(c);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#takeWhile(java.util.function.Predicate)
@@ -545,7 +542,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> takeWhile(Predicate<? super T> p) {
      
-      return (StreamableT<T>)TransformerSeq.super.takeWhile(p);
+      return (StreamableT<T>)FoldableTransformerSeq.super.takeWhile(p);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#dropWhile(java.util.function.Predicate)
@@ -553,7 +550,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> dropWhile(Predicate<? super T> p) {
      
-      return (StreamableT<T>)TransformerSeq.super.dropWhile(p);
+      return (StreamableT<T>)FoldableTransformerSeq.super.dropWhile(p);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#takeUntil(java.util.function.Predicate)
@@ -561,7 +558,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> takeUntil(Predicate<? super T> p) {
      
-      return (StreamableT<T>)TransformerSeq.super.takeUntil(p);
+      return (StreamableT<T>)FoldableTransformerSeq.super.takeUntil(p);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#dropUntil(java.util.function.Predicate)
@@ -569,7 +566,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> dropUntil(Predicate<? super T> p) {
      
-      return (StreamableT<T>)TransformerSeq.super.dropUntil(p);
+      return (StreamableT<T>)FoldableTransformerSeq.super.dropUntil(p);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#dropRight(int)
@@ -577,7 +574,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> dropRight(int num) {
      
-      return (StreamableT<T>)TransformerSeq.super.dropRight(num);
+      return (StreamableT<T>)FoldableTransformerSeq.super.dropRight(num);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#takeRight(int)
@@ -585,7 +582,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> takeRight(int num) {
      
-      return (StreamableT<T>)TransformerSeq.super.takeRight(num);
+      return (StreamableT<T>)FoldableTransformerSeq.super.takeRight(num);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#skip(long)
@@ -593,7 +590,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> skip(long num) {
      
-      return (StreamableT<T>)TransformerSeq.super.skip(num);
+      return (StreamableT<T>)FoldableTransformerSeq.super.skip(num);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#skipWhile(java.util.function.Predicate)
@@ -601,7 +598,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> skipWhile(Predicate<? super T> p) {
      
-      return (StreamableT<T>)TransformerSeq.super.skipWhile(p);
+      return (StreamableT<T>)FoldableTransformerSeq.super.skipWhile(p);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#skipUntil(java.util.function.Predicate)
@@ -609,7 +606,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> skipUntil(Predicate<? super T> p) {
      
-      return (StreamableT<T>)TransformerSeq.super.skipUntil(p);
+      return (StreamableT<T>)FoldableTransformerSeq.super.skipUntil(p);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#limit(long)
@@ -617,7 +614,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> limit(long num) {
      
-      return (StreamableT<T>)TransformerSeq.super.limit(num);
+      return (StreamableT<T>)FoldableTransformerSeq.super.limit(num);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#limitWhile(java.util.function.Predicate)
@@ -625,7 +622,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> limitWhile(Predicate<? super T> p) {
      
-      return (StreamableT<T>)TransformerSeq.super.limitWhile(p);
+      return (StreamableT<T>)FoldableTransformerSeq.super.limitWhile(p);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#limitUntil(java.util.function.Predicate)
@@ -633,7 +630,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> limitUntil(Predicate<? super T> p) {
      
-      return (StreamableT<T>)TransformerSeq.super.limitUntil(p);
+      return (StreamableT<T>)FoldableTransformerSeq.super.limitUntil(p);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#intersperse(java.lang.Object)
@@ -641,7 +638,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> intersperse(T value) {
      
-      return (StreamableT<T>)TransformerSeq.super.intersperse(value);
+      return (StreamableT<T>)FoldableTransformerSeq.super.intersperse(value);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#reverse()
@@ -649,7 +646,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> reverse() {
      
-      return (StreamableT<T>)TransformerSeq.super.reverse();
+      return (StreamableT<T>)FoldableTransformerSeq.super.reverse();
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#shuffle()
@@ -657,7 +654,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> shuffle() {
      
-      return (StreamableT<T>)TransformerSeq.super.shuffle();
+      return (StreamableT<T>)FoldableTransformerSeq.super.shuffle();
   }
 
   /* (non-Javadoc)
@@ -666,7 +663,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> skipLast(int num) {
      
-      return (StreamableT<T>)TransformerSeq.super.skipLast(num);
+      return (StreamableT<T>)FoldableTransformerSeq.super.skipLast(num);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#limitLast(int)
@@ -674,7 +671,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> limitLast(int num) {
      
-      return (StreamableT<T>)TransformerSeq.super.limitLast(num);
+      return (StreamableT<T>)FoldableTransformerSeq.super.limitLast(num);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#onEmpty(java.lang.Object)
@@ -682,7 +679,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> onEmpty(T value) {
      
-      return (StreamableT<T>)TransformerSeq.super.onEmpty(value);
+      return (StreamableT<T>)FoldableTransformerSeq.super.onEmpty(value);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#onEmptyGet(java.util.function.Supplier)
@@ -690,7 +687,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> onEmptyGet(Supplier<T> supplier) {
      
-      return (StreamableT<T>)TransformerSeq.super.onEmptyGet(supplier);
+      return (StreamableT<T>)FoldableTransformerSeq.super.onEmptyGet(supplier);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#onEmptyThrow(java.util.function.Supplier)
@@ -698,7 +695,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default <X extends Throwable> StreamableT<T> onEmptyThrow(Supplier<X> supplier) {
      
-      return (StreamableT<T>)TransformerSeq.super.onEmptyThrow(supplier);
+      return (StreamableT<T>)FoldableTransformerSeq.super.onEmptyThrow(supplier);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#shuffle(java.util.Random)
@@ -706,7 +703,7 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> shuffle(Random random) {
      
-      return (StreamableT<T>)TransformerSeq.super.shuffle(random);
+      return (StreamableT<T>)FoldableTransformerSeq.super.shuffle(random);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#slice(long, long)
@@ -714,13 +711,13 @@ public interface StreamableT<T>  extends  ConvertableSequence<T>,
   @Override
   default StreamableT<T> slice(long from, long to) {
      
-      return (StreamableT<T>)TransformerSeq.super.slice(from, to);
+      return (StreamableT<T>)FoldableTransformerSeq.super.slice(from, to);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#sorted(java.util.function.Function)
    */
   @Override
   default <U extends Comparable<? super U>> StreamableT<T> sorted(Function<? super T, ? extends U> function) {
-      return (StreamableT)TransformerSeq.super.sorted(function);
+      return (StreamableT)FoldableTransformerSeq.super.sorted(function);
   }
 }

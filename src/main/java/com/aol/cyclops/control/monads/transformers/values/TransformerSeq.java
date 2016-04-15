@@ -37,35 +37,20 @@ import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyOperations;
 import com.aol.cyclops.util.stream.Streamable;
 
-public interface TransformerSeq<T> extends  NestedFoldable<T>,
-                                            NestedCollectable<T>,
+public interface TransformerSeq<T> extends  
                                             ConvertableSequence<T>,
                                             Traversable<T>,
                                             Sequential<T>,                                
                                             Iterable<T>,
-                                            FilterableFunctor<T>,
+                                            
                                             ToStream<T>,
                                             Publisher<T> {
     
   
-    default <X extends CyclopsCollectable<T> & Foldable<T> & ConvertableSequence<T>> X flattened(){
-        return (X)stream();
-    }
+   
     public boolean isSeqPresent();
     
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
-     */
-    @Override
-    TransformerSeq<T> filter(Predicate<? super T> fn) ;
-
-   
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#map(java.util.function.Function)
-     */
-    @Override
-     <R> TransformerSeq<R> map(Function<? super T, ? extends R> fn);
+    
     
     <T> TransformerSeq<T> unitAnyM(AnyM<Traversable<T>> traversable);
     AnyM<? extends Traversable<T>> transformerStream();

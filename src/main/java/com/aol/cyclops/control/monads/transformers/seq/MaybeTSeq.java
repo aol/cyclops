@@ -22,9 +22,12 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.MaybeT;
+import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue;
@@ -52,7 +55,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *            The type contained on the Maybe within
  */
 public class MaybeTSeq<T>  implements  MaybeT<T>,
-                                        Traversable<T>,
+                                        TransformerSeq<T>,
                                         Foldable<T>,
                                         ConvertableSequence<T>,
                                         CyclopsCollectable<T>,
@@ -69,6 +72,16 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
         this.run = run;
     }
 
+    @Override
+    public <T>  MaybeTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        
+        return of((AnyMSeq)traversable.map(t->Maybe.fromIterable(t)));
+    }
+    @Override
+    public AnyMSeq<? extends Traversable<T>> transformerStream() {
+        
+        return run.map(m->m.toListX());
+    }
     /**
      * @return The wrapped AnyM
      */
@@ -339,7 +352,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
         
-         return (MaybeTSeq<T>)Traversable.super.combine(predicate, op);
+         return (MaybeTSeq<T>)TransformerSeq.super.combine(predicate, op);
      }
      
      /* (non-Javadoc)
@@ -348,7 +361,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> cycle(int times) {
         
-         return (MaybeTSeq<T>)Traversable.super.cycle(times);
+         return (MaybeTSeq<T>)TransformerSeq.super.cycle(times);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(com.aol.cyclops.Monoid, int)
@@ -356,7 +369,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> cycle(Monoid<T> m, int times) {
         
-         return (MaybeTSeq<T>)Traversable.super.cycle(m, times);
+         return (MaybeTSeq<T>)TransformerSeq.super.cycle(m, times);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleWhile(java.util.function.Predicate)
@@ -364,7 +377,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> cycleWhile(Predicate<? super T> predicate) {
         
-         return (MaybeTSeq<T>)Traversable.super.cycleWhile(predicate);
+         return (MaybeTSeq<T>)TransformerSeq.super.cycleWhile(predicate);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleUntil(java.util.function.Predicate)
@@ -372,7 +385,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> cycleUntil(Predicate<? super T> predicate) {
         
-         return (MaybeTSeq<T>)Traversable.super.cycleUntil(predicate);
+         return (MaybeTSeq<T>)TransformerSeq.super.cycleUntil(predicate);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -380,7 +393,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public <U, R> MaybeTSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         
-         return (MaybeTSeq<R>)Traversable.super.zip(other, zipper);
+         return (MaybeTSeq<R>)TransformerSeq.super.zip(other, zipper);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
@@ -388,7 +401,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public <U> MaybeTSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
         
-         return (MaybeTSeq<Tuple2<T, U>>)Traversable.super.zipStream(other);
+         return (MaybeTSeq<Tuple2<T, U>>)TransformerSeq.super.zipStream(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
@@ -396,7 +409,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public <U> MaybeTSeq<Tuple2<T, U>> zip(Seq<U> other) {
         
-         return (MaybeTSeq<Tuple2<T, U>>)Traversable.super.zip(other);
+         return (MaybeTSeq<Tuple2<T, U>>)TransformerSeq.super.zip(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -404,7 +417,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public <S, U> MaybeTSeq<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
         
-         return (MaybeTSeq)Traversable.super.zip3(second, third);
+         return (MaybeTSeq)TransformerSeq.super.zip3(second, third);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
@@ -413,7 +426,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      public <T2, T3, T4> MaybeTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
              Stream<T4> fourth) {
         
-         return (MaybeTSeq<Tuple4<T, T2, T3, T4>>)Traversable.super.zip4(second, third, fourth);
+         return (MaybeTSeq<Tuple4<T, T2, T3, T4>>)TransformerSeq.super.zip4(second, third, fourth);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipWithIndex()
@@ -421,7 +434,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<Tuple2<T, Long>> zipWithIndex() {
         
-         return (MaybeTSeq<Tuple2<T, Long>>)Traversable.super.zipWithIndex();
+         return (MaybeTSeq<Tuple2<T, Long>>)TransformerSeq.super.zipWithIndex();
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int)
@@ -429,7 +442,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<ListX<T>> sliding(int windowSize) {
         
-         return (MaybeTSeq<ListX<T>>)Traversable.super.sliding(windowSize);
+         return (MaybeTSeq<ListX<T>>)TransformerSeq.super.sliding(windowSize);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int, int)
@@ -437,7 +450,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<ListX<T>> sliding(int windowSize, int increment) {
         
-         return (MaybeTSeq<ListX<T>>)Traversable.super.sliding(windowSize, increment);
+         return (MaybeTSeq<ListX<T>>)TransformerSeq.super.sliding(windowSize, increment);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int, java.util.function.Supplier)
@@ -445,7 +458,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public <C extends Collection<? super T>> MaybeTSeq<C> grouped(int size, Supplier<C> supplier) {
         
-         return (MaybeTSeq<C> )Traversable.super.grouped(size, supplier);
+         return (MaybeTSeq<C> )TransformerSeq.super.grouped(size, supplier);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate)
@@ -453,7 +466,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
         
-         return (MaybeTSeq<ListX<T>>)Traversable.super.groupedUntil(predicate);
+         return (MaybeTSeq<ListX<T>>)TransformerSeq.super.groupedUntil(predicate);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
@@ -461,7 +474,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
         
-         return (MaybeTSeq<ListX<T>>)Traversable.super.groupedStatefullyWhile(predicate);
+         return (MaybeTSeq<ListX<T>>)TransformerSeq.super.groupedStatefullyWhile(predicate);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate)
@@ -469,7 +482,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
         
-         return (MaybeTSeq<ListX<T>>)Traversable.super.groupedWhile(predicate);
+         return (MaybeTSeq<ListX<T>>)TransformerSeq.super.groupedWhile(predicate);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
@@ -478,7 +491,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      public <C extends Collection<? super T>> MaybeTSeq<C> groupedWhile(Predicate<? super T> predicate,
              Supplier<C> factory) {
         
-         return (MaybeTSeq<C>)Traversable.super.groupedWhile(predicate, factory);
+         return (MaybeTSeq<C>)TransformerSeq.super.groupedWhile(predicate, factory);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
@@ -487,7 +500,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      public <C extends Collection<? super T>> MaybeTSeq<C> groupedUntil(Predicate<? super T> predicate,
              Supplier<C> factory) {
         
-         return (MaybeTSeq<C>)Traversable.super.groupedUntil(predicate, factory);
+         return (MaybeTSeq<C>)TransformerSeq.super.groupedUntil(predicate, factory);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int)
@@ -495,7 +508,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<ListX<T>> grouped(int groupSize) {
         
-         return ( MaybeTSeq<ListX<T>>)Traversable.super.grouped(groupSize);
+         return ( MaybeTSeq<ListX<T>>)TransformerSeq.super.grouped(groupSize);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
@@ -504,7 +517,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      public <K, A, D> MaybeTSeq<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier,
              Collector<? super T, A, D> downstream) {
         
-         return (MaybeTSeq)Traversable.super.grouped(classifier, downstream);
+         return (MaybeTSeq)TransformerSeq.super.grouped(classifier, downstream);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function)
@@ -512,7 +525,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public <K> MaybeTSeq<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
         
-         return (MaybeTSeq)Traversable.super.grouped(classifier);
+         return (MaybeTSeq)TransformerSeq.super.grouped(classifier);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#distinct()
@@ -520,7 +533,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> distinct() {
         
-         return (MaybeTSeq<T>)Traversable.super.distinct();
+         return (MaybeTSeq<T>)TransformerSeq.super.distinct();
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(com.aol.cyclops.Monoid)
@@ -528,7 +541,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> scanLeft(Monoid<T> monoid) {
         
-         return (MaybeTSeq<T>)Traversable.super.scanLeft(monoid);
+         return (MaybeTSeq<T>)TransformerSeq.super.scanLeft(monoid);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
@@ -536,7 +549,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public <U> MaybeTSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
         
-         return (MaybeTSeq<U>)Traversable.super.scanLeft(seed, function);
+         return (MaybeTSeq<U>)TransformerSeq.super.scanLeft(seed, function);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(com.aol.cyclops.Monoid)
@@ -544,7 +557,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> scanRight(Monoid<T> monoid) {
         
-         return (MaybeTSeq<T>)Traversable.super.scanRight(monoid);
+         return (MaybeTSeq<T>)TransformerSeq.super.scanRight(monoid);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
@@ -552,7 +565,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public <U> MaybeTSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
         
-         return (MaybeTSeq<U>)Traversable.super.scanRight(identity, combiner);
+         return (MaybeTSeq<U>)TransformerSeq.super.scanRight(identity, combiner);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted()
@@ -560,7 +573,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> sorted() {
         
-         return (MaybeTSeq<T>)Traversable.super.sorted();
+         return (MaybeTSeq<T>)TransformerSeq.super.sorted();
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.Comparator)
@@ -568,7 +581,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> sorted(Comparator<? super T> c) {
         
-         return (MaybeTSeq<T>)Traversable.super.sorted(c);
+         return (MaybeTSeq<T>)TransformerSeq.super.sorted(c);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeWhile(java.util.function.Predicate)
@@ -576,7 +589,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> takeWhile(Predicate<? super T> p) {
         
-         return (MaybeTSeq<T>)Traversable.super.takeWhile(p);
+         return (MaybeTSeq<T>)TransformerSeq.super.takeWhile(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropWhile(java.util.function.Predicate)
@@ -584,7 +597,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> dropWhile(Predicate<? super T> p) {
         
-         return (MaybeTSeq<T>)Traversable.super.dropWhile(p);
+         return (MaybeTSeq<T>)TransformerSeq.super.dropWhile(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeUntil(java.util.function.Predicate)
@@ -592,7 +605,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> takeUntil(Predicate<? super T> p) {
         
-         return (MaybeTSeq<T>)Traversable.super.takeUntil(p);
+         return (MaybeTSeq<T>)TransformerSeq.super.takeUntil(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropUntil(java.util.function.Predicate)
@@ -600,7 +613,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> dropUntil(Predicate<? super T> p) {
         
-         return (MaybeTSeq<T>)Traversable.super.dropUntil(p);
+         return (MaybeTSeq<T>)TransformerSeq.super.dropUntil(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropRight(int)
@@ -608,7 +621,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> dropRight(int num) {
         
-         return (MaybeTSeq<T>)Traversable.super.dropRight(num);
+         return (MaybeTSeq<T>)TransformerSeq.super.dropRight(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeRight(int)
@@ -616,7 +629,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> takeRight(int num) {
         
-         return (MaybeTSeq<T>)Traversable.super.takeRight(num);
+         return (MaybeTSeq<T>)TransformerSeq.super.takeRight(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skip(long)
@@ -624,7 +637,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> skip(long num) {
         
-         return (MaybeTSeq<T>)Traversable.super.skip(num);
+         return (MaybeTSeq<T>)TransformerSeq.super.skip(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipWhile(java.util.function.Predicate)
@@ -632,7 +645,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> skipWhile(Predicate<? super T> p) {
         
-         return (MaybeTSeq<T>)Traversable.super.skipWhile(p);
+         return (MaybeTSeq<T>)TransformerSeq.super.skipWhile(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipUntil(java.util.function.Predicate)
@@ -640,7 +653,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> skipUntil(Predicate<? super T> p) {
         
-         return (MaybeTSeq<T>)Traversable.super.skipUntil(p);
+         return (MaybeTSeq<T>)TransformerSeq.super.skipUntil(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limit(long)
@@ -648,7 +661,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> limit(long num) {
         
-         return (MaybeTSeq<T>)Traversable.super.limit(num);
+         return (MaybeTSeq<T>)TransformerSeq.super.limit(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitWhile(java.util.function.Predicate)
@@ -656,7 +669,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> limitWhile(Predicate<? super T> p) {
         
-         return (MaybeTSeq<T>)Traversable.super.limitWhile(p);
+         return (MaybeTSeq<T>)TransformerSeq.super.limitWhile(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitUntil(java.util.function.Predicate)
@@ -664,7 +677,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> limitUntil(Predicate<? super T> p) {
         
-         return (MaybeTSeq<T>)Traversable.super.limitUntil(p);
+         return (MaybeTSeq<T>)TransformerSeq.super.limitUntil(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#intersperse(java.lang.Object)
@@ -672,7 +685,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> intersperse(T value) {
         
-         return (MaybeTSeq<T>)Traversable.super.intersperse(value);
+         return (MaybeTSeq<T>)TransformerSeq.super.intersperse(value);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#reverse()
@@ -680,7 +693,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> reverse() {
         
-         return (MaybeTSeq<T>)Traversable.super.reverse();
+         return (MaybeTSeq<T>)TransformerSeq.super.reverse();
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle()
@@ -688,7 +701,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> shuffle() {
         
-         return (MaybeTSeq<T>)Traversable.super.shuffle();
+         return (MaybeTSeq<T>)TransformerSeq.super.shuffle();
      }
 
      /* (non-Javadoc)
@@ -697,7 +710,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> skipLast(int num) {
         
-         return (MaybeTSeq<T>)Traversable.super.skipLast(num);
+         return (MaybeTSeq<T>)TransformerSeq.super.skipLast(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitLast(int)
@@ -705,7 +718,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> limitLast(int num) {
         
-         return (MaybeTSeq<T>)Traversable.super.limitLast(num);
+         return (MaybeTSeq<T>)TransformerSeq.super.limitLast(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmpty(java.lang.Object)
@@ -713,7 +726,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> onEmpty(T value) {
         
-         return (MaybeTSeq<T>)Traversable.super.onEmpty(value);
+         return (MaybeTSeq<T>)TransformerSeq.super.onEmpty(value);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
@@ -721,7 +734,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> onEmptyGet(Supplier<T> supplier) {
         
-         return (MaybeTSeq<T>)Traversable.super.onEmptyGet(supplier);
+         return (MaybeTSeq<T>)TransformerSeq.super.onEmptyGet(supplier);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
@@ -729,7 +742,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public <X extends Throwable> MaybeTSeq<T> onEmptyThrow(Supplier<X> supplier) {
         
-         return (MaybeTSeq<T>)Traversable.super.onEmptyThrow(supplier);
+         return (MaybeTSeq<T>)TransformerSeq.super.onEmptyThrow(supplier);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle(java.util.Random)
@@ -737,7 +750,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> shuffle(Random random) {
         
-         return (MaybeTSeq<T>)Traversable.super.shuffle(random);
+         return (MaybeTSeq<T>)TransformerSeq.super.shuffle(random);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#slice(long, long)
@@ -745,13 +758,13 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      @Override
      public MaybeTSeq<T> slice(long from, long to) {
         
-         return (MaybeTSeq<T>)Traversable.super.slice(from, to);
+         return (MaybeTSeq<T>)TransformerSeq.super.slice(from, to);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.function.Function)
       */
      @Override
      public <U extends Comparable<? super U>> MaybeTSeq<T> sorted(Function<? super T, ? extends U> function) {
-         return (MaybeTSeq)Traversable.super.sorted(function);
+         return (MaybeTSeq)TransformerSeq.super.sorted(function);
      }
 }

@@ -4,8 +4,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
-
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface IterableFilterable<T> extends Filterable<T> {
