@@ -7,6 +7,9 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 
 public interface MonadicValue<T> extends Value<T>, Unit<T>,Functor<T> {
 
+    default boolean isPresent(){
+        return toOptional().isPresent();
+    }
     public <T> MonadicValue<T> unit(T unit);
     <R> MonadicValue<R>  map(Function<? super T,? extends R> fn);
     
@@ -16,9 +19,10 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>,Functor<T> {
     default <R> MonadicValue<R> coflatMap(Function<? super MonadicValue<T>,R> mapper){
         return mapper.andThen(r->unit(r)).apply(this);
     }
-    
+    //cojoin
     default  MonadicValue<MonadicValue<T>> nest(){
-        return unit(this);
+        return this.map(t->unit(t));
     }
+    
     
 }

@@ -25,21 +25,21 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
       * <pre>
       * {@code 
       * 
-      *  Monoid<Integer> add = Mondoid.of(1,Semigroups.intSum);
-      *  Maybe.of(10).plus(add,Maybe.none());
+      *  Monoid<Integer> add = Monoid.of(1,Semigroups.intSum);
+      *  Maybe.of(10).combine(add,Maybe.none());
       *  //Maybe[10]
       *  
-      *  Maybe.none().plus(add,Maybe.of(10));
+      *  Maybe.none().combine(add,Maybe.of(10));
       *  //Maybe[10]
       *  
-      *  Maybe.none().plus(add,Maybe.none());
+      *  Maybe.none().combine(add,Maybe.none());
       *  //Maybe.none()
       *  
-      *  Maybe.of(10).plus(add,Maybe.of(10));
+      *  Maybe.of(10).combine(add,Maybe.of(10));
       *  //Maybe[20]
       *  
       *  Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-      *  Maybe.of(10).plus(firstNonNull,Maybe.of(10));
+      *  Maybe.of(10).combine(firstNonNull,Maybe.of(10));
       *  //Maybe[10]
       * }
       * 
@@ -47,15 +47,12 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
       * @param v2
       * @return
       */
-    default MonadicValue1<T> combine(Monoid<T> monoid, MonadicValue1<? extends T> v2){
+    default MonadicValue1<T> combine(Monoid<T> monoid, MonadicValue<? extends T> v2){
         return unit(this.<T>flatMap(t1-> v2.map(t2->monoid.combiner().apply(t1,t2)))
                                        .orElseGet(()->this.orElseGet(()->monoid.zero())));
     }
     
-    //cojoin
-    default  MonadicValue<MonadicValue<T>> nest(){
-        return this.map(t->unit(t));
-    }
+    
     
     <R> MonadicValue<R> flatMap(Function<? super T,? extends MonadicValue<? extends R>> mapper);
 }

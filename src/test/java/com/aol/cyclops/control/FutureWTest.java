@@ -58,6 +58,25 @@ public class FutureWTest {
 	}
 
 	@Test
+    public void nest(){
+       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       assertThat(none.nest().map(m->m.get()),equalTo(none));
+    }
+    @Test
+    public void coFlatMap(){
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(FutureW.ofResult(50)));
+    }
+    @Test
+    public void combine(){
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        
+        assertThat(just.combine(add,Maybe.just(10)),equalTo(Maybe.just(20)));
+        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+        assertThat(just.combine(firstNonNull,none),equalTo(just));
+         
+    }
+	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
 		assertThat(none.toMaybe(),equalTo(Maybe.none()));

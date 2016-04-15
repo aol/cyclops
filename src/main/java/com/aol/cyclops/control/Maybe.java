@@ -1,6 +1,5 @@
 package com.aol.cyclops.control;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -8,6 +7,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
@@ -16,6 +16,8 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.applicative.Applicativable;
 
 import lombok.AccessLevel;
@@ -61,7 +63,7 @@ import lombok.AllArgsConstructor;
  *
  * @param <T>
  */
-public interface Maybe<T> extends MonadicValue<T>,
+public interface Maybe<T> extends MonadicValue1<T>,
 								Supplier<T>, 
 								ConvertableFunctor<T>, 
 								Filterable<T>,
@@ -130,17 +132,26 @@ public interface Maybe<T> extends MonadicValue<T>,
      */
     @Override
     default <R> Maybe<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
-        return (Maybe<R>)MonadicValue.super.coflatMap(mapper);
+        return (Maybe<R>)MonadicValue1.super.coflatMap(mapper);
     }
-
-    /* (non-Javadoc)
+  
+    /* cojoin
+     * (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#nest()
      */
     @Override
-    default Maybe<MonadicValue<T>> nest() {
-       
-        return (Maybe<MonadicValue<T>>)MonadicValue.super.nest();
+    default  Maybe<MonadicValue<T>> nest(){
+        return (Maybe<MonadicValue<T>>)MonadicValue1.super.nest();
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+     */
+    @Override
+    default Maybe<T> combine(Monoid<T> monoid, MonadicValue<? extends T> v2){
+        return (Maybe<T>)MonadicValue1.super.combine(monoid,v2);
+    }
+
+    
 
     /* (non-Javadoc)
 	 * @see com.aol.cyclops.value.Value#toMaybe()

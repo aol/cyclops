@@ -1,5 +1,7 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.For.Values.each2;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +12,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -19,6 +22,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.Memoize;
 
@@ -83,13 +87,15 @@ public interface Eval<T> extends Supplier<T>,
     default <R> Eval<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
         return (Eval<R>)MonadicValue.super.coflatMap(mapper);
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#nest()
-     */
-    @Override
-    default Eval<MonadicValue<T>> nest() {
+    default Eval<T> combine(Monoid<T> monoid, Eval<? extends T> v2){
+        return unit(each2(this, t1->v2, (t1,t2)->monoid.combiner().apply(t1, t2))
+                .orElseGet(()->this.orElseGet(()->monoid.zero())));
+    }
+    
+    default Eval<MonadicValue<T>> nest(){
         return (Eval<MonadicValue<T>>)MonadicValue.super.nest();
     }
+   
     public T get();
 	
 	

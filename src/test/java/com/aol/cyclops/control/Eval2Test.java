@@ -51,7 +51,29 @@ public class Eval2Test {
 		just = Eval.now(10);
 		none = Eval.now(null);
 	}
-
+	@Test
+    public void nest(){
+       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       
+    }
+    @Test
+    public void coFlatMap(){
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Eval.now(50)));
+    }
+    @Test
+    public void combine(){
+     
+        
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        assertThat(just.combine(add,Eval.now(10)),equalTo(Eval.now(20)));
+      
+      
+      
+        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+        assertThat(just.combine(firstNonNull,none),equalTo(just));
+         
+    }
 	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));

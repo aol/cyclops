@@ -53,7 +53,27 @@ public class Xor2Test {
 		just = Xor.primary(10);
 		none = Xor.secondary("none");
 	}
-
+	@Test
+    public void nest(){
+       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       assertThat(none.nest().map(m->m.get()),equalTo(none));
+    }
+    @Test
+    public void coFlatMap(){
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Xor.primary(50)));
+    }
+    @Test
+    public void combine(){
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        assertThat(just.combine(add,none),equalTo(Xor.primary(10)));
+        assertThat(none.combine(add,just),equalTo(Xor.primary(0))); 
+        assertThat(none.combine(add,none),equalTo(Xor.primary(0))); 
+        assertThat(just.combine(add,Xor.primary(10)),equalTo(Xor.primary(20)));
+        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+        assertThat(just.combine(firstNonNull,Xor.primary(null)),equalTo(just));
+         
+    }
 	@Test
 	public void visit(){
 	    

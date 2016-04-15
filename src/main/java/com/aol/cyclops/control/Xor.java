@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 
 import org.jooq.lambda.tuple.Tuple;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
@@ -20,6 +21,7 @@ import com.aol.cyclops.internal.matcher2.MatchingInstance;
 import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -104,8 +106,30 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	default AnyMValue<PT> anyM(){
 		return AnyM.ofValue(this);
 	}
-	
-	default <T> Xor<?,T> unit(T unit){
+	   /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> Xor<ST,R> coflatMap(Function<? super MonadicValue<PT>,R> mapper) {
+        return (Xor<ST,R>)MonadicValue2.super.coflatMap(mapper);
+    }
+    
+    //cojoin
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    default  Xor<ST,MonadicValue<PT>> nest(){
+        return this.map(t->unit(t));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+     */
+    @Override
+    default Xor<ST,PT> combine(Monoid<PT> monoid, MonadicValue2<? extends ST,? extends PT> v2){
+        return (Xor<ST,PT>)MonadicValue2.super.combine(monoid, v2);
+    }
+	default <T> Xor<ST,T> unit(T unit){
 		return Xor.primary(unit);
 	}
 	

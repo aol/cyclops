@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
@@ -19,6 +20,7 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -30,7 +32,7 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class FutureW<T> implements ConvertableFunctor<T>,
 											Applicativable<T>, 
-											MonadicValue<T>, 
+											MonadicValue1<T>, 
 											FlatMap<T>,
 											Filterable<T>{
 
@@ -64,6 +66,29 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	@Getter
 	private final CompletableFuture<T> future;
 
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+   public <R> FutureW<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+        return (FutureW<R>)MonadicValue1.super.coflatMap(mapper);
+    }
+  
+    /* cojoin
+     * (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    public  FutureW<MonadicValue<T>> nest(){
+        return (FutureW<MonadicValue<T>>)MonadicValue1.super.nest();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+     */
+    @Override
+    public FutureW<T> combine(Monoid<T> monoid, MonadicValue<? extends T> v2){
+        return (FutureW<T>)MonadicValue1.super.combine(monoid,v2);
+    }
 	@Override
 	public <R> FutureW<R> map(Function<? super T, ? extends R> fn) {
 		return new FutureW<R>(future.thenApply(fn));
@@ -83,6 +108,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	        throw ExceptionSoftener.throwSoftenedException(t.getCause());
 	    }
 	}
+	
 	
 
 	public boolean isSuccess(){

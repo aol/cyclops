@@ -12,7 +12,7 @@ import com.aol.cyclops.types.mixins.Printable;
 
 
 
-public class XorSeqComprehender implements Comprehender<XorTSeq>, Printable{
+public class XorTSeqComprehender implements Comprehender<XorTSeq>, Printable{
 	
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, XorTSeq apply) {

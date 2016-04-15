@@ -5,12 +5,14 @@ import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -55,6 +57,28 @@ public class TryTest {
 		none = Try.failure(exception);
 	}
 
+	@Test
+    public void nest(){
+       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       assertThat(none.nest().map(m->m.get()),equalTo(none));
+    }
+    @Test
+    public void coFlatMap(){
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Try.success(50)));
+    }
+    @Test
+    public void combine(){
+        
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        assertThat(just.combine(add,none),equalTo(Try.success(10)));
+        assertThat(none.combine(add,just),equalTo(Try.success(0))); 
+        assertThat(none.combine(add,none),equalTo(Try.success(0))); 
+        assertThat(just.combine(add,Try.success(10)),equalTo(Try.success(20)));
+        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+        assertThat(just.combine(firstNonNull,Try.success(null)),equalTo(just));
+         
+    }
 	
 	@Test
 	public void testToMaybe() {

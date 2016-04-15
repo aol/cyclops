@@ -13,6 +13,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.Matchables;
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
@@ -22,6 +23,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -67,7 +69,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	}
 	
 
-	default <T> Ior<?,T> unit(T unit){
+	default <T> Ior<ST,T> unit(T unit){
 		return Ior.primary(unit);
 	}
 	Ior<ST,PT> filter(Predicate<? super PT> test);
@@ -92,6 +94,31 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	Ior<ST,PT> peek(Consumer<? super PT> action);
 	
 	Ior<PT,ST> swap();
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> Ior<ST,R> coflatMap(Function<? super MonadicValue<PT>,R> mapper) {
+        return (Ior<ST,R>)MonadicValue2.super.coflatMap(mapper);
+    }
+    
+    //cojoin
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    default  Ior<ST,MonadicValue<PT>> nest(){
+        return this.map(t->unit(t));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+     */
+    @Override
+    default Ior<ST,PT> combine(Monoid<PT> monoid, MonadicValue2<? extends ST,? extends PT> v2){
+        return (Ior<ST,PT>)MonadicValue2.super.combine(monoid, v2);
+    }
+  
+    
 	Optional<Tuple2<ST,PT>> both();
 	default Value<Optional<Tuple2<ST,PT>>> bothValue(){
 		return ()->both();

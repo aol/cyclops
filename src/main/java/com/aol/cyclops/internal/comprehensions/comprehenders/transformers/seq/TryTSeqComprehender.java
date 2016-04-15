@@ -12,7 +12,7 @@ import com.aol.cyclops.types.mixins.Printable;
 
 
 
-public class TrySeqComprehender implements Comprehender<TryTSeq>, Printable{
+public class TryTSeqComprehender implements Comprehender<TryTSeq>, Printable{
 	
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, TryTSeq apply) {

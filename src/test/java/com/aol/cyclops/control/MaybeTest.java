@@ -57,6 +57,28 @@ public class MaybeTest implements Printable {
 	}
 	
 	@Test
+	public void nest(){
+	   assertThat(just.nest().map(m->m.get()),equalTo(just));
+	   assertThat(none.nest().map(m->m.get()),equalTo(none));
+	}
+	@Test
+	public void coFlatMap(){
+	    assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
+	    assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Maybe.of(50)));
+	}
+	@Test
+	public void combine(){
+	    Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+	    assertThat(just.combine(add,none),equalTo(just));
+	    assertThat(none.combine(add,just),equalTo(Maybe.of(0))); 
+	    assertThat(none.combine(add,none),equalTo(Maybe.of(0))); 
+	    assertThat(just.combine(add,Maybe.just(10)),equalTo(Maybe.just(20)));
+	    Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+	    assertThat(just.combine(firstNonNull,none),equalTo(just));
+	     
+	}
+	
+	@Test
 	public void optionalVMaybe(){
 	    
 	    Optional.of(10)

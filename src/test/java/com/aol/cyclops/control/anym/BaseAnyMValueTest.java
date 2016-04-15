@@ -68,6 +68,27 @@ public abstract class BaseAnyMValueTest {
 		assertThat(none.toMaybe(),equalTo(Maybe.none()));
 	}
 
+	@Test
+    public void nest(){
+       assertThat(just.nest().map(m->m.get()),equalTo(just));
+      
+    }
+    @Test
+    public void coFlatMap(){
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : just.get()),equalTo(just));
+    }
+    @Test
+    public void combine(){
+        
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        assertThat(just.combine(add,none),equalTo(just));
+        assertThat(none.combine(add,just).toTry(),equalTo(Try.success(0))); 
+        assertThat(none.combine(add,none).toTry(),equalTo(Try.success(0))); 
+        assertThat(just.combine(add,just).toTry(),equalTo(Try.success(20)));
+        
+         
+    }
 	private int add1(int i){
 		return i+1;
 	}
