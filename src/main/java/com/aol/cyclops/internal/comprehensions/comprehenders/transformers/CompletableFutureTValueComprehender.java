@@ -35,7 +35,7 @@ public class CompletableFutureTValueComprehender implements ValueComprehender<Co
 
 	@Override
 	public CompletableFutureTValue of(Object o) {
-	    System.out.println("of " + o);
+	    
 		return CompletableFutureTValue.of(CompletableFuture.completedFuture(o));
 	}
 

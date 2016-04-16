@@ -3,9 +3,11 @@ package com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq;
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.aol.cyclops.control.monads.transformers.seq.SetTSeq;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.mixins.Printable;
 
@@ -16,7 +18,7 @@ public class SetTSeqComprehender implements Comprehender<SetTSeq>, Printable{
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, SetTSeq apply) {
 	  
-		return apply.isSeqPresent() ? comp.of(apply.stream().toSetX()) : comp.empty();
+		return apply.isSeqPresent() ? comp.of(apply.stream().toSetX().collect(Collectors.toCollection(MaterializedList::new)))  : comp.empty();
 	}
 	@Override
     public Object filter(SetTSeq t, Predicate p){

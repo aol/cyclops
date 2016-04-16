@@ -328,7 +328,8 @@ public interface Maybe<T> extends MonadicValue1<T>,
         }
         public <R> R visit(Function<? super T,? extends R> some, 
                 Supplier<? extends R> none){
-            return map(some).get();
+            Maybe<R> mapped = map(some);
+            return mapped.orElseGet(()->none.get());
         }
         public Maybe<T> recover(T value){
             return new Lazy<T>(lazy.map(m->m.recover(value)));

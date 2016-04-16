@@ -71,7 +71,46 @@ public class ForValueTest {
                         (a,b) -> FutureW.<Integer>ofResult(a+b+10),
                         (a,b,c)->a+b+c<10,
                         Tuple::tuple).toListX();
+        
+       
+        val list2 = Maybe.just(10).flatMap(a-> Maybe.<Integer>just(a+5).flatMap(b-> Maybe.just(a+b+10)
+                                            .filter(c->a+b+c<10)
+                                            .map(c-> Tuple.<Integer,Integer,Integer>tuple(a,b,c)))).toListX();
+                            
 
+                                    
+        assertThat(list,equalTo(list2));
+                    
+    }
+    @Test
+    public void forGenFilter3True(){
+        
+        val list = each3(Maybe.<Integer>just(10), 
+                        i-> Eval.<Integer>now(i+5),
+                        (a,b) -> FutureW.<Integer>ofResult(a+b+10),
+                        (a,b,c)->a+b+c>10,
+                        Tuple::tuple).toListX();
+        
+       
+        val list2 = Maybe.just(10).flatMap(a-> Maybe.<Integer>just(a+5).flatMap(b-> Maybe.just(a+b+10)
+                                            .filter(c->a+b+c>10)
+                                            .map(c-> Tuple.<Integer,Integer,Integer>tuple(a,b,c)))).toListX();
+                            
+
+                                    
+        assertThat(list,equalTo(list2));
+                    
+    }
+    @Test
+    public void forGenFilter3Maybe(){
+        
+        val list = each3(Maybe.<Integer>just(10), 
+                        i-> Maybe.<Integer>just(i+5),
+                        (a,b) -> Maybe.<Integer>just(a+b+10),
+                        (a,b,c)->a+b+c<10,
+                        Tuple::tuple).toListX();
+        
+       
         val list2 = Maybe.just(10).flatMap(a-> Maybe.<Integer>just(a+5).flatMap(b-> Maybe.just(a+b+10)
                                             .filter(c->a+b+c<10)
                                             .map(c-> Tuple.<Integer,Integer,Integer>tuple(a,b,c)))).toListX();
@@ -108,7 +147,7 @@ public class ForValueTest {
                         (a,b,c) -> Maybe.<Integer>just(a+b+c+10),
                         (a,b,c,d)->a+b+c+d<10,
                         Tuple::tuple).toListX();
-
+        
         val list2 = Maybe.just(10).flatMap(a-> Maybe.<Integer>just(a+5).flatMap(b-> Maybe.just(a+b+10)
                                     .flatMap(c->Maybe.<Integer>just(a+b+c+10)
                                     .filter(d->a+b+c+d<10)

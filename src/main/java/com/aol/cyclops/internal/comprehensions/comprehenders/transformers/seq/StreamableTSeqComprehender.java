@@ -3,8 +3,10 @@ package com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq;
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
+import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.mixins.Printable;
 import com.aol.cyclops.util.stream.Streamable;
@@ -16,7 +18,7 @@ public class StreamableTSeqComprehender implements Comprehender<StreamableTSeq>,
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, StreamableTSeq apply) {
 	  
-		return apply.isSeqPresent() ? comp.of(apply.toStreamable()) : comp.empty();
+		return apply.isSeqPresent() ? comp.of(apply.stream().collect(Collectors.toCollection(MaterializedList::new)))  : comp.empty();
 	}
 	@Override
     public Object filter(StreamableTSeq t, Predicate p){
