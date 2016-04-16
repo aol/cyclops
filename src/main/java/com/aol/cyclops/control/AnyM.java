@@ -669,6 +669,8 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromIterable(Iterable<T> iterable){
 		Objects.requireNonNull(iterable);
+		if( iterable instanceof AnyMSeq)
+		    return (AnyMSeq<T>)iterable;
 		if(iterable instanceof List)
 		    iterable = ListX.fromIterable(iterable);
 		if(iterable instanceof Set)

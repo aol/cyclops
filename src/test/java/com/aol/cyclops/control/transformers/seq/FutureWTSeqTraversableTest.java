@@ -1,5 +1,6 @@
 package com.aol.cyclops.control.transformers.seq;
 
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.control.monads.transformers.MaybeT;
@@ -12,8 +13,8 @@ public class FutureWTSeqTraversableTest extends AbstractTraversableTest {
 
     @Override
     public <T> Traversable<T> of(T... elements) {
-        
-        return FutureWT.fromIterable(ListX.of(elements).map(FutureW::ofResult));
+        ListX<FutureW<T>> list = ListX.<T>of(elements).map(FutureW::ofResult);
+        return FutureWT.fromIterable(list);
     }
 
     @Override

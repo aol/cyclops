@@ -3,6 +3,7 @@ package com.aol.cyclops.control.monads.transformers.seq;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -26,7 +27,8 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.EvalT;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
+import com.aol.cyclops.control.monads.transformers.OptionalT;
+import com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Sequential;
@@ -53,7 +55,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *            The type contained on the Maybe within
  */
 public class EvalTSeq<T> implements EvalT<T>,
-                                    TransformerSeq<T>,
+                                    ValueTransformerSeq<T>,
                                     Foldable<T>,
                                     ConvertableSequence<T>,
                                     CyclopsCollectable<T>,
@@ -166,16 +168,20 @@ public class EvalTSeq<T> implements EvalT<T>,
         return new EvalTSeq<B>(run.map(o -> o.flatMap(f)));
 
     }
-    
+    @Override
+    public <T>  EvalTSeq<T> unitStream(ReactiveSeq<T> traversable) {
+        return EvalT.fromStream(traversable.map(Eval::now));
+       
+    }
+
     @Override
     public <T>  EvalTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
-        
         return of((AnyMSeq)traversable.map(t->Eval.fromIterable(t)));
     }
     @Override
     public AnyMSeq<? extends Traversable<T>> transformerStream() {
-        
-        return run.map(e->e.toListX());
+       
+        return AnyM.fromList(ListX.of(stream().peek(System.out::println)));
     }
 
     /**
@@ -290,7 +296,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.combine(predicate, op);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.combine(predicate, op);
     }
     
     /* (non-Javadoc)
@@ -299,7 +305,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> cycle(int times) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.cycle(times);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.cycle(times);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(com.aol.cyclops.Monoid, int)
@@ -307,7 +313,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> cycle(Monoid<T> m, int times) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.cycle(m, times);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.cycle(m, times);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleWhile(java.util.function.Predicate)
@@ -315,7 +321,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> cycleWhile(Predicate<? super T> predicate) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.cycleWhile(predicate);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.cycleWhile(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleUntil(java.util.function.Predicate)
@@ -323,7 +329,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> cycleUntil(Predicate<? super T> predicate) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.cycleUntil(predicate);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.cycleUntil(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -331,7 +337,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public <U, R> EvalTSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
        
-        return (EvalTSeq<R>)TransformerSeq.super.zip(other, zipper);
+        return (EvalTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
@@ -339,7 +345,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public <U> EvalTSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
        
-        return (EvalTSeq<Tuple2<T, U>>)TransformerSeq.super.zipStream(other);
+        return (EvalTSeq<Tuple2<T, U>>)ValueTransformerSeq.super.zipStream(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
@@ -347,7 +353,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public <U> EvalTSeq<Tuple2<T, U>> zip(Seq<U> other) {
        
-        return (EvalTSeq<Tuple2<T, U>>)TransformerSeq.super.zip(other);
+        return (EvalTSeq<Tuple2<T, U>>)ValueTransformerSeq.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -355,7 +361,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public <S, U> EvalTSeq<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
        
-        return (EvalTSeq)TransformerSeq.super.zip3(second, third);
+        return (EvalTSeq)ValueTransformerSeq.super.zip3(second, third);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
@@ -364,7 +370,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     public <T2, T3, T4> EvalTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
             Stream<T4> fourth) {
        
-        return (EvalTSeq<Tuple4<T, T2, T3, T4>>)TransformerSeq.super.zip4(second, third, fourth);
+        return (EvalTSeq<Tuple4<T, T2, T3, T4>>)ValueTransformerSeq.super.zip4(second, third, fourth);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipWithIndex()
@@ -372,7 +378,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<Tuple2<T, Long>> zipWithIndex() {
        
-        return (EvalTSeq<Tuple2<T, Long>>)TransformerSeq.super.zipWithIndex();
+        return (EvalTSeq<Tuple2<T, Long>>)ValueTransformerSeq.super.zipWithIndex();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int)
@@ -380,7 +386,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<ListX<T>> sliding(int windowSize) {
        
-        return (EvalTSeq<ListX<T>>)TransformerSeq.super.sliding(windowSize);
+        return (EvalTSeq<ListX<T>>)ValueTransformerSeq.super.sliding(windowSize);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int, int)
@@ -388,7 +394,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<ListX<T>> sliding(int windowSize, int increment) {
        
-        return (EvalTSeq<ListX<T>>)TransformerSeq.super.sliding(windowSize, increment);
+        return (EvalTSeq<ListX<T>>)ValueTransformerSeq.super.sliding(windowSize, increment);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int, java.util.function.Supplier)
@@ -396,7 +402,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public <C extends Collection<? super T>> EvalTSeq<C> grouped(int size, Supplier<C> supplier) {
        
-        return (EvalTSeq<C> )TransformerSeq.super.grouped(size, supplier);
+        return (EvalTSeq<C> )ValueTransformerSeq.super.grouped(size, supplier);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate)
@@ -404,7 +410,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
        
-        return (EvalTSeq<ListX<T>>)TransformerSeq.super.groupedUntil(predicate);
+        return (EvalTSeq<ListX<T>>)ValueTransformerSeq.super.groupedUntil(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
@@ -412,7 +418,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
        
-        return (EvalTSeq<ListX<T>>)TransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (EvalTSeq<ListX<T>>)ValueTransformerSeq.super.groupedStatefullyWhile(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate)
@@ -420,7 +426,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
        
-        return (EvalTSeq<ListX<T>>)TransformerSeq.super.groupedWhile(predicate);
+        return (EvalTSeq<ListX<T>>)ValueTransformerSeq.super.groupedWhile(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
@@ -429,7 +435,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     public <C extends Collection<? super T>> EvalTSeq<C> groupedWhile(Predicate<? super T> predicate,
             Supplier<C> factory) {
        
-        return (EvalTSeq<C>)TransformerSeq.super.groupedWhile(predicate, factory);
+        return (EvalTSeq<C>)ValueTransformerSeq.super.groupedWhile(predicate, factory);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
@@ -438,7 +444,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     public <C extends Collection<? super T>> EvalTSeq<C> groupedUntil(Predicate<? super T> predicate,
             Supplier<C> factory) {
        
-        return (EvalTSeq<C>)TransformerSeq.super.groupedUntil(predicate, factory);
+        return (EvalTSeq<C>)ValueTransformerSeq.super.groupedUntil(predicate, factory);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int)
@@ -446,7 +452,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<ListX<T>> grouped(int groupSize) {
        
-        return ( EvalTSeq<ListX<T>>)TransformerSeq.super.grouped(groupSize);
+        return ( EvalTSeq<ListX<T>>)ValueTransformerSeq.super.grouped(groupSize);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
@@ -455,7 +461,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     public <K, A, D> EvalTSeq<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier,
             Collector<? super T, A, D> downstream) {
        
-        return (EvalTSeq)TransformerSeq.super.grouped(classifier, downstream);
+        return (EvalTSeq)ValueTransformerSeq.super.grouped(classifier, downstream);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function)
@@ -463,7 +469,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public <K> EvalTSeq<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
        
-        return (EvalTSeq)TransformerSeq.super.grouped(classifier);
+        return (EvalTSeq)ValueTransformerSeq.super.grouped(classifier);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#distinct()
@@ -471,7 +477,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> distinct() {
        
-        return (EvalTSeq<T>)TransformerSeq.super.distinct();
+        return (EvalTSeq<T>)ValueTransformerSeq.super.distinct();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(com.aol.cyclops.Monoid)
@@ -479,7 +485,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> scanLeft(Monoid<T> monoid) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.scanLeft(monoid);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.scanLeft(monoid);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
@@ -487,7 +493,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public <U> EvalTSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
        
-        return (EvalTSeq<U>)TransformerSeq.super.scanLeft(seed, function);
+        return (EvalTSeq<U>)ValueTransformerSeq.super.scanLeft(seed, function);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(com.aol.cyclops.Monoid)
@@ -495,7 +501,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> scanRight(Monoid<T> monoid) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.scanRight(monoid);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.scanRight(monoid);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
@@ -503,7 +509,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public <U> EvalTSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
        
-        return (EvalTSeq<U>)TransformerSeq.super.scanRight(identity, combiner);
+        return (EvalTSeq<U>)ValueTransformerSeq.super.scanRight(identity, combiner);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted()
@@ -511,7 +517,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> sorted() {
        
-        return (EvalTSeq<T>)TransformerSeq.super.sorted();
+        return (EvalTSeq<T>)ValueTransformerSeq.super.sorted();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.Comparator)
@@ -519,7 +525,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> sorted(Comparator<? super T> c) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.sorted(c);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.sorted(c);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeWhile(java.util.function.Predicate)
@@ -527,7 +533,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> takeWhile(Predicate<? super T> p) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.takeWhile(p);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.takeWhile(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropWhile(java.util.function.Predicate)
@@ -535,7 +541,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> dropWhile(Predicate<? super T> p) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.dropWhile(p);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.dropWhile(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeUntil(java.util.function.Predicate)
@@ -543,7 +549,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> takeUntil(Predicate<? super T> p) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.takeUntil(p);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.takeUntil(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropUntil(java.util.function.Predicate)
@@ -551,7 +557,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> dropUntil(Predicate<? super T> p) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.dropUntil(p);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.dropUntil(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropRight(int)
@@ -559,7 +565,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> dropRight(int num) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.dropRight(num);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.dropRight(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeRight(int)
@@ -567,7 +573,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> takeRight(int num) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.takeRight(num);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.takeRight(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skip(long)
@@ -575,7 +581,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> skip(long num) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.skip(num);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.skip(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipWhile(java.util.function.Predicate)
@@ -583,7 +589,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> skipWhile(Predicate<? super T> p) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.skipWhile(p);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.skipWhile(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipUntil(java.util.function.Predicate)
@@ -591,7 +597,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> skipUntil(Predicate<? super T> p) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.skipUntil(p);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.skipUntil(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limit(long)
@@ -599,7 +605,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> limit(long num) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.limit(num);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.limit(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitWhile(java.util.function.Predicate)
@@ -607,7 +613,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> limitWhile(Predicate<? super T> p) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.limitWhile(p);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.limitWhile(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitUntil(java.util.function.Predicate)
@@ -615,7 +621,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> limitUntil(Predicate<? super T> p) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.limitUntil(p);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.limitUntil(p);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#intersperse(java.lang.Object)
@@ -623,7 +629,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> intersperse(T value) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.intersperse(value);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.intersperse(value);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#reverse()
@@ -631,7 +637,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> reverse() {
        
-        return (EvalTSeq<T>)TransformerSeq.super.reverse();
+        return (EvalTSeq<T>)ValueTransformerSeq.super.reverse();
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle()
@@ -639,7 +645,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> shuffle() {
        
-        return (EvalTSeq<T>)TransformerSeq.super.shuffle();
+        return (EvalTSeq<T>)ValueTransformerSeq.super.shuffle();
     }
 
     /* (non-Javadoc)
@@ -648,7 +654,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> skipLast(int num) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.skipLast(num);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.skipLast(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitLast(int)
@@ -656,7 +662,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> limitLast(int num) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.limitLast(num);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.limitLast(num);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmpty(java.lang.Object)
@@ -664,7 +670,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> onEmpty(T value) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.onEmpty(value);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.onEmpty(value);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
@@ -672,7 +678,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> onEmptyGet(Supplier<T> supplier) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.onEmptyGet(supplier);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.onEmptyGet(supplier);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
@@ -680,7 +686,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public <X extends Throwable> EvalTSeq<T> onEmptyThrow(Supplier<X> supplier) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.onEmptyThrow(supplier);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.onEmptyThrow(supplier);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle(java.util.Random)
@@ -688,7 +694,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> shuffle(Random random) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.shuffle(random);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.shuffle(random);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#slice(long, long)
@@ -696,14 +702,14 @@ public class EvalTSeq<T> implements EvalT<T>,
     @Override
     public EvalTSeq<T> slice(long from, long to) {
        
-        return (EvalTSeq<T>)TransformerSeq.super.slice(from, to);
+        return (EvalTSeq<T>)ValueTransformerSeq.super.slice(from, to);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.function.Function)
      */
     @Override
     public <U extends Comparable<? super U>> EvalTSeq<T> sorted(Function<? super T, ? extends U> function) {
-        return (EvalTSeq)TransformerSeq.super.sorted(function);
+        return (EvalTSeq)ValueTransformerSeq.super.sorted(function);
     }
     
    

@@ -46,7 +46,7 @@ public class EvalTSeqComprehender implements Comprehender<EvalTSeq>, Printable{
 
 	@Override
 	public Class getTargetClass() {
-		return ListTSeq.class;
+		return EvalTSeq.class;
 	}
     @Override
     public EvalTSeq fromIterator(Iterator o) {

@@ -46,7 +46,7 @@ public class MaybeTSeqComprehender implements Comprehender<MaybeTSeq>, Printable
 
 	@Override
 	public Class getTargetClass() {
-		return ListTSeq.class;
+		return MaybeTSeq.class;
 	}
     @Override
     public MaybeTSeq fromIterator(Iterator o) {

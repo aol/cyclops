@@ -46,7 +46,7 @@ public class OptionalTSeqComprehender implements Comprehender<OptionalTSeq>, Pri
 
 	@Override
 	public Class getTargetClass() {
-		return ListTSeq.class;
+		return OptionalTSeq.class;
 	}
     @Override
     public OptionalTSeq fromIterator(Iterator o) {

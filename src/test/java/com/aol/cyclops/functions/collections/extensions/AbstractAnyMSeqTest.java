@@ -78,7 +78,7 @@ public abstract class AbstractAnyMSeqTest {
     }
 	@Test
     public void mergePublisher() throws InterruptedException{
-      
+
         assertThat(of(1,2,3)
                         .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)))
                         .toListX(),hasItems(1,2,3,4,5));

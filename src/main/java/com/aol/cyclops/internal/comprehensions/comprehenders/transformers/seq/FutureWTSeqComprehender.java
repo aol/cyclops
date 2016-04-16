@@ -46,7 +46,7 @@ public class FutureWTSeqComprehender implements Comprehender<FutureWTSeq>, Print
 
 	@Override
 	public Class getTargetClass() {
-		return ListTSeq.class;
+		return FutureWTSeq.class;
 	}
     @Override
     public FutureWTSeq fromIterator(Iterator o) {

@@ -45,7 +45,7 @@ public class TryTSeqComprehender implements Comprehender<TryTSeq>, Printable{
 
 	@Override
 	public Class getTargetClass() {
-		return ListTSeq.class;
+		return TryTSeq.class;
 	}
     @Override
     public TryTSeq fromIterator(Iterator o) {

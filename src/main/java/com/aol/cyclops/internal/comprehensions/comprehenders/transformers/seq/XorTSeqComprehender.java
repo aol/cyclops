@@ -45,7 +45,7 @@ public class XorTSeqComprehender implements Comprehender<XorTSeq>, Printable{
 
 	@Override
 	public Class getTargetClass() {
-		return ListTSeq.class;
+		return XorTSeq.class;
 	}
     @Override
     public XorTSeq fromIterator(Iterator o) {

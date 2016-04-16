@@ -46,7 +46,7 @@ public class CompletableFutureTSeqComprehender implements Comprehender<Completab
 
 	@Override
 	public Class getTargetClass() {
-		return ListTSeq.class;
+		return CompletableFutureTSeq.class;
 	}
     @Override
     public CompletableFutureTSeq fromIterator(Iterator o) {

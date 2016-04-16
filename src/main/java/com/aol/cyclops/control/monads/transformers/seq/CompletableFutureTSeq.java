@@ -27,7 +27,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
-import com.aol.cyclops.control.monads.transformers.values.TransformerSeq;
+import com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.MonadicValue;
@@ -50,7 +50,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T>
  */
 public class CompletableFutureTSeq<A> implements CompletableFutureT<A>, 
-                                                    TransformerSeq<A>,
+                                                    ValueTransformerSeq<A>,
                                                     Foldable<A>,
                                                     ConvertableSequence<A>,
                                                     CyclopsCollectable<A>,
@@ -264,6 +264,13 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
     }
     
     @Override
+    public <T>  CompletableFutureTSeq<T> unitStream(ReactiveSeq<T> traversable) {
+        return CompletableFutureT.fromStream(traversable.map(CompletableFuture::completedFuture));
+       
+    }
+
+    
+    @Override
     public <T> CompletableFutureTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
         
         return of((AnyMSeq)traversable.map(t->FutureW.fromIterable(t).toCompletableFuture()));
@@ -306,7 +313,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> combine(BiPredicate<? super A, ? super A> predicate, BinaryOperator<A> op) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.combine(predicate, op);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.combine(predicate, op);
      }
      
      /* (non-Javadoc)
@@ -315,7 +322,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> cycle(int times) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.cycle(times);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.cycle(times);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(com.aol.cyclops.Monoid, int)
@@ -323,7 +330,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> cycle(Monoid<A> m, int times) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.cycle(m, times);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.cycle(m, times);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleWhile(java.util.function.Predicate)
@@ -331,7 +338,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> cycleWhile(Predicate<? super A> predicate) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.cycleWhile(predicate);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.cycleWhile(predicate);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleUntil(java.util.function.Predicate)
@@ -339,7 +346,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> cycleUntil(Predicate<? super A> predicate) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.cycleUntil(predicate);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.cycleUntil(predicate);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -347,7 +354,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public <U, R> CompletableFutureTSeq<R> zip(Iterable<U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
         
-         return (CompletableFutureTSeq<R>)TransformerSeq.super.zip(other, zipper);
+         return (CompletableFutureTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
@@ -355,7 +362,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public <U> CompletableFutureTSeq<Tuple2<A, U>> zipStream(Stream<U> other) {
         
-         return (CompletableFutureTSeq<Tuple2<A, U>>)TransformerSeq.super.zipStream(other);
+         return (CompletableFutureTSeq<Tuple2<A, U>>)ValueTransformerSeq.super.zipStream(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
@@ -363,7 +370,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public <U> CompletableFutureTSeq<Tuple2<A, U>> zip(Seq<U> other) {
         
-         return (CompletableFutureTSeq<Tuple2<A, U>>)TransformerSeq.super.zip(other);
+         return (CompletableFutureTSeq<Tuple2<A, U>>)ValueTransformerSeq.super.zip(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -371,7 +378,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public <S, U> CompletableFutureTSeq<Tuple3<A, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
         
-         return (CompletableFutureTSeq)TransformerSeq.super.zip3(second, third);
+         return (CompletableFutureTSeq)ValueTransformerSeq.super.zip3(second, third);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
@@ -380,7 +387,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      public <T2, T3, T4> CompletableFutureTSeq<Tuple4<A, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
              Stream<T4> fourth) {
         
-         return (CompletableFutureTSeq<Tuple4<A, T2, T3, T4>>)TransformerSeq.super.zip4(second, third, fourth);
+         return (CompletableFutureTSeq<Tuple4<A, T2, T3, T4>>)ValueTransformerSeq.super.zip4(second, third, fourth);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipWithIndex()
@@ -388,7 +395,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<Tuple2<A, Long>> zipWithIndex() {
         
-         return (CompletableFutureTSeq<Tuple2<A, Long>>)TransformerSeq.super.zipWithIndex();
+         return (CompletableFutureTSeq<Tuple2<A, Long>>)ValueTransformerSeq.super.zipWithIndex();
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int)
@@ -396,7 +403,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<ListX<A>> sliding(int windowSize) {
         
-         return (CompletableFutureTSeq<ListX<A>>)TransformerSeq.super.sliding(windowSize);
+         return (CompletableFutureTSeq<ListX<A>>)ValueTransformerSeq.super.sliding(windowSize);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int, int)
@@ -404,7 +411,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<ListX<A>> sliding(int windowSize, int increment) {
         
-         return (CompletableFutureTSeq<ListX<A>>)TransformerSeq.super.sliding(windowSize, increment);
+         return (CompletableFutureTSeq<ListX<A>>)ValueTransformerSeq.super.sliding(windowSize, increment);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int, java.util.function.Supplier)
@@ -412,7 +419,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public <C extends Collection<? super A>> CompletableFutureTSeq<C> grouped(int size, Supplier<C> supplier) {
         
-         return (CompletableFutureTSeq<C> )TransformerSeq.super.grouped(size, supplier);
+         return (CompletableFutureTSeq<C> )ValueTransformerSeq.super.grouped(size, supplier);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate)
@@ -420,7 +427,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<ListX<A>> groupedUntil(Predicate<? super A> predicate) {
         
-         return (CompletableFutureTSeq<ListX<A>>)TransformerSeq.super.groupedUntil(predicate);
+         return (CompletableFutureTSeq<ListX<A>>)ValueTransformerSeq.super.groupedUntil(predicate);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
@@ -428,7 +435,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<ListX<A>> groupedStatefullyWhile(BiPredicate<ListX<? super A>, ? super A> predicate) {
         
-         return (CompletableFutureTSeq<ListX<A>>)TransformerSeq.super.groupedStatefullyWhile(predicate);
+         return (CompletableFutureTSeq<ListX<A>>)ValueTransformerSeq.super.groupedStatefullyWhile(predicate);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate)
@@ -436,7 +443,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<ListX<A>> groupedWhile(Predicate<? super A> predicate) {
         
-         return (CompletableFutureTSeq<ListX<A>>)TransformerSeq.super.groupedWhile(predicate);
+         return (CompletableFutureTSeq<ListX<A>>)ValueTransformerSeq.super.groupedWhile(predicate);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
@@ -445,7 +452,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      public <C extends Collection<? super A>> CompletableFutureTSeq<C> groupedWhile(Predicate<? super A> predicate,
              Supplier<C> factory) {
         
-         return (CompletableFutureTSeq<C>)TransformerSeq.super.groupedWhile(predicate, factory);
+         return (CompletableFutureTSeq<C>)ValueTransformerSeq.super.groupedWhile(predicate, factory);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
@@ -454,7 +461,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      public <C extends Collection<? super A>> CompletableFutureTSeq<C> groupedUntil(Predicate<? super A> predicate,
              Supplier<C> factory) {
         
-         return (CompletableFutureTSeq<C>)TransformerSeq.super.groupedUntil(predicate, factory);
+         return (CompletableFutureTSeq<C>)ValueTransformerSeq.super.groupedUntil(predicate, factory);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int)
@@ -462,7 +469,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<ListX<A>> grouped(int groupSize) {
         
-         return ( CompletableFutureTSeq<ListX<A>>)TransformerSeq.super.grouped(groupSize);
+         return ( CompletableFutureTSeq<ListX<A>>)ValueTransformerSeq.super.grouped(groupSize);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
@@ -471,7 +478,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      public <K, T, D> CompletableFutureTSeq<Tuple2<K, D>> grouped(Function<? super A, ? extends K> classifier,
              Collector<? super A, T, D> downstream) {
         
-         return (CompletableFutureTSeq)TransformerSeq.super.grouped(classifier, downstream);
+         return (CompletableFutureTSeq)ValueTransformerSeq.super.grouped(classifier, downstream);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function)
@@ -479,7 +486,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public <K> CompletableFutureTSeq<Tuple2<K, Seq<A>>> grouped(Function<? super A, ? extends K> classifier) {
         
-         return (CompletableFutureTSeq)TransformerSeq.super.grouped(classifier);
+         return (CompletableFutureTSeq)ValueTransformerSeq.super.grouped(classifier);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#distinct()
@@ -487,7 +494,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> distinct() {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.distinct();
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.distinct();
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(com.aol.cyclops.Monoid)
@@ -495,7 +502,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> scanLeft(Monoid<A> monoid) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.scanLeft(monoid);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.scanLeft(monoid);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
@@ -503,7 +510,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public <U> CompletableFutureTSeq<U> scanLeft(U seed, BiFunction<U, ? super A, U> function) {
         
-         return (CompletableFutureTSeq<U>)TransformerSeq.super.scanLeft(seed, function);
+         return (CompletableFutureTSeq<U>)ValueTransformerSeq.super.scanLeft(seed, function);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(com.aol.cyclops.Monoid)
@@ -511,7 +518,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> scanRight(Monoid<A> monoid) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.scanRight(monoid);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.scanRight(monoid);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
@@ -519,7 +526,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public <U> CompletableFutureTSeq<U> scanRight(U identity, BiFunction<? super A, U, U> combiner) {
         
-         return (CompletableFutureTSeq<U>)TransformerSeq.super.scanRight(identity, combiner);
+         return (CompletableFutureTSeq<U>)ValueTransformerSeq.super.scanRight(identity, combiner);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted()
@@ -527,7 +534,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> sorted() {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.sorted();
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.sorted();
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.Comparator)
@@ -535,7 +542,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> sorted(Comparator<? super A> c) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.sorted(c);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.sorted(c);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeWhile(java.util.function.Predicate)
@@ -543,7 +550,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> takeWhile(Predicate<? super A> p) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.takeWhile(p);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.takeWhile(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropWhile(java.util.function.Predicate)
@@ -551,7 +558,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> dropWhile(Predicate<? super A> p) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.dropWhile(p);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.dropWhile(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeUntil(java.util.function.Predicate)
@@ -559,7 +566,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> takeUntil(Predicate<? super A> p) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.takeUntil(p);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.takeUntil(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropUntil(java.util.function.Predicate)
@@ -567,7 +574,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> dropUntil(Predicate<? super A> p) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.dropUntil(p);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.dropUntil(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropRight(int)
@@ -575,7 +582,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> dropRight(int num) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.dropRight(num);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.dropRight(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeRight(int)
@@ -583,7 +590,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> takeRight(int num) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.takeRight(num);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.takeRight(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skip(long)
@@ -591,7 +598,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> skip(long num) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.skip(num);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.skip(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipWhile(java.util.function.Predicate)
@@ -599,7 +606,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> skipWhile(Predicate<? super A> p) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.skipWhile(p);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.skipWhile(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipUntil(java.util.function.Predicate)
@@ -607,7 +614,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> skipUntil(Predicate<? super A> p) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.skipUntil(p);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.skipUntil(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limit(long)
@@ -615,7 +622,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> limit(long num) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.limit(num);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.limit(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitWhile(java.util.function.Predicate)
@@ -623,7 +630,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> limitWhile(Predicate<? super A> p) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.limitWhile(p);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.limitWhile(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitUntil(java.util.function.Predicate)
@@ -631,7 +638,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> limitUntil(Predicate<? super A> p) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.limitUntil(p);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.limitUntil(p);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#intersperse(java.lang.Object)
@@ -639,7 +646,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> intersperse(A value) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.intersperse(value);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.intersperse(value);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#reverse()
@@ -647,7 +654,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> reverse() {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.reverse();
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.reverse();
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle()
@@ -655,7 +662,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> shuffle() {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.shuffle();
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.shuffle();
      }
 
      /* (non-Javadoc)
@@ -664,7 +671,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> skipLast(int num) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.skipLast(num);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.skipLast(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitLast(int)
@@ -672,7 +679,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> limitLast(int num) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.limitLast(num);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.limitLast(num);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmpty(java.lang.Object)
@@ -680,7 +687,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> onEmpty(A value) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.onEmpty(value);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.onEmpty(value);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
@@ -688,7 +695,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> onEmptyGet(Supplier<A> supplier) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.onEmptyGet(supplier);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.onEmptyGet(supplier);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
@@ -696,7 +703,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public <X extends Throwable> CompletableFutureTSeq<A> onEmptyThrow(Supplier<X> supplier) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.onEmptyThrow(supplier);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.onEmptyThrow(supplier);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle(java.util.Random)
@@ -704,7 +711,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> shuffle(Random random) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.shuffle(random);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.shuffle(random);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#slice(long, long)
@@ -712,13 +719,13 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
      @Override
      public CompletableFutureTSeq<A> slice(long from, long to) {
         
-         return (CompletableFutureTSeq<A>)TransformerSeq.super.slice(from, to);
+         return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.slice(from, to);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.function.Function)
       */
      @Override
      public <U extends Comparable<? super U>> CompletableFutureTSeq<A> sorted(Function<? super A, ? extends U> function) {
-         return (CompletableFutureTSeq)TransformerSeq.super.sorted(function);
+         return (CompletableFutureTSeq)ValueTransformerSeq.super.sorted(function);
      }
 }

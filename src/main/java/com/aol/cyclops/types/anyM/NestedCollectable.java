@@ -1,7 +1,10 @@
 package com.aol.cyclops.types.anyM;
 
+import java.util.Collection;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
@@ -58,7 +61,12 @@ public interface NestedCollectable<T> {
         return nestedCollectables().map(s->s.collect(collector));
     }
 
-    
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
+     */
+    default <R, A, C extends Collection<R>> C collect(Supplier<C> supplier,Collector<? super T, A, R> collector) {
+        return nestedCollectables().map(s->s.collect(collector)).collect(Collectors.toCollection(supplier));
+    }
     
     /**
      * True if predicate matches all elements when Monad converted to a Stream
@@ -96,6 +104,16 @@ public interface NestedCollectable<T> {
         return nestedCollectables().map(s->s.noneMatch(c));
     }
 
+    default ListX<ListX<T>> toListOfLists(){
+        return nestedCollectables().stream()
+                                    .map(s->s.collect(ListX.listXCollector()))
+                                    .toListX();
+    }
+    default SetX<SetX<T>> toSetOfSets(){
+        return nestedCollectables().stream()
+                                    .map(s->s.collect(SetX.setXCollector()))
+                                    .toSetX();
+    }
     
     default AnyM<ListX<T>> toNestedListX() {
         return nestedCollectables().map(s->s.collect(ListX.listXCollector()));
