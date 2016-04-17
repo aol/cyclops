@@ -778,7 +778,7 @@ public class TryTTest implements Printable {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).value(),equalTo(Maybe.of(65)));
+		assertThat(just.trampoline(n ->sum(10,n)).toMaybe(),equalTo(Maybe.of(65)));
 	}
 
 	

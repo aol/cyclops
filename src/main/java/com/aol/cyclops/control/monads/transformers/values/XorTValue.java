@@ -298,7 +298,7 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
 
     @Override
     public ReactiveSeq<T> stream() {
-      return run.orElseGet(Xor.secondary(null)).stream();
+      return run.orElseGet(()->Xor.secondary(null)).stream();
     }
 
     @Override

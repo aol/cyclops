@@ -1,6 +1,7 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -17,9 +18,9 @@ public class StreamTSeqComprehender implements Comprehender<StreamTSeq>, Printab
 	
 	@Override
 	public Object resolveForCrossTypeFlatMap(Comprehender comp, StreamTSeq apply) {
-	  
-		return apply.isSeqPresent() ? comp.of(apply.stream().collect(Collectors.toCollection(MaterializedList::new))) ) : comp.empty();
-	}
+	    List list = (List) apply.stream().collect(Collectors.toCollection(MaterializedList::new));
+        return list.size()>0 ? comp.of(list) : comp.empty();
+     }
 	@Override
     public Object filter(StreamTSeq t, Predicate p){
         return t.filter(p);

@@ -23,6 +23,8 @@ public class For {
         /**
          * Perform a four level nested internal iteration over the provided Publishers
          * 
+         * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
+         * 
          * @param publisher2
          *            Nested Stream to iterate over
          
@@ -46,6 +48,8 @@ public class For {
         }
         /**
          * Perform a four level nested internal iteration over the provided Publishers
+         * 
+         * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
          * 
          * @param publisher2
          *            Nested Stream to iterate over
@@ -76,6 +80,8 @@ public class For {
         /**
          * Perform a three level nested internal iteration over the provided Publishers
          * 
+         * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
+         * 
          * @param publisher1
          *            Nested Stream to iterate over
         
@@ -97,6 +103,8 @@ public class For {
         }
         /**
          * Perform a three level nested internal iteration over the provided Publishers
+         * 
+         * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
          * 
          * @param publisher2
          *            Nested Stream to iterate over
@@ -125,6 +133,8 @@ public class For {
         /**
          * Perform a two level nested internal iteration over the provided Publishers
          * 
+         * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
+         * 
          * @param publisher2
          *            Nested Stream to iterate over
          * @param filterFunction
@@ -144,6 +154,9 @@ public class For {
     
         /**
          * Perform a two level nested internal iteration over the provided Publishers
+         * 
+         * 
+         * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
          * 
          * @param publisher2
          *            Nested Stream to iterate over

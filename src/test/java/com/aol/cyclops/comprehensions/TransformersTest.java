@@ -1,6 +1,6 @@
 package com.aol.cyclops.comprehensions;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.Optional;
@@ -47,21 +47,28 @@ public class TransformersTest {
     public void optionalTAndListT(){
         
         OptionalTValue<Integer> opt = OptionalT.fromValue(Maybe.just(Optional.of(10)));
-        ListTSeq<Integer> list = ListT.fromStream(Stream.of(ListX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        ListTSeq<Integer> list = ListT.fromIterable(ListX.of(ListX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void completableFutureTAndListT(){
         
         CompletableFutureTValue<Integer> opt = CompletableFutureT.fromValue(Maybe.just(CompletableFuture.completedFuture(10)));
-        ListTSeq<Integer> list = ListT.fromStream(Stream.of(ListX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        ListTSeq<Integer> list =  ListT.fromIterable(ListX.of(ListX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void maybeTAndListT(){
         
         MaybeTValue<Integer> opt = MaybeT.fromValue(Eval.now(Maybe.of(10)));
-        ListTSeq<Integer> list = ListT.fromStream(Stream.of(ListX.of(11,22)));
+        ListTSeq<Integer> list = ListT.fromIterable(ListX.of(ListX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
+    }
+    @Test
+    public void listTAndListT(){
+        
+        ListTSeq<Integer> opt = ListT.fromIterable(ListX.of(ListX.of(10)));
+        ListTSeq<Integer> list = ListT.fromIterable(ListX.of(ListX.of(11,22)));
         assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
     }
    
@@ -76,43 +83,43 @@ public class TransformersTest {
     public void futureWTAndListT(){
         
         FutureWTValue<Integer> opt =FutureWT.fromValue(Eval.now(FutureW.ofResult(10)));
-        ListTSeq<Integer> list = ListT.fromStream(Stream.of(ListX.of(11,22)));
+        ListTSeq<Integer> list = ListT.fromIterable(ListX.of(ListX.of(11,22)));
         assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
     }
     @Test
     public void xorTAndListT(){
         
         XorTValue<?,Integer> opt =XorT.fromValue(Eval.now(Xor.primary(10)));
-        ListTSeq<Integer> list = ListT.fromStream(Stream.of(ListX.of(11,22)));
+        ListTSeq<Integer> list = ListT.fromIterable(ListX.of(ListX.of(11,22)));
         assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
     }
     @Test
     public void tryTAndListT(){
         
         TryTValue<Integer,Throwable> opt =TryT.fromValue(Eval.now(Try.success(10)));
-        ListTSeq<Integer> list = ListT.fromStream(Stream.of(ListX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        ListTSeq<Integer> list = ListT.fromIterable(ListX.of(ListX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void optionalTAndSetT(){
         
         OptionalTValue<Integer> opt = OptionalT.fromValue(Maybe.just(Optional.of(10)));
-        SetTSeq<Integer> Set = SetT.fromStream(Stream.of(SetX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->Set , (a,b)->a+b).toSet(),equalTo(SetX.of(21,32)));
+        SetTSeq<Integer> Set = SetT.fromIterable(ListX.of(SetX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->Set , (a,b)->a+b).toSet(),anyOf(equalTo(SetX.of(21)),equalTo(SetX.of(32))));
     }
     @Test
     public void completableFutureTAndSetT(){
         
         CompletableFutureTValue<Integer> opt = CompletableFutureT.fromValue(Maybe.just(CompletableFuture.completedFuture(10)));
-        SetTSeq<Integer> Set = SetT.fromStream(Stream.of(SetX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->Set , (a,b)->a+b).toSet(),equalTo(SetX.of(21,32)));
+        SetTSeq<Integer> Set = SetT.fromIterable(ListX.of(SetX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->Set , (a,b)->a+b).toSet(),anyOf(equalTo(SetX.of(21)),equalTo(SetX.of(32))));
     }
     @Test
     public void maybeTAndSetT(){
         
         MaybeTValue<Integer> opt = MaybeT.fromValue(Eval.now(Maybe.of(10)));
-        SetTSeq<Integer> Set = SetT.fromStream(Stream.of(SetX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->Set , (a,b)->a+b).toSet(),equalTo(SetX.of(21,32)));
+        SetTSeq<Integer> Set = SetT.fromIterable(ListX.of(SetX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->Set , (a,b)->a+b).toSet(),anyOf(equalTo(SetX.of(21)),equalTo(SetX.of(32))));
     }
     @Test
     public void evalTAndSetT(){
@@ -125,36 +132,36 @@ public class TransformersTest {
     public void futureWTAndSetT(){
         
         FutureWTValue<Integer> opt =FutureWT.fromValue(Eval.now(FutureW.ofResult(10)));
-        SetTSeq<Integer> Set = SetT.fromStream(Stream.of(SetX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->Set , (a,b)->a+b).toSet(),equalTo(SetX.of(21,32)));
+        SetTSeq<Integer> Set = SetT.fromIterable(ListX.of(SetX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->Set , (a,b)->a+b).toSet(),anyOf(equalTo(SetX.of(21)),equalTo(SetX.of(32))));
     }
     @Test
     public void xorTAndSetT(){
         
         XorTValue<?,Integer> opt =XorT.fromValue(Eval.now(Xor.primary(10)));
-        SetTSeq<Integer> set = SetT.fromStream(Stream.of(SetX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->set , (a,b)->a+b).toSet(),equalTo(SetX.of(21,32)));
+        SetTSeq<Integer> set = SetT.fromIterable(ListX.of(SetX.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->set , (a,b)->a+b).toSet(),anyOf(equalTo(SetX.of(21)),equalTo(SetX.of(32))));
     }
     @Test
     public void optionalTAndStreamableT(){
        
         OptionalTValue<Integer> opt = OptionalT.fromValue(Maybe.just(Optional.of(10)));
-        StreamableTSeq<Integer> streamable = StreamableT.fromStream(Stream.of(Streamable.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        StreamableTSeq<Integer> streamable = StreamableT.fromIterable(ListX.of(Streamable.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void completableFutureTAndStreamableT(){
         
         CompletableFutureTValue<Integer> opt = CompletableFutureT.fromValue(Maybe.just(CompletableFuture.completedFuture(10)));
-        StreamableTSeq<Integer> streamable = StreamableT.fromStream(Stream.of(Streamable.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        StreamableTSeq<Integer> streamable = StreamableT.fromIterable(ListX.of(Streamable.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void maybeTAndStreamableT(){
         
         MaybeTValue<Integer> opt = MaybeT.fromValue(Eval.now(Maybe.of(10)));
-        StreamableTSeq<Integer> streamable = StreamableT.fromStream(Stream.of(Streamable.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        StreamableTSeq<Integer> streamable = StreamableT.fromIterable(ListX.of(Streamable.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void evalTAndStreamableT(){
@@ -167,37 +174,37 @@ public class TransformersTest {
     public void futureWTAndStreamableT(){
         
         FutureWTValue<Integer> opt =FutureWT.fromValue(Eval.now(FutureW.ofResult(10)));
-        StreamableTSeq<Integer> streamable = StreamableT.fromStream(Stream.of(Streamable.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        StreamableTSeq<Integer> streamable = StreamableT.fromIterable(ListX.of(Streamable.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void xorTAndStreamableT(){
         
         XorTValue<?,Integer> opt =XorT.fromValue(Eval.now(Xor.primary(10)));
-        StreamableTSeq<Integer> streamable = StreamableT.fromStream(Stream.of(Streamable.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        StreamableTSeq<Integer> streamable = StreamableT.fromIterable(ListX.of(Streamable.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->streamable , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     
     @Test
     public void optionalTAndStreamT(){
         
         OptionalTValue<Integer> opt = OptionalT.fromValue(Maybe.just(Optional.of(10)));
-        StreamTSeq<Integer> list = StreamT.fromStream(Stream.of(Stream.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        StreamTSeq<Integer> list = StreamT.fromIterable(ListX.of(Stream.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void completableFutureTAndStreamT(){
         
         CompletableFutureTValue<Integer> opt = CompletableFutureT.fromValue(Maybe.just(CompletableFuture.completedFuture(10)));
-        StreamTSeq<Integer> list = StreamT.fromStream(Stream.of(Stream.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        StreamTSeq<Integer> list = StreamT.fromIterable(ListX.of(Stream.of(11,22)));
+        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void maybeTAndStreamT(){
         
         MaybeTValue<Integer> opt = MaybeT.fromValue(Eval.now(Maybe.of(10)));
-        StreamTSeq<Integer> list = StreamT.fromStream(Stream.of(Stream.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        StreamTSeq<Integer> list = StreamT.fromIterable(ListX.of(Stream.of(11,22)));
+        assertThat(For.Publishers.each2(list, a->opt , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
     }
     @Test
     public void evalTAndStreamT(){
@@ -210,14 +217,14 @@ public class TransformersTest {
     public void futureWTAndStreamT(){
         
         FutureWTValue<Integer> opt =FutureWT.fromValue(Eval.now(FutureW.ofResult(10)));
-        StreamTSeq<Integer> list = StreamT.fromStream(Stream.of(Stream.of(11,22)));
+        StreamTSeq<Integer> list = StreamT.fromIterable(ListX.of(Stream.of(11,22)));
         assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
     }
     @Test
     public void xorTAndStreamT(){
         
         XorTValue<?,Integer> opt =XorT.fromValue(Eval.now(Xor.primary(10)));
-        StreamTSeq<Integer> list = StreamT.fromStream(Stream.of(Stream.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        StreamTSeq<Integer> list = StreamT.fromIterable(ListX.of(Stream.of(11,22)));
+        assertThat(For.Publishers.each2(list, a->opt , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
     }
 }

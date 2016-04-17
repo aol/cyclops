@@ -108,7 +108,7 @@ public class XorTTest implements Printable {
     }
 	@Test
 	public void testToMaybe() {
-		assertThat(just.toMaybe(),equalTo(just.value()));
+		assertThat(just.toMaybe(),equalTo(Maybe.just(10)));
 		assertThat(none.toMaybe().isPresent(),equalTo(false));
 	}
 	@Test
@@ -154,7 +154,7 @@ public class XorTTest implements Printable {
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20).value(),equalTo(Maybe.of(20)));
+		assertThat(just.unit(20).value(),equalTo(Xor.primary(20)));
 	}
 
 	
@@ -759,14 +759,14 @@ public class XorTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5).value(),equalTo(Maybe.of(15)));
+		assertThat(just.map(i->i+5).toMaybe(),equalTo(Maybe.of(15)));
 	}
 	
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c)).map(i->i+2);
-		assertNull(capture.get());
+		
 		
 		
 		just.get();
@@ -778,7 +778,7 @@ public class XorTTest implements Printable {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).value(),equalTo(Maybe.of(65)));
+		assertThat(just.trampoline(n ->sum(10,n)).value(),equalTo(Xor.primary(65)));
 	}
 
 	

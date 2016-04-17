@@ -278,7 +278,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 
     @Override
     public ReactiveSeq<T> stream() {
-      return run.orElseGet(Try.failure(null)).stream();
+      return run.orElseGet(()->Try.failure(null)).stream();
     }
 
     @Override
