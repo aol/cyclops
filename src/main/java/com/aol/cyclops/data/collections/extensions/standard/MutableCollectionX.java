@@ -26,94 +26,112 @@ import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface MutableCollectionX<T> extends FluentCollectionX<T> {
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.Foldable#reduce(java.lang.Object, java.util.function.BiFunction)
+	 */
 	@Override
     default <U> U reduce(U identity, BiFunction<U, ? super T,U> accumulator){
 	    return stream().reduce(identity,accumulator);
 	}
+	/**
+	 * @param stream Create a MultableCollectionX from a Stream
+	 * @return MutableCollectionX
+	 */
 	<X> MutableCollectionX<X> fromStream(Stream<X> stream);
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+	 */
 	@Override
 	default MutableCollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op){
 	    return fromStream(stream().combine(predicate, op)); 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#reverse()
+	 */
 	@Override
 	default MutableCollectionX<T> reverse(){
 		return fromStream(stream().reverse()); 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#filter(java.util.function.Predicate)
+	 */
 	@Override
 	default MutableCollectionX<T> filter(Predicate<? super T> pred){
 		return fromStream(stream().filter(pred));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#map(java.util.function.Function)
+	 */
 	@Override
 	default <R> CollectionX<R> map(Function<? super T, ? extends R> mapper){
 		return fromStream(stream().map(mapper));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#flatMap(java.util.function.Function)
+	 */
 	@Override
 	default <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper){
 		return fromStream(stream().flatMap(mapper.andThen(StreamUtils::stream)));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#limit(long)
+	 */
 	@Override
 	default MutableCollectionX<T> limit(long num){
 		return fromStream(stream().limit(num));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#skip(long)
+	 */
 	@Override
 	default MutableCollectionX<T> skip(long num){
 		return fromStream(stream().skip(num));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#takeRight(int)
+	 */
 	@Override
 	default MutableCollectionX<T> takeRight(int num){
 		return fromStream(stream().limitLast(num));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#dropRight(int)
+	 */
 	@Override
 	default MutableCollectionX<T> dropRight(int num){
 		return fromStream(stream().skipLast(num));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#takeWhile(java.util.function.Predicate)
+	 */
 	@Override
 	default MutableCollectionX<T> takeWhile(Predicate<? super T> p){
 		return fromStream(stream().limitWhile(p));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#dropWhile(java.util.function.Predicate)
+	 */
 	@Override
 	default MutableCollectionX<T> dropWhile(Predicate<? super T> p){
 		return fromStream(stream().skipWhile(p));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#takeUntil(java.util.function.Predicate)
+	 */
 	@Override
 	default MutableCollectionX<T> takeUntil(Predicate<? super T> p){
 		return fromStream(stream().limitUntil(p));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#dropUntil(java.util.function.Predicate)
+	 */
 	@Override
 	default MutableCollectionX<T> dropUntil(Predicate<? super T> p){
 		return fromStream(stream().skipUntil(p));
 	}
-	 /**
-	  * Performs a map operation that can call a recursive method without running out of stack space
-	  * <pre>
-	  * {@code
-	  * ReactiveSeq.of(10,20,30,40)
-				 .trampoline(i-> fibonacci(i))
-				 .forEach(System.out::println); 
-				 
-		Trampoline<Long> fibonacci(int i){
-			return fibonacci(i,1,0);
-		}
-		Trampoline<Long> fibonacci(int n, long a, long b) {
-	    	return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
-		}		 
-				 
-	  * 55
-		6765
-		832040
-		102334155
-	  * 
-	  * 
-	  * ReactiveSeq.of(10_000,200_000,3_000_000,40_000_000)
-				 .trampoline(i-> fibonacci(i))
-				 .forEach(System.out::println);
-				 
-				 
-	  * completes successfully
-	  * }
-	  * 
-	 * @param mapper
-	 * @return
+	 
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#trampoline(java.util.function.Function)
 	 */
 	default <R> MutableCollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper){
 		
@@ -124,42 +142,78 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 * 
 	 * @see org.jooq.lambda.Seq#slice(long, long)
 	 */
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#slice(long, long)
+	 */
 	default MutableCollectionX<T> slice(long from, long to){
 		return fromStream(stream().slice(from,to));	 
 	}
 	
 	
 
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#grouped(int)
+	 */
 	default MutableCollectionX<ListX<T>> grouped(int groupSize){
 		return fromStream(stream().grouped(groupSize).map(ListX::fromIterable));	 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#grouped(java.util.function.Function, java.util.stream.Collector)
+	 */
 	default <K, A, D> MutableCollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
 		return fromStream(stream().grouped(classifier,downstream));	 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#grouped(java.util.function.Function)
+	 */
 	default <K> MutableCollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return fromStream(stream().grouped(classifier));	 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(java.lang.Iterable)
+	 */
 	default <U> MutableCollectionX<Tuple2<T, U>> zip(Iterable<U> other){
 		return fromStream(stream().zip(other));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+	 */
 	default <U, R> MutableCollectionX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
 		return fromStream(stream().zip(other,zipper));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#sliding(int)
+	 */
 	default MutableCollectionX<ListX<T>> sliding(int windowSize){
 		return fromStream(stream().sliding(windowSize).map(ListX::fromIterable));	
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#sliding(int, int)
+	 */
 	default MutableCollectionX<ListX<T>> sliding(int windowSize, int increment){
 		return fromStream(stream().sliding(windowSize,increment).map(ListX::fromIterable));	
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanLeft(com.aol.cyclops.Monoid)
+	 */
 	default MutableCollectionX<T> scanLeft(Monoid<T> monoid){
 		return fromStream(stream().scanLeft(monoid));	
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
+	 */
 	default <U> MutableCollectionX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
 		return fromStream(stream().scanLeft(seed,function));	
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanRight(com.aol.cyclops.Monoid)
+	 */
 	default MutableCollectionX<T> scanRight(Monoid<T> monoid){
 		return fromStream(stream().scanRight(monoid));	
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
+	 */
 	default <U> MutableCollectionX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
 		return fromStream(stream().scanRight(identity,combiner));
 	}
@@ -170,36 +224,47 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 * 
 	 * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
 	 */
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#sorted(java.util.function.Function)
+	 */
 	default <U extends Comparable<? super U>> MutableCollectionX<T> sorted(Function<? super T, ? extends U> function){
 		return fromStream(stream().sorted(function));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#plus(java.lang.Object)
+	 */
 	default MutableCollectionX<T> plus(T e){
 		add(e);
 		return this;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#plusAll(java.util.Collection)
+	 */
 	default MutableCollectionX<T> plusAll(Collection<? extends T> list){
 		addAll(list);
 		return this;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#minus(java.lang.Object)
+	 */
 	default MutableCollectionX<T> minus(Object e){
 		remove(e);
 		return this;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#minusAll(java.util.Collection)
+	 */
 	default MutableCollectionX<T> minusAll(Collection<?> list){
 		removeAll(list);
 		return this;
 	}
 
 
-
-	
-
-
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#cycle(int)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#cycle(int)
 	 */
 	@Override
 	default MutableCollectionX<T> cycle(int times) {
@@ -207,8 +272,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().cycle(times));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#cycle(com.aol.cyclops.sequence.Monoid, int)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#cycle(com.aol.cyclops.Monoid, int)
 	 */
 	@Override
 	default MutableCollectionX<T> cycle(Monoid<T> m, int times) {
@@ -217,7 +283,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#cycleWhile(java.util.function.Predicate)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#cycleWhile(java.util.function.Predicate)
 	 */
 	@Override
 	default MutableCollectionX<T> cycleWhile(Predicate<? super T> predicate) {
@@ -225,8 +291,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().cycleWhile(predicate));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#cycleUntil(java.util.function.Predicate)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#cycleUntil(java.util.function.Predicate)
 	 */
 	@Override
 	default MutableCollectionX<T> cycleUntil(Predicate<? super T> predicate) {
@@ -235,7 +302,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#zipStream(java.util.stream.Stream)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
 	default <U> MutableCollectionX<Tuple2<T, U>> zipStream(Stream<U> other) {
@@ -243,8 +310,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().zipStream(other));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(org.jooq.lambda.Seq)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
 	default <U> MutableCollectionX<Tuple2<T, U>> zip(Seq<U> other) {
@@ -253,7 +321,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
 	default <S, U> MutableCollectionX<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
@@ -261,8 +329,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().zip3(second, third));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
 	default <T2, T3, T4> MutableCollectionX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
@@ -271,8 +340,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().zip4(second, third, fourth));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#zipWithIndex()
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zipWithIndex()
 	 */
 	@Override
 	default MutableCollectionX<Tuple2<T, Long>> zipWithIndex() {
@@ -280,8 +350,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().zipWithIndex());
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#distinct()
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#distinct()
 	 */
 	@Override
 	default MutableCollectionX<T> distinct() {
@@ -289,8 +360,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().distinct());
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#sorted()
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#sorted()
 	 */
 	@Override
 	default MutableCollectionX<T> sorted() {
@@ -298,8 +370,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().sorted());
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#sorted(java.util.Comparator)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#sorted(java.util.Comparator)
 	 */
 	@Override
 	default MutableCollectionX<T> sorted(Comparator<? super T> c) {
@@ -307,8 +380,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().sorted(c));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#skipWhile(java.util.function.Predicate)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#skipWhile(java.util.function.Predicate)
 	 */
 	@Override
 	default MutableCollectionX<T> skipWhile(Predicate<? super T> p) {
@@ -316,8 +390,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().skipWhile(p));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#skipUntil(java.util.function.Predicate)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#skipUntil(java.util.function.Predicate)
 	 */
 	@Override
 	default MutableCollectionX<T> skipUntil(Predicate<? super T> p) {
@@ -325,8 +400,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().skipUntil(p));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#limitWhile(java.util.function.Predicate)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#limitWhile(java.util.function.Predicate)
 	 */
 	@Override
 	default MutableCollectionX<T> limitWhile(Predicate<? super T> p) {
@@ -334,8 +410,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().limitWhile(p));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#limitUntil(java.util.function.Predicate)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#limitUntil(java.util.function.Predicate)
 	 */
 	@Override
 	default MutableCollectionX<T> limitUntil(Predicate<? super T> p) {
@@ -344,10 +421,8 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	}
 
 	
-	
-
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#intersperse(java.lang.Object)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#intersperse(java.lang.Object)
 	 */
 	@Override
 	default MutableCollectionX<T> intersperse(T value) {
@@ -355,8 +430,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().intersperse(value));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#shuffle()
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#shuffle()
 	 */
 	@Override
 	default MutableCollectionX<T> shuffle() {
@@ -366,8 +442,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 
 	
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#skipLast(int)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#skipLast(int)
 	 */
 	@Override
 	default MutableCollectionX<T> skipLast(int num) {
@@ -375,8 +452,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().skipLast(num));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#limitLast(int)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#limitLast(int)
 	 */
 	@Override
 	default MutableCollectionX<T> limitLast(int num) {
@@ -384,8 +462,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		return fromStream(stream().limitLast(num));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#onEmpty(java.lang.Object)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#onEmpty(java.lang.Object)
 	 */
 	@Override
 	default MutableCollectionX<T> onEmpty(T value) {
@@ -393,31 +472,34 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#onEmptyGet(java.util.function.Supplier)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
 	default MutableCollectionX<T> onEmptyGet(Supplier<T> supplier) {
 		return fromStream(stream().onEmptyGet(supplier));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#onEmptyThrow(java.util.function.Supplier)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
 	default <X extends Throwable> MutableCollectionX<T> onEmptyThrow(Supplier<X> supplier) {
 		return fromStream(stream().onEmptyThrow(supplier));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#shuffle(java.util.Random)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#shuffle(java.util.Random)
 	 */
 	@Override
 	default MutableCollectionX<T> shuffle(Random random) {
 		return fromStream(stream().shuffle(random));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
+	 * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
 	 */
 	@Override
 	default <U> MutableCollectionX<U> ofType(Class<U> type) {
@@ -426,7 +508,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#filterNot(java.util.function.Predicate)
 	 */
 	@Override
 	default MutableCollectionX<T> filterNot(Predicate<? super T> fn) {
@@ -437,6 +519,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
 	 */
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#notNull()
+	 */
 	@Override
 	default MutableCollectionX<T> notNull() {
 	    return fromStream(stream().notNull());
@@ -446,19 +531,26 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.util.stream.Stream)
 	 */
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#removeAll(java.util.stream.Stream)
+	 */
 	@Override
 	default MutableCollectionX<T> removeAll(Stream<T> stream) {
 		
 	    return fromStream(stream().removeAll(stream));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#removeAll(org.jooq.lambda.Seq)
+	 */
 	@Override
     default MutableCollectionX<T> removeAll(Seq<T> stream) {
         
         return fromStream(stream().removeAll(stream));
     }
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
 	default MutableCollectionX<T> removeAll(Iterable<T> it) {
@@ -466,8 +558,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 		
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Object[])
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#removeAll(java.lang.Object[])
 	 */
 	@Override
 	default MutableCollectionX<T> removeAll(T... values) {
@@ -476,27 +569,31 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Iterable)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
 	default MutableCollectionX<T> retainAll(Iterable<T> it) {
 	    return fromStream(stream().retainAll(it));
 	}
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.util.stream.Stream)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
 	default MutableCollectionX<T> retainAll(Stream<T> stream) {
 	    return fromStream(stream().retainAll(stream));
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#retainAll(org.jooq.lambda.Seq)
+	 */
 	@Override
     default MutableCollectionX<T> retainAll(Seq<T> stream) {
         return fromStream(stream().retainAll(stream));
     }
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#retainAll(java.lang.Object[])
 	 */
 	@Override
 	default MutableCollectionX<T> retainAll(T... values) {
@@ -505,8 +602,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 
 	
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#cast(java.lang.Class)
 	 */
 	@Override
 	default <U> MutableCollectionX<U> cast(Class<U> type) {
@@ -514,8 +612,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	}
 
 	
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#patternMatch(java.util.function.Function, java.util.function.Supplier)
 	 */
 	@Override
 	default <R> MutableCollectionX<R> patternMatch(
@@ -526,8 +625,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 
 	
 
+
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#permutations()
 	 */
 	@Override
 	default MutableCollectionX<ReactiveSeq<T>> permutations() {
@@ -537,6 +637,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
 	 */
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#combinations(int)
+	 */
 	@Override
 	default MutableCollectionX<ReactiveSeq<T>> combinations(int size) {
 		return fromStream(stream().combinations(size));
@@ -544,29 +647,44 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
 	 */
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#combinations()
+	 */
 	@Override
 	default MutableCollectionX<ReactiveSeq<T>> combinations() {
 		return fromStream(stream().combinations());
 	}
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#grouped(int, java.util.function.Supplier)
+     */
     @Override
     default <C extends Collection<? super T>> MutableCollectionX<C> grouped(int size, Supplier<C> supplier) {
         
         return fromStream(stream().grouped(size,supplier));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#groupedUntil(java.util.function.Predicate)
+     */
     @Override
     default MutableCollectionX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
         
         return fromStream(stream().groupedUntil(predicate));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#groupedWhile(java.util.function.Predicate)
+     */
     @Override
     default MutableCollectionX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
         
         return fromStream(stream().groupedWhile(predicate));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     */
     @Override
     default <C extends Collection<? super T>> MutableCollectionX<C> groupedWhile(Predicate<? super T> predicate,
             Supplier<C> factory) {
@@ -574,6 +692,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().groupedWhile(predicate,factory));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     */
     @Override
     default <C extends Collection<? super T>> MutableCollectionX<C> groupedUntil(Predicate<? super T> predicate,
             Supplier<C> factory) {
@@ -581,6 +702,9 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().groupedUntil(predicate,factory));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#groupedStatefullyWhile(java.util.function.BiPredicate)
+     */
     @Override
     default MutableCollectionX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
         return fromStream(stream().groupedStatefullyWhile(predicate));

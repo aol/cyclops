@@ -61,6 +61,9 @@ public interface ExtendedTraversable<T> extends Traversable<T>,
 	 }
 
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#stream()
+     */
     @Override
     default ReactiveSeq<T> stream() {
       

@@ -160,5 +160,6 @@ public interface TransformerTraversable<T> {
     default ListTSeq<T> groupedWhileT(Predicate<? super T> predicate){
         return ListT.fromStream(stream().groupedUntil(predicate));
     }
+    
     public ReactiveSeq<T> stream();
 }
