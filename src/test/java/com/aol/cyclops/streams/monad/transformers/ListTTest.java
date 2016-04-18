@@ -14,11 +14,10 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.control.monads.transformers.OptionalT;
-import com.aol.cyclops.control.monads.transformers.StreamableT;
-import com.aol.cyclops.util.stream.Streamable;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.monads.transformers.ListT;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.util.stream.Streamable;
 
 
 public class ListTTest {
@@ -50,10 +49,12 @@ public class ListTTest {
 		
 		CompletableFuture<List<Integer>> two = CompletableFuture.completedFuture(Arrays.asList(2));
 		AnyM<List<Integer>> future=  AnyM.fromCompletableFuture(two);
+		
+			
 		List<Integer> results = optTAdd2.apply(ListT.of(streamOpt),ListT.of(future))
 										.unwrap()
-										.<Stream<List<Integer>>>unwrap()
-										.flatMap(i->i.stream())
+										.<Streamable<List<Integer>>>unwrap()
+										.flatMap(i->Streamable.fromStream(i.stream()))
 										.collect(Collectors.toList());
 		
 		assertThat(results,equalTo(Arrays.asList(3,4,5)));

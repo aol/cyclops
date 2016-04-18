@@ -275,7 +275,7 @@ public class MaybeTValue<T> implements MaybeT<T>,
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return run.toString();
+        return String.format("MaybeTValue[%s]", run );
     }
 
     @Override

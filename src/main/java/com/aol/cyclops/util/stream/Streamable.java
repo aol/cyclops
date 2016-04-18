@@ -142,7 +142,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     @Override
     default Streamable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
        
-        return (Streamable<ListX<T>>)ZippingApplicativable.super.groupedStatefullyWhile(predicate);
+        return Streamable.fromIterable(ZippingApplicativable.super.groupedStatefullyWhile(predicate));
     }
 
 

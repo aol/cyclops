@@ -281,7 +281,7 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("TryTSeq[%s]", run );
 	}
    
     

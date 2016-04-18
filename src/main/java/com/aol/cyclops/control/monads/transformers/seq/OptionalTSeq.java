@@ -273,7 +273,7 @@ public class OptionalTSeq<T> implements OptionalT<T>,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("OptionalTSeq[%s]", run );
 	}
 
     public boolean isPresent() {

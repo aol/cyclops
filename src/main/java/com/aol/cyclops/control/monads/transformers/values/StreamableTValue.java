@@ -230,7 +230,7 @@ public class StreamableTValue<T> implements StreamableT<T>{
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("StreamableTValue[%s]", run );
 	}
     /* (non-Javadoc)
      * @see java.lang.Iterable#iterator()

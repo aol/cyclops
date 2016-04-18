@@ -284,7 +284,7 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
     }
     @Override
     public String toString() {
-        return String.format("AnyMSeq%s", monad );
+        return String.format("AnyMSeq[%s]", monad );
     }
     
 	

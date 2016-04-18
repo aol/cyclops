@@ -260,7 +260,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("TryTValue[%s]", run );
 	}
     @Override
     public T get() {

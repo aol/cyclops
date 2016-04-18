@@ -41,7 +41,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.util.stream.Streamable;
 
-public class TransformersTest {
+public class TransformersMixingValuesAndSeqTest {
 
     @Test
     public void optionalTAndListT(){
@@ -84,14 +84,14 @@ public class TransformersTest {
         
         FutureWTValue<Integer> opt =FutureWT.fromValue(Eval.now(FutureW.ofResult(10)));
         ListTSeq<Integer> list = ListT.fromIterable(ListX.of(ListX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void xorTAndListT(){
         
         XorTValue<?,Integer> opt =XorT.fromValue(Eval.now(Xor.primary(10)));
         ListTSeq<Integer> list = ListT.fromIterable(ListX.of(ListX.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21)));
     }
     @Test
     public void tryTAndListT(){
@@ -204,6 +204,7 @@ public class TransformersTest {
         
         MaybeTValue<Integer> opt = MaybeT.fromValue(Eval.now(Maybe.of(10)));
         StreamTSeq<Integer> list = StreamT.fromIterable(ListX.of(Stream.of(11,22)));
+       
         assertThat(For.Publishers.each2(list, a->opt , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
     }
     @Test
@@ -218,7 +219,8 @@ public class TransformersTest {
         
         FutureWTValue<Integer> opt =FutureWT.fromValue(Eval.now(FutureW.ofResult(10)));
         StreamTSeq<Integer> list = StreamT.fromIterable(ListX.of(Stream.of(11,22)));
-        assertThat(For.Publishers.each2(opt, a->list , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
+       
+        assertThat(For.Publishers.each2(list, a->opt , (a,b)->a+b).toList(),equalTo(ListX.of(21,32)));
     }
     @Test
     public void xorTAndStreamT(){

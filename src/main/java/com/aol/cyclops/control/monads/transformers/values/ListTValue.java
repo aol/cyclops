@@ -236,7 +236,7 @@ public class ListTValue<T> implements ListT<T>,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("ListTValue[%s]", run );
 	}
    
     /* (non-Javadoc)

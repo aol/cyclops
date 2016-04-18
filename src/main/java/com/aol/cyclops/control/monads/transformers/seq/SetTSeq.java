@@ -243,7 +243,7 @@ public class SetTSeq<T>  implements SetT<T>{
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("SetTSeq[%s]", run );
 	}
  
     /* (non-Javadoc)

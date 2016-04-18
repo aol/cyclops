@@ -219,4 +219,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
 	public <X> MutableCollectionX<X> fromStream(Stream<X> stream) {
 		return ListX.fromIterable(stream.collect(Collectors.toList()));
 	}
+	public String toString(){
+        return String.format("%s", delegate );
+    }
 }

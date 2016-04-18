@@ -257,7 +257,7 @@ public class OptionalTValue<T> implements OptionalT<T>,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("OptionalTValue[%s]", run );
 	}
 
     @Override

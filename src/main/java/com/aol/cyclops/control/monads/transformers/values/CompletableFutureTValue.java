@@ -250,7 +250,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("CompletableFutureTValue[%s]", run );
 	}
 	
     @Override

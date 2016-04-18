@@ -287,7 +287,7 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return run.toString();
+        return String.format("EvalTSeq[%s]", run );
     }
 
     /* (non-Javadoc)

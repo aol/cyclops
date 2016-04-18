@@ -53,8 +53,8 @@ public class SetTTest {
 		AnyM<Set<Integer>> future=  AnyM.fromCompletableFuture(two);
 		Set<Integer> results = optTAdd2.apply(SetT.of(streamOpt),SetT.of(future))
 										.unwrap()
-										.<Stream<Set<Integer>>>unwrap()
-										.flatMap(i->i.stream())
+										.<Streamable<Set<Integer>>>unwrap()
+										.flatMap(i->Streamable.fromStream(i.stream()))
 										.collect(Collectors.toSet());
 		
 		assertThat(results,equalTo(asSet(3,4,5)));

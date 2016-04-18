@@ -53,8 +53,8 @@ public class StreamableTTest {
 		AnyM<Streamable<Integer>> future=  AnyM.fromCompletableFuture(two);
 		List<Integer> results = optTAdd2.apply(StreamableT.of(streamOpt),StreamableT.of(future))
 										.unwrap()
-										.<Stream<Streamable<Integer>>>unwrap()
-										.flatMap(i->i.reactiveSeq())
+										.<Streamable<Streamable<Integer>>>unwrap()
+										.flatMap(i->i.toStreamable())
 										.collect(Collectors.toList());
 		
 		assertThat(results,equalTo(Arrays.asList(3,4,5)));

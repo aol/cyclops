@@ -193,7 +193,7 @@ public class StreamTSeq<T> implements StreamT<T>{
 	 * @see java.lang.Object#toString()
 	 */
    public String toString() {
-		return run.toString();
+       return String.format("StreamTSeq[%s]", run );
 	}
  
     /* (non-Javadoc)

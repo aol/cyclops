@@ -248,7 +248,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("CompletableFutureTSeq[%s]", run );
 	}
 	
     

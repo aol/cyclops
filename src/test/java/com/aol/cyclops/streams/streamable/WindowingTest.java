@@ -5,6 +5,7 @@ import static com.aol.cyclops.util.stream.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
@@ -29,7 +30,14 @@ public class WindowingTest {
 		empty = of();
 		nonEmpty = Streamable.of(1);
 	}
-	
+	@Test
+    public void takeWhile(){
+        assertThat(of(1,2,3,4,5).takeWhile(p->p<6).toList().size(),greaterThan(1));
+    }
+    @Test
+    public void takeWhileEmpty(){
+        assertThat(of().takeWhile(p->true).toList(),equalTo(Arrays.asList()));
+    } 
 	@Test
 	public void windowWhile(){
 		assertThat(Streamable.of(1,2,3,4,5,6)

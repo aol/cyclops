@@ -192,7 +192,7 @@ public class StreamTValue<T> implements StreamT<T>{
 	 * @see java.lang.Object#toString()
 	 */
    public String toString() {
-		return run.toString();
+       return String.format("StreamTValue[%s]", run );
 	}
     /* (non-Javadoc)
      * @see java.lang.Iterable#iterator()

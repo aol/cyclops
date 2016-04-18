@@ -263,7 +263,7 @@ public class FutureWTSeq<A> implements FutureWT<A>,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("FutureTSeq[%s]", run );
 	}
 	
     

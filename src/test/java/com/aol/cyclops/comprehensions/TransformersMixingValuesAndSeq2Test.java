@@ -42,7 +42,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.util.stream.Streamable;
 
-public class Transformers2Test {
+public class TransformersMixingValuesAndSeq2Test {
 
     @Test
     public void optionalTAndListT(){

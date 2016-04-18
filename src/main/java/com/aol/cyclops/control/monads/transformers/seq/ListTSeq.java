@@ -242,7 +242,8 @@ public class ListTSeq<T> implements ListT<T>{
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("ListTSeq[%s]", run );
+		
 	}
    
     

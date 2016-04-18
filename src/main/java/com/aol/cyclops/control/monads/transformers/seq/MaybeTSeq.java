@@ -301,7 +301,7 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return run.toString();
+        return String.format("MaybeTSeq[%s]", run );
     }
 
    

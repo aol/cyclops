@@ -268,7 +268,7 @@ public class EvalTValue<T> implements EvalT<T>,
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return run.toString();
+        return String.format("EvalTValue[%s]", run );
     }
 
     @Override

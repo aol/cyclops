@@ -238,7 +238,7 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("StreamableTSeq[%s]", run );
 	}
    
 

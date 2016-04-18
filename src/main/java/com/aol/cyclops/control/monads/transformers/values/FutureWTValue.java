@@ -247,7 +247,7 @@ public class FutureWTValue<A> implements FutureWT<A>,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return run.toString();
+	    return String.format("FutureWTValue[%s]", run );
 	}
 	
     @Override

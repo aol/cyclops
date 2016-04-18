@@ -302,7 +302,7 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return run.toString();
+        return String.format("XorTSeq[%s]", run );
     }
    
     

@@ -280,7 +280,7 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return run.toString();
+        return String.format("XorTValue[%s]", run );
     }
     @Override
     public T get() {
