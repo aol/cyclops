@@ -18,6 +18,8 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.monads.transformers.EvalT;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
+
+import lombok.val;
 public class EvalTTest {
 
 	String result = null;
@@ -95,10 +97,15 @@ public class EvalTTest {
 	}
 	@Test
 	public void flatMap() {
-		EvalTSeq<Integer> optionT = EvalT.fromAnyMSeq(AnyM.ofSeq(Stream.of(Eval.now(10))));
-		
+		EvalTSeq<Integer> optionT = EvalT.fromStream(Stream.of(Eval.now(10)));
+		Stream res = optionT.flatMapT(num->EvalT.fromStream(Stream.of(Eval.now("hello world"+num))))
+		                 .unwrap()
+		                 .unwrap()
+		                 ;
+		res.forEach(System.out::println);
 		assertThat(optionT.flatMapT(num->EvalT.fromStream(Stream.of(Eval.now("hello world"+num))))
-				.unwrap().<Stream<Eval<String>>>unwrap()
+				.unwrap()
+				.<Stream<Eval<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Eval.now("hello world10")));
 	}
 

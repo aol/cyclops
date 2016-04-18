@@ -1228,7 +1228,7 @@ public abstract class AbstractAnyMSeqTest {
             @Test
             public void testFoldLeftStringBuilder() {
                 Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
-
+                
                 
                 assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
                 assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("b"));

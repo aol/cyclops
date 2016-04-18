@@ -8,9 +8,12 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.anym.BaseAnyMValueTest;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.data.Mutable;
@@ -42,5 +45,11 @@ public class FutureWTAnyMValueTest extends BaseAnyMValueTest {
         assertThat(just.map(i->i+5).get(),equalTo(Maybe.of(15).get()));
         
     }
-
+    @Test
+    public void combine(){
+        
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        assertThat(just.combine(add,just).toTry(),equalTo(Try.success(20)));
+           
+    }
 }

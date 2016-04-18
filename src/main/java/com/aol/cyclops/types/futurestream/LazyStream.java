@@ -196,6 +196,7 @@ public interface LazyStream<U> extends BlockingStream<U>{
 			return		collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin, accumulator);
 			
 	}
+   
 	default U reduce(U identity, BinaryOperator<U> accumulator){
 		if(getLastActive().isSequential()){ 
 			Object[] result = {identity};
@@ -256,6 +257,36 @@ public interface LazyStream<U> extends BlockingStream<U>{
 		}
 		return collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin,(T)result[0], accumulator,combiner);
 	}
+	default<T> T reduce(T identity, BiFunction<T,? super U,T> accumulator){
+        
+        if(getLastActive().isSequential()){ 
+            Object[] result = {identity};
+            forEach(r-> {
+                if(result[0]==null)
+                    result[0]=r;
+                else{
+                    result[0]= accumulator.apply((T)result[0], r);
+                }
+            });
+            return (T)result[0];
+        
+        }
+        
+        Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+        IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this);
+        Object[] result =  {identity};
+        try {
+            this.getLastActive().injectFutures().forEach(next -> {
+
+                
+                collector.getConsumer().accept(next);
+                result[0] = collector.reduce(safeJoin,(T)result[0],accumulator);   
+            });
+        } catch (SimpleReactProcessingException e) {
+            
+        }
+        return collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin,(T)result[0], accumulator);
+    }
 	
 	default <R> R collect(Supplier<R> supplier, BiConsumer<R,? super U> accumulator, BiConsumer<R,R> combiner){
 		return (R)this.run((Collector)Collector.of(supplier, accumulator, ( a,b)-> { combiner.accept(a, b); return a;}));

@@ -2,7 +2,6 @@ package com.aol.cyclops.types;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,8 +11,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -25,6 +22,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.util.stream.Streamable;
@@ -160,8 +158,8 @@ public interface Foldable<T> {
 		return foldable().reduce(identity, accumulator);
 	}
 	default <U> U reduce(U identity, BiFunction<U, ? super T,U> accumulator){
-	    Object foldable = foldable();
-        return (foldable()).reduce(identity,accumulator);
+	    Foldable<T> foldable = foldable();
+        return foldable.reduce(identity,accumulator);
     }
 
 	/*

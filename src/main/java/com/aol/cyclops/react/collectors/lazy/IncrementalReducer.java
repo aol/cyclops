@@ -8,6 +8,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+
 import com.aol.cyclops.internal.react.async.future.FastFuture;
 import com.aol.cyclops.internal.react.stream.MissingValue;
 import com.aol.cyclops.types.futurestream.BlockingStream;
@@ -41,12 +43,8 @@ public class IncrementalReducer<T> {
 		consumer.getResults().clear();
 	}
 	public  T reduce(Function<FastFuture,T>safeJoin,T identity, BinaryOperator<T> accumulator){
-	//	if(consumer.getResults().size()>config.getBatchSize())
-	    {
-			 return reduceResults(consumer.getResults(),safeJoin, identity, accumulator);
-		}
+	    return reduceResults(consumer.getResults(),safeJoin, identity, accumulator);
 		
-		//return identity;
 	}
 	public T reduceResults( Collection<FastFuture<T>> results,Function<FastFuture, T> safeJoin, T identity,
 			BinaryOperator<T> accumulator) {
@@ -58,12 +56,9 @@ public class IncrementalReducer<T> {
 		return result;
 	}
 	public  Optional<T> reduce(Function<FastFuture,T>safeJoin, BinaryOperator<T> accumulator){
-		//if(consumer.getResults().size()>config.getBatchSize())
-	    {
-			 return reduceResults(consumer.getResults(),safeJoin, accumulator);
-		}
 		
-		//return Optional.empty();
+			 return reduceResults(consumer.getResults(),safeJoin, accumulator);
+		
 	}
 	public Optional<T> reduceResults( Collection<FastFuture<T>> results,Function<FastFuture, T> safeJoin,
 			BinaryOperator<T> accumulator) {
@@ -75,12 +70,15 @@ public class IncrementalReducer<T> {
 
 		return result;
 	}
+	public <U> U reduce(Function<FastFuture,T>safeJoin,U identity, BiFunction<U,? super T,U> accumulator){
+        
+        return reduceResults(consumer.getResults(),safeJoin, identity, accumulator);
+   
+	}
 	public <U> U reduce(Function<FastFuture,T>safeJoin,U identity, BiFunction<U,? super T,U> accumulator, BinaryOperator<U> combiner){
-		//if(consumer.getResults().size()>config.getBatchSize())
-	    {
+		
 			 return reduceResults(consumer.getResults(),safeJoin, identity, accumulator,combiner);
-		}
-	//	return identity;
+		
 	}
 	public <U> U reduceResults( Collection<FastFuture<T>> results,Function<FastFuture, T> safeJoin, U identity, BiFunction<U,? super T,U> accumulator, BinaryOperator<U> combiner){
 		Stream<FastFuture<T>> streamToUse = results.stream();
@@ -90,4 +88,12 @@ public class IncrementalReducer<T> {
 		consumer.getResults().clear();
 		return result;
 	}
+	public <U> U reduceResults( Collection<FastFuture<T>> results,Function<FastFuture, T> safeJoin, U identity, BiFunction<U,? super T,U> accumulator){
+        Stream<FastFuture<T>> streamToUse = results.stream();
+        
+         U result = Seq.seq(streamToUse).map(safeJoin)
+                    .filter(v -> v != MissingValue.MISSING_VALUE).foldLeft(identity, accumulator);
+        consumer.getResults().clear();
+        return result;
+    }
 }

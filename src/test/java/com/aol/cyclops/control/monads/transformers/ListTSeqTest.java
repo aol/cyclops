@@ -26,11 +26,11 @@ public class ListTSeqTest {
     
     @Test
     public void cycle(){
-        assertThat(trans.cycle(3).toString(),equalTo("AnyMSeq[[1, 2, 3, 1, 2, 3, 1, 2, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3]]"));
+        assertThat(trans.cycle(3).toString(),equalTo("ListTSeq[AnyMSeq[[[1, 2, 3, 1, 2, 3, 1, 2, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3]]]]"));
     }
     @Test
     public void cycleValue(){
-        assertThat(value.cycle(3).toString(),equalTo("AnyMValue[[1, 2, 3, 1, 2, 3, 1, 2, 3]]"));
+        assertThat(value.cycle(3).toString(),equalTo("ListTValue[AnyMValue[[1, 2, 3, 1, 2, 3, 1, 2, 3]]]"));
     }
    
 }

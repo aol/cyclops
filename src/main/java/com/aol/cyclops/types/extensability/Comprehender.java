@@ -136,10 +136,8 @@ public interface Comprehender<T> {
 		        return comp.empty();
 		    }
 		}
-		/**
-		if(apply instanceof StreamT)
-			return comp.of( ((StreamT)apply).unwrap());
-**/
+		
+	
 		return (T) new ComprehenderSelector().selectComprehender(apply)
 				.resolveForCrossTypeFlatMap(comp,apply);
 

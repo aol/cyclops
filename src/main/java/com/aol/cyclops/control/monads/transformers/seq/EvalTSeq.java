@@ -157,7 +157,6 @@ public class EvalTSeq<T> implements EvalT<T>,
     public <B> EvalTSeq<B> flatMapT(Function<? super T, EvalTSeq<? extends B>> f) {
 
         return of(run.bind(opt -> {
-            
                 return f.apply(opt.get()).run.unwrap();
            
         }));

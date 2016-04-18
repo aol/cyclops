@@ -76,6 +76,7 @@ import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
@@ -691,6 +692,9 @@ public interface LazyFutureStream<U> extends Functor<U>,
 
         return LazyToQueue.super.toQueue();
     }
+    default <T> T reduce(T identity, BiFunction<T, ? super U,T> accumulator){
+        return LazyStream.super.reduce(identity, accumulator,(a,b)->a);
+    }
     /*
      * (non-Javadoc)
      *
@@ -699,7 +703,6 @@ public interface LazyFutureStream<U> extends Functor<U>,
      */
     @Override
     default U reduce(U identity, BinaryOperator<U> accumulator) {
-
         return LazyStream.super.reduce(identity, accumulator);
     }
     /*
@@ -2279,7 +2282,9 @@ public interface LazyFutureStream<U> extends Functor<U>,
         return cycle().limitUntil(predicate);
     }
 
-
+    default Foldable<U> foldable(){
+        return this;
+    }
 
 
     /*
