@@ -35,7 +35,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -80,34 +79,56 @@ import com.aol.cyclops.util.stream.Streamable;
 import lombok.val;
 
 
-public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T>,
-                                                IterableFilterable<T>,FilterableFunctor<T>, ExtendedTraversable<T>,
-												Foldable<T>,CyclopsCollectable<T>,
-												JoolWindowing<T>, 
-												
-												Seq<T>,  Iterable<T>, Publisher<T>,
+public interface ReactiveSeq<T> extends Unwrapable, 
+                                        Stream<T>,
+                                        JoolManipulation<T>,
+                                        IterableFilterable<T>,
+                                        FilterableFunctor<T>, 
+                                        ExtendedTraversable<T>,
+                                        Foldable<T>,
+										CyclopsCollectable<T>,
+										JoolWindowing<T>, 
+										Seq<T>,  Iterable<T>, Publisher<T>,
 												ReactiveStreamsTerminalOperations<T>,
 												ZippingApplicativable<T>, Unit<T>,
 												ConvertableSequence<T>{
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
+	 */
 	@Override
 	public <T> ReactiveSeq<T> unitIterator(Iterator<T> it);
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
+	 */
 	@Override
 	public <T> ReactiveSeq<T> unit(T unit);
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#foldRight(java.lang.Object, java.util.function.BiFunction)
+	 */
+	@Override
 	default <U> U  foldRight(U identity, BiFunction<? super T, U,U> accumulator){
         return JoolWindowing.super.foldRight(identity,accumulator);
     }
-	 @Override
-	 default void printOut() {
-	        
-	        JoolWindowing.super.printOut();
-	  }
+	 /* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#printOut()
+	 */
+    @Override
+    default void printOut() {
+        JoolWindowing.super.printOut();
+    }
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.applicative.zipping.ZippingApplicativable#applicatives()
+	 */
 	@Override 
 	default <R> ApplyingZippingApplicativeBuilder<T,R,ZippingApplicativable<R>> applicatives(){
 	    Streamable<T> streamable = toStreamable();
 	        return new ApplyingZippingApplicativeBuilder<T,R,ZippingApplicativable<R>> (streamable,streamable);
 	}
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.zipping.ZippingApplicativable#ap1(java.util.function.Function)
+     */
     @Override
     default <R> ZippingApplicativable<R> ap1(Function<? super T,? extends R> fn){
         val dup = this.duplicateSequence();
@@ -128,6 +149,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 
 	
 
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.Unwrapable#unwrap()
+	 */
 	@Override
 	<R> R unwrap();
 
@@ -194,7 +218,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	Tuple2&lt;SequenceM&lt;Integer&gt;, SequenceM&lt;Integer&gt;&gt; copies = of(1, 2, 3, 4, 5, 6).duplicate();
+	 * 	Tuple2&lt;ReactiveSeq&lt;Integer&gt;, ReactiveSeq&lt;Integer&gt;&gt; copies = of(1, 2, 3, 4, 5, 6).duplicate();
 	 * 	assertTrue(copies.v1.anyMatch(i -&gt; i == 2));
 	 * 	assertTrue(copies.v2.anyMatch(i -&gt; i == 2));
 	 * 
@@ -213,7 +237,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	Tuple3&lt;SequenceM&lt;Tuple3&lt;T1, T2, T3&gt;&gt;, SequenceM&lt;Tuple3&lt;T1, T2, T3&gt;&gt;, SequenceM&lt;Tuple3&lt;T1, T2, T3&gt;&gt;&gt; Tuple3 = sequence.triplicate();
+	 * 	Tuple3&lt;ReactiveSeq&lt;Tuple3&lt;T1, T2, T3&gt;&gt;, ReactiveSeq&lt;Tuple3&lt;T1, T2, T3&gt;&gt;, ReactiveSeq&lt;Tuple3&lt;T1, T2, T3&gt;&gt;&gt; Tuple3 = sequence.triplicate();
 	 * 
 	 * }
 	 * </pre>
@@ -229,7 +253,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	Tuple4&lt;SequenceM&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, SequenceM&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, SequenceM&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, SequenceM&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;&gt; quad = sequence
+	 * 	Tuple4&lt;ReactiveSeq&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, ReactiveSeq&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, ReactiveSeq&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, ReactiveSeq&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;&gt; quad = sequence
 	 * 			.quadruplicate();
 	 * 
 	 * }
@@ -247,7 +271,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * {@code 
 	 * ReactiveSeq.of(1,2,3).splitAtHead()
 	 * 
-	 *  //Optional[1], SequenceM[2,3]
+	 *  //Optional[1], ReactiveSeq[2,3]
 	 * }
 	 * 
 	 * </pre>
@@ -263,7 +287,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * {@code 
 	 * ReactiveSeq.of(1,2,3).splitAt(1)
 	 * 
-	 *  //SequenceM[1], SequenceM[2,3]
+	 *  //ReactiveSeq[1], ReactiveSeq[2,3]
 	 * }
 	 * 
 	 * </pre>
@@ -277,7 +301,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * {@code
 	 *   ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
 	 *   
-	 *   //SequenceM[1,2,3] SequenceM[4,5,6]
+	 *   //ReactiveSeq[1,2,3] ReactiveSeq[4,5,6]
 	 * }
 	 * </pre>
 	 */
@@ -291,7 +315,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * {@code 
 	 *  ReactiveSeq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
 	 *  
-	 *  //SequenceM[1,3,5], SequenceM[2,4,6]
+	 *  //ReactiveSeq[1,3,5], ReactiveSeq[2,4,6]
 	 * }
 	 *
 	 * </pre>
@@ -317,6 +341,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            Number of times value should be repeated
 	 * @return Stream with reduced values repeated
 	 */
+	@Override
 	ReactiveSeq<T> cycle(Monoid<T> m, int times);
 
 	
@@ -338,6 +363,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            repeat while true
 	 * @return Repeating Stream
 	 */
+	@Override
 	ReactiveSeq<T> cycleWhile(Predicate<? super T> predicate);
 
 	/**
@@ -359,6 +385,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            repeat while true
 	 * @return Repeating Stream
 	 */
+	@Override
 	ReactiveSeq<T> cycleUntil(Predicate<? super T> predicate);
 
 	/**
@@ -373,6 +400,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * </pre>
 	 * 
 	 */
+	@Override
 	<U> ReactiveSeq<Tuple2<T, U>> zipStream(Stream<U> other);
 
 	/**
@@ -405,6 +433,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * </pre>
 	 */
+	@Override
 	<S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third);
 
 	/**
@@ -420,6 +449,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * // [[1,100,'a',&quot;hello&quot;],[2,200,'b',&quot;world&quot;]]
 	 * </pre>
 	 */
+	@Override
 	<T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third, Stream<T4> fourth);
 
 	/**
@@ -456,7 +486,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	<S, R> ReactiveSeq<R> zipSequence(ReactiveSeq<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper);
 
 	/**
-	 * Zip this SequenceM against any monad type.
+	 * Zip this ReactiveSeq against any monad type.
 	 * 
 	 * <pre>
 	 * {
@@ -509,8 +539,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * @param windowSize
 	 *            Size of sliding window
-	 * @return SequenceM with sliding view
+	 * @return ReactiveSeq with sliding view
 	 */
+	@Override
 	ReactiveSeq<ListX<T>> sliding(int windowSize);
 
 	/**
@@ -532,8 +563,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            number of elements in each batch
 	 * @param increment
 	 *            for each window
-	 * @return SequenceM with sliding view
+	 * @return ReactiveSeq with sliding view
 	 */
+	@Override
 	ReactiveSeq<ListX<T>> sliding(int windowSize, int increment);
 
 	/**
@@ -554,6 +586,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            Size of each Group
 	 * @return Stream with elements grouped by size
 	 */
+	@Override
 	ReactiveSeq<ListX<T>> grouped(int groupSize);
 	/**
      * Create ReactiveSeq of ListX where
@@ -572,8 +605,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
      * 
      * @param predicate
      *            Window while true
-     * @return SequenceM windowed while predicate holds
+     * @return ReactiveSeq windowed while predicate holds
      */
+	@Override
     ReactiveSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate);
 
 	/**
@@ -591,7 +625,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
      * @param size Max size of a batch
      * @param time (Max) time period to build a single batch in
      * @param t time unit for batch
-     * @return SequenceM batched by size and time
+     * @return ReactiveSeq batched by size and time
      */
     ReactiveSeq<ListX<T>> groupedBySizeAndTime(int size, long time, TimeUnit t);
 
@@ -613,7 +647,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
      *            time unit for batch
      * @param factory
      *            Collection factory
-     * @return SequenceM batched by size and time
+     * @return ReactiveSeq batched by size and time
      */
     <C extends Collection<? super T>> ReactiveSeq<C> groupedBySizeAndTime(int size, long time, TimeUnit unit, Supplier<C> factory);
 
@@ -631,7 +665,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
      *            - time period to build a single batch in
      * @param t
      *            time unit for batch
-     * @return SequenceM batched into lists by time period
+     * @return ReactiveSeq batched into lists by time period
      */
     ReactiveSeq<ListX<T>> groupedByTime(long time, TimeUnit t);
 
@@ -654,7 +688,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
      *            time unit for batch
      * @param factory
      *            Collection factory
-     * @return SequenceM batched into collection types by time period
+     * @return ReactiveSeq batched into collection types by time period
      */
     <C extends Collection<? super T>> ReactiveSeq<C> groupedByTime(long time, TimeUnit unit, Supplier<C> factory);
 
@@ -675,14 +709,15 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
      * 
      * @param size batch size
      * @param supplier Collection factory
-     * @return SequenceM batched into collection types by size
+     * @return ReactiveSeq batched into collection types by size
      */
+    @Override
     <C extends Collection<? super T>> ReactiveSeq<C> grouped(int size, Supplier<C> supplier);
 
     
 
     /**
-     * Create a SequenceM batched by List, where each batch is populated until
+     * Create a ReactiveSeq batched by List, where each batch is populated until
      * the predicate holds
      * 
      * <pre>
@@ -696,12 +731,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
      * 
      * @param predicate
      *            Batch until predicate holds, then open next batch
-     * @return SequenceM batched into lists determined by the predicate supplied
+     * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
     ReactiveSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate);
 
     /**
-     * Create a SequenceM batched by List, where each batch is populated while
+     * Create a ReactiveSeq batched by List, where each batch is populated while
      * the predicate holds
      * 
      * <pre>
@@ -715,12 +750,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
      * 
      * @param predicate
      *            Batch while predicate holds, then open next batch
-     * @return SequenceM batched into lists determined by the predicate supplied
+     * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
+    @Override
     ReactiveSeq<ListX<T>> groupedWhile(Predicate<? super T> predicate);
 
     /**
-     * Create a SequenceM batched by a Collection, where each batch is populated
+     * Create a ReactiveSeq batched by a Collection, where each batch is populated
      * while the predicate holds
      * 
      * <pre>
@@ -736,13 +772,14 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
      *            Batch while predicate holds, then open next batch
      * @param factory
      *            Collection factory
-     * @return SequenceM batched into collections determined by the predicate
+     * @return ReactiveSeq batched into collections determined by the predicate
      *         supplied
      */
+    @Override
     <C extends Collection<? super T>> ReactiveSeq<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory);
 
     /**
-     * Create a SequenceM batched by a Collection, where each batch is populated
+     * Create a ReactiveSeq batched by a Collection, where each batch is populated
      * until the predicate holds
      * 
      * <pre>
@@ -759,17 +796,25 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
      *            Batch until predicate holds, then open next batch
      * @param factory
      *            Collection factory
-     * @return SequenceM batched into collections determined by the predicate
+     * @return ReactiveSeq batched into collections determined by the predicate
      *         supplied
      */
+    @Override
     <C extends Collection<? super T>> ReactiveSeq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory);
 
-
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#grouped(java.util.function.Function, java.util.stream.Collector)
+     */
+    @Override
 	default <K, A, D> ReactiveSeq<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
 		return fromStream(JoolManipulation.super.grouped(classifier, downstream));
 	}
 
-	public default <K> ReactiveSeq<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#grouped(java.util.function.Function)
+	 */
+	@Override
+	default <K> ReactiveSeq<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
 		return fromStream(JoolManipulation.super.grouped(classifier));
 	}
 
@@ -882,36 +927,54 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 */
 	ReactiveSeq<T> sorted(Comparator<? super T> c);
 
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.Traversable#takeWhile(java.util.function.Predicate)
+	 */
 	@Override
     default  ReactiveSeq<T> takeWhile(Predicate<? super T> p) {
        
         return (ReactiveSeq<T>)ExtendedTraversable.super.takeWhile(p);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)
+     */
     @Override
     default ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
        
         return (ReactiveSeq<T>)ExtendedTraversable.super.dropWhile(p);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#takeUntil(java.util.function.Predicate)
+     */
     @Override
     default ReactiveSeq<T> takeUntil(Predicate<? super T> p) {
         
         return (ReactiveSeq<T>)ExtendedTraversable.super.takeUntil(p);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#dropUntil(java.util.function.Predicate)
+     */
     @Override
     default ReactiveSeq<T> dropUntil(Predicate<? super T> p) {
        
         return (ReactiveSeq<T>)ExtendedTraversable.super.dropUntil(p);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#dropRight(int)
+     */
     @Override
     default ReactiveSeq<T> dropRight(int num) {
         
         return (ReactiveSeq<T>)ExtendedTraversable.super.dropRight(num);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#takeRight(int)
+     */
     @Override
     default ReactiveSeq<T> takeRight(int num) {
         
@@ -965,6 +1028,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 */
 	ReactiveSeq<T> skipUntil(Predicate<? super T> p);
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#skipUntilClosed(java.util.function.Predicate)
+	 */
 	default ReactiveSeq<T> skipUntilClosed(Predicate<? super T> p) {
 		return fromStream(JoolManipulation.super.skipUntilClosed(p));
 	}
@@ -1010,9 +1076,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 */
 	ReactiveSeq<T> limitUntil(Predicate<? super T> p);
 
-	/**
-	 * @param p
-	 * @return
+	
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#limitUntilClosed(java.util.function.Predicate)
 	 */
 	@Override
 	default ReactiveSeq<T> limitUntilClosed(Predicate<? super T> p) {
@@ -1020,7 +1086,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/**
-	 * @return Does nothing SequenceM is for Sequential Streams
+	 * @return Does nothing ReactiveSeq is for Sequential Streams
 	 * 
 	 */
 	ReactiveSeq<T> parallel();
@@ -1115,12 +1181,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	SequenceM&lt;String&gt; helloWorld = ReactiveSeq.of(&quot;hello&quot;, &quot;world&quot;, &quot;last&quot;);
+	 * 	ReactiveSeq&lt;String&gt; helloWorld = ReactiveSeq.of(&quot;hello&quot;, &quot;world&quot;, &quot;last&quot;);
 	 * 	HeadAndTail&lt;String&gt; headAndTail = helloWorld.headAndTail();
 	 * 	String head = headAndTail.head();
 	 * 	assertThat(head, equalTo(&quot;hello&quot;));
 	 * 
-	 * 	SequenceM&lt;String&gt; tail = headAndTail.tail();
+	 * 	ReactiveSeq&lt;String&gt; tail = headAndTail.tail();
 	 * 	assertThat(tail.headAndTail().head(), equalTo(&quot;world&quot;));
 	 * }
 	 * </pre>
@@ -1427,7 +1493,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	public <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory);
 
 	/**
-	 * Convert this SequenceM into a Stream
+	 * Convert this ReactiveSeq into a Stream
 	 * 
 	 * @return calls to stream() but more flexible on type for inferencing
 	 *         purposes.
@@ -1435,7 +1501,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	public <T> Stream<T> toStream();
 
 	/**
-	 * Convert this SequenceM into a Stream
+	 * Convert this ReactiveSeq into a Stream
 	 */
 	public ReactiveSeq<T> stream();
 
@@ -1454,16 +1520,16 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 
 	/**
 	 * <pre>
-	 * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
+	 * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
 	 * </pre>
 	 * 
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
-	boolean startsWith(Iterator<T> iterator);
+	boolean startsWith(Stream<T> stream);
 
 	/**
-	 * @return this SequenceM converted to AnyM format
+	 * @return this ReactiveSeq converted to AnyM format
 	 */
 	public AnyMSeq<T> anyM();
 
@@ -1518,7 +1584,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 
 	/**
 	 * FlatMap where the result is a Collection, flattens the resultant
-	 * collections into the host SequenceM
+	 * collections into the host ReactiveSeq
 	 * 
 	 * <pre>
 	 * {@code 
@@ -1533,7 +1599,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * @param fn
 	 * @return
 	 */
-	<R> ReactiveSeq<R> flatMapIterable(Function<? super T, Iterable<? extends R>> fn);
+	<R> ReactiveSeq<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> fn);
 
 	/**
 	 * flatMap operation
@@ -1605,7 +1671,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	<U> ReactiveSeq<U> cast(Class<U> type);
 
 	/**
-	 * Lazily converts this SequenceM into a Collection. This does not trigger
+	 * Lazily converts this ReactiveSeq into a Collection. This does not trigger
 	 * the Stream. E.g. Collection is not thread safe on the first iteration.
 	 * 
 	 * <pre>
@@ -1624,7 +1690,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	CollectionX<T> toLazyCollection();
 
 	/**
-	 * Lazily converts this SequenceM into a Collection. This does not trigger
+	 * Lazily converts this ReactiveSeq into a Collection. This does not trigger
 	 * the Stream. E.g.
 	 * 
 	 * <pre>
@@ -1653,7 +1719,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * }
 	 * </pre>
 	 * 
-	 * @return Streamable that replay this SequenceM, populated lazily and can
+	 * @return Streamable that replay this ReactiveSeq, populated lazily and can
 	 *         be populated across threads
 	 */
 	public Streamable<T> toConcurrentLazyStreamable();
@@ -1687,7 +1753,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	public ReactiveSeq<T> shuffle();
 
 	/**
-	 * Append Stream to this SequenceM
+	 * Append Stream to this ReactiveSeq
 	 * 
 	 * <pre>
 	 * {
@@ -1700,12 +1766,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * @param stream
 	 *            to append
-	 * @return SequenceM with Stream appended
+	 * @return ReactiveSeq with Stream appended
 	 */
 	public ReactiveSeq<T> appendStream(Stream<T> stream);
 
 	/**
-	 * Prepend Stream to this SequenceM
+	 * Prepend Stream to this ReactiveSeq
 	 * 
 	 * <pre>
 	 * {
@@ -1719,12 +1785,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * @param stream
 	 *            to Prepend
-	 * @return SequenceM with Stream prepended
+	 * @return ReactiveSeq with Stream prepended
 	 */
 	ReactiveSeq<T> prependStream(Stream<T> stream);
 
 	/**
-	 * Append values to the end of this SequenceM
+	 * Append values to the end of this ReactiveSeq
 	 * 
 	 * <pre>
 	 * {
@@ -1737,7 +1803,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * @param values
 	 *            to append
-	 * @return SequenceM with appended values
+	 * @return ReactiveSeq with appended values
 	 */
 	ReactiveSeq<T> append(T... values);
 	@Override
@@ -1758,7 +1824,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
 	 * }
 	 * @param values to prepend
-	 * @return SequenceM with values prepended
+	 * @return ReactiveSeq with values prepended
 	 */
 	ReactiveSeq<T> prepend(T... values);
 
@@ -1819,7 +1885,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            to insert Stream at
 	 * @param stream
 	 *            to insert
-	 * @return newly conjoined SequenceM
+	 * @return newly conjoined ReactiveSeq
 	 */
 	ReactiveSeq<T> insertStreamAt(int pos, Stream<T> stream);
 
@@ -1841,7 +1907,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * }
 	 * 
 	 * @param iterable Values to check
-	 * @return true if SequenceM ends with values in the supplied iterable
+	 * @return true if ReactiveSeq ends with values in the supplied iterable
 	 */
 	boolean endsWithIterable(Iterable<T> iterable);
 
@@ -1855,7 +1921,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * @param stream
 	 *            Values to check
-	 * @return true if SequenceM endswith values in the supplied Stream
+	 * @return true if ReactiveSeq endswith values in the supplied Stream
 	 */
 	boolean endsWith(Stream<T> stream);
 
@@ -1876,7 +1942,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            Length of time
 	 * @param unit
 	 *            Time unit
-	 * @return SequenceM that skips all elements until time period has elapsed
+	 * @return ReactiveSeq that skips all elements until time period has elapsed
 	 */
 	ReactiveSeq<T> skip(long time, final TimeUnit unit);
 
@@ -1896,7 +1962,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            Length of time
 	 * @param unit
 	 *            Time unit
-	 * @return SequenceM that returns all elements until time period has elapsed
+	 * @return ReactiveSeq that returns all elements until time period has elapsed
 	 */
 	ReactiveSeq<T> limit(long time, final TimeUnit unit);
 
@@ -1910,7 +1976,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	ReactiveSeq<T> skipLast(int num);
 
 	/**
-	 * Limit results to the last x elements in a SequenceM
+	 * Limit results to the last x elements in a ReactiveSeq
 	 * 
 	 * <pre>
 	 * {@code 
@@ -1921,21 +1987,21 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * }
 	 * 
 	 * @param num of elements to return (last elements)
-	 * @return SequenceM limited to last num elements
+	 * @return ReactiveSeq limited to last num elements
 	 */
 	ReactiveSeq<T> limitLast(int num);
 
 	/**
-	 * Turns this SequenceM into a HotStream, a connectable Stream, being executed on a thread on the 
+	 * Turns this ReactiveSeq into a HotStream, a connectable Stream, being executed on a thread on the 
 	 * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
 	 * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedHotStream(Executor)}.
 	 * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#pausableHotStream(Executor)}.
-	 * Turns this SequenceM into a HotStream, a connectable Stream, being
+	 * Turns this ReactiveSeq into a HotStream, a connectable Stream, being
 	 * executed on a thread on the supplied executor, that is producing data
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+	 *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
 	 * 											.hotStream(exec)
 	 * 											
 	 * 		
@@ -1947,7 +2013,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * </pre>
 	 * 
 	 * @param e
-	 *            Executor to execute this SequenceM on
+	 *            Executor to execute this ReactiveSeq on
 	 * @return a Connectable HotStream
 	 */
 	HotStream<T> hotStream(Executor e);
@@ -1960,7 +2026,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	  * <pre>
 	 * {@code 
-	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+	 *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
 											.hotStream(exec)
 											
 		
@@ -1975,13 +2041,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 */
 	HotStream<T> primedHotStream(Executor e);
 	/**
-	 * Turns this SequenceM into a HotStream, a connectable & pausable Stream, being executed on a thread on the 
+	 * Turns this ReactiveSeq into a HotStream, a connectable & pausable Stream, being executed on a thread on the 
 	 * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
 	 * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
 	 * The generated HotStream is pausable, for a unpausable HotStream (slightly faster execution) @see {@link ReactiveSeq#hotStream(Executor)}.
 	 * <pre>
 	 * {@code 
-	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+	 *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
 											.hotStream(exec)
 											
 		
@@ -1994,7 +2060,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *  
 	 * }
 	 * </pre>
-	 * @param e Executor to execute this SequenceM on
+	 * @param e Executor to execute this ReactiveSeq on
 	 * @return a Connectable HotStream
 	 */
 	PausableHotStream<T> pausableHotStream(Executor e);
@@ -2006,7 +2072,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	  * <pre>
 	 * {@code 
-	 *  HotStream<Integer> ints = SequenceM.range(0,Integer.MAX_VALUE)
+	 *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
 											.hotStream(exec)
 											
 		
@@ -2183,7 +2249,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * <pre>
 	 * {@code
-	 *     SeqSubscriber<Integer> sub = SequenceM.subscriber();
+	 *     SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
 	 * 		ReactiveSeq.of(1,2,3).subscribe(sub);
 	 * 		sub.stream().forEach(System.out::println);
 	 * 		
@@ -2214,7 +2280,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 */
 	@SafeVarargs
 	public static <T> ReactiveSeq<T> of(T... elements) {
-		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, false, 0);
+		ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(elements, false, 0);
 		return StreamUtils.reactiveSeq(StreamSupport.stream(array, false),Optional.ofNullable(array));
 
 	}
@@ -2229,7 +2295,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 */
 	@SafeVarargs
 	public static <T> ReactiveSeq<T> reversedOf(T... elements) {
-		ReversingArraySpliterator array = new ReversingArraySpliterator<T>(elements, false, 0).invert();
+		ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(elements, false, 0).invert();
 		return StreamUtils.reactiveSeq(StreamSupport.stream(array, false),Optional.ofNullable(array));
 		
 
@@ -2259,7 +2325,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            Number of range to start from
 	 * @param end
 	 *            Number for range to end at
-	 * @return Range SequenceM
+	 * @return Range ReactiveSeq
 	 */
 	public static ReactiveSeq<Integer> range(int start, int end) {
 		ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(start, end, false);
@@ -2275,7 +2341,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            Number of range to start from
 	 * @param end
 	 *            Number for range to end at
-	 * @return Range SequenceM
+	 * @return Range ReactiveSeq
 	 */
 	public static ReactiveSeq<Long> rangeLong(long start, long end) {
 		ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(start, end, false);
@@ -2284,7 +2350,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/**
-	 * Construct a Sequence from a Stream
+	 * Construct a ReactiveSeq from a Stream
 	 * 
 	 * @param stream
 	 *            Stream to construct Sequence from
@@ -2293,12 +2359,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	public static <T> ReactiveSeq<T> fromStream(Stream<T> stream) {
 		Objects.requireNonNull(stream);
 		if (stream instanceof ReactiveSeq)
-			return (ReactiveSeq) stream;
+			return (ReactiveSeq<T>) stream;
 		return StreamUtils.reactiveSeq(stream,Optional.empty());
 	}
 
 	/**
-	 * Construct a Sequence from a Stream
+	 * Construct a ReactiveSeq from a Stream
 	 * 
 	 * @param stream
 	 *            Stream to construct Sequence from
@@ -2311,7 +2377,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/**
-	 * Construct a Sequence from a Stream
+	 * Construct a ReactiveSeq from a Stream
 	 * 
 	 * @param stream
 	 *            Stream to construct Sequence from
@@ -2323,7 +2389,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/**
-	 * Construct a Sequence from a Stream
+	 * Construct a ReactiveSeq from a Stream
 	 * 
 	 * @param stream
 	 *            Stream to construct Sequence from
@@ -2335,12 +2401,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/**
-	 * Construct a Sequence from a List (prefer this method if the source is a
+	 * Construct a ReactiveSeq from a List (prefer this method if the source is a
 	 * list, as it allows more efficient Stream reversal).
 	 * 
 	 * @param iterable
 	 *            to construct Sequence from
-	 * @return SequenceM
+	 * @return ReactiveSeq
 	 */
 	public static <T> ReactiveSeq<T> fromList(List<T> list) {
 		Objects.requireNonNull(list);
@@ -2361,11 +2427,11 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
         return sub.stream();
     }
 	/**
-	 * Construct a Sequence from an Iterable
+	 * Construct a ReactiveSeq from an Iterable
 	 * 
 	 * @param iterable
 	 *            to construct Sequence from
-	 * @return SequenceM
+	 * @return ReactiveSeq
 	 */
 	public static <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable) {
 		Objects.requireNonNull(iterable);
@@ -2373,11 +2439,11 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/**
-	 * Construct a Sequence from an Iterator
+	 * Construct a ReactiveSeq from an Iterator
 	 * 
 	 * @param iterator
 	 *            to construct Sequence from
-	 * @return SequenceM
+	 * @return ReactiveSeq
 	 */
 	public static <T> ReactiveSeq<T> fromIterator(Iterator<T> iterator) {
 		Objects.requireNonNull(iterator);
@@ -2407,7 +2473,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * {@code 
 	 *  unzip(ReactiveSeq.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c")))
 	 *  
-	 *  // SequenceM[1,2,3], SequenceM[a,b,c]
+	 *  // ReactiveSeq[1,2,3], ReactiveSeq[a,b,c]
 	 * }
 	 * 
 	 * </pre>
@@ -2425,7 +2491,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * {@code 
 	 *    unzip3(ReactiveSeq.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3,"c", 4l)))
 	 * }
-	 * // SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l]
+	 * // ReactiveSeq[1,2,3], ReactiveSeq[a,b,c], ReactiveSeq[2l,3l,4l]
 	 * </pre>
 	 */
 	public static <T1, T2, T3> Tuple3<ReactiveSeq<T1>, ReactiveSeq<T2>, ReactiveSeq<T3>> unzip3(ReactiveSeq<Tuple3<T1, T2, T3>> sequence) {
@@ -2441,7 +2507,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * unzip4(ReactiveSeq.of(new Tuple4(1, "a", 2l,'z'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
 	 * 						"c", 4l,'x')));
 	 * 		}
-	 * 		// SequenceM[1,2,3], SequenceM[a,b,c], SequenceM[2l,3l,4l], SequenceM[z,y,x]
+	 * 		// ReactiveSeq[1,2,3], ReactiveSeq[a,b,c], ReactiveSeq[2l,3l,4l], ReactiveSeq[z,y,x]
 	 * </pre>
 	 */
 	public static <T1, T2, T3, T4> Tuple4<ReactiveSeq<T1>, ReactiveSeq<T2>, ReactiveSeq<T3>, ReactiveSeq<T4>> unzip4(ReactiveSeq<Tuple4<T1, T2, T3, T4>> sequence) {
@@ -2564,7 +2630,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	
 
 	/**
-	 * If this SequenceM is empty replace it with a another Stream
+	 * If this ReactiveSeq is empty replace it with a another Stream
 	 * 
 	 * <pre>
 	 * {@code 
@@ -2577,9 +2643,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * @param switchTo
 	 *            Supplier that will generate the alternative Stream
-	 * @return SequenceM that will switch to an alternative Stream if empty
+	 * @return ReactiveSeq that will switch to an alternative Stream if empty
 	 */
-	default ReactiveSeq<T> onEmptySwitch(Supplier<Stream<T>> switchTo) {
+	default ReactiveSeq<T> onEmptySwitch(Supplier<? extends Stream<T>> switchTo) {
 		AtomicBoolean called = new AtomicBoolean(false);
 		return ReactiveSeq.fromStream(onEmptyGet((Supplier) () -> {
 			called.set(true);
@@ -2689,7 +2755,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            period
 	 * @param t
 	 *            Time unit
-	 * @return SequenceM that emits x elements per time period
+	 * @return ReactiveSeq that emits x elements per time period
 	 */
 	ReactiveSeq<T> xPer(int x, long time, TimeUnit t);
 
@@ -2698,7 +2764,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * <pre>
 	 * {@code 
-	 * SequenceM.iterate("", last -> "next")
+	 * ReactiveSeq.iterate("", last -> "next")
 	 * 				.limit(100)
 	 * 				.batchBySize(10)
 	 * 				.onePer(1, TimeUnit.MICROSECONDS)
@@ -2710,7 +2776,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * }
 	 * @param time period
 	 * @param t Time unit
-	 * @return SequenceM that emits 1 element per time period
+	 * @return ReactiveSeq that emits 1 element per time period
 	 */
 	ReactiveSeq<T> onePer(long time, TimeUnit t);
 
@@ -2750,7 +2816,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *            time length in nanos of the delay
 	 * @param unit
 	 *            for the delay
-	 * @return SequenceM that emits each element after a fixed delay
+	 * @return ReactiveSeq that emits each element after a fixed delay
 	 */
 	ReactiveSeq<T> fixedDelay(long l, TimeUnit unit);
 
@@ -2788,7 +2854,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * @param fn
 	 *            Function that accepts a Throwable and returns an alternative
 	 *            value
-	 * @return SequenceM that can recover from an Exception
+	 * @return ReactiveSeq that can recover from an Exception
 	 */
 	ReactiveSeq<T> recover(final Function<Throwable, ? extends T> fn);
 
@@ -2861,7 +2927,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/**
-	 * Remove all occurances of the specified element from the SequenceM
+	 * Remove all occurances of the specified element from the ReactiveSeq
 	 * 
 	 * <pre>
 	 * {@code
@@ -2873,18 +2939,18 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 
 	 * @param t
 	 *            element to remove
-	 * @return Filtered Stream / SequenceM
+	 * @return Filtered Stream / ReactiveSeq
 	 */
 	default ReactiveSeq<T> remove(T t) {
 		return this.filter(v -> v != t);
 	}
 
 	/**
-	 * Generate the permutations based on values in the SequenceM Makes use of
+	 * Generate the permutations based on values in the ReactiveSeq Makes use of
 	 * Streamable to store intermediate stages in a collection
 	 * 
 	 * 
-	 * @return Permutations from this SequenceM
+	 * @return Permutations from this ReactiveSeq
 	 */
 	default ReactiveSeq<ReactiveSeq<T>> permutations() {
 		Streamable<Streamable<T>> streamable = Streamable.fromStream(this).permutations();
@@ -2900,7 +2966,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 *   ReactiveSeq.of(1,2,3,4,5,6).subStream(1,3);
 	 *   
 	 *   
-	 *   //SequenceM[2,3]
+	 *   //ReactiveSeq[2,3]
 	 * }
 	 * </pre>
 	 * 
@@ -2919,7 +2985,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * {@code
 	 *   ReactiveSeq.of(1,2,3).combinations(2)
 	 *   
-	 *   //SequenceM[SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]]
+	 *   //ReactiveSeq[ReactiveSeq[1,2],ReactiveSeq[1,3],ReactiveSeq[2,3]]
 	 * }
 	 * </pre>
 	 * 
@@ -2939,8 +3005,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * {@code
 	 *   ReactiveSeq.of(1,2,3).combinations()
 	 *   
-	 *   //SequenceM[SequenceM[],SequenceM[1],SequenceM[2],SequenceM[3].SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]
-	 *   			,SequenceM[1,2,3]]
+	 *   //ReactiveSeq[ReactiveSeq[],ReactiveSeq[1],ReactiveSeq[2],ReactiveSeq[3].ReactiveSeq[1,2],ReactiveSeq[1,3],ReactiveSeq[2,3]
+	 *   			,ReactiveSeq[1,2,3]]
 	 * }
 	 * </pre>
 	 * 
@@ -2958,7 +3024,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	 * {@code
 	 *  //run at 8PM every night
-	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
 	 *            .map(this::processJob)
 	 *            .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
 	 * }
@@ -2969,7 +3035,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
+	 * 	HotStream&lt;Data&gt; dataStream = ReactiveSeq.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
 	 * 			.schedule(&quot;0 20 * * *&quot;, Executors.newScheduledThreadPool(1));
 	 * 
 	 * 	data.connect().forEach(this::logToDB);
@@ -2992,7 +3058,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	 * {@code
 	 *  //run every 60 seconds after last job completes
-	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
 	 *            .map(this::processJob)
 	 *            .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
 	 * }
@@ -3003,7 +3069,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
+	 * 	HotStream&lt;Data&gt; dataStream = ReactiveSeq.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
 	 * 			.scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
 	 * 
 	 * 	data.connect().forEach(this::logToDB);
@@ -3026,7 +3092,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	 * {@code
 	 *  //run every 60 seconds
-	 *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+	 *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
 	 *            .map(this::processJob)
 	 *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
 	 * }
@@ -3037,7 +3103,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
+	 * 	HotStream&lt;Data&gt; dataStream = ReactiveSeq.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
 	 * 			.scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
 	 * 
 	 * 	data.connect().forEach(this::logToDB);
@@ -3073,7 +3139,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 									a->b->c->c+":"a+":"+b);
 	 * 									
 	 * 
-	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
 	 * }
 	 * </pre>
 	 * 
@@ -3084,7 +3150,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * @param yieldingFunction
 	 *            Function with pointers to the current element from both
 	 *            Streams that generates the new elements
-	 * @return SequenceM with elements generated via nested iteration
+	 * @return ReactiveSeq with elements generated via nested iteration
 	 */
 	<R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
 			Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
@@ -3104,7 +3170,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 									a->b->c->c+":"a+":"+b);
 	 * 									
 	 * 
-	 *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+	 *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
 	 * }
 	 * </pre>
 	 * 
@@ -3119,7 +3185,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * @param yieldingFunction
 	 *            Function with pointers to the current element from both
 	 *            Streams that generates the new elements
-	 * @return SequenceM with elements generated via nested iteration
+	 * @return ReactiveSeq with elements generated via nested iteration
 	 */
 	<R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
 			Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
@@ -3137,7 +3203,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 									a->b->a+b);
 	 * 									
 	 * 
-	 *  //SequenceM[11,14,12,15,13,16]
+	 *  //ReactiveSeq[11,14,12,15,13,16]
 	 * }
 	 * </pre>
 	 * 
@@ -3147,7 +3213,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * @param yieldingFunction
 	 *            Function with pointers to the current element from both
 	 *            Streams that generates the new elements
-	 * @return SequenceM with elements generated via nested iteration
+	 * @return ReactiveSeq with elements generated via nested iteration
 	 */
 	<R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
@@ -3164,7 +3230,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * 									a->b->a+b);
 	 * 									
 	 * 
-	 *  //SequenceM[14,15]
+	 *  //ReactiveSeq[14,15]
 	 * }
 	 * </pre>
 	 * 
@@ -3176,7 +3242,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	 * @param yieldingFunction
 	 *            Function with pointers to the current element from both
 	 *            Streams that generates the new elements
-	 * @return SequenceM with elements generated via nested iteration
+	 * @return ReactiveSeq with elements generated via nested iteration
 	 */
 	<R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1, Function<? super T, Function<? super R1, Boolean>> filterFunction,
 			Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
@@ -3201,7 +3267,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#count(java.util.function.Predicate)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#count(java.util.function.Predicate)
 	 */
 	@Override
 	default long count(Predicate<? super T> predicate) {
@@ -3210,7 +3276,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#countDistinct(java.util.function.Predicate)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinct(java.util.function.Predicate)
 	 */
 	@Override
 	default long countDistinct(Predicate<? super T> predicate) {
@@ -3219,7 +3285,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#countDistinctBy(java.util.function.Function, java.util.function.Predicate)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinctBy(java.util.function.Function, java.util.function.Predicate)
 	 */
 	@Override
 	default <U> long countDistinctBy(Function<? super T, ? extends U> function, Predicate<? super U> predicate) {
@@ -3228,7 +3294,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#countDistinct()
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinct()
 	 */
 	@Override
 	default long countDistinct() {
@@ -3237,7 +3303,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#countDistinctBy(java.util.function.Function)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinctBy(java.util.function.Function)
 	 */
 	@Override
 	default <U> long countDistinctBy(Function<? super T, ? extends U> function) {
@@ -3246,7 +3312,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#mode()
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#mode()
 	 */
 	@Override
 	default Optional<T> mode() {
@@ -3255,7 +3321,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#sum()
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#sum()
 	 */
 	@Override
 	default Optional<T> sum() {
@@ -3264,7 +3330,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#sum(java.util.function.Function)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#sum(java.util.function.Function)
 	 */
 	@Override
 	default <U> Optional<U> sum(Function<? super T, ? extends U> function) {
@@ -3273,7 +3339,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#sumInt(java.util.function.ToIntFunction)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#sumInt(java.util.function.ToIntFunction)
 	 */
 	@Override
 	default int sumInt(ToIntFunction<? super T> function) {
@@ -3282,7 +3348,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#sumLong(java.util.function.ToLongFunction)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#sumLong(java.util.function.ToLongFunction)
 	 */
 	@Override
 	default long sumLong(ToLongFunction<? super T> function) {
@@ -3291,7 +3357,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#sumDouble(java.util.function.ToDoubleFunction)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#sumDouble(java.util.function.ToDoubleFunction)
 	 */
 	@Override
 	default double sumDouble(ToDoubleFunction<? super T> function) {
@@ -3300,7 +3366,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#avg()
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#avg()
 	 */
 	@Override
 	default Optional<T> avg() {
@@ -3309,7 +3375,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#avg(java.util.function.Function)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#avg(java.util.function.Function)
 	 */
 	@Override
 	default <U> Optional<U> avg(Function<? super T, ? extends U> function) {
@@ -3318,7 +3384,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#avgInt(java.util.function.ToIntFunction)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#avgInt(java.util.function.ToIntFunction)
 	 */
 	@Override
 	default double avgInt(ToIntFunction<? super T> function) {
@@ -3327,7 +3393,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#avgLong(java.util.function.ToLongFunction)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#avgLong(java.util.function.ToLongFunction)
 	 */
 	@Override
 	default double avgLong(ToLongFunction<? super T> function) {
@@ -3336,7 +3402,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#avgDouble(java.util.function.ToDoubleFunction)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#avgDouble(java.util.function.ToDoubleFunction)
 	 */
 	@Override
 	default double avgDouble(ToDoubleFunction<? super T> function) {
@@ -3345,7 +3411,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#min()
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#min()
 	 */
 	@Override
 	default Optional<T> min() {
@@ -3354,7 +3420,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#min(java.util.function.Function)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#min(java.util.function.Function)
 	 */
 	@Override
 	default <U extends Comparable<? super U>> Optional<U> min(Function<? super T, ? extends U> function) {
@@ -3363,7 +3429,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#min(java.util.function.Function, java.util.Comparator)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#min(java.util.function.Function, java.util.Comparator)
 	 */
 	@Override
 	default <U> Optional<U> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
@@ -3372,7 +3438,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#minBy(java.util.function.Function)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#minBy(java.util.function.Function)
 	 */
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function) {
@@ -3381,7 +3447,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#minBy(java.util.function.Function, java.util.Comparator)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#minBy(java.util.function.Function, java.util.Comparator)
 	 */
 	@Override
 	default <U> Optional<T> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
@@ -3390,7 +3456,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#max()
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#max()
 	 */
 	@Override
 	default Optional<T> max() {
@@ -3399,7 +3465,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#max(java.util.function.Function)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#max(java.util.function.Function)
 	 */
 	@Override
 	default <U extends Comparable<? super U>> Optional<U> max(Function<? super T, ? extends U> function) {
@@ -3408,7 +3474,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#max(java.util.function.Function, java.util.Comparator)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#max(java.util.function.Function, java.util.Comparator)
 	 */
 	@Override
 	default <U> Optional<U> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
@@ -3417,7 +3483,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#maxBy(java.util.function.Function)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#maxBy(java.util.function.Function)
 	 */
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> maxBy(Function<? super T, ? extends U> function) {
@@ -3426,7 +3492,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#maxBy(java.util.function.Function, java.util.Comparator)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#maxBy(java.util.function.Function, java.util.Comparator)
 	 */
 	@Override
 	default <U> Optional<T> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
@@ -3435,7 +3501,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#median()
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#median()
 	 */
 	@Override
 	default Optional<T> median() {
@@ -3444,7 +3510,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#median(java.util.Comparator)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#median(java.util.Comparator)
 	 */
 	@Override
 	default Optional<T> median(Comparator<? super T> comparator) {
@@ -3453,7 +3519,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#medianBy(java.util.function.Function)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#medianBy(java.util.function.Function)
 	 */
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> medianBy(Function<? super T, ? extends U> function) {
@@ -3462,7 +3528,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#medianBy(java.util.function.Function, java.util.Comparator)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#medianBy(java.util.function.Function, java.util.Comparator)
 	 */
 	@Override
 	default <U> Optional<T> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
@@ -3471,7 +3537,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#percentile(double)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentile(double)
 	 */
 	@Override
 	default Optional<T> percentile(double percentile) {
@@ -3480,7 +3546,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#percentile(double, java.util.Comparator)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentile(double, java.util.Comparator)
 	 */
 	@Override
 	default Optional<T> percentile(double percentile, Comparator<? super T> comparator) {
@@ -3489,7 +3555,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#percentileBy(double, java.util.function.Function)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentileBy(double, java.util.function.Function)
 	 */
 	@Override
 	default <U extends Comparable<? super U>> Optional<T> percentileBy(double percentile,
@@ -3499,7 +3565,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#percentileBy(double, java.util.function.Function, java.util.Comparator)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentileBy(double, java.util.function.Function, java.util.Comparator)
 	 */
 	@Override
 	default <U> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function,
@@ -3508,25 +3574,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 		return CyclopsCollectable.super.percentileBy(percentile, function, comparator);
 	}
 
+	
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#allMatch(org.hamcrest.Matcher)
-	 */
-	@Override
-	default boolean allMatch(Matcher<? super T> m) {
-		
-		return CyclopsCollectable.super.allMatch(m);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#noneMatch(org.hamcrest.Matcher)
-	 */
-	@Override
-	default boolean noneMatch(Matcher<? super T> m) {
-		return CyclopsCollectable.super.noneMatch(m);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toList(java.util.function.Supplier)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#toList(java.util.function.Supplier)
 	 */
 	@Override
 	default <L extends List<T>> L toList(Supplier<L> factory) {
@@ -3535,7 +3585,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toSet(java.util.function.Supplier)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#toSet(java.util.function.Supplier)
 	 */
 	@Override
 	default <S extends Set<T>> S toSet(Supplier<S> factory) {
@@ -3544,7 +3594,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toMap(java.util.function.Function, java.util.function.Function)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#toMap(java.util.function.Function, java.util.function.Function)
 	 */
 	@Override
 	default <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper,
@@ -3554,7 +3604,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toString(java.lang.CharSequence)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#toString(java.lang.CharSequence)
 	 */
 	@Override
 	default String toString(CharSequence delimiter) {
@@ -3563,7 +3613,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>,JoolManipulation<T
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.stream.SequenceMCollectable#toString(java.lang.CharSequence, java.lang.CharSequence, java.lang.CharSequence)
+	 * @see com.aol.cyclops.types.stream.CyclopsCollectable#toString(java.lang.CharSequence, java.lang.CharSequence, java.lang.CharSequence)
 	 */
 	@Override
 	default String toString(CharSequence delimiter, CharSequence prefix, CharSequence suffix) {

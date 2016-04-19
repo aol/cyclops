@@ -196,7 +196,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 	@Test
 	public void testIntersperse() {
 		
-		assertThat(((Traversable<Integer>)of(1,2,3).intersperse(0)).toListX(),equalTo(Arrays.asList(1,0,2,0,3)));
+		assertThat(((CollectionX<Integer>)of(1,2,3).intersperse(0)).toListX(),equalTo(Arrays.asList(1,0,2,0,3)));
 	
 
 
@@ -247,11 +247,11 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 
 		
 
-		assertThat((((Traversable<Serializable>)of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),containsInAnyOrder(1, 2, 3));
+		assertThat((((CollectionX<Integer>)of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),containsInAnyOrder(1, 2, 3));
 
-		assertThat((((Traversable<Serializable>)of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),not(containsInAnyOrder("a", "b",null)));
+		assertThat((((CollectionX<Integer>)of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),not(containsInAnyOrder("a", "b",null)));
 
-		assertThat(((Traversable<Serializable>)of(1, "a", 2, "b", 3)
+		assertThat(((CollectionX<Serializable>)of(1, "a", 2, "b", 3)
 
 				.ofType(Serializable.class)).toListX(),containsInAnyOrder(1, "a", 2, "b", 3));
 

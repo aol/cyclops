@@ -58,8 +58,8 @@ import com.aol.cyclops.util.stream.StreamUtils;
 
 public abstract class BaseAnyMValueTest {
 
-	AnyMValue<Integer> just;
-	AnyMValue<Integer> none;
+	protected AnyMValue<Integer> just;
+	protected AnyMValue<Integer> none;
 	
 
 	@Test
@@ -68,6 +68,27 @@ public abstract class BaseAnyMValueTest {
 		assertThat(none.toMaybe(),equalTo(Maybe.none()));
 	}
 
+	@Test
+    public void nest(){
+       assertThat(just.nest().map(m->m.get()),equalTo(just));
+      
+    }
+    @Test
+    public void coFlatMap(){
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : just.get()),equalTo(just));
+    }
+    @Test
+    public void combine(){
+        
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        assertThat(just.combine(add,none),equalTo(just));
+        assertThat(none.combine(add,just).toTry(),equalTo(Try.success(0))); 
+        assertThat(none.combine(add,none).toTry(),equalTo(Try.success(0))); 
+        assertThat(just.combine(add,just).toTry(),equalTo(Try.success(20)));
+        
+         
+    }
 	private int add1(int i){
 		return i+1;
 	}
@@ -188,10 +209,6 @@ public abstract class BaseAnyMValueTest {
 		assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
 	}
 
-	@Test
-	public void testGetMatchable() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
 
 	@Test
 	public void testIterate() {
@@ -342,7 +359,7 @@ public abstract class BaseAnyMValueTest {
 	@Test
 	public void testToListX() {
 		
-		assertThat(just.toListX(),equalTo(ListX.singleton(10)));
+		//assertThat(just.toListX(),equalTo(ListX.singleton(10)));
 		assertThat(none.toListX(),equalTo(ListX.empty()));
 	}
 
@@ -681,10 +698,7 @@ public abstract class BaseAnyMValueTest {
 		assertThat(cf.join(),equalTo(10));
 	}
 
-	@Test
-	public void testGetMatchable1() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
+	
 
 	@Test
     public void testMatches() {

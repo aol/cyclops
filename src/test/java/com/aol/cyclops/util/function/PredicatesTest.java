@@ -21,12 +21,16 @@ public class PredicatesTest {
 
     @Test
     public void testFilter(){
+        
         ReactiveSeq.of(1,2,3).filter(anyOf(not(in(2,3,4)),in(1,10,20)));
         ReactiveSeq.of(1,2,3).filter(anyOf(not(greaterThan(2)),in(1,10,20)));
         ReactiveSeq.of(1,2,3).filter(anyOf(not(greaterThanOrEquals(2)),in(1,10,20)));
         ReactiveSeq.of(1,2,3).filter(anyOf(not(lessThan(2)),in(1,10,20)));
         ReactiveSeq.of(1,2,3).filter(anyOf(not(lessThanOrEquals(2)),in(1,10,20)));
         ReactiveSeq.of(1,2,3).filter(anyOf(not(eq(2)),in(1,10,20)));
+        Stream.of(Maybe.of(2)).filter(eqv(Eval.now(2)));
+        
+        
     }
     @Test
     public void testEqv() {

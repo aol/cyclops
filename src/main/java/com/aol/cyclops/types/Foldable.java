@@ -2,24 +2,73 @@ package com.aol.cyclops.types;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import org.jooq.lambda.Seq;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.control.Ior;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Validator;
+import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.stream.HeadAndTail;
+import com.aol.cyclops.types.stream.HotStream;
+import com.aol.cyclops.util.stream.Streamable;
 
 public interface Foldable<T> {
 
-	public ReactiveSeq<T> stream();
-	
+    ReactiveSeq<T> stream();
+	default Foldable<T> foldable(){
+	    return stream();
+	}
+	/**
+     * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
+     * whenStream may be more efficient (as it is guaranteed to be lazy).
+     * 
+     * <pre>
+     * {@code 
+     * ListX.of(1,2,3,4,5,6,7,8,9)
+             .dropRight(5)
+             .plus(10)
+             .visit((x,xs) ->
+                 xs.join(x.>2?"hello":"world")),()->"NIL"
+             );
+     * 
+     * }
+     * //2world3world4
+     * 
+     * </pre>
+     * 
+     * 
+     * @param match
+     * @return
+     */
+    default <R> R visit(BiFunction<? super T,? super ReactiveSeq<T>,? extends R> match, Supplier<? extends R> ifEmpty){
+        
+        HeadAndTail<T> ht = foldable().headAndTail();
+        if(ht.isHeadPresent())
+            return match.apply(ht.head(),ht.tail());
+        return ifEmpty.get();
+        
+    }
+    default <R> R visit(BiFunction<? super Maybe<T>,? super ReactiveSeq<T>,? extends R> match){
+        HeadAndTail<T> ht = foldable().headAndTail();
+       return match.apply(ht.headMaybe(),ht.tail());
+        
+    }
+    	
 	/**
 	 * Attempt to map this Sequence to the same type as the supplied Monoid
 	 * (Reducer) Then use Monoid to reduce values
@@ -37,7 +86,7 @@ public interface Foldable<T> {
 	 * @return Reduce result
 	 */
 	default <R> R mapReduce(Reducer<R> reducer){
-		return stream().mapReduce(reducer);
+		return foldable().mapReduce(reducer);
 	}
 
 	/**
@@ -72,7 +121,7 @@ public interface Foldable<T> {
 	 * @return Reduce result
 	 */
 	default <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer){
-		return stream().mapReduce(mapper,reducer);
+		return foldable().mapReduce(mapper,reducer);
 	}
 	/**
 	 * <pre>
@@ -88,7 +137,7 @@ public interface Foldable<T> {
 	 * @return reduced values
 	 */
 	default T reduce(Monoid<T> reducer){
-		return stream().reduce(reducer);
+		return foldable().reduce(reducer);
 	}
 
 	/*
@@ -96,7 +145,7 @@ public interface Foldable<T> {
 	 * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
 	 */
 	default Optional<T> reduce(BinaryOperator<T> accumulator){
-		return stream().reduce(accumulator);
+		return foldable().reduce(accumulator);
 	}
 
 	/*
@@ -106,10 +155,11 @@ public interface Foldable<T> {
 	 * java.util.function.BinaryOperator)
 	 */
 	default T reduce(T identity, BinaryOperator<T> accumulator){
-		return stream().reduce(identity, accumulator);
+		return foldable().reduce(identity, accumulator);
 	}
 	default <U> U reduce(U identity, BiFunction<U, ? super T,U> accumulator){
-        return ((Seq<T>)stream()).foldLeft(identity,accumulator);
+	    Foldable<T> foldable = foldable();
+        return foldable.reduce(identity,accumulator);
     }
 
 	/*
@@ -119,7 +169,7 @@ public interface Foldable<T> {
 	 * java.util.function.BiFunction, java.util.function.BinaryOperator)
 	 */
 	default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner){
-		return stream().reduce(identity,accumulator,combiner);
+		return foldable().reduce(identity,accumulator,combiner);
 	}
 
 	/**
@@ -133,7 +183,7 @@ public interface Foldable<T> {
 	 * 	&#064;code
 	 * 	Monoid&lt;Integer&gt; sum = Monoid.of(0, (a, b) -&gt; a + b);
 	 * 	Monoid&lt;Integer&gt; mult = Monoid.of(1, (a, b) -&gt; a * b);
-	 * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).stream());
+	 * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).foldable());
 	 * 
 	 * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
 	 * 
@@ -145,7 +195,7 @@ public interface Foldable<T> {
 	 * @return
 	 */
 	default ListX<T> reduce(Stream<? extends Monoid<T>> reducers){
-		return stream().reduce(reducers);
+		return foldable().reduce(reducers);
 	}
 
 	/**
@@ -171,7 +221,7 @@ public interface Foldable<T> {
 	 * @return
 	 */
 	default ListX<T> reduce(Iterable<? extends Monoid<T>> reducers){
-		return stream().reduce(reducers);
+		return foldable().reduce(reducers);
 	}
 
 
@@ -190,7 +240,7 @@ public interface Foldable<T> {
 	 * @return Reduced result
 	 */
 	default T foldRight(Monoid<T> reducer){
-		return stream().foldRight(reducer);
+		return foldable().foldRight(reducer);
 	}
 
 	/**
@@ -207,10 +257,10 @@ public interface Foldable<T> {
 	 * @return
 	 */
 	default T foldRight(T identity, BinaryOperator<T> accumulator){
-		return stream().foldRight(identity,accumulator);
+		return foldable().foldRight(identity,accumulator);
 	}
 	default <U> U foldRight(U identity, BiFunction<? super T, U,U> accumulator){
-        return ((Seq<T>)stream()).foldRight(identity,accumulator);
+        return (foldable()).foldRight(identity,accumulator);
     }
 
 	/**
@@ -231,7 +281,7 @@ public interface Foldable<T> {
 	 * @return Reduce result
 	 */
 	default <T> T foldRightMapToType(Reducer<T> reducer){
-		return stream().foldRightMapToType(reducer);
+		return foldable().foldRightMapToType(reducer);
 	}
 	/**
      * <pre>
@@ -244,7 +294,7 @@ public interface Foldable<T> {
      */
     default String join(){
         
-        return stream().join();
+        return foldable().join();
     }
 
     /**
@@ -257,7 +307,7 @@ public interface Foldable<T> {
      * @return Stream as concatenated String
      */
     default String join(String sep){
-        return stream().join(sep);
+        return foldable().join(sep);
     }
 
     /**
@@ -270,21 +320,429 @@ public interface Foldable<T> {
      * @return Stream as concatenated String
      */
     default String join(String sep, String start, String end){
-        return stream().join(sep,start,end);
+        return foldable().join(sep,start,end);
     }
     
     default void print(PrintStream str){
-        stream().print(str);
+        foldable().print(str);
     }
     default void print(PrintWriter writer){
-        stream().print(writer);
+        foldable().print(writer);
     }
     default void printOut(){
-        stream().printOut();
+        foldable().printOut();
     }
     default void printErr(){
-        stream().printErr();
+        foldable().printErr();
+    }
+    
+    
+
+    /**
+     * Use classifier function to group elements in this Sequence into a Map
+     * 
+     * <pre>
+     * {
+     *  &#064;code
+     *  Map&lt;Integer, List&lt;Integer&gt;&gt; map1 = of(1, 2, 3, 4).groupBy(i -&gt; i % 2);
+     *  assertEquals(asList(2, 4), map1.get(0));
+     *  assertEquals(asList(1, 3), map1.get(1));
+     *  assertEquals(2, map1.size());
+     * 
+     * }
+     * 
+     * </pre>
+     */
+    default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier){
+        return foldable().groupBy(classifier);
+    }
+    
+
+    /**
+     * extract head and tail together, where head is expected to be present
+     * 
+     * <pre>
+     * {
+     *  &#064;code
+     *  SequenceM&lt;String&gt; helloWorld = ReactiveSeq.of(&quot;hello&quot;, &quot;world&quot;, &quot;last&quot;);
+     *  HeadAndTail&lt;String&gt; headAndTail = helloWorld.headAndTail();
+     *  String head = headAndTail.head();
+     *  assertThat(head, equalTo(&quot;hello&quot;));
+     * 
+     *  SequenceM&lt;String&gt; tail = headAndTail.tail();
+     *  assertThat(tail.headAndTail().head(), equalTo(&quot;world&quot;));
+     * }
+     * </pre>
+     * 
+     * @return
+     */
+    default HeadAndTail<T> headAndTail(){
+        return foldable().headAndTail();
+    }
+    
+    /**
+     * @return First matching element in sequential order
+     * 
+     *         <pre>
+     * {@code
+     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
+     * 
+     * //3
+     * }
+     * </pre>
+     * 
+     *         (deterministic)
+     * 
+     */
+    default Optional<T> findFirst(){
+        return foldable().findFirst();
+    }
+
+    /**
+     * @return first matching element, but order is not guaranteed
+     * 
+     *         <pre>
+     * {@code
+     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
+     * 
+     * //3
+     * }
+     * </pre>
+     * 
+     * 
+     *         (non-deterministic)
+     */
+    default Optional<T> findAny(){
+        return foldable().findAny();
+    }
+    
+    /**
+     * 
+     * <pre>
+     * {@code 
+     *  assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
+     * }
+     * </pre>
+     * 
+     * @param iterable
+     * @return True if Monad starts with Iterable sequence of data
+     */
+    default boolean startsWithIterable(Iterable<T> iterable){
+        return foldable().startsWithIterable(iterable);
+    }
+
+    /**
+     * <pre>
+     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
+     * </pre>
+     * 
+     * @param iterator
+     * @return True if Monad starts with Iterators sequence of data
+     */
+    default boolean startsWith(Stream<T> stream){
+        return foldable().startsWith(stream);
+    }
+    /**
+     * <pre>
+     * {@code
+     *  assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .endsWith(Arrays.asList(5,6)));
+     * 
+     * }
+     * 
+     * @param iterable Values to check
+     * @return true if SequenceM ends with values in the supplied iterable
+     */
+    default boolean endsWithIterable(Iterable<T> iterable){
+        return foldable().endsWithIterable(iterable);
+    }
+
+    /**
+     * <pre>
+     * {@code
+     * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
+     *              .endsWith(Stream.of(5,6))); 
+     * }
+     * </pre>
+     * 
+     * @param stream
+     *            Values to check
+     * @return true if SequenceM endswith values in the supplied Stream
+     */
+    default boolean endsWith(Stream<T> stream){
+        return foldable().endsWith(stream);
+    }
+    
+    /**
+     * Lazily converts this SequenceM into a Collection. This does not trigger
+     * the Stream. E.g. Collection is not thread safe on the first iteration.
+     * 
+     * <pre>
+     * {
+     *  &#064;code
+     *  Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
+     * 
+     *  col.forEach(System.out::println);
+     * }
+     * 
+     * // Will print out &quot;first!&quot; before anything else
+     * </pre>
+     * 
+     * @return
+     */
+    default CollectionX<T> toLazyCollection(){
+        return foldable().toLazyCollection();
+    }
+
+    /**
+     * Lazily converts this SequenceM into a Collection. This does not trigger
+     * the Stream. E.g.
+     * 
+     * <pre>
+     * {
+     *  &#064;code
+     *  Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
+     * 
+     *  col.forEach(System.out::println);
+     * }
+     * 
+     * // Will print out &quot;first!&quot; before anything else
+     * </pre>
+     * 
+     * @return
+     */
+    default CollectionX<T> toConcurrentLazyCollection(){
+        return foldable().toConcurrentLazyCollection();
+    }
+
+    /**
+     * <pre>
+     * {
+     *  &#064;code
+     *  Streamable&lt;Integer&gt; repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -&gt; i + 2).toConcurrentLazyStreamable();
+     * 
+     *  assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     *  assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     * }
+     * </pre>
+     * 
+     * @return Streamable that replay this SequenceM, populated lazily and can
+     *         be populated across threads
+     */
+    default Streamable<T> toConcurrentLazyStreamable(){
+        return foldable().toConcurrentLazyStreamable();
+    }
+    
+    /**
+     * <pre>
+     * {@code 
+     *  assertThat(ReactiveSeq.of(1,2,3,4)
+     *                  .map(u->{throw new RuntimeException();})
+     *                  .recover(e->"hello")
+     *                  .firstValue(),equalTo("hello"));
+     * }
+     * </pre>
+     * 
+     * @return first value in this Stream
+     */
+    default T firstValue(){
+        return foldable().firstValue();
+    }
+
+    /**
+     * <pre>
+     * {@code 
+     *    
+     *    //1
+     *    ReactiveSeq.of(1).single(); 
+     *    
+     *    //UnsupportedOperationException
+     *    ReactiveSeq.of().single();
+     *     
+     *     //UnsupportedOperationException
+     *    ReactiveSeq.of(1,2,3).single();
+     * }
+     * </pre>
+     * 
+     * @return a single value or an UnsupportedOperationException if 0/1 values
+     *         in this Stream
+     */
+    default T single() {
+        return foldable().single();
+
+    }
+
+    default T single(Predicate<? super T> predicate){
+        return foldable().single(predicate);
+    }
+
+    /**
+     * <pre>
+     * {@code 
+     *    
+     *    //Optional[1]
+     *    ReactiveSeq.of(1).singleOptional(); 
+     *    
+     *    //Optional.empty
+     *    ReactiveSeq.of().singleOpional();
+     *     
+     *     //Optional.empty
+     *    ReactiveSeq.of(1,2,3).singleOptional();
+     * }
+     * </pre>
+     * 
+     * @return An Optional with single value if this Stream has exactly one
+     *         element, otherwise Optional Empty
+     */
+    default Optional<T> singleOptional() {
+        return foldable().singleOptional();
+
+    }
+
+    /**
+     * Return the elementAt index or Optional.empty
+     * 
+     * <pre>
+     * {@code
+     *  assertThat(ReactiveSeq.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+     * }
+     * </pre>
+     * 
+     * @param index
+     *            to extract element from
+     * @return elementAt index
+     */
+    default Optional<T> get(long index){
+        return foldable().get(index);
+    }
+    
+    
+    /**
+     * Execute this Stream on a schedule
+     * 
+     * <pre>
+     * {@code
+     *  //run at 8PM every night
+     *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+     *            .map(this::processJob)
+     *            .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
+     * }
+     * </pre>
+     * 
+     * Connect to the Scheduled Stream
+     * 
+     * <pre>
+     * {
+     *  &#064;code
+     *  HotStream&lt;Data&gt; dataStream = ReactiveSeq.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
+     *          .schedule(&quot;0 20 * * *&quot;, Executors.newScheduledThreadPool(1));
+     * 
+     *  data.connect().forEach(this::logToDB);
+     * }
+     * </pre>
+     * 
+     * 
+     * 
+     * @param cron
+     *            Expression that determines when each job will run
+     * @param ex
+     *            ScheduledExecutorService
+     * @return Connectable HotStream of output from scheduled Stream
+     */
+    default HotStream<T> schedule(String cron, ScheduledExecutorService ex){
+        return foldable().schedule(cron, ex);
+    }
+
+    /**
+     * Execute this Stream on a schedule
+     * 
+     * <pre>
+     * {@code
+     *  //run every 60 seconds after last job completes
+     *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+     *            .map(this::processJob)
+     *            .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
+     * }
+     * </pre>
+     * 
+     * Connect to the Scheduled Stream
+     * 
+     * <pre>
+     * {
+     *  &#064;code
+     *  HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
+     *          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
+     * 
+     *  data.connect().forEach(this::logToDB);
+     * }
+     * </pre>
+     * 
+     * 
+     * @param delay
+     *            Between last element completes passing through the Stream
+     *            until the next one starts
+     * @param ex
+     *            ScheduledExecutorService
+     * @return Connectable HotStream of output from scheduled Stream
+     */
+    default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
+        return foldable().scheduleFixedDelay(delay, ex);
+    }
+
+    /**
+     * Execute this Stream on a schedule
+     * 
+     * <pre>
+     * {@code
+     *  //run every 60 seconds
+     *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+     *            .map(this::processJob)
+     *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
+     * }
+     * </pre>
+     * 
+     * Connect to the Scheduled Stream
+     * 
+     * <pre>
+     * {
+     *  &#064;code
+     *  HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
+     *          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
+     * 
+     *  data.connect().forEach(this::logToDB);
+     * }
+     * </pre>
+     * 
+     * @param rate
+     *            Time in millis between job runs
+     * @param ex
+     *            ScheduledExecutorService
+     * @return Connectable HotStream of output from scheduled Stream
+     */
+    default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
+        return foldable().scheduleFixedRate(rate, ex);
     }
    
+    default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(Validator<T, S, F> validator) {
 
+        ReactiveSeq<Xor<F, S>> xors = stream().<Xor<F, S>> flatMap(s -> validator.accumulate(s).toXors().stream());
+        MapX<Boolean, List<Xor<F, S>>> map = xors.groupBy(s -> s.isPrimary());
+
+        return Ior.both(ReactiveSeq.fromStream(map.get(false).stream().map(x -> x.secondaryGet())),
+                ReactiveSeq.fromStream(map.get(true).stream().map(x -> x.get())));
+    }
+    /**
+     * Check that there are specified number of matches of predicate in the
+     * Stream
+     * 
+     * <pre>
+     * {@code 
+     *  assertTrue(ReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+     * }
+     * </pre>
+     * 
+     */
+    default boolean xMatch(int num, Predicate<? super T> c){
+        return foldable().xMatch(num, c);
+    }
 }

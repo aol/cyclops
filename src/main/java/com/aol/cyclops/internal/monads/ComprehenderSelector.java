@@ -27,7 +27,7 @@ public class ComprehenderSelector {
 	public Comprehender selectComprehender(Object structure) {
 
 		return cache.computeIfAbsent(structure.getClass(), st-> comprehenders.getRegisteredComprehenders().stream()
-																	.filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
+		                                                           .filter(e -> e.getKey().isAssignableFrom(structure.getClass()))
 																	.map(e->e.getValue())
 																	.findFirst()
 																	.orElse(new InvokeDynamicComprehender(Optional.ofNullable(structure)

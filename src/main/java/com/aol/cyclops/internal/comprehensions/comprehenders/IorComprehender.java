@@ -31,7 +31,7 @@ public class IorComprehender implements ValueComprehender<Ior> {
 
 	@Override
 	public Ior empty() {
-		return  Ior.primary(null);
+		return  Ior.secondary(null);
 	}
 
 	@Override

@@ -29,6 +29,11 @@ public class ForEachSequenceMTest {
 	}
 	volatile int times = 0;
 	@Test
+	public void emptyOnComplete(){
+	    ReactiveSeq.empty().forEachEvent(e->{}, e->{}, ()->complete=true);
+	    assertTrue(complete);
+	}
+	@Test
 	public void onComplete(){
         ReactiveSeq.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .map(this::load)
@@ -117,8 +122,26 @@ public class ForEachSequenceMTest {
 			throw new RuntimeException();
 		return ints;
 	}
+	private String process(int process){
+	    return "processed " + process;
+	}
+	@Test
+	public void forEachXWithErrorExample(){
+	    
+	   
+	    Subscription s = ReactiveSeq.of(10,20,30)
+                                    .map(this::process)
+                                    .forEachXWithError( 2,System.out::println, System.err::println);
+        
+        System.out.println("Completed 2");
+        s.request(1);
+        System.out.println("Finished all!");
+        
+	}
 	@Test
 	public void forEachXWithErrors(){
+	    
+	    
 	
 		List<Integer> list = new ArrayList<>();
 		

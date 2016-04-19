@@ -253,21 +253,6 @@ public abstract class BaseAnyMImpl<T> {
         return String.format("AnyM(%s)", monad );
     }
 	
-	public List<T> toList() {
-		if(this.monad.unwrap() instanceof Stream){
-			return asSequence().toList();
-		}
-		return this.<T>toSequence().toList();
-	}
-	
-	public Set<T> toSet() {
-		if(this.monad.unwrap() instanceof Stream){
-			return asSequence().toSet();
-		}
-		return this.<T>toSequence().toSet();
-	}
-	
-
 
 
 	public T get() {

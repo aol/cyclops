@@ -66,7 +66,7 @@ import com.aol.cyclops.util.stream.StreamUtils;
 import com.aol.cyclops.util.stream.Streamable;
 
 public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>{
-	private final Stream<T> stream;
+	private final Seq<T> stream;
 	private final Optional<ReversableSpliterator> reversable;
 	
 	public ReactiveSeqImpl(Stream<T> stream){
@@ -83,7 +83,9 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 		
 	}
 	
-	
+	public <U> U reduce(U identity, BiFunction<U, ? super T,U> accumulator){
+	    return stream.foldLeft(identity, accumulator);
+	}
 	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
@@ -1203,8 +1205,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * @param iterator
 	 * @return True if Monad starts with Iterators sequence of data
 	 */
-	public final boolean startsWith(Iterator<T> iterator){
-		return StreamUtils.startsWith(stream,iterator);
+	public final boolean startsWith(Stream<T> stream2){
+		return StreamUtils.startsWith(stream,stream2);
 		
 	}
 	
@@ -1281,7 +1283,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * @param fn
 	 * @return
 	 */
-	public final <R> ReactiveSeq<R> flatMapIterable(Function<? super T,Iterable<? extends R>> fn) {
+	public final <R> ReactiveSeq<R> flatMapIterable(Function<? super T,? extends Iterable<? extends R>> fn) {
 		return StreamUtils.reactiveSeq(StreamUtils.flatMapIterable(stream,fn),Optional.empty());
 		
 	}

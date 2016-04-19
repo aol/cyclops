@@ -1,6 +1,7 @@
 
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.For.Values.each2;
 import java.io.Closeable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -12,10 +13,13 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.stream.ToStream;
@@ -52,13 +56,21 @@ import lombok.val;
  * @param <X> Base Error type
  */
 public interface Try<T,X extends Throwable> extends Supplier<T>,
-                                                    Value<T>, 
+                                                    MonadicValue<T>, 
                                                     ToStream<T>,
                                                     Filterable<T>,
                                                     Functor<T>,
                                                     Applicativable<T> {
     
     
+    public static <T,X extends Throwable> Try<T,X> fromIterable(Iterable<T> iterable){
+        Iterator<T> it = iterable.iterator();
+        return Try.success(it.hasNext() ? it.next() : null);
+    }
+    default Try<T,Throwable> toTry(){
+        return (Try<T,Throwable>)this;
+        
+     }
     default <R> Eval<R>  matches(Function<CheckValue1<T,R>,CheckValue1<T,R>> secondary,Function<CheckValue1<X,R>,CheckValue1<X,R>> primary,Supplier<? extends R> otherwise){
         return  toXor().swap().matches(secondary, primary, otherwise);
     }
@@ -73,7 +85,27 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
      */
     @Override
     public Ior<X,T> toIor();
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> Try<R,X> coflatMap(Function<? super MonadicValue<T>,R> mapper) {
+        return mapper.andThen(r->unit(r)).apply(this);
+    }
     
+    //cojoin
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    default  Try<MonadicValue<T>,X> nest(){
+        return this.map(t->unit(t));
+    }
+    
+    default Try<T,X> combine(Monoid<T> monoid, Try<? extends T,X> v2){
+        return unit(each2(this, t1->v2, (t1,t2)->monoid.combiner().apply(t1, t2))
+                        .orElseGet(()->this.orElseGet(()->monoid.zero())));
+    }
     
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
@@ -137,7 +169,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 			return Xor.<X,T>secondary(this.toFailedOptional().get());
 	}
 	
-	default <T> Try<T,?> unit(T value){
+	default <T> Try<T,X> unit(T value){
 		return success(value);
 	}
 	@Override
@@ -151,7 +183,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 	/**
 	 * @return This monad, wrapped as AnyM of Success
 	 */
-	public AnyM<T> anyM();
+	public AnyMValue<T> anyM();
 	/**
 	 * @return This monad, wrapped as AnyM of Failure
 	 */
@@ -632,8 +664,8 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		/**
 		 * @return This monad wrapped as AnyM
 		 */
-		public AnyM<T> anyM(){
-			return AnyM.fromIterable(this);
+		public AnyMValue<T> anyM(){
+			return AnyM.fromTry(this);
 		}
 		/**
 		 * @return This monad, wrapped as AnyM of Failure

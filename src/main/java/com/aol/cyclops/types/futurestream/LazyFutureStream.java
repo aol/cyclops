@@ -46,6 +46,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.LazyReact;
@@ -75,6 +76,7 @@ import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
@@ -175,7 +177,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      *            Supplier that will generate the alternative Stream
      * @return SequenceM that will switch to an alternative Stream if empty
      */
-    default LazyFutureStream<U> onEmptySwitch(Supplier<Stream<U>> switchTo){
+    default LazyFutureStream<U> onEmptySwitch(Supplier<? extends Stream<U>> switchTo){
         return fromStream(ReactiveSeq.fromStream(stream()).onEmptySwitch(switchTo));
     }
     /**
@@ -344,7 +346,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
     @Override
     default <R> LazyFutureStream<R> patternMatch(Function<CheckValue1<U,R>,CheckValue1< U,R>> case1,Supplier<? extends R> otherwise){
 
-        return  map(u-> Matchable.of(u).matches(case1,otherwise).get());
+        return  map(u-> Matchables.supplier(()->u).matches(case1,otherwise).get());
     }
 
     /**
@@ -690,6 +692,9 @@ public interface LazyFutureStream<U> extends Functor<U>,
 
         return LazyToQueue.super.toQueue();
     }
+    default <T> T reduce(T identity, BiFunction<T, ? super U,T> accumulator){
+        return LazyStream.super.reduce(identity, accumulator,(a,b)->a);
+    }
     /*
      * (non-Javadoc)
      *
@@ -698,7 +703,6 @@ public interface LazyFutureStream<U> extends Functor<U>,
      */
     @Override
     default U reduce(U identity, BinaryOperator<U> accumulator) {
-
         return LazyStream.super.reduce(identity, accumulator);
     }
     /*
@@ -2278,7 +2282,9 @@ public interface LazyFutureStream<U> extends Functor<U>,
         return cycle().limitUntil(predicate);
     }
 
-
+    default Foldable<U> foldable(){
+        return this;
+    }
 
 
     /*
@@ -2761,7 +2767,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * @see com.aol.cyclops.control.ReactiveSeq#startsWith(java.util.Iterator)
      */
     @Override
-    default boolean startsWith(Iterator<U> iterator) {
+    default boolean startsWith(Stream<U> iterator) {
         return  ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                 .startsWith(iterator);
     }
@@ -2798,7 +2804,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      */
     @Override
     default <R> LazyFutureStream<R> flatMapIterable(
-            Function<? super U, Iterable<? extends R>> fn) {
+            Function<? super U, ? extends Iterable<? extends R>> fn) {
         return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                 .flatMapIterable(fn));
     }

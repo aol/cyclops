@@ -18,13 +18,18 @@ import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.QuadFunction;
@@ -34,14 +39,38 @@ import com.aol.cyclops.util.function.TriFunction;
 public interface AnyMValue<T> extends AnyM<T>,
 									  Value<T>,
 									  Filterable<T>,
-									  Applicativable<T>,Matchable.ValueAndOptionalMatcher<T>{
+									  Applicativable<T>,
+									  MonadicValue<T>,
+									  Matchable.ValueAndOptionalMatcher<T>{
 	
     default <R, A> R collect(Collector<? super T, A, R> collector){
         
          return this.<T>toSequence().collect(collector);
         
     }
-    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> AnyMValue<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+        return mapper.andThen(r->unit(r)).apply(this);
+    }
+  
+    /* cojoin
+     * (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    default  AnyMValue<MonadicValue<T>> nest(){
+        return unit(this);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+     */
+    default AnyMValue<T> combine(Monoid<T> monoid, AnyMValue<? extends T> v2){
+        return unit(this.<T>flatMap(t1-> v2.map(t2->monoid.combiner().apply(t1,t2)))
+                .orElseGet(()->this.orElseGet(()->monoid.zero())));
+    }
 	
     default String mkString(){
         Optional<T> opt = toOptional();

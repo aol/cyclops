@@ -1,12 +1,31 @@
 package com.aol.cyclops.control.monads.transformers;
 
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.reactivestreams.Publisher;
+
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
+import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.stream.ToStream;
 
 /**
  * Monad Transformer for Java  CompletableFutures
@@ -20,18 +39,41 @@ import com.aol.cyclops.control.AnyM;
  *
  * @param <T>
  */
-public class CompletableFutureT<A> {
+public interface CompletableFutureT<A> extends Unit<A>, 
+                                               Publisher<A>,
+                                               Functor<A>,
+                                               Filterable<A>,
+                                               
+                                               ToStream<A>{
    
-   private final AnyM<CompletableFuture<A>> run;
+    public <R> CompletableFutureT<R> empty();
+   
+    MaybeT<A> filter(Predicate<? super A> test);
+    
+   default <B> CompletableFutureT<B> bind(Function<? super A, CompletableFutureT<? extends B>> f) {
+        return of(unwrap().bind(opt -> {
+                return f.apply(opt.join()).unwrap().unwrap();
+        }));
+    }
+   
+   /**
+    * Construct an MaybeT from an AnyM that wraps a monad containing Maybes
+    * 
+    * @param monads
+    *            AnyM that contains a monad wrapping an Maybe
+    * @return MaybeT
+    */
+   public static <A> CompletableFutureT<A> of(AnyM<CompletableFuture<A>> monads) {
+     
+       return Matchables.anyM(monads).visit(v-> CompletableFutureTValue.of(v), s->CompletableFutureTSeq.of(s));
+       
+   }
+   
    /**
 	 * @return The wrapped AnyM
 	 */
-   public AnyM<CompletableFuture<A>> unwrap(){
-	   return run;
-   }
-   private CompletableFutureT(final AnyM<CompletableFuture<A>> run){
-       this.run = run;
-   }
+   public AnyM<CompletableFuture<A>> unwrap();
+  
    /**
 	 * Peek at the current value of the CompletableFuture
 	 * <pre>
@@ -46,10 +88,7 @@ public class CompletableFutureT<A> {
 	 * @param peek  Consumer to accept current value of CompletableFuture
 	 * @return CompletableFutureT with peek call
 	 */
-   public CompletableFutureT<A> peek(Consumer<? super A> peek){
-	  
-       return of(run.peek(future-> future.thenApply(a->{peek.accept(a); return a;})));
-   }
+   public CompletableFutureT<A> peek(Consumer<? super A> peek);
    /**
 	 * Map the wrapped CompletableFuture
 	 * 
@@ -66,27 +105,11 @@ public class CompletableFutureT<A> {
 	 * @param f Mapping function for the wrapped CompletableFuture
 	 * @return CompletableFutureT that applies the map function to the wrapped CompletableFuture
 	 */   
-   public <B> CompletableFutureT<B> map(Function<? super A,? extends B> f){
-       return new CompletableFutureT<B>(run.map(o-> o.thenApply(f)));
-   }
-   /**
-	 * Flat Map the wrapped CompletableFuture
-	  * <pre>
-	 * {@code 
-	 *  CompletableFutureT.of(AnyM.fromStream(Arrays.asCompletableFuture(10))
-	 *             .flatMap(t->CompletableFuture.completedFuture(20));
-	 *  
-	 *  
-	 *  //CompletableFutureT<AnyM<Stream<CompletableFuture[20]>>>
-	 * }
-	 * </pre>
-	 * @param f FlatMap function
-	 * @return CompletableFutureT that applies the flatMap function to the wrapped CompletableFuture
-	 */
+   public <B> CompletableFutureT<B> map(Function<? super A,? extends B> f);
+   
 
-   public <B> CompletableFutureT<B> flatMap(Function<? super A,CompletableFutureT<B>> f){
-	   return of(run.map(future-> future.thenCompose(a-> f.apply(a).run.stream().toList().get(0))));
-   }
+   public <B> CompletableFutureT<B> flatMap(Function<? super A,? extends MonadicValue<? extends B>> f);
+   
    /**
 	 * Lift a function into one that accepts and returns an CompletableFutureT
 	 * This allows multiple monad types to add functionality to existing functions and methods
@@ -150,36 +173,105 @@ public class CompletableFutureT<A> {
   	 * @return Function that accepts and returns an CompletableFutureT
   	 */
 	public static <U1, U2, R> BiFunction<CompletableFutureT<U1>, CompletableFutureT<U2>, CompletableFutureT<R>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
-		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+		return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
-	/**
-	 * Construct an CompletableFutureT from an AnyM that contains a monad type that contains type other than CompletableFuture
-	 * The values in the underlying monad will be mapped to CompletableFuture<A>
-	 * 
-	 * @param anyM AnyM that doesn't contain a monad wrapping an CompletableFuture
-	 * @return CompletableFutureT
-	 */
-   public static <A> CompletableFutureT<A> fromAnyM(AnyM<A> anyM){
-	   return of(anyM.map(CompletableFuture::completedFuture));
-   }
-   /**
-	 * Construct an CompletableFutureT from an AnyM that wraps a monad containing  CompletableFutures
-	 * 
-	 * @param monads AnyM that contains a monad wrapping an CompletableFuture
-	 * @return CompletableFutureT
-	 */   
-   public static <A> CompletableFutureT<A> of(AnyM<CompletableFuture<A>> monads){
-	   return new CompletableFutureT<>(monads);
-   }
-   
-   
-   /*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return run.toString();
-	}
- 
+
+    public static <A> CompletableFutureT<A> fromAnyM(AnyM<A> anyM) {
+        return of(anyM.map(CompletableFuture::completedFuture));
+    }
+
+    public static <A> CompletableFutureTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+        return CompletableFutureTValue.fromAnyM(anyM);
+    }
+
+    public static <A> CompletableFutureTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return CompletableFutureTSeq.fromAnyM(anyM);
+    }
+
+    public static <A> CompletableFutureTSeq<A> fromIterable(
+            Iterable<CompletableFuture<A>> iterableOfCompletableFutures) {
+        return CompletableFutureTSeq.of(AnyM.fromIterable(iterableOfCompletableFutures));
+    }
+
+    public static <A> CompletableFutureTSeq<A> fromStream(Stream<CompletableFuture<A>> streamOfCompletableFutures) {
+        return CompletableFutureTSeq.of(AnyM.fromStream(streamOfCompletableFutures));
+    }
+
+    public static <A> CompletableFutureTSeq<A> fromPublisher(
+            Publisher<CompletableFuture<A>> publisherOfCompletableFutures) {
+        return CompletableFutureTSeq.of(AnyM.fromPublisher(publisherOfCompletableFutures));
+    }
+
+    public static <A, V extends MonadicValue<CompletableFuture<A>>> CompletableFutureTValue<A> fromValue(
+            V monadicValue) {
+        return CompletableFutureTValue.fromValue(monadicValue);
+    }
+
+    public static <A> CompletableFutureTValue<A> fromOptional(Optional<CompletableFuture<A>> optional) {
+        return CompletableFutureTValue.of(AnyM.fromOptional(optional));
+    }
+
+    public static <A> CompletableFutureTValue<A> fromFuture(CompletableFuture<CompletableFuture<A>> future) {
+        return CompletableFutureTValue.of(AnyM.fromCompletableFuture(future));
+    }
+
+    public static <A> CompletableFutureTValue<A> fromIterableValue(
+            Iterable<CompletableFuture<A>> iterableOfCompletableFutures) {
+        return CompletableFutureTValue.of(AnyM.fromIterableValue(iterableOfCompletableFutures));
+    }
+    public static <T> CompletableFutureTValue<T> emptyMaybe(){
+        return CompletableFutureTValue.emptyOptional();
+    }
+    public static <T> CompletableFutureTSeq<T> emptyList(){
+        return CompletableFutureT.fromIterable(ListX.of());
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    default <U> CompletableFutureT<U> cast(Class<U> type) {
+        return (CompletableFutureT<U>)Functor.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    default <R> CompletableFutureT<R> trampoline(Function<? super A, ? extends Trampoline<? extends R>> mapper) {
+        return (CompletableFutureT<R>)Functor.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    default <R> CompletableFutureT<R> patternMatch(Function<CheckValue1<A, R>, CheckValue1<A, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (CompletableFutureT<R>)Functor.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    default <U> MaybeT<U> ofType(Class<U> type) {
+        
+        return (MaybeT<U>)Filterable.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    default MaybeT<A> filterNot(Predicate<? super A> fn) {
+       
+        return (MaybeT<A>)Filterable.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    default MaybeT<A> notNull() {
+       
+        return (MaybeT<A>)Filterable.super.notNull();
+    }
+    
+    
+
 }

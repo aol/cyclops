@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -9,8 +10,10 @@ import java.util.function.Supplier;
 
 import org.jooq.lambda.tuple.Tuple;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.MatchableCase;
@@ -18,6 +21,8 @@ import com.aol.cyclops.internal.matcher2.MatchingInstance;
 import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
@@ -64,8 +69,16 @@ import lombok.EqualsAndHashCode;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterable<PT>,Applicativable<PT>{
+public interface Xor<ST,PT> extends Supplier<PT>,
+                                    MonadicValue2<ST,PT>,
+                                    Functor<PT>, 
+                                    Filterable<PT>,
+                                    Applicativable<PT>{
 
+    public static <ST,T> Xor<ST,T> fromIterable(Iterable<T> iterable){
+        Iterator<T> it = iterable.iterator();
+        return Xor.primary(it.hasNext() ? it.next() : null);
+    }
 	/**
 	 * Create an instance of the secondary type. Most methods are biased to the primary type,
 	 * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
@@ -93,11 +106,36 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	default AnyMValue<PT> anyM(){
 		return AnyM.ofValue(this);
 	}
-	
-	default <T> Xor<?,T> unit(T unit){
+	   /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> Xor<ST,R> coflatMap(Function<? super MonadicValue<PT>,R> mapper) {
+        return (Xor<ST,R>)MonadicValue2.super.coflatMap(mapper);
+    }
+    
+    //cojoin
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    default  Xor<ST,MonadicValue<PT>> nest(){
+        return this.map(t->unit(t));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+     */
+    @Override
+    default Xor<ST,PT> combine(Monoid<PT> monoid, MonadicValue2<? extends ST,? extends PT> v2){
+        return (Xor<ST,PT>)MonadicValue2.super.combine(monoid, v2);
+    }
+	default <T> Xor<ST,T> unit(T unit){
 		return Xor.primary(unit);
 	}
 	
+	default Optional<PT> toOptional(){
+	   return isPrimary() ? Optional.of(get()) : Optional.empty();
+	}
 	
 	Xor<ST,PT> filter(Predicate<? super PT> test);
 	
@@ -116,6 +154,9 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	@Override
     default Xor<ST,PT> toXor(){
         return this;
+    }
+	default <ST2> Xor<ST2,PT> toXor(ST2 secondary){
+      return visit (s-> secondary(secondary), p-> primary(p));
     }
    
 	public static <ST,PT> Xor<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Xor<ST,PT>> xors){
@@ -191,7 +232,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 	ReactiveSeq<ST> secondaryToStream();
 	
 	
-	<LT1,RT1> Xor<LT1,RT1> flatMap(Function<? super PT,? extends Xor<LT1,RT1>> mapper);
+	<LT1,RT1> Xor<LT1,RT1> flatMap(Function<? super PT,? extends MonadicValue2<? extends LT1,? extends RT1>> mapper);
 	<LT1,RT1> Xor<LT1,RT1> secondaryFlatMap(Function<? super ST,? extends Xor<LT1,RT1>> mapper);
 	Xor<ST,PT> secondaryToPrimayFlatMap(Function<? super ST, ? extends Xor<ST,PT>> fn);
 	
@@ -311,8 +352,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 		}
 
 		@Override
-		public <LT1, RT1> Xor<LT1, RT1> flatMap(Function<? super PT, ? extends Xor<LT1, RT1>> mapper) {
-			return mapper.apply(value);
+		public <LT1, RT1> Xor<LT1, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper) {
+			return (Xor<LT1, RT1>)mapper.apply(value).toXor();
 		}
 
 		@Override
@@ -365,6 +406,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
                 Supplier<? extends R> otherwise) {
                 Matchable.MTuple1<PT> mt1 = ()->Tuple.tuple(value);
                 return mt1.matches(primary, otherwise);
+
         }
         
         
@@ -437,7 +479,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,Value<PT>,Functor<PT>, Filterab
 			return ReactiveSeq.fromStream(StreamUtils.optionalToStream(secondaryToOptional()));
 		}
 		@Override
-		public <LT1, RT1> Xor<LT1, RT1> flatMap(Function<? super PT, ? extends Xor<LT1, RT1>> mapper) {
+		public <LT1, RT1> Xor<LT1, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper) {
 			return (Xor<LT1, RT1>)this;
 		}
 		@Override

@@ -41,6 +41,42 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
+import com.aol.cyclops.control.monads.transformers.EvalT;
+import com.aol.cyclops.control.monads.transformers.FutureWT;
+import com.aol.cyclops.control.monads.transformers.ListT;
+import com.aol.cyclops.control.monads.transformers.MaybeT;
+import com.aol.cyclops.control.monads.transformers.OptionalT;
+import com.aol.cyclops.control.monads.transformers.ReaderT;
+import com.aol.cyclops.control.monads.transformers.SetT;
+import com.aol.cyclops.control.monads.transformers.StreamT;
+import com.aol.cyclops.control.monads.transformers.StreamableT;
+import com.aol.cyclops.control.monads.transformers.TryT;
+import com.aol.cyclops.control.monads.transformers.XorT;
+import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.ReaderTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.SetTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.StreamTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
+import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
+import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
+import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
+import com.aol.cyclops.control.monads.transformers.values.ListTValue;
+import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
+import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
+import com.aol.cyclops.control.monads.transformers.values.ReaderTValue;
+import com.aol.cyclops.control.monads.transformers.values.SetTValue;
+import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
+import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
+import com.aol.cyclops.control.monads.transformers.values.TryTValue;
+import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.async.Adapter;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.Topic;
@@ -160,6 +196,42 @@ public class Matchables {
  
     public static <T> MXor<AnyMValue<T>,AnyMSeq<T>> anyM(AnyM<T> anyM){
         return ()-> anyM instanceof AnyMValue ?  Xor.secondary((AnyMValue<T>)anyM) : Xor.primary((AnyMSeq<T>)anyM);
+    }
+    public static <T> MXor<MaybeTValue<T>,MaybeTSeq<T>> maybeT(MaybeT<T> transformer){
+        return ()-> transformer instanceof MaybeTValue ?  Xor.secondary((MaybeTValue<T>)transformer) : Xor.primary((MaybeTSeq<T>)transformer);
+    }
+    public static <T> MXor<OptionalTValue<T>,OptionalTSeq<T>> optionalT(OptionalT<T> transformer){
+        return ()-> transformer instanceof OptionalTValue ?  Xor.secondary((OptionalTValue<T>)transformer) : Xor.primary((OptionalTSeq<T>)transformer);
+    }
+    public static <T> MXor<EvalTValue<T>,EvalTSeq<T>> evalT(EvalT<T> transformer){
+        return ()-> transformer instanceof EvalTValue ?  Xor.secondary((EvalTValue<T>)transformer) : Xor.primary((EvalTSeq<T>)transformer);
+    }
+    public static <ST,T> MXor<XorTValue<ST,T>,XorTSeq<ST,T>> xorT(XorT<ST,T> transformer){
+        return ()-> transformer instanceof XorTValue ?  Xor.secondary((XorTValue<ST,T>)transformer) : Xor.primary((XorTSeq<ST,T>)transformer);
+    }
+    public static <T,X extends Throwable> MXor<TryTValue<T,X>,TryTSeq<T,X>> tryT(TryT<T,X> transformer){
+        return ()-> transformer instanceof TryTValue ?  Xor.secondary((TryTValue<T,X>)transformer) : Xor.primary((TryTSeq<T,X>)transformer);
+    }
+    public static <T> MXor<FutureWTValue<T>,FutureWTSeq<T>> futureWT(FutureWT<T> transformer){
+        return ()-> transformer instanceof FutureWTValue ?  Xor.secondary((FutureWTValue<T>)transformer) : Xor.primary((FutureWTSeq<T>)transformer);
+    }
+    public static <T> MXor<CompletableFutureTValue<T>,CompletableFutureTSeq<T>> completableFutureT(CompletableFutureT<T> transformer){
+        return ()-> transformer instanceof CompletableFutureTValue ?  Xor.secondary((CompletableFutureTValue<T>)transformer) : Xor.primary((CompletableFutureTSeq<T>)transformer);
+    }
+    public static <T> MXor<ListTValue<T>,ListTSeq<T>> listT(ListT<T> transformer){
+        return ()-> transformer instanceof ListTValue ?  Xor.secondary((ListTValue<T>)transformer) : Xor.primary((ListTSeq<T>)transformer);
+    }
+    public static <T> MXor<SetTValue<T>,SetTSeq<T>> setT(SetT<T> transformer){
+        return ()-> transformer instanceof SetTValue ?  Xor.secondary((SetTValue<T>)transformer) : Xor.primary((SetTSeq<T>)transformer);
+    }
+    public static <T> MXor<StreamTValue<T>,StreamTSeq<T>> streamT(StreamT<T> transformer){
+        return ()-> transformer instanceof StreamTValue ?  Xor.secondary((StreamTValue<T>)transformer) : Xor.primary((StreamTSeq<T>)transformer);
+    }
+    public static <T> MXor<StreamableTValue<T>,StreamableTSeq<T>> streamableT(StreamableT<T> transformer){
+        return ()-> transformer instanceof StreamableTValue ?  Xor.secondary((StreamableTValue<T>)transformer) : Xor.primary((StreamableTSeq<T>)transformer);
+    }
+    public static <T,R> MXor<ReaderTValue<T,R>,ReaderTSeq<T,R>> readerT(ReaderT<T,R> transformer){
+        return ()-> transformer instanceof ReaderTValue ?  Xor.secondary((ReaderTValue<T,R>)transformer) : Xor.primary((ReaderTSeq<T,R>)transformer);
     }
 	public static<X extends Throwable> MTuple4<Class,String,Throwable,MatchableIterable<StackTraceElement>> throwable(X t){
 		return supplier4(()->(Class)t.getClass(),

@@ -13,5 +13,7 @@ public  class StreamableImpl<T> implements Streamable<T>{
 	private final Iterable<T> streamable;
 
 	
-	
+	public String toString(){
+	    return String.format("Streamable[%s]", streamable );
+	}
 }

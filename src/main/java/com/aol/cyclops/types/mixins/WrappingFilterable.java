@@ -7,10 +7,14 @@ import com.aol.cyclops.types.Filterable;
 
 public interface WrappingFilterable<T> extends Filterable<T> {
 	default   Filterable<T>  filter(Predicate<? super T> fn) {
-		T filterable = (T)new ComprehenderSelector().selectComprehender(
+	    Object filterable = getFilterable();
+	    if(filterable instanceof Filterable){
+	        return withFilterable( (T)((Filterable)filterable).filter(fn) );
+	    }
+		T result = (T)new ComprehenderSelector().selectComprehender(
 				getFilterable())
-				.filter(getFilterable(), fn);
-		return withFilterable( filterable );
+				.filter(filterable, fn);
+		return withFilterable( result );
 	}
 
 	//ofType

@@ -19,6 +19,7 @@ import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Failure;
 import com.aol.cyclops.control.Try.Success;
 import com.aol.cyclops.control.monads.transformers.TryT;
+import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
 public class TryTTest {
 
 	String result = null;
@@ -95,9 +96,9 @@ public class TryTTest {
 	}
 	@Test
 	public void flatMap() {
-		TryT<Integer,RuntimeException> optionT = TryT.of(AnyM.ofSeq(Stream.of(Try.of(10))));
+		TryTSeq<Integer,RuntimeException> optionT = TryT.fromStream(Stream.of(Try.of(10)));
 		
-		assertThat(optionT.flatMap(num->TryT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMapT(num->TryT.fromStream(Stream.of(Try.success("hello world"+num))))
 				.unwrap().<Stream<Try<String,RuntimeException>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Try.of("hello world10")));
 	}

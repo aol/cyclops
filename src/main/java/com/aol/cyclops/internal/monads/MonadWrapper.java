@@ -47,4 +47,8 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable{
 			return ((ReactiveSeq)monad);
 		return ReactiveSeq.fromStream(this.stream());
 	}
+	
+	public String toString(){
+	    return monad.toString();
+	}
 }

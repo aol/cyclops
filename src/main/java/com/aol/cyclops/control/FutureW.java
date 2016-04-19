@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
@@ -19,6 +20,7 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -30,10 +32,17 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class FutureW<T> implements ConvertableFunctor<T>,
 											Applicativable<T>, 
-											MonadicValue<T>, 
+											MonadicValue1<T>, 
 											FlatMap<T>,
 											Filterable<T>{
 
+    public static <T> FutureW<T> empty(){
+        return new FutureW(CompletableFuture.completedFuture(null));
+    }
+    public static <T> FutureW<T> fromIterable(Iterable<T> iterable){
+        Iterator<T> it = iterable.iterator();
+        return FutureW.ofResult(Eval.fromIterable(iterable)).map(e->e.get());
+    }
 	public static <T> FutureW<T> of(CompletableFuture<T> f){
 		return new FutureW<>(f);
 	}
@@ -57,6 +66,29 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	@Getter
 	private final CompletableFuture<T> future;
 
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+   public <R> FutureW<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+        return (FutureW<R>)MonadicValue1.super.coflatMap(mapper);
+    }
+  
+    /* cojoin
+     * (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    public  FutureW<MonadicValue<T>> nest(){
+        return (FutureW<MonadicValue<T>>)MonadicValue1.super.nest();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+     */
+    @Override
+    public FutureW<T> combine(Monoid<T> monoid, MonadicValue<? extends T> v2){
+        return (FutureW<T>)MonadicValue1.super.combine(monoid,v2);
+    }
 	@Override
 	public <R> FutureW<R> map(Function<? super T, ? extends R> fn) {
 		return new FutureW<R>(future.thenApply(fn));
@@ -76,6 +108,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	        throw ExceptionSoftener.throwSoftenedException(t.getCause());
 	    }
 	}
+	
 	
 
 	public boolean isSuccess(){
@@ -109,8 +142,8 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	public <R> FutureW<R> flatten() {
 		return FutureW.of(AnyM.fromCompletableFuture(future).flatten().unwrap());
 	}
-	public <R> FutureW<R> flatMap(Function<? super T, ? extends FutureW<? extends R>> mapper){
-		return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage<R>)mapper.apply(t).getFuture()));	
+	public <R> FutureW<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper){
+		return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage<R>)mapper.apply(t).toFutureW().getFuture()));	
 	}
 	public <R> FutureW<R> flatMapCf(Function<? super T, ? extends CompletionStage<? extends R>> mapper){
         return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage<R>)mapper.apply(t))); 

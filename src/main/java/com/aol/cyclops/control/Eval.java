@@ -1,5 +1,8 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.For.Values.each2;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -9,6 +12,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -22,15 +26,45 @@ import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.Memoize;
 
 /**
- * Represents a computation that can be defered, cached or immediate.
- * Supports tail recursion via map / flatMap.
+ * Represents a computation that can be defered (always), cached (later) or immediate(now).
+ * Supports tail recursion via map / flatMap. 
+ * Computations are always Lazy even when performed against a Now instance. 
+ * Heavily inspired by Cats Eval @link https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/Eval.scala
+ * 
+ * Tail Recursion example
+ * <pre>
+ * {@code 
+ * 
+ * public void odd(){
+        System.out.println(even(Eval.now(200000)).get());
+    }
+    public Eval<String> odd(Eval<Integer> n )  {
+       
+       return n.flatMap(x->even(Eval.now(x-1)));
+    }
+    public Eval<String> even(Eval<Integer> n )  {
+        return n.flatMap(x->{
+            return x<=0 ? Eval.now("done") : odd(Eval.now(x-1));
+        });
+     }
+ * }
+ * </pre>
  * 
  * @author johnmcclean
  *
  * @param <T>
  */
-public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filterable<T>, Applicativable<T>,Matchable.ValueAndOptionalMatcher<T>{
+public interface Eval<T> extends Supplier<T>, 
+                                 MonadicValue<T>, 
+                                 Functor<T>, 
+                                 Filterable<T>, 
+                                 Applicativable<T>,
+                                 Matchable.ValueAndOptionalMatcher<T>{
 
+    public static <T> Eval<T> fromIterable(Iterable<T> iterable){
+        Iterator<T> it = iterable.iterator();
+        return Eval.later(()->it.hasNext() ? it.next() : null);
+    }
 	public static<T> Eval<T> now(T value){
 	    return always(()->value);
 		
@@ -66,7 +100,23 @@ public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filte
 	
 	
 	
-	public T get();
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> Eval<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+        return (Eval<R>)MonadicValue.super.coflatMap(mapper);
+    }
+    default Eval<T> combine(Monoid<T> monoid, Eval<? extends T> v2){
+        return unit(each2(this, t1->v2, (t1,t2)->monoid.combiner().apply(t1, t2))
+                .orElseGet(()->this.orElseGet(()->monoid.zero())));
+    }
+    
+    default Eval<MonadicValue<T>> nest(){
+        return (Eval<MonadicValue<T>>)MonadicValue.super.nest();
+    }
+   
+    public T get();
 	
 	
 	@Override
@@ -132,9 +182,9 @@ public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filte
     static <R> Eval<R> narrow(Eval<? extends R> broad){
 		return (Eval<R>)broad;
 	}
+
+	
     
-	
-	
 	static class Module{
 	    public static class Later<T> extends Rec<T> implements Eval<T>{
 	        
@@ -289,9 +339,11 @@ public interface Eval<T> extends Supplier<T>, MonadicValue<T>, Functor<T>, Filte
         public T get() {
             return apply();
         }
+        
        
         
     }
+
 	}
 	
 }

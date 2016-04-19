@@ -1,14 +1,29 @@
 package com.aol.cyclops.control.monads.transformers;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-import org.jooq.lambda.function.Function1;
+import org.reactivestreams.Publisher;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
+import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 
 /**
@@ -25,21 +40,19 @@ import com.aol.cyclops.control.AnyM;
  *
  * @param <T> The type contained on the Optional within
  */
-public class OptionalT<T> {
+public interface OptionalT<T>  extends Publisher<T>, 
+                                       Functor<T>,
+                                       Filterable<T>{
    
-   private final AnyM<Optional<T>> run;
-   
-   
-   private OptionalT(final AnyM<Optional<T>> run){
-       this.run = run;
-   }
+    
+    public ReactiveSeq<T> stream();
+    public <R> OptionalT<R> unit(R value);
+    public <R> OptionalT<R> empty();
    
 	/**
 	 * @return The wrapped AnyM
 	 */
-	public AnyM<Optional<T>> unwrap() {
-		return run;
-	}
+	public AnyM<Optional<T>> unwrap();
 
    
 	/**
@@ -56,12 +69,7 @@ public class OptionalT<T> {
 	 * @param peek  Consumer to accept current value of Optional
 	 * @return OptionalT with peek call
 	 */
-	public OptionalT<T> peek(Consumer<? super T> peek) {
-		return of(run.peek(opt -> opt.map(a -> {
-			peek.accept(a);
-			return a;
-		})));
-	}
+	public OptionalT<T> peek(Consumer<? super T> peek);
    
 	/**
 	 * Filter the wrapped Optional
@@ -76,9 +84,7 @@ public class OptionalT<T> {
 	 * @param test Predicate to filter the wrapped Optional
 	 * @return OptionalT that applies the provided filter
 	 */
-	public OptionalT<T> filter(Predicate<? super T> test) {
-		return of(run.map(opt -> opt.filter(test)));
-	}
+	public OptionalT<T> filter(Predicate<? super T> test);
 
 	/**
 	 * Map the wrapped Optional
@@ -96,9 +102,7 @@ public class OptionalT<T> {
 	 * @param f Mapping function for the wrapped Optional
 	 * @return OptionalT that applies the map function to the wrapped Optional
 	 */
-	public <B> OptionalT<B> map(Function<? super T,? extends B> f) {
-		return new OptionalT<B>(run.map(o -> o.map(f)));
-	}
+	public <B> OptionalT<B> map(Function<? super T,? extends B> f);
 
 	/**
 	 * Flat Map the wrapped Optional
@@ -114,15 +118,16 @@ public class OptionalT<T> {
 	 * @param f FlatMap function
 	 * @return OptionalT that applies the flatMap function to the wrapped Optional
 	 */
-	public <B> OptionalT<B> flatMap(Function<? super T, OptionalT<? extends B>> f) {
+	default <B> OptionalT<B> bind(Function<? super T, OptionalT<? extends B>> f) {
 
-		return of(run.bind(opt -> {
+		return of(unwrap().bind(opt -> {
 			if (opt.isPresent())
-				return f.apply(opt.get()).run.unwrap();
-			return run.unit(Optional.<B> empty()).unwrap();
+				return f.apply(opt.get()).unwrap().unwrap();
+			return unwrap().unit(Optional.<B> empty()).unwrap();
 		}));
 
 	}
+	public <B> OptionalT<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
 
 	/**
 	 * Lift a function into one that accepts and returns an OptionalT
@@ -188,7 +193,7 @@ public class OptionalT<T> {
 	 * @return Function that accepts and returns an OptionalT
 	 */
 	public static <U1, U2, R> BiFunction<OptionalT<U1>, OptionalT<U2>, OptionalT<R>> lift2(BiFunction<? super U1, ? super U2,? extends R> fn) {
-		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+		return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 
 	/**
@@ -209,16 +214,100 @@ public class OptionalT<T> {
 	 * @return OptionalT
 	 */
 	public static <A> OptionalT<A> of(AnyM<Optional<A>> monads) {
-		return new OptionalT<>(monads);
+	    return Matchables.anyM(monads).visit(v-> OptionalTValue.of(v), s->OptionalTSeq.of(s));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return run.toString();
-	}
- 
+   
+    public static <A> OptionalTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+        return OptionalTValue.fromAnyM(anyM);
+    }
+
+    public static <A> OptionalTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return OptionalTSeq.fromAnyM(anyM);
+    }
+
+    public static <A> OptionalTSeq<A> fromIterable(
+            Iterable<Optional<A>> iterableOfOptionals) {
+        return OptionalTSeq.of(AnyM.fromIterable(iterableOfOptionals));
+    }
+
+    public static <A> OptionalTSeq<A> fromStream(Stream<Optional<A>> streamOfOptionals) {
+        return OptionalTSeq.of(AnyM.fromStream(streamOfOptionals));
+    }
+
+    public static <A> OptionalTSeq<A> fromPublisher(
+            Publisher<Optional<A>> publisherOfOptionals) {
+        return OptionalTSeq.of(AnyM.fromPublisher(publisherOfOptionals));
+    }
+
+    public static <A> OptionalTValue<A> fromValue(
+            MonadicValue<Optional<A>> monadicValue) {
+        return OptionalTValue.fromValue(monadicValue);
+    }
+
+    public static <A> OptionalTValue<A> fromOptional(Optional<Optional<A>> optional) {
+        return OptionalTValue.of(AnyM.fromOptional(optional));
+    }
+
+    public static <A> OptionalTValue<A> fromFuture(CompletableFuture<Optional<A>> future) {
+        return OptionalTValue.of(AnyM.fromCompletableFuture(future));
+    }
+
+    public static <A> OptionalTValue<A> fromIterablOptionalue(
+            Iterable<Optional<A>> iterableOfOptionals) {
+        return OptionalTValue.of(AnyM.fromIterableValue(iterableOfOptionals));
+    }
+    public static <T> OptionalTValue<T> emptyOptional(){
+        return OptionalTValue.emptyOptional();
+    }
+    public static <T> OptionalTSeq<T> emptyList(){
+        return OptionalT.fromIterable(ListX.of());
+    }
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    default <U> OptionalT<U> cast(Class<U> type) {
+        return (OptionalT<U>)Functor.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    default <R> OptionalT<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (OptionalT<R>)Functor.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    default <R> OptionalT<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (OptionalT<R>)Functor.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    default <U> OptionalT<U> ofType(Class<U> type) {
+        
+        return (OptionalT<U>)Filterable.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    default OptionalT<T> filterNot(Predicate<? super T> fn) {
+       
+        return (OptionalT<T>)Filterable.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    default OptionalT<T> notNull() {
+       
+        return (OptionalT<T>)Filterable.super.notNull();
+    }
 }

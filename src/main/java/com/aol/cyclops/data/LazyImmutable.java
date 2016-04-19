@@ -9,11 +9,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 
 import lombok.ToString;

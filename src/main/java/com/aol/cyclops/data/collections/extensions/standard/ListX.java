@@ -50,7 +50,9 @@ public interface ListX<T> extends List<T>,
 	}
 
 	
-	
+	static <T> Collector<T,?,ListX<T>> listXCollector(){
+        return Collectors.toCollection(()-> ListX.of());
+    }
 	static <T> Collector<T,?,List<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new ArrayList<>());
 	}
@@ -92,31 +94,52 @@ public interface ListX<T> extends List<T>,
 			return new ListXImpl<T>( (List<T>)it, collector);
 		return new ListXImpl<T>(StreamUtils.stream(it).collect(collector),collector);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
+	 */
 	@Override
 	default<R> ListX<R> unit(Collection<R> col){
 		return fromIterable(col);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
+	 */
 	@Override
 	default <R> ListX<R> unit(R value){
 		return singleton(value);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
+	 */
 	@Override
 	default <R> ListX<R> unitIterator(Iterator<R> it){
 		return fromIterable(()->it);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#patternMatch(java.util.function.Function, java.util.function.Supplier)
+	 */
 	@Override
     default <R> ListX<R> patternMatch(
             Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
         return (ListX<R>)MutableCollectionX.super.patternMatch(case1,otherwise);
     }
+	/* (non-Javadoc)
+	 * @see java.util.Collection#stream()
+	 */
 	@Override
 	default ReactiveSeq<T> stream(){
 		
 		return ReactiveSeq.fromIterable(this);
 	}
+	/**
+	 * @return A Collector to generate a List
+	 */
 	public <T> Collector<T,?,List<T>> getCollector();
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#from(java.util.Collection)
+	 */
 	default <T1> ListX<T1> from(Collection<T1> c){
 		return ListX.<T1>fromIterable(getCollector(),c);
 	}
@@ -198,9 +221,15 @@ public interface ListX<T> extends List<T>,
 		
 		return (ListX<T>)MutableCollectionX.super.skip(num);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#takeRight(int)
+	 */
 	default  ListX<T> takeRight(int num){
 		return (ListX<T>)MutableCollectionX.super.takeRight(num);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#dropRight(int)
+	 */
 	default  ListX<T> dropRight(int num){
 		return  (ListX<T>)MutableCollectionX.super.dropRight(num);
 	}
@@ -264,15 +293,27 @@ public interface ListX<T> extends List<T>,
 		return (ListX<T>)MutableCollectionX.super.sorted(function);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(int)
+	 */
 	default ListX<ListX<T>> grouped(int groupSize){
 		return (ListX<ListX<T>>)MutableCollectionX.super.grouped(groupSize); 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.stream.Collector)
+	 */
 	default <K, A, D> ListX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream){
 		return (ListX)MutableCollectionX.super.grouped(classifier,downstream);
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function)
+	 */
 	default <K> ListX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return (ListX)MutableCollectionX.super.grouped(classifier);	 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable)
+	 */
 	default <U> ListX<Tuple2<T, U>> zip(Iterable<U> other){
 		return (ListX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
 	}
@@ -285,21 +326,39 @@ public interface ListX<T> extends List<T>,
 		return (ListX<R>)MutableCollectionX.super.zip(other, zipper);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sliding(int)
+	 */
 	default ListX<ListX<T>> sliding(int windowSize){
 		return (ListX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sliding(int, int)
+	 */
 	default ListX<ListX<T>> sliding(int windowSize, int increment){
 		return (ListX<ListX<T>>)MutableCollectionX.super.sliding(windowSize,increment); 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanLeft(com.aol.cyclops.Monoid)
+	 */
 	default ListX<T> scanLeft(Monoid<T> monoid){
 		return (ListX<T>)MutableCollectionX.super.scanLeft(monoid); 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
+	 */
 	default <U> ListX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
 		return (ListX<U>)MutableCollectionX.super.scanLeft(seed,function); 	
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanRight(com.aol.cyclops.Monoid)
+	 */
 	default ListX<T> scanRight(Monoid<T> monoid){
 		return (ListX<T>)MutableCollectionX.super.scanRight(monoid); 
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
+	 */
 	default <U> ListX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
 		return (ListX<U>)MutableCollectionX.super.scanRight(identity,combiner); 
 	}
@@ -311,30 +370,51 @@ public interface ListX<T> extends List<T>,
 	default ListX<T> with(int i,T element){
 		return from(stream().deleteBetween(i, i+1).insertAt(i,element).collect(getCollector()));
 	}
+	/* (non-Javadoc)
+	 * @see java.util.List#subList(int, int)
+	 */
 	public ListX<T> subList(int start, int end);
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#plus(java.lang.Object)
+	 */
 	default ListX<T> plus(T e){
 		add(e);
 		return this;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#plusAll(java.util.Collection)
+	 */
 	default ListX<T> plusAll(Collection<? extends T> list){
 		addAll(list);
 		return this;
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableSequenceX#minus(int)
+	 */
 	default ListX<T> minus(int pos){
 		remove(pos);
 		return this;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#minus(java.lang.Object)
+	 */
 	default ListX<T> minus(Object e){
 		remove(e);
 		return this;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#minusAll(java.util.Collection)
+	 */
 	default ListX<T> minusAll(Collection<?> list){
 		removeAll(list);
 		return this;
 	}
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableSequenceX#plus(int, java.lang.Object)
+	 */
 	@Override
 	default ListX<T> plus(int i, T e){
 		add(i,e);
@@ -342,6 +422,9 @@ public interface ListX<T> extends List<T>,
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableSequenceX#plusAll(int, java.util.Collection)
+	 */
 	default ListX<T> plusAll(int i, Collection<? extends T> list){
 		addAll(i,list);
 		return this;
@@ -709,13 +792,19 @@ public interface ListX<T> extends List<T>,
 	}
 
 	
-	  @Override
+	  /* (non-Javadoc)
+	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(int, java.util.function.Supplier)
+	 */
+	@Override
 	    default <C extends Collection<? super T>> ListX<C> grouped(int size, Supplier<C> supplier) {
 	        
 	        return (ListX<C>)MutableCollectionX.super.grouped(size, supplier);
 	    }
 
 
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate)
+	     */
 	    @Override
 	    default ListX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
 	        
@@ -723,6 +812,9 @@ public interface ListX<T> extends List<T>,
 	    }
 
 
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate)
+	     */
 	    @Override
 	    default ListX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
 	        
@@ -730,6 +822,9 @@ public interface ListX<T> extends List<T>,
 	    }
 
 
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+	     */
 	    @Override
 	    default <C extends Collection<? super T>> ListX<C> groupedWhile(Predicate<? super T> predicate,
 	            Supplier<C> factory) {
@@ -738,6 +833,9 @@ public interface ListX<T> extends List<T>,
 	    }
 
 
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+	     */
 	    @Override
 	    default <C extends Collection<? super T>> ListX<C> groupedUntil(Predicate<? super T> predicate,
 	            Supplier<C> factory) {
@@ -746,12 +844,18 @@ public interface ListX<T> extends List<T>,
 	    }
 
 
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyWhile(java.util.function.BiPredicate)
+	     */
 	    @Override
 	    default ListX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
 	        
 	        return (ListX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
 	    }
 	    
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#removeAll(org.jooq.lambda.Seq)
+	     */
 	    @Override
 	    default ListX<T> removeAll(Seq<T> stream) {
 	       
@@ -759,11 +863,12 @@ public interface ListX<T> extends List<T>,
 	    }
 
 
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#retainAll(org.jooq.lambda.Seq)
+	     */
 	    @Override
 	    default ListX<T> retainAll(Seq<T> stream) {
-	       
-	        return (ListX<T>)MutableCollectionX.super.retainAll(stream);
+	        return (ListX<T>) MutableCollectionX.super.retainAll(stream);
 	    }
-	
 	
 }

@@ -5,11 +5,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-import lombok.Getter;
-import lombok.Value;
-
 import com.aol.cyclops.internal.stream.SeqUtils;
 import com.aol.cyclops.internal.stream.StreamableImpl;
+
+import lombok.AllArgsConstructor;
 
 
 public class AsStreamable {
@@ -41,14 +40,7 @@ public class AsStreamable {
 		if(object instanceof Stream){
 			
 			Collection c = SeqUtils.toConcurrentLazyCollection((Stream)object);
-			return new Iterable<T>(){
-
-				@Override
-				public Iterator<T> iterator() {
-					return c.iterator();
-				}
-				
-		};
+			 return new PrintableIterable<T>(c);
 		}
 		if(object instanceof Object[]){
             return (Iterable<T>)Arrays.asList((Object[])object);
@@ -63,14 +55,7 @@ public class AsStreamable {
 		if(object instanceof Stream){
 			
 			Collection c = SeqUtils.toLazyCollection((Stream)object);
-			return new Iterable<T>(){
-
-				@Override
-				public Iterator<T> iterator() {
-					return c.iterator();
-				}
-				
-		};
+			return new PrintableIterable<T>(c);		
 		}
 		if(object instanceof Object[]){
 		    return (Iterable<T>)Arrays.asList((Object[])object);
@@ -79,6 +64,19 @@ public class AsStreamable {
 		    return (Iterable<T>)object;
 		
 		return Arrays.asList(object);
+	}
+	
+	@AllArgsConstructor
+	static class PrintableIterable<T> implements Iterable<T>{
+	    private final Collection c;
+	    @Override
+        public Iterator<T> iterator() {
+            return c.iterator();
+        }
+        
+	    public String toString(){
+	        return String.format("%s", c );
+	    }
 	}
 	
 }

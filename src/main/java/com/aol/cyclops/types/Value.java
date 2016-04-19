@@ -18,16 +18,15 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
@@ -41,7 +40,6 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
@@ -51,16 +49,14 @@ import lombok.AllArgsConstructor;
 
 public interface Value<T> extends Supplier<T>, 
                                   Foldable<T>, 
-                                  Matchable<T>, 
                                   Convertable<T>,
                                   Publisher<T>,
                                   Predicate<T>{
     
-   
-   
     default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
         return toMaybe().visit(present, absent);
     }
+
 
     default boolean test(T t){
         if(!(t instanceof Value))
@@ -141,12 +137,7 @@ public interface Value<T> extends Supplier<T>,
 	default ReactiveSeq<T> stream() {
 			return ReactiveSeq.of(Try.withCatch(()->get(),NoSuchElementException.class)).filter(Try::isSuccess).map(Try::get);
 	}
-	 /**
-	  * @return matchable
-	  */
-	 default T getMatchable(){
-		return get();
-	 }
+	 
 	 default ListX<?> unapply(){
 		 return toListX();
 	 }
@@ -181,8 +172,23 @@ public interface Value<T> extends Supplier<T>,
 	     return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(new NoSuchElementException());
 		
 	 }
+	 /**
+      * Convert to an Xor where the secondary value will be used if no primary value is present
+      * 
+     * @param secondary Value to use in case no primary value is present
+     * @return
+     */
+    default <ST> Xor<ST,T> toXor(ST secondary){
+         Optional<T> o = toOptional();
+         return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(secondary);
+     }
+     default <X extends Throwable> Try<T,X> toTry(X throwable){
+         return toXor().visit(secondary->Try.failure(throwable),
+                              primary->Try.success(primary));
+         
+      }
 	 
-	 default Try<T,NoSuchElementException> toTry(){
+	 default Try<T,Throwable> toTry(){
 	    return toXor().visit(secondary->Try.failure(new NoSuchElementException()),
 	                         primary->Try.success(primary));
 		
@@ -194,9 +200,12 @@ public interface Value<T> extends Supplier<T>,
 	     if(this instanceof Ior)
              return (Ior)this;
          Optional<T> o = toOptional();
-         return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(null);
+         return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(new NoSuchElementException());
 	 }
-	 
+	 default FeatureToggle<T> toFeatureToggle(){
+	       Optional<T> opt = toOptional();
+	       return opt.isPresent() ? FeatureToggle.enable(opt.get()) : FeatureToggle.disable(null);
+	 }
 	 default Eval<T> toEvalNow(){
 		 return Eval.now(get());
 	 }

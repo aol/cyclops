@@ -165,10 +165,7 @@ public class FeatureToggleTest {
         
         assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
-	@Test
-	public void testGetMatchable() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
+
 
 	@Test
 	public void testIterate() {
@@ -654,10 +651,7 @@ public class FeatureToggleTest {
 		assertThat(cf.join(),equalTo(10));
 	}
 
-	@Test
-	public void testGetMatchable1() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
+	
 	@Test
     public void testMatches() {
         assertThat(just.matches(c->c.is(when(10),then("hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.of("hello")));

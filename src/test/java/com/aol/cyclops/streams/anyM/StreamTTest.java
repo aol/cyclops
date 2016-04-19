@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.monads.transformers.StreamableT;
+import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
 import com.aol.cyclops.util.stream.Streamable;
 import com.aol.cyclops.control.AnyM;
 
@@ -21,10 +22,10 @@ public class StreamTTest {
 
 	@Test
 	public void flatMap() {
-		StreamableT<Integer> streamT = StreamableT.of(AnyM.ofValue(Optional.of(Streamable.of(10))));
+		StreamableTValue<Integer> streamT = StreamableT.fromOptional(Optional.of(Streamable.of(10)));
 		
 		
-		assertThat(streamT.flatMap(num->StreamableT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
+		assertThat(streamT.flatMapT(num->StreamableT.fromAnyMValue(AnyM.ofValue(Stream.of("hello world"+num))))
 						.unwrap()
 						.<Optional<Streamable<String>>>unwrap()
 						.get()

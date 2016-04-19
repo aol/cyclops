@@ -2,8 +2,6 @@ package com.aol.cyclops.control;
 
 
 
-import java.io.File;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -29,9 +27,29 @@ import java.util.stream.StreamSupport;
 import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.monads.transformers.ListT;
+import com.aol.cyclops.control.monads.transformers.SetT;
+import com.aol.cyclops.control.monads.transformers.StreamT;
+import com.aol.cyclops.control.monads.transformers.StreamableT;
+import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
+import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
+import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
+import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
+import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
+import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
+import com.aol.cyclops.control.monads.transformers.values.TryTValue;
+import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.internal.monads.AnyMFunctions;
@@ -46,6 +64,7 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
@@ -445,7 +464,9 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> AnyMSeq<T> streamOf(T... streamData){
 		return AnyMFactory.instance.seq(Stream.of(streamData));
 	}
-	
+	public static <T> AnyMSeq<T> fromPublisher(Publisher<T> publisher){
+	    return AnyMFactory.instance.convertSeq(publisher);
+	}
 	/**
 	 * Create an AnyM instance that wraps a Stream
 	 * 
@@ -564,16 +585,82 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 		Objects.requireNonNull(future);
 		return AnyMFactory.instance.value(future);
 	}
-	/**
-	 * Create an AnyM instance that wraps a Collection
-	 * 
-	 * @param stream Collection to wrap
-	 * @return AnyM that wraps the provided Collection
-	 */
-	public static <T> AnyMSeq<T> fromCollection(Collection<T> collection){
-		Objects.requireNonNull(collection);
-		return AnyMFactory.instance.convertSeq(collection);
-	}
+	
+	public static <T> AnyMValue<T> fromEvalTValue(EvalTValue<T> evalT){
+        Objects.requireNonNull(evalT);
+        return AnyMFactory.instance.value(evalT);
+    }
+	public static <T> AnyMValue<T> fromMaybeTValue(MaybeTValue<T> maybeT){
+        Objects.requireNonNull(maybeT);
+        return AnyMFactory.instance.value(maybeT);
+    }
+	public static <T> AnyMValue<T> fromOptionalTValue(OptionalTValue<T> optionalT){
+        Objects.requireNonNull(optionalT);
+        return AnyMFactory.instance.value(optionalT);
+    }
+	public static <T> AnyMValue<T> fromCompletableFutureTValue(CompletableFutureTValue<T> futureT){
+        Objects.requireNonNull(futureT);
+        return AnyMFactory.instance.value(futureT);
+    }
+	public static <ST,PT> AnyMValue<PT> fromXorTValue(XorTValue<ST,PT> xorT){
+        Objects.requireNonNull(xorT);
+        return AnyMFactory.instance.value(xorT);
+    }
+    public static <T,X extends Throwable> AnyMValue<T> fromTryTValue(TryTValue<T,X> tryT){
+        Objects.requireNonNull(tryT);
+        return AnyMFactory.instance.value(tryT);
+    }
+    public static <ST,PT> AnyMSeq<PT> fromXorTSeq(XorTSeq<ST,PT> xorT){
+        Objects.requireNonNull(xorT);
+        return AnyMFactory.instance.seq(xorT);
+    }
+    public static <T,X extends Throwable> AnyMSeq<T> fromTryTSeq(TryTSeq<T,X> tryT){
+        Objects.requireNonNull(tryT);
+        return AnyMFactory.instance.seq(tryT);
+    }
+	public static <T> AnyMSeq<T> fromEvalTSeq(EvalTSeq<T> evalT){
+        Objects.requireNonNull(evalT);
+        return AnyMFactory.instance.seq(evalT);
+    }
+	   public static <T> AnyMSeq<T> fromMaybeTSeq(MaybeTSeq<T> maybeT){
+	        Objects.requireNonNull(maybeT);
+	        return AnyMFactory.instance.seq(maybeT);
+	    }
+	    public static <T> AnyMSeq<T> fromOptionalTSeq(OptionalTSeq<T> optionalT){
+	        Objects.requireNonNull(optionalT);
+	        return AnyMFactory.instance.seq(optionalT);
+	    }
+	    public static <T> AnyMSeq<T> fromCompletableFutureTSeq(CompletableFutureTSeq<T> futureT){
+	        Objects.requireNonNull(futureT);
+	        return AnyMFactory.instance.seq(futureT);
+	    }
+	public static <T> AnyMValue<T> fromFutureWTValue(FutureWTValue<T> futureT){
+        Objects.requireNonNull(futureT);
+        return AnyMFactory.instance.value(futureT);
+    }
+	public static <T> AnyMSeq<T> fromFutureWTSeq(FutureWTSeq<T> futureT){
+        Objects.requireNonNull(futureT);
+        return AnyMFactory.instance.seq(futureT);
+    }
+	
+	public static <T> AnyMSeq<T> fromListT(ListT<T> listT){
+        Objects.requireNonNull(listT);
+        return AnyMFactory.instance.seq(listT);
+    }
+	
+	public static <T> AnyMSeq<T> fromStreamT(StreamT<T> streamT){
+        Objects.requireNonNull(streamT);
+        return AnyMFactory.instance.seq(streamT);
+    }
+	public static <T> AnyMSeq<T> fromStreamableT(StreamableT<T> streamT){
+        Objects.requireNonNull(streamT);
+        return AnyMFactory.instance.seq(streamT);
+    }
+	public static <T> AnyMSeq<T> fromSetT(SetT<T> setT){
+        Objects.requireNonNull(setT);
+        return AnyMFactory.instance.seq(setT);
+    }
+	
 	/**
 	 * Create an AnyM instance that wraps an Iterable
 	 * 
@@ -582,29 +669,27 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	 */
 	public static <T> AnyMSeq<T> fromIterable(Iterable<T> iterable){
 		Objects.requireNonNull(iterable);
-		
+		if( iterable instanceof AnyMSeq)
+		    return (AnyMSeq<T>)iterable;
+		if(iterable instanceof List)
+		    iterable = ListX.fromIterable(iterable);
+		if(iterable instanceof Set)
+            iterable = SetX.fromIterable(iterable);
 		return AnyMFactory.instance.convertSeq(iterable);
 	}
 	/**
-	 * Create an AnyM instance that wraps an textual Stream from a file
+	 * Use this method to create an AnyMValue from an Iterable.
+	 * This exists as many monadic value types in Java libraries implement iterable (such 
+	 * as Optional in Javaslang or FunctionalJava).
 	 * 
-	 * @param stream File to generate text / line Stream from, and to wrap
-	 * @return AnyM that wraps the Stream generated from the provided file
+	 * @param iterable
+	 * @return
 	 */
-	public static AnyMSeq<String> fromFile(File file){
-		Objects.requireNonNull(file);
-		return AnyMFactory.instance.convertSeq(file);
-	}
-	/**
-	 * Create an AnyM instance that wraps an textual Stream from a URL
-	 * 
-	 * @param stream URL to generate text / line Stream from, and to wrap
-	 * @return AnyM that wraps the Stream generated from the provided url
-	 */
-	public static AnyMSeq<String> fromURL(URL url){
-		Objects.requireNonNull(url);
-		return AnyMFactory.instance.convertSeq(url);
-	}
+	public static <T> AnyMValue<T> fromIterableValue(Iterable<T> iterable){
+        Objects.requireNonNull(iterable);
+        return AnyMFactory.instance.value(iterable);
+    }
+	
 	
 	/**
 	 * Take the supplied object and always attempt to convert it to a Monad type
@@ -716,21 +801,7 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> List<AnyMSeq<T>> listFromIterable(Iterable<Iterable<T>> anyM){
 		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromIterable(i)).collect(Collectors.toList());
 	}
-	/**
-	 * Take an iterable containing Streamables and convert them into a List of AnyMs
-	 * e.g.
-	 * {@code 
-	 *     List<AnyM<Integer>> anyMs = AnyM.listFromStreamable(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(10,20,30));
-	 *     
-	 *     //List[AnyM[List[1,2,3],List[10,20,30]]]
-	 * }
-	 * 
-	 * @param anyM Iterable containing Collections
-	 * @return List of AnyMs
-	 */
-	public static <T> List<AnyMSeq<T>> listFromCollection(Iterable<Collection<T>> anyM){
-		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromCollection(i)).collect(Collectors.toList());
-	}
+	
 	
 	public static  <ST,T> List<AnyMValue<T>> listFromXor(Iterable<Xor<ST,T>> anyM){
 		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromXor(i)).collect(Collectors.toList());
@@ -1058,5 +1129,9 @@ static AnyMFactory instance = new AnyMFactory();
 		return new AnyMonads();
 	}
 }
+
+
+
+
 	
 }

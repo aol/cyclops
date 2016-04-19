@@ -14,8 +14,9 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.monads.transformers.OptionalT;
+import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
 public class OptionTTest {
 
 	String result = null;
@@ -89,9 +90,9 @@ public class OptionTTest {
 	}
 	@Test
 	public void flatMap() {
-		OptionalT<Integer> optionT = OptionalT.of(AnyM.ofSeq(Stream.of(Optional.of(10))));
+		OptionalTSeq<Integer> optionT = OptionalT.fromStream(Stream.of(Optional.of(10)));
 		
-		assertThat(optionT.flatMap(num->OptionalT.fromAnyM(AnyM.ofSeq(Stream.of("hello world"+num))))
+		assertThat(optionT.flatMapT(num->OptionalT.fromStream(Stream.of(Optional.of("hello world"+num))))
 				.unwrap().<Stream<Optional<String>>>unwrap()
 						.collect(Collectors.toList()).get(0),  equalTo(Optional.of("hello world10")));
 	}

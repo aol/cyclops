@@ -259,7 +259,7 @@ public class AnyMTest {
         
        
         
-		AnyM<ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCollection(asList(asList(1,2),asList(3,4) ) ) );
+		AnyM<ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromIterable(asList(asList(1,2),asList(3,4) ) ) );
         
       
         assertThat(futureList.stream()
@@ -448,7 +448,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void startsWithIterator(){
-		assertTrue(AnyM.fromStream(Stream.of(1,2,3,4)).stream().startsWith(Arrays.asList(1,2,3).iterator()));
+		assertTrue(AnyM.fromStream(Stream.of(1,2,3,4)).stream().startsWith(Arrays.asList(1,2,3).stream()));
 	}
 	@Test
 	public void distinctOptional(){

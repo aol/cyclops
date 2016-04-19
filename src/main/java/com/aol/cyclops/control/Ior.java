@@ -13,14 +13,18 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.Matchables;
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.Matchable.CheckValue2;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
@@ -42,13 +46,13 @@ import lombok.EqualsAndHashCode;
  * @param <PT> Primary type
  */
 public interface Ior<ST,PT> extends Supplier<PT>,
-                                    MonadicValue<PT>,
+                                    MonadicValue2<ST,PT>,
 									BiFunctor<ST,PT>,
 									Functor<PT>,
 									Filterable<PT>,
 									Applicativable<PT>{
 
-	public static <ST,PT> Ior<ST,PT> primary(PT primary){
+	public static <ST,PT> Ior<ST,PT> primary(PT primary){ 
 		return new Primary<>(primary);
 	}
 	public static <ST,PT> Ior<ST,PT> secondary(ST secondary){
@@ -65,13 +69,15 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	}
 	
 
-	default <T> Ior<?,T> unit(T unit){
+	default <T> Ior<ST,T> unit(T unit){
 		return Ior.primary(unit);
 	}
 	Ior<ST,PT> filter(Predicate<? super PT> test);
 	Xor<ST,PT> toXor(); //drop ST
 	Xor<ST,PT> toXorDropPrimary(); //drop ST
-	
+	default <ST2> Xor<ST2,PT> toXor(ST2 secondary){
+	      return visit (s-> Xor.secondary(secondary), p-> Xor.primary(p),(s,p)->Xor.primary(p));
+	    }
     
 	@Override
 	default Ior<ST,PT> toIor(){
@@ -88,6 +94,31 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	Ior<ST,PT> peek(Consumer<? super PT> action);
 	
 	Ior<PT,ST> swap();
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> Ior<ST,R> coflatMap(Function<? super MonadicValue<PT>,R> mapper) {
+        return (Ior<ST,R>)MonadicValue2.super.coflatMap(mapper);
+    }
+    
+    //cojoin
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    default  Ior<ST,MonadicValue<PT>> nest(){
+        return this.map(t->unit(t));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+     */
+    @Override
+    default Ior<ST,PT> combine(Monoid<PT> monoid, MonadicValue2<? extends ST,? extends PT> v2){
+        return (Ior<ST,PT>)MonadicValue2.super.combine(monoid, v2);
+    }
+  
+    
 	Optional<Tuple2<ST,PT>> both();
 	default Value<Optional<Tuple2<ST,PT>>> bothValue(){
 		return ()->both();
@@ -126,9 +157,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 			return (Ior<R1,R2>)map(primary);
 		return bimap(secondary,primary);
 	}
-	<R> Eval<R>  matches(Function<CheckValue1<ST,R>,CheckValue1<ST,R>> fn1,
-	                     Function<CheckValue1<PT,R>,CheckValue1<PT,R>> fn2,
-	                     Function<CheckValue2<ST,PT,R>,CheckValue2<ST,PT,R>> fn3,Supplier<? extends R> otherwise);
+	<R> Eval<R>  matches(Function<CheckValue1<ST,R>,CheckValue1<ST,R>> secondary,
+	                     Function<CheckValue1<PT,R>,CheckValue1<PT,R>> primary,
+	                     Function<CheckValue2<ST,PT,R>,CheckValue2<ST,PT,R>> both,Supplier<? extends R> otherwise);
 
 	PT get();
 
@@ -138,11 +169,11 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	ReactiveSeq<ST> secondaryToStream();
 	
 	
-	<LT1,RT1> Ior<LT1,RT1> flatMap(Function<? super PT,? extends Ior<LT1,RT1>> mapper);
+	<LT1,RT1> Ior<LT1,RT1> flatMap(Function<? super PT,? extends MonadicValue2<? extends LT1,? extends RT1>> mapper);
 	<LT1,RT1> Ior<LT1,RT1> secondaryFlatMap(Function<? super ST,? extends Ior<LT1,RT1>> mapper);
 	Ior<ST,PT> secondaryToPrimayFlatMap(Function<? super ST, ? extends Ior<ST,PT>> fn);
 	
-	
+	 
 	
 	public boolean isPrimary();
 	public boolean isSecondary();
@@ -325,8 +356,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		}
 
 		@Override
-		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends Ior<LT1, RT1>> mapper) {
-			return mapper.apply(value);
+		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper) {
+			return (Ior<LT1,RT1>)mapper.apply(value).toIor();
 		}
 
 		@Override
@@ -376,13 +407,13 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 
         @Override
         public <R> Eval<R> matches(
-                Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> fn1,
-                Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn2,
-                Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
+                Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> secondary,
+                Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> primary,
+                Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> both,
                 Supplier<? extends R> otherwise) {
-           
+          
             Matchable.MTuple1<PT> mt1 = ()->Tuple.tuple(value);
-            return mt1.matches(fn2, otherwise);
+            return mt1.matches(primary, otherwise);
         }
 		
 		
@@ -458,7 +489,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 			return ReactiveSeq.fromStream(StreamUtils.optionalToStream(secondaryToOptional()));
 		}
 		@Override
-		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends Ior<LT1, RT1>> mapper) {
+		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper) {
 			return (Ior<LT1, RT1>)this;
 		}
 		@Override
@@ -575,9 +606,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 		@Override
 		public <R> R visit(Function<? super ST,? extends R> secondary, 
 	            Function<? super PT,? extends R> primary, BiFunction<? super ST, ? super PT, ? extends R> both){
-	        
-	        
-	        return Matchable.from(both().get()).visit((a,b)-> both.apply(a, b));
+		    return Matchables.tuple2(both().get()).visit((a,b)-> both.apply(a, b));
 	    }
 		
 		@Override
@@ -605,7 +634,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 			return secondary.secondaryToStream();
 		}
 		@Override
-		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends Ior<LT1, RT1>> mapper) {
+		public <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper) {
 			return Ior.both(secondary.flatMap(mapper), primary.flatMap(mapper));
 		}
 		@Override

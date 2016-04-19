@@ -72,7 +72,7 @@ public class TryComprehender implements ValueComprehender<Try> {
 	 */
 	@Override
 	public Try empty() {
-		return Success.of(Optional.empty());
+		return Try.failure(null);
 	}
 
 	@Override

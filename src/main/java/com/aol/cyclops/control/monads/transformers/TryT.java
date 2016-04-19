@@ -1,16 +1,30 @@
 package com.aol.cyclops.control.monads.transformers;
 
 
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-import org.jooq.lambda.function.Function1;
+import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.Try.Success;
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.control.Try;
+import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
+import com.aol.cyclops.control.monads.transformers.values.TryTValue;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.AnyMValue;
 
 
 /**
@@ -27,21 +41,17 @@ import com.aol.cyclops.control.AnyM;
  *
  * @param <T> The type contained on the Try within
  */
-public class TryT<T,X extends Throwable> {
+public interface TryT<T,X extends Throwable>  extends Publisher<T>, 
+                                                      Functor<T>,
+                                                      Filterable<T>{
    
-   private final AnyM<Try<T,X>> run;
-   
-   
-   private TryT(final AnyM<Try<T,X>> run){
-       this.run = run;
-   }
-   
+    public <R> TryT<R,X> unit(R value);
+    public <R> TryT<R,X> empty();
+    public <B> TryT<B,X> flatMap(Function<? super T, ? extends Try<B,X>> f);
 	/**
 	 * @return The wrapped AnyM
 	 */
-	public AnyM<Try<T,X>> unwrap() {
-		return run;
-	}
+	AnyM<Try<T,X>> unwrap();
 
    
 	/**
@@ -58,12 +68,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param peek  Consumer to accept current value of Try
 	 * @return TryT with peek call
 	 */
-	public TryT<T,X> peek(Consumer<? super T> peek) {
-		return of(run.peek(opt -> opt.map(a -> {
-			peek.accept(a);
-			return a;
-		})));
-	}
+	public TryT<T,X> peek(Consumer<? super T> peek);
    
 	/**
 	 * Filter the wrapped Try
@@ -78,9 +83,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param test Predicate to filter the wrapped Try
 	 * @return OptionalT that applies the provided filter
 	 */
-	public MaybeT<T> filter(Predicate<? super T> test) {
-		return MaybeT.of(run.map(opt -> opt.filter(test)));
-	}
+	public MaybeT<T> filter(Predicate<? super T> test);
 
 	/**
 	 * Map the wrapped Try
@@ -98,9 +101,7 @@ public class TryT<T,X extends Throwable> {
 	 * @param f Mapping function for the wrapped Try
 	 * @return TryT that applies the map function to the wrapped Try
 	 */
-	public <B> TryT<B,X> map(Function<? super T,? extends B> f) {
-		return new TryT<B,X>(run.map(o -> o.map(f)));
-	}
+	public <B> TryT<B,X> map(Function<? super T,? extends B> f);
 
 	/**
 	 * Flat Map the wrapped Try
@@ -116,13 +117,13 @@ public class TryT<T,X extends Throwable> {
 	 * @param f FlatMap function
 	 * @return TryT that applies the flatMap function to the wrapped Try
 	 */
-	public <B> TryT<B,X> flatMap(Function<? super T, TryT<B,X>> f) {
+	default <B> TryT<B,X> bind(Function<? super T, TryT<B,X>> f) {
 
-		return of(run.bind(opt -> {
+		return of(unwrap().bind(opt -> {
 			if (opt.isSuccess())
-				return f.apply(opt.get()).run.unwrap();
+				return f.apply(opt.get()).unwrap().unwrap();
 			Try<B,X> ret = (Try)opt;
-			return run.unit(ret).unwrap();
+			return unwrap().unit(ret).unwrap();
 		}));
 
 	}
@@ -191,7 +192,7 @@ public class TryT<T,X extends Throwable> {
 	 * @return Function that accepts and returns an TryT
 	 */
 	public static <U1, U2, R, X extends Throwable> BiFunction<TryT<U1,X>, TryT<U2,X>, TryT<R,X>> lift2(BiFunction<? super U1,? super U2,? extends R> fn) {
-		return (optTu1, optTu2) -> optTu1.flatMap(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
+		return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
 	}
 
 	/**
@@ -203,7 +204,7 @@ public class TryT<T,X extends Throwable> {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <A, X extends Throwable> TryT<A,X> fromAnyM(AnyM<A> anyM) {
-		return (TryT<A, X>) of(anyM.map(Success::of));
+		return (TryT<A, X>) of(anyM.map(Try::success));
 	}
    
 	/**
@@ -213,16 +214,101 @@ public class TryT<T,X extends Throwable> {
 	 * @return TryT
 	 */
 	public static <A,X extends Throwable> TryT<A,X> of(AnyM<Try<A,X>> monads) {
-		return new TryT<>(monads);
+	    return Matchables.anyM(monads).visit(v-> TryTValue.of(v), s->TryTSeq.of(s));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return run.toString();
-	}
+   
+
+    public static <A,X extends Throwable> TryTValue<A,X> fromAnyMValue(AnyMValue<A> anyM) {
+        return TryTValue.fromAnyM(anyM);
+    }
+
+    public static <A,X extends Throwable> TryTSeq<A,X> fromAnyMSeq(AnyMSeq<A> anyM) {
+        return TryTSeq.fromAnyM(anyM);
+    }
+
+    public static <A,X extends Throwable> TryTSeq<A,X> fromIterable(
+            Iterable<Try<A,X>> iterableOfTrys) {
+        return TryTSeq.of(AnyM.fromIterable(iterableOfTrys));
+    }
+
+    public static <A,X extends Throwable> TryTSeq<A,X> fromStream(Stream<Try<A,X>> streamOfTrys) {
+        return TryTSeq.of(AnyM.fromStream(streamOfTrys));
+    }
+
+    public static <A,X extends Throwable> TryTSeq<A,X> fromPublisher(
+            Publisher<Try<A,X>> publisherOfTrys) {
+        return TryTSeq.of(AnyM.fromPublisher(publisherOfTrys));
+    }
+
+    public static <A, X extends Throwable,V extends MonadicValue<Try<A,X>>> TryTValue<A,X> fromValue(
+            V monadicValue) {
+        return TryTValue.fromValue(monadicValue);
+    }
+
+    public static <A,X extends Throwable> TryTValue<A,X> fromOptional(Optional<Try<A,X>> optional) {
+        return TryTValue.of(AnyM.fromOptional(optional));
+    }
+
+    public static <A,X extends Throwable> TryTValue<A,X> fromFuture(CompletableFuture<Try<A,X>> future) {
+        return TryTValue.of(AnyM.fromCompletableFuture(future));
+    }
+
+    public static <A,X extends Throwable> TryTValue<A,X> fromIterablTryue(
+            Iterable<Try<A,X>> iterableOfTrys) {
+        return TryTValue.of(AnyM.fromIterableValue(iterableOfTrys));
+    }
+    public static <T,X extends Throwable> TryTSeq<T,X> emptyList(){
+        return TryT.fromIterable(ListX.of());
+    }
+    public static <A,X extends Throwable> TryTValue<A,X>  emptyOptional(){
+        return TryTValue.emptyOptional();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+    @Override
+    default <U> TryT<U,X> cast(Class<U> type) {
+        return (TryT<U,X>)Functor.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+    @Override
+    default <R> TryT<R,X> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (TryT<R,X>)Functor.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    default <R> TryT<R,X> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+       return (TryT<R,X>)Functor.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+    @Override
+    default <U> MaybeT<U> ofType(Class<U> type) {
+        
+        return (MaybeT<U>)Filterable.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+    @Override
+    default MaybeT<T> filterNot(Predicate<? super T> fn) {
+       
+        return (MaybeT<T>)Filterable.super.filterNot(fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+    @Override
+    default MaybeT<T> notNull() {
+       
+        return (MaybeT<T>)Filterable.super.notNull();
+    }
  
 }

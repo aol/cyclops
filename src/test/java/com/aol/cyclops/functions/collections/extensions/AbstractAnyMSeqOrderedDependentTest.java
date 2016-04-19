@@ -14,6 +14,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
@@ -27,7 +28,6 @@ import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.function.Predicates;
@@ -36,6 +36,14 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMSeqTest {
+    
+    @Test
+    public void groupedT(){
+       
+       assertThat(of(1,2,3,4).groupedT(2)
+                    .toListOfLists(),equalTo(ListX.of(ListX.of(1,2),ListX.of(3,4))));
+                    
+    }
     @Test
     public void sortedComparator() {
         assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),is(Arrays.asList(5,4,3,2,1)));
@@ -81,8 +89,13 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
     }
     @Test
     public void sliding() {
+        
+       
+        
         List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
+      
+        
         assertThat(list.get(0), hasItems(1, 2));
         assertThat(list.get(1), hasItems(2, 3));
     }
@@ -90,6 +103,27 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
     @Test
     public void slidingIncrement() {
         List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+
+        System.out.println(list);
+        assertThat(list.get(0), hasItems(1, 2, 3));
+        assertThat(list.get(1), hasItems(3, 4, 5));
+    }
+    @Test
+    public void slidingT() {
+        
+       
+        
+        ArrayList<List<Integer>> list = of(1, 2, 3, 4, 5, 6).slidingT(2).collect(()->new ArrayList(),Collectors.toList());
+
+       
+        
+        assertThat(list.get(0), hasItems(1, 2));
+        assertThat(list.get(1), hasItems(2, 3));
+    }
+
+    @Test
+    public void slidingIncrementT() {
+        ArrayList<List<Integer>> list = of(1, 2, 3, 4, 5, 6).slidingT(3, 2).collect(()->new ArrayList(),Collectors.toList());
 
         System.out.println(list);
         assertThat(list.get(0), hasItems(1, 2, 3));
@@ -151,7 +185,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 	@Test
 	public void testIntersperse() {
 		
-		assertThat(((Traversable<Integer>)of(1,2,3).intersperse(0)).toListX(),equalTo(Arrays.asList(1,0,2,0,3)));
+		assertThat((of(1,2,3).intersperse(0)).toListX(),equalTo(Arrays.asList(1,0,2,0,3)));
 	
 
 

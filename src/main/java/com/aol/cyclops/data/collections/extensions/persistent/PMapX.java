@@ -8,20 +8,18 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
@@ -32,8 +30,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 									 IterableFilterable<Tuple2<K, V>>,				
 									 ExtendedTraversable<Tuple2<K, V>>, 
 									 Foldable<Tuple2<K,V>>,
-									 CyclopsCollectable<Tuple2<K,V>>,
-									 IterableCollectable<Tuple2<K,V>>{
+									 CyclopsCollectable<Tuple2<K,V>>{
 
 	public static<K,V> PMapX<K,V> empty(){
 		return new PMapXImpl<K,V>(HashTreePMap.empty());

@@ -31,7 +31,7 @@ public class XorComprehender implements ValueComprehender<Xor> {
 
 	@Override
 	public Xor empty() {
-		return  Xor.primary(null);
+		return  Xor.secondary(null);
 	}
 
 	@Override

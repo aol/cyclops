@@ -14,9 +14,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.hamcrest.Matcher;
 import org.jooq.lambda.Collectable;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
@@ -27,7 +25,6 @@ import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.IterableCollectable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -39,8 +36,8 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 												IterableFilterable<Tuple2<K, V>>,
 												ExtendedTraversable<Tuple2<K, V>>, 
 												Foldable<Tuple2<K,V>>,
-												CyclopsCollectable<Tuple2<K,V>>,
-												IterableCollectable<Tuple2<K,V>>{
+												CyclopsCollectable<Tuple2<K,V>>
+												{
 
 	static <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> defaultCollector(){
 		return Collectors.toMap(t->t.v1, t->t.v2);

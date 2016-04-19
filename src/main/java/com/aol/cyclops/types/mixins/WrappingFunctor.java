@@ -61,6 +61,12 @@ public interface WrappingFunctor<T> extends Functor<T> {
 	}
 	
 	default  <R> WrappingFunctor<R>  map(Function<? super T,? extends R> fn) {
+	    Object functor = getFunctor();
+	    if(functor instanceof Functor){
+	        Functor f = (Functor)functor;
+	        
+	        return withFunctor((R)f.map(fn));
+	    }
 		Object value = new ComprehenderSelector().selectComprehender(
 				getFunctor()).map(getFunctor(), fn);
 	

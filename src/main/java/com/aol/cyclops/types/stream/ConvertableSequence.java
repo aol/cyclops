@@ -1,6 +1,5 @@
 package com.aol.cyclops.types.stream;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -143,7 +142,7 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 	default  Xor<ListX<T>,?> toXorSecondary(){
 		return toValue().toXor().swap();
 	}
-	default  Try<ListX<T>,NoSuchElementException> toTry(){
+	default  Try<ListX<T>,Throwable> toTry(){
 		
 		return toValue().toTry();
 	}

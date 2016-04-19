@@ -41,11 +41,12 @@ import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.Applicativable.Applicatives;
+import com.aol.cyclops.types.mixins.Printable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 
 
-public class MaybeTest {
+public class MaybeTest implements Printable {
 
 	Maybe<Integer> just;
 	Maybe<Integer> none;
@@ -53,6 +54,39 @@ public class MaybeTest {
 	public void setUp() throws Exception {
 		just = Maybe.of(10);
 		none = Maybe.none();
+	}
+	
+	@Test
+	public void nest(){
+	   assertThat(just.nest().map(m->m.get()),equalTo(just));
+	   assertThat(none.nest().map(m->m.get()),equalTo(none));
+	}
+	@Test
+	public void coFlatMap(){
+	    assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
+	    assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Maybe.of(50)));
+	}
+	@Test
+	public void combine(){
+	    Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+	    assertThat(just.combine(add,none),equalTo(just));
+	    assertThat(none.combine(add,just),equalTo(Maybe.of(0))); 
+	    assertThat(none.combine(add,none),equalTo(Maybe.of(0))); 
+	    assertThat(just.combine(add,Maybe.just(10)),equalTo(Maybe.just(20)));
+	    Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+	    assertThat(just.combine(firstNonNull,none),equalTo(just));
+	     
+	}
+	
+	@Test
+	public void optionalVMaybe(){
+	    
+	    Optional.of(10)
+	            .map(i->print("optional " + (i+10)));
+	            
+	    Maybe.just(10)
+	         .map(i->print("maybe " + (i+10)));
+	    
 	}
 	
     @Test
@@ -230,10 +264,7 @@ public class MaybeTest {
         assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 
-	@Test
-	public void testGetMatchable() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
+
 
 	@Test
 	public void testIterate() {
@@ -541,7 +572,15 @@ public class MaybeTest {
 	}
 	@Test
 	public void testAp3() {
-		assertThat(Maybe.of(1).ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
+	    
+	    
+	    Maybe.of(1)
+	         .ap3(this::add3)
+	         .ap(Optional.of(3))
+	         .ap(Maybe.of(4));
+	    
+		
+	    assertThat(Maybe.of(1).ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
 	}
 	private int add4(int a, int b, int c,int d){
 		return a+b+c+d;
@@ -631,6 +670,13 @@ public class MaybeTest {
 	
 	@Test
 	public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
+	    
+	    
+	    String match = Maybe.just("data is present")
+	                        .visit(present->"hello", ()->"missing");
+	    
+	    
+	    
 		assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
 		assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
 	}
@@ -719,10 +765,7 @@ public class MaybeTest {
 		assertThat(cf.join(),equalTo(10));
 	}
 
-	@Test
-	public void testGetMatchable1() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
+	
 
 	@Test
     public void testMatches() {

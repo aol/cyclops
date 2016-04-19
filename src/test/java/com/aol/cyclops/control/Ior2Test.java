@@ -5,8 +5,11 @@ import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +56,27 @@ public class Ior2Test {
 		just = Ior.primary(10);
 		none = Ior.secondary("none");
 	}
+	@Test
+    public void nest(){
+       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       assertThat(none.nest().map(m->m.get()),equalTo(none));
+    }
+    @Test
+    public void coFlatMap(){
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Ior.primary(50)));
+    }
+    @Test
+    public void combine(){
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        assertThat(just.combine(add,none),equalTo(Ior.primary(10)));
+        assertThat(none.combine(add,just),equalTo(Ior.primary(0))); 
+        assertThat(none.combine(add,none),equalTo(Ior.primary(0))); 
+        assertThat(just.combine(add,Xor.primary(10)),equalTo(Ior.primary(20)));
+        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+        assertThat(just.combine(firstNonNull,Xor.primary(null)),equalTo(just));
+         
+    }
 	@Test
     public void visit(){
         assertThat(just.visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("yes"));
@@ -174,17 +198,14 @@ public class Ior2Test {
         assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 
+
     @Test
     public void testConvertToAsync() {
         FutureW<Stream<Integer>> async = FutureW.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
         assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
-	@Test
-	public void testGetMatchable() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
-
+	
 	@Test
 	public void testIterate() {
 		assertThat(just.iterate(i->i+1).limit(10).sum(),equalTo(Optional.of(145)));
@@ -670,10 +691,7 @@ public class Ior2Test {
 		assertThat(cf.join(),equalTo(10));
 	}
 
-	@Test
-	public void testGetMatchable1() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
+	
 
 	@Test
     public void testMatches() {

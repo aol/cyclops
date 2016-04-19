@@ -58,6 +58,25 @@ public class FutureWTest {
 	}
 
 	@Test
+    public void nest(){
+       assertThat(just.nest().map(m->m.get()).get(),equalTo(just.get()));
+       assertThat(none.nest().map(m->m.get()).isPresent(),equalTo(false));
+    }
+    @Test
+    public void coFlatMap(){
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50).get(),equalTo(just.get()));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50).get(),equalTo(50));
+    }
+    @Test
+    public void combine(){
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        
+        assertThat(just.combine(add,Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
+        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+        assertThat(just.combine(firstNonNull,none).get(),equalTo(just.get()));
+         
+    }
+	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
 		assertThat(none.toMaybe(),equalTo(Maybe.none()));
@@ -174,11 +193,7 @@ public class FutureWTest {
         assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 
-	@Test
-	public void testGetMatchable() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
-
+	
 	@Test
 	public void testIterate() {
 		assertThat(just.iterate(i->i+1).limit(10).sum(),equalTo(Optional.of(145)));
@@ -661,10 +676,7 @@ public class FutureWTest {
 		assertThat(cf.join(),equalTo(10));
 	}
 
-	@Test
-	public void testGetMatchable1() {
-		assertThat(just.getMatchable(),equalTo(10));
-	}
+	
 
 	@Test
     public void testMatches() {

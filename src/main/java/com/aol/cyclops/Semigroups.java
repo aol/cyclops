@@ -13,10 +13,12 @@ public interface Semigroups {
 		return () -> (a, b) -> (C) a.plusAll(b);
 	}
 
-	static <T> Semigroup<ReactiveSeq<T>> combineSequenceM() {
+	static <T> Semigroup<ReactiveSeq<T>> combineReactiveSeq() {
 		return () -> (a, b) -> a.appendStream(b);
 	}
-
+	static <T> Semigroup<T> firstNonNull() {
+        return () -> (a, b) -> a!=null ? a : b;
+    }
 	static <T> Semigroup<Maybe<T>> firstPresentMaybe() {
 		return () -> (a, b) -> a.isPresent() ? a : b;
 	}

@@ -9,10 +9,13 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.data.Mutable;
 
 public class EvalAnyMValueTest extends BaseAnyMValueTest {
@@ -20,6 +23,16 @@ public class EvalAnyMValueTest extends BaseAnyMValueTest {
     public void setUp() throws Exception {
         just = AnyM.fromEval(Eval.now(10));
         none = AnyM.fromEval(Eval.later(()->null));
+    }
+    @Test
+    public void combine(){
+        
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+       
+        
+        assertThat(just.combine(add,just).toTry(),equalTo(Try.success(20)));
+        
+         
     }
     @Test
     public void testPeek() {

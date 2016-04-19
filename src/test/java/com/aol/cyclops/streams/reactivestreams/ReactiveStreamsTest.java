@@ -28,6 +28,14 @@ import reactor.core.publisher.Flux;
 public class ReactiveStreamsTest {
 
     @Test
+    public void subscribeToEmpty(){
+        SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
+        ReactiveSeq.<Integer>empty().subscribe(sub);
+        
+        sub.forEach(System.out::println);
+        
+    }
+    @Test
     public void subscribeToFlux(){
         SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
         Flux.just(1,2,3).subscribe(sub);

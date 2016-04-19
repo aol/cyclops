@@ -40,7 +40,7 @@ public class EvalComprehender implements ValueComprehender<Eval>{
 
 	@Override
 	public Eval empty() {
-		return Eval.later(()->Optional.empty());
+		return Eval.later(()->null);
 	}
 
 	@Override
