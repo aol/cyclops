@@ -398,7 +398,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		return  (PStackX)PersistentCollectionX.super.grouped(classifier);
 	}
 	default <U> PStackX<Tuple2<T, U>> zip(Iterable<? extends U> other){
-		return  (PStackX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+		return  (PStackX)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -504,7 +504,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	@Override
 	default <U> PStackX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
-		return (PStackX<Tuple2<T, U>>)PersistentCollectionX.super.zipStream(other);
+		return (PStackX)PersistentCollectionX.super.zipStream(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
@@ -512,7 +512,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	@Override
 	default <U> PStackX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
-		return (PStackX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+		return (PStackX)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -721,7 +721,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	@Override
 	default PStackX<T> retainAll(Stream<? extends T> seq) {
 		
-		return (PStackX<T>)PersistentCollectionX.super.retainAll(stream);
+		return (PStackX<T>)PersistentCollectionX.super.retainAll(seq);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Object[])

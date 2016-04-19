@@ -693,7 +693,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
       */
      @Override
-     public CompletableFutureTSeq<A> onEmptyGet(Supplier<A> supplier) {
+     public CompletableFutureTSeq<A> onEmptyGet(Supplier<? extends A> supplier) {
         
          return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.onEmptyGet(supplier);
      }

@@ -462,7 +462,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	@Override
 	default PersistentCollectionX<T> retainAll(Stream<? extends T> seq) {
 		
-	    return from(this.<T>monoid().mapReduce(stream().retainAll(stream)));
+	    return from(this.<T>monoid().mapReduce(stream().retainAll(seq)));
 	}
 	@Override
     default PersistentCollectionX<T> retainAll(Seq<? extends T> stream) {

@@ -361,7 +361,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
     }
 
     default <U> PQueueX<Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        return (PQueueX<Tuple2<T, U>>) PersistentCollectionX.super.zip(other);
+        return (PQueueX) PersistentCollectionX.super.zip(other);
     }
 
     /*
@@ -515,7 +515,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
     @Override
     default <U> PQueueX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 
-        return (PQueueX<Tuple2<T, U>>) PersistentCollectionX.super.zipStream(other);
+        return (PQueueX) PersistentCollectionX.super.zipStream(other);
     }
 
     /*
@@ -867,7 +867,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
     @Override
     default PQueueX<T> retainAll(Stream<? extends T> seq) {
 
-        return (PQueueX<T>) PersistentCollectionX.super.retainAll(stream);
+        return (PQueueX<T>) PersistentCollectionX.super.retainAll(seq);
     }
 
     /*

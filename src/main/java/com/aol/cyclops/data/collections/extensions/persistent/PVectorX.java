@@ -347,7 +347,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 		return  (PVectorX)PersistentCollectionX.super.grouped(classifier);
 	}
 	default <U> PVectorX<Tuple2<T, U>> zip(Iterable<? extends U> other){
-		return  (PVectorX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+		return  (PVectorX)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -453,7 +453,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	@Override
 	default <U> PVectorX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
-		return (PVectorX<Tuple2<T, U>>)PersistentCollectionX.super.zipStream(other);
+		return (PVectorX)PersistentCollectionX.super.zipStream(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
@@ -461,7 +461,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	@Override
 	default <U> PVectorX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
-		return (PVectorX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+		return (PVectorX)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -670,7 +670,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	@Override
 	default PVectorX<T> retainAll(Stream<? extends T> seq) {
 		
-		return (PVectorX<T>)PersistentCollectionX.super.retainAll(stream);
+		return (PVectorX<T>)PersistentCollectionX.super.retainAll(seq);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Object[])

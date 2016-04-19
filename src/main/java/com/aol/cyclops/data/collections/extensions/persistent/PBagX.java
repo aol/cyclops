@@ -400,7 +400,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	@Override
 	default <U> PBagX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
-		return (PBagX<Tuple2<T, U>>)PersistentCollectionX.super.zipStream(other);
+		return (PBagX)PersistentCollectionX.super.zipStream(other);
 	}
 
 
@@ -410,7 +410,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	@Override
 	default <U> PBagX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
-		return (PBagX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+		return (PBagX)PersistentCollectionX.super.zip(other);
 	}
 
 
@@ -671,7 +671,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	@Override
 	default PBagX<T> retainAll(Stream<? extends T> seq) {
 		
-		return (PBagX<T>)PersistentCollectionX.super.retainAll(stream);
+		return (PBagX<T>)PersistentCollectionX.super.retainAll(seq);
 	}
 
 

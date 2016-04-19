@@ -288,7 +288,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 		return  (POrderedSetX)PersistentCollectionX.super.grouped(classifier);
 	}
 	default <U> POrderedSetX<Tuple2<T, U>> zip(Iterable<? extends U> other){
-		return  (POrderedSetX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+		return  (POrderedSetX)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -395,7 +395,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	@Override
 	default <U> POrderedSetX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
-		return (POrderedSetX<Tuple2<T, U>>)PersistentCollectionX.super.zipStream(other);
+		return (POrderedSetX)PersistentCollectionX.super.zipStream(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
@@ -403,7 +403,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	@Override
 	default <U> POrderedSetX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
-		return (POrderedSetX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+		return (POrderedSetX)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -612,7 +612,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	@Override
 	default POrderedSetX<T> retainAll(Stream<? extends T> seq) {
 		
-		return (POrderedSetX<T>)PersistentCollectionX.super.retainAll(stream);
+		return (POrderedSetX<T>)PersistentCollectionX.super.retainAll(seq);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Object[])
