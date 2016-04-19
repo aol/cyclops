@@ -42,7 +42,7 @@ public interface Filterable<T> {
 	 * }
 	 */
 	@SuppressWarnings("unchecked")
-	default <U> Filterable<U> ofType(Class<U> type){
+	default <U> Filterable<U> ofType(Class<? extends U> type){
 		return (Filterable<U>)filter(type::isInstance);
 	}
 	

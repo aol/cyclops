@@ -211,7 +211,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	 * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> Ior<ST,U> ofType(Class<U> type) {
+	default <U> Ior<ST,U> ofType(Class<? extends U> type) {
 		
 		return (Ior<ST,U>)Filterable.super.ofType(type);
 	}
@@ -236,7 +236,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> Ior<ST,U> cast(Class<U> type) {
+	default <U> Ior<ST,U> cast(Class<? extends U> type) {
 		
 		return (Ior<ST,U>)Applicativable.super.cast(type);
 	}

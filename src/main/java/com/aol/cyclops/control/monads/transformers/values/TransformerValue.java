@@ -44,7 +44,7 @@ public interface TransformerValue<T> extends  MonadicValue<T>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> TransformerValue<U> cast(Class<U> type) {
+    default <U> TransformerValue<U> cast(Class<? extends U> type) {
        
         return (TransformerValue<U>)MonadicValue.super.cast(type);
     }

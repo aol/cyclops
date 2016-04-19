@@ -268,7 +268,7 @@ public interface OptionalT<T>  extends Publisher<T>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> OptionalT<U> cast(Class<U> type) {
+    default <U> OptionalT<U> cast(Class<? extends U> type) {
         return (OptionalT<U>)Functor.super.cast(type);
     }
     /* (non-Javadoc)
@@ -290,7 +290,7 @@ public interface OptionalT<T>  extends Publisher<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> OptionalT<U> ofType(Class<U> type) {
+    default <U> OptionalT<U> ofType(Class<? extends U> type) {
         
         return (OptionalT<U>)Filterable.super.ofType(type);
     }

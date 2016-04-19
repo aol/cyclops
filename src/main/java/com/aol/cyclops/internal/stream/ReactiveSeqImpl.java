@@ -424,7 +424,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * </pre>
 	 * 
 	 */
-	public final <S> ReactiveSeq<Tuple2<T,S>> zip(Stream<S> second){
+	public final <S> ReactiveSeq<Tuple2<T,S>> zip(Stream<? extends S> second){
 
 		return zipStream(second,(a,b)->new Tuple2<>(a,b));
 	}
@@ -667,7 +667,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * }
 	 * </pre>
 	 */
-	public final <U> ReactiveSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+	public final <U> ReactiveSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
 		
 		return StreamUtils.reactiveSeq(Seq.seq(stream).scanLeft(seed, function),reversable);
 		
@@ -696,7 +696,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * }
 	 * </pre>
 	 */
-	public final<U> ReactiveSeq<U> scanRight(U identity,BiFunction<? super T, U, U>  combiner){
+	public final<U> ReactiveSeq<U> scanRight(U identity,BiFunction<? super T, ? super U,? extends U>  combiner){
 		
 		return StreamUtils.reactiveSeq(StreamUtils.scanRight(stream,identity,combiner),reversable);
 	}
@@ -1134,7 +1134,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * @param accumulator
 	 * @return
 	 */
-	public final<U> U foldRight(U seed, BiFunction<? super T, U, U> function){
+	public final<U> U foldRight(U seed, BiFunction<? super T, ? super U,? extends U> function){
 		 return Seq.seq(stream).foldRight(seed, function);
 	 }
 	/**
@@ -1528,7 +1528,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public <U> ReactiveSeq<U> ofType(Class<U> type) {
+	public <U> ReactiveSeq<U> ofType(Class<? extends U> type) {
 		return StreamUtils.reactiveSeq(StreamUtils.ofType(stream, type),reversable);
 	}
 	/**
@@ -1539,7 +1539,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
 	 * 
 	 */
-	public <U> ReactiveSeq<U> cast(Class<U> type) {
+	public <U> ReactiveSeq<U> cast(Class<? extends U> type) {
 		return StreamUtils.reactiveSeq(StreamUtils.cast(stream, type),reversable);
 	}
 	/**
@@ -1827,7 +1827,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
 
 	@Override
-	public <U> ReactiveSeq<Tuple2<T, U>> zip(Seq<U> other) {
+	public <U> ReactiveSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		return StreamUtils.reactiveSeq(Seq.seq(stream).zip(other),reversable);
 	}
 
@@ -1845,19 +1845,19 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
 
 	@Override
-	public ReactiveSeq<T> onEmptyGet(Supplier<T> supplier) {
+	public ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier) {
 		return StreamUtils.reactiveSeq(Seq.seq(stream).onEmptyGet(supplier),Optional.empty());
 	}
 
 
 	@Override
-	public <X extends Throwable> ReactiveSeq<T> onEmptyThrow(Supplier<X> supplier) {
+	public <X extends Throwable> ReactiveSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		return StreamUtils.reactiveSeq(Seq.seq(stream).onEmptyThrow(supplier),Optional.empty());
 	}
 
 
 	@Override
-	public ReactiveSeq<T> concat(Stream<T> other) {
+	public ReactiveSeq<T> concat(Stream<? extends T> other) {
 		return StreamUtils.reactiveSeq(Seq.seq(stream).concat(other),Optional.empty());
 	}
 
@@ -1882,7 +1882,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
 
 	@Override
-	public <U, R> ReactiveSeq<R> zip(Seq<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	public <U, R> ReactiveSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		return StreamUtils.reactiveSeq(Seq.seq(stream).zip(other, zipper),Optional.empty());
 	}
 
@@ -1908,7 +1908,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
 
 	@Override
-	public <U> ReactiveSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
+	public <U> ReactiveSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		return StreamUtils.reactiveSeq(StreamUtils.zipStream(stream, other,Tuple::tuple),Optional.empty());
 	}
 

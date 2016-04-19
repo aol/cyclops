@@ -24,7 +24,7 @@ public class LazyFutureStreamFunctions {
 	 * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
 	 * </code>
 	 */
-	static <T1, T2> Seq<Tuple2<T1, T2>> zip(Stream<T1> left, Stream<T2> right) {
+	static <T1, T2> Seq<Tuple2<T1, T2>> zip(Stream<T1> left, Stream<? extends T2> right) {
 		return zip(left, right, Tuple::tuple);
 	}
 

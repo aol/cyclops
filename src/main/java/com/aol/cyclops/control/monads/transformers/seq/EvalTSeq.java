@@ -334,7 +334,7 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> EvalTSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> EvalTSeq<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
        
         return (EvalTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
     }
@@ -342,17 +342,17 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> EvalTSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
+    public <U> EvalTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
        
-        return (EvalTSeq<Tuple2<T, U>>)ValueTransformerSeq.super.zipStream(other);
+        return (EvalTSeq)ValueTransformerSeq.super.zipStream(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> EvalTSeq<Tuple2<T, U>> zip(Seq<U> other) {
+    public <U> EvalTSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
        
-        return (EvalTSeq<Tuple2<T, U>>)ValueTransformerSeq.super.zip(other);
+        return (EvalTSeq)ValueTransformerSeq.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -490,7 +490,7 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> EvalTSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+    public <U> EvalTSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
        
         return (EvalTSeq<U>)ValueTransformerSeq.super.scanLeft(seed, function);
     }
@@ -506,7 +506,7 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> EvalTSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+    public <U> EvalTSeq<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
        
         return (EvalTSeq<U>)ValueTransformerSeq.super.scanRight(identity, combiner);
     }
@@ -675,7 +675,7 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    public EvalTSeq<T> onEmptyGet(Supplier<T> supplier) {
+    public EvalTSeq<T> onEmptyGet(Supplier<? extends T> supplier) {
        
         return (EvalTSeq<T>)ValueTransformerSeq.super.onEmptyGet(supplier);
     }
@@ -683,7 +683,7 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    public <X extends Throwable> EvalTSeq<T> onEmptyThrow(Supplier<X> supplier) {
+    public <X extends Throwable> EvalTSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
        
         return (EvalTSeq<T>)ValueTransformerSeq.super.onEmptyThrow(supplier);
     }

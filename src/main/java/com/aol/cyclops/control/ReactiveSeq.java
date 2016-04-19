@@ -88,10 +88,12 @@ public interface ReactiveSeq<T> extends Unwrapable,
                                         Foldable<T>,
 										CyclopsCollectable<T>,
 										JoolWindowing<T>, 
-										Seq<T>,  Iterable<T>, Publisher<T>,
-												ReactiveStreamsTerminalOperations<T>,
-												ZippingApplicativable<T>, Unit<T>,
-												ConvertableSequence<T>{
+										Seq<T>,  
+										Iterable<T>, 
+										Publisher<T>,
+										ReactiveStreamsTerminalOperations<T>,
+										ZippingApplicativable<T>, Unit<T>,
+										ConvertableSequence<T>{
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
 	 */
@@ -108,7 +110,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * @see org.jooq.lambda.Seq#foldRight(java.lang.Object, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U> U  foldRight(U identity, BiFunction<? super T, U,U> accumulator){
+	default <U> U  foldRight(U identity, BiFunction<? super T, ? super U,? extends U> accumulator){
         return JoolWindowing.super.foldRight(identity,accumulator);
     }
 	 /* (non-Javadoc)
@@ -142,7 +144,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> ReactiveSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	default <U, R> ReactiveSeq<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return ReactiveSeq.fromStream(Seq.zip(this,other,zipper));
 	}
@@ -401,7 +403,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * 
 	 */
 	@Override
-	<U> ReactiveSeq<Tuple2<T, U>> zipStream(Stream<U> other);
+	<U> ReactiveSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other);
 
 	/**
 	 * Zip 2 streams into one
@@ -416,7 +418,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * 
 	 */
 	@Override
-	default <U> ReactiveSeq<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> ReactiveSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		return fromStream(JoolManipulation.super.zip(other));
 	}
 
@@ -873,7 +875,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * }
 	 * </pre>
 	 */
-	<U> ReactiveSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function);
+	<U> ReactiveSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function);
 
 	/**
 	 * Scan right
@@ -898,7 +900,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * }
 	 * </pre>
 	 */
-	<U> ReactiveSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner);
+	<U> ReactiveSeq<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner);
 
 	/**
 	 * <pre>
@@ -1658,7 +1660,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	<U> ReactiveSeq<U> ofType(Class<U> type);
+	<U> ReactiveSeq<U> ofType(Class<? extends U> type);
 
 	/**
 	 * Cast all elements in a stream to a given type, possibly throwing a
@@ -1668,7 +1670,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
 	 * 
 	 */
-	<U> ReactiveSeq<U> cast(Class<U> type);
+	<U> ReactiveSeq<U> cast(Class<? extends U> type);
 
 	/**
 	 * Lazily converts this ReactiveSeq into a Collection. This does not trigger
@@ -2521,21 +2523,21 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * 
 	 * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
 	 */
-	default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Stream<U> other){
+	default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Stream<? extends U> other){
 		return fromStream(JoolManipulation.super.crossJoin(other));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#crossJoin(org.jooq.lambda.Seq)
 	 */
-	default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Seq<U> other){
+	default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Seq<? extends U> other){
 		return fromStream(JoolManipulation.super.crossJoin(other));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#crossJoin(java.lang.Iterable)
 	 */
-	default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Iterable<U> other){
+	default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Iterable<? extends U> other){
 		return fromStream(JoolManipulation.super.crossJoin(other));
 	}
 
@@ -2548,25 +2550,25 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * java.util.function.BiPredicate)
 	 */
 
-	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Stream<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
-		Streamable<U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
+	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Stream<? extends U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
+		Streamable<? extends U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
 
 		return innerJoin(s, predicate);
 	}
 
 	
 
-	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Iterable<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
-		Streamable<U> s = Streamable.fromIterable(other);
+	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Iterable<? extends U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
+		Streamable<? extends U> s = Streamable.fromIterable(other);
 		return innerJoin(s, predicate);
 	}
 
-	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Seq<U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
-		Streamable<U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
+	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Seq<? extends U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
+		Streamable<? extends U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
 
 		return innerJoin(s, predicate);
 	}
-	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Streamable<U> other, java.util.function.BiPredicate<? super T,? super U> predicate){
+	default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Streamable<? extends U> other, java.util.function.BiPredicate<? super T,? super U> predicate){
 		return flatMap(t -> other.stream()
                 .filter(u -> predicate.test(t, u))
                 .map(u -> Tuple.tuple(t, u)));
@@ -2579,30 +2581,30 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream,
 	 * java.util.function.BiPredicate)
 	 */
-	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Stream<U> other, BiPredicate<? super T, ? super U> predicate) {
+	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Stream<? extends U> other, BiPredicate<? super T, ? super U> predicate) {
 
-		Streamable<U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other).toLazyCollection());
-
-		return leftOuterJoin(s, predicate);
-
-	}
-
-	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Seq<U> other, BiPredicate<? super T, ? super U> predicate) {
-
-		Streamable<U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other));
+		Streamable<? extends U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other).toLazyCollection());
 
 		return leftOuterJoin(s, predicate);
 
 	}
 
-	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Iterable<U> other, BiPredicate<? super T, ? super U> predicate) {
+	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Seq<? extends U> other, BiPredicate<? super T, ? super U> predicate) {
 
-		Streamable<U> s = Streamable.fromIterable(other);
+		Streamable<? extends U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other));
 
 		return leftOuterJoin(s, predicate);
 
 	}
-	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Streamable<U> s, java.util.function.BiPredicate<? super T,? super U> predicate){
+
+	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Iterable<? extends U> other, BiPredicate<? super T, ? super U> predicate) {
+
+		Streamable<? extends U> s = Streamable.fromIterable(other);
+
+		return leftOuterJoin(s, predicate);
+
+	}
+	default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Streamable<? extends U> s, java.util.function.BiPredicate<? super T,? super U> predicate){
 		return flatMap(t -> Seq.seq(s.stream())
                 .filter(u -> predicate.test(t, u))
                 .onEmpty(null)
@@ -2614,15 +2616,15 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream,
 	 * java.util.function.BiPredicate)
 	 */
-	default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Stream<U> other, BiPredicate<? super T, ? super U> predicate){
+	default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Stream<? extends U> other, BiPredicate<? super T, ? super U> predicate){
 		return fromStream(JoolManipulation.super.rightOuterJoin(other,predicate));
 	}
 
-	default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Iterable<U> other, BiPredicate<? super T, ? super U> predicate){
+	default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Iterable<? extends U> other, BiPredicate<? super T, ? super U> predicate){
 		return fromStream(JoolManipulation.super.rightOuterJoin(other,predicate));
 	}
 
-	default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Seq<U> other, BiPredicate<? super T, ? super U> predicate){
+	default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Seq<? extends U> other, BiPredicate<? super T, ? super U> predicate){
 		return fromStream(JoolManipulation.super.rightOuterJoin(other,predicate));
 	}
 		
@@ -2669,14 +2671,14 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * 
 	 * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
 	 */
-	ReactiveSeq<T> onEmptyGet(Supplier<T> supplier);
+	ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
 	 */
-	default <X extends Throwable> ReactiveSeq<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> ReactiveSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		return ReactiveSeq.fromStream(JoolManipulation.super.onEmptyThrow(supplier));
 	}
 
@@ -2685,7 +2687,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * 
 	 * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
 	 */
-	ReactiveSeq<T> concat(Stream<T> other);
+	ReactiveSeq<T> concat(Stream<? extends T> other);
 
 	/*
 	 * (non-Javadoc)
@@ -2714,7 +2716,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * @see org.jooq.lambda.Seq#zip(org.jooq.lambda.Seq,
 	 * java.util.function.BiFunction)
 	 */
-	<U, R> ReactiveSeq<R> zip(Seq<U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
+	<U, R> ReactiveSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
 	/*
 	 * (non-Javadoc)

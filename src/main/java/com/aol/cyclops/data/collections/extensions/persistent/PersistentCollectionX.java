@@ -171,10 +171,10 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	default <K> PersistentCollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return from(this.<Tuple2<K, Seq<T>>>monoid().mapReduce(stream().grouped(classifier)));
 	}
-	default <U> PersistentCollectionX<Tuple2<T, U>> zip(Iterable<U> other){
+	default <U> PersistentCollectionX<Tuple2<T, U>> zip(Iterable<? extends U> other){
 		return from(this.<Tuple2<T, U>>monoid().mapReduce(stream().zip(other)));
 	}
-	default <U, R> PersistentCollectionX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
+	default <U, R> PersistentCollectionX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
 		return from(this.<R>monoid().mapReduce(stream().zip(other,zipper)));
 	}
 	default PersistentCollectionX<ListX<T>> sliding(int windowSize){
@@ -190,11 +190,11 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	default PersistentCollectionX<T> scanRight(Monoid<T> monoid){
 		return from(this.<T>monoid().mapReduce(stream().scanRight(monoid)));
 	}
-	default <U> PersistentCollectionX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> PersistentCollectionX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return from(this.<U>monoid().mapReduce(stream().scanLeft(seed,function)));
 	}
 	
-	default <U> PersistentCollectionX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> PersistentCollectionX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return from(this.<U>monoid().mapReduce(stream().scanRight(identity,combiner)));
 	}
 	
@@ -235,7 +235,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> PersistentCollectionX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> PersistentCollectionX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
 		return from(this.<Tuple2<T, U>>monoid().mapReduce(stream().zipStream(other)));
 	}
@@ -243,7 +243,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> PersistentCollectionX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> PersistentCollectionX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
 		return from(this.<Tuple2<T, U>>monoid().mapReduce(stream().zip(other)));
 	}
@@ -375,7 +375,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Traversable#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default PersistentCollectionX<T> onEmptyGet(Supplier<T> supplier) {
+	default PersistentCollectionX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return from(this.<T>monoid().mapReduce(stream().onEmptyGet(supplier)));
 	}
@@ -383,7 +383,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Traversable#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable> PersistentCollectionX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> PersistentCollectionX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return from(this.<T>monoid().mapReduce(stream().onEmptyThrow(supplier)));
 	}
@@ -399,7 +399,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> PersistentCollectionX<U> ofType(Class<U> type) {
+	default <U> PersistentCollectionX<U> ofType(Class<? extends U> type) {
 		
 	    return from(this.<U>monoid().mapReduce(stream().ofType(type)));
 	}
@@ -423,12 +423,12 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default PersistentCollectionX<T> removeAll(Stream<T> stream) {
+	default PersistentCollectionX<T> removeAll(Stream<? extends T> stream) {
 		
 	    return from(this.<T>monoid().mapReduce(stream().removeAll(stream)));
 	}
 	@Override
-    default PersistentCollectionX<T> removeAll(Seq<T> stream) {
+    default PersistentCollectionX<T> removeAll(Seq<? extends T> stream) {
         
         return from(this.<T>monoid().mapReduce(stream().removeAll(stream)));
     }
@@ -436,7 +436,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default PersistentCollectionX<T> removeAll(Iterable<T> it) {
+	default PersistentCollectionX<T> removeAll(Iterable<? extends T> it) {
 		
 	    return from(this.<T>monoid().mapReduce(stream().removeAll(it)));
 	}
@@ -452,7 +452,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default PersistentCollectionX<T> retainAll(Iterable<T> it) {
+	default PersistentCollectionX<T> retainAll(Iterable<? extends T> it) {
 		
 	    return from(this.<T>monoid().mapReduce(stream().retainAll(it)));
 	}
@@ -460,12 +460,12 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default PersistentCollectionX<T> retainAll(Stream<T> stream) {
+	default PersistentCollectionX<T> retainAll(Stream<? extends T> seq) {
 		
-	    return from(this.<T>monoid().mapReduce(stream().retainAll(stream)));
+	    return from(this.<T>monoid().mapReduce(stream().retainAll(seq)));
 	}
 	@Override
-    default PersistentCollectionX<T> retainAll(Seq<T> stream) {
+    default PersistentCollectionX<T> retainAll(Seq<? extends T> stream) {
         
         return from(this.<T>monoid().mapReduce(stream().retainAll(stream)));
     }
@@ -482,7 +482,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> PersistentCollectionX<U> cast(Class<U> type) {
+	default <U> PersistentCollectionX<U> cast(Class<? extends U> type) {
 		
 	    return from(this.<U>monoid().mapReduce(stream().cast(type)));
 	}

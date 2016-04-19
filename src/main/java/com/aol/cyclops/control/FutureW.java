@@ -205,7 +205,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	public <U> FutureW<U> cast(Class<U> type) {
+	public <U> FutureW<U> cast(Class<? extends U> type) {
 		
 		return (FutureW<U>)Applicativable.super.cast(type);
 	}
@@ -248,7 +248,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         return toMaybe().filter(fn);
     }
     @Override
-    public <U> Maybe<U> ofType(Class<U> type) {
+    public <U> Maybe<U> ofType(Class<? extends U> type) {
         
         return (Maybe<U>)Filterable.super.ofType(type);
     }

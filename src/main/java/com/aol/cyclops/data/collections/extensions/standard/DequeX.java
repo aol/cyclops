@@ -247,15 +247,15 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	default <K> DequeX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return (DequeX)MutableCollectionX.super.grouped(classifier);	 
 	}
-	default <U> DequeX<Tuple2<T, U>> zip(Iterable<U> other){
-		return (DequeX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+	default <U> DequeX<Tuple2<T, U>> zip(Iterable<? extends U> other){
+		return (DequeX)MutableCollectionX.super.zip(other);
 	}
 	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> DequeX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	default <U, R> DequeX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return (DequeX<R>)MutableCollectionX.super.zip(other, zipper);
 	}
@@ -270,13 +270,13 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	default DequeX<T> scanLeft(Monoid<T> monoid){
 		return (DequeX<T>)MutableCollectionX.super.scanLeft(monoid); 
 	}
-	default <U> DequeX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> DequeX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return (DequeX<U>)MutableCollectionX.super.scanLeft(seed,function); 	
 	}
 	default DequeX<T> scanRight(Monoid<T> monoid){
 		return (DequeX<T>)MutableCollectionX.super.scanRight(monoid); 
 	}
-	default <U> DequeX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> DequeX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return (DequeX<U>)MutableCollectionX.super.scanRight(identity,combiner); 
 	}
 	
@@ -372,18 +372,18 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> DequeX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> DequeX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
-		return (DequeX<Tuple2<T, U>>)MutableCollectionX.super.zipStream(other);
+		return (DequeX)MutableCollectionX.super.zipStream(other);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> DequeX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> DequeX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
-		return (DequeX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+		return (DequeX)MutableCollectionX.super.zip(other);
 	}
 
 	/* (non-Javadoc)
@@ -529,7 +529,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.Traversable#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default DequeX<T> onEmptyGet(Supplier<T> supplier) {
+	default DequeX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return (DequeX<T>)MutableCollectionX.super.onEmptyGet(supplier);
 	}
@@ -538,7 +538,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.Traversable#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable> DequeX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> DequeX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return (DequeX<T>)MutableCollectionX.super.onEmptyThrow(supplier);
 	}
@@ -583,7 +583,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> DequeX<U> cast(Class<U> type) {
+	default <U> DequeX<U> cast(Class<? extends U> type) {
 	
 		return (DequeX<U>)MutableCollectionX.super.cast(type);
 	}
@@ -594,7 +594,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> DequeX<U> ofType(Class<U> type) {
+	default <U> DequeX<U> ofType(Class<? extends U> type) {
 		
 		return (DequeX<U>)MutableCollectionX.super.ofType(type);
 	}
@@ -624,7 +624,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default DequeX<T> removeAll(Stream<T> stream) {
+	default DequeX<T> removeAll(Stream<? extends T> stream) {
 		
 		return  (DequeX<T>)MutableCollectionX.super.removeAll(stream);
 	}
@@ -634,7 +634,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default DequeX<T> removeAll(Iterable<T> it) {
+	default DequeX<T> removeAll(Iterable<? extends T> it) {
 		
 		return  (DequeX<T>)MutableCollectionX.super.removeAll(it);
 	}
@@ -654,7 +654,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default DequeX<T> retainAll(Iterable<T> it) {
+	default DequeX<T> retainAll(Iterable<? extends T> it) {
 		
 		return  (DequeX<T>)MutableCollectionX.super.retainAll(it);
 	}
@@ -664,9 +664,9 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default DequeX<T> retainAll(Stream<T> stream) {
+	default DequeX<T> retainAll(Stream<? extends T> seq) {
 		
-		return  (DequeX<T>)MutableCollectionX.super.retainAll(stream);
+		return  (DequeX<T>)MutableCollectionX.super.retainAll(seq);
 	}
 
 
@@ -724,14 +724,14 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
     }
     
     @Override
-    default DequeX<T> removeAll(Seq<T> stream) {
+    default DequeX<T> removeAll(Seq<? extends T> stream) {
        
         return (DequeX<T>)MutableCollectionX.super.removeAll(stream);
     }
 
 
     @Override
-    default DequeX<T> retainAll(Seq<T> stream) {
+    default DequeX<T> retainAll(Seq<? extends T> stream) {
        
         return (DequeX<T>)MutableCollectionX.super.retainAll(stream);
     }

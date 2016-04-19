@@ -279,15 +279,15 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	default <K> PBagX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return  (PBagX)PersistentCollectionX.super.grouped(classifier);
 	}
-	default <U> PBagX<Tuple2<T, U>> zip(Iterable<U> other){
-		return  (PBagX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+	default <U> PBagX<Tuple2<T, U>> zip(Iterable<? extends U> other){
+		return  (PBagX)PersistentCollectionX.super.zip(other);
 	}
 	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> PBagX<R> zip(Iterable<U> other,
+	default <U, R> PBagX<R> zip(Iterable<? extends U> other,
 			BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return (PBagX<R>)PersistentCollectionX.super.zip(other, zipper);
@@ -333,13 +333,13 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	default PBagX<T> scanLeft(Monoid<T> monoid){
 		return  (PBagX<T>)PersistentCollectionX.super.scanLeft(monoid);
 	}
-	default <U> PBagX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> PBagX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return  (PBagX<U>)PersistentCollectionX.super.scanLeft(seed,function);
 	}
 	default PBagX<T> scanRight(Monoid<T> monoid){
 		return  (PBagX<T>)PersistentCollectionX.super.scanRight(monoid);
 	}
-	default <U> PBagX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> PBagX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return  (PBagX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
 	}
 
@@ -398,9 +398,9 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> PBagX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> PBagX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
-		return (PBagX<Tuple2<T, U>>)PersistentCollectionX.super.zipStream(other);
+		return (PBagX)PersistentCollectionX.super.zipStream(other);
 	}
 
 
@@ -408,9 +408,9 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> PBagX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> PBagX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
-		return (PBagX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
+		return (PBagX)PersistentCollectionX.super.zip(other);
 	}
 
 
@@ -569,7 +569,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default PBagX<T> onEmptyGet(Supplier<T> supplier) {
+	default PBagX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return (PBagX<T>)PersistentCollectionX.super.onEmptyGet(supplier);
 	}
@@ -579,7 +579,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable> PBagX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> PBagX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return (PBagX<T>)PersistentCollectionX.super.onEmptyThrow(supplier);
 	}
@@ -599,7 +599,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> PBagX<U> ofType(Class<U> type) {
+	default <U> PBagX<U> ofType(Class<? extends U> type) {
 		
 		return (PBagX<U>)PersistentCollectionX.super.ofType(type);
 	}
@@ -629,7 +629,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default PBagX<T> removeAll(Stream<T> stream) {
+	default PBagX<T> removeAll(Stream<? extends T> stream) {
 		
 		return (PBagX<T>)PersistentCollectionX.super.removeAll(stream);
 	}
@@ -639,7 +639,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default PBagX<T> removeAll(Iterable<T> it) {
+	default PBagX<T> removeAll(Iterable<? extends T> it) {
 		
 		return (PBagX<T>)PersistentCollectionX.super.removeAll(it);
 	}
@@ -659,7 +659,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default PBagX<T> retainAll(Iterable<T> it) {
+	default PBagX<T> retainAll(Iterable<? extends T> it) {
 		
 		return (PBagX<T>)PersistentCollectionX.super.retainAll(it);
 	}
@@ -669,9 +669,9 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default PBagX<T> retainAll(Stream<T> stream) {
+	default PBagX<T> retainAll(Stream<? extends T> seq) {
 		
-		return (PBagX<T>)PersistentCollectionX.super.retainAll(stream);
+		return (PBagX<T>)PersistentCollectionX.super.retainAll(seq);
 	}
 
 
@@ -692,7 +692,7 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> PBagX<U> cast(Class<U> type) {
+	default <U> PBagX<U> cast(Class<? extends U> type) {
 		
 		return (PBagX<U>)PersistentCollectionX.super.cast(type);
 	}
@@ -757,14 +757,14 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 
 
     @Override
-    default PBagX<T> removeAll(Seq<T> stream) {
+    default PBagX<T> removeAll(Seq<? extends T> stream) {
        
         return (PBagX<T>)PersistentCollectionX.super.removeAll(stream);
     }
 
 
     @Override
-    default PBagX<T> retainAll(Seq<T> stream) {
+    default PBagX<T> retainAll(Seq<? extends T> stream) {
        
         return (PBagX<T>)PersistentCollectionX.super.retainAll(stream);
     }

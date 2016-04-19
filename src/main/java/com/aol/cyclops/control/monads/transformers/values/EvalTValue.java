@@ -325,7 +325,7 @@ public class EvalTValue<T> implements EvalT<T>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> EvalTValue<U> cast(Class<U> type) {
+    public <U> EvalTValue<U> cast(Class<? extends U> type) {
        
         return (EvalTValue<U>)TransformerValue.super.cast(type);
     }
@@ -350,7 +350,7 @@ public class EvalTValue<T> implements EvalT<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> MaybeTValue<U> ofType(Class<U> type) {
+    public <U> MaybeTValue<U> ofType(Class<? extends U> type) {
        
         return (MaybeTValue<U>)EvalT.super.ofType(type);
     }

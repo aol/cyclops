@@ -2,8 +2,9 @@ package com.aol.cyclops.internal.react.async.future;
 
 import java.util.function.Supplier;
 
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+
 import lombok.AllArgsConstructor;
-import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 /**
  * Single consumer / multiple producer future pool
  * 

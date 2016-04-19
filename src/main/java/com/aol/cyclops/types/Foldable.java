@@ -259,7 +259,7 @@ public interface Foldable<T> {
 	default T foldRight(T identity, BinaryOperator<T> accumulator){
 		return foldable().foldRight(identity,accumulator);
 	}
-	default <U> U foldRight(U identity, BiFunction<? super T, U,U> accumulator){
+	default <U> U foldRight(U identity, BiFunction<? super T, ? super U,? extends U> accumulator){
         return (foldable()).foldRight(identity,accumulator);
     }
 

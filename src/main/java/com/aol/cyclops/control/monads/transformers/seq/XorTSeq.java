@@ -399,7 +399,7 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
       */
      @Override
-     public <U, R> XorTSeq<ST,R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+     public <U, R> XorTSeq<ST,R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         
          return (XorTSeq<ST,R>)ValueTransformerSeq.super.zip(other, zipper);
      }
@@ -407,17 +407,17 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
       */
      @Override
-     public <U> XorTSeq<ST,Tuple2<T, U>> zipStream(Stream<U> other) {
+     public <U> XorTSeq<ST,Tuple2<T, U>> zipStream(Stream<? extends U> other) {
         
-         return (XorTSeq<ST,Tuple2<T, U>>)ValueTransformerSeq.super.zipStream(other);
+         return (XorTSeq)ValueTransformerSeq.super.zipStream(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
       */
      @Override
-     public <U> XorTSeq<ST,Tuple2<T, U>> zip(Seq<U> other) {
+     public <U> XorTSeq<ST,Tuple2<T, U>> zip(Seq<? extends U> other) {
         
-         return (XorTSeq<ST,Tuple2<T, U>>)ValueTransformerSeq.super.zip(other);
+         return (XorTSeq)ValueTransformerSeq.super.zip(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -555,7 +555,7 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
       */
      @Override
-     public <U> XorTSeq<ST,U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+     public <U> XorTSeq<ST,U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
         
          return (XorTSeq<ST,U>)ValueTransformerSeq.super.scanLeft(seed, function);
      }
@@ -571,7 +571,7 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
       */
      @Override
-     public <U> XorTSeq<ST,U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+     public <U> XorTSeq<ST,U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
         
          return (XorTSeq<ST,U>)ValueTransformerSeq.super.scanRight(identity, combiner);
      }
@@ -740,7 +740,7 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
       */
      @Override
-     public XorTSeq<ST,T> onEmptyGet(Supplier<T> supplier) {
+     public XorTSeq<ST,T> onEmptyGet(Supplier<? extends T> supplier) {
         
          return (XorTSeq<ST,T>)ValueTransformerSeq.super.onEmptyGet(supplier);
      }
@@ -748,7 +748,7 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
       */
      @Override
-     public <X extends Throwable> XorTSeq<ST,T> onEmptyThrow(Supplier<X> supplier) {
+     public <X extends Throwable> XorTSeq<ST,T> onEmptyThrow(Supplier<? extends X> supplier) {
         
          return (XorTSeq<ST,T>)ValueTransformerSeq.super.onEmptyThrow(supplier);
      }

@@ -268,7 +268,7 @@ public interface TryT<T,X extends Throwable>  extends Publisher<T>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> TryT<U,X> cast(Class<U> type) {
+    default <U> TryT<U,X> cast(Class<? extends U> type) {
         return (TryT<U,X>)Functor.super.cast(type);
     }
     /* (non-Javadoc)
@@ -290,7 +290,7 @@ public interface TryT<T,X extends Throwable>  extends Publisher<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> MaybeT<U> ofType(Class<U> type) {
+    default <U> MaybeT<U> ofType(Class<? extends U> type) {
         
         return (MaybeT<U>)Filterable.super.ofType(type);
     }

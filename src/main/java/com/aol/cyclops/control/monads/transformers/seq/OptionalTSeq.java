@@ -360,7 +360,7 @@ public class OptionalTSeq<T> implements OptionalT<T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
       */
      @Override
-     public <U, R> OptionalTSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+     public <U, R> OptionalTSeq<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         
          return (OptionalTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
      }
@@ -368,17 +368,17 @@ public class OptionalTSeq<T> implements OptionalT<T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
       */
      @Override
-     public <U> OptionalTSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
+     public <U> OptionalTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
         
-         return (OptionalTSeq<Tuple2<T, U>>)ValueTransformerSeq.super.zipStream(other);
+         return (OptionalTSeq)ValueTransformerSeq.super.zipStream(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
       */
      @Override
-     public <U> OptionalTSeq<Tuple2<T, U>> zip(Seq<U> other) {
+     public <U> OptionalTSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
         
-         return (OptionalTSeq<Tuple2<T, U>>)ValueTransformerSeq.super.zip(other);
+         return (OptionalTSeq)ValueTransformerSeq.super.zip(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -516,7 +516,7 @@ public class OptionalTSeq<T> implements OptionalT<T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
       */
      @Override
-     public <U> OptionalTSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+     public <U> OptionalTSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
         
          return (OptionalTSeq<U>)ValueTransformerSeq.super.scanLeft(seed, function);
      }
@@ -532,7 +532,7 @@ public class OptionalTSeq<T> implements OptionalT<T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
       */
      @Override
-     public <U> OptionalTSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+     public <U> OptionalTSeq<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
         
          return (OptionalTSeq<U>)ValueTransformerSeq.super.scanRight(identity, combiner);
      }
@@ -701,7 +701,7 @@ public class OptionalTSeq<T> implements OptionalT<T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
       */
      @Override
-     public OptionalTSeq<T> onEmptyGet(Supplier<T> supplier) {
+     public OptionalTSeq<T> onEmptyGet(Supplier<? extends T> supplier) {
         
          return (OptionalTSeq<T>)ValueTransformerSeq.super.onEmptyGet(supplier);
      }
@@ -709,7 +709,7 @@ public class OptionalTSeq<T> implements OptionalT<T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
       */
      @Override
-     public <X extends Throwable> OptionalTSeq<T> onEmptyThrow(Supplier<X> supplier) {
+     public <X extends Throwable> OptionalTSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
         
          return (OptionalTSeq<T>)ValueTransformerSeq.super.onEmptyThrow(supplier);
      }

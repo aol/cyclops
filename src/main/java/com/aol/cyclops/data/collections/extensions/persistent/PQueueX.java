@@ -360,8 +360,8 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
         return (PQueueX) PersistentCollectionX.super.grouped(classifier);
     }
 
-    default <U> PQueueX<Tuple2<T, U>> zip(Iterable<U> other) {
-        return (PQueueX<Tuple2<T, U>>) PersistentCollectionX.super.zip(other);
+    default <U> PQueueX<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        return (PQueueX) PersistentCollectionX.super.zip(other);
     }
 
     /*
@@ -372,7 +372,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> PQueueX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> PQueueX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (PQueueX<R>) PersistentCollectionX.super.zip(other, zipper);
     }
@@ -428,7 +428,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
         return (PQueueX<T>) PersistentCollectionX.super.scanLeft(monoid);
     }
 
-    default <U> PQueueX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+    default <U> PQueueX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
         return (PQueueX<U>) PersistentCollectionX.super.scanLeft(seed, function);
     }
 
@@ -436,7 +436,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
         return (PQueueX<T>) PersistentCollectionX.super.scanRight(monoid);
     }
 
-    default <U> PQueueX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+    default <U> PQueueX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
         return (PQueueX<U>) PersistentCollectionX.super.scanRight(identity, combiner);
     }
 
@@ -513,9 +513,9 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * zipStream(java.util.stream.Stream)
      */
     @Override
-    default <U> PQueueX<Tuple2<T, U>> zipStream(Stream<U> other) {
+    default <U> PQueueX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 
-        return (PQueueX<Tuple2<T, U>>) PersistentCollectionX.super.zipStream(other);
+        return (PQueueX) PersistentCollectionX.super.zipStream(other);
     }
 
     /*
@@ -526,7 +526,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * zip(org.jooq.lambda.Seq)
      */
     @Override
-    default <U> PQueueX<Tuple2<T, U>> zip(Seq<U> other) {
+    default <U> PQueueX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 
         return (PQueueX<Tuple2<T, U>>) PersistentCollectionX.super.zip(other);
     }
@@ -735,7 +735,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    default PQueueX<T> onEmptyGet(Supplier<T> supplier) {
+    default PQueueX<T> onEmptyGet(Supplier<? extends T> supplier) {
 
         return (PQueueX<T>) PersistentCollectionX.super.onEmptyGet(supplier);
     }
@@ -748,7 +748,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> PQueueX<T> onEmptyThrow(Supplier<X> supplier) {
+    default <X extends Throwable> PQueueX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 
         return (PQueueX<T>) PersistentCollectionX.super.onEmptyThrow(supplier);
     }
@@ -774,7 +774,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * ofType(java.lang.Class)
      */
     @Override
-    default <U> PQueueX<U> ofType(Class<U> type) {
+    default <U> PQueueX<U> ofType(Class<? extends U> type) {
 
         return (PQueueX<U>) PersistentCollectionX.super.ofType(type);
     }
@@ -813,7 +813,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * removeAll(java.util.stream.Stream)
      */
     @Override
-    default PQueueX<T> removeAll(Stream<T> stream) {
+    default PQueueX<T> removeAll(Stream<? extends T> stream) {
 
         return (PQueueX<T>) PersistentCollectionX.super.removeAll(stream);
     }
@@ -826,7 +826,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * removeAll(java.lang.Iterable)
      */
     @Override
-    default PQueueX<T> removeAll(Iterable<T> it) {
+    default PQueueX<T> removeAll(Iterable<? extends T> it) {
 
         return (PQueueX<T>) PersistentCollectionX.super.removeAll(it);
     }
@@ -852,7 +852,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * retainAll(java.lang.Iterable)
      */
     @Override
-    default PQueueX<T> retainAll(Iterable<T> it) {
+    default PQueueX<T> retainAll(Iterable<? extends T> it) {
 
         return (PQueueX<T>) PersistentCollectionX.super.retainAll(it);
     }
@@ -865,9 +865,9 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * retainAll(java.util.stream.Stream)
      */
     @Override
-    default PQueueX<T> retainAll(Stream<T> stream) {
+    default PQueueX<T> retainAll(Stream<? extends T> seq) {
 
-        return (PQueueX<T>) PersistentCollectionX.super.retainAll(stream);
+        return (PQueueX<T>) PersistentCollectionX.super.retainAll(seq);
     }
 
     /*
@@ -892,7 +892,7 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * cast(java.lang.Class)
      */
     @Override
-    default <U> PQueueX<U> cast(Class<U> type) {
+    default <U> PQueueX<U> cast(Class<? extends U> type) {
 
         return (PQueueX<U>) PersistentCollectionX.super.cast(type);
     }
@@ -950,13 +950,13 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
     }
 
     @Override
-    default PQueueX<T> removeAll(Seq<T> stream) {
+    default PQueueX<T> removeAll(Seq<? extends T> stream) {
 
         return (PQueueX<T>) PersistentCollectionX.super.removeAll(stream);
     }
 
     @Override
-    default PQueueX<T> retainAll(Seq<T> stream) {
+    default PQueueX<T> retainAll(Seq<? extends T> stream) {
 
         return (PQueueX<T>) PersistentCollectionX.super.retainAll(stream);
     }

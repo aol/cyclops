@@ -191,7 +191,7 @@ public class LazyImmutable<T> implements Supplier<T>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	public <U> LazyImmutable<U> cast(Class<U> type) {
+	public <U> LazyImmutable<U> cast(Class<? extends U> type) {
 		
 		return (LazyImmutable<U>)Applicativable.super.cast(type);
 	}

@@ -14,7 +14,7 @@ public interface IterableFilterable<T> extends Filterable<T> {
 	 * @param stream of elements to remove
 	 * @return Filterable with all supplied elements removed
 	 */
-	default Filterable<T> removeAll(Stream<T> stream){
+	default Filterable<T> removeAll(Stream<? extends T> stream){
 		Set<T> set= stream.collect(Collectors.toSet());
 		return filterNot(i-> set.contains(i));
 	}
@@ -25,7 +25,7 @@ public interface IterableFilterable<T> extends Filterable<T> {
 	 * @param it  an Iterable of elements to remove
 	 * @return Filterable with all supplied elements removed
 	 */
-	default  Filterable<T> removeAll(Iterable<T> it){
+	default  Filterable<T> removeAll(Iterable<? extends T> it){
 		return removeAll(StreamUtils.stream(it));
 	}
 	
@@ -45,7 +45,7 @@ public interface IterableFilterable<T> extends Filterable<T> {
 	 * @param it Iterable of elements to retain
 	 * @return Filterable with supplied values retained, and others removed
 	 */
-	default  Filterable<T> retainAll(Iterable<T> it){
+	default  Filterable<T> retainAll(Iterable<? extends T> it){
 		return retainAll(StreamUtils.stream(it));
 	}
 
@@ -55,7 +55,7 @@ public interface IterableFilterable<T> extends Filterable<T> {
 	 * @param stream of elements to retain
 	 * @return Filterable with supplied values retained, and others removed
 	 */
-	default  Filterable<T> retainAll(Stream<T> stream){
+	default  Filterable<T> retainAll(Stream<? extends T> stream){
 		Set<T> set= stream.collect(Collectors.toSet());
 		return filter(i-> set.contains(i));
 	}
