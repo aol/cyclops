@@ -267,14 +267,14 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	    
 		return (SortedSetX)fromStream(stream().grouped(classifier).map(t->t.map2(Comparables::comparable)));     
 	}
-	default <U> SortedSetX<Tuple2<T, U>> zip(Iterable<U> other){
+	default <U> SortedSetX<Tuple2<T, U>> zip(Iterable<? extends U> other){
 		return (SortedSetX<Tuple2<T, U>>)(SortedSetX<T>)MutableCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> SortedSetX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	default <U, R> SortedSetX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		return (SortedSetX<R>)MutableCollectionX.super.zip(other, zipper);
 	}
 
@@ -287,13 +287,13 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	default SortedSetX<T> scanLeft(Monoid<T> monoid){
 		return (SortedSetX<T>)(SortedSetX<T>)MutableCollectionX.super.scanLeft(monoid); 
 	}
-	default <U> SortedSetX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> SortedSetX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return (SortedSetX<U>)(SortedSetX<T>)MutableCollectionX.super.scanLeft(seed,function); 	
 	}
 	default SortedSetX<T> scanRight(Monoid<T> monoid){
 		return (SortedSetX<T>)(SortedSetX<T>)MutableCollectionX.super.scanRight(monoid); 
 	}
-	default <U> SortedSetX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> SortedSetX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return (SortedSetX<U>)(SortedSetX<T>)MutableCollectionX.super.scanRight(identity,combiner); 
 	}
 	
@@ -354,17 +354,17 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> SortedSetX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> SortedSetX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
-		return (SortedSetX<Tuple2<T, U>>)MutableCollectionX.super.zipStream(other);
+		return (SortedSetX)MutableCollectionX.super.zipStream(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> SortedSetX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> SortedSetX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
-		return (SortedSetX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+		return (SortedSetX)MutableCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -491,7 +491,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default SortedSetX<T> onEmptyGet(Supplier<T> supplier) {
+	default SortedSetX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return (SortedSetX<T>)MutableCollectionX.super.onEmptyGet(supplier);
 	}
@@ -499,7 +499,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable> SortedSetX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> SortedSetX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return (SortedSetX<T>)MutableCollectionX.super.onEmptyThrow(supplier);
 	}
@@ -515,7 +515,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> SortedSetX<U> ofType(Class<U> type) {
+	default <U> SortedSetX<U> ofType(Class<? extends U> type) {
 		
 		return (SortedSetX<U>)MutableCollectionX.super.ofType(type);
 	}
@@ -539,7 +539,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default SortedSetX<T> removeAll(Stream<T> stream) {
+	default SortedSetX<T> removeAll(Stream<? extends T> stream) {
 		
 		return (SortedSetX<T>)MutableCollectionX.super.removeAll(stream);
 	}
@@ -547,7 +547,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default SortedSetX<T> removeAll(Iterable<T> it) {
+	default SortedSetX<T> removeAll(Iterable<? extends T> it) {
 		
 		return (SortedSetX<T>)MutableCollectionX.super.removeAll(it);
 	}
@@ -563,7 +563,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default SortedSetX<T> retainAll(Iterable<T> it) {
+	default SortedSetX<T> retainAll(Iterable<? extends T> it) {
 		
 		return (SortedSetX<T>)MutableCollectionX.super.retainAll(it);
 	}
@@ -571,9 +571,9 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default SortedSetX<T> retainAll(Stream<T> stream) {
+	default SortedSetX<T> retainAll(Stream<? extends T> seq) {
 		
-		return (SortedSetX<T>)MutableCollectionX.super.retainAll(stream);
+		return (SortedSetX<T>)MutableCollectionX.super.retainAll(seq);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Object[])
@@ -588,7 +588,7 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> SortedSetX<U> cast(Class<U> type) {
+	default <U> SortedSetX<U> cast(Class<? extends U> type) {
 		
 		return (SortedSetX<U>)MutableCollectionX.super.cast(type);
 	}
@@ -645,14 +645,14 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	        return (SortedSetX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
 	    }
 	    @Override
-	    default SortedSetX<T> removeAll(Seq<T> stream) {
+	    default SortedSetX<T> removeAll(Seq<? extends T> stream) {
 	       
 	        return (SortedSetX<T>)MutableCollectionX.super.removeAll(stream);
 	    }
 
 
 	    @Override
-	    default SortedSetX<T> retainAll(Seq<T> stream) {
+	    default SortedSetX<T> retainAll(Seq<? extends T> stream) {
 	       
 	        return (SortedSetX<T>)MutableCollectionX.super.retainAll(stream);
 	    }

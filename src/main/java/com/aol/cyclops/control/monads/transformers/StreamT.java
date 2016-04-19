@@ -222,7 +222,7 @@ public interface StreamT<T> extends  FoldableTransformerSeq<T>{
   * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
   */
  @Override
- default <U> StreamT<U> cast(Class<U> type) {
+ default <U> StreamT<U> cast(Class<? extends U> type) {
      return (StreamT<U>)FoldableTransformerSeq.super.cast(type);
  }
  /* (non-Javadoc)
@@ -244,7 +244,7 @@ public interface StreamT<T> extends  FoldableTransformerSeq<T>{
   * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
   */
  @Override
- default <U> StreamT<U> ofType(Class<U> type) {
+ default <U> StreamT<U> ofType(Class<? extends U> type) {
      
      return (StreamT<U>)FoldableTransformerSeq.super.ofType(type);
  }
@@ -309,7 +309,7 @@ public interface StreamT<T> extends  FoldableTransformerSeq<T>{
   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip(java.lang.Iterable, java.util.function.BiFunction)
   */
  @Override
- default <U, R> StreamT<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+ default <U, R> StreamT<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
     
      return (StreamT<R>)FoldableTransformerSeq.super.zip(other, zipper);
  }
@@ -317,17 +317,17 @@ public interface StreamT<T> extends  FoldableTransformerSeq<T>{
   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zipStream(java.util.stream.Stream)
   */
  @Override
- default <U> StreamT<Tuple2<T, U>> zipStream(Stream<U> other) {
+ default <U> StreamT<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
     
-     return (StreamT<Tuple2<T, U>>)FoldableTransformerSeq.super.zipStream(other);
+     return (StreamT)FoldableTransformerSeq.super.zipStream(other);
  }
  /* (non-Javadoc)
   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip(org.jooq.lambda.Seq)
   */
  @Override
- default <U> StreamT<Tuple2<T, U>> zip(Seq<U> other) {
+ default <U> StreamT<Tuple2<T, U>> zip(Seq<? extends U> other) {
     
-     return (StreamT<Tuple2<T, U>>)FoldableTransformerSeq.super.zip(other);
+     return (StreamT)FoldableTransformerSeq.super.zip(other);
  }
  /* (non-Javadoc)
   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -465,7 +465,7 @@ public interface StreamT<T> extends  FoldableTransformerSeq<T>{
   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#scanLeft(java.lang.Object, java.util.function.BiFunction)
   */
  @Override
- default <U> StreamT<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+ default <U> StreamT<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
     
      return (StreamT<U>)FoldableTransformerSeq.super.scanLeft(seed, function);
  }
@@ -481,7 +481,7 @@ public interface StreamT<T> extends  FoldableTransformerSeq<T>{
   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#scanRight(java.lang.Object, java.util.function.BiFunction)
   */
  @Override
- default <U> StreamT<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+ default <U> StreamT<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
     
      return (StreamT<U>)FoldableTransformerSeq.super.scanRight(identity, combiner);
  }
@@ -650,7 +650,7 @@ public interface StreamT<T> extends  FoldableTransformerSeq<T>{
   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#onEmptyGet(java.util.function.Supplier)
   */
  @Override
- default StreamT<T> onEmptyGet(Supplier<T> supplier) {
+ default StreamT<T> onEmptyGet(Supplier<? extends T> supplier) {
     
      return (StreamT<T>)FoldableTransformerSeq.super.onEmptyGet(supplier);
  }
@@ -658,7 +658,7 @@ public interface StreamT<T> extends  FoldableTransformerSeq<T>{
   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#onEmptyThrow(java.util.function.Supplier)
   */
  @Override
- default <X extends Throwable> StreamT<T> onEmptyThrow(Supplier<X> supplier) {
+ default <X extends Throwable> StreamT<T> onEmptyThrow(Supplier<? extends X> supplier) {
     
      return (StreamT<T>)FoldableTransformerSeq.super.onEmptyThrow(supplier);
  }

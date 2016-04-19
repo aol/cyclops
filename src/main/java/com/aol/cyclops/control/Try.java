@@ -111,7 +111,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 	 * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
 	 */
 	@Override
-    default <U> Try<U,X> cast(Class<U> type) {
+    default <U> Try<U,X> cast(Class<? extends U> type) {
         return (Try<U,X>)Applicativable.super.cast(type);
     }
     /* (non-Javadoc)
@@ -125,7 +125,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> Maybe<U> ofType(Class<U> type) {
+    default <U> Maybe<U> ofType(Class<? extends U> type) {
        
         return (Maybe<U>)Filterable.super.ofType(type);
     }

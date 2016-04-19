@@ -283,7 +283,7 @@ public interface XorT<ST,T>  extends Publisher<T>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> XorT<ST,U> cast(Class<U> type) {
+    default <U> XorT<ST,U> cast(Class<? extends U> type) {
         return (XorT<ST,U>)Functor.super.cast(type);
     }
     /* (non-Javadoc)
@@ -305,7 +305,7 @@ public interface XorT<ST,T>  extends Publisher<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> XorT<ST,U> ofType(Class<U> type) {
+    default <U> XorT<ST,U> ofType(Class<? extends U> type) {
         
         return (XorT<ST,U>)Filterable.super.ofType(type);
     }

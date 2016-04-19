@@ -4,11 +4,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
+
 import com.aol.cyclops.data.async.wait.NoWaitRetry;
 import com.aol.cyclops.data.async.wait.WaitStrategy;
-
-import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
-import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 
 public class QueueFactories {

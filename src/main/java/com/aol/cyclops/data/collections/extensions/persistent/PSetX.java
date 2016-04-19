@@ -272,14 +272,14 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	default <K> PSetX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return  (PSetX)PersistentCollectionX.super.grouped(classifier);
 	}
-	default <U> PSetX<Tuple2<T, U>> zip(Iterable<U> other){
+	default <U> PSetX<Tuple2<T, U>> zip(Iterable<? extends U> other){
 		return  (PSetX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> PSetX<R> zip(Iterable<U> other,
+	default <U, R> PSetX<R> zip(Iterable<? extends U> other,
 			BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return (PSetX<R>)PersistentCollectionX.super.zip(other, zipper);
@@ -324,13 +324,13 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	default PSetX<T> scanLeft(Monoid<T> monoid){
 		return  (PSetX<T>)PersistentCollectionX.super.scanLeft(monoid);
 	}
-	default <U> PSetX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> PSetX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return  (PSetX<U>)PersistentCollectionX.super.scanLeft(seed,function);
 	}
 	default PSetX<T> scanRight(Monoid<T> monoid){
 		return  (PSetX<T>)PersistentCollectionX.super.scanRight(monoid);
 	}
-	default <U> PSetX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> PSetX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return  (PSetX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
 	}
 	/* (non-Javadoc)
@@ -377,7 +377,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> PSetX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> PSetX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
 		return (PSetX<Tuple2<T, U>>)PersistentCollectionX.super.zipStream(other);
 	}
@@ -385,7 +385,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> PSetX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> PSetX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
 		return (PSetX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
@@ -514,7 +514,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default PSetX<T> onEmptyGet(Supplier<T> supplier) {
+	default PSetX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return (PSetX<T>)PersistentCollectionX.super.onEmptyGet(supplier);
 	}
@@ -522,7 +522,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable> PSetX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> PSetX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return (PSetX<T>)PersistentCollectionX.super.onEmptyThrow(supplier);
 	}
@@ -538,7 +538,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> PSetX<U> ofType(Class<U> type) {
+	default <U> PSetX<U> ofType(Class<? extends U> type) {
 		
 		return (PSetX<U>)PersistentCollectionX.super.ofType(type);
 	}
@@ -562,7 +562,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default PSetX<T> removeAll(Stream<T> stream) {
+	default PSetX<T> removeAll(Stream<? extends T> stream) {
 		
 		return (PSetX<T>)PersistentCollectionX.super.removeAll(stream);
 	}
@@ -570,7 +570,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default PSetX<T> removeAll(Iterable<T> it) {
+	default PSetX<T> removeAll(Iterable<? extends T> it) {
 		
 		return (PSetX<T>)PersistentCollectionX.super.removeAll(it);
 	}
@@ -586,7 +586,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default PSetX<T> retainAll(Iterable<T> it) {
+	default PSetX<T> retainAll(Iterable<? extends T> it) {
 		
 		return (PSetX<T>)PersistentCollectionX.super.retainAll(it);
 	}
@@ -594,7 +594,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default PSetX<T> retainAll(Stream<T> stream) {
+	default PSetX<T> retainAll(Stream<? extends T> seq) {
 		
 		return (PSetX<T>)PersistentCollectionX.super.retainAll(stream);
 	}
@@ -611,7 +611,7 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> PSetX<U> cast(Class<U> type) {
+	default <U> PSetX<U> cast(Class<? extends U> type) {
 		
 		return (PSetX<U>)PersistentCollectionX.super.cast(type);
 	}
@@ -668,14 +668,14 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 	        return (PSetX<C>)PersistentCollectionX.super.groupedUntil(predicate, factory);
 	    }
 	    @Override
-	    default PSetX<T> removeAll(Seq<T> stream) {
+	    default PSetX<T> removeAll(Seq<? extends T> stream) {
 	       
 	        return (PSetX<T>)PersistentCollectionX.super.removeAll(stream);
 	    }
 
 
 	    @Override
-	    default PSetX<T> retainAll(Seq<T> stream) {
+	    default PSetX<T> retainAll(Seq<? extends T> stream) {
 	       
 	        return (PSetX<T>)PersistentCollectionX.super.retainAll(stream);
 	    }

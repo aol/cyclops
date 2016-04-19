@@ -39,7 +39,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	
 	
 	@Override
-    default <U> FeatureToggle<U> cast(Class<U> type) {
+    default <U> FeatureToggle<U> cast(Class<? extends U> type) {
         return (FeatureToggle<U>)Applicativable.super.cast(type);
     }
     @Override
@@ -48,7 +48,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
         return (FeatureToggle<R>)Applicativable.super.trampoline(mapper);
     }
     @Override
-    default <U> FeatureToggle<U> ofType(Class<U> type) {
+    default <U> FeatureToggle<U> ofType(Class<? extends U> type) {
        
         return (FeatureToggle<U>)Filterable.super.ofType(type);
     }

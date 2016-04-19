@@ -397,14 +397,14 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	default <K> PStackX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return  (PStackX)PersistentCollectionX.super.grouped(classifier);
 	}
-	default <U> PStackX<Tuple2<T, U>> zip(Iterable<U> other){
+	default <U> PStackX<Tuple2<T, U>> zip(Iterable<? extends U> other){
 		return  (PStackX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> PStackX<R> zip(Iterable<U> other,
+	default <U, R> PStackX<R> zip(Iterable<? extends U> other,
 			BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return (PStackX<R>)PersistentCollectionX.super.zip(other, zipper);
@@ -447,11 +447,11 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		return  (PStackX<ListX<T>>)PersistentCollectionX.super.sliding(windowSize,increment);
 	}
 	
-	default <U> PStackX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> PStackX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return  (PStackX<U>)PersistentCollectionX.super.scanLeft(seed,function);
 	}
 	
-	default <U> PStackX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> PStackX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return  (PStackX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
 	}
 	default PStackX<T> scanLeft(Monoid<T> monoid){
@@ -502,7 +502,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> PStackX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> PStackX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
 		return (PStackX<Tuple2<T, U>>)PersistentCollectionX.super.zipStream(other);
 	}
@@ -510,7 +510,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> PStackX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> PStackX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
 		return (PStackX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
@@ -639,7 +639,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default PStackX<T> onEmptyGet(Supplier<T> supplier) {
+	default PStackX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return (PStackX<T>)PersistentCollectionX.super.onEmptyGet(supplier);
 	}
@@ -647,7 +647,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable> PStackX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> PStackX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return (PStackX<T>)PersistentCollectionX.super.onEmptyThrow(supplier);
 	}
@@ -663,7 +663,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> PStackX<U> ofType(Class<U> type) {
+	default <U> PStackX<U> ofType(Class<? extends U> type) {
 		
 		return (PStackX<U>)PersistentCollectionX.super.ofType(type);
 	}
@@ -687,7 +687,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default PStackX<T> removeAll(Stream<T> stream) {
+	default PStackX<T> removeAll(Stream<? extends T> stream) {
 		
 		return (PStackX<T>)PersistentCollectionX.super.removeAll(stream);
 	}
@@ -695,7 +695,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default PStackX<T> removeAll(Iterable<T> it) {
+	default PStackX<T> removeAll(Iterable<? extends T> it) {
 		
 		return (PStackX<T>)PersistentCollectionX.super.removeAll(it);
 	}
@@ -711,7 +711,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default PStackX<T> retainAll(Iterable<T> it) {
+	default PStackX<T> retainAll(Iterable<? extends T> it) {
 		
 		return (PStackX<T>)PersistentCollectionX.super.retainAll(it);
 	}
@@ -719,7 +719,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default PStackX<T> retainAll(Stream<T> stream) {
+	default PStackX<T> retainAll(Stream<? extends T> seq) {
 		
 		return (PStackX<T>)PersistentCollectionX.super.retainAll(stream);
 	}
@@ -736,7 +736,7 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> PStackX<U> cast(Class<U> type) {
+	default <U> PStackX<U> cast(Class<? extends U> type) {
 		
 		return (PStackX<U>)PersistentCollectionX.super.cast(type);
 	}
@@ -793,14 +793,14 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	        return (PStackX<C>)PersistentCollectionX.super.groupedUntil(predicate, factory);
 	    }
 	    @Override
-	    default PStackX<T> removeAll(Seq<T> stream) {
+	    default PStackX<T> removeAll(Seq<? extends T> stream) {
 	       
 	        return (PStackX<T>)PersistentCollectionX.super.removeAll(stream);
 	    }
 
 
 	    @Override
-	    default PStackX<T> retainAll(Seq<T> stream) {
+	    default PStackX<T> retainAll(Seq<? extends T> stream) {
 	       
 	        return (PStackX<T>)PersistentCollectionX.super.retainAll(stream);
 	    }

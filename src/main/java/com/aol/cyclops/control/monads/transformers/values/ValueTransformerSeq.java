@@ -80,7 +80,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Traversable<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Traversable<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         ReactiveSeq<R> zipped = stream().zip(other,zipper);
        return unitStream(zipped);
        
@@ -90,8 +90,8 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
      */
     @Override
-    default <U> Traversable<Tuple2<T, U>> zipStream(Stream<U> other) {
-        Streamable<U> streamable = Streamable.fromStream(other);
+    default <U> Traversable<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+        Streamable<? extends U> streamable = Streamable.fromStream(other);
         return unitStream(stream().zipStream(streamable.stream()));
     }
 
@@ -99,7 +99,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    default <U> Traversable<Tuple2<T, U>> zip(Seq<U> other) {
+    default <U> Traversable<Tuple2<T, U>> zip(Seq<? extends U> other) {
        return zipStream(other);
     }
 
@@ -263,7 +263,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> Traversable<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+    default <U> Traversable<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
         return unitStream(stream().scanLeft(seed,function));
     }
 
@@ -279,7 +279,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol).cyclops.types.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+    default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
         return unitStream(stream().scanRight(identity,combiner));
     }
 
@@ -450,7 +450,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    default Traversable<T> onEmptyGet(Supplier<T> supplier) {
+    default Traversable<T> onEmptyGet(Supplier<? extends T> supplier) {
         return unitStream(stream().onEmptyGet(supplier));
     }
 
@@ -458,7 +458,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> Traversable<T> onEmptyThrow(Supplier<X> supplier) {
+    default <X extends Throwable> Traversable<T> onEmptyThrow(Supplier<? extends X> supplier) {
        return unitStream(stream().onEmptyThrow(supplier));
        
     }

@@ -326,7 +326,7 @@ public class MaybeTValue<T> implements MaybeT<T>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> MaybeTValue<U> cast(Class<U> type) {
+    public <U> MaybeTValue<U> cast(Class<? extends U> type) {
        
         return (MaybeTValue<U>)TransformerValue.super.cast(type);
     }
@@ -351,7 +351,7 @@ public class MaybeTValue<T> implements MaybeT<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> MaybeTValue<U> ofType(Class<U> type) {
+    public <U> MaybeTValue<U> ofType(Class<? extends U> type) {
        
         return (MaybeTValue<U>)MaybeT.super.ofType(type);
     }

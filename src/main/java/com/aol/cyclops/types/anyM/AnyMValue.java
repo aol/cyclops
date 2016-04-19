@@ -82,7 +82,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 	
 	
 	@Override
-    default <U> AnyMValue<U> ofType(Class<U> type) {
+    default <U> AnyMValue<U> ofType(Class<? extends U> type) {
        
         return ( AnyMValue<U>)Filterable.super.ofType(type);
     }
@@ -103,7 +103,7 @@ public interface AnyMValue<T> extends AnyM<T>,
 
 
     @Override
-    default <U> AnyMValue<U> cast(Class<U> type) {
+    default <U> AnyMValue<U> cast(Class<? extends U> type) {
        
         return (AnyMValue<U>)AnyM.super.cast(type);
     }

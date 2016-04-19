@@ -352,7 +352,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
       */
      @Override
-     public <U, R> CompletableFutureTSeq<R> zip(Iterable<U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+     public <U, R> CompletableFutureTSeq<R> zip(Iterable<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
         
          return (CompletableFutureTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
      }
@@ -360,17 +360,17 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
       */
      @Override
-     public <U> CompletableFutureTSeq<Tuple2<A, U>> zipStream(Stream<U> other) {
+     public <U> CompletableFutureTSeq<Tuple2<A, U>> zipStream(Stream<? extends U> other) {
         
-         return (CompletableFutureTSeq<Tuple2<A, U>>)ValueTransformerSeq.super.zipStream(other);
+         return (CompletableFutureTSeq)ValueTransformerSeq.super.zipStream(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
       */
      @Override
-     public <U> CompletableFutureTSeq<Tuple2<A, U>> zip(Seq<U> other) {
+     public <U> CompletableFutureTSeq<Tuple2<A, U>> zip(Seq<? extends U> other) {
         
-         return (CompletableFutureTSeq<Tuple2<A, U>>)ValueTransformerSeq.super.zip(other);
+         return (CompletableFutureTSeq)ValueTransformerSeq.super.zip(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -508,7 +508,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
       */
      @Override
-     public <U> CompletableFutureTSeq<U> scanLeft(U seed, BiFunction<U, ? super A, U> function) {
+     public <U> CompletableFutureTSeq<U> scanLeft(U seed, BiFunction<? super U, ? super A,? extends U> function) {
         
          return (CompletableFutureTSeq<U>)ValueTransformerSeq.super.scanLeft(seed, function);
      }
@@ -524,7 +524,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
       */
      @Override
-     public <U> CompletableFutureTSeq<U> scanRight(U identity, BiFunction<? super A, U, U> combiner) {
+     public <U> CompletableFutureTSeq<U> scanRight(U identity, BiFunction<? super A, ? super U,? extends U> combiner) {
         
          return (CompletableFutureTSeq<U>)ValueTransformerSeq.super.scanRight(identity, combiner);
      }
@@ -701,7 +701,7 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
       */
      @Override
-     public <X extends Throwable> CompletableFutureTSeq<A> onEmptyThrow(Supplier<X> supplier) {
+     public <X extends Throwable> CompletableFutureTSeq<A> onEmptyThrow(Supplier<? extends X> supplier) {
         
          return (CompletableFutureTSeq<A>)ValueTransformerSeq.super.onEmptyThrow(supplier);
      }

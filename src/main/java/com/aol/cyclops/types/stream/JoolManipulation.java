@@ -13,19 +13,19 @@ public interface JoolManipulation<T> extends IterableFilterable<T>, Seq<T>{
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.util.stream.Stream)
 	 */
-	default ReactiveSeq<T> removeAll(Stream<T> stream){
+	default ReactiveSeq<T> removeAll(Stream<? extends T> stream){
 		return (ReactiveSeq<T>)(IterableFilterable.super.removeAll(stream));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.lang.Iterable)
 	 */
-	default  ReactiveSeq<T> removeAll(Iterable<T> it){
+	default  ReactiveSeq<T> removeAll(Iterable<? extends T> it){
 		return (ReactiveSeq<T>)(IterableFilterable.super.removeAll(it));
 	}
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#removeAll(org.jooq.lambda.Seq)
 	 */
-	default  ReactiveSeq<T> removeAll(Seq<T> seq){
+	default  ReactiveSeq<T> removeAll(Seq<? extends T> seq){
 		return (ReactiveSeq<T>)(IterableFilterable.super.removeAll((Stream)seq));
 	}
 	/* (non-Javadoc)
@@ -38,20 +38,20 @@ public interface JoolManipulation<T> extends IterableFilterable<T>, Seq<T>{
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.lang.Iterable)
 	 */
-	default  ReactiveSeq<T> retainAll(Iterable<T> it){
+	default  ReactiveSeq<T> retainAll(Iterable<? extends T> it){
 	  
 		return (ReactiveSeq<T>)(IterableFilterable.super.retainAll(it));
 	}
 	/* (non-Javadoc)
 	 * @see org.jooq.lambda.Seq#retainAll(org.jooq.lambda.Seq)
 	 */
-	default  ReactiveSeq<T> retainAll(Seq<T> seq){
+	default  ReactiveSeq<T> retainAll(Seq<? extends T> seq){
 		return (ReactiveSeq<T>)(IterableFilterable.super.retainAll((Stream)seq));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.util.stream.Stream)
 	 */
-	default  ReactiveSeq<T> retainAll(Stream<T> stream){
+	default  ReactiveSeq<T> retainAll(Stream<? extends T> stream){
 		return (ReactiveSeq<T>)(IterableFilterable.super.retainAll(stream));
 	}
 	/* (non-Javadoc)
@@ -84,7 +84,7 @@ public interface JoolManipulation<T> extends IterableFilterable<T>, Seq<T>{
 	 * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> ReactiveSeq<U> ofType(Class<U> type) {
+	default <U> ReactiveSeq<U> ofType(Class<? extends U> type) {
 		
 		return (ReactiveSeq<U>)IterableFilterable.super.ofType(type);
 	}

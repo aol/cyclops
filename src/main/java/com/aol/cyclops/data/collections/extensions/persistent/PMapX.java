@@ -136,7 +136,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> PMapX<K,U> cast(Class<U> type) {
+	default <U> PMapX<K,U> cast(Class<? extends U> type) {
 		
 		return (PMapX<K,U>)Functor.super.cast(type);
 	}

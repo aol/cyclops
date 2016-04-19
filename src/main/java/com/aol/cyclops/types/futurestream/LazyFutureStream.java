@@ -126,7 +126,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
         return (LazyFutureStream<R>)ReactiveSeq.super.trampoline(mapper);
     }
     
-     default <R> R  foldRight(R identity, BiFunction<? super U, R,R> accumulator){
+     default <R> R  foldRight(R identity, BiFunction<? super U, ? super R,? extends R> accumulator){
          return ReactiveSeq.super.foldRight(identity,accumulator);
      }
      @Override 
@@ -1587,7 +1587,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      */
     @SuppressWarnings({ "unchecked" })
     @Override
-    default LazyFutureStream<U> concat(Stream<U> other) {
+    default LazyFutureStream<U> concat(Stream<? extends U> other) {
         return fromStream(Stream.concat(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED),
                 false),StreamSupport.stream(Spliterators.spliteratorUnknownSize(other.iterator(), Spliterator.ORDERED),
                         false)));
@@ -1644,7 +1644,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * com.aol.simple.react.stream.traits.FutureStream#cast(java.lang.Class)
      */
     @Override
-    default <U> LazyFutureStream<U> cast(Class<U> type) {
+    default <U> LazyFutureStream<U> cast(Class<? extends U> type) {
         return (LazyFutureStream)LazySimpleReactStream.super.cast(type);
 
     }
@@ -1664,7 +1664,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      *
      */
     @Override
-    default <U> LazyFutureStream<U> ofType(Class<U> type) {
+    default <U> LazyFutureStream<U> ofType(Class<? extends U> type) {
         return (LazyFutureStream)LazySimpleReactStream.super.ofType(type);
     }
 
@@ -1953,7 +1953,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * @see #zip(Stream, Stream)
      */
     @Override
-    default <T> LazyFutureStream<Tuple2<U, T>> zip(Seq<T> other) {
+    default <T> LazyFutureStream<Tuple2<U, T>> zip(Seq<? extends T> other) {
         return fromStream(LazyFutureStreamFunctions.zip(this, other));
     }
 
@@ -1969,7 +1969,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * @see #zip(Seq, BiFunction)
      */
     @Override
-    default <T, R> LazyFutureStream<R> zip(Seq<T> other,
+    default <T, R> LazyFutureStream<R> zip(Seq<? extends T> other,
             BiFunction<? super U, ? super T,? extends R> zipper) {
         return fromStream(LazyFutureStreamFunctions.zip(this, other, zipper));
     }
@@ -1984,7 +1984,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      */
     @Override
     default <T> LazyFutureStream<T> scanLeft(T seed,
-            BiFunction<T, ? super U, T> function) {
+            BiFunction<? super T, ? super U, ? extends T> function) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).scanLeft(seed, function));
 
     }
@@ -1999,7 +1999,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      */
     @Override
     default <R> LazyFutureStream<R> scanRight(R seed,
-            BiFunction<? super U, R, R> function) {
+            BiFunction<? super U, ? super R, ? extends R> function) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).scanRight(seed, function));
 
     }
@@ -2118,7 +2118,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * LazyFutureStream.of(1, 2).crossJoin(LazyFutureStream.of("a", "b"))
      * }</pre>
      */
-    default <T> LazyFutureStream<Tuple2<U, T>> crossJoin(Stream<T> other) {
+    default <T> LazyFutureStream<Tuple2<U, T>> crossJoin(Stream<? extends T> other) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).crossJoin(other));
     }
 
@@ -2152,7 +2152,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * </pre>
      *
      */
-    default LazyFutureStream<U> onEmptyGet(Supplier<U> supplier){
+    default LazyFutureStream<U> onEmptyGet(Supplier<? extends U> supplier){
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).onEmptyGet(supplier));
     }
     /**
@@ -2168,7 +2168,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * </pre>
      *
      */
-    default <X extends Throwable> LazyFutureStream<U> onEmptyThrow(Supplier<X> supplier) {
+    default <X extends Throwable> LazyFutureStream<U> onEmptyThrow(Supplier<? extends X> supplier) {
         return fromStream(ReactiveSeq.super.onEmptyThrow(supplier));
     }
     /**
@@ -2180,7 +2180,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * LazyFutureStream.of(1, 2, 3).innerJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
      * }</pre>
      */
-    default <T> LazyFutureStream<Tuple2<U, T>> innerJoin(Stream<T> other, BiPredicate<? super U, ? super T> predicate) {
+    default <T> LazyFutureStream<Tuple2<U, T>> innerJoin(Stream<? extends T> other, BiPredicate<? super U, ? super T> predicate) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).innerJoin(other,predicate));
 
     }
@@ -2194,7 +2194,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * LazyFutureStream.of(1, 2, 3).leftOuterJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
      * }</pre>
      */
-    default <T> LazyFutureStream<Tuple2<U, T>> leftOuterJoin(Stream<T> other, BiPredicate<? super U, ?  super T> predicate) {
+    default <T> LazyFutureStream<Tuple2<U, T>> leftOuterJoin(Stream<? extends T> other, BiPredicate<? super U, ?  super T> predicate) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).leftOuterJoin(other,predicate));
     }
 
@@ -2207,7 +2207,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * LazyFutureStream.of(1, 2).rightOuterJoin(Seq.of(1, 2, 3), t -> Objects.equals(t.v1, t.v2))
      * }</pre>
      */
-    default <T> LazyFutureStream<Tuple2<U, T>> rightOuterJoin(Stream<T> other, BiPredicate<? super U, ? super T> predicate) {
+    default <T> LazyFutureStream<Tuple2<U, T>> rightOuterJoin(Stream<? extends T> other, BiPredicate<? super U, ? super T> predicate) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).rightOuterJoin(other,predicate));
     }
     /**
@@ -2651,7 +2651,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
      * @see com.aol.cyclops.control.ReactiveSeq#zipStream(java.util.stream.Stream)
      */
     @Override
-    default <R> LazyFutureStream<Tuple2<U, R>> zipStream(Stream<R> other) {
+    default <R> LazyFutureStream<Tuple2<U, R>> zipStream(Stream<? extends R> other) {
         return  (LazyFutureStream) fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).zipStream(other));
 
     }

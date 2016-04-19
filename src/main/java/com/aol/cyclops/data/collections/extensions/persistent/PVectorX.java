@@ -346,14 +346,14 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	default <K> PVectorX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return  (PVectorX)PersistentCollectionX.super.grouped(classifier);
 	}
-	default <U> PVectorX<Tuple2<T, U>> zip(Iterable<U> other){
+	default <U> PVectorX<Tuple2<T, U>> zip(Iterable<? extends U> other){
 		return  (PVectorX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> PVectorX<R> zip(Iterable<U> other,
+	default <U, R> PVectorX<R> zip(Iterable<? extends U> other,
 			BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return (PVectorX<R>)PersistentCollectionX.super.zip(other, zipper);
@@ -398,13 +398,13 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	default PVectorX<T> scanLeft(Monoid<T> monoid){
 		return  (PVectorX<T>)PersistentCollectionX.super.scanLeft(monoid);
 	}
-	default <U> PVectorX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> PVectorX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return  (PVectorX<U>)PersistentCollectionX.super.scanLeft(seed,function);
 	}
 	default PVectorX<T> scanRight(Monoid<T> monoid){
 		return  (PVectorX<T>)PersistentCollectionX.super.scanRight(monoid);
 	}
-	default <U> PVectorX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> PVectorX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return  (PVectorX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
 	}
 	/* (non-Javadoc)
@@ -451,7 +451,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> PVectorX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> PVectorX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
 		return (PVectorX<Tuple2<T, U>>)PersistentCollectionX.super.zipStream(other);
 	}
@@ -459,7 +459,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> PVectorX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> PVectorX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
 		return (PVectorX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
@@ -588,7 +588,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default PVectorX<T> onEmptyGet(Supplier<T> supplier) {
+	default PVectorX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return (PVectorX<T>)PersistentCollectionX.super.onEmptyGet(supplier);
 	}
@@ -596,7 +596,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable> PVectorX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> PVectorX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return (PVectorX<T>)PersistentCollectionX.super.onEmptyThrow(supplier);
 	}
@@ -612,7 +612,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> PVectorX<U> ofType(Class<U> type) {
+	default <U> PVectorX<U> ofType(Class<? extends U> type) {
 		
 		return (PVectorX<U>)PersistentCollectionX.super.ofType(type);
 	}
@@ -636,7 +636,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default PVectorX<T> removeAll(Stream<T> stream) {
+	default PVectorX<T> removeAll(Stream<? extends T> stream) {
 		
 		return (PVectorX<T>)PersistentCollectionX.super.removeAll(stream);
 	}
@@ -644,7 +644,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default PVectorX<T> removeAll(Iterable<T> it) {
+	default PVectorX<T> removeAll(Iterable<? extends T> it) {
 		
 		return (PVectorX<T>)PersistentCollectionX.super.removeAll(it);
 	}
@@ -660,7 +660,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default PVectorX<T> retainAll(Iterable<T> it) {
+	default PVectorX<T> retainAll(Iterable<? extends T> it) {
 		
 		return (PVectorX<T>)PersistentCollectionX.super.retainAll(it);
 	}
@@ -668,7 +668,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default PVectorX<T> retainAll(Stream<T> stream) {
+	default PVectorX<T> retainAll(Stream<? extends T> seq) {
 		
 		return (PVectorX<T>)PersistentCollectionX.super.retainAll(stream);
 	}
@@ -685,7 +685,7 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> PVectorX<U> cast(Class<U> type) {
+	default <U> PVectorX<U> cast(Class<? extends U> type) {
 		
 		return (PVectorX<U>)PersistentCollectionX.super.cast(type);
 	}
@@ -742,14 +742,14 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	        return (PVectorX<C>)PersistentCollectionX.super.groupedUntil(predicate, factory);
 	    }
 	    @Override
-	    default PVectorX<T> removeAll(Seq<T> stream) {
+	    default PVectorX<T> removeAll(Seq<? extends T> stream) {
 	       
 	        return (PVectorX<T>)PersistentCollectionX.super.removeAll(stream);
 	    }
 
 
 	    @Override
-	    default PVectorX<T> retainAll(Seq<T> stream) {
+	    default PVectorX<T> retainAll(Seq<? extends T> stream) {
 	       
 	        return (PVectorX<T>)PersistentCollectionX.super.retainAll(stream);
 	    }

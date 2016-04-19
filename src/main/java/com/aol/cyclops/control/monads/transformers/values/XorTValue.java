@@ -341,7 +341,7 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> XorTValue<ST,U> cast(Class<U> type) {
+    public <U> XorTValue<ST,U> cast(Class<? extends U> type) {
         return (XorTValue<ST,U>)XorT.super.cast(type);
     }
     /* (non-Javadoc)
@@ -363,7 +363,7 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> XorTValue<ST,U> ofType(Class<U> type) {
+    public <U> XorTValue<ST,U> ofType(Class<? extends U> type) {
         
         return (XorTValue<ST,U>)XorT.super.ofType(type);
     }

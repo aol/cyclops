@@ -250,7 +250,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	 * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> Xor<ST,U> ofType(Class<U> type) {
+	default <U> Xor<ST,U> ofType(Class<? extends U> type) {
 		
 		return (Xor<ST,U>)Filterable.super.ofType(type);
 	}
@@ -275,7 +275,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> Xor<ST,U> cast(Class<U> type) {
+	default <U> Xor<ST,U> cast(Class<? extends U> type) {
 		
 		return (Xor<ST,U>)Applicativable.super.cast(type);
 	}

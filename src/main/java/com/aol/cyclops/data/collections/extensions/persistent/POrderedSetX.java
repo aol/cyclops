@@ -287,14 +287,14 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	default <K> POrderedSetX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return  (POrderedSetX)PersistentCollectionX.super.grouped(classifier);
 	}
-	default <U> POrderedSetX<Tuple2<T, U>> zip(Iterable<U> other){
+	default <U> POrderedSetX<Tuple2<T, U>> zip(Iterable<? extends U> other){
 		return  (POrderedSetX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> POrderedSetX<R> zip(Iterable<U> other,
+	default <U, R> POrderedSetX<R> zip(Iterable<? extends U> other,
 			BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return (POrderedSetX<R>)PersistentCollectionX.super.zip(other, zipper);
@@ -339,13 +339,13 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	default POrderedSetX<T> scanLeft(Monoid<T> monoid){
 		return  (POrderedSetX<T>)PersistentCollectionX.super.scanLeft(monoid);
 	}
-	default <U> POrderedSetX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> POrderedSetX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return  (POrderedSetX<U>)PersistentCollectionX.super.scanLeft(seed,function);
 	}
 	default POrderedSetX<T> scanRight(Monoid<T> monoid){
 		return  (POrderedSetX<T>)PersistentCollectionX.super.scanRight(monoid);
 	}
-	default <U> POrderedSetX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> POrderedSetX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return  (POrderedSetX<U>)PersistentCollectionX.super.scanRight(identity,combiner);
 	}
 	
@@ -393,7 +393,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> POrderedSetX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> POrderedSetX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
 		return (POrderedSetX<Tuple2<T, U>>)PersistentCollectionX.super.zipStream(other);
 	}
@@ -401,7 +401,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> POrderedSetX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> POrderedSetX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
 		return (POrderedSetX<Tuple2<T, U>>)PersistentCollectionX.super.zip(other);
 	}
@@ -530,7 +530,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default POrderedSetX<T> onEmptyGet(Supplier<T> supplier) {
+	default POrderedSetX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return (POrderedSetX<T>)PersistentCollectionX.super.onEmptyGet(supplier);
 	}
@@ -538,7 +538,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable> POrderedSetX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> POrderedSetX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return (POrderedSetX<T>)PersistentCollectionX.super.onEmptyThrow(supplier);
 	}
@@ -554,7 +554,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> POrderedSetX<U> ofType(Class<U> type) {
+	default <U> POrderedSetX<U> ofType(Class<? extends U> type) {
 		
 		return (POrderedSetX<U>)PersistentCollectionX.super.ofType(type);
 	}
@@ -578,7 +578,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default POrderedSetX<T> removeAll(Stream<T> stream) {
+	default POrderedSetX<T> removeAll(Stream<? extends T> stream) {
 		
 		return (POrderedSetX<T>)PersistentCollectionX.super.removeAll(stream);
 	}
@@ -586,7 +586,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default POrderedSetX<T> removeAll(Iterable<T> it) {
+	default POrderedSetX<T> removeAll(Iterable<? extends T> it) {
 		
 		return (POrderedSetX<T>)PersistentCollectionX.super.removeAll(it);
 	}
@@ -602,7 +602,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default POrderedSetX<T> retainAll(Iterable<T> it) {
+	default POrderedSetX<T> retainAll(Iterable<? extends T> it) {
 		
 		return (POrderedSetX<T>)PersistentCollectionX.super.retainAll(it);
 	}
@@ -610,7 +610,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default POrderedSetX<T> retainAll(Stream<T> stream) {
+	default POrderedSetX<T> retainAll(Stream<? extends T> seq) {
 		
 		return (POrderedSetX<T>)PersistentCollectionX.super.retainAll(stream);
 	}
@@ -627,7 +627,7 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> POrderedSetX<U> cast(Class<U> type) {
+	default <U> POrderedSetX<U> cast(Class<? extends U> type) {
 		
 		return (POrderedSetX<U>)PersistentCollectionX.super.cast(type);
 	}
@@ -684,14 +684,14 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	        return (POrderedSetX<C>)PersistentCollectionX.super.groupedUntil(predicate, factory);
 	    }
 	    @Override
-	    default POrderedSetX<T> removeAll(Seq<T> stream) {
+	    default POrderedSetX<T> removeAll(Seq<? extends T> stream) {
 	       
 	        return (POrderedSetX<T>)PersistentCollectionX.super.removeAll(stream);
 	    }
 
 
 	    @Override
-	    default POrderedSetX<T> retainAll(Seq<T> stream) {
+	    default POrderedSetX<T> retainAll(Seq<? extends T> stream) {
 	       
 	        return (POrderedSetX<T>)PersistentCollectionX.super.retainAll(stream);
 	    }
