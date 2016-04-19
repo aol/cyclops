@@ -29,10 +29,45 @@ public interface Functor<T> {
 	default <U> Functor<U> cast(Class<U> type){
 		return map(type::cast);
 	}
+	/**
+	 * Transform this functor using the supplied transformation function
+	 * 
+	 * <pre>
+	 * {@code 
+	 *  
+	 *  
+	 *    of(1,2,3).map(i->i*2)
+	 *    
+	 *    //[2,4,6]
+	 *  
+	 * }
+	 * </pre>
+	 * 
+	 * @param fn Transformation function
+	 * @return Transformed Functor
+	 */
 	<R> Functor<R>  map(Function<? super T,? extends R> fn);
 	
+	/**
+	 * Peek at the current value of this Functor, without transforming it
+	 * 
+	  * <pre>
+     * {@code 
+     *  
+     *  
+     *    of(1,2,3).map(System.out::println)
+     *    
+     *    1
+     *    2
+     *    3
+     *  
+     * }
+     * </pre>
+	 * @param c Consumer that recieves each element from this Functor
+	 * @return Functor that will peek at each value
+	 */
 	default   Functor<T>  peek(Consumer<? super T> c) {
-		return (Functor)map(input -> {
+		return map(input -> {
 			c.accept(input);
 			return  input;
 		});

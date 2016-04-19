@@ -22,13 +22,33 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.Memoize;
 
 /**
- * Represents a computation that can be defered, cached or immediate.
- * Supports tail recursion via map / flatMap.
+ * Represents a computation that can be defered (always), cached (later) or immediate(now).
+ * Supports tail recursion via map / flatMap. 
+ * Computations are always Lazy even when performed against a Now instance. 
+ * Heavily inspired by Cats Eval @link https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/Eval.scala
+ * 
+ * Tail Recursion example
+ * <pre>
+ * {@code 
+ * 
+ * public void odd(){
+        System.out.println(even(Eval.now(200000)).get());
+    }
+    public Eval<String> odd(Eval<Integer> n )  {
+       
+       return n.flatMap(x->even(Eval.now(x-1)));
+    }
+    public Eval<String> even(Eval<Integer> n )  {
+        return n.flatMap(x->{
+            return x<=0 ? Eval.now("done") : odd(Eval.now(x-1));
+        });
+     }
+ * }
+ * </pre>
  * 
  * @author johnmcclean
  *
