@@ -54,6 +54,7 @@ if (JavaVersion.current().isJava8Compatible()) {
       }
     }
   }
+  
 
 configurations {
 	provided

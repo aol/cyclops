@@ -1,11 +1,14 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.For.Publishers.each2;
+
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.BaseStream;
 
+import org.jooq.lambda.tuple.Tuple;
 import org.pcollections.ConsPStack;
 import org.reactivestreams.Publisher;
 
@@ -17,21 +20,34 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
+import reactor.core.publisher.Flux;
+
 public class For {
     
     public interface Publishers {
+        
         /**
          * Perform a four level nested internal iteration over the provided Publishers
-         * 
          * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
          * 
-         * @param publisher2
-         *            Nested Stream to iterate over
-         
-         * @param yieldingFunction
-         *            Function with pointers to the current element from both
-         *            Streams that generates the new elements
-         * @return SequenceM with elements generated via nested iteration
+         * <pre>
+         * {@code
+         * each4(Flux.range(1,10), 
+                  a-> ReactiveSeq.iterate(a,i->i+1).limit(10),
+                  (a,b) -> Maybe.<Integer>of(a+b),
+                  (a,b,c) -> Mono.<Integer>just(a+b+c),
+                        Tuple::tuple)
+                        .toListX()
+         * 
+         * }
+         * </pre>
+         * 
+         * @param publisher top level publisher
+         * @param publisher2 Nested publisher
+         * @param publisher3 Nested publisher
+         * @param publisher4 Nested publisher
+         * @param yieldingFunction  Generates a result per combination
+         * @return A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
         static <T1,T2,T3,R1,R2, R3, R> AnyMSeq< R> each4(Publisher<? extends T1> publisher,
                                             Function<? super T1, ? extends Publisher<R1>> publisher2, 
@@ -48,18 +64,28 @@ public class For {
         }
         /**
          * Perform a four level nested internal iteration over the provided Publishers
-         * 
          * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
          * 
-         * @param publisher2
-         *            Nested Stream to iterate over
-         * @param filterFunction
-         *            Filter to apply over elements before passing non-filtered
-         *            values to the yielding function
-         * @param yieldingFunction
-         *            Function with pointers to the current element from both
-         *            Streams that generates the new elements
-         * @return SequenceM with elements generated via nested iteration
+         * <pre>
+         * {@code 
+         *  each4(Flux.range(1,10), 
+                            a-> ReactiveSeq.iterate(a,i->i+1).limit(10),
+                            (a,b) -> Maybe.<Integer>of(a+b),
+                            (a,b,c) -> Mono.<Integer>just(a+b+c),
+                            (a,b,c,d) -> a+b+c+d <100,
+                                Tuple::tuple)
+                            .toListX()
+         * 
+         * }
+         * </pre>
+         * 
+         * @param publisher top level publisher
+         * @param publisher2 Nested publisher
+         * @param publisher3 Nested publisher
+         * @param publisher4 Nested publisher
+         * @param filterFunction A filtering function, keeps values where the predicate holds
+         * @param yieldingFunction Generates a result per combination
+         * @return A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
         static <T1,T2,T3,R1,R2, R3, R> AnyMSeq< R> each4(Publisher<? extends T1> publisher,
                                             Function<? super T1, ? extends Publisher<R1>> publisher2, 
@@ -77,18 +103,26 @@ public class For {
                     
         }
     
+       
         /**
          * Perform a three level nested internal iteration over the provided Publishers
          * 
          * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
          * 
-         * @param publisher1
-         *            Nested Stream to iterate over
-        
-         * @param yieldingFunction
-         *            Function with pointers to the current element from both
-         *            Streams that generates the new elements
-         * @return SequenceM with elements generated via nested iteration
+         * <pre>
+         * {@code 
+         * each3(Flux.range(1,10), 
+                            a-> ReactiveSeq.iterate(a,i->i+1).limit(10),
+                            (a,b) -> Maybe.<Integer>of(a+b),
+                            Tuple::tuple).toListX();
+         * 
+         * }
+         * </pre>
+         * @param publisher top level publisher
+         * @param publisher1 Nested publisher
+         * @param publisher2 Nested publisher
+         * @param yieldingFunction  Generates a result per combination
+         * @return A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
         static <T1,T2,R1,R2, R> AnyMSeq< R> each3(Publisher<? extends T1> publisher,
                                             Function<? super T1, ? extends Publisher<R1>> publisher1, 
@@ -101,20 +135,28 @@ public class For {
                       .yield3(yieldingFunction);
                     
         }
+       
         /**
          * Perform a three level nested internal iteration over the provided Publishers
-         * 
          * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
          * 
-         * @param publisher2
-         *            Nested Stream to iterate over
-         * @param filterFunction
-         *            Filter to apply over elements before passing non-filtered
-         *            values to the yielding function
-         * @param yieldingFunction
-         *            Function with pointers to the current element from both
-         *            Streams that generates the new elements
-         * @return SequenceM with elements generated via nested iteration
+         * <pre>
+         * {@code 
+         * each3(Flux.range(1,10), 
+                   a-> ReactiveSeq.iterate(a,i->i+1).limit(10),
+                   (a,b) -> Maybe.<Integer>of(a+b),
+                   (a,b,c) ->a+b+c<10,
+                   Tuple::tuple).toListX();
+         * }
+         * </pre>
+         * 
+         * 
+         * @param publisher top level publisher
+         * @param publisher2 Nested publisher
+         * @param publisher3 Nested publisher
+         * @param filterFunction A filtering function
+         * @param yieldingFunction  Generates a result per combination
+         * @return A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
         static <T1,T2,R1,R2, R> AnyMSeq< R> each3(Publisher<? extends T1> publisher,
                                             Function<? super T1, ? extends Publisher<R1>> publisher2, 
@@ -130,17 +172,25 @@ public class For {
                     
         }
     
+        
         /**
          * Perform a two level nested internal iteration over the provided Publishers
          * 
          * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
          * 
-         * @param publisher2
-         *            Nested Stream to iterate over
-         * @param filterFunction
-         *            Filter to apply over elements before passing non-filtered
-         *            values to the yielding function
-         * @return SequenceM with elements generated via nested iteration
+         * <pre>
+         * {@code 
+         *   each2(Flux.range(1,10), 
+                   i-> ReactiveSeq.iterate(i,a->a+1).limit(10),
+                   Tuple::tuple)
+                   .toListX();
+         * }
+         * </pre>
+         * 
+         * @param publisher Top level publisher
+         * @param publisher2 Nested publisher
+         * @param yieldingFunction Generates a result per combination
+         * @return  A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
         static <T,R1, R> AnyMSeq< R> each2(Publisher<? extends T> publisher,
                                             Function<? super T, ? extends Publisher<R1>> publisher2, 
@@ -152,21 +202,25 @@ public class For {
                     
         }
     
+       
         /**
          * Perform a two level nested internal iteration over the provided Publishers
          * 
-         * 
          * NB - avoid using traverse once Stream types as any parameter other than the first! (e.g. ReactiveSeq)
+         * <pre>
+         * {@code 
+         *  each2(Flux.range(1,10), 
+                          i-> ReactiveSeq.iterate(i,a->a+1).limit(10),
+                          (a,b)->a+b<10,
+                          Tuple::tuple).toListX();
+         * }
+         * </pre>
          * 
-         * @param publisher2
-         *            Nested Stream to iterate over
-         * @param filterFunction
-         *            Filter to apply over elements before passing non-filtered
-         *            values to the yielding function
-         * @param yieldingFunction
-         *            Function with pointers to the current element from both
-         *            Streams that generates the new elements
-         * @return SequenceM with elements generated via nested iteration
+         * @param publisher  Top level publisher
+         * @param publisher2 Nested publisher
+         * @param filterFunction A filtering function
+         * @param yieldingFunction Generates a result per combination
+         * @return A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
         static <T,R1, R> AnyMSeq< R> each2(Publisher<? extends T> publisher,
                                             Function<? super T, ? extends Publisher<R1>> publisher2, 
@@ -295,6 +349,12 @@ public class For {
          *            Filter to apply over elements before passing non-filtered
          *            values to the yielding function
          * @return SequenceM with elements generated via nested iteration
+         */
+        /**
+         * @param monadicValue
+         * @param value2
+         * @param yieldingFunction
+         * @return
          */
         static <T,R1, R> AnyMValue< R> each2(MonadicValue<? extends T> monadicValue,
                                             Function<? super T, MonadicValue<R1>> value2, 

@@ -36,7 +36,7 @@ public interface Sequential<T>{
      * 
      * <pre>
      * {@code 
-     * SequenceM.iterate("", last -> "next")
+     * ReactiveSeq.iterate("", last -> "next")
      *              .limit(100)
      *              .batchBySize(10)
      *              .onePer(1, TimeUnit.MICROSECONDS)
