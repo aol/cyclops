@@ -1,14 +1,11 @@
 package com.aol.cyclops.control;
 
-import static com.aol.cyclops.control.For.Publishers.each2;
-
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.BaseStream;
 
-import org.jooq.lambda.tuple.Tuple;
 import org.pcollections.ConsPStack;
 import org.reactivestreams.Publisher;
 
@@ -19,8 +16,6 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
-
-import reactor.core.publisher.Flux;
 
 public class For {
     
