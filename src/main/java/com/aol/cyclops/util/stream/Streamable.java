@@ -95,7 +95,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
      * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Streamable<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Streamable<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
        
         return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
     }
@@ -106,7 +106,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
      * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
      */
     @Override
-    default <U> Streamable<Tuple2<T, U>> zipStream(Stream<U> other) {
+    default <U> Streamable<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
        
         return Streamable.fromIterable(ZippingApplicativable.super.zipStream(other));
     }
@@ -429,7 +429,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
 	 * @param function folding function
 	 * @return Single reduced value
 	 */
-	default <U> U foldRight(U seed, BiFunction<? super T, U, U> function)  {
+	default <U> U foldRight(U seed, BiFunction<? super T,? super U,? extends U> function)  {
         return reactiveSeq().foldRight(seed, function);
     }
 	/**
@@ -1144,7 +1144,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     	 * }
     	 * </pre>
     	 */
-    	default <U> Streamable<U> scanLeft(U identity, BiFunction<U, ? super T, U> function){
+    	default <U> Streamable<U> scanLeft(U identity, BiFunction<? super U, ? super T, ? extends U> function){
     		return fromStream(reactiveSeq().scanLeft(identity,function));		
     	}
     	
@@ -1171,7 +1171,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     	 * }
     	 * </pre>
     	 */
-    	default <U> Streamable<U> scanRight(U identity,BiFunction<? super T, U, U>  combiner){
+    	default <U> Streamable<U> scanRight(U identity,BiFunction<? super T, ? super U,? extends U>  combiner){
     		return fromStream(reactiveSeq().scanRight(identity,combiner));			
     	}
     	
@@ -1739,7 +1739,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     	 * 
     	 */
     	@SuppressWarnings("unchecked")
-    	default <U> Streamable<U> ofType(Class<U> type){
+    	default <U> Streamable<U> ofType(Class<? extends U> type){
     		return fromStream(reactiveSeq().ofType(type));
     	}
     	
@@ -1751,7 +1751,7 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     	 * // ClassCastException Streamable.of(1, "a", 2, "b", 3).cast(Integer.class)
     	 * 
     	 */
-    	default <U> Streamable<U> cast(Class<U> type){
+    	default <U> Streamable<U> cast(Class<? extends U> type){
     		return fromStream(reactiveSeq().cast(type));
     	}
     	
@@ -2381,12 +2381,12 @@ public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>,
     	}
 
     	
-    	default Streamable<T> onEmptyGet(Supplier<T> supplier){
+    	default Streamable<T> onEmptyGet(Supplier<? extends T> supplier){
     		return fromStream(reactiveSeq().onEmptyGet(supplier));
     	}
 
     	
-    	default <X extends Throwable> Streamable<T> onEmptyThrow(Supplier<X> supplier){
+    	default <X extends Throwable> Streamable<T> onEmptyThrow(Supplier<? extends X> supplier){
     		return fromStream(reactiveSeq().onEmptyThrow(supplier));
     	}
 

@@ -1,19 +1,15 @@
 package com.aol.cyclops.data.async;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.junit.Test;
 
-import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
-
-import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.wait.DirectWaitStrategy;
-import com.aol.cyclops.data.async.wait.NoWaitRetry;
 import com.aol.cyclops.data.async.wait.WaitStrategy.Offerable;
 import com.aol.cyclops.data.async.wait.WaitStrategy.Takeable;
-
-import static org.junit.Assert.assertThat;
 public class DirectWaitStrategyTest {
 	int called = 0;
 	Takeable<String> takeable = ()->{ 

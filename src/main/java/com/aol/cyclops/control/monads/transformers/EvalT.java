@@ -286,7 +286,7 @@ public interface EvalT<T>  extends Publisher<T>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> EvalT<U> cast(Class<U> type) {
+    default <U> EvalT<U> cast(Class<? extends U> type) {
         return (EvalT<U>)Functor.super.cast(type);
     }
     /* (non-Javadoc)
@@ -308,7 +308,7 @@ public interface EvalT<T>  extends Publisher<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> MaybeT<U> ofType(Class<U> type) {
+    default <U> MaybeT<U> ofType(Class<? extends U> type) {
         
         return (MaybeT<U>)Filterable.super.ofType(type);
     }

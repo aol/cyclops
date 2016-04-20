@@ -325,7 +325,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> TryTValue<U,X> cast(Class<U> type) {
+    public <U> TryTValue<U,X> cast(Class<? extends U> type) {
         return (TryTValue<U,X>)TryT.super.cast(type);
     }
     /* (non-Javadoc)
@@ -347,7 +347,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> MaybeTValue<U> ofType(Class<U> type) {
+    public <U> MaybeTValue<U> ofType(Class<? extends U> type) {
         
         return (MaybeTValue<U>)TryT.super.ofType(type);
     }

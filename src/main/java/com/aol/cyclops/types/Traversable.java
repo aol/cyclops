@@ -169,7 +169,7 @@ public interface Traversable<T> extends Iterable<T>,
 		return traversable().cycleUntil(predicate);
 	}
 
-	default <U, R> Traversable<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	default <U, R> Traversable<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         return traversable().zip(other,zipper);
     }
 	/**
@@ -184,7 +184,7 @@ public interface Traversable<T> extends Iterable<T>,
 	 * </pre>
 	 * 
 	 */
-	default <U> Traversable<Tuple2<T, U>> zipStream(Stream<U> other){
+	default <U> Traversable<Tuple2<T, U>> zipStream(Stream<? extends U> other){
 		return traversable().zipStream(other);
 	}
 
@@ -200,7 +200,7 @@ public interface Traversable<T> extends Iterable<T>,
 	 * </pre>
 	 * 
 	 */
-	default <U> Traversable<Tuple2<T, U>> zip(Seq<U> other){
+	default <U> Traversable<Tuple2<T, U>> zip(Seq<? extends U> other){
 		return traversable().zip(other);
 	}
 
@@ -513,7 +513,7 @@ public interface Traversable<T> extends Iterable<T>,
 	 * }
 	 * </pre>
 	 */
-	default <U> Traversable<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> Traversable<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return traversable().scanLeft(seed,function);
 	}
 
@@ -542,7 +542,7 @@ public interface Traversable<T> extends Iterable<T>,
 	 * }
 	 * </pre>
 	 */
-	default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return traversable().scanRight(identity,combiner);
 	}
 
@@ -793,7 +793,7 @@ public interface Traversable<T> extends Iterable<T>,
 	 * 
 	 * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
 	 */
-	default Traversable<T> onEmptyGet(Supplier<T> supplier){
+	default Traversable<T> onEmptyGet(Supplier<? extends T> supplier){
 		return traversable().onEmptyGet(supplier);
 	}
 
@@ -802,7 +802,7 @@ public interface Traversable<T> extends Iterable<T>,
 	 * 
 	 * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
 	 */
-	 default <X extends Throwable> Traversable<T> onEmptyThrow(Supplier<X> supplier){
+	 default <X extends Throwable> Traversable<T> onEmptyThrow(Supplier<? extends X> supplier){
 		 return traversable().onEmptyThrow(supplier);
 	 }
 	/*

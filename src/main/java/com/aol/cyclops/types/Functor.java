@@ -26,7 +26,7 @@ public interface Functor<T> {
 	 * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
 	 * 
 	 */
-	default <U> Functor<U> cast(Class<U> type){
+	default <U> Functor<U> cast(Class<? extends U> type){
 		return map(type::cast);
 	}
 	/**

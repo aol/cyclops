@@ -266,14 +266,14 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	default <K> SetX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return (SetX)MutableCollectionX.super.grouped(classifier);	 
 	}
-	default <U> SetX<Tuple2<T, U>> zip(Iterable<U> other){
-		return (SetX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+	default <U> SetX<Tuple2<T, U>> zip(Iterable<? extends U> other){
+		return (SetX)MutableCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> SetX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	default <U, R> SetX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return (SetX<R>)MutableCollectionX.super.zip(other, zipper);
 	}
@@ -287,13 +287,13 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	default SetX<T> scanLeft(Monoid<T> monoid){
 		return (SetX<T>)MutableCollectionX.super.scanLeft(monoid); 
 	}
-	default <U> SetX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> SetX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return (SetX<U>)MutableCollectionX.super.scanLeft(seed,function); 	
 	}
 	default SetX<T> scanRight(Monoid<T> monoid){
 		return (SetX<T>)MutableCollectionX.super.scanRight(monoid); 
 	}
-	default <U> SetX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> SetX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return (SetX<U>)MutableCollectionX.super.scanRight(identity,combiner); 
 	}
 	
@@ -353,17 +353,17 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> SetX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> SetX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
-		return (SetX<Tuple2<T, U>>)MutableCollectionX.super.zipStream(other);
+		return (SetX)MutableCollectionX.super.zipStream(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> SetX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> SetX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
-		return (SetX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+		return (SetX)MutableCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -490,7 +490,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default SetX<T> onEmptyGet(Supplier<T> supplier) {
+	default SetX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return (SetX<T>)MutableCollectionX.super.onEmptyGet(supplier);
 	}
@@ -498,7 +498,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable> SetX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> SetX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return (SetX<T>)MutableCollectionX.super.onEmptyThrow(supplier);
 	}
@@ -514,7 +514,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> SetX<U> ofType(Class<U> type) {
+	default <U> SetX<U> ofType(Class<? extends U> type) {
 		
 		return (SetX<U>)MutableCollectionX.super.ofType(type);
 	}
@@ -538,7 +538,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default SetX<T> removeAll(Stream<T> stream) {
+	default SetX<T> removeAll(Stream<? extends T> stream) {
 		
 		return (SetX<T>)MutableCollectionX.super.removeAll(stream);
 	}
@@ -546,7 +546,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default SetX<T> removeAll(Iterable<T> it) {
+	default SetX<T> removeAll(Iterable<? extends T> it) {
 		
 		return (SetX<T>)MutableCollectionX.super.removeAll(it);
 	}
@@ -562,7 +562,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default SetX<T> retainAll(Iterable<T> it) {
+	default SetX<T> retainAll(Iterable<? extends T> it) {
 		
 		return (SetX<T>)MutableCollectionX.super.retainAll(it);
 	}
@@ -570,9 +570,9 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default SetX<T> retainAll(Stream<T> stream) {
+	default SetX<T> retainAll(Stream<? extends T> seq) {
 		
-		return (SetX<T>)MutableCollectionX.super.retainAll(stream);
+		return (SetX<T>)MutableCollectionX.super.retainAll(seq);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Object[])
@@ -587,7 +587,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> SetX<U> cast(Class<U> type) {
+	default <U> SetX<U> cast(Class<? extends U> type) {
 		
 		return (SetX<U>)MutableCollectionX.super.cast(type);
 	}
@@ -644,14 +644,14 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	        return (SetX<ListX<T>>)MutableCollectionX.super.groupedStatefullyWhile(predicate);
 	    }
 	    @Override
-	    default SetX<T> removeAll(Seq<T> stream) {
+	    default SetX<T> removeAll(Seq<? extends T> stream) {
 	       
 	        return (SetX<T>)MutableCollectionX.super.removeAll(stream);
 	    }
 
 
 	    @Override
-	    default SetX<T> retainAll(Seq<T> stream) {
+	    default SetX<T> retainAll(Seq<? extends T> stream) {
 	       
 	        return (SetX<T>)MutableCollectionX.super.retainAll(stream);
 	    }

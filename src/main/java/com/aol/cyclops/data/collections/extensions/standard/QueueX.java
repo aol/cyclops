@@ -258,14 +258,14 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	default <K> QueueX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier){
 		return (QueueX)MutableCollectionX.super.grouped(classifier);	 
 	}
-	default <U> QueueX<Tuple2<T, U>> zip(Iterable<U> other){
-		return (QueueX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+	default <U> QueueX<Tuple2<T, U>> zip(Iterable<? extends U> other){
+		return (QueueX)MutableCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> QueueX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	default <U, R> QueueX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return (QueueX<R>)MutableCollectionX.super.zip(other, zipper);
 	}
@@ -279,13 +279,13 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	default QueueX<T> scanLeft(Monoid<T> monoid){
 		return (QueueX<T>)MutableCollectionX.super.scanLeft(monoid); 
 	}
-	default <U> QueueX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> QueueX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return (QueueX<U>)MutableCollectionX.super.scanLeft(seed,function); 	
 	}
 	default QueueX<T> scanRight(Monoid<T> monoid){
 		return (QueueX<T>)MutableCollectionX.super.scanRight(monoid); 
 	}
-	default <U> QueueX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> QueueX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return (QueueX<U>)MutableCollectionX.super.scanRight(identity,combiner); 
 	}
 	
@@ -331,7 +331,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> QueueX<U> cast(Class<U> type) {
+	default <U> QueueX<U> cast(Class<? extends U> type) {
 		
 		return (QueueX<U>)MutableCollectionX.super.cast(type);
 	}
@@ -377,18 +377,18 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U>  QueueX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U>  QueueX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
-		return (QueueX<Tuple2<T, U>>)MutableCollectionX.super.zipStream(other);
+		return (QueueX)MutableCollectionX.super.zipStream(other);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U>  QueueX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U>  QueueX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
-		return (QueueX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+		return (QueueX)MutableCollectionX.super.zip(other);
 	}
 
 	/* (non-Javadoc)
@@ -531,7 +531,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default  QueueX<T> onEmptyGet(Supplier<T> supplier) {
+	default  QueueX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return (QueueX<T>)MutableCollectionX.super.onEmptyGet(supplier);
 	}
@@ -540,7 +540,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable>  QueueX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable>  QueueX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return (QueueX<T>)MutableCollectionX.super.onEmptyThrow(supplier);
 	}
@@ -558,7 +558,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U>  QueueX<U> ofType(Class<U> type) {
+	default <U>  QueueX<U> ofType(Class<? extends U> type) {
 		
 		return (QueueX<U>)MutableCollectionX.super.ofType(type);
 	}
@@ -585,7 +585,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default  QueueX<T> removeAll(Stream<T> stream) {
+	default  QueueX<T> removeAll(Stream<? extends T> stream) {
 		
 		return (QueueX<T>)MutableCollectionX.super.removeAll(stream);
 	}
@@ -594,7 +594,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default  QueueX<T> removeAll(Iterable<T> it) {
+	default  QueueX<T> removeAll(Iterable<? extends T> it) {
 		
 		return (QueueX<T>)MutableCollectionX.super.removeAll(it);
 	}
@@ -612,7 +612,7 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default  QueueX<T> retainAll(Iterable<T> it) {
+	default  QueueX<T> retainAll(Iterable<? extends T> it) {
 		
 		return (QueueX<T>)MutableCollectionX.super.retainAll(it);
 	}
@@ -621,9 +621,9 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default  QueueX<T> retainAll(Stream<T> stream) {
+	default  QueueX<T> retainAll(Stream<? extends T> seq) {
 		
-		return (QueueX<T>)MutableCollectionX.super.retainAll(stream);
+		return (QueueX<T>)MutableCollectionX.super.retainAll(seq);
 	}
 
 	/* (non-Javadoc)
@@ -680,14 +680,14 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	    }	
 	    
 	    @Override
-	    default QueueX<T> removeAll(Seq<T> stream) {
+	    default QueueX<T> removeAll(Seq<? extends T> stream) {
 	       
 	        return (QueueX<T>)MutableCollectionX.super.removeAll(stream);
 	    }
 
 
 	    @Override
-	    default QueueX<T> retainAll(Seq<T> stream) {
+	    default QueueX<T> retainAll(Seq<? extends T> stream) {
 	       
 	        return (QueueX<T>)MutableCollectionX.super.retainAll(stream);
 	    }

@@ -4,6 +4,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.internal.react.async.future.FastFuture;
@@ -13,7 +15,6 @@ import com.aol.cyclops.internal.react.async.future.PipelineBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
-import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
 @AllArgsConstructor
 public class LazyStreamWrapper<U> implements StreamWrapper<U> {
@@ -32,7 +33,7 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 		
 		this.react = react;
 		if(react.isPoolingActive())
-			pool = new FuturePool(new ManyToOneConcurrentArrayQueue(react.getMaxActive().getMaxActive()), react.getMaxActive().getMaxActive());
+			pool = new FuturePool(new ManyToOneConcurrentArrayQueue<>(react.getMaxActive().getMaxActive()), react.getMaxActive().getMaxActive());
 		else
 			pool = null;
 		

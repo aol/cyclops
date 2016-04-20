@@ -301,7 +301,7 @@ public class FutureWTValue<A> implements FutureWT<A>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> FutureWTValue<U> cast(Class<U> type) {
+    public <U> FutureWTValue<U> cast(Class<? extends U> type) {
         return (FutureWTValue<U>)TransformerValue.super.cast(type);
     }
     /* (non-Javadoc)
@@ -323,7 +323,7 @@ public class FutureWTValue<A> implements FutureWT<A>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> MaybeTValue<U> ofType(Class<U> type) {
+    public <U> MaybeTValue<U> ofType(Class<? extends U> type) {
         
         return (MaybeTValue<U>)FutureWT.super.ofType(type);
     }

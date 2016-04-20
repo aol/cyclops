@@ -314,14 +314,14 @@ public interface ListX<T> extends List<T>,
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable)
 	 */
-	default <U> ListX<Tuple2<T, U>> zip(Iterable<U> other){
-		return (ListX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+	default <U> ListX<Tuple2<T, U>> zip(Iterable<? extends U> other){
+		return (ListX)MutableCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> ListX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	default <U, R> ListX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return (ListX<R>)MutableCollectionX.super.zip(other, zipper);
 	}
@@ -347,7 +347,7 @@ public interface ListX<T> extends List<T>,
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
 	 */
-	default <U> ListX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function){
+	default <U> ListX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function){
 		return (ListX<U>)MutableCollectionX.super.scanLeft(seed,function); 	
 	}
 	/* (non-Javadoc)
@@ -359,7 +359,7 @@ public interface ListX<T> extends List<T>,
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
 	 */
-	default <U> ListX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner){
+	default <U> ListX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner){
 		return (ListX<U>)MutableCollectionX.super.scanRight(identity,combiner); 
 	}
 	
@@ -495,18 +495,18 @@ public interface ListX<T> extends List<T>,
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> ListX<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> ListX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 
-		return (ListX<Tuple2<T, U>>)MutableCollectionX.super.zipStream(other);
+		return (ListX)MutableCollectionX.super.zipStream(other);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> ListX<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> ListX<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
-		return (ListX<Tuple2<T, U>>)MutableCollectionX.super.zip(other);
+		return (ListX)MutableCollectionX.super.zip(other);
 	}
 
 	/* (non-Javadoc)
@@ -631,7 +631,7 @@ public interface ListX<T> extends List<T>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> ListX<U> cast(Class<U> type) {
+	default <U> ListX<U> cast(Class<? extends U> type) {
 		
 		return (ListX<U>)MutableCollectionX.super.cast(type);
 	}
@@ -696,7 +696,7 @@ public interface ListX<T> extends List<T>,
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyGet(java.util.function.Supplier)
 	 */
 	@Override
-	default ListX<T> onEmptyGet(Supplier<T> supplier) {
+	default ListX<T> onEmptyGet(Supplier<? extends T> supplier) {
 		
 		return (ListX<T>)MutableCollectionX.super.onEmptyGet(supplier);
 	}
@@ -705,7 +705,7 @@ public interface ListX<T> extends List<T>,
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmptyThrow(java.util.function.Supplier)
 	 */
 	@Override
-	default <X extends Throwable> ListX<T> onEmptyThrow(Supplier<X> supplier) {
+	default <X extends Throwable> ListX<T> onEmptyThrow(Supplier<? extends X> supplier) {
 		
 		return (ListX<T>)MutableCollectionX.super.onEmptyThrow(supplier);
 	}
@@ -714,7 +714,7 @@ public interface ListX<T> extends List<T>,
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> ListX<U> ofType(Class<U> type) {
+	default <U> ListX<U> ofType(Class<? extends U> type) {
 		
 		return (ListX<U>)MutableCollectionX.super.ofType(type);
 	}
@@ -741,7 +741,7 @@ public interface ListX<T> extends List<T>,
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.util.stream.Stream)
 	 */
 	@Override
-	default ListX<T> removeAll(Stream<T> stream) {
+	default ListX<T> removeAll(Stream<? extends T> stream) {
 		
 		return (ListX<T>)MutableCollectionX.super.removeAll(stream);
 	}
@@ -750,7 +750,7 @@ public interface ListX<T> extends List<T>,
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
 	 */
 	@Override
-	default ListX<T> removeAll(Iterable<T> it) {
+	default ListX<T> removeAll(Iterable<? extends T> it) {
 		
 		return (ListX<T>)MutableCollectionX.super.removeAll(it);
 	}
@@ -768,7 +768,7 @@ public interface ListX<T> extends List<T>,
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Iterable)
 	 */
 	@Override
-	default ListX<T> retainAll(Iterable<T> it) {
+	default ListX<T> retainAll(Iterable<? extends T> it) {
 		
 		return (ListX<T>)MutableCollectionX.super.retainAll(it);
 	}
@@ -777,9 +777,9 @@ public interface ListX<T> extends List<T>,
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.util.stream.Stream)
 	 */
 	@Override
-	default ListX<T> retainAll(Stream<T> stream) {
+	default ListX<T> retainAll(Stream<? extends T> seq) {
 		
-		return (ListX<T>)MutableCollectionX.super.retainAll(stream);
+		return (ListX<T>)MutableCollectionX.super.retainAll(seq);
 	}
 
 	/* (non-Javadoc)
@@ -857,7 +857,7 @@ public interface ListX<T> extends List<T>,
 	     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#removeAll(org.jooq.lambda.Seq)
 	     */
 	    @Override
-	    default ListX<T> removeAll(Seq<T> stream) {
+	    default ListX<T> removeAll(Seq<? extends T> stream) {
 	       
 	        return (ListX<T>)MutableCollectionX.super.removeAll(stream);
 	    }
@@ -867,7 +867,7 @@ public interface ListX<T> extends List<T>,
 	     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#retainAll(org.jooq.lambda.Seq)
 	     */
 	    @Override
-	    default ListX<T> retainAll(Seq<T> stream) {
+	    default ListX<T> retainAll(Seq<? extends T> stream) {
 	        return (ListX<T>) MutableCollectionX.super.retainAll(stream);
 	    }
 	

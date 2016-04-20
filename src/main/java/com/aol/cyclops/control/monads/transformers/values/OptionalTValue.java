@@ -304,7 +304,7 @@ public class OptionalTValue<T> implements OptionalT<T>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> OptionalTValue<U> cast(Class<U> type) {
+    public <U> OptionalTValue<U> cast(Class<? extends U> type) {
        
         return (OptionalTValue<U>)TransformerValue.super.cast(type);
     }
@@ -329,7 +329,7 @@ public class OptionalTValue<T> implements OptionalT<T>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> OptionalTValue<U> ofType(Class<U> type) {
+    public <U> OptionalTValue<U> ofType(Class<? extends U> type) {
        
         return (OptionalTValue<U>)OptionalT.super.ofType(type);
     }

@@ -183,7 +183,7 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	 * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
 	 */
 	@Override
-	default <U> Maybe<U> ofType(Class<U> type) {
+	default <U> Maybe<U> ofType(Class<? extends U> type) {
 		
 		return (Maybe<U>)Filterable.super.ofType(type);
 	}
@@ -213,7 +213,7 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> Maybe<U> cast(Class<U> type) {
+	default <U> Maybe<U> cast(Class<? extends U> type) {
 		
 		return (Maybe<U>)Applicativable.super.cast(type);
 	}

@@ -337,7 +337,7 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> StreamableTSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> StreamableTSeq<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
        
         return (StreamableTSeq<R>)StreamableT.super.zip(other, zipper);
     }
@@ -345,17 +345,17 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> StreamableTSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
+    public <U> StreamableTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
        
-        return (StreamableTSeq<Tuple2<T, U>>)StreamableT.super.zipStream(other);
+        return (StreamableTSeq)StreamableT.super.zipStream(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> StreamableTSeq<Tuple2<T, U>> zip(Seq<U> other) {
+    public <U> StreamableTSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
        
-        return (StreamableTSeq<Tuple2<T, U>>)StreamableT.super.zip(other);
+        return (StreamableTSeq)StreamableT.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -493,7 +493,7 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> StreamableTSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+    public <U> StreamableTSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
        
         return (StreamableTSeq<U>)StreamableT.super.scanLeft(seed, function);
     }
@@ -509,7 +509,7 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> StreamableTSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+    public <U> StreamableTSeq<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
        
         return (StreamableTSeq<U>)StreamableT.super.scanRight(identity, combiner);
     }
@@ -678,7 +678,7 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    public StreamableTSeq<T> onEmptyGet(Supplier<T> supplier) {
+    public StreamableTSeq<T> onEmptyGet(Supplier<? extends T> supplier) {
        
         return (StreamableTSeq<T>)StreamableT.super.onEmptyGet(supplier);
     }
@@ -686,7 +686,7 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    public <X extends Throwable> StreamableTSeq<T> onEmptyThrow(Supplier<X> supplier) {
+    public <X extends Throwable> StreamableTSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
        
         return (StreamableTSeq<T>)StreamableT.super.onEmptyThrow(supplier);
     }

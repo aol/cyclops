@@ -14,8 +14,9 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 
-
 import org.jooq.lambda.Collectable;
+
+import com.aol.cyclops.control.ReactiveSeq;
 
 
 
@@ -25,6 +26,240 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
 	
 
 	/* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#modeBy(java.util.function.Function)
+     */
+    @Override
+    default <U> Optional<T> modeBy(Function<? super T, ? extends U> function) {
+        
+        return collectable().modeBy(function);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#modeAll()
+     */
+    @Override
+    default ReactiveSeq<T> modeAll() {
+        
+        return ReactiveSeq.fromStream(collectable().modeAll());
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#modeAllBy(java.util.function.Function)
+     */
+    @Override
+    default <U> ReactiveSeq<T> modeAllBy(Function<? super T, ? extends U> function) {
+        
+        return ReactiveSeq.fromStream(collectable().modeAllBy(function));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#minAll()
+     */
+    @Override
+    default ReactiveSeq<T> minAll() {
+        
+        return ReactiveSeq.fromStream(collectable().minAll());
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#minAll(java.util.Comparator)
+     */
+    @Override
+    default ReactiveSeq<T> minAll(Comparator<? super T> comparator) {
+        
+        return ReactiveSeq.fromStream(collectable().minAll(comparator));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#minAll(java.util.function.Function)
+     */
+    @Override
+    default <U extends Comparable<? super U>> ReactiveSeq<U> minAll(Function<? super T, ? extends U> function) {
+        
+        return ReactiveSeq.fromStream(collectable().minAll(function));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#minAll(java.util.function.Function, java.util.Comparator)
+     */
+    @Override
+    default <U> ReactiveSeq<U> minAll(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+        
+        return ReactiveSeq.fromStream(collectable().minAll(function,comparator));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#minAllBy(java.util.function.Function)
+     */
+    @Override
+    default <U extends Comparable<? super U>> ReactiveSeq<T> minAllBy(Function<? super T, ? extends U> function) {
+        
+        return ReactiveSeq.fromStream(collectable().minAllBy(function));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#minAllBy(java.util.function.Function, java.util.Comparator)
+     */
+    @Override
+    default <U> ReactiveSeq<T> minAllBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+        
+        return ReactiveSeq.fromStream(collectable().minAllBy(function,comparator));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#maxAll()
+     */
+    @Override
+    default ReactiveSeq<T> maxAll() {
+        
+        return ReactiveSeq.fromStream(collectable().maxAll());
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#maxAll(java.util.Comparator)
+     */
+    @Override
+    default ReactiveSeq<T> maxAll(Comparator<? super T> comparator) {
+        
+        return ReactiveSeq.fromStream(collectable().maxAll(comparator));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#maxAll(java.util.function.Function)
+     */
+    @Override
+    default <U extends Comparable<? super U>> ReactiveSeq<U> maxAll(Function<? super T, ? extends U> function) {
+        
+        return ReactiveSeq.fromStream(collectable().maxAll(function));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#maxAll(java.util.function.Function, java.util.Comparator)
+     */
+    @Override
+    default <U> ReactiveSeq<U> maxAll(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+        
+        return ReactiveSeq.fromStream(collectable().maxAll(function,comparator));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#maxAllBy(java.util.function.Function)
+     */
+    @Override
+    default <U extends Comparable<? super U>> ReactiveSeq<T> maxAllBy(Function<? super T, ? extends U> function) {
+        
+        return ReactiveSeq.fromStream(collectable().maxAllBy(function));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#maxAllBy(java.util.function.Function, java.util.Comparator)
+     */
+    @Override
+    default <U> ReactiveSeq<T> maxAllBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+        
+        return ReactiveSeq.fromStream(collectable().maxAllBy(function,comparator));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#bitAnd()
+     */
+    @Override
+    default Optional<T> bitAnd() {
+        
+        return collectable().bitAnd();
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#bitAnd(java.util.function.Function)
+     */
+    @Override
+    default <U> Optional<U> bitAnd(Function<? super T, ? extends U> function) {
+        
+        return collectable().bitAnd(function);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#bitAndInt(java.util.function.ToIntFunction)
+     */
+    @Override
+    default int bitAndInt(ToIntFunction<? super T> function) {
+        
+        return collectable().bitAndInt(function);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#bitAndLong(java.util.function.ToLongFunction)
+     */
+    @Override
+    default long bitAndLong(ToLongFunction<? super T> function) {
+        
+        return collectable().bitAndLong(function);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#bitOr()
+     */
+    @Override
+    default Optional<T> bitOr() {
+        
+        return collectable().bitOr();
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#bitOr(java.util.function.Function)
+     */
+    @Override
+    default <U> Optional<U> bitOr(Function<? super T, ? extends U> function) {
+        
+        return collectable().bitOr(function);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#bitOrInt(java.util.function.ToIntFunction)
+     */
+    @Override
+    default int bitOrInt(ToIntFunction<? super T> function) {
+        
+        return collectable().bitOrInt(function);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#bitOrLong(java.util.function.ToLongFunction)
+     */
+    @Override
+    default long bitOrLong(ToLongFunction<? super T> function) {
+        
+        return collectable().bitOrLong(function);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#toMap(java.util.function.Function)
+     */
+    @Override
+    default <K> Map<K, T> toMap(Function<? super T, ? extends K> keyMapper) {
+        
+        return collectable().toMap(keyMapper);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#commonPrefix()
+     */
+    @Override
+    default String commonPrefix() {
+        
+        return collectable().commonPrefix();
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#commonSuffix()
+     */
+    @Override
+    default String commonSuffix() {
+        
+        return collectable().commonSuffix();
+    }
+
+    /* (non-Javadoc)
 	 * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
 	 */
 	@Override

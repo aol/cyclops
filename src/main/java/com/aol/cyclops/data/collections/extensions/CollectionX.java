@@ -74,7 +74,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    <U> CollectionX<Tuple2<T, U>> zip(Seq<U> other);
+    <U> CollectionX<Tuple2<T, U>> zip(Seq<? extends U> other);
 
 
     /* (non-Javadoc)
@@ -262,7 +262,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
      * @see com.aol.cyclops.types.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    CollectionX<T> onEmptyGet(Supplier<T> supplier);
+    CollectionX<T> onEmptyGet(Supplier<? extends T> supplier);
 
 
     
@@ -270,7 +270,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
      * @see com.aol.cyclops.types.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    <X extends Throwable> CollectionX<T> onEmptyThrow(Supplier<X> supplier);
+    <X extends Throwable> CollectionX<T> onEmptyThrow(Supplier<? extends X> supplier);
 
 
     /* (non-Javadoc)
@@ -451,15 +451,15 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * @param other
 	 * @return
 	 */
-	<U> CollectionX<Tuple2<T, U>> zip(Iterable<U> other);
+	<U> CollectionX<Tuple2<T, U>> zip(Iterable<? extends U> other);
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
-	<U, R> CollectionX<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
+	<U, R> CollectionX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
 	 */
-	<U> CollectionX<Tuple2<T, U>> zipStream(Stream<U> other);
+	<U> CollectionX<Tuple2<T, U>> zipStream(Stream<? extends U> other);
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Traversable#zipWithIndex()
 	 */
@@ -479,7 +479,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
 	 */
-	<U> CollectionX<U> scanLeft(U seed, BiFunction<U, ? super T, U> function);
+	<U> CollectionX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function);
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Traversable#scanRight(com.aol.cyclops.Monoid)
 	 */
@@ -487,7 +487,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
 	 */
-	<U> CollectionX<U> scanRight(U identity, BiFunction<? super T, U, U> combiner);
+	<U> CollectionX<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner);
 	
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#distinct()
@@ -500,16 +500,16 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.util.stream.Stream)
      */
-    CollectionX<T> removeAll(Stream<T> stream);
+    CollectionX<T> removeAll(Stream<? extends T> stream);
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.lang.Iterable)
      */
-    CollectionX<T> removeAll(Iterable<T> it);
+    CollectionX<T> removeAll(Iterable<? extends T> it);
     /**
      * @param seq
      * @return
      */
-    CollectionX<T> removeAll(Seq<T> seq);
+    CollectionX<T> removeAll(Seq<? extends T> seq);
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.lang.Object[])
      */
@@ -517,16 +517,16 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.lang.Iterable)
      */
-    CollectionX<T> retainAll(Iterable<T> it);
+    CollectionX<T> retainAll(Iterable<? extends T> it);
     /**
      * @param seq
      * @return
      */
-    CollectionX<T> retainAll(Seq<T> seq);
+    CollectionX<T> retainAll(Seq<? extends T> seq);
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.util.stream.Stream)
      */
-    CollectionX<T> retainAll(Stream<T> stream);
+    CollectionX<T> retainAll(Stream<? extends T> seq);
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.lang.Object[])
      */
@@ -744,7 +744,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> CollectionX<U> cast(Class<U> type) {
+	default <U> CollectionX<U> cast(Class<? extends U> type) {
 		
 		return (CollectionX<U>)ZippingApplicativable.super.cast(type);
 	}

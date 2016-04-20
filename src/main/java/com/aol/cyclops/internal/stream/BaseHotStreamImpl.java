@@ -9,10 +9,10 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import uk.co.real_logic.agrona.concurrent.OneToOneConcurrentArrayQueue;
+import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
-import com.aol.cyclops.internal.stream.spliterators.ClosingSpliterator;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.internal.stream.spliterators.ClosingSpliterator;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.util.stream.StreamUtils;
 

@@ -120,7 +120,7 @@ public interface Eval<T> extends Supplier<T>,
 	
 	
 	@Override
-    default <U> Maybe<U> ofType(Class<U> type) {
+    default <U> Maybe<U> ofType(Class<? extends U> type) {
        
         return (Maybe<U>)Filterable.super.ofType(type);
     }
@@ -142,7 +142,7 @@ public interface Eval<T> extends Supplier<T>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> Eval<U> cast(Class<U> type) {
+	default <U> Eval<U> cast(Class<? extends U> type) {
 		return (Eval<U>)Applicativable.super.cast(type);
 	}
 	/* (non-Javadoc)

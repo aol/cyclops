@@ -50,7 +50,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 * gives a Stream of ("a","b")
 	 * 
 	 */
-	default <U> BaseSimpleReactStream<U> ofType(Class<U> type) {
+	default <U> BaseSimpleReactStream<U> ofType(Class<? extends U> type) {
 		return filterSync(type::isInstance).thenSync(t -> (U) t);
 	}
 	
@@ -67,7 +67,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U>{
 	 * @return SimpleReactStream
 	 * 
 	 */
-	default <U> BaseSimpleReactStream<U> cast(Class<U> type) {
+	default <U> BaseSimpleReactStream<U> cast(Class<? extends U> type) {
 		return this.thenSync(type::cast);
 		
 	}

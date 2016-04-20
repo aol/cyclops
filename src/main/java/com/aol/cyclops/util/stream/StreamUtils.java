@@ -1300,7 +1300,7 @@ public class StreamUtils{
 	public final static <T> Streamable<T> toConcurrentLazyStreamable(Stream<T> stream){
 		return AsStreamable.synchronizedFromStream(stream);
 	}
-	public final static <U,T> Stream<U> scanRight(Stream<T> stream,U identity,BiFunction<? super T, U, U>  combiner){
+	public final static <U,T> Stream<U> scanRight(Stream<T> stream,U identity,BiFunction<? super T, ? super U,? extends U>  combiner){
 		return Seq.seq(stream).scanRight(identity,combiner);
 	}
 	/**
@@ -1580,7 +1580,7 @@ public class StreamUtils{
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T, U> Stream<U> ofType(Stream<T> stream, Class<U> type) {
+	public static <T, U> Stream<U> ofType(Stream<T> stream, Class<? extends U> type) {
 		return stream.filter(type::isInstance).map(t -> (U) t);
 	}
 
@@ -1594,7 +1594,7 @@ public class StreamUtils{
 	 *  // throws ClassCastException
 	 *  }
 	 */
-	public static <T, U> Stream<U> cast(Stream<T> stream, Class<U> type) {
+	public static <T, U> Stream<U> cast(Stream<T> stream, Class<? extends U> type) {
 		return stream.map(type::cast);
 	}
 	/**

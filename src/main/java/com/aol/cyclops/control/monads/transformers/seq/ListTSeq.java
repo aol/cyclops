@@ -352,7 +352,7 @@ public class ListTSeq<T> implements ListT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> ListTSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> ListTSeq<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
        
         return (ListTSeq<R>)ListT.super.zip(other, zipper);
     }
@@ -360,17 +360,17 @@ public class ListTSeq<T> implements ListT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> ListTSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
+    public <U> ListTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
        
-        return (ListTSeq<Tuple2<T, U>>)ListT.super.zipStream(other);
+        return (ListTSeq)ListT.super.zipStream(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> ListTSeq<Tuple2<T, U>> zip(Seq<U> other) {
+    public <U> ListTSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
        
-        return (ListTSeq<Tuple2<T, U>>)ListT.super.zip(other);
+        return (ListTSeq)ListT.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -508,7 +508,7 @@ public class ListTSeq<T> implements ListT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> ListTSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+    public <U> ListTSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
        
         return (ListTSeq<U>)ListT.super.scanLeft(seed, function);
     }
@@ -524,7 +524,7 @@ public class ListTSeq<T> implements ListT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> ListTSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+    public <U> ListTSeq<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
        
         return (ListTSeq<U>)ListT.super.scanRight(identity, combiner);
     }
@@ -693,7 +693,7 @@ public class ListTSeq<T> implements ListT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    public ListTSeq<T> onEmptyGet(Supplier<T> supplier) {
+    public ListTSeq<T> onEmptyGet(Supplier<? extends T> supplier) {
        
         return (ListTSeq<T>)ListT.super.onEmptyGet(supplier);
     }
@@ -701,7 +701,7 @@ public class ListTSeq<T> implements ListT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    public <X extends Throwable> ListTSeq<T> onEmptyThrow(Supplier<X> supplier) {
+    public <X extends Throwable> ListTSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
        
         return (ListTSeq<T>)ListT.super.onEmptyThrow(supplier);
     }

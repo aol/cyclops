@@ -146,7 +146,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
      * @see com.aol.cyclops.types.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    default AnyMSeq<T> onEmptyGet(Supplier<T> supplier) {
+    default AnyMSeq<T> onEmptyGet(Supplier<? extends T> supplier) {
        
         return AnyM.ofSeq(ExtendedTraversable.super.onEmptyGet(supplier));
     }
@@ -157,7 +157,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
      * @see com.aol.cyclops.types.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> AnyMSeq<T> onEmptyThrow(Supplier<X> supplier) {
+    default <X extends Throwable> AnyMSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
        
         return AnyM.ofSeq(ExtendedTraversable.super.onEmptyThrow(supplier));
     }
@@ -206,7 +206,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
 	 */
 	@Override
-	default <U> AnyMSeq<U> cast(Class<U> type) {
+	default <U> AnyMSeq<U> cast(Class<? extends U> type) {
 		
 		return (AnyMSeq<U>)ZippingApplicativable.super.cast(type);
 	}
@@ -272,7 +272,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U, R> AnyMSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	default <U, R> AnyMSeq<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		
 		return AnyM.fromIterable(ZippingApplicativable.super.zip(other, zipper));
 	}
@@ -281,7 +281,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> AnyMSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
+	default <U> AnyMSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
 		
 		return AnyM.fromIterable(ZippingApplicativable.super.zipStream(other));
 	}
@@ -290,7 +290,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
 	 */
 	@Override
-	default <U> AnyMSeq<Tuple2<T, U>> zip(Seq<U> other) {
+	default <U> AnyMSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
 		
 		return AnyM.fromIterable(ZippingApplicativable.super.zip(other));
 	}
@@ -470,7 +470,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.types.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U> AnyMSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+	default <U> AnyMSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
 		
 		return AnyM.fromIterable(ZippingApplicativable.super.scanLeft(seed, function));
 	}
@@ -488,7 +488,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.types.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
 	 */
 	@Override
-	default <U> AnyMSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+	default <U> AnyMSeq<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
 		
 		return AnyM.fromIterable(ZippingApplicativable.super.scanRight(identity, combiner));
 	}
@@ -594,7 +594,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     
    
     @Override
-    default <U> AnyMSeq<U> ofType(Class<U> type){
+    default <U> AnyMSeq<U> ofType(Class<? extends U> type){
         
         return (AnyMSeq<U>)FilterableFunctor.super.ofType(type);
     }

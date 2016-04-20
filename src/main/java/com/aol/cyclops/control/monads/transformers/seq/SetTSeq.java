@@ -346,7 +346,7 @@ public class SetTSeq<T>  implements SetT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> SetTSeq<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> SetTSeq<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
        
         return (SetTSeq<R>)SetT.super.zip(other, zipper);
     }
@@ -354,17 +354,17 @@ public class SetTSeq<T>  implements SetT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> SetTSeq<Tuple2<T, U>> zipStream(Stream<U> other) {
+    public <U> SetTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
        
-        return (SetTSeq<Tuple2<T, U>>)SetT.super.zipStream(other);
+        return (SetTSeq)SetT.super.zipStream(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> SetTSeq<Tuple2<T, U>> zip(Seq<U> other) {
+    public <U> SetTSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
        
-        return (SetTSeq<Tuple2<T, U>>)SetT.super.zip(other);
+        return (SetTSeq)SetT.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -502,7 +502,7 @@ public class SetTSeq<T>  implements SetT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> SetTSeq<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+    public <U> SetTSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
        
         return (SetTSeq<U>)SetT.super.scanLeft(seed, function);
     }
@@ -518,7 +518,7 @@ public class SetTSeq<T>  implements SetT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> SetTSeq<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+    public <U> SetTSeq<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
        
         return (SetTSeq<U>)SetT.super.scanRight(identity, combiner);
     }
@@ -687,7 +687,7 @@ public class SetTSeq<T>  implements SetT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    public SetTSeq<T> onEmptyGet(Supplier<T> supplier) {
+    public SetTSeq<T> onEmptyGet(Supplier<? extends T> supplier) {
        
         return (SetTSeq<T>)SetT.super.onEmptyGet(supplier);
     }
@@ -695,7 +695,7 @@ public class SetTSeq<T>  implements SetT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    public <X extends Throwable> SetTSeq<T> onEmptyThrow(Supplier<X> supplier) {
+    public <X extends Throwable> SetTSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
        
         return (SetTSeq<T>)SetT.super.onEmptyThrow(supplier);
     }

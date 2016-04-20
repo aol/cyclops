@@ -1,18 +1,14 @@
 package com.aol.cyclops.data.async;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.junit.Test;
 
-import uk.co.real_logic.agrona.concurrent.ManyToOneConcurrentArrayQueue;
-
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.wait.SpinWait;
-import com.aol.cyclops.data.async.wait.YieldWait;
 import com.aol.cyclops.data.async.wait.WaitStrategy.Offerable;
 import com.aol.cyclops.data.async.wait.WaitStrategy.Takeable;
+import com.aol.cyclops.data.async.wait.YieldWait;
 
 public class YieldWaitTest {
 	int called = 0;

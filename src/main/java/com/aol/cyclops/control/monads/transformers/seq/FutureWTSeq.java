@@ -350,7 +350,7 @@ public class FutureWTSeq<A> implements FutureWT<A>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> FutureWTSeq<R> zip(Iterable<U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+    public <U, R> FutureWTSeq<R> zip(Iterable<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
        
         return (FutureWTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
     }
@@ -358,17 +358,17 @@ public class FutureWTSeq<A> implements FutureWT<A>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> FutureWTSeq<Tuple2<A, U>> zipStream(Stream<U> other) {
+    public <U> FutureWTSeq<Tuple2<A, U>> zipStream(Stream<? extends U> other) {
        
-        return (FutureWTSeq<Tuple2<A, U>>)ValueTransformerSeq.super.zipStream(other);
+        return (FutureWTSeq)ValueTransformerSeq.super.zipStream(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> FutureWTSeq<Tuple2<A, U>> zip(Seq<U> other) {
+    public <U> FutureWTSeq<Tuple2<A, U>> zip(Seq<? extends U> other) {
        
-        return (FutureWTSeq<Tuple2<A, U>>)ValueTransformerSeq.super.zip(other);
+        return (FutureWTSeq)ValueTransformerSeq.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -506,7 +506,7 @@ public class FutureWTSeq<A> implements FutureWT<A>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> FutureWTSeq<U> scanLeft(U seed, BiFunction<U, ? super A, U> function) {
+    public <U> FutureWTSeq<U> scanLeft(U seed, BiFunction<? super U, ? super A, ? extends U> function) {
        
         return (FutureWTSeq<U>)ValueTransformerSeq.super.scanLeft(seed, function);
     }
@@ -522,7 +522,7 @@ public class FutureWTSeq<A> implements FutureWT<A>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> FutureWTSeq<U> scanRight(U identity, BiFunction<? super A, U, U> combiner) {
+    public <U> FutureWTSeq<U> scanRight(U identity, BiFunction<? super A, ? super U,? extends U> combiner) {
        
         return (FutureWTSeq<U>)ValueTransformerSeq.super.scanRight(identity, combiner);
     }
@@ -691,7 +691,7 @@ public class FutureWTSeq<A> implements FutureWT<A>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    public FutureWTSeq<A> onEmptyGet(Supplier<A> supplier) {
+    public FutureWTSeq<A> onEmptyGet(Supplier<? extends A> supplier) {
        
         return (FutureWTSeq<A>)ValueTransformerSeq.super.onEmptyGet(supplier);
     }
@@ -699,7 +699,7 @@ public class FutureWTSeq<A> implements FutureWT<A>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    public <X extends Throwable> FutureWTSeq<A> onEmptyThrow(Supplier<X> supplier) {
+    public <X extends Throwable> FutureWTSeq<A> onEmptyThrow(Supplier<? extends X> supplier) {
        
         return (FutureWTSeq<A>)ValueTransformerSeq.super.onEmptyThrow(supplier);
     }

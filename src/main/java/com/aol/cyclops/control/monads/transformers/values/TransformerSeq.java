@@ -109,7 +109,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Traversable<R> zip(Iterable<U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Traversable<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         AnyM<Traversable<R>> zipped = transformerStream().map(s->s.zip(other,zipper));
        return unitAnyM(zipped);
        
@@ -119,8 +119,8 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
      */
     @Override
-    default <U> Traversable<Tuple2<T, U>> zipStream(Stream<U> other) {
-        Streamable<U> streamable = Streamable.fromStream(other);
+    default <U> Traversable<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+        Streamable<? extends U> streamable = Streamable.fromStream(other);
         return unitAnyM(transformerStream().map(s->s.zipStream(streamable.stream())));
     }
 
@@ -128,7 +128,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    default <U> Traversable<Tuple2<T, U>> zip(Seq<U> other) {
+    default <U> Traversable<Tuple2<T, U>> zip(Seq<? extends U> other) {
        return zipStream(other);
     }
 
@@ -292,7 +292,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      * @see com.aol.cyclops.types.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> Traversable<U> scanLeft(U seed, BiFunction<U, ? super T, U> function) {
+    default <U> Traversable<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
         return unitAnyM(transformerStream().map(s->s.scanLeft(seed,function)));
     }
 
@@ -308,7 +308,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      * @see com.aol).cyclops.types.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, U, U> combiner) {
+    default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
         return unitAnyM(transformerStream().map(s->s.scanRight(identity,combiner)));
     }
 
@@ -496,7 +496,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      * @see com.aol.cyclops.types.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    default Traversable<T> onEmptyGet(Supplier<T> supplier) {
+    default Traversable<T> onEmptyGet(Supplier<? extends T> supplier) {
         return unitAnyM(transformerStream().map(s->s.onEmptyGet(supplier)));
     }
 
@@ -504,7 +504,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      * @see com.aol.cyclops.types.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> Traversable<T> onEmptyThrow(Supplier<X> supplier) {
+    default <X extends Throwable> Traversable<T> onEmptyThrow(Supplier<? extends X> supplier) {
        return unitAnyM(transformerStream().map(s->s.onEmptyThrow(supplier)));
        
     }

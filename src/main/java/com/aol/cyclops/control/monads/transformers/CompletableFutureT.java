@@ -229,7 +229,7 @@ public interface CompletableFutureT<A> extends Unit<A>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> CompletableFutureT<U> cast(Class<U> type) {
+    default <U> CompletableFutureT<U> cast(Class<? extends U> type) {
         return (CompletableFutureT<U>)Functor.super.cast(type);
     }
     /* (non-Javadoc)
@@ -251,7 +251,7 @@ public interface CompletableFutureT<A> extends Unit<A>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> MaybeT<U> ofType(Class<U> type) {
+    default <U> MaybeT<U> ofType(Class<? extends U> type) {
         
         return (MaybeT<U>)Filterable.super.ofType(type);
     }

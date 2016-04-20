@@ -302,7 +302,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> CompletableFutureTValue<U> cast(Class<U> type) {
+    public <U> CompletableFutureTValue<U> cast(Class<? extends U> type) {
         return (CompletableFutureTValue<U>)TransformerValue.super.cast(type);
     }
     /* (non-Javadoc)
@@ -324,7 +324,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> MaybeTValue<U> ofType(Class<U> type) {
+    public <U> MaybeTValue<U> ofType(Class<? extends U> type) {
         
         return (MaybeTValue<U>)CompletableFutureT.super.ofType(type);
     }
