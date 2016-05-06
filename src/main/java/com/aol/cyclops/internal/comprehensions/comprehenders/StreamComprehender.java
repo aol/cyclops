@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.types.extensability.Comprehender;
-import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 public class StreamComprehender implements Comprehender<Stream> {
@@ -58,9 +57,10 @@ public class StreamComprehender implements Comprehender<Stream> {
 			return (T)((Collection)apply).stream();
 		}
 		if(apply instanceof Iterable){
-			if(apply instanceof ToStream){
-				return (T)((ToStream)apply).reactiveSeq();
-			}
+		//	if(apply instanceof ToStream){
+			//	return (T)((ToStream)apply).reactiveSeq();
+		//	}
+		    return (T)StreamUtils.stream((Iterable)apply);
 		}
 		if(apply instanceof BaseStream){
 			return (T)StreamSupport.stream(Spliterators.spliteratorUnknownSize(((BaseStream)apply).iterator(), Spliterator.ORDERED),

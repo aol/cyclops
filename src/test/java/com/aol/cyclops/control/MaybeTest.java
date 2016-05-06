@@ -63,6 +63,11 @@ public class MaybeTest implements Printable {
 	}
 	@Test
 	public void coFlatMap(){
+	    
+	    Maybe.none().coflatMap(m-> m.isPresent()? m.get() : 10);
+	    
+	    //Maybe[10]
+	    
 	    assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
 	    assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Maybe.of(50)));
 	}

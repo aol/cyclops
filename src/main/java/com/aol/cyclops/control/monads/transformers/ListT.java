@@ -263,10 +263,7 @@ public interface ListT<T>  extends  FoldableTransformerSeq<T> {
         return ListTValue.of(AnyM.fromCompletableFuture(future));
     }
 
-    public static <A> ListTValue<A> fromIterablListue(
-            Iterable<? extends List<A>> iterableOfLists) {
-        return ListTValue.of(AnyM.fromIterableValue(iterableOfLists));
-    }
+    
     public static <T> ListTValue<T> emptyOptional(){
         return ListTValue.emptyOptional();
     }

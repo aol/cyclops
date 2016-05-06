@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,9 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 
@@ -35,6 +39,7 @@ public abstract class BaseSeqFutureTest {
 	LazyFutureStream<Integer> empty;
 	LazyFutureStream<Integer> nonEmpty;
 
+	
 	@Before
 	public void setup(){
 		empty = of();

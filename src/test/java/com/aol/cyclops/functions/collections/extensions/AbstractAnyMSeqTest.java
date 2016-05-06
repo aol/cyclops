@@ -69,7 +69,7 @@ import lombok.EqualsAndHashCode;
 public abstract class AbstractAnyMSeqTest {
 	public abstract <T> AnyMSeq<T> empty();
 	public abstract <T> AnyMSeq<T> of(T... values);
-
+	
     public static final LazyReact r = new LazyReact(10,10);
     @Test
     public void stream(){

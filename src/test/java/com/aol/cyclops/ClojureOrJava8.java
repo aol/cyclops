@@ -6,17 +6,16 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.MapXs;
-import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 
 import lombok.AllArgsConstructor;
@@ -34,6 +33,17 @@ public class ClojureOrJava8 {
         ListX<Integer> org = ListX.of(10,20,30);
         List<Integer> mapped = org.map(i->i*2);
     
+    }
+    @Test
+    public void comonad(){
+        AnyM.fromOptional(Optional.of(1))
+            .coflatMap(v->v.isPresent()?v.get() : 10);
+        
+    }
+    @Test
+    public void applicative(){
+        AnyM.fromOptional(Optional.of(1)).ap(Semigroups.intMult)
+                                         .ap(AnyM.fromOptional(Optional.of(10)));
     }
     
     public void java8TransformList(){
