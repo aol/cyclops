@@ -51,20 +51,20 @@ public interface IterableFunctor<T> extends Iterable<T>,
         int maxSize = 5000;
         Iterator<? extends Publisher<T>> it = publishers.iterator();
         
-        while(it.hasNext() && size < maxSize) {
+        while(it.hasNext() && size < maxSize - 1) {
         	size++;
         	it.next();
         }
         
-        c.active.set(size + 1);
         QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory,c,size + 1);
        
         int sizeForSupplier = size;
         
         Supplier<Continuation> sp = ()->{
               subscribe(init);
-              for(Publisher next : publishers){
-                     next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c, sizeForSupplier));
+              for(Publisher next : publishers) {
+            	  	c.active.incrementAndGet();
+                    next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c, sizeForSupplier));
                }
                    
                init.close();
