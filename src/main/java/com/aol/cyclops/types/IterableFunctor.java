@@ -24,6 +24,8 @@ public interface IterableFunctor<T> extends Iterable<T>,
                                             Traversable<T>,
 											ConvertableSequence<T>{
   
+	final static int MAX_QUEUE_SIZE = 5_000;
+	
     /**
       A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergeublisher(Collection, FlatMapConfig)} 
@@ -34,7 +36,7 @@ public interface IterableFunctor<T> extends Iterable<T>,
      * @return
      */
     default  ReactiveSeq<T> mergePublisher(Iterable<? extends Publisher<T>> publishers){
-        return mergePublisher(publishers,QueueFactories.boundedQueue(5_000));
+        return mergePublisher(publishers,QueueFactories.boundedQueue(MAX_QUEUE_SIZE));
     }
     
     /**
@@ -48,10 +50,9 @@ public interface IterableFunctor<T> extends Iterable<T>,
         Counter c = new Counter();
         
         int size = 0;
-        int maxSize = 5000;
         Iterator<? extends Publisher<T>> it = publishers.iterator();
         
-        while(it.hasNext() && size < maxSize - 1) {
+        while(it.hasNext() && size < MAX_QUEUE_SIZE) {
         	size++;
         	it.next();
         }
@@ -60,17 +61,19 @@ public interface IterableFunctor<T> extends Iterable<T>,
        
         int sizeForSupplier = size;
         
-        Supplier<Continuation> sp = ()->{
-              subscribe(init);
-              for(Publisher next : publishers) {
-            	  	c.active.incrementAndGet();
-                    next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c, sizeForSupplier));
-               }
-                   
-               init.close();
-                
-            return Continuation.empty();
-        };
+		Supplier<Continuation> sp = () -> {
+			c.active.set(1);
+
+			subscribe(init);
+			for (Publisher next : publishers) {
+				c.active.incrementAndGet();
+				next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, sizeForSupplier));
+			}
+
+			init.close();
+
+			return Continuation.empty();
+		};
         Continuation continuation = new Continuation(sp);
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
