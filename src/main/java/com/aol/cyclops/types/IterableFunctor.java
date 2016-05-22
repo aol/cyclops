@@ -33,7 +33,7 @@ public interface IterableFunctor<T> extends Iterable<T>,
      * @param publishers
      * @return
      */
-    default  ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers){
+    default  ReactiveSeq<T> mergePublisher(Iterable<? extends Publisher<T>> publishers){
         return mergePublisher(publishers,QueueFactories.boundedQueue(5_000));
     }
     
@@ -44,15 +44,27 @@ public interface IterableFunctor<T> extends Iterable<T>,
      * 
      * 
      */
-    default  ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers, QueueFactory<T> factory){
+    default  ReactiveSeq<T> mergePublisher(Iterable<? extends Publisher<T>> publishers, QueueFactory<T> factory){
         Counter c = new Counter();
-        c.active.set(publishers.size()+1);
-        QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory,c,publishers.size());
+        
+        int size = 0;
+        int maxSize = 5000;
+        Iterator<? extends Publisher<T>> it = publishers.iterator();
+        
+        while(it.hasNext() && size < maxSize) {
+        	size++;
+        	it.next();
+        }
+        
+        c.active.set(size + 1);
+        QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory,c,size + 1);
        
+        int sizeForSupplier = size;
+        
         Supplier<Continuation> sp = ()->{
               subscribe(init);
               for(Publisher next : publishers){
-                     next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c,publishers.size()));
+                     next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c, sizeForSupplier));
                }
                    
                init.close();
