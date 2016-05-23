@@ -1,14 +1,13 @@
 package com.aol.cyclops.streams.anyM;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
-import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.control.AnyM;
 
 public class UnitTest {

@@ -35,8 +35,6 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.monads.AnyMSeqImpl;
-import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.Foldable;
@@ -844,60 +842,7 @@ public interface AnyMSeq<T> extends AnyM<T>,
     
      <R> AnyMSeq<R> bind(Function<? super T,?> fn);
 
-	/**
-	 * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process
-	 * 
-	<pre>{@code 
-       Stream<CompletableFuture<Integer>> futures = createFutures();
-       AnyMSeq<List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
-        }
-		</pre>
-	 * 
-	 * @param seq Stream of Monads
-	 * @param fn Function to apply 
-	 * @return Monad with a list
-	 */
-	public static <T,R> AnyMSeq<ListX<R>> traverse(Collection<? extends AnyMSeq<T>> seq, Function<? super T,? extends R> fn){
-		
-		return AnyMSeqImpl.from(new AnyMonads().traverse(seq,fn));
-	}
-
 	
-	/**
-	 * Convert a Collection of Monads to a Monad with a List
-	 * 
-	 * <pre>
-	 * {@code
-		List<CompletableFuture<Integer>> futures = createFutures();
-		AnyMSeq<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
-
-	   //where AnyM wraps  CompletableFuture<List<Integer>>
-	  }</pre>
-	 * 
-	 * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
-	 * @param seq Collection of monads to convert
-	 * @return Monad with a List
-	 */ 
-	public static <T1>  AnyMSeq<ListX<T1>> sequence(Collection<? extends AnyMSeq<T1>> seq){
-		return AnyMSeqImpl.from(new AnyMonads().sequence(seq));
-	}
-	/**
-	 * Convert a Stream of Monads to a Monad with a List
-	 * 
-	 * <pre>{@code
-		Stream<CompletableFuture<Integer>> futures = createFutures();
-		AnyMSeq<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
-
-	   //where AnyM wraps  CompletableFuture<List<Integer>>
-	  }</pre>
-	 * 
-	 * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
-	 * @param seq Stream of monads to convert
-	 * @return Monad with a List
-	 */
-	public static <T1>  AnyMSeq<ListX<T1>> sequence(Stream<? extends AnyMSeq<T1>> seq){
-		return AnyMSeqImpl.from(new AnyMonads().sequence(seq));
-	}
 	/**
 	 * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
 	 * AnyM view simplifies type related challenges.

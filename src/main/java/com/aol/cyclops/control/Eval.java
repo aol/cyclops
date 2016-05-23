@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -78,8 +79,16 @@ public interface Eval<T> extends Supplier<T>,
 	}
 	
 	public static <T> Eval<ListX<T>> sequence(CollectionX<Eval<T>> evals){
-		return AnyM.sequence(AnyM.<T>listFromEval(evals)).unwrap();
+	    return sequence(evals).map(s->s.toListX());
+		
 	}
+	public static <T> Eval<ReactiveSeq<T>> sequence(Stream<Eval<T>> evals){
+        return AnyM.genericSequence(evals.map(f->AnyM.fromEval(f)),
+                ()->AnyM.fromEval(Eval.later(()->Stream.<T>empty()))
+                .map(s->ReactiveSeq.fromStream(s)))
+                .unwrap();
+        
+    }
 	
 	public static <T,R> Eval<R> accumulate(CollectionX<Eval<T>> evals,Reducer<R> reducer){
 		return sequence(evals).map(s->s.mapReduce(reducer));

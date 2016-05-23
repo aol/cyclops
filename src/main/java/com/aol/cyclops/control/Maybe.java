@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -109,9 +110,18 @@ public interface Maybe<T> extends MonadicValue1<T>,
 		return (Maybe<T>)broad;
 	}
 	
-	public static <T> Maybe<ListX<T>> sequence(CollectionX<Maybe<T>> maybes){
-		return AnyM.sequence(AnyM.<T>listFromMaybe(maybes)).unwrap();
-	}
+
+    public static <T> Maybe<ListX<T>> sequence(CollectionX<Maybe<T>> evals){
+        return sequence(evals).map(s->s.toListX());
+        
+    }
+    public static <T> Maybe<ReactiveSeq<T>> sequence(Stream<Maybe<T>> maybes){
+        return AnyM.genericSequence(maybes.map(f->AnyM.fromMaybe(f)),
+                ()->AnyM.fromMaybe(Maybe.just(Stream.<T>empty())))
+                .map(s->ReactiveSeq.fromStream(s))
+                .unwrap();
+        
+    }
 	
 	public static <T,R> Maybe<R> accumulateJust(CollectionX<Maybe<T>> maybes,Reducer<R> reducer){
 		return sequence(maybes).map(s->s.mapReduce(reducer));

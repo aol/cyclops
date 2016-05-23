@@ -17,11 +17,11 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
@@ -33,6 +33,7 @@ import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
@@ -131,7 +132,9 @@ public abstract class BaseAnyMValueTest {
 
 	@Test
 	public void testSequence() {
-		AnyMValue<ListX<Integer>> maybes =AnyMValue.sequence(ListX.of(just,none,AnyM.ofNullable(1)));
+	    Supplier<AnyM<Stream<Integer>>> unitEmpty = ()->AnyM.fromMaybe(Maybe.just(Stream.<Integer>empty()));
+		AnyM<ListX<Integer>> maybes =AnyM.genericSequence(ReactiveSeq.of(just,none,AnyM.ofNullable(1)), unitEmpty)
+		                                  .map(s->ReactiveSeq.fromStream(s).toListX());
 		assertThat(maybes,equalTo(AnyM.ofNullable(ListX.of(10,1))));
 	}
 
