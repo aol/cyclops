@@ -18,7 +18,9 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 public abstract class AbstractFoldableTest {
@@ -282,5 +284,13 @@ public abstract class AbstractFoldableTest {
         assertEquals(2, map1.size());
 
      
+    }
+    
+    @Test
+    public void testValidateIsLazy() {
+    	Validator<Integer, Integer, Integer> v = Validator.of(i -> i < 3, null, 0);
+		Ior<ReactiveSeq<Integer>, ReactiveSeq<Integer>> results = ReactiveSeq.of(1, 2, 3, 4, 5, 6).validate(v);
+		
+		results.swap().findFirst().get().map(i -> i + 1);
     }
 }

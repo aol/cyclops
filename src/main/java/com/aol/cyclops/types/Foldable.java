@@ -12,6 +12,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.tuple.Tuple2;
+
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Ior;
@@ -22,7 +24,6 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.util.stream.Streamable;
@@ -725,11 +726,13 @@ public interface Foldable<T> {
    
     default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(Validator<T, S, F> validator) {
 
-        ReactiveSeq<Xor<F, S>> xors = stream().<Xor<F, S>> flatMap(s -> validator.accumulate(s).toXors().stream());
-        MapX<Boolean, List<Xor<F, S>>> map = xors.groupBy(s -> s.isPrimary());
+		Tuple2<ReactiveSeq<Xor<F, S>>, ReactiveSeq<Xor<F, S>>> xors = stream()
+				.<Xor<F, S>> flatMap(s -> validator.accumulate(s).toXors().stream()).duplicateSequence();
 
-        return Ior.both(ReactiveSeq.fromStream(map.get(false).stream().map(x -> x.secondaryGet())),
-                ReactiveSeq.fromStream(map.get(true).stream().map(x -> x.get())));
+        Predicate<Xor<F,S>> primaryPredicate = e -> e.isPrimary();
+        
+        return Ior.both(xors.v1.filter(primaryPredicate.negate()).map(x -> x.secondaryGet()),
+                xors.v2.filter(primaryPredicate).map(x -> x.get()));
     }
     /**
      * Check that there are specified number of matches of predicate in the
