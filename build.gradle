@@ -63,7 +63,7 @@ configurations {
 dependencies {
    
 	
-   
+    compile 'io.javaslang:javaslang:2.0.2'
 	compile 'com.nurkiewicz.asyncretry:asyncretry:'+asyncRetryVersion
 	compile 'org.pcollections:pcollections:'+pCollectionsVersion
 	compile "org.jooq:jool:${joolVersion}"

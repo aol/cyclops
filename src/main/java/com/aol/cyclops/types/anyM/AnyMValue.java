@@ -48,6 +48,15 @@ public interface AnyMValue<T> extends AnyM<T>,
          return this.<T>toSequence().collect(collector);
         
     }
+    
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.AnyM#flatMapFirst(java.util.function.Function)
+     */
+    @Override
+    <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn) ;
+
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */

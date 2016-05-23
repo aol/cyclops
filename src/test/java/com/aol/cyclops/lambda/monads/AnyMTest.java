@@ -23,9 +23,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 
 import lombok.val;
@@ -33,6 +32,21 @@ import lombok.val;
 
 
 public class AnyMTest {
+    
+    @Test
+    public void flatMapFirst(){
+     
+       List l= AnyM.fromList(ListX.of(1,2,3))
+            .flatMapFirst(i->AnyM.fromList(ListX.of(10,i)))
+            .unwrap();
+       System.out.println(l);
+    }
+    @Test
+    public void flatMap(){
+       AnyM.fromStream(Stream.of(1,2,3))
+            .flatMap(i->AnyM.fromStream(Stream.of(10,i)))
+            .forEach(System.out::println);
+    }
 	@Test
 	public void createAnyMFromListOrOptional(){
 		List<Integer> list = Arrays.asList(1,2,3);

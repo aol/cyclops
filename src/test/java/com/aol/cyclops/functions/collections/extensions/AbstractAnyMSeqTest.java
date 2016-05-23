@@ -1135,15 +1135,7 @@ public abstract class AbstractAnyMSeqTest {
             
         }
 
-        
-        
-        
-        
-       
-        
-        
-
-         
+          
             @Test
             public void testCastNumber() {
                 

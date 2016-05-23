@@ -137,8 +137,9 @@ public class ListTSeq<T> implements ListT<T>{
 	 */
    public <B> ListTSeq<B> flatMapT(Function<? super T,ListTSeq<B>> f){
 	  
-	   return of( run.map(stream-> ReactiveSeq.fromList(stream).flatMap(a-> f.apply(a).run.stream()).flatMap(a->a.stream())
-			   .toList()));
+	   return of( run.map(list -> list.flatMap(a-> f.apply(a).run.stream())
+	                                   .flatMap(a->a.stream())
+			   ));
    }
    /**
 	 * Lift a function into one that accepts and returns an ListT

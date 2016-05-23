@@ -36,6 +36,12 @@ import lombok.val;
 
 public class AnyMSeqTest {
 
+    @Test
+    public void sequence2Test(){
+        AnyM<ListX<Integer>> futureList = AnyMSeq.sequence(ListX.of(Arrays.asList(1,2,3),Arrays.asList(8), Arrays.asList(10,20)).map(i->AnyM.fromIterable(i)));
+        ListX<ListX<Integer>> f = futureList.unwrap();
+        System.out.println(f);
+    }
 	@Test
 	public void testSequence(){
 		
@@ -48,7 +54,8 @@ public class AnyMSeqTest {
         
         AnyM<ListX<Integer>> futureList = AnyMSeq.sequence(AnyM.listFromStream(futures));
         
- 
+        Stream<ListX<Integer>> futureStream = futureList.unwrap();
+      
         List<Integer> collected = futureList.<Stream<Integer>>unwrap().collect(Collectors.toList());
         assertThat(collected.size(),equalTo( list.size()));
         
