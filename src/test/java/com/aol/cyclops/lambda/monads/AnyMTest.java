@@ -24,7 +24,9 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 
 import lombok.val;
@@ -32,7 +34,28 @@ import lombok.val;
 
 
 public class AnyMTest {
-    
+    @Test
+    public void anyMSetConversion() {
+      AnyMSeq<Integer> wrapped = AnyM.fromSet(SetX.of(1, 2, 3, 4, 5));
+
+      Eval<Integer> lazyResult = wrapped
+              .map(i -> i * 10)
+              .lazyOperations() 
+              .reduce(50, (acc, next) -> acc + next);
+
+      assertEquals(200, lazyResult.get().intValue());
+    }
+    @Test
+    public void anyMListConversion() {
+      AnyMSeq<Integer> wrapped = AnyM.fromList(ListX.of(1, 2, 3, 4, 5));
+
+      Eval<Integer> lazyResult = wrapped
+              .map(i -> i * 10)
+              .lazyOperations() 
+              .reduce(50, (acc, next) -> acc + next);
+
+      assertEquals(200, lazyResult.get().intValue());
+    }
     @Test
     public void flatMapFirst(){
      
@@ -166,7 +189,7 @@ public class AnyMTest {
 	@Test
 	public void testSetMap(){
 		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
-		assertThat(set.map(i->i+2).unwrap(),equalTo(new HashSet<>(Arrays.asList(3,4,5))));
+		assertThat(set.map(i->i+2).unwrap(),equalTo((Set<Integer>)new HashSet<>(Arrays.asList(3,4,5))));
 		
 	}
 	
@@ -175,7 +198,7 @@ public class AnyMTest {
 	public void testSetFilter(){
 		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
 		System.out.println(set.filter(i->i<3).unwrap().getClass());
-		assertThat(set.filter(i->i<3).unwrap(),equalTo(new HashSet<>(Arrays.asList(1,2))));
+		assertThat(set.filter(i->i<3).unwrap(),equalTo((Set<Integer>)new HashSet<>(Arrays.asList(1,2))));
 	}
 	
 	@Test

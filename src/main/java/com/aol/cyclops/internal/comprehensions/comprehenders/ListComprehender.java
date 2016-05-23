@@ -25,20 +25,13 @@ public class ListComprehender implements Comprehender {
 	@Override
 	public Object filter(Object t, Predicate p) {
 	    return ListX.fromIterable((Iterable)t).filter(p);
-		/**if(t instanceof List)
-			return ((List)t).stream().filter(p);
-		else
-			return ((Stream)t).filter(p);**/
+		
 	}
 
 	@Override
 	public Object map(Object t, Function fn) {
 	    return ListX.fromIterable((Iterable)t).map(fn);
-	/**	if(t instanceof List)
-			return ((List)t).stream().map(fn);
-		else
-			return ((Stream)t).map(fn);
-			**/
+	
 	}
 	
 	public Object executeflatMap(Object t, Function fn){
@@ -47,15 +40,7 @@ public class ListComprehender implements Comprehender {
 	@Override
 	public Object flatMap(Object t, Function fn) {
 	    return ListX.fromIterable((Iterable)t).flatMap(fn);
-	  /**  List result;
-	    if(t instanceof List){
-			result =  (List)((List) t).stream().flatMap(fn).collect(Collectors.toList());
-	    }
-	    else  {
-			result = (List)((Stream) t).flatMap(fn).collect(Collectors.toList());
-			
-	    }
-		return result;**/
+	  
 	}
 
 	@Override
@@ -86,8 +71,7 @@ public class ListComprehender implements Comprehender {
 			return (List)((Stream)o).collect(Collectors.toList());
 	}
 	static List unwrapOtherMonadTypesLC(Comprehender comp,Object apply){
-		
-		
+	
 		
 		if(apply instanceof Collection){
 			return  ListX.fromIterable((Collection)apply);
@@ -98,8 +82,7 @@ public class ListComprehender implements Comprehender {
 		}
 		
 		if(apply instanceof BaseStream){
-			//return StreamSupport.stream(Spliterators.spliteratorUnknownSize(((BaseStream)apply).iterator(), Spliterator.ORDERED),
-		//			false);
+		
 		    return  ListX.fromIterable(()->((BaseStream)apply).iterator());
 		    
 		}
