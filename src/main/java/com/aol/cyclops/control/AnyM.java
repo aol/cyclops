@@ -2,6 +2,7 @@ package com.aol.cyclops.control;
 
 
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +53,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
+import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.types.EmptyUnit;
@@ -111,14 +113,9 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
      */
    
     <R, A> R collect(Collector<? super T, A, R> collector);
-    /* Convert this AnyM to a Stream (SequenceM)
-	 * Chooses the most appropriate of asSequence() and toSequence()
-	 * 
-	 * (non-Javadoc)
-	 * @see com.aol.cyclops.sequence.streamable.ToStream#stream()
-	 * @see com.aol.cyclops.monad.asSequence()
-	 * @see com.aol.cyclops.monad.toSequence()
-	 */
+    
+    /* Convert this AnyM to a Stream
+     */
 	public ReactiveSeq<T> stream();
 	
     /**
@@ -831,20 +828,38 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
 	public static <T> List<AnyMSeq<T>> listFromIterator(Iterable<Iterator<T>> anyM){
 		return StreamSupport.stream(anyM.spliterator(),false).map(i-> AnyM.fromIterable(()->i)).collect(Collectors.toList());
 	}
-	
+	/**
+     * Convert a Collection of Monads to a Monad with a List
+     * 
+     * <pre>
+     * {@code
+        List<CompletableFuture<Integer>> futures = createFutures();
+        AnyM<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
+
+       //where AnyM wraps  CompletableFuture<List<Integer>>
+      }</pre>
+     * 
+     * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
+     * @param seq Collection of monads to convert
+     * @return Monad with a List
+     */ 
+    public static <T1>  AnyMValue<ListX<T1>> sequence(Collection<? extends AnyM<T1>> seq){
+        return new AnyMonads().sequence(seq);
+    }
+    
 
 	/**
 	 * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
 	 *
 	 */
-	public static <T,R> AnyM<Stream<R>> genericTraverse(Stream<AnyM<T>> source, Supplier<AnyM<Stream<T>>> unitEmpty,Function<? super T,? extends R> fn) {
-        return genericSequence(source,unitEmpty).map(s->s.map(fn));
+	public static <T,R> AnyM<Stream<R>> traverse(Stream<AnyM<T>> source, Supplier<AnyM<Stream<T>>> unitEmpty,Function<? super T,? extends R> fn) {
+        return sequence(source,unitEmpty).map(s->s.map(fn));
     }
 	/**
      * Convert a Stream of Monads to a Monad with a Stream
      *
      */
-	public static <T> AnyM<Stream<T>> genericSequence(Stream<AnyM<T>> source, Supplier<AnyM<Stream<T>>> unitEmpty) {
+	public static <T> AnyM<Stream<T>> sequence(Stream<AnyM<T>> source, Supplier<AnyM<Stream<T>>> unitEmpty) {
         return  source.reduce(unitEmpty.get(),
                         (fl, fo) ->   fl.flatMapFirst(a->{
                                  Streamable<T> streamable= Streamable.fromStream(a);

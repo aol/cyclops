@@ -132,11 +132,14 @@ public abstract class BaseAnyMValueTest {
 
 	@Test
 	public void testSequence() {
+	    
 	    Supplier<AnyM<Stream<Integer>>> unitEmpty = ()->AnyM.fromMaybe(Maybe.just(Stream.<Integer>empty()));
-		AnyM<ListX<Integer>> maybes =AnyM.genericSequence(ReactiveSeq.of(just,none,AnyM.ofNullable(1)), unitEmpty)
+	    Stream<AnyM<Integer>> source = ReactiveSeq.of(just,AnyM.ofNullable(1));
+		AnyM<ListX<Integer>> maybes =AnyM.sequence(source, unitEmpty)
 		                                  .map(s->ReactiveSeq.fromStream(s).toListX());
 		assertThat(maybes,equalTo(AnyM.ofNullable(ListX.of(10,1))));
 	}
+	
 
 	
 	@Test

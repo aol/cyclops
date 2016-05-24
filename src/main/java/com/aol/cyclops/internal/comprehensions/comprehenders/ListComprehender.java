@@ -15,30 +15,36 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class ListComprehender implements Comprehender {
+public class ListComprehender implements Comprehender<List> {
+    @Override
+    public Object resolveForCrossTypeFlatMap(Comprehender comp, List apply) {
+        List list = (List) apply.stream().collect(Collectors.toCollection(MaterializedList::new));
+        return list.size()>0 ? comp.of(list) : comp.empty();
+    }
 	public Class getTargetClass(){
 		return List.class;
 	}
 	@Override
-	public Object filter(Object t, Predicate p) {
-	    return ListX.fromIterable((Iterable)t).filter(p);
+	public Object filter(List t, Predicate p) {
+	    return ListX.fromIterable(t).filter(p);
 		
 	}
 
 	@Override
-	public Object map(Object t, Function fn) {
-	    return ListX.fromIterable((Iterable)t).map(fn);
+	public Object map(List t, Function fn) {
+	    return ListX.fromIterable(t).map(fn);
 	
 	}
 	
-	public Object executeflatMap(Object t, Function fn){
+	public Object executeflatMap(List t, Function fn){
 		return flatMap(t,input -> unwrapOtherMonadTypesLC(this,fn.apply(input)));
 	}
 	@Override
-	public Object flatMap(Object t, Function fn) {
+	public Object flatMap(List t, Function fn) {
 	    return ListX.fromIterable((Iterable)t).flatMap(fn);
 	  
 	}
@@ -88,13 +94,13 @@ public class ListComprehender implements Comprehender {
 		}
 		Object o = Comprehender.unwrapOtherMonadTypes(comp,apply);
 		if(o instanceof Collection){
-		    return  ListX.fromIterable((Collection)apply);
+		    return  ListX.fromIterable((Collection)o);
 		}
 		if(o instanceof Iterable){
-		    return  ListX.fromIterable((Iterable)apply);
+		    return  ListX.fromIterable((Iterable)o);
 		}
-		if(apply instanceof BaseStream){
-		    return  ListX.fromIterable(()->((BaseStream)apply).iterator());
+		if(o instanceof BaseStream){
+		    return  ListX.fromIterable(()->((BaseStream)o).iterator());
 		}
 		return (List)o;
 		

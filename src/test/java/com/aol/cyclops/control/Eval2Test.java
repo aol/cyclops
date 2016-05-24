@@ -128,6 +128,7 @@ public class Eval2Test {
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
+	   Object o = Eval.sequence(ListX.of(just,Eval.now(1)));
 		Eval<PSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,none,Eval.now(1)),Reducers.toPSetX());
 		assertThat(maybes,equalTo(Eval.now(PSetX.of(10,1))));
 	}

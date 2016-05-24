@@ -49,17 +49,21 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	}
 
     public static <T> FutureW<ListX<T>> sequence(CollectionX<FutureW<T>> fts){
-        return sequence(fts).map(s->s.toListX());
+        return sequence(fts.stream()).map(s->s.toListX());
         
     }
     public static <T> FutureW<ReactiveSeq<T>> sequence(Stream<FutureW<T>> fts){
-        return AnyM.genericSequence(fts.map(f->AnyM.fromFutureW(f)),
-                ()->AnyM.fromFutureW(FutureW.ofResult(Stream.<T>empty()))
-                .map(s->ReactiveSeq.fromStream(s)))
+        return AnyM.sequence(fts.map(f->AnyM.fromFutureW(f)),
+                ()->AnyM.fromFutureW(FutureW.ofResult(Stream.<T>empty())))
+                .map(s->ReactiveSeq.fromStream(s))
                 .unwrap();
         
     }
-	
+    public static <T,R> FutureW<R> accumulateSuccess(CollectionX<FutureW<T>> fts,Reducer<R> reducer){
+        
+        FutureW<ListX<T>> sequenced =  AnyM.sequence(fts.map(f->AnyM.fromFutureW(f))).unwrap();
+        return sequenced.map(s->s.mapReduce(reducer));
+    }
 	
 	public static <T,R> FutureW<R> accumulate(CollectionX<FutureW<T>> fts,Reducer<R> reducer){
 		return sequence(fts).map(s->s.mapReduce(reducer));

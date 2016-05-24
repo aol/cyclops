@@ -40,73 +40,7 @@ public class MonadTest {
 				.collect(Collectors.toList());
 		assertThat(Arrays.asList(2,6),equalTo(list));
 	}
-	
-	
-	
-	@Test
-	public void testSequence(){
-		
-        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-        List<CompletableFuture<Integer>> futures = list
-                .stream()
-                .map(x -> CompletableFuture.supplyAsync(() -> x))
-                .collect(Collectors.toList());
-       
-        
-        AnyM<ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures));
-        
- 
-        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat(list.get(next),equalTo( collected.get(next)));
-        }
-        
-	}
-	@Test
-	public void testSequenceStream(){
-		
-        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-        List<CompletableFuture<Integer>> futures = list
-                .stream()
-                .map(x -> CompletableFuture.supplyAsync(() -> x))
-                .collect(Collectors.toList());
-       
-        
-        AnyM<ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures).stream());
-        
- 
-        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat(list.get(next),equalTo( collected.get(next)));
-        }
-        
-	}
-	
-	
-	@Test
-	public void testTraverse(){
-		
-        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-        List<CompletableFuture<Integer>> futures = list
-                .stream()
-                .map(x -> CompletableFuture.supplyAsync(() -> x))
-                .collect(Collectors.toList());
 
-       
-        AnyM<ListX<String>> futureList = AnyM.traverse(AnyM.listFromCompletableFuture(futures), (Integer i) -> "hello" +i);
-   
-        List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat("hello"+list.get(next),equalTo( collected.get(next)));
-        }
-        
-	}
 	
 	
 	

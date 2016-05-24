@@ -15,11 +15,15 @@ import com.aol.cyclops.control.ReactiveSeq;
 public class Optionals {
 
     public static <T> Optional<ListX<T>> sequence(CollectionX<Optional<T>> opts){
-        return sequence(opts).map(s->s.toListX());
+        return sequence(opts.stream()).map(s->s.toListX());
         
     }
+    public static <T> Optional<ListX<T>> sequencePresent(CollectionX<Optional<T>> opts){
+        Optional<ListX<T>> unwrapped = AnyM.sequence(opts.map(o->AnyM.fromOptional(o))).unwrap();
+        return unwrapped;
+    }
 	public static <T> Optional<ReactiveSeq<T>> sequence(Stream<Optional<T>> opts){
-	    return AnyM.genericSequence(opts.map(f->AnyM.fromOptional(f)),
+	    return AnyM.sequence(opts.map(f->AnyM.fromOptional(f)),
                 ()->AnyM.fromOptional(Optional.of(Stream.<T>empty())))
                 .map(s->ReactiveSeq.fromStream(s))
                 .unwrap();
@@ -27,10 +31,10 @@ public class Optionals {
 	}
 	
 	public static <T,R> Optional<R> accumulatePresent(CollectionX<Optional<T>> maybes,Reducer<R> reducer){
-		return sequence(maybes).map(s->s.mapReduce(reducer));
+		return sequencePresent(maybes).map(s->s.mapReduce(reducer));
 	}
 	public static <T,R> Optional<R> accumulatePresent(CollectionX<Optional<T>> maybes,Function<? super T, R> mapper,Semigroup<R> reducer){
-		return sequence(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
+		return sequencePresent(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
 
 }

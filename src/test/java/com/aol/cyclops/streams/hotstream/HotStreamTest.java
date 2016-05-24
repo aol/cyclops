@@ -1,14 +1,18 @@
 package com.aol.cyclops.streams.hotstream;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.Spliterator;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.stream.StreamSupport;
 
 import org.junit.Test;
 
@@ -19,23 +23,44 @@ public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(5);
 	volatile Object value;
 	
+	String captured;
 	@Test
-	public void backpressure(){
-	    
+	public void backpressurePrimed(){
+	   
+	    captured= "";
 
 	      Executor exec = Executors.newFixedThreadPool(1);
 	      LinkedBlockingQueue<String> blockingQueue = new LinkedBlockingQueue<String>(3);
 
 	      ReactiveSeq.range(0, Integer.MAX_VALUE)
-	         // .limit(500)
+	          .limit(2)
 	          .map(i -> i.toString())
 	          .peek(System.out::println)
 	          .primedHotStream(exec)
 	          .connect(blockingQueue)
 	          .onePer(1, TimeUnit.SECONDS)
-	          .forEach(System.out::println);
+	          .forEach(c->captured=c);
 	    
+	      assertThat(captured,equalTo("1"));
 	}
+	@Test
+    public void backpressure(){
+        captured= "";
+
+          Executor exec = Executors.newFixedThreadPool(1);
+          LinkedBlockingQueue<String> blockingQueue = new LinkedBlockingQueue<String>(3);
+
+          ReactiveSeq.range(0, Integer.MAX_VALUE)
+              .limit(2)
+              .map(i -> i.toString())
+              .peek(System.out::println)
+              .hotStream(exec)
+              .connect(blockingQueue)
+              .onePer(1, TimeUnit.SECONDS)
+              .forEach(c->captured=c);
+        
+          assertThat(captured,equalTo("1"));
+    }
 	@Test
 	public void hotStream() throws InterruptedException{
 		value= null;

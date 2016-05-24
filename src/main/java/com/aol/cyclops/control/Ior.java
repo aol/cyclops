@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -180,19 +179,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	public boolean isSecondary();
 	public boolean isBoth();
 	
-	public static <ST,PT>  Ior<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Ior<ST,PT>> iors){
-        return (Ior)sequenceSecondary(iors.stream()).map(s->s.toListX());
-        //alternative swap, map other side, swap back
-                                            
-    }
-    public static <ST,PT> Ior<ReactiveSeq<PT>,ReactiveSeq<ST>> sequenceSecondary(Stream<Ior<ST,PT>> iors){
-        return AnyM.genericSequence(iors.map(f->AnyM.fromIor(f.swap())),
-                ()->AnyM.fromIor(Ior.primary(Stream.<ST>empty())))
-                .map(s->ReactiveSeq.fromStream(s))
-                .unwrap();
-        
-    }
-	
+	public static <ST,PT> Ior<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Ior<ST,PT>> iors){
+		return AnyM.sequence(AnyM.listFromIor(iors.map(Ior::swap))).unwrap();
+	}
 	
 	public static <ST,PT,R> Ior<?,R> accumulateSecondary(CollectionX<Ior<ST,PT>> iors,Reducer<R> reducer){
 		return sequenceSecondary(iors).map(s->s.mapReduce(reducer));
@@ -204,15 +193,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
         return sequenceSecondary(iors).map(s->s.reduce(reducer.reducer()).get());
     }
 	public static <ST,PT> Ior<ListX<ST>,ListX<PT>> sequencePrimary(CollectionX<Ior<ST,PT>> iors){
-	    return (Ior)sequencePrimary(iors.stream()).map(s->s.toListX());
+		return AnyM.sequence(AnyM.<ST,PT>listFromIor(iors)).unwrap();
 	}
-	public static <ST,PT> Ior<ReactiveSeq<PT>,ReactiveSeq<ST>> sequencePrimary(Stream<Ior<ST,PT>> iors){
-        return AnyM.genericSequence(iors.map(f->AnyM.fromIor(f)),
-                ()->AnyM.fromIor(Ior.primary(Stream.<PT>empty())))
-                .map(s->ReactiveSeq.fromStream(s))
-                .unwrap();
-        
-    }
 	
 	public static <ST,PT,R> Ior<?,R> accumulatePrimary(CollectionX<Ior<ST,PT>> iors,Reducer<R> reducer){
 		return sequencePrimary(iors).map(s->s.mapReduce(reducer));

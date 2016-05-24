@@ -21,7 +21,7 @@ public class CompletableFutures {
 	}
 	
 	public static <T> CompletableFuture<ReactiveSeq<T>> sequence(Stream<CompletableFuture<T>> fts){
-	    return AnyM.genericSequence(fts.map(f->fromCompletableFuture(f)),
+	    return AnyM.sequence(fts.map(f->fromCompletableFuture(f)),
                 ()->AnyM.fromCompletableFuture(completedFuture(Stream.<T>empty())))
 	                .map(s->ReactiveSeq.fromStream(s))
 	                .unwrap();

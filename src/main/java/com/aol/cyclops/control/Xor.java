@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple;
 
@@ -159,19 +158,10 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	default <ST2> Xor<ST2,PT> toXor(ST2 secondary){
       return visit (s-> secondary(secondary), p-> primary(p));
     }
-	public static <ST,PT>  Xor<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Xor<ST,PT>> xors){
-        return (Xor)sequenceSecondary(xors.stream()).map(s->s.toListX());
-        //alternative swap, map other side, swap back
-                                            
-    }
-    public static <ST,PT> Xor<ReactiveSeq<PT>,ReactiveSeq<ST>> sequenceSecondary(Stream<Xor<ST,PT>> iors){
-        return AnyM.genericSequence(iors.map(f->AnyM.fromXor(f.swap())),
-                ()->AnyM.fromXor(Xor.primary(Stream.<ST>empty())))
-                .map(s->ReactiveSeq.fromStream(s))
-                .unwrap();
-        
-    }
-	
+   
+	public static <ST,PT> Xor<ListX<PT>,ListX<ST>> sequenceSecondary(CollectionX<Xor<ST,PT>> xors){
+		return AnyM.sequence(AnyM.listFromXor(xors.map(Xor::swap))).unwrap();
+	}
 	
 	public static <ST,PT,R> Xor<?,R> accumulateSecondary(CollectionX<Xor<ST,PT>> xors,Reducer<R> reducer){
 		return sequenceSecondary(xors).map(s->s.mapReduce(reducer));
@@ -180,15 +170,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 		return sequenceSecondary(xors).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
 	
-    public static <ST,PT> Xor<ReactiveSeq<PT>,ReactiveSeq<ST>> sequencePrimary(Stream<Xor<ST,PT>> iors){
-        return AnyM.genericSequence(iors.map(f->AnyM.fromXor(f)),
-                ()->AnyM.fromXor(Xor.primary(Stream.<PT>empty())))
-                .map(s->ReactiveSeq.fromStream(s))
-                .unwrap();
-        
-    }
 	public static <ST,PT> Xor<ListX<ST>,ListX<PT>> sequencePrimary(CollectionX<Xor<ST,PT>> xors){
-	    return (Xor)sequencePrimary(xors.stream()).map(s->s.toListX());
+		return AnyM.sequence(AnyM.<ST,PT>listFromXor(xors)).unwrap();
 	}
 	
 	public static <ST,PT,R> Xor<?,R> accumulatePrimary(CollectionX<Xor<ST,PT>> xors,Reducer<R> reducer){

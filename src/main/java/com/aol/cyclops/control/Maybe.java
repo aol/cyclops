@@ -110,13 +110,16 @@ public interface Maybe<T> extends MonadicValue1<T>,
 		return (Maybe<T>)broad;
 	}
 	
-
-    public static <T> Maybe<ListX<T>> sequence(CollectionX<Maybe<T>> evals){
-        return sequence(evals).map(s->s.toListX());
+	public static <T> Maybe<ListX<T>> sequenceJust(CollectionX<Maybe<T>> opts){
+        Maybe<ListX<T>> unwrapped = AnyM.sequence(opts.map(o->AnyM.fromMaybe(o))).unwrap();
+        return unwrapped;
+    }
+    public static <T> Maybe<ListX<T>> sequence(CollectionX<Maybe<T>> maybes){
+        return sequence(maybes.stream()).map(s->s.toListX());
         
     }
     public static <T> Maybe<ReactiveSeq<T>> sequence(Stream<Maybe<T>> maybes){
-        return AnyM.genericSequence(maybes.map(f->AnyM.fromMaybe(f)),
+        return AnyM.sequence(maybes.map(f->AnyM.fromMaybe(f)),
                 ()->AnyM.fromMaybe(Maybe.just(Stream.<T>empty())))
                 .map(s->ReactiveSeq.fromStream(s))
                 .unwrap();
@@ -124,13 +127,13 @@ public interface Maybe<T> extends MonadicValue1<T>,
     }
 	
 	public static <T,R> Maybe<R> accumulateJust(CollectionX<Maybe<T>> maybes,Reducer<R> reducer){
-		return sequence(maybes).map(s->s.mapReduce(reducer));
+		return sequenceJust(maybes).map(s->s.mapReduce(reducer));
 	}
 	public static <T,R> Maybe<R> accumulateJust(CollectionX<Maybe<T>> maybes,Function<? super T, R> mapper,Semigroup<R> reducer){
-		return sequence(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
+		return sequenceJust(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
 	public static <T> Maybe<T> accumulateJust(CollectionX<Maybe<T>> maybes,Semigroup<T> reducer){
-		return sequence(maybes).map(s->s.reduce(reducer.reducer()).get());
+		return sequenceJust(maybes).map(s->s.reduce(reducer.reducer()).get());
 	}
 	default <T> Maybe<T> unit(T unit){
 		return  Maybe.of(unit);
@@ -428,7 +431,17 @@ public interface Maybe<T> extends MonadicValue1<T>,
 		public boolean isPresent(){
 			return false;
 		}
-		
+		@Override
+        public boolean equals(Object obj) {
+		    
+		       
+            if(obj instanceof Nothing)
+                return true;
+            if(obj instanceof Lazy){
+                return !((Lazy)obj).isPresent();
+            }
+            return false;
+        }
 		
 	}
 	
