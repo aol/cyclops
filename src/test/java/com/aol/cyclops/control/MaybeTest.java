@@ -167,6 +167,12 @@ public class MaybeTest implements Printable {
 	}
 
 	@Test
+	public void testSequenceLazy(){
+	    Maybe<ListX<Integer>> maybes =Maybe.sequence(ListX.of(just,none,Maybe.of(1)));
+        
+        assertThat(maybes,equalTo(Maybe.just(1).flatMap(i->Maybe.none()))); 
+	}
+	@Test
 	public void testSequence() {
 		Maybe<ListX<Integer>> maybes =Maybe.sequence(ListX.of(just,none,Maybe.of(1)));
 		
@@ -174,7 +180,7 @@ public class MaybeTest implements Printable {
 	}
 	@Test
     public void testSequenceJust() {
-        Maybe<ListX<Integer>> maybes =Maybe.sequence(ListX.of(just,none,Maybe.of(1)));
+        Maybe<ListX<Integer>> maybes =Maybe.sequenceJust(ListX.of(just,none,Maybe.of(1)));
         assertThat(maybes,equalTo(Maybe.of(ListX.of(10,1))));
     }
 

@@ -390,8 +390,16 @@ public interface Maybe<T> extends MonadicValue1<T>,
             
             if(obj instanceof Just)
                 return Objects.equals(get(),((Just)obj).get());
-            if(obj instanceof Lazy)
-                return Objects.equals(get(),((Lazy)obj).get());
+            else if(obj instanceof Nothing){
+                return !isPresent();
+            }
+            else if(obj instanceof Lazy){
+                if(isPresent())
+                    return Objects.equals(get(),((Lazy)obj).get());
+                else{
+                    return !((Lazy)obj).isPresent();
+                }
+            }
             return false;
         }
         
