@@ -73,6 +73,7 @@ Used in Aol to build robust, performant & scalable asynchronous systems : featur
 
 [Old simple-react landing page](https://github.com/aol/simple-react/wiki/1.-simple-react-overview)
 
+[OSCON 2016 slides](http://cdn.oreillystatic.com/en/assets/1/event/154/AOL_s%20return%20to%20open%20source_%20An%20overview%20of%20Java%208%20library%20cyclops-react%20Presentation.pdf)
 
 # License
 
