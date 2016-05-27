@@ -30,7 +30,7 @@ public class AnyMSeqTest {
         Stream<AnyMSeq<Integer>> source = ReactiveSeq.of(just,AnyM.fromArray(1));
         AnyMSeq<ListX<Integer>> maybes =AnyMSeq.sequence(source, unitEmpty)
                                           .map(s->ReactiveSeq.fromStream(s).toListX());
-        assertThat(maybes,equalTo(AnyM.ofNullable(ListX.of(10,1))));
+        assertThat(maybes,equalTo(AnyM.fromList(ListX.of(10,1))));
     }
     @Test
     public void testSequence(){
