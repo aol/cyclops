@@ -30,7 +30,7 @@ import com.aol.cyclops.types.stream.lazy.LazyOperations;
 public interface Traversable<T> extends Iterable<T>, 
                                         Publisher<T>{
 	
-   
+  
     default ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(this);
     }

@@ -76,7 +76,7 @@ public class FutureWTest {
 	
 	@Test
     public void fib2(){
-        System.out.println(fib(100_000,1l,0l));
+        System.out.println(fib(10,1l,0l));
     }
 	
 	public static long fib(int n, long a, long b) {

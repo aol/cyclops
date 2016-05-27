@@ -968,6 +968,10 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		private final X error;
 		
 		@Override
+        public boolean isPresent(){
+            return false;
+        }
+		@Override
         public Xor<X,T> toXor(){
             return Xor.secondary(error);
             

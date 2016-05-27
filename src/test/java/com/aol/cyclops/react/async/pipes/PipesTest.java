@@ -68,18 +68,23 @@ public class PipesTest {
 	@Test
     public void nextValueFinished(){
         
+	    Maybe.just("hello").peek(System.out::println);
         Pipes<String, Integer> bus = Pipes.of();
         bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
                                               .build());
         
         bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
-        
+        System.out.println("get eval A");
         val ev = bus.nextValue("reactor");
         List results = new ArrayList();
-        
+        System.out.println("first");
         results.add(ev.get());
         results.add(ev.get());
+        System.out.println("last one!");
+       
+       
         results.add(ev.get());
+        System.out.println("done!");
         
         assertThat(results,equalTo(ListX.of(Maybe.of(10),Maybe.of(20),Maybe.of(30))));
            

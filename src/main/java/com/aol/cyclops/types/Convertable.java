@@ -36,10 +36,18 @@ public interface Convertable<T> extends Iterable<T>,
                                         Supplier<T>,
                                         Visitable<T>{
     
+    /* Present is executed and it's return value returned if the value is both present and non-null, otherwise absent is called and its return value returned
+     * 
+     * (non-Javadoc)
+     * @see com.aol.cyclops.types.Visitable#visit(java.util.function.Function, java.util.function.Supplier)
+     */
     default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
         if(isPresent()){
             try{
-                return present.apply(get());
+                T value = get();
+                if(value!=null)
+                    return present.apply(get());
+                return absent.get();
             }catch(NoSuchElementException e){
                 return absent.get();
             }
@@ -87,7 +95,13 @@ public interface Convertable<T> extends Iterable<T>,
 	 * @return Optional that wraps contained value, Optional.empty if value is null
 	 */
 	default Optional<T> toOptional(){
-	    return visit(p->Optional.of(p),()->Optional.empty());
+	  /**  System.out.println(isPresent());
+	    try{
+            return Optional.ofNullable(get());
+        }catch(NoSuchElementException e){
+            return Optional.empty();
+        }**/
+	    return visit(p->Optional.ofNullable(p),()->Optional.empty());
 	}
 	
 	/**

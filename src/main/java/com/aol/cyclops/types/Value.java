@@ -214,7 +214,7 @@ public interface Value<T> extends Supplier<T>,
 		 return Eval.always(this);
 	 }
 	 default Maybe<T> toMaybe(){
-		  return visit(p->Maybe.just(p),()->Maybe.none());
+		  return visit(p->{ System.out.println("p is " +  p); return Maybe.ofNullable(p);},()->Maybe.none());
 	 }
 	 default ListX<T> toListX(){
 		 return ListX.fromIterable(toList());
@@ -250,9 +250,9 @@ public interface Value<T> extends Supplier<T>,
 		 return PBagX.fromCollection(toList());
 	 }
 	 default String mkString(){
-		 Optional<T> opt = this.toOptional();
-		 if(opt.isPresent())
-			 return this.getClass().getSimpleName()+"[" + opt.get() + "]";
+		
+		 if(isPresent())
+			 return this.getClass().getSimpleName()+"[" + get() + "]";
 		 return this.getClass().getSimpleName()+"[]";
 	 }
 

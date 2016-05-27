@@ -5,11 +5,13 @@ import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -59,7 +61,13 @@ public class Eval2Test {
     @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Eval.now(50)));
+        assertThat(none.coflatMap(m->  {
+            if(m.isPresent()) {
+                return m.get();
+            } else{
+                return 50;
+            } } ),equalTo(Eval.now(null)));
+        
     }
     @Test
     public void combine(){
@@ -186,6 +194,7 @@ public class Eval2Test {
 		assertThat(just.visit(i->i+1,()->20),equalTo(11));
 		assertThat(none.visit(i->i+1,()->20),equalTo(20));
 	}
+	
 
 	@Test
 	public void testUnapply() {
@@ -434,7 +443,7 @@ public class Eval2Test {
 	@Test
 	public void testMkString() {
 		assertThat(just.mkString(),equalTo("Always[10]"));
-		assertThat(none.mkString(),equalTo("Always[]"));
+		assertThat(none.mkString(),equalTo("Always[null]"));
 	}
 	LazyReact react = new LazyReact();
 	@Test

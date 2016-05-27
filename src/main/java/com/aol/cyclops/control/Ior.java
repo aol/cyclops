@@ -163,7 +163,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 
 	PT get();
 	default boolean isPresent(){
-        return isPrimary();
+        return isPrimary() || isBoth();
     }
 	Value<ST> secondaryValue();
 	ST secondaryGet();
