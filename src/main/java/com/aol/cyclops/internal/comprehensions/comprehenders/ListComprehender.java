@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 public class ListComprehender implements Comprehender {
@@ -23,18 +24,14 @@ public class ListComprehender implements Comprehender {
 	}
 	@Override
 	public Object filter(Object t, Predicate p) {
-		if(t instanceof List)
-			return ((List)t).stream().filter(p);
-		else
-			return ((Stream)t).filter(p);
+	    return ListX.fromIterable((Iterable)t).filter(p);
+		
 	}
 
 	@Override
 	public Object map(Object t, Function fn) {
-		if(t instanceof List)
-			return ((List)t).stream().map(fn);
-		else
-			return ((Stream)t).map(fn);
+	    return ListX.fromIterable((Iterable)t).map(fn);
+	
 	}
 	
 	public Object executeflatMap(Object t, Function fn){
@@ -42,16 +39,13 @@ public class ListComprehender implements Comprehender {
 	}
 	@Override
 	public Object flatMap(Object t, Function fn) {
-		if(t instanceof List)
-			return ((List) t).stream().flatMap(fn);
-		else 
-			return ((Stream) t).flatMap(fn);
-			
+	    return ListX.fromIterable((Iterable)t).flatMap(fn);
+	  
 	}
 
 	@Override
 	public boolean instanceOfT(Object apply) {
-		return apply instanceof Stream;
+		return apply instanceof List;
 	}
 	@Override
 	public List empty() {
@@ -76,34 +70,34 @@ public class ListComprehender implements Comprehender {
 		else
 			return (List)((Stream)o).collect(Collectors.toList());
 	}
-	static Stream unwrapOtherMonadTypesLC(Comprehender comp,Object apply){
-		
-		
+	static List unwrapOtherMonadTypesLC(Comprehender comp,Object apply){
+	
 		
 		if(apply instanceof Collection){
-			return ((Collection)apply).stream();
+			return  ListX.fromIterable((Collection)apply);
 		}
 		if(apply instanceof Iterable){
-			 return StreamSupport.stream(((Iterable)apply).spliterator(),
-						false);
+			
+		    return  ListX.fromIterable((Iterable)apply);
 		}
+		
 		if(apply instanceof BaseStream){
-			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(((BaseStream)apply).iterator(), Spliterator.ORDERED),
-					false);
+		
+		    return  ListX.fromIterable(()->((BaseStream)apply).iterator());
+		    
 		}
 		Object o = Comprehender.unwrapOtherMonadTypes(comp,apply);
 		if(o instanceof Collection){
-			return ((Collection)o).stream();
+		    return  ListX.fromIterable((Collection)apply);
 		}
 		if(o instanceof Iterable){
-			 return StreamSupport.stream(((Iterable)o).spliterator(),
-						false);
+		    return  ListX.fromIterable((Iterable)apply);
 		}
 		if(apply instanceof BaseStream){
-			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(((BaseStream)apply).iterator(), Spliterator.ORDERED),
-					false);
+		    return  ListX.fromIterable(()->((BaseStream)apply).iterator());
 		}
-		return (Stream)o;
+		return (List)o;
+		
 		
 	}
 	

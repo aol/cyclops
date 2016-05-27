@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,13 +22,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
+import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
@@ -39,7 +43,33 @@ import lombok.val;
 
 
 public class Tutorial {
-
+    
+    
+    @Test
+    public void futureOperationsExamaple(){
+       
+        CompletableFuture<Integer> asyncResult = ReactiveSeq.of(1,2,3,4)
+                                                            .futureOperations(Executors.newFixedThreadPool(1))
+                                                            .reduce( 50,(acc,next) -> acc+next);
+        //CompletableFuture[1550]
+        
+        Eval<Integer> lazyResult = ListX.of(1,2,3,4)
+                                        .map(i->i*10)
+                                        .lazyOperations()
+                                        .reduce( 50,(acc,next) -> acc+next);
+        
+      //Eval[15500]
+    }
+    @Test
+    public void addValues(){
+        ListX.of(1,2,3)
+        .ap2(this::sum)
+        .ap(ListX.of(4,5,6))
+        .printOut();
+    }
+    public int sum(int a,int b){
+        return a+b;
+    }
     @Test
     public void IO(){
         

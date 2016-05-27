@@ -80,9 +80,14 @@ public class AnyMonads implements AnyMFunctions{
 	public  <T1>  AnyMValue<ListX<T1>> sequence(Collection<? extends AnyM<T1>> seq){
 		if(seq.size()==0)
 			return AnyM.ofValue(ListX.empty());
-		else
+		else{
+		    
 			return new MonadWrapper<>(comprehender(seq).of(1))
-				.bind(in-> new MonadWrapper<>(seq.stream().map(it->it.unwrap())).flatten().unwrap()).anyMValue();
+				.bind(in-> new MonadWrapper<>(seq.stream()
+				                                 .map(it->it.unwrap()))
+				                                 .flatten()
+				                                 .unwrap()).anyMValue();
+		}
 	}
 	private <T1> Comprehender comprehender(Collection<? extends AnyM<T1>> seq) {
 		Object o = seq.iterator().next();

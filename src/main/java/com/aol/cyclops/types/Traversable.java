@@ -2,12 +2,8 @@ package com.aol.cyclops.types;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -25,22 +21,10 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.Ior;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Validator;
-import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyOperations;
-import com.aol.cyclops.util.stream.Streamable;
 
 
 public interface Traversable<T> extends Iterable<T>, 

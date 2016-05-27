@@ -45,7 +45,7 @@ public class ForComprehensionTest {
 		public void intstream4() {
 			
 			Stream<Integer> res = For.stream(IntStream.range(0,4)) 
-								.yield( v1 -> v1 + 1).unwrap();
+								      .yield( v1 -> v1 + 1).unwrap();
 			List<Integer> expected = Arrays.asList(1,2,3,4);
 			
 			

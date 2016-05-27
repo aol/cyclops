@@ -2,12 +2,13 @@ package com.aol.cyclops.streams.hotstream;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.locks.LockSupport;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
@@ -18,6 +19,23 @@ public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(5);
 	volatile Object value;
 	
+	@Test
+	public void backpressure(){
+	    
+
+	      Executor exec = Executors.newFixedThreadPool(1);
+	      LinkedBlockingQueue<String> blockingQueue = new LinkedBlockingQueue<String>(3);
+
+	      ReactiveSeq.range(0, Integer.MAX_VALUE)
+	         // .limit(500)
+	          .map(i -> i.toString())
+	          .peek(System.out::println)
+	          .primedHotStream(exec)
+	          .connect(blockingQueue)
+	          .onePer(1, TimeUnit.SECONDS)
+	          .forEach(System.out::println);
+	    
+	}
 	@Test
 	public void hotStream() throws InterruptedException{
 		value= null;

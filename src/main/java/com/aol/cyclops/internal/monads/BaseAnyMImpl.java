@@ -36,7 +36,8 @@ public abstract class BaseAnyMImpl<T> {
 	protected final Class initialType;
 	
 	public <R> R unwrap(){
-		return (R)new ComprehenderSelector().selectComprehender(initialType).unwrap(monad.unwrap());
+	    return (R)monad.unwrap();
+	//	return (R)new ComprehenderSelector().selectComprehender(initialType).unwrap(monad.unwrap());
 	}
 	
 	
