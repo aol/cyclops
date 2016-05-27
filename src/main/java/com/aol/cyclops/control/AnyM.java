@@ -846,7 +846,23 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
     public static <T1>  AnyMValue<ListX<T1>> sequence(Collection<? extends AnyM<T1>> seq){
         return new AnyMonads().sequence(seq);
     }
-    
+    /**
+     * Convert a Collection of Monads to a Monad with a List applying the supplied function in the process
+     * 
+     * <pre>
+     * {@code 
+       List<CompletableFuture<Integer>> futures = createFutures();
+       AnyM<List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
+        }
+        </pre>
+     * 
+     * @param seq Collection of Monads
+     * @param fn Function to apply 
+     * @return Monad with a list
+     */
+    public static <T,R> AnyMValue<ListX<R>> traverse(Collection<? extends AnyM<T>> seq, Function<? super T,? extends R> fn){
+        return new AnyMonads().traverse(seq,fn);
+    }
 
 	/**
 	 * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
@@ -859,8 +875,9 @@ public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Fu
      * Convert a Stream of Monads to a Monad with a Stream
      *
      */
-	public static <T> AnyM<Stream<T>> sequence(Stream<AnyM<T>> source, Supplier<AnyM<Stream<T>>> unitEmpty) {
-        return  source.reduce(unitEmpty.get(),
+	public static <T> AnyM<Stream<T>> sequence(Stream<? extends AnyM<T>> source, Supplier<? extends AnyM<Stream<T>>> unitEmpty) {
+	    Stream<AnyM<T>> narrowed = (Stream<AnyM<T>>)source;
+        return  narrowed.reduce((AnyM<Stream<T>>)unitEmpty.get(),
                         (fl, fo) ->   fl.flatMapFirst(a->{
                                  Streamable<T> streamable= Streamable.fromStream(a);
                                  return fo.map(b->Stream.concat(streamable.stream(),Stream.of(b)));

@@ -36,6 +36,69 @@ import lombok.val;
 
 public class AnyMValueTest {
 
+    @Test
+    public void testSequenceAnyM() {
+        AnyMValue<Integer> just = AnyM.ofNullable(10);
+        Supplier<AnyM<Stream<Integer>>> unitEmpty = ()->AnyM.fromMaybe(Maybe.just(Stream.<Integer>empty()));
+        Stream<AnyM<Integer>> source = ReactiveSeq.of(just,AnyM.ofNullable(1));
+        AnyM<ListX<Integer>> maybes =AnyM.sequence(source, unitEmpty)
+                                          .map(s->ReactiveSeq.fromStream(s).toListX());
+        assertThat(maybes,equalTo(AnyM.ofNullable(ListX.of(10,1))));
+    }
+    @Test
+    public void testSequenceAnyMValue() {
+        AnyMValue<Integer> just = AnyM.ofNullable(10);
+        Supplier<AnyMValue<Stream<Integer>>> unitEmpty = ()->AnyM.fromMaybe(Maybe.just(Stream.<Integer>empty()));
+        Stream<AnyMValue<Integer>> source = ReactiveSeq.of(just,AnyM.ofNullable(1));
+        AnyM<ListX<Integer>> maybes =AnyMValue.sequence(source, unitEmpty)
+                                          .map(s->ReactiveSeq.fromStream(s).toListX());
+        assertThat(maybes,equalTo(AnyM.ofNullable(ListX.of(10,1))));
+    }
+	@Test
+	public void testSequence(){
+		
+        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
+        List<CompletableFuture<Integer>> futures = list
+                .stream()
+                .map(x -> CompletableFuture.supplyAsync(() -> x))
+                .collect(Collectors.toList());
+       
+        
+        AnyM<ListX<Integer>> futureList = AnyMValue.sequence(AnyM.listFromCompletableFuture(futures));
+        
+ 
+        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
+        assertThat(collected.size(),equalTo( list.size()));
+        
+        for(Integer next : list){
+        	assertThat(list.get(next),equalTo( collected.get(next)));
+        }
+        
+	}
+	
+
+	@Test
+	public void testTraverse(){
+		
+        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
+        List<CompletableFuture<Integer>> futures = list
+                .stream()
+                .map(x -> CompletableFuture.supplyAsync(() -> x))
+                .collect(Collectors.toList());
+
+       
+        AnyM<ListX<String>> futureList = AnyMValue.traverse( AnyM.listFromCompletableFuture(futures), (Integer i) -> "hello" +i);
+   
+        List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
+        assertThat(collected.size(),equalTo( list.size()));
+        
+        for(Integer next : list){
+        	assertThat("hello"+list.get(next),equalTo( collected.get(next)));
+        }
+        
+	}
+	
+
 	
 
 	@Test
