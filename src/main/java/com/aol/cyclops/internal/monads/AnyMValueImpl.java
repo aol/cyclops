@@ -198,7 +198,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
         if(!(obj instanceof AnyMValue))
             return false;
         AnyMValue v2 = (AnyMValue)obj;
-        return this.toMaybe().equals(v2.toMaybe());
+        return unwrap().equals(v2.unwrap());
         
        
     }

@@ -1,6 +1,6 @@
 package com.aol.cyclops.lambda.monads;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
@@ -12,11 +12,9 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.anyM.AnyMValue;
 
 import lombok.val;
 
@@ -24,13 +22,30 @@ import lombok.val;
 
 public class AnyMSeqTest {
     @Test
+    public void equals(){
+        AnyMSeq<ListX<Integer>> test1 = AnyM.fromList(ListX.of(ListX.of(10,1)));
+        AnyMSeq<ListX<Integer>> test2 = AnyM.fromList(ListX.of(ListX.of(10,1)));
+        System.out.println(test1.equals(test2));
+        assertThat(test1,equalTo(test2));
+    }
+    @Test
+    public void equalsNull(){
+        AnyMSeq<ListX<Integer>> test1 = AnyM.fromList(ListX.of(ListX.of(10,1)));
+        
+        assertThat(test1,not(equalTo(null)));
+    }
+    @Test
     public void testSequenceAnyMSeq() {
-        AnyMSeq<Integer> just = AnyM.fromArray(10);
+        AnyMSeq<Integer> just = AnyM.fromList(ListX.of(10));
         Supplier<AnyMSeq<Stream<Integer>>> unitEmpty = ()->AnyM.fromList(ListX.of(Stream.<Integer>empty()));
         Stream<AnyMSeq<Integer>> source = ReactiveSeq.of(just,AnyM.fromArray(1));
         AnyMSeq<ListX<Integer>> maybes =AnyMSeq.sequence(source, unitEmpty)
                                           .map(s->ReactiveSeq.fromStream(s).toListX());
-        assertThat(maybes,equalTo(AnyM.fromList(ListX.of(10,1))));
+       
+        
+       
+       
+        assertThat(maybes,equalTo(AnyM.fromList(ListX.of(ListX.of(10,1)))));
     }
     @Test
     public void testSequence(){
