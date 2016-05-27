@@ -254,6 +254,9 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         return FutureW.<T>of(cf);
      }
     
+    public boolean isPresent(){
+        return !this.future.isCompletedExceptionally();
+    }
    
     public String mkString(){
         return "FutureW["+future.toString()+"]";

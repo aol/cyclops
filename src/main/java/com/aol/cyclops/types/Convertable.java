@@ -32,9 +32,25 @@ import lombok.Value;
  *
  * @param <T>
  */
-public interface Convertable<T> extends Iterable<T>, Supplier<T>{
-	
+public interface Convertable<T> extends Iterable<T>, 
+                                        Supplier<T>,
+                                        Visitable<T>{
+    
+    default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
+        if(isPresent()){
+            try{
+                return present.apply(get());
+            }catch(NoSuchElementException e){
+                return absent.get();
+            }
+        }
+        return absent.get();
+    }
    
+    default boolean isPresent(){
+        return true;
+    }
+    
 	/**
 	 * Construct a Convertable from a Supplier
 	 * 
@@ -71,12 +87,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>{
 	 * @return Optional that wraps contained value, Optional.empty if value is null
 	 */
 	default Optional<T> toOptional(){
-	    
-	    try{
-	        return Optional.ofNullable(get());
-	    }catch(NoSuchElementException e){
-	        return Optional.empty();
-	    }
+	    return visit(p->Optional.of(p),()->Optional.empty());
 	}
 	
 	/**

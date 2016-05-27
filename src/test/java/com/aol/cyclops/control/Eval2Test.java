@@ -129,18 +129,18 @@ public class Eval2Test {
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
 	   Object o = Eval.sequence(ListX.of(just,Eval.now(1)));
-		Eval<PSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,none,Eval.now(1)),Reducers.toPSetX());
+		Eval<PSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
 		assertThat(maybes,equalTo(Eval.now(PSetX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Eval<String> maybes =Eval.accumulate(ListX.of(just,none,Eval.later(()->1)),i->""+i,Semigroups.stringConcat);
+		Eval<String> maybes =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Semigroups.stringConcat);
 		assertThat(maybes,equalTo(Eval.now("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Eval<Integer> maybes =Eval.accumulate(ListX.of(just,none,Eval.now(1)),Semigroups.intSum);
+		Eval<Integer> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Semigroups.intSum);
 		assertThat(maybes,equalTo(Eval.now(11)));
 	}
 

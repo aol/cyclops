@@ -30,7 +30,8 @@ public interface Applicative2<T,T2,R, D extends ConvertableFunctor<R>> extends F
 	ConvertableFunctor<Function<? super T,Function<? super T2,? extends R>>>  delegate();
 	
 	default Applicative<T2,R,D> ap(Functor<T> f){
-		return ()->(ConvertableFunctor)delegate().toOptional().map (myFn-> f.map(t->myFn.apply(t))).orElse(Maybe.none());
+	    
+		return ()->(ConvertableFunctor)delegate().visit(myFn->f.map(t->myFn.apply(t)),()->Maybe.none());
 		
 	}
 	default Applicative<T2,R,D> ap(Optional<T> f){

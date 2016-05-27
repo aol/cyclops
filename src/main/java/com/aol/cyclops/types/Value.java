@@ -53,9 +53,7 @@ public interface Value<T> extends Supplier<T>,
                                   Publisher<T>,
                                   Predicate<T>{
     
-    default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
-        return toMaybe().visit(present, absent);
-    }
+    
 
 
     default boolean test(T t){
@@ -216,7 +214,7 @@ public interface Value<T> extends Supplier<T>,
 		 return Eval.always(this);
 	 }
 	 default Maybe<T> toMaybe(){
-		 return Maybe.fromOptional(toOptional());
+		  return visit(p->Maybe.just(p),()->Maybe.none());
 	 }
 	 default ListX<T> toListX(){
 		 return ListX.fromIterable(toList());

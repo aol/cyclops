@@ -83,15 +83,12 @@ public interface Eval<T> extends Supplier<T>,
 		
 	}
 	public static <T> Eval<ReactiveSeq<T>> sequence(Stream<Eval<T>> evals){
-	   
-	  
 	    return AnyM.sequence(evals.map(f->AnyM.fromEval(f)),
                 ()->AnyM.fromEval(Eval.now(ReactiveSeq.<T>empty()))
 	             ).map(s->ReactiveSeq.fromStream(s))
                 
                 .unwrap();
         
-	  
     }
 	
 	public static <T,R> Eval<R> accumulate(CollectionX<Eval<T>> evals,Reducer<R> reducer){

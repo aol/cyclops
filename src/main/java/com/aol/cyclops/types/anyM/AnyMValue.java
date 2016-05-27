@@ -45,6 +45,8 @@ public interface AnyMValue<T> extends AnyM<T>,
     }
     
     
+    
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.AnyM#flatMapFirst(java.util.function.Function)
      */

@@ -10,8 +10,15 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
 
 @FunctionalInterface
-public interface Applicative<T,R, D extends ConvertableFunctor<R>> extends Functor<Function<? super T,? extends R>> {
+public interface Applicative<T,R, D extends ConvertableFunctor<R>> 
+                                    extends Functor<Function<? super T,? extends R>> {
 
+    /**
+     * @return true if a value is present, false otherwise
+     */
+    default boolean isPresent(){
+        return delegate().isPresent();
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
 	 */

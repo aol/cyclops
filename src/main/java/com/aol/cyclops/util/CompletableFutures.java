@@ -10,12 +10,13 @@ import java.util.stream.Stream;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 public class CompletableFutures {
-
+    
 	public static <T> CompletableFuture<ListX<T>> sequence(CollectionX<CompletableFuture<T>> fts){
 	    return sequence(fts.stream()).thenApply(s->s.toListX());
 	}
@@ -27,7 +28,11 @@ public class CompletableFutures {
 	                .unwrap();
        
     }
-    
+	public static <T,R> CompletableFuture<R> accumulateSuccess(CollectionX<CompletableFuture<T>> fts,Reducer<R> reducer){
+        
+	    CompletableFuture<ListX<T>> sequenced =  AnyM.sequence(fts.map(f->AnyM.fromCompletableFuture(f))).unwrap();
+        return sequenced.thenApply(s->s.mapReduce(reducer));
+    }
 	public static <T,R> CompletableFuture<R> accumulate(CollectionX<CompletableFuture<T>> fts,Reducer<R> reducer){
 		return sequence(fts).thenApply(s->s.mapReduce(reducer));
 	}
