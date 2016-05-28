@@ -44,6 +44,7 @@ public interface ToStream<T> extends Iterable<T>,ConvertableToReactiveSeq<T>{
 		return SeqUtils.reverse(jdkStream());
 	}
 	default boolean isEmpty(){
+	   
 		return this.reactiveSeq().isEmpty();
 	}
 	default Stream<T> jdkStream(){

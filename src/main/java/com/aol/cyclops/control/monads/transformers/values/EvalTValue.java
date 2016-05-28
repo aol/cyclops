@@ -370,5 +370,18 @@ public class EvalTValue<T> implements EvalT<T>,
        
         return (MaybeTValue<T>)EvalT.super.notNull();
     }
+    
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof EvalTValue){
+            return run.equals( ((EvalTValue)o).run);
+        }
+        return false;
+    }
  
 }

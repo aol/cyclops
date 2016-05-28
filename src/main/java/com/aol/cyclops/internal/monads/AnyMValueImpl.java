@@ -15,6 +15,7 @@ import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.util.function.Predicates;
 
 public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 	

@@ -145,10 +145,9 @@ public class Pipes<K,V> {
      * @param key
      * @return
      */
-    public  Eval<Maybe<V>> nextValue(K key){
-        
-        ValueSubscriber<V> sub = ValueSubscriber.subscriber();
-        LazyImmutable<Boolean> requested = LazyImmutable.def();
+    public  Eval<Maybe<V>> nextValue(K key){ 
+       ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+       LazyImmutable<Boolean> requested = LazyImmutable.def();
        Maybe<Eval<Maybe<V>>> nested =  get(key).peek(a->a.stream().subscribe(sub))
                         .map(a-> Eval.always(()->{
                             if(requested.isSet()){
@@ -158,8 +157,7 @@ public class Pipes<K,V> {
                             }
                             Maybe<V> res = sub.toMaybe();
                            return res;
-                        }));
-       
+                        }));  
         return nested.orElse(Eval.now(Maybe.<V>none()));
     }
     /**

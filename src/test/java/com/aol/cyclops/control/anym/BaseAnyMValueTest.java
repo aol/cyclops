@@ -76,6 +76,7 @@ public abstract class BaseAnyMValueTest {
     }
     @Test
     public void coFlatMap(){
+      
         assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
         assertThat(none.coflatMap(m-> m.isPresent()? m.get() : just.get()),equalTo(just));
     }

@@ -53,6 +53,17 @@ public class Eval2Test {
 		just = Eval.now(10);
 		none = Eval.now(null);
 	}
+	
+	@Test
+	public void equals(){
+	    assertTrue(Eval.always(()->10).equals(Eval.later(()->10)));
+	    assertTrue(Eval.always(()->10).equals(Eval.now(10)));
+	    assertTrue(Eval.now(10).equals(Eval.later(()->10)));
+	    assertTrue(Eval.later(()->10).equals(Eval.always(()->10)));
+	    assertTrue(Eval.always(()->null).equals(Eval.later(()->null)));
+	    assertFalse(Eval.always(()->10).equals(Eval.later(()->null)));
+	    assertFalse(Eval.always(()->null).equals(Eval.later(()->10)));
+	}
 	@Test
     public void nest(){
        assertThat(just.nest().map(m->m.get()),equalTo(just));
