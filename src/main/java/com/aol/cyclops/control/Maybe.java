@@ -18,7 +18,6 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
-import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.applicative.Applicativable;
 
 import lombok.AccessLevel;
@@ -319,6 +318,14 @@ public interface Maybe<T> extends MonadicValue1<T>,
 			}
 			return false;
 		}
+		@Override
+		public T orElse(T value){
+	       return lazy.get();
+	    }
+		@Override
+        public T orElseGet(Supplier<? extends T> value){
+           return lazy.get();
+        }
 		
 	}
     @AllArgsConstructor(access=AccessLevel.PRIVATE)
@@ -374,6 +381,22 @@ public interface Maybe<T> extends MonadicValue1<T>,
                 maybe = ((Lazy<T>)maybe).lazy.get();
             }
             return maybe.isPresent();
+        }
+        @Override
+        public T orElse(T value){
+            Maybe<T> maybe =  lazy.get();
+            while(maybe instanceof Lazy){
+                maybe = ((Lazy<T>)maybe).lazy.get();
+            }
+            return maybe.orElse(value);
+        }
+        @Override
+        public T orElseGet(Supplier<? extends T> value){
+            Maybe<T> maybe =  lazy.get();
+            while(maybe instanceof Lazy){
+                maybe = ((Lazy<T>)maybe).lazy.get();
+            }
+            return maybe.orElseGet(value);
         }
         /* (non-Javadoc)
          * @see java.lang.Object#hashCode()
@@ -454,7 +477,14 @@ public interface Maybe<T> extends MonadicValue1<T>,
             }
             return false;
         }
-		
+		@Override
+		public T orElse(T value){
+	        return value;
+	    }
+		@Override
+        public T orElseGet(Supplier<? extends T> value){
+           return value.get();
+        }
 	}
 	
 }

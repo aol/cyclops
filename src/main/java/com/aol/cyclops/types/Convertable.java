@@ -46,7 +46,7 @@ public interface Convertable<T> extends Iterable<T>,
             try{
                 T value = get();
                 if(value!=null)
-                    return present.apply(get());
+                    return present.apply(value);
                 return absent.get();
             }catch(NoSuchElementException e){
                 return absent.get();
@@ -95,12 +95,7 @@ public interface Convertable<T> extends Iterable<T>,
 	 * @return Optional that wraps contained value, Optional.empty if value is null
 	 */
 	default Optional<T> toOptional(){
-	  /**  System.out.println(isPresent());
-	    try{
-            return Optional.ofNullable(get());
-        }catch(NoSuchElementException e){
-            return Optional.empty();
-        }**/
+	 
 	    return visit(p->Optional.ofNullable(p),()->Optional.empty());
 	}
 	
