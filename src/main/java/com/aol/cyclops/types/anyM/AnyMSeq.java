@@ -49,6 +49,7 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
+import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
@@ -65,6 +66,14 @@ public interface AnyMSeq<T> extends AnyM<T>,
 									ZippingApplicativable<T>,
 									ReactiveStreamsTerminalOperations<T>,
 									Publisher<T>{
+    
+    /**
+     * Equivalence test
+     */
+    default boolean eqv(AnyMSeq<T> t){
+        return Predicates.eqvIterable(t).test(this);
+    }
+    
     @Override
     default <R, A> R collect(Collector<? super T, A, R> collector){
         return stream().collect(collector);

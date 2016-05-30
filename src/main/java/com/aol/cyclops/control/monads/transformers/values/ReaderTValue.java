@@ -237,7 +237,18 @@ public class ReaderTValue<T,R> implements Function<T,R> {
     public Maybe<R> maybeApply(T t) {
        return run.toMaybe().map(fn->fn.apply(t));
     }
-
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof ReaderTValue){
+            return run.equals( ((ReaderTValue)o).run);
+        }
+        return false;
+    }
 
  
 }

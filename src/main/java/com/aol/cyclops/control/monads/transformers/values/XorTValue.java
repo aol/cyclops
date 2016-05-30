@@ -383,5 +383,17 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
        
         return (XorTValue<ST,T>)XorT.super.notNull();
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof XorTValue){
+            return run.equals( ((XorTValue)o).run);
+        }
+        return false;
+    }
  
 }

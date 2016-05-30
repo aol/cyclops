@@ -124,7 +124,7 @@ public interface ConvertableSequence<T> extends Iterable<T>{
 		return Optional.of(list);
 	}
 	default Value<ListX<T>> toValue(){
-		return ()-> ListX.fromIterable(StreamUtils.stream(this).collect(Collectors.toList()));
+		return Eval.later(()->ListX.fromIterable(StreamUtils.stream(this).collect(Collectors.toList())));
 	}
 	default Value<SetX<T>> toValueSet(){
 		return ()-> SetX.fromIterable(StreamUtils.stream(this).collect(Collectors.toSet()));

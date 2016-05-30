@@ -1,5 +1,6 @@
 package com.aol.cyclops.control.anym;
 
+import static com.aol.cyclops.Matchers.equivalent;
 import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
@@ -24,6 +25,7 @@ import java.util.stream.StreamSupport;
 
 import org.junit.Test;
 
+import com.aol.cyclops.Matchers;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
@@ -71,20 +73,20 @@ public abstract class BaseAnyMValueTest {
 
 	@Test
     public void nest(){
-       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       assertThat(just.nest().map(m->m.get()),equivalent(just));
       
     }
     @Test
     public void coFlatMap(){
       
-        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : just.get()),equalTo(just));
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equivalent(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : just.get()),equivalent(just));
     }
     @Test
     public void combine(){
         
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-        assertThat(just.combine(add,none),equalTo(just));
+        assertThat(just.combine(add,none),equivalent(just));
         assertThat(none.combine(add,just).toTry(),equalTo(Try.success(0))); 
         assertThat(none.combine(add,none).toTry(),equalTo(Try.success(0))); 
         assertThat(just.combine(add,just).toTry(),equalTo(Try.success(20)));
@@ -764,7 +766,7 @@ public abstract class BaseAnyMValueTest {
 
 	@Test
 	public void testUnitT1() {
-		assertThat(none.unit(10),equalTo(just));
+		assertThat(none.unit(10),Matchers.equivalent(just));
 	}
 
 }

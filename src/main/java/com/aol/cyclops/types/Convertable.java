@@ -36,7 +36,7 @@ public interface Convertable<T> extends Iterable<T>,
                                         Supplier<T>,
                                         Visitable<T>{
     
-    /* Present is executed and it's return value returned if the value is both present and non-null, otherwise absent is called and its return value returned
+    /* Present is executed and it's return value returned if the value is both present, otherwise absent is called and its return value returned
      * 
      * (non-Javadoc)
      * @see com.aol.cyclops.types.Visitable#visit(java.util.function.Function, java.util.function.Supplier)
@@ -56,7 +56,14 @@ public interface Convertable<T> extends Iterable<T>,
     }
    
     default boolean isPresent(){
-        return true;
+        try {
+            T value = get();
+            if (value != null)
+                return true;
+            return false;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
     
 	/**

@@ -318,6 +318,10 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 	 */
 	public void forEachFailed(Consumer<? super X> consumer);
 	
+	@Override
+	default boolean isPresent(){
+	    return isSuccess();
+	}
 	/**
 	 * @param consumer Accept value if Success
 	 * @return this
@@ -945,6 +949,19 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure) {
 			return success.apply(get());
 		}
+		@Override
+		public int hashCode(){
+		    return Objects.hash(value);
+		}
+		
+		@Override
+		public boolean equals(Object o){
+		    if(o instanceof Success){
+		        Success s = ((Success)o);
+		        return Objects.equals(this.value, s.value);
+		    }
+		    return false;
+		}
 		
 	}
 	/**
@@ -1240,6 +1257,19 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure) {
 			return failure.apply(error);
 		}
+		@Override
+        public int hashCode(){
+            return Objects.hash(error);
+        }
+        
+        @Override
+        public boolean equals(Object o){
+            if(o instanceof Failure){
+                Failure s = ((Failure)o);
+                return Objects.equals(this.error, s.error);
+            }
+            return false;
+        }
 	}
 
 	

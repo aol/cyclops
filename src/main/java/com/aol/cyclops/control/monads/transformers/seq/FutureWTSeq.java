@@ -726,6 +726,17 @@ public class FutureWTSeq<A> implements FutureWT<A>,
     public <U extends Comparable<? super U>> FutureWTSeq<A> sorted(Function<? super A, ? extends U> function) {
         return (FutureWTSeq)ValueTransformerSeq.super.sorted(function);
     }
- 
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof FutureWTSeq){
+            return run.equals( ((FutureWTSeq)o).run);
+        }
+        return false;
+    }
  
 }

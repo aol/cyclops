@@ -352,4 +352,16 @@ public class OptionalTValue<T> implements OptionalT<T>,
        
         return (OptionalTValue<T>)OptionalT.super.notNull();
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof OptionalTValue){
+            return run.equals( ((OptionalTValue)o).run);
+        }
+        return false;
+    }
 }

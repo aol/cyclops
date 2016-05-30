@@ -247,6 +247,17 @@ public class StreamTValue<T> implements StreamT<T>{
         
         return run;
     }
- 
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof StreamTValue){
+            return run.equals( ((StreamTValue)o).run);
+        }
+        return false;
+    }
     
 }

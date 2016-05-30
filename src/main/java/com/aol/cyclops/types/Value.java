@@ -214,7 +214,7 @@ public interface Value<T> extends Supplier<T>,
 		 return Eval.always(this);
 	 }
 	 default Maybe<T> toMaybe(){
-		  return visit(p->{ System.out.println("p is " +  p); return Maybe.ofNullable(p);},()->Maybe.none());
+		  return visit(p-> Maybe.ofNullable(p),()->Maybe.none());
 	 }
 	 default ListX<T> toListX(){
 		 return ListX.fromIterable(toList());

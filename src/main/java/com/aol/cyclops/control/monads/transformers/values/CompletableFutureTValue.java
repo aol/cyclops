@@ -344,7 +344,18 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
        
         return (MaybeTValue<A>)CompletableFutureT.super.notNull();
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
     
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof CompletableFutureTValue){
+            return run.equals( ((CompletableFutureTValue)o).run);
+        }
+        return false;
+    }
  
  
 }

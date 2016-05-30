@@ -72,12 +72,7 @@ public class Eval2Test {
     @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m->  {
-            if(m.isPresent()) {
-                return m.get();
-            } else{
-                return 50;
-            } } ),equalTo(Eval.now(null)));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Eval.now(50)));
         
     }
     @Test
@@ -454,7 +449,7 @@ public class Eval2Test {
 	@Test
 	public void testMkString() {
 		assertThat(just.mkString(),equalTo("Always[10]"));
-		assertThat(none.mkString(),equalTo("Always[null]"));
+		assertThat(none.mkString(),equalTo("Always[]"));
 	}
 	LazyReact react = new LazyReact();
 	@Test

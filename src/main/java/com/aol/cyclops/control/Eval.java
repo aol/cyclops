@@ -4,6 +4,7 @@ import static com.aol.cyclops.control.For.Values.each2;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -188,6 +189,13 @@ public interface Eval<T> extends Supplier<T>,
 	default Eval<CompletableFuture<T>> asyncAlways(){
 		return Eval.always(()->this.toCompletableFutureAsync());
 	}
+	@Override
+	default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
+	    T value = get();
+        if(value!=null)
+              return present.apply(value);
+        return absent.get();
+    }
 	
     static <R> Eval<R> narrow(Eval<? extends R> broad){
 		return (Eval<R>)broad;

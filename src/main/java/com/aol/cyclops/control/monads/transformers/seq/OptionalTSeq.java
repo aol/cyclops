@@ -736,4 +736,16 @@ public class OptionalTSeq<T> implements OptionalT<T>,
      public <U extends Comparable<? super U>> OptionalTSeq<T> sorted(Function<? super T, ? extends U> function) {
          return (OptionalTSeq)ValueTransformerSeq.super.sorted(function);
      }
+     @Override
+     public int hashCode(){
+         return run.hashCode();
+     }
+     
+     @Override
+     public boolean equals(Object o){
+         if(o instanceof OptionalTSeq){
+             return run.equals( ((OptionalTSeq)o).run);
+         }
+         return false;
+     }
 }

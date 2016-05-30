@@ -66,6 +66,7 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ToStream;
+import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
@@ -100,12 +101,19 @@ import com.aol.cyclops.util.stream.Streamable;
  * @param <T> type data wrapped by the underlying monad
  */
 
-public interface AnyM<T> extends Unwrapable,EmptyUnit<T>, Unit<T>,Foldable<T>,Functor<T>,
+public interface AnyM<T> extends    Unwrapable,
+                                    EmptyUnit<T>, 
+                                    Unit<T>,
+                                    Foldable<T>,
+                                    Functor<T>,
 									FlatMap<T>,
 									ToStream<T>
 									{
 	
-	
+    
+    default boolean eqv(AnyM<T> t){
+        return Predicates.eqvIterable(t).test(this);
+    }
     Xor<AnyMValue<T>,AnyMSeq<T>> matchable();
     <R> AnyM<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn);
     /**

@@ -31,10 +31,10 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
-import com.aol.cyclops.util.stream.Streamable;
 
 public interface AnyMValue<T> extends AnyM<T>,
 									  Value<T>,
@@ -43,6 +43,12 @@ public interface AnyMValue<T> extends AnyM<T>,
 									  MonadicValue<T>,
 									  Matchable.ValueAndOptionalMatcher<T>{
 	
+    /**
+     * Equivalence test
+     */
+    default boolean eqv(AnyMValue<T> t){
+        return Predicates.eqv(t).test(this);
+    }
     default <R, A> R collect(Collector<? super T, A, R> collector){
         
          return this.<T>toSequence().collect(collector);
