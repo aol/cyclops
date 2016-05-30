@@ -1,16 +1,18 @@
 package com.aol.cyclops.types;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collector;
 
+import org.jooq.lambda.Collectable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -19,7 +21,6 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FeatureToggle;
-import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Maybe;
@@ -42,6 +43,7 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Predicates;
 
@@ -51,7 +53,8 @@ public interface Value<T> extends Supplier<T>,
                                   Foldable<T>, 
                                   Convertable<T>,
                                   Publisher<T>,
-                                  Predicate<T>{
+                                  Predicate<T>,
+                                  CyclopsCollectable<T>{
     
     default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
         return toMaybe().visit(present, absent);
@@ -272,6 +275,20 @@ public interface Value<T> extends Supplier<T>,
 
 	default SimpleReactStream<T> toSimpleReact() {
 		return new SimpleReact().ofAsync(this);
+	}
+	
+	default <R, A> R collect(Collector<? super T, A, R> collector) {
+	    final A state = collector.supplier().get();
+	    collector.accumulator().accept(state, get());
+	    return collector.finisher().apply(state);
+	}
+	
+	default List<T> toList() {
+	    return Convertable.super.toList();
+	}
+	
+	default Collectable<T> collectable() {
+	    return this;
 	}
 	
 }
