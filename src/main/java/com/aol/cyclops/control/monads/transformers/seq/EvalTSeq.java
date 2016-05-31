@@ -28,6 +28,7 @@ import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.EvalT;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
+import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
@@ -746,7 +747,18 @@ public class EvalTSeq<T> implements EvalT<T>,
      public static <T> EvalTSeq<T> emptyList() {
          return EvalT.fromIterable(ListX.of());
      }
-    
+     @Override
+     public int hashCode(){
+         return run.hashCode();
+     }
+     
+     @Override
+     public boolean equals(Object o){
+         if(o instanceof EvalTSeq){
+             return run.equals( ((EvalTSeq)o).run);
+         }
+         return false;
+     }
     
     
  

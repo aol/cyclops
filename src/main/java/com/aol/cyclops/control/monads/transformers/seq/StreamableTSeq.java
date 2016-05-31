@@ -714,4 +714,17 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
         return (StreamableTSeq)StreamableT.super.sorted(function);
     }
     
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof StreamableTSeq){
+            return run.equals( ((StreamableTSeq)o).run);
+        }
+        return false;
+    }
+    
 }

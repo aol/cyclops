@@ -44,10 +44,31 @@ public class XorTest {
 	                                .convertable().get(),equalTo("failed1failed2"));
 	}
 	@Test
+    public void accumulateSuccessFail(){
+        Xor<String,String> fail1 = Xor.primary("success1");
+        assertThat(fail1.swap().ap((a,b)->a+b)
+                                .ap(Xor.secondary("failed2").swap())
+                                .ap(Xor.<String,String>primary("success2").swap())
+                                .convertable()
+                                .get(),equalTo("failed2"));
+    }
+	@Test
+    public void accumulateSuccessFail2(){
+        Xor<String,String> fail1 = Xor.primary("success1");
+        assertThat(fail1.swap().ap((a,b)->a+b)
+                                .ap(Xor.<String,String>primary("success2").swap())
+                                .ap(Xor.secondary("failed2").swap())
+                                .convertable()
+                                .get(),equalTo("failed2"));
+    }
+	@Test
     public void accumulate2(){
         Xor<String,String> fail1 = Xor.secondary("failed1");
-        assertThat(fail1.swap().ap((a,b)->a+b).ap(Xor.secondary("failed2").swap()).ap(Xor.<String,String>primary("success").swap())
-                                    .convertable().get(),equalTo("failed1failed2"));
+        assertThat(fail1.swap().ap((a,b)->a+b)
+                                .ap(Xor.secondary("failed2").swap())
+                                .ap(Xor.<String,String>primary("success").swap())
+                                .convertable()
+                                .get(),equalTo("failed1failed2"));
     }
 	@Test
     public void accumulate3(){

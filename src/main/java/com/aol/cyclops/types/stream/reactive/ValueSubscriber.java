@@ -36,7 +36,8 @@ import com.aol.cyclops.util.function.Memoize;
  *
  * @param <T>
  */
-public class ValueSubscriber<T> implements Subscriber<T>, Value<T>{
+public class ValueSubscriber<T> implements Subscriber<T>, 
+                                            Value<T>{
         
         
         private final Object UNSET = new Object();

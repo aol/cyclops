@@ -291,6 +291,17 @@ public class StreamableTValue<T> implements StreamableT<T>{
         
         return run;
     }
-
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof StreamableTValue){
+            return run.equals( ((StreamableTValue)o).run);
+        }
+        return false;
+    }
     
 }

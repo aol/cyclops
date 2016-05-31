@@ -2,31 +2,21 @@ package com.aol.cyclops.internal.monads;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
-
 import com.aol.cyclops.control.For;
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
-
-import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.util.stream.StreamUtils;
-import com.aol.cyclops.util.stream.Streamable;
 
 public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
 	
@@ -285,6 +275,21 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
     @Override
     public String toString() {
         return String.format("AnyMSeq[%s]", monad );
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+       return Objects.hashCode(unwrap());
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof AnyMSeq))
+            return false;
+        return unwrap().equals( ((AnyMSeq)o).unwrap());
     }
     
 	

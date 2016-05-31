@@ -23,6 +23,9 @@ public interface TransformerValue<T> extends  MonadicValue<T>,
 
     public boolean isValuePresent();
     public MonadicValue<T> value();
+    default boolean isPresent(){
+        return isValuePresent();
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
      */

@@ -395,6 +395,11 @@ public interface FeatureToggle<F> extends Supplier<F>,
 		        this.disabled = disabled;
 		    }
 		    
+		    @Override
+		    public boolean isPresent(){
+		        return false;
+		    }
+		    
 		    /**
 			 * @return This monad, wrapped as AnyM
 			 */

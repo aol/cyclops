@@ -666,4 +666,16 @@ public class StreamTSeq<T> implements StreamT<T>{
     public <U extends Comparable<? super U>> StreamTSeq<T> sorted(Function<? super T, ? extends U> function) {
         return (StreamTSeq)StreamT.super.sorted(function);
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof StreamTSeq){
+            return run.equals( ((StreamTSeq)o).run);
+        }
+        return false;
+    }
 }

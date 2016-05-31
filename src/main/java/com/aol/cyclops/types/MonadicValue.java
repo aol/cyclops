@@ -9,10 +9,10 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>,Functor<T> {
 
     /**
      * @return true if this value is present
-     */
+     
     default boolean isPresent(){
         return toOptional().isPresent();
-    }
+    }*/
     public <T> MonadicValue<T> unit(T unit);
     <R> MonadicValue<R>  map(Function<? super T,? extends R> fn);
     

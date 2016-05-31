@@ -307,4 +307,16 @@ public class SetTValue<T>  implements SetT<T>,
         
         return run;
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof SetTValue){
+            return run.equals( ((SetTValue)o).run);
+        }
+        return false;
+    }
 }

@@ -1,5 +1,6 @@
 package com.aol.cyclops.control.anym;
 
+import static com.aol.cyclops.Matchers.equivalent;
 import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
@@ -17,13 +18,14 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.Matchers;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
@@ -33,6 +35,7 @@ import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
@@ -70,19 +73,20 @@ public abstract class BaseAnyMValueTest {
 
 	@Test
     public void nest(){
-       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       assertThat(just.nest().map(m->m.get()),equivalent(just));
       
     }
     @Test
     public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : just.get()),equalTo(just));
+      
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equivalent(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : just.get()),equivalent(just));
     }
     @Test
     public void combine(){
         
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-        assertThat(just.combine(add,none),equalTo(just));
+        assertThat(just.combine(add,none),equivalent(just));
         assertThat(none.combine(add,just).toTry(),equalTo(Try.success(0))); 
         assertThat(none.combine(add,none).toTry(),equalTo(Try.success(0))); 
         assertThat(just.combine(add,just).toTry(),equalTo(Try.success(20)));
@@ -129,11 +133,8 @@ public abstract class BaseAnyMValueTest {
 		assertThat(Maybe.ofNullable(1),equalTo(Maybe.narrow(Maybe.of(1))));
 	}
 
-	@Test
-	public void testSequence() {
-		AnyMValue<ListX<Integer>> maybes =AnyMValue.sequence(ListX.of(just,none,AnyM.ofNullable(1)));
-		assertThat(maybes,equalTo(AnyM.ofNullable(ListX.of(10,1))));
-	}
+	
+	
 
 	
 	@Test
@@ -765,7 +766,7 @@ public abstract class BaseAnyMValueTest {
 
 	@Test
 	public void testUnitT1() {
-		assertThat(none.unit(10),equalTo(just));
+		assertThat(none.unit(10),Matchers.equivalent(just));
 	}
 
 }

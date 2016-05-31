@@ -722,4 +722,16 @@ public class SetTSeq<T>  implements SetT<T>{
     public <U extends Comparable<? super U>> SetTSeq<T> sorted(Function<? super T, ? extends U> function) {
         return (SetTSeq)SetT.super.sorted(function);
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof SetTSeq){
+            return run.equals( ((SetTSeq)o).run);
+        }
+        return false;
+    }
 }

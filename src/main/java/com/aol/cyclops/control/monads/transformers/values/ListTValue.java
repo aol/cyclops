@@ -317,5 +317,16 @@ public class ListTValue<T> implements ListT<T>,
         
         return run;
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
     
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof ListTValue){
+            return run.equals( ((ListTValue)o).run);
+        }
+        return false;
+    }
 }

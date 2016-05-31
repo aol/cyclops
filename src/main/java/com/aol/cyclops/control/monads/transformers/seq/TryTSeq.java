@@ -762,5 +762,17 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
      public <U extends Comparable<? super U>> TryTSeq<T,X> sorted(Function<? super T, ? extends U> function) {
          return (TryTSeq)ValueTransformerSeq.super.sorted(function);
      }
+     @Override
+     public int hashCode(){
+         return run.hashCode();
+     }
+     
+     @Override
+     public boolean equals(Object o){
+         if(o instanceof TryTSeq){
+             return run.equals( ((TryTSeq)o).run);
+         }
+         return false;
+     }
     
 }

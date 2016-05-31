@@ -775,4 +775,16 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
      public <U extends Comparable<? super U>> XorTSeq<ST,T> sorted(Function<? super T, ? extends U> function) {
          return (XorTSeq)ValueTransformerSeq.super.sorted(function);
      }
+     @Override
+     public int hashCode(){
+         return run.hashCode();
+     }
+     
+     @Override
+     public boolean equals(Object o){
+         if(o instanceof XorTSeq){
+             return run.equals( ((XorTSeq)o).run);
+         }
+         return false;
+     }
 }

@@ -68,6 +68,7 @@ public class PipesTest {
 	@Test
     public void nextValueFinished(){
         
+	    Maybe.just("hello").peek(System.out::println);
         Pipes<String, Integer> bus = Pipes.of();
         bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
                                               .build());
@@ -79,7 +80,10 @@ public class PipesTest {
         
         results.add(ev.get());
         results.add(ev.get());
+        
+       
         results.add(ev.get());
+        
         
         assertThat(results,equalTo(ListX.of(Maybe.of(10),Maybe.of(20),Maybe.of(30))));
            

@@ -729,6 +729,17 @@ public class ListTSeq<T> implements ListT<T>{
     public <U extends Comparable<? super U>> ListTSeq<T> sorted(Function<? super T, ? extends U> function) {
         return (ListTSeq)ListT.super.sorted(function);
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
     
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof ListTSeq){
+            return run.equals( ((ListTSeq)o).run);
+        }
+        return false;
+    }
     
 }

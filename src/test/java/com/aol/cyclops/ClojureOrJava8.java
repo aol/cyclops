@@ -9,10 +9,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.MapXs;
@@ -20,6 +24,8 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.val;
+import reactor.core.publisher.Flux;
 
 public class ClojureOrJava8 {
 
@@ -29,6 +35,8 @@ public class ClojureOrJava8 {
         int age;
     }
     public void cyclopsReactTransformList(){
+        
+        
         
         ListX<Integer> org = ListX.of(10,20,30);
         List<Integer> mapped = org.map(i->i*2);

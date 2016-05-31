@@ -770,4 +770,16 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
      public <U extends Comparable<? super U>> MaybeTSeq<T> sorted(Function<? super T, ? extends U> function) {
          return (MaybeTSeq)ValueTransformerSeq.super.sorted(function);
      }
+     @Override
+     public int hashCode(){
+         return run.hashCode();
+     }
+     
+     @Override
+     public boolean equals(Object o){
+         if(o instanceof MaybeTSeq){
+             return run.equals( ((MaybeTSeq)o).run);
+         }
+         return false;
+     }
 }

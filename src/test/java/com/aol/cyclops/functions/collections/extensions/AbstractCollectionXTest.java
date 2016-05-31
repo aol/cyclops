@@ -97,9 +97,11 @@ public abstract class AbstractCollectionXTest {
     public void testIterate(){
         assertThat(iterate(5,1,i->i+1).size(),equalTo(5));
     }
+	
 	@Test
     public void testGenerate(){
-        assertThat(generate(5,()->"hello").size(),equalTo(5));
+	    count = 0;
+        assertThat(generate(5,()->"hello"+(count++)).size(),equalTo(5));
     }
 	@Test
     public void testUnfold(){

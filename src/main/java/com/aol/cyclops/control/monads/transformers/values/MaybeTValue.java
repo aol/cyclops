@@ -371,4 +371,16 @@ public class MaybeTValue<T> implements MaybeT<T>,
        
         return (MaybeTValue<T>)MaybeT.super.notNull();
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof MaybeTValue){
+            return run.equals( ((MaybeTValue)o).run);
+        }
+        return false;
+    }
 }

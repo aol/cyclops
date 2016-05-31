@@ -1,9 +1,6 @@
 package com.aol.cyclops.streams.anyM;
 
 
-import static com.aol.cyclops.control.AnyM.listFromCompletableFuture;
-import static com.aol.cyclops.control.AnyM.listFromOptional;
-import static com.aol.cyclops.control.AnyM.listFromStream;
 import static com.aol.cyclops.control.AnyM.ofSeq;
 import static com.aol.cyclops.control.AnyM.ofValue;
 import static java.util.Arrays.asList;
@@ -22,7 +19,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -33,7 +29,6 @@ import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.stream.Streamable;
@@ -229,67 +224,6 @@ public class AnyMTest {
     }
 	
 	
-	
-	
-	
-	@Test
-	public void testSequence(){
-		
-        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-        List<CompletableFuture<Integer>> futures = list
-                .stream()
-                .map(x -> CompletableFuture.supplyAsync(() -> x))
-                .collect(Collectors.toList());
-       
-        
-        AnyM<ListX<Integer>> futureList = AnyM.sequence(listFromCompletableFuture(futures));
-        
- 
-        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat(list.get(next),equalTo( collected.get(next)));
-        }
-        
-	}
-	@Test
-	public void testSequenceList(){
-		
-        
-       
-        
-		AnyM<ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromIterable(asList(asList(1,2),asList(3,4) ) ) );
-        
-      
-        assertThat(futureList.stream()
-        						.toList(),equalTo(Arrays.asList(1,2,3,4)));
-        
-	}
-	@Test
-	public void testSequenceStream(){
-	
-        
-       
-        
-        AnyM<ListX<Integer>> result = AnyM.sequence(listFromStream(asList(Stream.of(1,2),Stream.of(3,4))));
-        
- 
-       
-        assertThat(result.stream()
-        		      .toList(),
-        				equalTo(Arrays.asList(1,2,3,4)));
-        
-	}
-	@Test
-	public void testSequenceOptional(){
-		  
-        AnyMValue<ListX<Integer>> futureList = AnyM.sequence(listFromOptional(asList(Optional.of(7),Optional.of(8),Optional.of(9))));
-        
- 
-        assertThat(futureList.toSequence().toList(),equalTo(Arrays.asList(7,8,9)));
-        
-	}
 	@Test
 	public void traversableTestToList(){
 		 List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
@@ -325,26 +259,6 @@ public class AnyMTest {
 
 		 
 		 assertThat(list,hasItems(1,2,3,4,5,6));
-	}
-	@Test
-	public void testTraverse(){
-		
-        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-        List<CompletableFuture<Integer>> futures = list
-                .stream()
-                .map(x -> CompletableFuture.supplyAsync(() -> x))
-                .collect(Collectors.toList());
-
-       
-        AnyM<ListX<String>> futureList = AnyM.traverse( listFromCompletableFuture(futures), (Integer i) -> "hello" +i);
-   
-        List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat("hello"+list.get(next),equalTo( collected.get(next)));
-        }
-        
 	}
 	
 	@Test

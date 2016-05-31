@@ -162,7 +162,9 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 	                     Function<CheckValue2<ST,PT,R>,CheckValue2<ST,PT,R>> both,Supplier<? extends R> otherwise);
 
 	PT get();
-
+	default boolean isPresent(){
+        return isPrimary() || isBoth();
+    }
 	Value<ST> secondaryValue();
 	ST secondaryGet();
 	Optional<ST> secondaryToOptional();

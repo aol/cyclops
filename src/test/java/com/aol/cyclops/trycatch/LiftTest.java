@@ -8,13 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import lombok.val;
-
 import org.junit.Test;
 
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Try;
+
+import lombok.val;
 
 
 public class LiftTest {

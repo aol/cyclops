@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -14,26 +15,33 @@ import java.util.stream.Stream;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class SetComprehender implements Comprehender<Object> {
-	public Class getTargetClass(){
+public class SetComprehender implements Comprehender<Set> {
+	
+    @Override
+    public Object resolveForCrossTypeFlatMap(Comprehender comp, Set apply) {
+        List list = (List) apply.stream().collect(Collectors.toCollection(MaterializedList::new));
+        return list.size()>0 ? comp.of(list) : comp.empty();
+    }
+    
+    public Class getTargetClass(){
 		return Set.class;
 	}
 	@Override
-	public Object filter(Object t, Predicate p) {
-	    return SetX.fromIterable((Iterable)t).filter(p);
+	public Object filter(Set t, Predicate p) {
+	    return SetX.fromIterable(t).filter(p);
 		
 	}
 
 	@Override
-	public Object map(Object t, Function fn) {
-	    return SetX.fromIterable((Iterable)t).map(fn);
+	public Object map(Set t, Function fn) {
+	    return SetX.fromIterable(t).map(fn);
 	}
 	
-	public Object executeflatMap(Object t, Function fn){
+	public Object executeflatMap(Set t, Function fn){
 		return flatMap(t,input -> unwrapOtherMonadTypesLC(this,fn.apply(input)));
 	}
 	@Override
-	public Object flatMap(Object t, Function fn) {
+	public Object flatMap(Set t, Function fn) {
 	    return SetX.fromIterable((Iterable)t).flatMap(fn);
 			
 	}

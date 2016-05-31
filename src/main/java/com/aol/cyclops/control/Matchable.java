@@ -467,9 +467,11 @@ public interface Matchable<TYPE>{
            
             return Value.super.toOptional();
         }
+       
         default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
             return Value.super.visit(present,absent);
         }
+        
         @Override
         default Iterator<T> iterator() {
          

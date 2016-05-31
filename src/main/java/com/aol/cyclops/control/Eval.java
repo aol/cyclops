@@ -4,6 +4,7 @@ import static com.aol.cyclops.control.For.Values.each2;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -11,6 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -78,8 +80,17 @@ public interface Eval<T> extends Supplier<T>,
 	}
 	
 	public static <T> Eval<ListX<T>> sequence(CollectionX<Eval<T>> evals){
-		return AnyM.sequence(AnyM.<T>listFromEval(evals)).unwrap();
+	    return sequence(evals.stream()).map(s->s.toListX());
+		
 	}
+	public static <T> Eval<ReactiveSeq<T>> sequence(Stream<Eval<T>> evals){
+	    return AnyM.sequence(evals.map(f->AnyM.fromEval(f)),
+                ()->AnyM.fromEval(Eval.now(ReactiveSeq.<T>empty()))
+	             ).map(s->ReactiveSeq.fromStream(s))
+                
+                .unwrap();
+        
+    }
 	
 	public static <T,R> Eval<R> accumulate(CollectionX<Eval<T>> evals,Reducer<R> reducer){
 		return sequence(evals).map(s->s.mapReduce(reducer));
@@ -178,6 +189,13 @@ public interface Eval<T> extends Supplier<T>,
 	default Eval<CompletableFuture<T>> asyncAlways(){
 		return Eval.always(()->this.toCompletableFutureAsync());
 	}
+	@Override
+	default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
+	    T value = get();
+        if(value!=null)
+              return present.apply(value);
+        return absent.get();
+    }
 	
     static <R> Eval<R> narrow(Eval<? extends R> broad){
 		return (Eval<R>)broad;
