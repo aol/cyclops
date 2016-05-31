@@ -2,6 +2,7 @@ package com.aol.cyclops.types.anyM;
 
 import static com.aol.cyclops.internal.Utils.firstOrNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +30,6 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.util.function.QuadFunction;
@@ -642,7 +642,15 @@ public interface AnyMValue<T> extends AnyM<T>,
 															u5.map(input5->fn.apply(input1).apply(input2).apply(input3).apply(input4).apply(input5)  )))).unwrap());
 	}
 	
-
-
+	@Override
+	default <R> AnyM<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn) {
+		return AnyM.fromOptional(this.reactiveSeq().flatMapAnyM((Function<? super T, AnyM<? extends R>>) fn).findFirst());
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(AnyM.fromMaybe(Maybe.just(10)).flatMapFirst(i->AnyM.fromStream(ReactiveSeq.of(i,20,30))).stream().toList());
+		Object first = Stream.of(Arrays.asList(1,2),Arrays.asList(3,4,5)).flatMap(l -> l.stream()).findFirst();
+		System.out.println(first);
+	}
 	
 }
