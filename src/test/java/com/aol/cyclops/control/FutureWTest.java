@@ -3,11 +3,10 @@ package com.aol.cyclops.control;
 import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
-import static com.aol.cyclops.control.Maybe.just;
 import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -25,8 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -66,22 +63,28 @@ public class FutureWTest {
 	}
 	
 	@Test
-	public void fib(){
-	    System.out.println(fibonacci(just(tuple(100_000,1l,0l))));
+	public void scheduleDelay(){
+	    
+	    long start = System.currentTimeMillis();
+	    String res = FutureW.schedule(100, Executors.newScheduledThreadPool(1), ()->"hello")
+	                        .get();
+	    
+	    assertThat(100l,lessThan(System.currentTimeMillis()-start));
+	    assertThat(res,equalTo("hello"));
+	    
 	}
-	
-	public Maybe<Long> fibonacci(Maybe<Tuple3<Integer,Long,Long>> fib)  {
-	    return fib.flatMap(t->t.v1 ==  0 ? just(t.v3) : fibonacci(just(tuple(t.v1-1,t.v2+t.v3,t.v2))));
-	}
-	
 	@Test
-    public void fib2(){
-        System.out.println(fib(10,1l,0l));
+    public void scheduleCron(){
+        
+        long start = System.currentTimeMillis();
+        String res = FutureW.schedule("*/2 * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello")
+                            .get();
+        
+        assertThat(1000l,lessThan(System.currentTimeMillis()-start));
+        assertThat(res,equalTo("hello"));
+        
     }
 	
-	public static long fib(int n, long a, long b) {
-	    return n == 0 ? b : fib(n-1, a+b, a);
-	}
 
 	@Test
     public void nest(){

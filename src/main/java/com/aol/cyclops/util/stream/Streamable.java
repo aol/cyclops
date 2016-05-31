@@ -45,11 +45,11 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HotStream;
@@ -65,13 +65,15 @@ import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
  *
  * @param <T> Data type for Stream
  */
-public interface Streamable<T> extends ToStream<T>, CyclopsCollectable<T>, 
-											ConvertableSequence<T>, 
-											Functor<T>,
-											Filterable<T>,
-											Traversable<T>,
-											Unit<T>,
-											ZippingApplicativable<T>{
+public interface Streamable<T> extends ToStream<T>, 
+                                        IterableFoldable<T>,
+                                        CyclopsCollectable<T>, 
+										ConvertableSequence<T>, 
+										Functor<T>,
+										Filterable<T>,
+										Traversable<T>,
+										Unit<T>,
+										ZippingApplicativable<T>{
 	
 	default Collectable<T> collectable(){
 	  

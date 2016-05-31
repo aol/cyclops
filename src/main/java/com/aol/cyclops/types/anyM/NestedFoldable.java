@@ -34,12 +34,13 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.util.stream.Streamable;
 
 public interface NestedFoldable<T> {
-    public AnyM<? extends Foldable<T>> nestedFoldables();
+    public AnyM<? extends IterableFoldable<T>> nestedFoldables();
    
     /**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,

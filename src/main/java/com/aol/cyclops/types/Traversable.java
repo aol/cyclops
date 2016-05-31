@@ -817,11 +817,6 @@ public interface Traversable<T> extends Iterable<T>,
 	}
 	
 	
-	
-
-
-
-	
 	default Traversable<T> traversable() {
 		return stream();
 	}

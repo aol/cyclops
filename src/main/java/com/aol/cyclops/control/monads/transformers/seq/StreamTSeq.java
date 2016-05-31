@@ -25,7 +25,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -223,7 +223,7 @@ public class StreamTSeq<T> implements StreamT<T>{
        return of(run.empty());
     }
     @Override
-    public AnyM<? extends Foldable<T>> nestedFoldables() {
+    public AnyM<? extends IterableFoldable<T>> nestedFoldables() {
         return run;
        
     }

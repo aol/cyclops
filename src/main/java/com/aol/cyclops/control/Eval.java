@@ -266,7 +266,7 @@ public interface Eval<T> extends Supplier<T>,
 	        
 	    }
 	    public static class Always<T> extends Rec<T> implements Eval<T>{
-	        //private final Function<Object,? extends T> s;
+	       
 	        Always(Function <Object,? extends T> s){
 	            super(PVectorX.of(Rec.raw(s)));   
 	        }

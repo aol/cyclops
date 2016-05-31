@@ -20,7 +20,8 @@ import com.aol.cyclops.control.ReactiveSeq;
 
 
 
-public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
+public interface CyclopsCollectable<T> extends Collectable<T>, 
+                                                Iterable<T> {
 	
 
 	

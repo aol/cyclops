@@ -4,7 +4,6 @@ package com.aol.cyclops.control.monads.transformers.seq;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -27,10 +26,9 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
-import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
@@ -52,7 +50,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  */
 public class FutureWTSeq<A> implements FutureWT<A>, 
                                         ValueTransformerSeq<A>,
-                                        Foldable<A>,
+                                        IterableFoldable<A>,
                                         ConvertableSequence<A>,
                                         CyclopsCollectable<A>,
                                         Sequential<A>{
