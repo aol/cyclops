@@ -23,9 +23,11 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 
 import lombok.val;
@@ -33,6 +35,42 @@ import lombok.val;
 
 
 public class AnyMTest {
+    @Test
+    public void anyMSetConversion() {
+      AnyMSeq<Integer> wrapped = AnyM.fromSet(SetX.of(1, 2, 3, 4, 5));
+
+      Eval<Integer> lazyResult = wrapped
+              .map(i -> i * 10)
+              .lazyOperations() 
+              .reduce(50, (acc, next) -> acc + next);
+
+      assertEquals(200, lazyResult.get().intValue());
+    }
+    @Test
+    public void anyMListConversion() {
+      AnyMSeq<Integer> wrapped = AnyM.fromList(ListX.of(1, 2, 3, 4, 5));
+
+      Eval<Integer> lazyResult = wrapped
+              .map(i -> i * 10)
+              .lazyOperations() 
+              .reduce(50, (acc, next) -> acc + next);
+
+      assertEquals(200, lazyResult.get().intValue());
+    }
+    @Test
+    public void flatMapFirst(){
+     
+       List l= AnyM.fromList(ListX.of(1,2,3))
+            .flatMapFirst(i->AnyM.fromList(ListX.of(10,i)))
+            .unwrap();
+       System.out.println(l);
+    }
+    @Test
+    public void flatMap(){
+       AnyM.fromStream(Stream.of(1,2,3))
+            .flatMap(i->AnyM.fromStream(Stream.of(10,i)))
+            .forEach(System.out::println);
+    }
 	@Test
 	public void createAnyMFromListOrOptional(){
 		List<Integer> list = Arrays.asList(1,2,3);
@@ -146,13 +184,14 @@ public class AnyMTest {
 	}
 	@Test
 	public void testSet(){
+	   
 		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
 		assertThat(set.unwrap(),instanceOf(Set.class));
 	}
 	@Test
 	public void testSetMap(){
 		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
-		assertThat(set.map(i->i+2).unwrap(),equalTo(new HashSet<>(Arrays.asList(3,4,5))));
+		assertThat(set.map(i->i+2).unwrap(),equalTo((Set<Integer>)new HashSet<>(Arrays.asList(3,4,5))));
 		
 	}
 	
@@ -161,72 +200,11 @@ public class AnyMTest {
 	public void testSetFilter(){
 		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
 		System.out.println(set.filter(i->i<3).unwrap().getClass());
-		assertThat(set.filter(i->i<3).unwrap(),equalTo(new HashSet<>(Arrays.asList(1,2))));
+		assertThat(set.filter(i->i<3).unwrap(),equalTo((Set<Integer>)new HashSet<>(Arrays.asList(1,2))));
 	}
 	
-	@Test
-	public void testSequence(){
-		
-        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-        List<CompletableFuture<Integer>> futures = list
-                .stream()
-                .map(x -> CompletableFuture.supplyAsync(() -> x))
-                .collect(Collectors.toList());
-       
-        
-        AnyM<ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures));
-        
- 
-        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat(list.get(next),equalTo( collected.get(next)));
-        }
-        
-	}
-	@Test
-	public void testSequenceStream(){
-		
-		 List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-	        List<CompletableFuture<Integer>> futures = list
-	                .stream()
-	                .map(x -> CompletableFuture.supplyAsync(() -> x))
-	                .collect(Collectors.toList());
-       
-        
-        AnyM<ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures).stream());
-        
- 
-        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat(list.get(next),equalTo( collected.get(next)));
-        }
-        
-	}
-
-	@Test
-	public void testTraverse(){
-		
-        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-        List<CompletableFuture<Integer>> futures = list
-                .stream()
-                .map(x -> CompletableFuture.supplyAsync(() -> x))
-                .collect(Collectors.toList());
-
-       
-        AnyM<ListX<String>> futureList = AnyM.traverse( AnyM.listFromCompletableFuture(futures), (Integer i) -> "hello" +i);
-   
-        List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat("hello"+list.get(next),equalTo( collected.get(next)));
-        }
-        
-	}
+	
+	
 	
 
 	@Test

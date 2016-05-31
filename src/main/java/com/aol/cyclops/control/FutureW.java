@@ -5,10 +5,12 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -46,9 +48,62 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	public static <T> FutureW<T> of(CompletableFuture<T> f){
 		return new FutureW<>(f);
 	}
-	public static <T> FutureW<ListX<T>> sequence(CollectionX<FutureW<T>> fts){
-		return AnyM.sequence(AnyM.<T>listFromFutureW(fts)).unwrap();
+	
+	public static <T,X extends Throwable> FutureW<T> fromTry(Try<T,X> value, Executor ex){
+	    return FutureW.ofSupplier(value,ex);
 	}
+	
+	public static <T> FutureW<T> schedule(String cron, ScheduledExecutorService ex, Supplier<T> t){
+	    CompletableFuture<T> future=  new CompletableFuture<>();
+	    FutureW<T> wrapped = FutureW.of(future);
+	    ReactiveSeq.generate(()->{
+            try{
+                future.complete(t.get());
+            }catch(Throwable t1){
+                future.completeExceptionally(t1);
+            }
+            return 1;
+            
+        }).limit(1)
+	      .schedule(cron, ex);
+	            
+	    
+	    return wrapped;
+	}
+	public static <T> FutureW<T> schedule(long delay, ScheduledExecutorService ex, Supplier<T> t){
+        CompletableFuture<T> future=  new CompletableFuture<>();
+        FutureW<T> wrapped = FutureW.of(future);
+
+        ReactiveSeq.generate(()->{
+            try{
+                future.complete(t.get());
+            }catch(Throwable t1){
+                future.completeExceptionally(t1);
+            }
+            return 1;
+            
+        }).limit(1)
+          .scheduleFixedDelay(delay, ex);
+                   
+        return wrapped;
+    }
+
+    public static <T> FutureW<ListX<T>> sequence(CollectionX<FutureW<T>> fts){
+        return sequence(fts.stream()).map(s->s.toListX());
+        
+    }
+    public static <T> FutureW<ReactiveSeq<T>> sequence(Stream<FutureW<T>> fts){
+        return AnyM.sequence(fts.map(f->AnyM.fromFutureW(f)),
+                ()->AnyM.fromFutureW(FutureW.ofResult(Stream.<T>empty())))
+                .map(s->ReactiveSeq.fromStream(s))
+                .unwrap();
+        
+    }
+    public static <T,R> FutureW<R> accumulateSuccess(CollectionX<FutureW<T>> fts,Reducer<R> reducer){
+        
+        FutureW<ListX<T>> sequenced =  AnyM.sequence(fts.map(f->AnyM.fromFutureW(f))).unwrap();
+        return sequenced.map(s->s.mapReduce(reducer));
+    }
 	
 	public static <T,R> FutureW<R> accumulate(CollectionX<FutureW<T>> fts,Reducer<R> reducer){
 		return sequence(fts).map(s->s.mapReduce(reducer));
@@ -239,6 +294,9 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         return FutureW.<T>of(cf);
      }
     
+    public boolean isPresent(){
+        return !this.future.isCompletedExceptionally();
+    }
    
     public String mkString(){
         return "FutureW["+future.toString()+"]";
@@ -277,6 +335,9 @@ public class FutureW<T> implements ConvertableFunctor<T>,
     public static <T> FutureW<T> ofSupplier(Supplier<T> s) {
        return FutureW.of(CompletableFuture.supplyAsync(s));
     }
+    public static <T> FutureW<T> ofSupplier(Supplier<T> s,Executor ex) {
+        return FutureW.of(CompletableFuture.supplyAsync(s,ex));
+     }
    
     
 	

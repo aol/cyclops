@@ -19,7 +19,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -288,7 +288,7 @@ public class SetTValue<T>  implements SetT<T>,
         return SetT.fromOptional(Optional.empty());
     }
     @Override
-    public AnyM<? extends Foldable<T>> nestedFoldables() {
+    public AnyM<? extends IterableFoldable<T>> nestedFoldables() {
         return run;
        
     }
@@ -306,5 +306,17 @@ public class SetTValue<T>  implements SetT<T>,
     public AnyM<? extends Traversable<T>> transformerStream() {
         
         return run;
+    }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof SetTValue){
+            return run.equals( ((SetTValue)o).run);
+        }
+        return false;
     }
 }

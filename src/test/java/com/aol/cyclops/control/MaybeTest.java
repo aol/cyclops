@@ -3,7 +3,9 @@ package com.aol.cyclops.control;
 import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops.control.Maybe.just;
 import static org.hamcrest.Matchers.equalTo;
+import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,12 +60,35 @@ public class MaybeTest implements Printable {
 	}
 	
 	@Test
+    public void fib(){
+        System.out.println(fibonacci(just(tuple(100_000,1l,0l))));
+    }
+    
+    public Maybe<Long> fibonacci(Maybe<Tuple3<Integer,Long,Long>> fib)  {
+        return fib.flatMap(t->t.v1 ==  0 ? just(t.v3) : fibonacci(just(tuple(t.v1-1,t.v2+t.v3,t.v2))));
+    }
+    
+    @Test
+    public void fib2(){
+        System.out.println(fib(10,1l,0l));
+    }
+    
+    public static long fib(int n, long a, long b) {
+        return n == 0 ? b : fib(n-1, a+b, a);
+    }
+	
+	@Test
 	public void nest(){
 	   assertThat(just.nest().map(m->m.get()),equalTo(just));
 	   assertThat(none.nest().map(m->m.get()),equalTo(none));
 	}
 	@Test
 	public void coFlatMap(){
+	    
+	    Maybe.none().coflatMap(m-> m.isPresent()? m.get() : 10);
+	    
+	    //Maybe[10]
+	    
 	    assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
 	    assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Maybe.of(50)));
 	}
@@ -162,10 +188,22 @@ public class MaybeTest implements Printable {
 	}
 
 	@Test
+	public void testSequenceLazy(){
+	    Maybe<ListX<Integer>> maybes =Maybe.sequence(ListX.of(just,none,Maybe.of(1)));
+        
+        assertThat(maybes,equalTo(Maybe.just(1).flatMap(i->Maybe.none()))); 
+	}
+	@Test
 	public void testSequence() {
 		Maybe<ListX<Integer>> maybes =Maybe.sequence(ListX.of(just,none,Maybe.of(1)));
-		assertThat(maybes,equalTo(Maybe.of(ListX.of(10,1))));
+		
+		assertThat(maybes,equalTo(Maybe.none()));
 	}
+	@Test
+    public void testSequenceJust() {
+        Maybe<ListX<Integer>> maybes =Maybe.sequenceJust(ListX.of(just,none,Maybe.of(1)));
+        assertThat(maybes,equalTo(Maybe.of(ListX.of(10,1))));
+    }
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {

@@ -5,11 +5,13 @@ import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -51,6 +53,17 @@ public class Eval2Test {
 		just = Eval.now(10);
 		none = Eval.now(null);
 	}
+	
+	@Test
+	public void equals(){
+	    assertTrue(Eval.always(()->10).equals(Eval.later(()->10)));
+	    assertTrue(Eval.always(()->10).equals(Eval.now(10)));
+	    assertTrue(Eval.now(10).equals(Eval.later(()->10)));
+	    assertTrue(Eval.later(()->10).equals(Eval.always(()->10)));
+	    assertTrue(Eval.always(()->null).equals(Eval.later(()->null)));
+	    assertFalse(Eval.always(()->10).equals(Eval.later(()->null)));
+	    assertFalse(Eval.always(()->null).equals(Eval.later(()->10)));
+	}
 	@Test
     public void nest(){
        assertThat(just.nest().map(m->m.get()),equalTo(just));
@@ -60,6 +73,7 @@ public class Eval2Test {
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
         assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Eval.now(50)));
+        
     }
     @Test
     public void combine(){
@@ -128,18 +142,19 @@ public class Eval2Test {
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Eval<PSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,none,Eval.now(1)),Reducers.toPSetX());
+	   Object o = Eval.sequence(ListX.of(just,Eval.now(1)));
+		Eval<PSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
 		assertThat(maybes,equalTo(Eval.now(PSetX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Eval<String> maybes =Eval.accumulate(ListX.of(just,none,Eval.later(()->1)),i->""+i,Semigroups.stringConcat);
+		Eval<String> maybes =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Semigroups.stringConcat);
 		assertThat(maybes,equalTo(Eval.now("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Eval<Integer> maybes =Eval.accumulate(ListX.of(just,none,Eval.now(1)),Semigroups.intSum);
+		Eval<Integer> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Semigroups.intSum);
 		assertThat(maybes,equalTo(Eval.now(11)));
 	}
 
@@ -185,6 +200,7 @@ public class Eval2Test {
 		assertThat(just.visit(i->i+1,()->20),equalTo(11));
 		assertThat(none.visit(i->i+1,()->20),equalTo(20));
 	}
+	
 
 	@Test
 	public void testUnapply() {

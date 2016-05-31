@@ -1,7 +1,5 @@
 package com.aol.cyclops.control.monads.transformers.values;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -13,7 +11,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -272,7 +270,7 @@ public class StreamableTValue<T> implements StreamableT<T>{
         return run.get();
     }
     @Override
-    public AnyM<? extends Foldable<T>> nestedFoldables() {
+    public AnyM<? extends IterableFoldable<T>> nestedFoldables() {
         return run;
        
     }
@@ -291,6 +289,17 @@ public class StreamableTValue<T> implements StreamableT<T>{
         
         return run;
     }
-
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof StreamableTValue){
+            return run.equals( ((StreamableTValue)o).run);
+        }
+        return false;
+    }
     
 }

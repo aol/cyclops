@@ -150,7 +150,9 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	Xor<PT,ST> swap();
 	@Override
     Ior<ST,PT> toIor();
-	
+	default boolean isPresent(){
+        return isPrimary();
+    }
 	@Override
     default Xor<ST,PT> toXor(){
         return this;

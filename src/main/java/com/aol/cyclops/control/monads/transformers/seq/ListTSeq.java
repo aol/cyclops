@@ -28,6 +28,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -137,8 +138,9 @@ public class ListTSeq<T> implements ListT<T>{
 	 */
    public <B> ListTSeq<B> flatMapT(Function<? super T,ListTSeq<B>> f){
 	  
-	   return of( run.map(stream-> ReactiveSeq.fromList(stream).flatMap(a-> f.apply(a).run.stream()).flatMap(a->a.stream())
-			   .toList()));
+	   return of( run.map(list -> list.flatMap(a-> f.apply(a).run.stream())
+	                                   .flatMap(a->a.stream())
+			   ));
    }
    /**
 	 * Lift a function into one that accepts and returns an ListT
@@ -281,7 +283,7 @@ public class ListTSeq<T> implements ListT<T>{
        return of(run.empty());
     }
     @Override
-    public AnyM<? extends Foldable<T>> nestedFoldables() {
+    public AnyM<? extends IterableFoldable<T>> nestedFoldables() {
         return run;
        
     }
@@ -728,6 +730,17 @@ public class ListTSeq<T> implements ListT<T>{
     public <U extends Comparable<? super U>> ListTSeq<T> sorted(Function<? super T, ? extends U> function) {
         return (ListTSeq)ListT.super.sorted(function);
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
     
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof ListTSeq){
+            return run.equals( ((ListTSeq)o).run);
+        }
+        return false;
+    }
     
 }

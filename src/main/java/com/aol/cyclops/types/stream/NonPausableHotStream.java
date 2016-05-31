@@ -20,7 +20,7 @@ public class NonPausableHotStream<T>  extends BaseHotStreamImpl<T> {
 					
 					for(int i=0;i<local;i++){
 					
-						connections.get(i).offer(a);
+						connections.get(i).add(a);
 					}
 					
 					

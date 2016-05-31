@@ -12,8 +12,10 @@ import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.util.function.Predicates;
 
 public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 	
@@ -51,6 +53,12 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 		return super.get();
 	}
 
+	public boolean isPresent(){
+	    if(monad.unwrap() instanceof Value){
+	        return ( (Value<T>)monad.unwrap() ).isPresent();
+	    }
+	    return AnyMValue.super.isPresent();
+	}
 	
 	@Override
 	public <T> AnyMValue<T> emptyUnit() {
@@ -192,7 +200,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
         if(!(obj instanceof AnyMValue))
             return false;
         AnyMValue v2 = (AnyMValue)obj;
-        return this.toMaybe().equals(v2.toMaybe());
+        return unwrap().equals(v2.unwrap());
         
        
     }

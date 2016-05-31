@@ -46,7 +46,11 @@ public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
         ConvertableFunctor<T> functor;
 
         public SemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
-            return fn.toMaybe().isPresent() ? withFunctor(functor.map(v1 -> combiner.apply(v1, fn.get()))) : this;
+            
+            return functor.visit(p-> fn.visit(p2-> withFunctor(functor.map(v1 -> combiner.apply(v1, fn.get()))),
+                                                     ()-> this),
+                                    ()->withFunctor(fn));
+           
         }
 
         public Value<T> convertable() {
@@ -67,7 +71,7 @@ public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
             
             fail1.swap().ap(Semigroups.stringConcat)
                         .ap(Xor.secondary("failed2").swap())
-                        .ap(Xor.<String,String>primary("success").swap()
+                        .ap(Xor.<String,String>primary("success").swap())
                                     .
                                     
             // [failed1failed2]

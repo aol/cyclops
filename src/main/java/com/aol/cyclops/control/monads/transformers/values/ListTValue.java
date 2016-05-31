@@ -17,7 +17,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -46,6 +46,40 @@ public class ListTValue<T> implements ListT<T>,
    private ListTValue(final AnyMValue<? extends List<T>> run){
        this.run = run.map(s->ListX.fromIterable(s));
    }
+   
+   /**
+    * Flat Map the wrapped List
+     * <pre>
+    * {@code 
+    *  ListT.of(AnyM.fromStream(Arrays.asList(10))
+    *             .flatMap(t->List.empty();
+    *  
+    *  
+    *  //ListT<AnyM<Stream<List.empty>>>
+    * }
+    * </pre>
+    * @param f FlatMap function
+    * @return ListT that applies the flatMap function to the wrapped List
+   */
+   public <B> ListTValue<B> flatMapT(Function<? super T,ListTValue<B>> f){
+     
+       return of( run.map(list-> 
+                                   list.flatMap(a-> f.apply(a)
+                                                     .run
+                                                     .stream())
+                                       .flatMap(a->a)
+                                       
+                            )
+               );
+   }
+   
+   
+   
+   
+   
+   
+   
+   
    public boolean isSeqPresent(){
        return !run.isEmpty();
    }
@@ -112,25 +146,8 @@ public class ListTValue<T> implements ListT<T>,
        return new ListTValue<B>(run.map(o -> ListX.fromIterable(o).flatMap(f)));
 
    }
-   /**
-	 * Flat Map the wrapped List
-	  * <pre>
-	 * {@code 
-	 *  ListT.of(AnyM.fromStream(Arrays.asList(10))
-	 *             .flatMap(t->List.empty();
-	 *  
-	 *  
-	 *  //ListT<AnyM<Stream<List.empty>>>
-	 * }
-	 * </pre>
-	 * @param f FlatMap function
-	 * @return ListT that applies the flatMap function to the wrapped List
-	 */
-   public <B> ListTValue<B> flatMapT(Function<? super T,ListTValue<B>> f){
-	  
-	   return of( run.map(stream-> ReactiveSeq.fromList(stream).flatMap(a-> f.apply(a).run.stream()).flatMap(a->a.stream())
-			   .toList()));
-   }
+   
+ 
    /**
 	 * Lift a function into one that accepts and returns an ListT
 	 * This allows multiple monad types to add functionality to existing functions and methods
@@ -281,7 +298,7 @@ public class ListTValue<T> implements ListT<T>,
         return run.get();
     }
     @Override
-    public AnyM<? extends Foldable<T>> nestedFoldables() {
+    public AnyM<? extends IterableFoldable<T>> nestedFoldables() {
         return run;
        
     }
@@ -300,5 +317,16 @@ public class ListTValue<T> implements ListT<T>,
         
         return run;
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
     
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof ListTValue){
+            return run.equals( ((ListTValue)o).run);
+        }
+        return false;
+    }
 }

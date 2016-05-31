@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -17,7 +18,6 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
-import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.applicative.Applicativable;
 
 import lombok.AccessLevel;
@@ -109,18 +109,30 @@ public interface Maybe<T> extends MonadicValue1<T>,
 		return (Maybe<T>)broad;
 	}
 	
-	public static <T> Maybe<ListX<T>> sequence(CollectionX<Maybe<T>> maybes){
-		return AnyM.sequence(AnyM.<T>listFromMaybe(maybes)).unwrap();
-	}
+	public static <T> Maybe<ListX<T>> sequenceJust(CollectionX<Maybe<T>> opts){
+        Maybe<ListX<T>> unwrapped = AnyM.sequence(opts.map(o->AnyM.fromMaybe(o))).unwrap();
+        return unwrapped;
+    }
+    public static <T> Maybe<ListX<T>> sequence(CollectionX<Maybe<T>> maybes){
+        return sequence(maybes.stream()).map(s->s.toListX());
+        
+    }
+    public static <T> Maybe<ReactiveSeq<T>> sequence(Stream<Maybe<T>> maybes){
+        return AnyM.sequence(maybes.map(f->AnyM.fromMaybe(f)),
+                ()->AnyM.fromMaybe(Maybe.just(Stream.<T>empty())))
+                .map(s->ReactiveSeq.fromStream(s))
+                .unwrap();
+        
+    }
 	
 	public static <T,R> Maybe<R> accumulateJust(CollectionX<Maybe<T>> maybes,Reducer<R> reducer){
-		return sequence(maybes).map(s->s.mapReduce(reducer));
+		return sequenceJust(maybes).map(s->s.mapReduce(reducer));
 	}
 	public static <T,R> Maybe<R> accumulateJust(CollectionX<Maybe<T>> maybes,Function<? super T, R> mapper,Semigroup<R> reducer){
-		return sequence(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
+		return sequenceJust(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
 	public static <T> Maybe<T> accumulateJust(CollectionX<Maybe<T>> maybes,Semigroup<T> reducer){
-		return sequence(maybes).map(s->s.reduce(reducer.reducer()).get());
+		return sequenceJust(maybes).map(s->s.reduce(reducer.reducer()).get());
 	}
 	default <T> Maybe<T> unit(T unit){
 		return  Maybe.of(unit);
@@ -306,6 +318,14 @@ public interface Maybe<T> extends MonadicValue1<T>,
 			}
 			return false;
 		}
+		@Override
+		public T orElse(T value){
+	       return lazy.get();
+	    }
+		@Override
+        public T orElseGet(Supplier<? extends T> value){
+           return lazy.get();
+        }
 		
 	}
     @AllArgsConstructor(access=AccessLevel.PRIVATE)
@@ -329,7 +349,11 @@ public interface Maybe<T> extends MonadicValue1<T>,
         public <R> R visit(Function<? super T,? extends R> some, 
                 Supplier<? extends R> none){
             Maybe<R> mapped = map(some);
-            return mapped.orElseGet(()->none.get());
+            if(isPresent()){
+                return mapped.get();
+            }
+            return none.get();
+       
         }
         public Maybe<T> recover(T value){
             return new Lazy<T>(lazy.map(m->m.recover(value)));
@@ -358,6 +382,22 @@ public interface Maybe<T> extends MonadicValue1<T>,
             }
             return maybe.isPresent();
         }
+        @Override
+        public T orElse(T value){
+            Maybe<T> maybe =  lazy.get();
+            while(maybe instanceof Lazy){
+                maybe = ((Lazy<T>)maybe).lazy.get();
+            }
+            return maybe.orElse(value);
+        }
+        @Override
+        public T orElseGet(Supplier<? extends T> value){
+            Maybe<T> maybe =  lazy.get();
+            while(maybe instanceof Lazy){
+                maybe = ((Lazy<T>)maybe).lazy.get();
+            }
+            return maybe.orElseGet(value);
+        }
         /* (non-Javadoc)
          * @see java.lang.Object#hashCode()
          */
@@ -377,8 +417,16 @@ public interface Maybe<T> extends MonadicValue1<T>,
             
             if(obj instanceof Just)
                 return Objects.equals(get(),((Just)obj).get());
-            if(obj instanceof Lazy)
-                return Objects.equals(get(),((Lazy)obj).get());
+            else if(obj instanceof Nothing){
+                return !isPresent();
+            }
+            else if(obj instanceof Lazy){
+                if(isPresent())
+                    return Objects.equals(get(),((Lazy)obj).get());
+                else{
+                    return !((Lazy)obj).isPresent();
+                }
+            }
             return false;
         }
         
@@ -418,8 +466,25 @@ public interface Maybe<T> extends MonadicValue1<T>,
 		public boolean isPresent(){
 			return false;
 		}
-		
-		
+		@Override
+        public boolean equals(Object obj) {
+		    
+		       
+            if(obj instanceof Nothing)
+                return true;
+            if(obj instanceof Lazy){
+                return !((Lazy)obj).isPresent();
+            }
+            return false;
+        }
+		@Override
+		public T orElse(T value){
+	        return value;
+	    }
+		@Override
+        public T orElseGet(Supplier<? extends T> value){
+           return value.get();
+        }
 	}
 	
 }

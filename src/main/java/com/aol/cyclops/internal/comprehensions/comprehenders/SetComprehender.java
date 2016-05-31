@@ -1,53 +1,48 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.control.Try;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class SetComprehender implements Comprehender<Object> {
-	public Class getTargetClass(){
+public class SetComprehender implements Comprehender<Set> {
+	
+    @Override
+    public Object resolveForCrossTypeFlatMap(Comprehender comp, Set apply) {
+        List list = (List) apply.stream().collect(Collectors.toCollection(MaterializedList::new));
+        return list.size()>0 ? comp.of(list) : comp.empty();
+    }
+    
+    public Class getTargetClass(){
 		return Set.class;
 	}
 	@Override
-	public Object filter(Object t, Predicate p) {
-		if(t instanceof Set)
-			return ((Set)t).stream().filter(p);
-		else
-			return ((Stream)t).filter(p);
+	public Object filter(Set t, Predicate p) {
+	    return SetX.fromIterable(t).filter(p);
+		
 	}
 
 	@Override
-	public Object map(Object t, Function fn) {
-		if(t instanceof Set)
-			return ((Set)t).stream().map(fn);
-		else
-			return ((Stream)t).map(fn);
+	public Object map(Set t, Function fn) {
+	    return SetX.fromIterable(t).map(fn);
 	}
 	
-	public Object executeflatMap(Object t, Function fn){
+	public Object executeflatMap(Set t, Function fn){
 		return flatMap(t,input -> unwrapOtherMonadTypesLC(this,fn.apply(input)));
 	}
 	@Override
-	public Object flatMap(Object t, Function fn) {
-		if(t instanceof Set)
-			return ((Set) t).stream().flatMap(fn);
-		else 
-			return ((Stream) t).flatMap(fn);
+	public Object flatMap(Set t, Function fn) {
+	    return SetX.fromIterable((Iterable)t).flatMap(fn);
 			
 	}
 	@Override
@@ -61,16 +56,11 @@ public class SetComprehender implements Comprehender<Object> {
 	
 	@Override
 	public Set of(Object o) {
-		Set set= new HashSet();
-		set.add(o);
-		return Collections.unmodifiableSet(set);
+	    return SetX.of(o);
+		
 	}
 	public Set fromIterator(Iterator it){
-	    Set set= new HashSet();
-	    for(Object next : (Iterable)()-> it){
-	        set.add(next);
-	    }
-	    return Collections.unmodifiableSet(set);
+	    return SetX.fromIterable(()->it);
     }
 	@Override 
 	public Set unwrap(Object o){
@@ -79,34 +69,32 @@ public class SetComprehender implements Comprehender<Object> {
 		else
 			return (Set)((Stream)o).collect(Collectors.toSet());
 	}
-	static Stream unwrapOtherMonadTypesLC(Comprehender comp,Object apply){
+	static Set unwrapOtherMonadTypesLC(Comprehender comp,Object apply){
 		
-		
-		
-		if(apply instanceof Collection){
-			return ((Collection)apply).stream();
-		}
-		if(apply instanceof Iterable){
-			 return StreamSupport.stream(((Iterable)apply).spliterator(),
-						false);
-		}
-		if(apply instanceof BaseStream){
-			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(((BaseStream)apply).iterator(), Spliterator.ORDERED),
-					false);
-		}
-		Object o = Comprehender.unwrapOtherMonadTypes(comp,apply);
-		if(o instanceof Collection){
-			return ((Collection)o).stream();
-		}
-		if(o instanceof Iterable){
-			 return StreamSupport.stream(((Iterable)o).spliterator(),
-						false);
-		}
-		if(apply instanceof BaseStream){
-			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(((BaseStream)apply).iterator(), Spliterator.ORDERED),
-					false);
-		}
-		return (Stream)o;
+	    if(apply instanceof Collection){
+            return  SetX.fromIterable((Collection)apply);
+        }
+        if(apply instanceof Iterable){
+            
+            return  SetX.fromIterable((Iterable)apply);
+        }
+        
+        if(apply instanceof BaseStream){
+        
+            return  SetX.fromIterable(()->((BaseStream)apply).iterator());
+            
+        }
+        Object o = Comprehender.unwrapOtherMonadTypes(comp,apply);
+        if(o instanceof Collection){
+            return  SetX.fromIterable((Collection)apply);
+        }
+        if(o instanceof Iterable){
+            return  SetX.fromIterable((Iterable)apply);
+        }
+        if(apply instanceof BaseStream){
+            return  SetX.fromIterable(()->((BaseStream)apply).iterator());
+        }
+        return (Set)o;
 		
 	}
 	

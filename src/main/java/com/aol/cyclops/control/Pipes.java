@@ -145,10 +145,10 @@ public class Pipes<K,V> {
      * @param key
      * @return
      */
-    public  Eval<Maybe<V>> nextValue(K key){
-        ValueSubscriber<V> sub = ValueSubscriber.subscriber();
-        LazyImmutable<Boolean> requested = LazyImmutable.def();
-        return get(key).peek(a->a.stream().subscribe(sub))
+    public  Eval<Maybe<V>> nextValue(K key){ 
+       ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+       LazyImmutable<Boolean> requested = LazyImmutable.def();
+       Maybe<Eval<Maybe<V>>> nested =  get(key).peek(a->a.stream().subscribe(sub))
                         .map(a-> Eval.always(()->{
                             if(requested.isSet()){
                                 sub.requestOne();
@@ -156,11 +156,9 @@ public class Pipes<K,V> {
                                 requested.setOnce(true);
                             }
                             Maybe<V> res = sub.toMaybe();
-                            
-                            return res;
-                        }))
-                        
-                        .orElse(Eval.now(Maybe.<V>none()));
+                           return res;
+                        }));  
+        return nested.orElse(Eval.now(Maybe.<V>none()));
     }
     /**
      * Return an Eval that allows retrieval of the next value from the attached pipe when get() is called

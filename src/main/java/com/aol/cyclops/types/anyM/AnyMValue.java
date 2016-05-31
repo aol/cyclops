@@ -19,11 +19,11 @@ import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -32,6 +32,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
@@ -43,11 +44,28 @@ public interface AnyMValue<T> extends AnyM<T>,
 									  MonadicValue<T>,
 									  Matchable.ValueAndOptionalMatcher<T>{
 	
+    /**
+     * Equivalence test
+     */
+    default boolean eqv(AnyMValue<T> t){
+        return Predicates.eqv(t).test(this);
+    }
     default <R, A> R collect(Collector<? super T, A, R> collector){
         
          return this.<T>toSequence().collect(collector);
         
     }
+    
+    
+    
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.AnyM#flatMapFirst(java.util.function.Function)
+     */
+    @Override
+    <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn) ;
+
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
@@ -192,6 +210,59 @@ public interface AnyMValue<T> extends AnyM<T>,
 	@Override
 	AnyMValue<List<T>> aggregate(AnyM<T> next) ;
 
+	   /**
+     * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process
+     * 
+    <pre>{@code 
+       Stream<CompletableFuture<Integer>> futures = createFutures();
+       AnyMValue<List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
+        }
+        </pre>
+     * 
+     * @param seq Stream of Monads
+     * @param fn Function to apply 
+     * @return Monad with a list
+     */
+    public static <T,R> AnyMValue<ListX<R>> traverse(Collection<? extends AnyMValue<T>> seq, Function<? super T,? extends R> fn){
+        
+        return new AnyMonads().traverse(seq,fn);
+    }
+
+    /**
+     * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
+     *
+     */
+    public static <T,R> AnyMValue<Stream<R>> traverse(Stream<AnyMValue<T>> source, Supplier<AnyMValue<Stream<T>>> unitEmpty,Function<? super T,? extends R> fn) {
+        return sequence(source,unitEmpty).map(s->s.map(fn));
+    }
+    /**
+     * Convert a Stream of Monads to a Monad with a Stream
+     *
+     */
+    public static <T> AnyMValue<Stream<T>> sequence(Stream<AnyMValue<T>> source, Supplier<AnyMValue<Stream<T>>> unitEmpty) {
+        
+        return  Matchables.anyM(AnyM.sequence(source,unitEmpty)).visit(v->v, s-> { throw new IllegalStateException("unreachable");});
+    }
+    
+    /**
+     * Convert a Collection of Monads to a Monad with a List
+     * 
+     * <pre>
+     * {@code
+        List<CompletableFuture<Integer>> futures = createFutures();
+        AnyMValue<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
+
+       //where AnyM wraps  CompletableFuture<List<Integer>>
+      }</pre>
+     * 
+     * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
+     * @param seq Collection of monads to convert
+     * @return Monad with a List
+     */ 
+    public static <T1>  AnyMValue<ListX<T1>> sequence(Collection<? extends AnyMValue<T1>> seq){
+        return new AnyMonads().sequence(seq);
+    }
+	
 	/**
 	 * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
 	 * etc to be injected, for example)
@@ -407,60 +478,6 @@ public interface AnyMValue<T> extends AnyM<T>,
 
 	
 	
-	/**
-	 * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process
-	 * 
-	<pre>{@code 
-       Stream<CompletableFuture<Integer>> futures = createFutures();
-       AnyMValue<List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
-        }
-		</pre>
-	 * 
-	 * @param seq Stream of Monads
-	 * @param fn Function to apply 
-	 * @return Monad with a list
-	 */
-	public static <T,R> AnyMValue<ListX<R>> traverse(Collection<? extends AnyMValue<T>> seq, Function<? super T,? extends R> fn){
-		
-		return new AnyMonads().traverse(seq,fn);
-	}
-
-	
-	/**
-	 * Convert a Collection of Monads to a Monad with a List
-	 * 
-	 * <pre>
-	 * {@code
-		List<CompletableFuture<Integer>> futures = createFutures();
-		AnyMValue<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
-
-	   //where AnyM wraps  CompletableFuture<List<Integer>>
-	  }</pre>
-	 * 
-	 * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
-	 * @param seq Collection of monads to convert
-	 * @return Monad with a List
-	 */ 
-	public static <T1>  AnyMValue<ListX<T1>> sequence(Collection<? extends AnyMValue<T1>> seq){
-		return new AnyMonads().sequence(seq);
-	}
-	/**
-	 * Convert a Stream of Monads to a Monad with a List
-	 * 
-	 * <pre>{@code
-		Stream<CompletableFuture<Integer>> futures = createFutures();
-		AnyMValue<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
-
-	   //where AnyM wraps  CompletableFuture<List<Integer>>
-	  }</pre>
-	 * 
-	 * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
-	 * @param seq Stream of monads to convert
-	 * @return Monad with a List
-	 */
-	public static <T1>  AnyMValue<ListX<T1>> sequence(Stream<? extends AnyMValue<T1>> seq){
-		return new AnyMonads().sequence(seq);
-	}
 	/**
 	 * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
 	 * AnyM view simplifies type related challenges.

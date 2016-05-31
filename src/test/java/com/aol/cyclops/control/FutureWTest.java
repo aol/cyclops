@@ -4,9 +4,14 @@ import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static com.aol.cyclops.util.function.Predicates.instanceOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.lessThan;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +61,30 @@ public class FutureWTest {
 		just =FutureW.of(CompletableFuture.completedFuture(10));
 		none = FutureW.ofError(exception);
 	}
+	
+	@Test
+	public void scheduleDelay(){
+	    
+	    long start = System.currentTimeMillis();
+	    String res = FutureW.schedule(100, Executors.newScheduledThreadPool(1), ()->"hello")
+	                        .get();
+	    
+	    assertThat(100l,lessThan(System.currentTimeMillis()-start));
+	    assertThat(res,equalTo("hello"));
+	    
+	}
+	@Test
+    public void scheduleCron(){
+        
+        long start = System.currentTimeMillis();
+        String res = FutureW.schedule("*/2 * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello")
+                            .get();
+        
+        assertThat(1000l,lessThan(System.currentTimeMillis()-start));
+        assertThat(res,equalTo("hello"));
+        
+    }
+	
 
 	@Test
     public void nest(){
@@ -104,29 +133,30 @@ public class FutureWTest {
 
 	@Test
 	public void testSequence() {
-		FutureW<ListX<Integer>> maybes =FutureW.sequence(ListX.of(just,none,FutureW.ofResult(1)));
+		FutureW<ListX<Integer>> maybes =FutureW.sequence(ListX.of(just,FutureW.ofResult(1)));
 		assertThat(maybes.get(),equalTo(ListX.of(10,1)));
 	}
 	@Test
     public void testSequenceCF() {
         CompletableFuture<ListX<Integer>> maybes =CompletableFutures.sequence(ListX.of(just.getFuture(),none.getFuture(),FutureW.ofResult(1).getFuture()));
-        assertThat(maybes.join(),equalTo(ListX.of(10,1)));
+        assertThat(maybes.isCompletedExceptionally(),equalTo(true));
+ 
     }
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		FutureW<PSetX<Integer>> maybes =FutureW.accumulate(ListX.of(just,none,FutureW.ofResult(1)),Reducers.toPSetX());
+		FutureW<PSetX<Integer>> maybes =FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofResult(1)),Reducers.toPSetX());
 		assertThat(maybes.get(),equalTo(PSetX.of(10,1)));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		FutureW<String> maybes = FutureW.accumulate(ListX.of(just,none,FutureW.ofResult(1)),i->""+i,Semigroups.stringConcat);
+		FutureW<String> maybes = FutureW.accumulate(ListX.of(just,FutureW.ofResult(1)),i->""+i,Semigroups.stringConcat);
 		assertThat(maybes.get(),equalTo("101"));
 	}
 	@Test
 	public void testAccumulateJust() {
-		FutureW<Integer> maybes =FutureW.accumulate(ListX.of(just,none,FutureW.ofResult(1)),Semigroups.intSum);
+		FutureW<Integer> maybes =FutureW.accumulate(ListX.of(just,FutureW.ofResult(1)),Semigroups.intSum);
 		assertThat(maybes.get(),equalTo(11));
 	}
 	

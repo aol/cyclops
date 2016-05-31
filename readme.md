@@ -6,6 +6,9 @@ Future & functional based programming via JDK compatible extensions for Java 8 a
 
 * [![Maven Central : cyclops-react](https://maven-badges.herokuapp.com/maven-central/com.aol.simplereact/cyclops-react/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.simple-react/cyclops-react)
 
+* Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
+
+
 ## Gradle
 
 where x.y.z represents the latest version

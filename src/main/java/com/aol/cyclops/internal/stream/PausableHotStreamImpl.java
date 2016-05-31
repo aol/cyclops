@@ -21,7 +21,7 @@ public class PausableHotStreamImpl<T> extends BaseHotStreamImpl<T> implements Pa
 					
 					for(int i=0;i<local;i++){
 					
-						connections.get(i).offer(a);
+						connections.get(i).add(a);
 					}
 					
 					

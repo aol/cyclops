@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
 
-@AllArgsConstructor
+//@AllArgsConstructor
 public class MonadWrapper<T> implements Monad<T>, Decomposable{
 	@Wither
 	private final Object monad;
@@ -20,6 +20,11 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable{
 		this.monad = monad;
 		orgType= monad.getClass();
 	}
+	
+	/**
+	public MonadWrapper<T> withMonad(Object o ){
+	    return new MonadWrapper(monad,orgType);
+	}**/
 	
 	public static <T> Monad<T>  of(Object of) {
 		return new MonadWrapper(of);
@@ -51,4 +56,10 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable{
 	public String toString(){
 	    return monad.toString();
 	}
+
+    public MonadWrapper(Object monad, Class orgType) {
+        super();
+        this.monad = monad;
+        this.orgType = orgType;
+    }
 }

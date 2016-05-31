@@ -33,11 +33,14 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -73,11 +76,40 @@ import reactor.core.publisher.Mono;
 public abstract class AbstractCollectionXTest {
 	public abstract <T> FluentCollectionX<T> empty();
 	public abstract <T> FluentCollectionX<T> of(T... values);
+	public abstract  FluentCollectionX<Integer> range(int start, int end);
+	public abstract  FluentCollectionX<Long> rangeLong(long start, long end);
+	public abstract <T> FluentCollectionX<T> iterate(int times, T seed, UnaryOperator<T> fn);
+	public abstract <T> FluentCollectionX<T> generate(int times,Supplier<T> fn);
+	public abstract <U,T> FluentCollectionX<T> unfold(U seed,Function<? super U,Optional<Tuple2<T,U>>> unfolder);
 	public static final LazyReact r = new LazyReact(10,10);
 	
 	int captured=-1;
    
-    
+	@Test
+	public void testRange(){
+	    assertThat(range(0,2).size(),equalTo(2));
+	}
+	@Test
+    public void testRangeLong(){
+        assertThat(rangeLong(0,2).size(),equalTo(2));
+    }
+	@Test
+    public void testIterate(){
+        assertThat(iterate(5,1,i->i+1).size(),equalTo(5));
+    }
+	
+	@Test
+    public void testGenerate(){
+	    count = 0;
+        assertThat(generate(5,()->"hello"+(count++)).size(),equalTo(5));
+    }
+	@Test
+    public void testUnfold(){
+	    Function<Integer,Optional<Tuple2<Integer,Integer>>> fn= i-> i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.empty();
+	  
+        assertThat(unfold(1,fn ).size(),equalTo(6));
+    }
+	
 	@Test
     public void mergePublisherFlux() throws InterruptedException{
       

@@ -3,7 +3,6 @@ package com.aol.cyclops.control.monads.transformers.seq;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -24,13 +23,11 @@ import org.jooq.lambda.tuple.Tuple4;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.EvalT;
-import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -56,7 +53,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  */
 public class EvalTSeq<T> implements EvalT<T>,
                                     ValueTransformerSeq<T>,
-                                    Foldable<T>,
+                                    IterableFoldable<T>,
                                     ConvertableSequence<T>,
                                     CyclopsCollectable<T>,
                                     Sequential<T>{
@@ -746,7 +743,18 @@ public class EvalTSeq<T> implements EvalT<T>,
      public static <T> EvalTSeq<T> emptyList() {
          return EvalT.fromIterable(ListX.of());
      }
-    
+     @Override
+     public int hashCode(){
+         return run.hashCode();
+     }
+     
+     @Override
+     public boolean equals(Object o){
+         if(o instanceof EvalTSeq){
+             return run.equals( ((EvalTSeq)o).run);
+         }
+         return false;
+     }
     
     
  

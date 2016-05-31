@@ -343,4 +343,16 @@ public class FutureWTValue<A> implements FutureWT<A>,
        
         return (MaybeTValue<A>)FutureWT.super.notNull();
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof FutureWTValue){
+            return run.equals( ((FutureWTValue)o).run);
+        }
+        return false;
+    }
 }

@@ -64,27 +64,7 @@ public class MonadTest {
         }
         
 	}
-	@Test
-	public void testSequenceStream(){
-		
-        List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
-        List<CompletableFuture<Integer>> futures = list
-                .stream()
-                .map(x -> CompletableFuture.supplyAsync(() -> x))
-                .collect(Collectors.toList());
-       
-        
-        AnyM<ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures).stream());
-        
- 
-        List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
-        assertThat(collected.size(),equalTo( list.size()));
-        
-        for(Integer next : list){
-        	assertThat(list.get(next),equalTo( collected.get(next)));
-        }
-        
-	}
+	
 	
 	
 	@Test

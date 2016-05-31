@@ -15,6 +15,7 @@ import com.aol.cyclops.control.Matchable.MTuple4;
 import com.aol.cyclops.control.Matchable.MTuple5;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
 import com.aol.cyclops.types.Value;
 
@@ -255,9 +256,16 @@ public class Predicates {
 	public static<V> Predicate<Value<? super V>> eqv(Value<? super V> value){
 	   
         return test-> test == null ? (value== null ?  true : !value.toMaybe().isPresent()) :
-                            ((Value)test).toMaybe().equals(value.toMaybe());
+                                        test.toMaybe().equals(value.toMaybe());
         
     }
+	public static<V> Predicate<Iterable<? super V>> eqvIterable(Iterable<? super V> iterable){
+	       
+        return test-> test == null ? (iterable== null ?  true : ListX.fromIterable(iterable).isEmpty()) :
+                            ListX.fromIterable(test).equals(ListX.fromIterable(iterable));
+        
+    }
+	
 	public static<V> Predicate<V> eqv2(Value<? super V> value){
 	       
         return test-> test == null ? (value== null ?  true : !value.toMaybe().isPresent()) :

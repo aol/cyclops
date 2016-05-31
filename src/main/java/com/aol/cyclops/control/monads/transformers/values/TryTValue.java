@@ -367,4 +367,16 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
        
         return (MaybeTValue<T>)TryT.super.notNull();
     }
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof TryTValue){
+            return run.equals( ((TryTValue)o).run);
+        }
+        return false;
+    }
 }

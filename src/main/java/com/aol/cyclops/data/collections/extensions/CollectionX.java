@@ -29,8 +29,8 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableFilterable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Unit;
@@ -50,7 +50,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 										Iterable<T>,
 										Sequential<T>,
 										IterableFunctor<T>, 
-										Foldable<T>,
+										IterableFoldable<T>,
 										IterableFilterable<T>,
 										ZippingApplicativable<T>,
 										Unit<T>,

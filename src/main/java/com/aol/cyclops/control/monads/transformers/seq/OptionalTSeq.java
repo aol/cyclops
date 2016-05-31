@@ -28,7 +28,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
@@ -53,7 +53,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  */
 public class OptionalTSeq<T> implements OptionalT<T>,
                                         ValueTransformerSeq<T>,
-                                        Foldable<T>,
+                                        IterableFoldable<T>,
                                         ConvertableSequence<T>,
                                         CyclopsCollectable<T>,
                                         Sequential<T>{
@@ -735,5 +735,17 @@ public class OptionalTSeq<T> implements OptionalT<T>,
      @Override
      public <U extends Comparable<? super U>> OptionalTSeq<T> sorted(Function<? super T, ? extends U> function) {
          return (OptionalTSeq)ValueTransformerSeq.super.sorted(function);
+     }
+     @Override
+     public int hashCode(){
+         return run.hashCode();
+     }
+     
+     @Override
+     public boolean equals(Object o){
+         if(o instanceof OptionalTSeq){
+             return run.equals( ((OptionalTSeq)o).run);
+         }
+         return false;
      }
 }

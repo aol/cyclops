@@ -235,7 +235,18 @@ public class ReaderTSeq<T,R> {
     public ReactiveSeq<R> streamApply(T t) {
        return run.map(fn->fn.apply(t)).stream();
     }
-
+    @Override
+    public int hashCode(){
+        return run.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof ReaderTSeq){
+            return run.equals( ((ReaderTSeq)o).run);
+        }
+        return false;
+    }
 
  
 }
