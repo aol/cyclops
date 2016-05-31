@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -47,6 +48,45 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	public static <T> FutureW<T> of(CompletableFuture<T> f){
 		return new FutureW<>(f);
 	}
+	
+	public static <T,X extends Throwable> FutureW<T> fromTry(Try<T,X> value, Executor ex){
+	    return FutureW.ofSupplier(value,ex);
+	}
+	
+	public static <T> FutureW<T> schedule(String cron, ScheduledExecutorService ex, Supplier<T> t){
+	    CompletableFuture<T> future=  new CompletableFuture<>();
+	    FutureW<T> wrapped = FutureW.of(future);
+	    ReactiveSeq.generate(()->{
+            try{
+                future.complete(t.get());
+            }catch(Throwable t1){
+                future.completeExceptionally(t1);
+            }
+            return 1;
+            
+        }).limit(1)
+	      .schedule(cron, ex);
+	            
+	    
+	    return wrapped;
+	}
+	public static <T> FutureW<T> schedule(long delay, ScheduledExecutorService ex, Supplier<T> t){
+        CompletableFuture<T> future=  new CompletableFuture<>();
+        FutureW<T> wrapped = FutureW.of(future);
+
+        ReactiveSeq.generate(()->{
+            try{
+                future.complete(t.get());
+            }catch(Throwable t1){
+                future.completeExceptionally(t1);
+            }
+            return 1;
+            
+        }).limit(1)
+          .scheduleFixedDelay(delay, ex);
+                   
+        return wrapped;
+    }
 
     public static <T> FutureW<ListX<T>> sequence(CollectionX<FutureW<T>> fts){
         return sequence(fts.stream()).map(s->s.toListX());
@@ -295,6 +335,9 @@ public class FutureW<T> implements ConvertableFunctor<T>,
     public static <T> FutureW<T> ofSupplier(Supplier<T> s) {
        return FutureW.of(CompletableFuture.supplyAsync(s));
     }
+    public static <T> FutureW<T> ofSupplier(Supplier<T> s,Executor ex) {
+        return FutureW.of(CompletableFuture.supplyAsync(s,ex));
+     }
    
     
 	

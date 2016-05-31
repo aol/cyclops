@@ -40,7 +40,7 @@ import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
@@ -58,6 +58,7 @@ import com.aol.cyclops.util.stream.Streamable;
 import lombok.val;
 
 public interface AnyMSeq<T> extends AnyM<T>,
+                                    IterableFoldable<T>,
 									ConvertableSequence<T>,
 									ExtendedTraversable<T>,
 									Sequential<T>,
@@ -87,10 +88,10 @@ public interface AnyMSeq<T> extends AnyM<T>,
         }
         return stream();
     }
-    default Foldable<T> foldable(){
+    default IterableFoldable<T> foldable(){
         Object o = unwrap();
-        if(o instanceof Foldable){
-            return (Foldable)o;
+        if(o instanceof IterableFoldable){
+            return (IterableFoldable)o;
         }
         return stream();
     }

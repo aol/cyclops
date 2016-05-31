@@ -3,7 +3,6 @@ package com.aol.cyclops.control.monads.transformers.seq;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -20,17 +19,15 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
-import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.MaybeT;
-import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
@@ -57,7 +54,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  */
 public class MaybeTSeq<T>  implements  MaybeT<T>,
                                         ValueTransformerSeq<T>,
-                                        Foldable<T>,
+                                        IterableFoldable<T>,
                                         ConvertableSequence<T>,
                                         CyclopsCollectable<T>,
                                         Sequential<T>{  

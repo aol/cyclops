@@ -24,7 +24,7 @@ import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 public abstract class AbstractFoldableTest {
-    public abstract <T> Foldable<T> of(T...elements);
+    public abstract <T> IterableFoldable<T> of(T...elements);
     
     @Test
     public void get0(){

@@ -169,6 +169,12 @@ public interface Convertable<T> extends Iterable<T>,
 	default FutureW<T> toFutureW(){
 		return FutureW.of(toCompletableFuture());
 	}
+	default FutureW<T> toFutureWAsync(){
+        return FutureW.of(toCompletableFutureAsync());
+    }
+	default FutureW<T> toFutureWAsync(Executor ex){
+        return FutureW.of(toCompletableFutureAsync(ex));
+    }
 	/**
 	 * @return A CompletableFuture, populated immediately by a call to get
 	 */

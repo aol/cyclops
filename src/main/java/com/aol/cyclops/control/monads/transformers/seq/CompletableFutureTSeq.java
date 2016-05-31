@@ -29,7 +29,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
@@ -51,7 +51,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  */
 public class CompletableFutureTSeq<A> implements CompletableFutureT<A>, 
                                                     ValueTransformerSeq<A>,
-                                                    Foldable<A>,
+                                                    IterableFoldable<A>,
                                                     ConvertableSequence<A>,
                                                     CyclopsCollectable<A>,
                                                     Sequential<A>{

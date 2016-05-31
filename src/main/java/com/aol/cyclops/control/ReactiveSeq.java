@@ -42,7 +42,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -56,8 +55,8 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
-import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.IterableFilterable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -86,7 +85,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
                                         IterableFilterable<T>,
                                         FilterableFunctor<T>, 
                                         ExtendedTraversable<T>,
-                                        Foldable<T>,
+                                        IterableFoldable<T>,
 										CyclopsCollectable<T>,
 										JoolWindowing<T>, 
 										Seq<T>,  

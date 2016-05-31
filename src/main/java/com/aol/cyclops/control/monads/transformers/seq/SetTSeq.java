@@ -30,7 +30,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -276,7 +276,7 @@ public class SetTSeq<T>  implements SetT<T>{
        return of(run.empty());
     }
     @Override
-    public AnyM<? extends Foldable<T>> nestedFoldables() {
+    public AnyM<? extends IterableFoldable<T>> nestedFoldables() {
         return run;
        
     }

@@ -23,13 +23,11 @@ import org.jooq.lambda.tuple.Tuple4;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.control.monads.transformers.TryT;
 import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
@@ -56,7 +54,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  */
 public class XorTSeq<ST,T> implements XorT<ST,T>,
                                         ValueTransformerSeq<T>,
-                                        Foldable<T>,
+                                        IterableFoldable<T>,
                                         ConvertableSequence<T>,
                                         CyclopsCollectable<T>,
                                         Sequential<T>{
