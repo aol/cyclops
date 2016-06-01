@@ -644,14 +644,4 @@ public interface AnyMValue<T> extends AnyM<T>,
 	
 	@Override
 	<R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn);
-	
-	public static void main(String[] args) {
-		
-		System.out.println(AnyM.fromMaybe(Maybe.just(10)).flatMapFirst(i->AnyM.fromList(ListX.of(i,20,30))).stream().toList());
-		System.out.println(AnyM.fromMaybe(Maybe.just(10)).flatMapFirst(i->AnyM.fromStream(ReactiveSeq.of(i,20,30))).stream().toList());
-
-		Object first = Stream.of(Arrays.asList(1,2),Arrays.asList(3,4,5)).flatMap(l -> l.stream()).findFirst();
-		System.out.println(first);
-	}
-	
 }
