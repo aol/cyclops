@@ -77,9 +77,11 @@ public class FutureWTest {
     public void scheduleCron(){
         
         long start = System.currentTimeMillis();
-        String res = FutureW.schedule("*/2 * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello")
+        FutureW.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello")
                             .get();
         
+        String res = FutureW.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello")
+                .get();
         assertThat(1000l,lessThan(System.currentTimeMillis()-start));
         assertThat(res,equalTo("hello"));
         
