@@ -48,12 +48,12 @@ import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AllArgsConstructor;
 
+@FunctionalInterface
 public interface Value<T> extends Supplier<T>, 
                                   Foldable<T>, 
                                   Convertable<T>,
                                   Publisher<T>,
-                                  Predicate<T>,
-                                  CyclopsCollectable<T>{
+                                  Predicate<T>{
     
     
 
@@ -284,8 +284,5 @@ public interface Value<T> extends Supplier<T>,
 	    return Convertable.super.toList();
 	}
 	
-	default Collectable<T> collectable() {
-	    return this;
-	}
 	
 }

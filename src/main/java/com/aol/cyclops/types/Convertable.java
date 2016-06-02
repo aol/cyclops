@@ -9,10 +9,12 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.control.Eval;
@@ -36,12 +38,21 @@ public interface Convertable<T> extends Iterable<T>,
                                         Supplier<T>,
                                         Visitable<T>{
     
+    default <R, A> R collect(Collector<? super T, A, R> collector){
+        return toStream().collect(collector);
+    }
+    default <R> R collect(Supplier<R> supplier,
+            BiConsumer<R, ? super T> accumulator,
+            BiConsumer<R, R> combiner){
+        return toStream().collect(supplier,accumulator,combiner);
+    }
     /* Present is executed and it's return value returned if the value is both present, otherwise absent is called and its return value returned
      * 
      * (non-Javadoc)
      * @see com.aol.cyclops.types.Visitable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     default <R> R visit(Function<? super T,? extends R> present,Supplier<? extends R> absent){
+      
         if(isPresent()){
             try{
                 T value = get();
