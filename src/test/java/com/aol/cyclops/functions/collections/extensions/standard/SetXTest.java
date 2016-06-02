@@ -18,6 +18,7 @@ public class SetXTest extends AbstractCollectionXTest{
 		return SetX.of(values);
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
 	 */
