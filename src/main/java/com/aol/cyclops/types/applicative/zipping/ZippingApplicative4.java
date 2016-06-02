@@ -25,10 +25,10 @@ public interface ZippingApplicative4<T,T2,T3,T4,R, D extends IterableFunctor<R>>
 	//<U extends Functor<Function<? super T,? extends R>> & Convertable<Function<? super T,? extends R>>> U delegate();
 	IterableFunctor<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>>>  delegate();
 	
-	default ZippingApplicative3<T2,T3,T4,R,D> ap(IterableFunctor<T> f){
+	default ZippingApplicative3<T2,T3,T4,R,D> ap(Iterable<? extends T> f){
 	
 		Iterator<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>>> fn = delegate().iterator();
-		Iterator<T> it = f.iterator();
+		Iterator<? extends T> it = f.iterator();
 		return ()-> (IterableFunctor)delegate().unitIterator(ReactiveSeq.fromIterator(fn).zip(ReactiveSeq.fromIterator(it))
 								 .map(t->t.v1.apply(t.v2)).iterator());
 		

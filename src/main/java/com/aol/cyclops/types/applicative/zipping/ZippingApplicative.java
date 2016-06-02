@@ -22,9 +22,9 @@ public interface ZippingApplicative<T,R, D extends IterableFunctor<R>> extends F
 	
 	IterableFunctor<Function<? super T,? extends R>>  delegate();
 	
-	default<T2> D ap(IterableFunctor<T> f){
+	default<T2> D ap(Iterable<? extends T> f){
 		Iterator<Function<? super T,? extends R>> fn = delegate().iterator();
-		Iterator<T> it = f.iterator();
+		Iterator<? extends T> it = f.iterator();
 		return (D) delegate().unitIterator(ReactiveSeq.fromIterator(fn).zip(ReactiveSeq.fromIterator(it))
 								 .map(t->t.v1.apply(t.v2)).iterator());		
 	}

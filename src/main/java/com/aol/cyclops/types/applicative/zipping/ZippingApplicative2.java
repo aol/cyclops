@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.function.Function;
 
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFunctor;
 
@@ -27,10 +26,10 @@ public interface ZippingApplicative2<T,T2,R, D extends IterableFunctor<R>> exten
 	//<U extends Functor<Function<? super T,? extends R>> & Convertable<Function<? super T,? extends R>>> U delegate();
 	IterableFunctor<Function<? super T,Function<? super T2,? extends R>>>  delegate();
 	
-	default ZippingApplicative<T2,R,D> ap(IterableFunctor<T> f){
+	default ZippingApplicative<T2,R,D> ap(Iterable<? extends T> f){
 	
 		Iterator<Function<? super T,Function<? super T2,? extends R>>> fn = delegate().iterator();
-		Iterator<T> it = f.iterator();
+		Iterator<? extends T> it = f.iterator();
 		return ()-> (IterableFunctor)delegate().unitIterator(ReactiveSeq.fromIterator(fn).zip(ReactiveSeq.fromIterator(it))
 								 .map(t->t.v1.apply(t.v2)).iterator());
 		
