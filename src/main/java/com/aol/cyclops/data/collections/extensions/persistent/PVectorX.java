@@ -426,8 +426,19 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 		
 		return (PVectorX<R>)PersistentCollectionX.super.zip(other, zipper);
 	}
+	@Override
+    default <U, R> PVectorX<R> zip(Seq<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (PVectorX<R>)PersistentCollectionX.super.zip(other, zipper);
+    }
 
-
+	@Override
+    default <U, R> PVectorX<R> zip(Stream<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (PVectorX<R>)PersistentCollectionX.super.zip(other, zipper);
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
 	 */
@@ -519,9 +530,9 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> PVectorX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+	default <U> PVectorX<Tuple2<T, U>> zip(Stream<? extends U> other) {
 		
-		return (PVectorX)PersistentCollectionX.super.zipStream(other);
+		return (PVectorX)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
@@ -543,10 +554,10 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4> PVectorX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4> PVectorX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
-		return (PVectorX<Tuple4<T, T2, T3, T4>>)PersistentCollectionX.super.zip4(second, third, fourth);
+		return (PVectorX)PersistentCollectionX.super.zip4(second, third, fourth);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipWithIndex()

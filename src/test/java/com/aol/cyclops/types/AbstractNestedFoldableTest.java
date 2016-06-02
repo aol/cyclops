@@ -70,11 +70,11 @@ public abstract class AbstractNestedFoldableTest {
     }
     @Test
     public void visitMaybe() {
-        assertThat(of(1,2,3,4).visit((a, b)->"world").single(),equalTo("world"));
+        assertThat(of(1,2,3,4).visit((a, b)->"world",()->"hello").single(),equalTo("world"));
     }
     @Test
     public void visitMaybeEmpty() {
-        assertThat(this.<Integer>empty().visit((a, b)->a.orElseGet(()->10)).single(),equalTo(10));
+        assertThat(this.<Integer>empty().visit((a, b)->a,()->10).single(),equalTo(10));
     }
     
 

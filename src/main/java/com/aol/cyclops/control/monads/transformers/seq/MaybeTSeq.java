@@ -395,14 +395,30 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
         
          return (MaybeTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
      }
+     @Override
+     public <U, R> MaybeTSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+         return (MaybeTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+     }
+     @Override
+     public <U, R> MaybeTSeq<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+         return (MaybeTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+     }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
       */
      @Override
-     public <U> MaybeTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+     public <U> MaybeTSeq<Tuple2<T, U>> zip(Stream<? extends U> other) {
         
-         return (MaybeTSeq)ValueTransformerSeq.super.zipStream(other);
+         return (MaybeTSeq)ValueTransformerSeq.super.zip(other);
      }
+     @Override
+     public <U> MaybeTSeq<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        
+         return (MaybeTSeq)ValueTransformerSeq.super.zip(other);
+     }
+     
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
       */
@@ -423,10 +439,10 @@ public class MaybeTSeq<T>  implements  MaybeT<T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
       */
      @Override
-     public <T2, T3, T4> MaybeTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-             Stream<T4> fourth) {
+     public <T2, T3, T4> MaybeTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+             Stream<? extends T4> fourth) {
         
-         return (MaybeTSeq<Tuple4<T, T2, T3, T4>>)ValueTransformerSeq.super.zip4(second, third, fourth);
+         return (MaybeTSeq)ValueTransformerSeq.super.zip4(second, third, fourth);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipWithIndex()

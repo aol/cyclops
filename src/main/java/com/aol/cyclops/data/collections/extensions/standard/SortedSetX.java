@@ -344,7 +344,14 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	default <U, R> SortedSetX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 		return (SortedSetX<R>)MutableCollectionX.super.zip(other, zipper);
 	}
-
+	@Override
+    default <U, R> SortedSetX<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (SortedSetX<R>)MutableCollectionX.super.zip(other, zipper);
+    }
+	@Override
+    default <U, R> SortedSetX<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (SortedSetX<R>)MutableCollectionX.super.zip(other, zipper);
+    }
 	default SortedSetX<ListX<T>> sliding(int windowSize){
 		return (SortedSetX<ListX<T>>)(SortedSetX<T>)MutableCollectionX.super.sliding(windowSize); 
 	}
@@ -418,12 +425,12 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
         return this.stream().cycleUntil(predicate).toListX();
     }
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zipStream(java.util.stream.Stream)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> SortedSetX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+	default <U> SortedSetX<Tuple2<T, U>> zip(Stream<? extends U> other) {
 		
-		return (SortedSetX)MutableCollectionX.super.zipStream(other);
+		return (SortedSetX)MutableCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(org.jooq.lambda.Seq)
@@ -445,10 +452,10 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4> SortedSetX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4> SortedSetX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
-		return (SortedSetX<Tuple4<T, T2, T3, T4>>)MutableCollectionX.super.zip4(second, third, fourth);
+		return (SortedSetX)MutableCollectionX.super.zip4(second, third, fourth);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zipWithIndex()

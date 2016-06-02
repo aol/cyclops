@@ -62,6 +62,7 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
     private final AnyMSeq<Xor<ST,T>> run;
 
     private XorTSeq(final AnyMSeq<Xor<ST,T>> run) {
+        
         this.run = run;
     }
 
@@ -401,19 +402,31 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
         
          return (XorTSeq<ST,R>)ValueTransformerSeq.super.zip(other, zipper);
      }
-     /* (non-Javadoc)
-      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
-      */
      @Override
-     public <U> XorTSeq<ST,Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+     public <U, R> XorTSeq<ST,R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         
-         return (XorTSeq)ValueTransformerSeq.super.zipStream(other);
+         return (XorTSeq<ST,R>)ValueTransformerSeq.super.zip(other, zipper);
+     }
+     @Override
+     public <U, R> XorTSeq<ST,R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+         return (XorTSeq<ST,R>)ValueTransformerSeq.super.zip(other, zipper);
      }
      /* (non-Javadoc)
-      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
+      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.util.stream.Stream)
       */
      @Override
+     public <U> XorTSeq<ST,Tuple2<T, U>> zip(Stream<? extends U> other) {
+        
+         return (XorTSeq)ValueTransformerSeq.super.zip(other);
+     }
+     @Override
      public <U> XorTSeq<ST,Tuple2<T, U>> zip(Seq<? extends U> other) {
+        
+         return (XorTSeq)ValueTransformerSeq.super.zip(other);
+     }
+     @Override
+     public <U> XorTSeq<ST,Tuple2<T, U>> zip(Iterable<? extends U> other) {
         
          return (XorTSeq)ValueTransformerSeq.super.zip(other);
      }
@@ -429,10 +442,10 @@ public class XorTSeq<ST,T> implements XorT<ST,T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
       */
      @Override
-     public <T2, T3, T4> XorTSeq<ST,Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-             Stream<T4> fourth) {
+     public <T2, T3, T4> XorTSeq<ST,Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+             Stream<? extends T4> fourth) {
         
-         return (XorTSeq<ST,Tuple4<T, T2, T3, T4>>)ValueTransformerSeq.super.zip4(second, third, fourth);
+         return (XorTSeq)ValueTransformerSeq.super.zip4(second, third, fourth);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipWithIndex()

@@ -16,7 +16,7 @@ public class StreamableTSeqTraversableTest extends AbstractTraversableTest {
 
     @Test
     public void streamable(){
-        Streamable.of(1,2,3).zipStream(Stream.of(1,2,3)).printOut();
+        Streamable.of(1,2,3).zip(Stream.of(1,2,3)).printOut();
     }
     @Override
     public <T> Traversable<T> of(T... elements) {

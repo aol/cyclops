@@ -148,7 +148,22 @@ public interface ReactiveSeq<T> extends Unwrapable,
 		
 		return ReactiveSeq.fromStream(Seq.zip(this,other,zipper));
 	}
-
+	/*
+     * (non-Javadoc)
+     * 
+     * @see org.jooq.lambda.Seq#zip(org.jooq.lambda.Seq,
+     * java.util.function.BiFunction)
+     */
+	@Override
+    default <U, R> ReactiveSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return zip((Iterable<? extends U>)other,zipper);
+    }
+	@Override
+    default <U, R> ReactiveSeq<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return zip((Iterable<? extends U>)ReactiveSeq.fromStream(other),zipper);
+    }
 	
 
 	/* (non-Javadoc)
@@ -403,7 +418,14 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * 
 	 */
 	@Override
-	<U> ReactiveSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other);
+	default <U> ReactiveSeq<Tuple2<T, U>> zip(Stream<? extends U> other){
+	    return zip(Seq.seq(other));
+	}
+	@Override
+    default <U> ReactiveSeq<Tuple2<T, U>> zip(Iterable<? extends U> other){
+	    return zip(Seq.seq(other));
+	}
+	
 
 	/**
 	 * Zip 2 streams into one
@@ -452,7 +474,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * </pre>
 	 */
 	@Override
-	<T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third, Stream<T4> fourth);
+	<T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third, Stream<? extends T4> fourth);
 
 	/**
 	 * Add an index to the current Stream
@@ -468,41 +490,6 @@ public interface ReactiveSeq<T> extends Unwrapable,
 		return fromStream(JoolManipulation.super.zipWithIndex());
 	}
 
-	/**
-	 * Generic zip function. E.g. Zipping a Stream and an Optional
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	Stream&lt;List&lt;Integer&gt;&gt; zipped = asMonad(Stream.of(1, 2, 3)).zip(asMonad(Optional.of(2)), (a, b) -&gt; Arrays.asList(a, b));
-	 * 	// [[1,2]]
-	 * }
-	 * </pre>
-	 * 
-	 * @param second
-	 *            Monad to zip with
-	 * @param zipper
-	 *            Zipping function
-	 * @return Stream zipping two Monads
-	 */
-	<S, R> ReactiveSeq<R> zipSequence(ReactiveSeq<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper);
-
-	/**
-	 * Zip this ReactiveSeq against any monad type.
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	Stream&lt;List&lt;Integer&gt;&gt; zipped = anyM(Stream.of(1, 2, 3)).asSequence().zip(anyM(Optional.of(2)), (a, b) -&gt; Arrays.asList(a, b)).toStream();
-	 * 
-	 * 	List&lt;Integer&gt; zip = zipped.collect(Collectors.toList()).get(0);
-	 * 	assertThat(zip.get(0), equalTo(1));
-	 * 	assertThat(zip.get(1), equalTo(2));
-	 * }
-	 * </pre>
-	 * 
-	 */
-	<S, R> ReactiveSeq<R> zipAnyM(AnyM<? extends S> second, BiFunction<? super T, ? super S, ? extends R> zipper);
 
 	/**
 	 * Zip this Monad with a Stream
@@ -2730,13 +2717,8 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 */
 	<U> ReactiveSeq<T> distinct(Function<? super T, ? extends U> keyExtractor);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jooq.lambda.Seq#zip(org.jooq.lambda.Seq,
-	 * java.util.function.BiFunction)
-	 */
-	<U, R> ReactiveSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
+	
+	
 
 	/*
 	 * (non-Javadoc)

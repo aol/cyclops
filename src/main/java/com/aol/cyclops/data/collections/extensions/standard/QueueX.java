@@ -335,6 +335,16 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 		
 		return (QueueX<R>)MutableCollectionX.super.zip(other, zipper);
 	}
+	@Override
+    default <U, R> QueueX<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (QueueX<R>)MutableCollectionX.super.zip(other, zipper);
+    }
+	@Override
+    default <U, R> QueueX<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (QueueX<R>)MutableCollectionX.super.zip(other, zipper);
+    }
 
 	default QueueX<ListX<T>> sliding(int windowSize){
 		return (QueueX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
@@ -440,12 +450,12 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zipStream(java.util.stream.Stream)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.util.stream.Stream)
 	 */
 	@Override
-	default <U>  QueueX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+	default <U>  QueueX<Tuple2<T, U>> zip(Stream<? extends U> other) {
 		
-		return (QueueX)MutableCollectionX.super.zipStream(other);
+		return (QueueX)MutableCollectionX.super.zip(other);
 	}
 
 	/* (non-Javadoc)
@@ -470,10 +480,10 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4>  QueueX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4>  QueueX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
-		return (QueueX<Tuple4<T, T2, T3, T4>>)MutableCollectionX.super.zip4(second, third, fourth);
+		return (QueueX)MutableCollectionX.super.zip4(second, third, fourth);
 	}
 
 	/* (non-Javadoc)

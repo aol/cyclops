@@ -1,5 +1,9 @@
 package com.aol.cyclops.control.anym.transformers.seq;
 
+import java.util.Arrays;
+
+import org.junit.Test;
+
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
@@ -22,6 +26,10 @@ public class ListTListTest extends AbstractAnyMSeqOrderedDependentTest{
 	}
 	
 	
-
+	@Test
+	public void listT(){
+	    //check this issue doesn't affect cyclops-react ListT : https://github.com/scalaz/scalaz/pull/166
+	    ListT.fromIterable(Arrays.asList(ListX.range(0,2000))).map(i->i*2).printOut();
+	}
 }
 

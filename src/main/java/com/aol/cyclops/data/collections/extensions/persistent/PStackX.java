@@ -475,6 +475,18 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 		
 		return (PStackX<R>)PersistentCollectionX.super.zip(other, zipper);
 	}
+	@Override
+    default <U, R> PStackX<R> zip(Seq<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (PStackX<R>)PersistentCollectionX.super.zip(other, zipper);
+    }
+	@Override
+    default <U, R> PStackX<R> zip(Stream<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (PStackX<R>)PersistentCollectionX.super.zip(other, zipper);
+    }
 
 
 	/* (non-Javadoc)
@@ -568,9 +580,9 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> PStackX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+	default <U> PStackX<Tuple2<T, U>> zip(Stream<? extends U> other) {
 		
-		return (PStackX)PersistentCollectionX.super.zipStream(other);
+		return (PStackX)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
@@ -592,10 +604,10 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4> PStackX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4> PStackX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
-		return (PStackX<Tuple4<T, T2, T3, T4>>)PersistentCollectionX.super.zip4(second, third, fourth);
+		return (PStackX)PersistentCollectionX.super.zip4(second, third, fourth);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipWithIndex()

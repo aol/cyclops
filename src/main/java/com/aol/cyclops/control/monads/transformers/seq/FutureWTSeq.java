@@ -352,13 +352,28 @@ public class FutureWTSeq<A> implements FutureWT<A>,
        
         return (FutureWTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
     }
+    @Override
+    public <U, R> FutureWTSeq<R> zip(Stream<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+       
+        return (FutureWTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+    }
+    @Override
+    public <U, R> FutureWTSeq<R> zip(Seq<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+       
+        return (FutureWTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+    }
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    public <U> FutureWTSeq<Tuple2<A, U>> zipStream(Stream<? extends U> other) {
+    public <U> FutureWTSeq<Tuple2<A, U>> zip(Stream<? extends U> other) {
        
-        return (FutureWTSeq)ValueTransformerSeq.super.zipStream(other);
+        return (FutureWTSeq)ValueTransformerSeq.super.zip(other);
+    }
+    @Override
+    public <U> FutureWTSeq<Tuple2<A, U>> zip(Iterable<? extends U> other) {
+       
+        return (FutureWTSeq)ValueTransformerSeq.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
@@ -380,10 +395,10 @@ public class FutureWTSeq<A> implements FutureWT<A>,
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> FutureWTSeq<Tuple4<A, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-            Stream<T4> fourth) {
+    public <T2, T3, T4> FutureWTSeq<Tuple4<A, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+            Stream<? extends T4> fourth) {
        
-        return (FutureWTSeq<Tuple4<A, T2, T3, T4>>)ValueTransformerSeq.super.zip4(second, third, fourth);
+        return (FutureWTSeq)ValueTransformerSeq.super.zip4(second, third, fourth);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipWithIndex()

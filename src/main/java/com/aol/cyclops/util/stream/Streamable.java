@@ -101,16 +101,25 @@ public interface Streamable<T> extends ToStream<T>,
        
         return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
     }
-
+    @Override
+    default <U, R> Streamable<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+       
+        return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
+    }
+    @Override
+    default <U, R> Streamable<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+       
+        return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
+    }
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
+     * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Streamable<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+    default <U> Streamable<Tuple2<T, U>> zip(Stream<? extends U> other) {
        
-        return Streamable.fromIterable(ZippingApplicativable.super.zipStream(other));
+        return Streamable.fromIterable(ZippingApplicativable.super.zip(other));
     }
 
 
@@ -130,8 +139,8 @@ public interface Streamable<T> extends ToStream<T>,
      * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-            Stream<T4> fourth) {
+    default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+            Stream<? extends T4> fourth) {
        
         return Streamable.fromIterable(ZippingApplicativable.super.zip4(second, third, fourth));
     }
@@ -910,12 +919,17 @@ public interface Streamable<T> extends ToStream<T>,
     	 * </pre>
     	 * 
     	 */
-    	default <U> Streamable<Tuple2<T, U>> zip(Streamable<U> other){
-    		return fromStream(reactiveSeq().zip(other.reactiveSeq()));
+    	@Override
+    	default <U> Streamable<Tuple2<T, U>> zip(Iterable<? extends U> other){
+    		return fromStream(reactiveSeq().zip(other));
     	}
-    	default <U,R> Streamable<R> zip(Streamable<U> other,BiFunction<T, U, R> zipper){
-    		return fromStream(reactiveSeq().zip(other.reactiveSeq(), zipper));
-    	}
+    	@Override
+        default <U> Streamable<Tuple2<T, U>> zip(Seq<? extends U> other){
+            return fromStream(reactiveSeq().zip(other));
+        }
+    	
+    	
+    	
     	/**
     	 * zip 3 Streams into one
     	 * <pre>
@@ -945,7 +959,7 @@ public interface Streamable<T> extends ToStream<T>,
     	 *  //[[1,100,'a',"hello"],[2,200,'b',"world"]]
     	 * </pre>
     	 */
-    	 default <T2,T3,T4> Streamable<Tuple4<T,T2,T3,T4>> zip4(Streamable<T2> second,Streamable<T3> third,Streamable<T4> fourth){
+    	 default <T2,T3,T4> Streamable<Tuple4<T,T2,T3,T4>> zip4(Streamable<? extends T2> second,Streamable<? extends T3> third,Streamable<? extends T4> fourth){
     		 return fromStream(reactiveSeq().zip4(second.reactiveSeq(),third.reactiveSeq(),fourth.reactiveSeq()));
     	 }
     	/** 
@@ -960,51 +974,7 @@ public interface Streamable<T> extends ToStream<T>,
     	default Streamable<Tuple2<T,Long>> zipWithIndex(){
     		return fromStream(reactiveSeq().zipWithIndex());
     	}
-    	/**
-    	 * Generic zip function. E.g. Zipping a Stream and an Optional
-    	 * 
-    	 * <pre>
-    	 * {
-    	 * 	&#064;code
-    	 * 	Stream&lt;List&lt;Integer&gt;&gt; zipped = asMonad(Stream.of(1, 2, 3)).zip(
-    	 * 			asMonad(Optional.of(2)), (a, b) -&gt; Arrays.asList(a, b));
-    	 * 	// [[1,2]]
-    	 * }
-    	 * </pre>
-    	 * 
-    	 * @param second
-    	 *            Monad to zip with
-    	 * @param zipper
-    	 *            Zipping function
-    	 * @return Stream zipping two Monads
-    	 */
-    	default <S, R> Streamable<R> zipStreamable(Streamable<? extends S> second,
-    			BiFunction<? super T, ? super S, ? extends R> zipper) {
-    		return fromStream(reactiveSeq().zipSequence(second.reactiveSeq(), zipper));
-    	}
-    	/**
-    	 * Zip this Streamable against any monad type.
-    	 * 
-    	 * <pre>
-    	 * {@code
-    	 * Stream<List<Integer>> zipped = anyM(Stream.of(1,2,3))
-    										.asSequence()
-    										.zip(anyM(Optional.of(2)), 
-    											(a,b) -> Arrays.asList(a,b)).toStream();
-    		
-    		
-    		List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
-    		assertThat(zip.get(0),equalTo(1));
-    		assertThat(zip.get(1),equalTo(2));
-    	 * }
-    	 * </pre>
-    	 * 
-    	 */
-    	default <S, R> Streamable<R> zipAnyM(AnyMSeq<? extends S> second,
-    			BiFunction<? super T, ? super S, ? extends R> zipper){
-    		return fromStream(reactiveSeq().zipAnyM(second, zipper));
-    	}
-
+    	
     	/**
     	 * Zip this Monad with a Stream
     	 * 

@@ -177,6 +177,12 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	default <U, R> PersistentCollectionX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
 		return from(this.<R>monoid().mapReduce(stream().zip(other,zipper)));
 	}
+	default <U, R> PersistentCollectionX<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
+        return from(this.<R>monoid().mapReduce(stream().zip(other,zipper)));
+    }
+	default <U, R> PersistentCollectionX<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
+        return from(this.<R>monoid().mapReduce(stream().zip(other,zipper)));
+    }
 	default PersistentCollectionX<ListX<T>> sliding(int windowSize){
 		return from(this.<ListX<T>>monoid().mapReduce(stream().sliding(windowSize)));
 	}
@@ -235,10 +241,11 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> PersistentCollectionX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+	default <U> PersistentCollectionX<Tuple2<T, U>> zip(Stream<? extends U> other) {
 		
-		return from(this.<Tuple2<T, U>>monoid().mapReduce(stream().zipStream(other)));
+		return from(this.<Tuple2<T, U>>monoid().mapReduce(stream().zip(other)));
 	}
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(org.jooq.lambda.Seq)
 	 */
@@ -259,8 +266,8 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T>{
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4> PersistentCollectionX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4> PersistentCollectionX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
 		return from(this.<Tuple4<T, T2, T3, T4>> monoid().mapReduce(stream().zip4(second, third, fourth)));
 	}

@@ -153,7 +153,7 @@ public class MatchableTest implements Printable{
 		
 		Matchables.supplier2(()->"hello",()->ListX.of(1,2,3))
 	 			    .visit((num,list)-> just(list).orElse(ListX.empty())
-	 											  .visit((x,xs)-> xs.toList()));
+	 											  .visit((x,xs)-> xs.toList(),()->ListX.empty()));
 	 			     
 		String v  =new Address(10,"hello","my city").match()
 							   			 .on$12_()

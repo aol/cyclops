@@ -236,7 +236,7 @@ public class ZippingTest {
 
 	@Test
 	public void testZipDifferingLengthStream() {
-		List<Tuple2<Integer, String>> list = of(1, 2).zipStream(of("a", "b", "c", "d")).toList();
+		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
 
 		assertEquals(2, list.size());
 		assertTrue(asList(1, 2).contains(list.get(0).v1));
@@ -252,7 +252,7 @@ public class ZippingTest {
 		final ReactiveSeq<Integer> second = of(1, 2, 3, 4);
 
 		
-		final ReactiveSeq<String> zipped = first.zipSequence(second, (a, b) -> a + b);
+		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
@@ -261,7 +261,7 @@ public class ZippingTest {
 	public void shouldTrimFirstFixedSeqIfLongerSequence() throws Exception {
 		final ReactiveSeq<String> first = of("A", "B", "C","D");
 		final ReactiveSeq<Integer> second = of(1, 2, 3);
-		final ReactiveSeq<String> zipped = first.zipSequence(second, (a, b) -> a + b);
+		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));

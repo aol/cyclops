@@ -42,11 +42,7 @@ public interface IterableFoldable<T> extends Foldable<T>,
         return ifEmpty.get();
         
     }
-    default <R> R visit(BiFunction<? super Maybe<T>,? super ReactiveSeq<T>,? extends R> match){
-        HeadAndTail<T> ht = foldable().headAndTail();
-       return match.apply(ht.headMaybe(),ht.tail());
-        
-    }
+    
     /**
      * extract head and tail together, where head is expected to be present
      * 

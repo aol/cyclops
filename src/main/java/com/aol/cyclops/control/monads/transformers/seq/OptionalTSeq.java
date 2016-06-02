@@ -364,13 +364,28 @@ public class OptionalTSeq<T> implements OptionalT<T>,
         
          return (OptionalTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
      }
+     @Override
+     public <U, R> OptionalTSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+         return (OptionalTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+     }
+     @Override
+     public <U, R> OptionalTSeq<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+         return (OptionalTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+     }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
       */
      @Override
-     public <U> OptionalTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+     public <U> OptionalTSeq<Tuple2<T, U>> zip(Stream<? extends U> other) {
         
-         return (OptionalTSeq)ValueTransformerSeq.super.zipStream(other);
+         return (OptionalTSeq)ValueTransformerSeq.super.zip(other);
+     }
+     @Override
+     public <U> OptionalTSeq<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        
+         return (OptionalTSeq)ValueTransformerSeq.super.zip(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
@@ -380,6 +395,7 @@ public class OptionalTSeq<T> implements OptionalT<T>,
         
          return (OptionalTSeq)ValueTransformerSeq.super.zip(other);
      }
+     
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
       */
@@ -392,10 +408,10 @@ public class OptionalTSeq<T> implements OptionalT<T>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
       */
      @Override
-     public <T2, T3, T4> OptionalTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-             Stream<T4> fourth) {
+     public <T2, T3, T4> OptionalTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+             Stream<? extends T4> fourth) {
         
-         return (OptionalTSeq<Tuple4<T, T2, T3, T4>>)ValueTransformerSeq.super.zip4(second, third, fourth);
+         return (OptionalTSeq)ValueTransformerSeq.super.zip4(second, third, fourth);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipWithIndex()

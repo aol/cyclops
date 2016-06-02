@@ -1955,6 +1955,15 @@ public interface LazyFutureStream<U> extends Functor<U>,
     default <T> LazyFutureStream<Tuple2<U, T>> zip(Seq<? extends T> other) {
         return fromStream(LazyFutureStreamFunctions.zip(this, other));
     }
+    @Override
+    default <T> LazyFutureStream<Tuple2<U, T>> zip(Stream<? extends T> other) {
+        return fromStream(LazyFutureStreamFunctions.zip(this, other));
+    }
+    @Override
+    default <T> LazyFutureStream<Tuple2<U, T>> zip(Iterable<? extends T> other) {
+        return fromStream(LazyFutureStreamFunctions.zip(this, ReactiveSeq.fromIterable(other)));
+    }
+   
 
     /**
      * Zip two streams into one using a {@link BiFunction} to produce resulting
@@ -1973,6 +1982,16 @@ public interface LazyFutureStream<U> extends Functor<U>,
         return fromStream(LazyFutureStreamFunctions.zip(this, other, zipper));
     }
 
+    @Override
+    default <T, R> LazyFutureStream<R> zip(Stream<? extends T> other,
+            BiFunction<? super U, ? super T,? extends R> zipper) {
+        return fromStream(LazyFutureStreamFunctions.zip(this, ReactiveSeq.fromStream(other), zipper));
+    }
+    @Override
+    default <T, R> LazyFutureStream<R> zip(Iterable<? extends T> other,
+            BiFunction<? super U, ? super T,? extends R> zipper) {
+        return fromStream(LazyFutureStreamFunctions.zip(this, ReactiveSeq.fromIterable(other), zipper));
+    }
     /**
      * Scan a stream to the left.
      *
@@ -2643,17 +2662,6 @@ public interface LazyFutureStream<U> extends Functor<U>,
 
     }
 
-  
-
-
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#zipStream(java.util.stream.Stream)
-     */
-    @Override
-    default <R> LazyFutureStream<Tuple2<U, R>> zipStream(Stream<? extends R> other) {
-        return  (LazyFutureStream) fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).zipStream(other));
-
-    }
 
 
     /*
@@ -2671,33 +2679,14 @@ public interface LazyFutureStream<U> extends Functor<U>,
      */
     @Override
     default <T2, T3, T4> LazyFutureStream<Tuple4<U, T2, T3, T4>> zip4(
-            Stream<T2> second, Stream<T3> third, Stream<T4> fourth) {
+            Stream<? extends T2> second, Stream<? extends T3> third, Stream<? extends T4> fourth) {
         return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).zip4(second,third,fourth));
 
     }
 
 
 
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#zipSequence(com.aol.cyclops.control.ReactiveSeq, java.util.function.BiFunction)
-     */
-    @Override
-    default <S, R> LazyFutureStream<R> zipSequence(ReactiveSeq<? extends S> second,
-            BiFunction<? super U, ? super S, ? extends R> zipper) {
-        return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).zipSequence(second,zipper));
-
-    }
-
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#zipAnyM(com.aol.cyclops.monad.AnyM, java.util.function.BiFunction)
-     */
-    @Override
-    default <S, R> LazyFutureStream<R> zipAnyM(AnyM<? extends S> second,
-            BiFunction<? super U, ? super S, ? extends R> zipper) {
-        return  fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).zipAnyM(second,zipper));
-
-    }
-
+    
     /*
      * @see com.aol.cyclops.control.ReactiveSeq#zipStream(java.util.stream.BaseStream, java.util.function.BiFunction)
      */

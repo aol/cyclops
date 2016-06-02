@@ -67,10 +67,7 @@ public interface NestedFoldable<T> {
     default <R> AnyM<R> visit(BiFunction<? super T,? super ReactiveSeq<T>,? extends R> match, Supplier<? extends R> ifEmpty){
         return nestedFoldables().map(s->s.visit(match,ifEmpty)); 
     }
-    default <R> AnyM<R> visit(BiFunction<? super Maybe<T>,? super ReactiveSeq<T>,? extends R> match){
-        return nestedFoldables().map(s->s.visit(match));
-        
-    }
+   
         
     /**
      * Attempt to map this Sequence to the same type as the supplied Monoid
