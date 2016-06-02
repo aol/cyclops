@@ -360,7 +360,18 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 		
 		return (PBagX<R>)PersistentCollectionX.super.zip(other, zipper);
 	}
-
+	@Override
+    default <U, R> PBagX<R> zip(Seq<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (PBagX<R>)PersistentCollectionX.super.zip(other, zipper);
+    }
+	@Override
+    default <U, R> PBagX<R> zip(Stream<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (PBagX<R>)PersistentCollectionX.super.zip(other, zipper);
+    }
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
@@ -463,15 +474,13 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
+	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> PBagX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
-		
-		return (PBagX)PersistentCollectionX.super.zipStream(other);
+	default <U> PBagX<Tuple2<T, U>> zip(Stream<? extends U> other) {
+		return (PBagX)PersistentCollectionX.super.zip(other);
 	}
-
-
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
 	 */
@@ -496,10 +505,10 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4> PBagX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4> PBagX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
-		return (PBagX<Tuple4<T, T2, T3, T4>>)PersistentCollectionX.super.zip4(second, third, fourth);
+		return (PBagX)PersistentCollectionX.super.zip4(second, third, fourth);
 	}
 
 

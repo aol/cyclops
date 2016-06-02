@@ -359,12 +359,36 @@ public class ListTSeq<T> implements ListT<T>{
         return (ListTSeq<R>)ListT.super.zip(other, zipper);
     }
     /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.ListT#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> ListTSeq<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+       
+        return (ListTSeq<R>)ListT.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.ListT#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> ListTSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+       
+        return (ListTSeq<R>)ListT.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> ListTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+    public <U> ListTSeq<Tuple2<T, U>> zip(Stream<? extends U> other) {
        
-        return (ListTSeq)ListT.super.zipStream(other);
+        return (ListTSeq)ListT.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.ListT#zip(java.lang.Iterable)
+     */
+    @Override
+    public <U> ListTSeq<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+       
+        return (ListTSeq)ListT.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip(org.jooq.lambda.Seq)
@@ -386,10 +410,10 @@ public class ListTSeq<T> implements ListT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> ListTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-            Stream<T4> fourth) {
+    public <T2, T3, T4> ListTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+            Stream<? extends T4> fourth) {
        
-        return (ListTSeq<Tuple4<T, T2, T3, T4>>)ListT.super.zip4(second, third, fourth);
+        return (ListTSeq)ListT.super.zip4(second, third, fourth);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zipWithIndex()

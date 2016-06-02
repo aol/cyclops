@@ -43,6 +43,14 @@ import lombok.EqualsAndHashCode;
 
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {
     
+  
+    @Test
+    public void whenNilOrNotJoinWithFirstElement(){
+        
+        
+        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
+        assertThat(res,equalTo("2world3"));
+    }
     @Test
     public void sortedComparator() {
         assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),is(Arrays.asList(5,4,3,2,1)));
@@ -379,14 +387,14 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 	        assertThat(of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
 	                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
 	    }	
-	@Test
-	public void whenGreaterThan2(){
-		String res=	of(5,2,3).visit((x,xs)->
-								xs.join(x.visit(some-> (int)some>2? "hello" : "world",()->"boo!"))
-					);
-		assertThat(res,equalTo("2hello3"));
-	}
-	
+
+    @Test
+    public void whenGreaterThan2() {
+        String res = of(5, 2, 3).visit((x, xs) -> xs.join(x > 2 ? "hello" : "world"), () -> "boo!");
+
+        assertThat(res, equalTo("2hello3"));
+    }
+
 	@Test
 	public void headTailReplay() {
 

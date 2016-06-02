@@ -298,18 +298,11 @@ public class StreamTSeq<T> implements StreamT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> StreamTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
-       
-        return (StreamTSeq)StreamT.super.zipStream(other);
-    }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.StreamT#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    public <U> StreamTSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
+    public <U> StreamTSeq<Tuple2<T, U>> zip(Stream<? extends U> other) {
        
         return (StreamTSeq)StreamT.super.zip(other);
     }
+   
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
@@ -322,10 +315,10 @@ public class StreamTSeq<T> implements StreamT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> StreamTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-            Stream<T4> fourth) {
+    public <T2, T3, T4> StreamTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+            Stream<? extends T4> fourth) {
        
-        return (StreamTSeq<Tuple4<T, T2, T3, T4>>)StreamT.super.zip4(second, third, fourth);
+        return (StreamTSeq)StreamT.super.zip4(second, third, fourth);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#zipWithIndex()

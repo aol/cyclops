@@ -156,6 +156,12 @@ public interface Traversable<T> extends Iterable<T>,
 	default <U, R> Traversable<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         return traversable().zip(other,zipper);
     }
+	default <U, R> Traversable<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return zip((Iterable<? extends U>)other,zipper);
+    }
+	default <U, R> Traversable<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+	    return zip((Iterable<? extends U>)ReactiveSeq.fromStream(other),zipper);
+    }
 	/**
 	 * Zip 2 streams into one
 	 * 
@@ -168,26 +174,19 @@ public interface Traversable<T> extends Iterable<T>,
 	 * </pre>
 	 * 
 	 */
-	default <U> Traversable<Tuple2<T, U>> zipStream(Stream<? extends U> other){
-		return traversable().zipStream(other);
-	}
-
-	/**
-	 * Zip 2 streams into one
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	List&lt;Tuple2&lt;Integer, String&gt;&gt; list = of(1, 2).zip(of(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)).toList();
-	 * 	// [[1,&quot;a&quot;],[2,&quot;b&quot;]]
-	 * }
-	 * </pre>
-	 * 
-	 */
-	default <U> Traversable<Tuple2<T, U>> zip(Seq<? extends U> other){
+	default <U> Traversable<Tuple2<T, U>> zip(Stream<? extends U> other){
 		return traversable().zip(other);
 	}
+	default <U> Traversable<Tuple2<T, U>> zip(Seq<? extends U> other){
+        return zip((Stream<? extends U> )other);
+    }
+	
+	
+    default <U> Traversable<Tuple2<T, U>> zip(Iterable<? extends U> other){
+	    return zip((Stream<? extends U> )ReactiveSeq.fromIterable(other));
+	}
 
+	
 	/**
 	 * zip 3 Streams into one
 	 * 
@@ -218,7 +217,7 @@ public interface Traversable<T> extends Iterable<T>,
 	 * // [[1,100,'a',&quot;hello&quot;],[2,200,'b',&quot;world&quot;]]
 	 * </pre>
 	 */
-	default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third, Stream<T4> fourth){
+	default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third, Stream<? extends T4> fourth){
 		return traversable().zip4(second, third, fourth);
 	}
 

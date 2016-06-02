@@ -444,7 +444,17 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
 
         return (PQueueX<R>) PersistentCollectionX.super.zip(other, zipper);
     }
+    
+    @Override
+    default <U, R> PQueueX<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 
+        return (PQueueX<R>) PersistentCollectionX.super.zip(other, zipper);
+    }
+    @Override
+    default <U, R> PQueueX<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+
+        return (PQueueX<R>) PersistentCollectionX.super.zip(other, zipper);
+    }
     /*
      * (non-Javadoc)
      * 
@@ -578,12 +588,12 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * 
      * @see
      * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
-     * zipStream(java.util.stream.Stream)
+     * zip(java.util.stream.Stream)
      */
     @Override
-    default <U> PQueueX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+    default <U> PQueueX<Tuple2<T, U>> zip(Stream<? extends U> other) {
 
-        return (PQueueX) PersistentCollectionX.super.zipStream(other);
+        return (PQueueX) PersistentCollectionX.super.zip(other);
     }
 
     /*
@@ -621,9 +631,9 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
      * java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> PQueueX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third, Stream<T4> fourth) {
+    default <T2, T3, T4> PQueueX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third, Stream<? extends T4> fourth) {
 
-        return (PQueueX<Tuple4<T, T2, T3, T4>>) PersistentCollectionX.super.zip4(second, third, fourth);
+        return (PQueueX) PersistentCollectionX.super.zip4(second, third, fourth);
     }
 
     /*

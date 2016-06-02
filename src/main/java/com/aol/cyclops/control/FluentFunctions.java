@@ -21,9 +21,9 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.control.Matchable.CheckValues;
 import com.aol.cyclops.data.MutableInt;
 import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
+import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.function.Cacheable;
 import com.aol.cyclops.util.function.Curry;
@@ -437,6 +437,8 @@ public class FluentFunctions {
 		public R apply(T t) {
 			return fn.apply(t);
 		}
+		
+		
 		
 		public <R1> FluentFunction<T, R1> map(Function<? super R, ? extends R1> f2) {
 			return FluentFunctions.of(fn.andThen( f2));

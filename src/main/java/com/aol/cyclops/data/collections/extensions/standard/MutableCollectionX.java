@@ -178,9 +178,18 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
+	@Override
 	default <U, R> MutableCollectionX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
 		return fromStream(stream().zip(other,zipper));
 	}
+	@Override
+	default <U, R> MutableCollectionX<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
+        return fromStream(stream().zip(other,zipper));
+    }
+	@Override
+    default <U, R> MutableCollectionX<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper){
+        return fromStream(stream().zip(other,zipper));
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#sliding(int)
 	 */
@@ -302,12 +311,12 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zipStream(java.util.stream.Stream)
+	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> MutableCollectionX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+	default <U> MutableCollectionX<Tuple2<T, U>> zip(Stream<? extends U> other) {
 		
-		return fromStream(stream().zipStream(other));
+		return fromStream(stream().zip(other));
 	}
 
 
@@ -334,8 +343,8 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 	 * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4> MutableCollectionX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4> MutableCollectionX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
 		return fromStream(stream().zip4(second, third, fourth));
 	}

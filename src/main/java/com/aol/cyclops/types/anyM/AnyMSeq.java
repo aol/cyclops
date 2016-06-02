@@ -287,15 +287,32 @@ public interface AnyMSeq<T> extends AnyM<T>,
 		
 		return AnyM.fromIterable(ZippingApplicativable.super.zip(other, zipper));
 	}
+	
+    @Override
+    default <U, R> AnyMSeq<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.zip(other, zipper));
+    }
+    
+    @Override
+    default <U, R> AnyMSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.zip(other, zipper));
+    }
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
+	 * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> AnyMSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+	default <U> AnyMSeq<Tuple2<T, U>> zip(Stream<? extends U> other) {
 		
-		return AnyM.fromIterable(ZippingApplicativable.super.zipStream(other));
+		return AnyM.fromIterable(ZippingApplicativable.super.zip(other));
 	}
+	@Override
+    default <U> AnyMSeq<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        
+        return AnyM.fromIterable(ZippingApplicativable.super.zip(other));
+    }
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
@@ -319,8 +336,8 @@ public interface AnyMSeq<T> extends AnyM<T>,
 	 * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4> AnyMSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4> AnyMSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
 		return AnyM.fromIterable(ZippingApplicativable.super.zip4(second, third, fourth));
 	}

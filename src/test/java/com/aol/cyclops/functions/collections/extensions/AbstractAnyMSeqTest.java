@@ -158,45 +158,38 @@ public abstract class AbstractAnyMSeqTest {
                .toListX().size(),equalTo(15));
        
     }
-	@Test
-	public void visit(){
-		
-		String res=	of(1,2,3).visit((x,xs)->
-								xs.join(x.visit(some-> (int)some>2? "hello" : "world",()->"boo!"))
-					);
-		assertThat(res,equalTo("2world3"));
-	}
-	@Test
-	public void whenGreaterThan2(){
-		String res=	of(5,2,3).visit((x,xs)->
-								xs.join(x.visit(some-> (int)some>2? "hello" : "world",()->"boo!"))
-					);
-		
-		assertNotNull(res);
-
-	}
-	@Test
-	public void when2(){
-		
-		Integer res =	of(1,2,3).visit((x,xs)->{
-						
-								System.out.println(x.isPresent());
-								System.out.println(x.get());
-								return x.get();
-								});
-		System.out.println(res);
-	}
-	@Test
-	public void whenNilOrNot(){
-		String res1=	ListX.of(1,2,3).visit((x,xs)-> x.visit(some-> (int)some>2? "hello" : "world",()->"EMPTY"));
-	}
-	@Test
-	public void whenNilOrNotJoinWithFirstElement(){
-		
-		
-		String res=	ListX.of(1,2,3).visit((x,xs)-> x.visit(some-> xs.join((int)some>2? "hello" : "world"),()->"EMPTY"));
-		assertThat(res,equalTo("2world3"));
-	}
+    @Test
+    public void visit(){
+        
+        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),
+                                                              ()->"boo!");
+                    
+        assertThat(res,equalTo("2world3"));
+    }
+    @Test
+    public void whenGreaterThan2(){
+        String res= of(5,2,3).visit((x,xs)->
+                                xs.join(x>2? "hello" : "world"),()->"boo!");
+                    
+        assertThat(res,equalTo("2hello3"));
+    }
+    @Test
+    public void when2(){
+        
+        Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
+        System.out.println(res);
+    }
+    @Test
+    public void whenNilOrNot(){
+        String res1=    of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
+    }
+    @Test
+    public void whenNilOrNotJoinWithFirstElement(){
+        
+        
+        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
+        assertThat(res,equalTo("2world3"));
+    }
 	
 	@Test
 	public void testCollectable(){
@@ -1091,7 +1084,7 @@ public abstract class AbstractAnyMSeqTest {
         @Test
         public void zip2(){
             List<Tuple2<Integer,Integer>> list =
-                    of(1,2,3,4,5,6).zipStream(Stream.of(100,200,300,400))
+                    of(1,2,3,4,5,6).zip(Stream.of(100,200,300,400))
                                                     .peek(it -> System.out.println(it))
                                                     
                                                     .collect(Collectors.toList());

@@ -367,7 +367,18 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 		
 		return (POrderedSetX<R>)PersistentCollectionX.super.zip(other, zipper);
 	}
-
+	@Override
+    default <U, R> POrderedSetX<R> zip(Seq<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (POrderedSetX<R>)PersistentCollectionX.super.zip(other, zipper);
+    }
+	@Override
+    default <U, R> POrderedSetX<R> zip(Stream<? extends U> other,
+            BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (POrderedSetX<R>)PersistentCollectionX.super.zip(other, zipper);
+    }
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
@@ -461,9 +472,9 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> POrderedSetX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+	default <U> POrderedSetX<Tuple2<T, U>> zip(Stream<? extends U> other) {
 		
-		return (POrderedSetX)PersistentCollectionX.super.zipStream(other);
+		return (POrderedSetX)PersistentCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
@@ -485,10 +496,10 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4> POrderedSetX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4> POrderedSetX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
-		return (POrderedSetX<Tuple4<T, T2, T3, T4>>)PersistentCollectionX.super.zip4(second, third, fourth);
+		return (POrderedSetX)PersistentCollectionX.super.zip4(second, third, fourth);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipWithIndex()

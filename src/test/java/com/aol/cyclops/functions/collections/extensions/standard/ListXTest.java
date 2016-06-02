@@ -65,44 +65,37 @@ public class ListXTest extends CollectionXTestsWithNulls {
     }
 
     @Test
-    public void when() {
-
-        String res = ListX.of(1, 2, 3)
-                .visit((x, xs) -> xs.join(x.visit(some -> (int) some > 2 ? "hello" : "world", () -> "boo!")));
-        assertThat(res, equalTo("2world3"));
+    public void when(){
+        
+        String res= of(1,2,3).visit((x,xs)->
+                                xs.join(x>2? "hello" : "world"),()->"boo!");
+                    
+        assertThat(res,equalTo("2world3"));
     }
-
     @Test
-    public void whenGreaterThan2() {
-        String res = ListX.of(5, 2, 3)
-                .visit((x, xs) -> xs.join(x.visit(some -> (int) some > 2 ? "hello" : "world", () -> "boo!")));
-        assertThat(res, equalTo("2hello3"));
+    public void whenGreaterThan2(){
+        String res= of(5,2,3).visit((x,xs)->
+                                xs.join(x>2? "hello" : "world"),()->"boo!");
+                
+        assertThat(res,equalTo("2hello3"));
     }
-
+    
     @Test
-    public void when2() {
-
-        Integer res = ListX.of(1, 2, 3).visit((x, xs) -> {
-
-            System.out.println(x.isPresent());
-            System.out.println(x.get());
-            return x.get();
-        });
+    public void when2(){
+        
+        Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
         System.out.println(res);
     }
-
     @Test
-    public void whenNilOrNot() {
-        String res1 = ListX.of(1, 2, 3)
-                .visit((x, xs) -> x.visit(some -> (int) some > 2 ? "hello" : "world", () -> "EMPTY"));
+    public void whenNilOrNot(){
+        String res1=    of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
     }
-
     @Test
-    public void whenNilOrNotJoinWithFirstElement() {
-
-        String res = ListX.of(1, 2, 3)
-                .visit((x, xs) -> x.visit(some -> xs.join((int) some > 2 ? "hello" : "world"), () -> "EMPTY"));
-        assertThat(res, equalTo("2world3"));
+    public void whenNilOrNotJoinWithFirstElement(){
+        
+        
+        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
+        assertThat(res,equalTo("2world3"));
     }
 
     /**

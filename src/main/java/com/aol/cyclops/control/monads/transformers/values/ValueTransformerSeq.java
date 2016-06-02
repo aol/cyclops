@@ -85,22 +85,35 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
        return unitStream(zipped);
        
     }
+    @Override
+    default <U, R> Traversable<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return zip((Iterable<? extends U>) other,zipper);
+       
+    }
+    @Override
+    default <U, R> Traversable<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other),zipper);
+       
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
      */
     @Override
-    default <U> Traversable<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+    default <U> Traversable<Tuple2<T, U>> zip(Stream<? extends U> other) {
         Streamable<? extends U> streamable = Streamable.fromStream(other);
-        return unitStream(stream().zipStream(streamable.stream()));
+        return unitStream(stream().zip(streamable.stream()));
     }
-
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
     default <U> Traversable<Tuple2<T, U>> zip(Seq<? extends U> other) {
-       return zipStream(other);
+       return zip((Stream<? extends U>)other);
+    }
+    @Override
+    default <U> Traversable<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+       return zip((Stream<? extends U>) ReactiveSeq.fromIterable(other));
     }
 
     /* (non-Javadoc)
@@ -118,11 +131,11 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-            Stream<T4> fourth) {
-        Streamable<T2> streamable2 = Streamable.fromStream(second);
-        Streamable<T3> streamable3 = Streamable.fromStream(third);
-        Streamable<T4> streamable4 = Streamable.fromStream(fourth);
+    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+            Stream<? extends T4> fourth) {
+        Streamable<? extends T2> streamable2 = Streamable.fromStream(second);
+        Streamable<? extends T3> streamable3 = Streamable.fromStream(third);
+        Streamable<? extends T4> streamable4 = Streamable.fromStream(fourth);
         ReactiveSeq<Tuple4<T, T2, T3, T4>> zipped =stream().zip4(streamable2.stream(),streamable3.stream(),streamable4.stream());
         return unitStream(zipped);
     }

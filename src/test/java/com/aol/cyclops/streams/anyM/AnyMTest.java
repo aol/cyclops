@@ -281,7 +281,7 @@ public class AnyMTest {
 	public void zipOptional(){
 		Stream<List<Integer>> zipped = ofSeq(Stream.of(1,2,3))
 										.stream()
-										.zipAnyM(ofValue(Optional.of(2)), 
+										.zip(ofValue(Optional.of(2)), 
 											(a,b) -> Arrays.asList(a,b)).toStream();
 		
 		

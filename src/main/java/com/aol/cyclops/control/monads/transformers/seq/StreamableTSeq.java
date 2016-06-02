@@ -341,13 +341,28 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
        
         return (StreamableTSeq<R>)StreamableT.super.zip(other, zipper);
     }
+    @Override
+    public <U, R> StreamableTSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+       
+        return (StreamableTSeq<R>)StreamableT.super.zip(other, zipper);
+    }
+    @Override
+    public <U, R> StreamableTSeq<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+       
+        return (StreamableTSeq<R>)StreamableT.super.zip(other, zipper);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> StreamableTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+    public <U> StreamableTSeq<Tuple2<T, U>> zip(Stream<? extends U> other) {
        
-        return (StreamableTSeq)StreamableT.super.zipStream(other);
+        return (StreamableTSeq)StreamableT.super.zip(other);
+    }
+    @Override
+    public <U> StreamableTSeq<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+       
+        return (StreamableTSeq)StreamableT.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#zip(org.jooq.lambda.Seq)
@@ -369,10 +384,10 @@ public class StreamableTSeq<T>  implements StreamableT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> StreamableTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-            Stream<T4> fourth) {
+    public <T2, T3, T4> StreamableTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+            Stream<? extends T4> fourth) {
        
-        return (StreamableTSeq<Tuple4<T, T2, T3, T4>>)StreamableT.super.zip4(second, third, fourth);
+        return (StreamableTSeq)StreamableT.super.zip4(second, third, fourth);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#zipWithIndex()

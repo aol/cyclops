@@ -1,6 +1,10 @@
 package com.aol.cyclops.types;
 
+import java.util.Iterator;
 import java.util.function.Function;
+
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
@@ -51,7 +55,6 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
         return unit(this.<T>flatMap(t1-> v2.map(t2->monoid.combiner().apply(t1,t2)))
                                        .orElseGet(()->this.orElseGet(()->monoid.zero())));
     }
-    
     
     
     <R> MonadicValue<R> flatMap(Function<? super T,? extends MonadicValue<? extends R>> mapper);

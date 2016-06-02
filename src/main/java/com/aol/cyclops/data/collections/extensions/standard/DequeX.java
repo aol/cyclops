@@ -327,6 +327,16 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 		
 		return (DequeX<R>)MutableCollectionX.super.zip(other, zipper);
 	}
+	@Override
+    default <U, R> DequeX<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (DequeX<R>)MutableCollectionX.super.zip(other, zipper);
+    }
+	@Override
+    default <U, R> DequeX<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (DequeX<R>)MutableCollectionX.super.zip(other, zipper);
+    }
 
 
 	default DequeX<ListX<T>> sliding(int windowSize){
@@ -437,12 +447,12 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.Traversable#zipStream(java.util.stream.Stream)
+	 * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> DequeX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+	default <U> DequeX<Tuple2<T, U>> zip(Stream<? extends U> other) {
 		
-		return (DequeX)MutableCollectionX.super.zipStream(other);
+		return (DequeX)MutableCollectionX.super.zip(other);
 	}
 
 	/* (non-Javadoc)
@@ -467,10 +477,10 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4> DequeX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4> DequeX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
-		return (DequeX<Tuple4<T, T2, T3, T4>>)MutableCollectionX.super.zip4(second, third, fourth);
+		return (DequeX)MutableCollectionX.super.zip4(second, third, fourth);
 	}
 
 	/* (non-Javadoc)

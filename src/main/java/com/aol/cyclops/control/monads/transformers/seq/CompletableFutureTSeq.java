@@ -356,13 +356,28 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
         
          return (CompletableFutureTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
      }
+     @Override
+     public <U, R> CompletableFutureTSeq<R> zip(Seq<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+        
+         return (CompletableFutureTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+     }
+     @Override
+     public <U, R> CompletableFutureTSeq<R> zip(Stream<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+        
+         return (CompletableFutureTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+     }
      /* (non-Javadoc)
-      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipStream(java.util.stream.Stream)
+      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.util.stream.Stream)
       */
      @Override
-     public <U> CompletableFutureTSeq<Tuple2<A, U>> zipStream(Stream<? extends U> other) {
+     public <U> CompletableFutureTSeq<Tuple2<A, U>> zip(Stream<? extends U> other) {
         
-         return (CompletableFutureTSeq)ValueTransformerSeq.super.zipStream(other);
+         return (CompletableFutureTSeq)ValueTransformerSeq.super.zip(other);
+     }
+     @Override
+     public <U> CompletableFutureTSeq<Tuple2<A, U>> zip(Iterable<? extends U> other) {
+        
+         return (CompletableFutureTSeq)ValueTransformerSeq.super.zip(other);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
@@ -384,10 +399,10 @@ public class CompletableFutureTSeq<A> implements CompletableFutureT<A>,
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
       */
      @Override
-     public <T2, T3, T4> CompletableFutureTSeq<Tuple4<A, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-             Stream<T4> fourth) {
+     public <T2, T3, T4> CompletableFutureTSeq<Tuple4<A, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+             Stream<? extends T4> fourth) {
         
-         return (CompletableFutureTSeq<Tuple4<A, T2, T3, T4>>)ValueTransformerSeq.super.zip4(second, third, fourth);
+         return (CompletableFutureTSeq)ValueTransformerSeq.super.zip4(second, third, fourth);
      }
      /* (non-Javadoc)
       * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipWithIndex()

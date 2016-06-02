@@ -305,21 +305,20 @@ public interface Matchable<TYPE>{
 		
 	    Iterable<TYPE> getMatchable();
 	    
-		default <R> Eval<R> visitSeq(BiFunction<? super Maybe<TYPE>,? super ReactiveSeq<TYPE>,? extends R> match ){
+		default <R> Eval<R> visitSeq(BiFunction<? super TYPE,? super ReactiveSeq<TYPE>,? extends R> match, Supplier<? extends R> absent ){
 			@SuppressWarnings("unchecked")
 			Iterable<TYPE> it = (Iterable<TYPE>)getMatchable();
-			return Eval.later(()->ReactiveSeq.fromIterable(it).visit(match));	
+			return Eval.later(()->ReactiveSeq.fromIterable(it).visit(match,absent));	
 		}	
-		default <R> Eval<R> visit(BiFunction<? super Maybe<TYPE>,? super MatchableIterable<TYPE>,? extends R> match ){
+		default <R> Eval<R> visit(BiFunction<? super TYPE,? super MatchableIterable<TYPE>,? extends R> match,Supplier<? extends R> absent ){
 			@SuppressWarnings("unchecked")
 			Iterable<TYPE> it = (Iterable<TYPE>)getMatchable();
 			
 			return 	Eval.later(()->{ 
 				Iterator<TYPE> iter = it.iterator();
 				Maybe<TYPE> head = Maybe.ofNullable( (iter.hasNext() ? iter.next() : null));
-				
 				MatchableIterable<TYPE> matchable = ()->()->iter;
-				return match.apply(head,matchable);
+				return head.visit(some-> match.apply(some,matchable), absent);
 			});
 		}
 		

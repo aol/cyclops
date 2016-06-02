@@ -390,14 +390,14 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 	        assertThat(of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
 	                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
 	    }	
-	@Test
-	public void whenGreaterThan2(){
-		String res=	of(5,2,3).visit((x,xs)->
-								xs.join(x.visit(some-> (int)some>2? "hello" : "world",()->"boo!"))
-					);
-		assertThat(res,equalTo("2hello3"));
-	}
-	
+
+    @Test
+    public void whenGreaterThan2() {
+        String res = of(5, 2, 3).visit((x, xs) -> xs.join(x > 2 ? "hello" : "world"), () -> "boo!");
+
+        assertThat(res, equalTo("2hello3"));
+    }
+
 	@Test
 	public void headTailReplay() {
 

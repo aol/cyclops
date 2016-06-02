@@ -162,8 +162,8 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
      * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    <T2, T3, T4> CollectionX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-            Stream<T4> fourth) ;
+    <T2, T3, T4> CollectionX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+            Stream<? extends T4> fourth) ;
     
     
 
@@ -456,10 +456,15 @@ public interface CollectionX<T> extends ExtendedTraversable<T>,
 	 * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
 	 */
 	<U, R> CollectionX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
+	<U, R> CollectionX<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
+	<U, R> CollectionX<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
+	 * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream)
 	 */
-	<U> CollectionX<Tuple2<T, U>> zipStream(Stream<? extends U> other);
+	@Override
+	<U> CollectionX<Tuple2<T, U>> zip(Stream<? extends U> other);
+
+	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.Traversable#zipWithIndex()
 	 */

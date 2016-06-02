@@ -530,7 +530,7 @@ public abstract class AbstractTraversableTest {
         @Test
         public void zip2(){
             List<Tuple2<Integer,Integer>> list =
-                    of(1,2,3,4,5,6).zipStream(Stream.of(100,200,300,400))
+                    of(1,2,3,4,5,6).zip(Stream.of(100,200,300,400))
                                                     .stream()
                                                     .peek(it -> System.out.println(it))
                                                     .collect(Collectors.toList());

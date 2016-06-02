@@ -348,13 +348,31 @@ public interface StreamableT<T>  extends  FoldableTransformerSeq<T>{
      
       return (StreamableT<R>)FoldableTransformerSeq.super.zip(other, zipper);
   }
+  @Override
+  default <U, R> StreamableT<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+     
+      return (StreamableT<R>)FoldableTransformerSeq.super.zip(other, zipper);
+  }
+  @Override
+  default <U, R> StreamableT<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+     
+      return (StreamableT<R>)FoldableTransformerSeq.super.zip(other, zipper);
+  }
   /* (non-Javadoc)
-   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zipStream(java.util.stream.Stream)
+   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip(java.util.stream.Stream)
    */
   @Override
-  default <U> StreamableT<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+  default <U> StreamableT<Tuple2<T, U>> zip(Stream<? extends U> other) {
      
-      return (StreamableT)FoldableTransformerSeq.super.zipStream(other);
+      return (StreamableT)FoldableTransformerSeq.super.zip(other);
+  }
+  /* (non-Javadoc)
+   * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip(java.util.stream.Stream)
+   */
+  @Override
+  default <U> StreamableT<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+     
+      return (StreamableT)FoldableTransformerSeq.super.zip(other);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip(org.jooq.lambda.Seq)
@@ -376,10 +394,10 @@ public interface StreamableT<T>  extends  FoldableTransformerSeq<T>{
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
    */
   @Override
-  default <T2, T3, T4> StreamableT<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-          Stream<T4> fourth) {
+  default <T2, T3, T4> StreamableT<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+          Stream<? extends T4> fourth) {
      
-      return (StreamableT<Tuple4<T, T2, T3, T4>>)FoldableTransformerSeq.super.zip4(second, third, fourth);
+      return (StreamableT)FoldableTransformerSeq.super.zip4(second, third, fourth);
   }
   /* (non-Javadoc)
    * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#zipWithIndex()

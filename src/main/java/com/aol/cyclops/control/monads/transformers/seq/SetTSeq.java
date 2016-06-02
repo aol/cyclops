@@ -350,13 +350,28 @@ public class SetTSeq<T>  implements SetT<T>{
        
         return (SetTSeq<R>)SetT.super.zip(other, zipper);
     }
+    @Override
+    public <U, R> SetTSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+       
+        return (SetTSeq<R>)SetT.super.zip(other, zipper);
+    }
+    @Override
+    public <U, R> SetTSeq<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+       
+        return (SetTSeq<R>)SetT.super.zip(other, zipper);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> SetTSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+    public <U> SetTSeq<Tuple2<T, U>> zip(Stream<? extends U> other) {
        
-        return (SetTSeq)SetT.super.zipStream(other);
+        return (SetTSeq)SetT.super.zip(other);
+    }
+    @Override
+    public <U> SetTSeq<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+       
+        return (SetTSeq)SetT.super.zip(other);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#zip(org.jooq.lambda.Seq)
@@ -378,10 +393,10 @@ public class SetTSeq<T>  implements SetT<T>{
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> SetTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-            Stream<T4> fourth) {
+    public <T2, T3, T4> SetTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+            Stream<? extends T4> fourth) {
        
-        return (SetTSeq<Tuple4<T, T2, T3, T4>>)SetT.super.zip4(second, third, fourth);
+        return (SetTSeq)SetT.super.zip4(second, third, fourth);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.SetT#zipWithIndex()

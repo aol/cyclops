@@ -442,7 +442,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 *</pre>
 	 */
 	public final <S,U> ReactiveSeq<Tuple3<T,S,U>> zip3(Stream<? extends S> second,Stream<? extends U> third){
-		return zip(second).zipStream(third).map(p -> new Tuple3(p.v1().v1(),p.v1().v2(),p.v2()));
+		return zip(second).zip(third).map(p -> new Tuple3(p.v1().v1(),p.v1().v2(),p.v2()));
 		
 	}
 	/**
@@ -458,58 +458,12 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	 *  //[[1,100,'a',"hello"],[2,200,'b',"world"]]
 	 * </pre>
 	 */
-	public final <T2,T3,T4> ReactiveSeq<Tuple4<T,T2,T3,T4>> zip4(Stream<T2> second,Stream<T3> third,Stream<T4> fourth){
-		return zip3(second,third).zipStream(fourth).map(t ->  new Tuple4(t.v1().v1(), t.v1().v2(),t.v1().v3(),t.v2()));
+	public final <T2,T3,T4> ReactiveSeq<Tuple4<T,T2,T3,T4>> zip4(Stream<? extends T2> second,Stream<? extends T3> third,Stream<? extends T4> fourth){
+		return zip3(second,third).zip(fourth).map(t ->  new Tuple4(t.v1().v1(), t.v1().v2(),t.v1().v3(),t.v2()));
 		
 	}
 	
-	/**
-	 * Generic zip function. E.g. Zipping a Stream and an Optional
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	Stream&lt;List&lt;Integer&gt;&gt; zipped = asStreamUtils.sequenceM(Stream.of(1, 2, 3)).zip(
-	 * 			asStreamUtils.sequenceM(Optional.of(2)), (a, b) -&gt; Arrays.asList(a, b));
-	 * 	// [[1,2]]
-	 * }
-	 * </pre>
-	 * 
-	 * @param second
-	 *            Monad to zip with
-	 * @param zipper
-	 *            Zipping function
-	 * @return Stream zipping two Monads
-	 */
-	public final <S, R> ReactiveSeq<R> zipSequence(ReactiveSeq<? extends S> second,
-			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return StreamUtils.reactiveSeq(StreamUtils.zipSequence(stream,second, zipper),Optional.empty());
-		
-	}
-	/**
-	 * Zip this SequenceM against any monad type.
-	 * 
-	 * <pre>
-	 * {@code
-	 * Stream<List<Integer>> zipped = anyM(Stream.of(1,2,3))
-										.asSequence()
-										.zip(anyM(Optional.of(2)), 
-											(a,b) -> Arrays.asList(a,b)).toStream();
-		
-		
-		List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
-		assertThat(zip.get(0),equalTo(1));
-		assertThat(zip.get(1),equalTo(2));
-	 * }
-	 * </pre>
-	 * 
-	 */
-	@Override
-	public final <S, R> ReactiveSeq<R> zipAnyM(AnyM<? extends S> second,
-			BiFunction<? super T, ? super S, ? extends R> zipper) {
-		return zipSequence(second.stream(), zipper);
-	}
-
+	
 	/**
 	 * Zip this Monad with a Stream
 	 * 
@@ -1907,10 +1861,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 	}
 
 
-	@Override
-	public <U> ReactiveSeq<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
-		return StreamUtils.reactiveSeq(StreamUtils.zipStream(stream, other,Tuple::tuple),Optional.empty());
-	}
+	
 
 	@Override
 	public ReactiveSeq<T> xPer(int x, long time, TimeUnit t) {

@@ -345,6 +345,16 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 		
 		return (SetX<R>)MutableCollectionX.super.zip(other, zipper);
 	}
+	@Override
+    default <U, R> SetX<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (SetX<R>)MutableCollectionX.super.zip(other, zipper);
+    }
+	@Override
+    default <U, R> SetX<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (SetX<R>)MutableCollectionX.super.zip(other, zipper);
+    }
 
 	default SetX<ListX<T>> sliding(int windowSize){
 		return (SetX<ListX<T>>)MutableCollectionX.super.sliding(windowSize); 
@@ -418,12 +428,12 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 		return this.stream().cycleUntil(predicate).toListX();
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zipStream(java.util.stream.Stream)
+	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.util.stream.Stream)
 	 */
 	@Override
-	default <U> SetX<Tuple2<T, U>> zipStream(Stream<? extends U> other) {
+	default <U> SetX<Tuple2<T, U>> zip(Stream<? extends U> other) {
 		
-		return (SetX)MutableCollectionX.super.zipStream(other);
+		return (SetX)MutableCollectionX.super.zip(other);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(org.jooq.lambda.Seq)
@@ -445,10 +455,10 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
 	 */
 	@Override
-	default <T2, T3, T4> SetX<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third,
-			Stream<T4> fourth) {
+	default <T2, T3, T4> SetX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
+			Stream<? extends T4> fourth) {
 		
-		return (SetX<Tuple4<T, T2, T3, T4>>)MutableCollectionX.super.zip4(second, third, fourth);
+		return (SetX)MutableCollectionX.super.zip4(second, third, fourth);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zipWithIndex()

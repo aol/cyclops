@@ -1,5 +1,6 @@
 package com.aol.cyclops;
 
+import static com.aol.cyclops.Matchables.optional;
 import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
@@ -135,8 +136,20 @@ public class MatchablesTest {
         
         assertThat(result,equalTo(Eval.now(2)));
     }
+    Optional<Integer> serviceB(Object o){
+        return Optional.of(2);
+    }
+    Integer serviceC(Object o){
+        return 3;
+    }
     @Test
-    public void optional(){
+    public void optional2(){
+        Object args = null;
+     
+        optional(Optional.of(1)).visit(some-> some, 
+                                        ()-> optional(serviceB(args)).visit(some->some,
+                                                                        ()->serviceC(args)));
+        
         Eval<Integer> result = Matchables.optional(Optional.of(1))
                                         .matches(c-> c.is( when(some(1)), then(2)), otherwise(3));
         
