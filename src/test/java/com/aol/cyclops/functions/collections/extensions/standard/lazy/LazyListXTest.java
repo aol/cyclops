@@ -48,13 +48,13 @@ public class LazyListXTest extends AbstractLazyTest{
 	public void whenNilOrNot(){
 		String res1=	ListX.of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
 	}
-	@Test
-	public void whenNilOrNotJoinWithFirstElement(){
-		
-		
-		String res=	ListX.of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
-		assertThat(res,equalTo("2world3"));
-	}
+
+    @Test
+    public void whenNilOrNotJoinWithFirstElement() {
+
+        String res = of(1, 2, 3).visit((x, xs) -> xs.join(x > 2 ? "hello" : "world"), () -> "EMPTY");
+        assertThat(res, equalTo("2world3"));
+    }
 	
 	/**
 	 *

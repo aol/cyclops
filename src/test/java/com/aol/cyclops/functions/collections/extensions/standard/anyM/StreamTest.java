@@ -53,7 +53,7 @@ public class StreamTest extends AbstractAnyMSeqOrderedDependentTest{
     public void whenNilOrNotJoinWithFirstElement(){
         
         
-        String res= of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
+        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
         assertThat(res,equalTo("2world3"));
     }
 	/**

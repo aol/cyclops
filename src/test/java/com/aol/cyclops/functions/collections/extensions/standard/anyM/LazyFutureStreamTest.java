@@ -53,14 +53,14 @@ public class LazyFutureStreamTest extends AbstractAnyMSeqOrderedDependentTest{
 	public void whenNilOrNot(){
 		String res1=	of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
 	}
-	@Test
-	public void whenNilOrNotJoinWithFirstElement(){
-		
-		
-		String res=	of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
-		assertThat(res,equalTo("2world3"));
-	}
-	
+
+    @Test
+    public void whenNilOrNotJoinWithFirstElement() {
+
+        String res = of(1, 2, 3).visit((x, xs) -> xs.join(x > 2 ? "hello" : "world"), () -> "EMPTY");
+        assertThat(res, equalTo("2world3"));
+    }
+
 	@Test
     public void cast(){
         assertThat(of(1,2,3).cast(String.class).toListX(),equalTo(ListX.of()));
