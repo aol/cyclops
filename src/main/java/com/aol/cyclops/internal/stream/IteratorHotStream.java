@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
+import com.aol.cyclops.Matchables;
+import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.stream.scheduling.cron.CronExpression;
 
@@ -52,7 +54,9 @@ public class IteratorHotStream<T> {
 						
 						for(int i=0;i<local;i++){
 						
-							connections.get(i).offer(next);
+						    Matchables.blocking(connections.get(i))
+						              .visit(FluentFunctions.ofChecked(in->{ in.put(next); return true;}),
+						                      q-> q.offer(next));
 						}
 						
 					}
@@ -82,7 +86,11 @@ public class IteratorHotStream<T> {
 						
 						for(int i=0;i<local;i++){
 						
-							connections.get(i).offer(next);
+						    Matchables.blocking(connections.get(i))
+							              .visit(FluentFunctions.ofChecked(in->{ in.put(next); return true;}),
+							                  q-> q.offer(next));
+							          
+							 
 						}
 						
 					
@@ -106,7 +114,9 @@ public class IteratorHotStream<T> {
 						
 						for(int i=0;i<local;i++){
 						
-							connections.get(i).offer(next);
+						    Matchables.blocking(connections.get(i))
+                                      .visit(FluentFunctions.ofChecked(in->{ in.put(next); return true;}),
+                                              q-> q.offer(next));
 						}
 						
 					

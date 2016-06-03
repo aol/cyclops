@@ -1,18 +1,16 @@
 package com.aol.cyclops.streams.hotstream;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Spliterator;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.stream.StreamSupport;
 
 import org.junit.Test;
 
@@ -23,43 +21,114 @@ public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(5);
 	volatile Object value;
 	
+	static final ScheduledExecutorService scheduled = Executors.newScheduledThreadPool(1);
 	String captured;
+	long diff;
+	@Test
+    public void backpressureScheduledDelay(){
+       
+        captured= "";
+
+           diff =  System.currentTimeMillis();
+          LinkedBlockingQueue<String> blockingQueue = new LinkedBlockingQueue<String>(1);
+          blockingQueue.add("10");
+          blockingQueue.offer("10");
+          ReactiveSeq.range(0, Integer.MAX_VALUE)
+              .limit(2)
+              .peek(v-> diff = System.currentTimeMillis()-diff)
+              .map(i -> i.toString())
+              .scheduleFixedDelay(1l, scheduled)
+              .connect(blockingQueue)
+              .onePer(1, TimeUnit.SECONDS)
+              .peek(i->System.out.println("BQ " + blockingQueue))
+              .peek(System.out::println)
+              .forEach(c->captured=c);
+        
+          assertThat(diff,greaterThan(500l));
+    }
+	@Test
+    public void backpressureScheduledRate(){
+       
+        captured= "";
+
+           diff =  System.currentTimeMillis();
+          LinkedBlockingQueue<String> blockingQueue = new LinkedBlockingQueue<String>(1);
+          blockingQueue.add("10");
+          blockingQueue.offer("10");
+          ReactiveSeq.range(0, Integer.MAX_VALUE)
+              .limit(2)
+              .peek(v-> diff = System.currentTimeMillis()-diff)
+              .map(i -> i.toString())
+              .scheduleFixedRate(1l, scheduled)
+              .connect(blockingQueue)
+              .onePer(1, TimeUnit.SECONDS)
+              .peek(i->System.out.println("BQ " + blockingQueue))
+              .peek(System.out::println)
+              .forEach(c->captured=c);
+        
+          assertThat(diff,greaterThan(500l));
+    }
+	@Test
+    public void backpressureScheduledCron(){
+       
+        captured= "";
+
+           diff =  System.currentTimeMillis();
+          LinkedBlockingQueue<String> blockingQueue = new LinkedBlockingQueue<String>(1);
+          blockingQueue.add("10");
+          blockingQueue.offer("10");
+          ReactiveSeq.range(0, Integer.MAX_VALUE)
+              .limit(2)
+              .peek(v-> diff = System.currentTimeMillis()-diff)
+              .map(i -> i.toString())
+              .schedule("* * * * * ?", scheduled)
+              .connect(blockingQueue)
+              .onePer(2, TimeUnit.SECONDS)
+              .peek(i->System.out.println("BQ " + blockingQueue))
+              .peek(System.out::println)
+              .forEach(c->captured=c);
+        
+          assertThat(diff,greaterThan(1500l));
+    }
 	@Test
 	public void backpressurePrimed(){
 	   
 	    captured= "";
 
 	      Executor exec = Executors.newFixedThreadPool(1);
-	      LinkedBlockingQueue<String> blockingQueue = new LinkedBlockingQueue<String>(3);
-
+	      LinkedBlockingQueue<String> blockingQueue = new LinkedBlockingQueue<String>(1);
+	      diff =  System.currentTimeMillis();
 	      ReactiveSeq.range(0, Integer.MAX_VALUE)
 	          .limit(2)
 	          .map(i -> i.toString())
+	          .peek(v-> diff = System.currentTimeMillis()-diff)
 	          .peek(System.out::println)
 	          .primedHotStream(exec)
 	          .connect(blockingQueue)
 	          .onePer(1, TimeUnit.SECONDS)
 	          .forEach(c->captured=c);
 	    
-	      assertThat(captured,equalTo("1"));
+	     
+	      assertThat(diff,greaterThan(500l));
 	}
 	@Test
     public void backpressure(){
         captured= "";
 
-          Executor exec = Executors.newFixedThreadPool(1);
+          
           LinkedBlockingQueue<String> blockingQueue = new LinkedBlockingQueue<String>(3);
-
+          diff =  System.currentTimeMillis();
           ReactiveSeq.range(0, Integer.MAX_VALUE)
               .limit(2)
               .map(i -> i.toString())
+              .peek(v-> diff = System.currentTimeMillis()-diff)
               .peek(System.out::println)
               .hotStream(exec)
               .connect(blockingQueue)
               .onePer(1, TimeUnit.SECONDS)
               .forEach(c->captured=c);
         
-          assertThat(captured,equalTo("1"));
+          assertThat(diff,greaterThan(500l));
     }
 	@Test
 	public void hotStream() throws InterruptedException{
