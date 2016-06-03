@@ -38,7 +38,8 @@ public class HotStreamTest {
           blockingQueue.offer("10");
           ReactiveSeq.range(0, Integer.MAX_VALUE)
               .limit(2)
-              .peek(v-> diff = System.currentTimeMillis()-diff)
+              .peek(v-> diff = System.currentTimeMillis())
+              .peek(i->System.out.println("diff is "  +diff))
               .map(i -> i.toString())
               .scheduleFixedDelay(1l, scheduled)
               .connect(blockingQueue)
@@ -47,7 +48,7 @@ public class HotStreamTest {
               .peek(System.out::println)
               .forEach(c->captured=c);
         
-          assertThat(diff,greaterThan(500l));
+          assertThat(System.currentTimeMillis() - diff,greaterThan(1500l));
     }
 	@Test
     public void backpressureScheduledDelayNonBlocking(){
@@ -57,10 +58,12 @@ public class HotStreamTest {
            diff =  System.currentTimeMillis();
           Queue<String> blockingQueue = new ManyToOneConcurrentArrayQueue<String>(1);
          
+        
           ReactiveSeq.range(0, Integer.MAX_VALUE)
               .limit(3)
+              .peek(i->System.out.println("diff before is "  +diff))
               .peek(v-> diff = System.currentTimeMillis()-diff)
-              .peek(System.out::println)
+              .peek(i->System.out.println("diff is "  +diff))
               .map(i -> i.toString())
               .scheduleFixedDelay(1l, scheduled)
               .connect(blockingQueue)
@@ -82,7 +85,7 @@ public class HotStreamTest {
           blockingQueue.offer("10");
           ReactiveSeq.range(0, Integer.MAX_VALUE)
               .limit(2)
-              .peek(v-> diff = System.currentTimeMillis()-diff)
+              .peek(v-> diff = System.currentTimeMillis())
               .map(i -> i.toString())
               .scheduleFixedRate(1l, scheduled)
               .connect(blockingQueue)
@@ -91,7 +94,7 @@ public class HotStreamTest {
               .peek(System.out::println)
               .forEach(c->captured=c);
         
-          assertThat(diff,greaterThan(500l));
+          assertThat(System.currentTimeMillis() - diff,greaterThan(1500l));
     }
 	@Test
     public void backpressureScheduledCron(){
@@ -104,7 +107,7 @@ public class HotStreamTest {
           blockingQueue.offer("10");
           ReactiveSeq.range(0, Integer.MAX_VALUE)
               .limit(2)
-              .peek(v-> diff = System.currentTimeMillis()-diff)
+              .peek(v-> diff = System.currentTimeMillis())
               .map(i -> i.toString())
               .schedule("* * * * * ?", scheduled)
               .connect(blockingQueue)
@@ -113,7 +116,7 @@ public class HotStreamTest {
               .peek(System.out::println)
               .forEach(c->captured=c);
         
-          assertThat(diff,greaterThan(1500l));
+          assertThat(System.currentTimeMillis() - diff,greaterThan(1500l));
     }
 	@Test
 	public void backpressurePrimed(){
