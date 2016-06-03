@@ -460,7 +460,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<Long> sumLong(ToLongFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return LongOperatorsMixin.super.sumLong(fn);
 	}
 	/* (non-Javadoc)
@@ -468,7 +468,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<OptionalLong> maxLong(ToLongFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return LongOperatorsMixin.super.maxLong(fn);
 	}
 	/* (non-Javadoc)
@@ -476,7 +476,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<OptionalLong> minLong(ToLongFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return LongOperatorsMixin.super.minLong(fn);
 	}
 	/* (non-Javadoc)
@@ -484,7 +484,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<OptionalDouble> averageLong(ToLongFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return LongOperatorsMixin.super.averageLong(fn);
 	}
 	/* (non-Javadoc)
@@ -492,7 +492,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return LongOperatorsMixin.super.summaryStatisticsLong(fn);
 	}
 	/* (non-Javadoc)
@@ -500,7 +500,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<Integer> sumInt(ToIntFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return IntOperatorsMixin.super.sumInt(fn);
 	}
 	/* (non-Javadoc)
@@ -508,7 +508,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<OptionalInt> maxInt(ToIntFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return IntOperatorsMixin.super.maxInt(fn);
 	}
 	/* (non-Javadoc)
@@ -516,7 +516,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<OptionalInt> minInt(ToIntFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return IntOperatorsMixin.super.minInt(fn);
 	}
 	/* (non-Javadoc)
@@ -524,7 +524,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<OptionalDouble> averageInt(ToIntFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return IntOperatorsMixin.super.averageInt(fn);
 	}
 	/* (non-Javadoc)
@@ -532,7 +532,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return IntOperatorsMixin.super.summaryStatisticsInt(fn);
 	}
 	/* (non-Javadoc)
@@ -540,7 +540,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return DoubleOperatorsMixin.super.maxDouble(fn);
 	}
 	/* (non-Javadoc)
@@ -548,7 +548,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return DoubleOperatorsMixin.super.minDouble(fn);
 	}
 	/* (non-Javadoc)
@@ -556,7 +556,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return DoubleOperatorsMixin.super.averageDouble(fn);
 	}
 	/* (non-Javadoc)
@@ -564,7 +564,7 @@ public abstract class BaseFutureOperationsImpl<T> implements  DoubleOperatorsMix
 	 */
 	@Override
 	public CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn) {
-		// TODO Auto-generated method stub
+		
 		return DoubleOperatorsMixin.super.summaryStatisticsDouble(fn);
 	}
 	
