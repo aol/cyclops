@@ -1,9 +1,11 @@
 package com.aol.cyclops.streams.hotstream;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -12,6 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
@@ -45,6 +48,28 @@ public class HotStreamTest {
               .forEach(c->captured=c);
         
           assertThat(diff,greaterThan(500l));
+    }
+	@Test
+    public void backpressureScheduledDelayNonBlocking(){
+       
+        captured= "";
+
+           diff =  System.currentTimeMillis();
+          Queue<String> blockingQueue = new ManyToOneConcurrentArrayQueue<String>(1);
+         
+          ReactiveSeq.range(0, Integer.MAX_VALUE)
+              .limit(3)
+              .peek(v-> diff = System.currentTimeMillis()-diff)
+              .peek(System.out::println)
+              .map(i -> i.toString())
+              .scheduleFixedDelay(1l, scheduled)
+              .connect(blockingQueue)
+              .onePer(1, TimeUnit.SECONDS)
+              .peek(i->System.out.println("BQ " + blockingQueue))
+              .peek(System.out::println)
+              .forEach(c->captured=c);
+        
+          assertThat(diff,lessThan(500l));
     }
 	@Test
     public void backpressureScheduledRate(){
