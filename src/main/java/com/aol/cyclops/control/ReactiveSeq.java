@@ -2901,7 +2901,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * 				.retry(serviceMock)
 	 * 				.firstValue();
 	 * 
-	 * 		assertThat(result, is("42"));
+	 * 		//result = 42
 	 * }
 	 * </pre>
 	 * 
@@ -2930,7 +2930,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 * 				.retry(serviceMock, 7, 2, TimeUnit.SECONDS)
 	 * 				.firstValue();
 	 * 
-	 * 		assertThat(result, is("42"));
+	 * 		//result = 42
 	 * }
 	 * </pre>
 	 * 
@@ -2946,7 +2946,7 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	default <R> ReactiveSeq<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
 		Function<T, R> retry = t -> {
 			int count = retries;
-			long[] sleep = { delay };
+			long[] sleep = { timeUnit.toMillis(delay) };
 			Throwable exception = null;
 			while (count-- > 0) {
 				try {

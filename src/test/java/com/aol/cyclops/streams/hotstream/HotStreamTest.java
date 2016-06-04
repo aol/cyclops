@@ -21,10 +21,10 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.PausableHotStream;
 
 public class HotStreamTest {
-	static final Executor exec = Executors.newFixedThreadPool(5);
+	static final Executor exec = Executors.newFixedThreadPool(15);
 	volatile Object value;
 	
-	static final ScheduledExecutorService scheduled = Executors.newScheduledThreadPool(1);
+	static final ScheduledExecutorService scheduled = Executors.newScheduledThreadPool(15);
 	String captured;
 	long diff;
 	@Test
