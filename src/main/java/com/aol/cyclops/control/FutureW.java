@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -27,6 +28,7 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.Applicativable.SemigroupApplyer;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
 
@@ -182,6 +184,44 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	}
 	
 	
+    public static class FutureSemigroupApplyer<T> extends SemigroupApplyer<T> {
+        
+        
+       public FutureW<T> futureW(){
+            return (FutureW<T>)super.functor;
+        }
+        
+       
+        /* (non-Javadoc)
+         * @see com.aol.cyclops.types.applicative.Applicativable.SemigroupApplyer#withFunctor(com.aol.cyclops.types.ConvertableFunctor)
+         */
+        @Override
+        public FutureSemigroupApplyer<T> withFunctor(ConvertableFunctor<T> functor) {
+           
+            return new FutureSemigroupApplyer<T>(super.combiner,super.functor);
+        }
+
+
+        public FutureSemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
+            
+          return  withFunctor(FutureW.of(futureW().getFuture().thenCombine(fn.toFutureW().getFuture(), super.combiner)));
+         
+        }
+        
+
+        public FutureSemigroupApplyer(BiFunction<T, T, T> combiner, ConvertableFunctor<T> functor) {
+            super(combiner, functor);
+            
+        }
+    }
+	@Override
+	public  FutureSemigroupApplyer<T> ap(BiFunction<T,T,T> fn){
+        return  new FutureSemigroupApplyer<T>(fn, this);
+    }
+	@Override
+	public  FutureSemigroupApplyer<T> ap(Semigroup<T> fn){
+        return  new FutureSemigroupApplyer<>(fn.combiner(), this);
+    }
 
 	public boolean isSuccess(){
 	    return future.isDone() && !future.isCompletedExceptionally();
@@ -349,6 +389,15 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         }
         
     }
+ 
+    public FutureW<T> toFutureWAsync(){
+        return this;
+    }
+    public FutureW<T> toFutureWAsync(Executor ex){
+        return this;
+    }
+ 
+
     public static <T> FutureW<T> ofSupplier(Supplier<T> s) {
        return FutureW.of(CompletableFuture.supplyAsync(s));
     }
