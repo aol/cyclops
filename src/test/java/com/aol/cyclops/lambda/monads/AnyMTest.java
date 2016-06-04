@@ -15,7 +15,6 @@ import java.util.OptionalLong;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -27,10 +26,12 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 
 import lombok.val;
+import reactor.core.publisher.Flux;
 
 
 
@@ -63,7 +64,55 @@ public class AnyMTest {
        List l= AnyM.fromList(ListX.of(1,2,3))
             .flatMapFirst(i->AnyM.fromList(ListX.of(10,i)))
             .unwrap();
-       System.out.println(l);
+      assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
+    }
+    @Test
+    public void flatMapFirstList(){
+     
+       List l= AnyM.fromList(ListX.of(1,2,3))
+            .flatMapFirst(i->ListX.of(10,i))
+            .unwrap();
+       assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
+    }
+    @Test
+    public void flatMapFirstQueue(){
+     
+       List l= AnyM.fromList(ListX.of(1,2,3))
+            .flatMapFirst(i->QueueX.of(10,i))
+            .unwrap();
+       assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
+    }
+    @Test
+    public void flatMapFirstFlux(){
+     
+       List l= AnyM.fromList(ListX.of(1,2,3))
+            .flatMapFirstPublisher(i->Flux.just(10,i))
+            .unwrap();
+       assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
+    }
+    @Test
+    public void flatMapValueFirstList(){
+     
+       Maybe l= AnyM.fromMaybe(Maybe.of(1))
+            .flatMapFirst(i->ListX.of(10,i))
+            .unwrap();
+       assertThat(l,equalTo(Maybe.of(10)));
+    }
+    @Test
+    public void flatMapValueFirstQueue(){
+     
+        Maybe l= AnyM.fromMaybe(Maybe.of(1))
+            .flatMapFirst(i->QueueX.of(10,i))
+            .unwrap();
+        assertThat(l,equalTo(Maybe.of(10)));
+    }
+    @Test
+    public void flatMapValueFirstFlux(){
+     
+        Maybe l= AnyM.fromMaybe(Maybe.of(1))
+            .flatMapFirstPublisher(i->Flux.just(10,i))
+            .unwrap();
+        assertThat(l,equalTo(Maybe.of(10)));
     }
     @Test
     public void flatMap(){

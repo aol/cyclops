@@ -80,6 +80,25 @@ public interface AnyMSeq<T> extends AnyM<T>,
         return stream().collect(collector);
         
     }
+    /**
+     * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
+     * will take the first value from the Iterable returned.
+     * 
+     * @param fn FlatMaping function
+     * @return AnyM with flattening transformation
+     */
+    @Override
+    <R> AnyMSeq<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn) ;
+    
+    /**
+     * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
+     * will take the first value from the Publisher returned.
+     * 
+     * @param fn FlatMaping function
+     * @return AnyM with flattening transformation
+     */
+    @Override
+    <R> AnyMSeq<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn); 
     
     default Traversable<T> traversable(){
         Object o = unwrap();
