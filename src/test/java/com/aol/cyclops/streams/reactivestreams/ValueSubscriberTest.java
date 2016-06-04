@@ -9,9 +9,11 @@ import java.util.NoSuchElementException;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 
@@ -25,6 +27,52 @@ public class ValueSubscriberTest {
         
         Maybe<Integer> maybe = sub.toMaybe();
         assertThat(maybe.get(),equalTo(1));
+        
+    }
+    @Test
+    public void maybeFromPublisherTest(){
+        ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
+        ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        Maybe<Integer> maybe = Maybe.fromPublisher(stream);
+        assertThat(maybe.get(),equalTo(1));
+        
+    }
+    @Test
+    public void evalFromPublisherTest(){
+        ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
+        ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        Eval<Integer> maybe = Eval.fromPublisher(stream);
+        assertThat(maybe.get(),equalTo(1));
+        
+    }
+    @Test
+    public void xorFromPublisherTest(){
+        ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
+        ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        Xor<Throwable,Integer> maybe = Xor.fromPublisher(stream);
+        assertThat(maybe.get(),equalTo(1));
+        
+    }
+    @Test
+    public void iorFromPublisherTest(){
+        ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
+        ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        Ior<Throwable,Integer> maybe = Ior.fromPublisher(stream);
+        assertThat(maybe.get(),equalTo(1));
+        
+    }
+    @Test
+    public void truFromPublisherTest(){
+        ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
+        ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        Try<Integer,Throwable> maybe = Try.fromPublisher(stream);
+        assertThat(maybe.get(),equalTo(1));
+        
     }
     @Test
     public void maybePublisherTest(){

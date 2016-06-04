@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.jooq.lambda.tuple.Tuple;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -26,6 +27,7 @@ import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.AccessLevel;
@@ -75,6 +77,11 @@ public interface Xor<ST,PT> extends Supplier<PT>,
                                     Filterable<PT>,
                                     Applicativable<PT>{
 
+    public static <T> Xor<Throwable,T> fromPublisher(Publisher<T> pub){
+        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+        pub.subscribe(sub);
+        return sub.toXor();
+    }
     public static <ST,T> Xor<ST,T> fromIterable(Iterable<T> iterable){
         Iterator<T> it = iterable.iterator();
         return Xor.primary(it.hasNext() ? it.next() : null);

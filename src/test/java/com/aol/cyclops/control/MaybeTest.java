@@ -395,6 +395,7 @@ public class MaybeTest implements Printable {
 	@Test
 	public void testToIor() {
 		assertThat(just.toIor(),equalTo(Ior.primary(10)));
+		assertThat(Ior.fromPublisher(just),equalTo(Ior.primary(10)));
 		
 	}
 	@Test

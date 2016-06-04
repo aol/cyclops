@@ -185,12 +185,12 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
 	}
 	@Override
 	public <R> AnyMSeq<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return with(super.flatMapInternal(fn.andThen(it->AnyM.fromIterable(it))));
+        return with(super.flatMapInternal(fn.andThen(it->fromIterable(it))));
 
     }
 	@Override
     public  <R> AnyMSeq<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return with(super.flatMapInternal(fn.andThen(it->AnyM.fromPublisher(it))));
+        return with(super.flatMapInternal(fn.andThen(it->fromPublisher(it))));
 
     }
 

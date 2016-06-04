@@ -314,6 +314,8 @@ public class Eval2Test {
 	public void testToTry() {
 		assertTrue(none.toTry().isFailure());
 		assertThat(just.toTry(),equalTo(Try.success(10)));
+		assertTrue(Try.fromPublisher(none).isFailure());
+        assertThat(Try.fromPublisher(just),equalTo(Try.success(10)));
 	}
 
 	@Test

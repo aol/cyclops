@@ -12,6 +12,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
@@ -25,6 +27,7 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
@@ -40,6 +43,20 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 
     public static <T> FutureW<T> empty(){
         return new FutureW(CompletableFuture.completedFuture(null));
+    }
+    static <T> FutureW<T> fromPublisher(Publisher<T> pub,Executor ex){
+        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+        pub.subscribe(sub);
+        return sub.toFutureWAsync(ex);
+    }
+    public static <T> FutureW<T> fromIterable(Iterable<T> iterable,Executor ex){
+        Iterator<T> it = iterable.iterator();
+        return FutureW.ofSupplier(()->Eval.fromIterable(iterable)).map(e->e.get());
+    }
+    static <T> FutureW<T> fromPublisher(Publisher<T> pub){
+        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+        pub.subscribe(sub);
+        return sub.toFutureW();
     }
     public static <T> FutureW<T> fromIterable(Iterable<T> iterable){
         Iterator<T> it = iterable.iterator();
