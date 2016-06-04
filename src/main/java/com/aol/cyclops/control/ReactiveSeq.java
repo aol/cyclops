@@ -2949,12 +2949,13 @@ public interface ReactiveSeq<T> extends Unwrapable,
 			long[] sleep = { timeUnit.toMillis(delay) };
 			Throwable exception = null;
 			while (count-- > 0) {
+			    ExceptionSoftener.softenRunnable(() -> timeUnit.sleep(sleep[0])).run();
 				try {
 					return fn.apply(t);
 				} catch (Throwable e) {
 					exception = e;
 				}
-				ExceptionSoftener.softenRunnable(() -> timeUnit.sleep(sleep[0]));
+				
 
 				sleep[0] = sleep[0] * 2;
 			}

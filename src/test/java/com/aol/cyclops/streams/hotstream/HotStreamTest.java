@@ -214,6 +214,7 @@ public class HotStreamTest {
 	}
 	@Test
 	public void hotStreamConnectPausable() throws InterruptedException{
+	    Thread.sleep(1000l);
 		value= null;
 		active=true;
 		CountDownLatch latch = new CountDownLatch(1);
