@@ -52,7 +52,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         return sub.toFutureWAsync(ex);
     }
     public static <T> FutureW<T> fromIterable(Iterable<T> iterable,Executor ex){
-        Iterator<T> it = iterable.iterator();
+        
         return FutureW.ofSupplier(()->Eval.fromIterable(iterable)).map(e->e.get());
     }
     public static <T> FutureW<T> fromPublisher(Publisher<T> pub){
@@ -198,7 +198,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         @Override
         public FutureSemigroupApplyer<T> withFunctor(ConvertableFunctor<T> functor) {
            
-            return new FutureSemigroupApplyer<T>(super.combiner,super.functor);
+            return new FutureSemigroupApplyer<T>(super.combiner,functor);
         }
 
 

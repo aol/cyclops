@@ -570,7 +570,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 		            @Override
 		            public FeatureToggleSemigroupApplyer<T> withFunctor(ConvertableFunctor<T> functor) {
 		               
-		                return new FeatureToggleSemigroupApplyer<T>(super.combiner,super.functor);
+		                return new FeatureToggleSemigroupApplyer<T>(super.combiner,functor);
 		            }
 
 

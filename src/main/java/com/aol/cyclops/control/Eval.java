@@ -273,7 +273,7 @@ public interface Eval<T> extends Supplier<T>,
 	            @Override
 	            public EvalSemigroupApplyer<T> withFunctor(ConvertableFunctor<T> functor) {
 	               
-	                return new EvalSemigroupApplyer<T>(super.combiner,super.functor);
+	                return new EvalSemigroupApplyer<T>(super.combiner,functor);
 	            }
 
 

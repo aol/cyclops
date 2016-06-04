@@ -456,7 +456,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
          */
         @Override
         public <T2, R> Ior<ST,R> ap(Value<T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
-            return  app.toXor().visit(s->Ior.primary(fn.apply(get(),app.get())), f->Ior.secondary(null));
+           
+            return  app.toXor().visit(s->Ior.secondary(null), f->Ior.primary(fn.apply(get(),app.get())));
         }
 
         @Override
@@ -751,13 +752,13 @@ public interface Ior<ST,PT> extends Supplier<PT>,
          */
         @Override
         public <T2, R> Ior<ST,R> ap(Value<T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
-            return  app.toXor().visit(s->Ior.both(this.secondaryGet(),fn.apply(get(),app.get())), f->Ior.secondary(this.secondaryGet()));
+            return  app.toXor().visit(s->Ior.secondary(this.secondaryGet()), f->Ior.both(this.secondaryGet(),fn.apply(get(),app.get())));
         }
 	}
 	 public static class IorSemigroupApplyer<ST,T> extends SemigroupApplyer<T> {
          
          
-         public Ior<ST,T> xor(){
+         public Ior<ST,T> ior(){
               return (Ior<ST,T>)super.functor;
           }
           
@@ -768,13 +769,13 @@ public interface Ior<ST,PT> extends Supplier<PT>,
           @Override
           public IorSemigroupApplyer<ST,T> withFunctor(ConvertableFunctor<T> functor) {
              
-              return new IorSemigroupApplyer<ST,T>(super.combiner,super.functor);
+              return new IorSemigroupApplyer<ST,T>(super.combiner,functor);
           }
 
 
           public IorSemigroupApplyer<ST,T> ap(ConvertableFunctor<T> fn) {
               
-            return  withFunctor(xor().ap(fn, super.combiner));
+            return  withFunctor(ior().ap(fn, super.combiner));
            
           }
           

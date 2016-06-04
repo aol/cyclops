@@ -43,7 +43,7 @@ public class TryTTest {
 		
 	}
 	private Try<Integer,RuntimeException> toTry(Integer b){
-		return  b!=null ? Success.of(b) : Failure.of(new NullPointerException());
+		return  b!=null ? Try.success(b) : Try.failure(new NullPointerException());
 	}
 	@Test
 	public void tryAndStreamAndFuture(){

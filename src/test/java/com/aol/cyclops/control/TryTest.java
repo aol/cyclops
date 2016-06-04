@@ -56,6 +56,27 @@ public class TryTest {
 		just = Try.success(10);
 		none = Try.failure(exception);
 	}
+	
+	   @Test
+	    public void testApFeatureToggle() {
+	      
+	        assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+	    }
+	   
+	    @Test
+	    public void testApCombiner(){
+	        assertThat(just.ap(this::add).ap(FeatureToggle.enable(20)).toTry().get(),equalTo(30));
+	    }
+	    @Test
+	    public void testApMonoid(){
+	        assertThat(just.ap(Semigroups.intSum).ap(FeatureToggle.enable(20)).toTry().get(),equalTo(30));
+	    }
+	   
+
+	    @Test
+	    public void testZipPubFeatureToggle() {
+	        assertThat(just.zip(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+	    }
 
 	@Test
     public void nest(){
@@ -464,7 +485,7 @@ public class TryTest {
 
 	@Test
 	public void testAp1() {
-		assertThat(Ior.primary(1).ap1(this::add1).toMaybe(),equalTo(Ior.primary(2).toMaybe()));
+		assertThat(Ior.primary(1).applyFunctions().ap1(this::add1).toMaybe(),equalTo(Ior.primary(2).toMaybe()));
 	}
 	
 	private int add(int a, int b){
@@ -473,21 +494,21 @@ public class TryTest {
 
 	@Test
 	public void testAp2() {
-		assertThat(Ior.primary(1).ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Ior.primary(4).toMaybe()));
+		assertThat(Ior.primary(1).applyFunctions().ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Ior.primary(4).toMaybe()));
 	}
 	private int add3(int a, int b, int c){
 		return a+b+c;
 	}
 	@Test
 	public void testAp3() {
-		assertThat(Ior.primary(1).ap3(this::add3).ap(Optional.of(3)).ap(Ior.primary(4)).toMaybe(),equalTo(Ior.primary(8).toMaybe()));
+		assertThat(Ior.primary(1).applyFunctions().ap3(this::add3).ap(Optional.of(3)).ap(Ior.primary(4)).toMaybe(),equalTo(Ior.primary(8).toMaybe()));
 	}
 	private int add4(int a, int b, int c,int d){
 		return a+b+c+d;
 	}
 	@Test
 	public void testAp4() {
-		assertThat(Ior.primary(1).ap4(this::add4)
+		assertThat(Ior.primary(1).applyFunctions().ap4(this::add4)
 						.ap(Optional.of(3))
 						.ap(Ior.primary(4))
 						.ap(Ior.primary(6)).toMaybe(),equalTo(Ior.primary(14).toMaybe()));
@@ -497,7 +518,7 @@ public class TryTest {
 	}
 	@Test
 	public void testAp5() {
-		assertThat(Ior.primary(1).ap5(this::add5)
+		assertThat(Ior.primary(1).applyFunctions().ap5(this::add5)
 				.ap(Optional.of(3))
 				.ap(Ior.primary(4))
 				.ap(Ior.primary(6))

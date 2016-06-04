@@ -1304,9 +1304,8 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> ApplicativeFunctor<R> ap(Value<T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        // TODO Auto-generated method stub
-        return ApplicativeFunctor.super.ap(app, fn);
+    default <T2, R> Try<R, X> ap(Value<T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (Try<R, X>)ApplicativeFunctor.super.ap(app, fn);
     }
     /**
      * Equivalent to ap, but accepts an Iterable and takes the first value
@@ -1351,7 +1350,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
             @Override
             public TrySemigroupApplyer<T,X> withFunctor(ConvertableFunctor<T> functor) {
                
-                return new TrySemigroupApplyer<T,X>(super.combiner,super.functor);
+                return new TrySemigroupApplyer<T,X>(super.combiner,functor);
             }
 
 

@@ -58,7 +58,26 @@ public class MaybeTest implements Printable {
 		just = Maybe.of(10);
 		none = Maybe.none();
 	}
-	
+	  @Test
+      public void testApFeatureToggle() {
+        
+          assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+      }
+     
+      @Test
+      public void testApCombiner(){
+          assertThat(just.ap(this::add).ap(FeatureToggle.enable(20)).maybe().get(),equalTo(30));
+      }
+      @Test
+      public void testApMonoid(){
+          assertThat(just.ap(Semigroups.intSum).ap(FeatureToggle.enable(20)).maybe().get(),equalTo(30));
+      }
+     
+
+      @Test
+      public void testZipPubFeatureToggle() {
+          assertThat(just.zip(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+      }
 	@Test
     public void fib(){
         System.out.println(fibonacci(just(tuple(100_000,1l,0l))));
@@ -595,7 +614,7 @@ public class MaybeTest implements Printable {
 
 	@Test
 	public void testAp1() {
-		assertThat(Maybe.of(1).ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
+		assertThat(Maybe.of(1).applyFunctions().ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
 	}
 	
 	private int add(int a, int b){
@@ -604,7 +623,7 @@ public class MaybeTest implements Printable {
 
 	@Test
 	public void testAp2() {
-		assertThat(Maybe.of(1).ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
+		assertThat(Maybe.of(1).applyFunctions().ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
 	}
 	private int add3(int a, int b, int c){
 		return a+b+c;
@@ -614,12 +633,13 @@ public class MaybeTest implements Printable {
 	    
 	    
 	    Maybe.of(1)
+	          .applyFunctions()
 	         .ap3(this::add3)
 	         .ap(Optional.of(3))
 	         .ap(Maybe.of(4));
 	    
 		
-	    assertThat(Maybe.of(1).ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
+	    assertThat(Maybe.of(1).applyFunctions().ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
 	}
 	private int add4(int a, int b, int c,int d){
 		return a+b+c+d;
@@ -627,7 +647,7 @@ public class MaybeTest implements Printable {
 	@Test
 	public void testAp4() {
 	   
-		assertThat(Maybe.of(1).ap4(this::add4)
+		assertThat(Maybe.of(1).applyFunctions().ap4(this::add4)
 						.ap(Optional.of(3))
 						.ap(Maybe.of(4))
 						.ap(Maybe.of(6)).toMaybe(),equalTo(Maybe.of(14)));
@@ -637,7 +657,7 @@ public class MaybeTest implements Printable {
 	}
 	@Test
 	public void testAp5() {
-		assertThat(Maybe.of(1).ap5(this::add5)
+		assertThat(Maybe.of(1).applyFunctions().ap5(this::add5)
 				.ap(Optional.of(3))
 				.ap(Maybe.of(4))
 				.ap(Maybe.of(6))

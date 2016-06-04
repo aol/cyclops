@@ -457,7 +457,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
          */
         @Override
         public <T2, R> Xor<ST,R> ap(Value<T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
-            return  app.toXor().visit(s->Xor.primary(fn.apply(get(),app.get())), f->Xor.secondary(null));
+            return  app.toXor().visit(s->Xor.secondary(null), f->Xor.primary(fn.apply(get(),app.get())));
         }
 
         
@@ -603,7 +603,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
             @Override
             public XorSemigroupApplyer<ST,T> withFunctor(ConvertableFunctor<T> functor) {
                
-                return new XorSemigroupApplyer<ST,T>(super.combiner,super.functor);
+                return new XorSemigroupApplyer<ST,T>(super.combiner,functor);
             }
 
 

@@ -75,7 +75,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	 * Peek at the current value of the Try
 	 * <pre>
 	 * {@code 
-	 *    TryT.of(AnyM.fromStream(Success.of(10))
+	 *    TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .peek(System.out::println);
 	 *             
 	 *     //prints 10        
@@ -96,7 +96,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	 * Filter the wrapped Try
 	 * <pre>
 	 * {@code 
-	 *    TryT.of(AnyM.fromStream(Success.of(10))
+	 *    TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .filter(t->t!=10);
 	 *             
 	 *     //TryT<AnyMValue<Stream<Optional.empty>>>
@@ -114,7 +114,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  TryT.of(AnyM.fromStream(Success.of(10))
+	 *  TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .map(t->t=t+1);
 	 *  
 	 *  
@@ -133,8 +133,8 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	 * Flat Map the wrapped Try
 	  * <pre>
 	 * {@code 
-	 *  TryT.of(AnyM.fromStream(Success.of(10))
-	 *             .flatMap(t->Failure.of(new Exception());
+	 *  TryT.of(AnyM.fromStream(Try.success(10))
+	 *             .flatMap(t->Try.failure(new Exception());
 	 *  
 	 *  
 	 *  //TryT<AnyMValue<Stream<Failure[Excption]>>>

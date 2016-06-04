@@ -58,7 +58,7 @@ public interface TryT<T,X extends Throwable>  extends Publisher<T>,
 	 * Peek at the current value of the Try
 	 * <pre>
 	 * {@code 
-	 *    TryT.of(AnyM.fromStream(Success.of(10))
+	 *    TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .peek(System.out::println);
 	 *             
 	 *     //prints 10        
@@ -74,7 +74,7 @@ public interface TryT<T,X extends Throwable>  extends Publisher<T>,
 	 * Filter the wrapped Try
 	 * <pre>
 	 * {@code 
-	 *    TryT.of(AnyM.fromStream(Success.of(10))
+	 *    TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .filter(t->t!=10);
 	 *             
 	 *     //TryT<AnyM<Stream<Optional.empty>>>
@@ -90,7 +90,7 @@ public interface TryT<T,X extends Throwable>  extends Publisher<T>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  TryT.of(AnyM.fromStream(Success.of(10))
+	 *  TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .map(t->t=t+1);
 	 *  
 	 *  
@@ -107,8 +107,8 @@ public interface TryT<T,X extends Throwable>  extends Publisher<T>,
 	 * Flat Map the wrapped Try
 	  * <pre>
 	 * {@code 
-	 *  TryT.of(AnyM.fromStream(Success.of(10))
-	 *             .flatMap(t->Failure.of(new Exception());
+	 *  TryT.of(AnyM.fromStream(Try.success(10))
+	 *             .flatMap(t->Try.failure(new Exception());
 	 *  
 	 *  
 	 *  //TryT<AnyM<Stream<Failure[Excption]>>>

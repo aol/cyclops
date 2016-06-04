@@ -15,7 +15,7 @@ public class XorTest {
 	@Test
 	public void test() {
 		Xor<String,String> fail1 = Xor.secondary("failed1");
-		String s = fail1.swap().ap2(this::concat).ap(Xor.secondary("failed2").swap()).get();
+		String s = fail1.swap().applyFunctions().ap2(this::concat).ap(Xor.secondary("failed2").swap()).get();
 		System.out.println(s);
 	}
 	

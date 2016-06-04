@@ -211,7 +211,7 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	        @Override
 	        public MaybeSemigroupApplyer<T> withFunctor(ConvertableFunctor<T> functor) {
 	           
-	            return new MaybeSemigroupApplyer<T>(super.combiner,super.functor);
+	            return new MaybeSemigroupApplyer<T>(super.combiner,functor);
 	        }
 
 

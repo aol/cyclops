@@ -32,7 +32,8 @@ import lombok.experimental.Wither;
  *
  * @param <T>
  */
-public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T>{
+public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, 
+                                               Unit<T>{
 
 	
 	public static class Applicatives{

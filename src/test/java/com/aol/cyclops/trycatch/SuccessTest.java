@@ -31,7 +31,7 @@ public class SuccessTest {
 	
 	
 	public Try<String,FileNotFoundException> load(String filename){
-		return Success.of("test-data");
+		return Try.success("test-data");
 	}
 	
 	public void process(){
@@ -45,7 +45,7 @@ public class SuccessTest {
 	
 	@Before
 	public void setup(){
-		success = Success.of(10);
+		success = Try.success(10);
 	}
 
 	@Test
@@ -65,12 +65,12 @@ public class SuccessTest {
 
 	@Test
 	public void testMap() {
-		assertThat(success.map(x->x+1),equalTo(Success.of(value+1)));
+		assertThat(success.map(x->x+1),equalTo(Try.success(value+1)));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(success.flatMap(x->Success.of(x+1)),equalTo(Success.of(value+1)));
+		assertThat(success.flatMap(x->Try.success(x+1)),equalTo(Try.success(value+1)));
 	}
 
 	@Test
@@ -89,30 +89,30 @@ public class SuccessTest {
 
 	@Test
 	public void testRecoverWith() {
-		assertThat(success.recoverWith(e->Success.of(20)),equalTo(success));
+		assertThat(success.recoverWith(e->Try.success(20)),equalTo(success));
 	}
 
 	@Test
 	public void testRecoverFor() {
-		Success<Integer,IOException> success = Success.of(20);
-		assertThat(success.recoverFor(FileSystemException.class, e-> 10),equalTo(Success.of(20)));
-		assertThat(success.recoverFor(FileNotFoundException.class, e-> 15),equalTo(Success.of(20)));
+		Success<Integer,IOException> success = Try.success(20);
+		assertThat(success.recoverFor(FileSystemException.class, e-> 10),equalTo(Try.success(20)));
+		assertThat(success.recoverFor(FileNotFoundException.class, e-> 15),equalTo(Try.success(20)));
 		assertThat(success.recoverFor(IOException.class,e->30),equalTo(success));
 	}
 
 	@Test
 	public void testRecoverWithFor() {
-		assertThat(success.recoverWithFor(FileNotFoundException.class,e->Success.of(20)),equalTo(success));
+		assertThat(success.recoverWithFor(FileNotFoundException.class,e->Try.success(20)),equalTo(success));
 	}
 	@Test
 	public void testFlatten() {
 		
-		assertThat(Success.of(success).flatten(),equalTo(success));
+		assertThat(Try.success(success).flatten(),equalTo(success));
 	}
 	@Test
 	public void testFlattenFailure() {
 		FileNotFoundException error = new FileNotFoundException();
-		assertThat(Success.of(Failure.of(error)).flatten(),equalTo(Failure.of(error)));
+		assertThat(Try.success(Try.failure(error)).flatten(),equalTo(Try.failure(error)));
 	}
 
 	@Test
@@ -161,7 +161,7 @@ public class SuccessTest {
 
 	@Test
 	public void testOnFailClassOfQsuperXConsumerOfX() {
-		Success<Integer,IOException> success = Success.of(10);
+		Success<Integer,IOException> success = Try.success(10);
 		errorCaptured = null;
 		success.onFail(FileNotFoundException.class,e -> errorCaptured =e);
 		assertThat(errorCaptured,is(nullValue()));
