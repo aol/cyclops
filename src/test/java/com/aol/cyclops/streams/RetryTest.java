@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -101,9 +102,9 @@ public class RetryTest {
 
 		long time = System.currentTimeMillis();
 		String result = ReactiveSeq.of( 1,  2, 3)
-				.retry(serviceMock)
+				.retry(serviceMock,7,200,TimeUnit.MILLISECONDS)
 				.firstValue();
-		assertThat(System.currentTimeMillis()-time,greaterThan(2000l));
+		assertThat(System.currentTimeMillis()-time,greaterThan(200l));
 		assertThat(result, is("42"));
 	}
 
