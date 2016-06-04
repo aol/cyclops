@@ -23,7 +23,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.val;
 
@@ -50,7 +50,7 @@ public class EvalTValue<T> implements EvalT<T>,
                                     Supplier<T>, 
                                     ConvertableFunctor<T>, 
                                     Filterable<T>,
-                                    Applicativable<T>,
+                                    ApplicativeFunctor<T>,
                                     Matchable.ValueAndOptionalMatcher<T>
                                     {
 

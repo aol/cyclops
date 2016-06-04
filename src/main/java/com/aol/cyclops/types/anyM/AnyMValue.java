@@ -31,7 +31,7 @@ import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
@@ -40,7 +40,7 @@ import com.aol.cyclops.util.function.TriFunction;
 public interface AnyMValue<T> extends AnyM<T>,
 									  Value<T>,
 									  Filterable<T>,
-									  Applicativable<T>,
+									  ApplicativeFunctor<T>,
 									  MonadicValue<T>,
 									  Matchable.ValueAndOptionalMatcher<T>{
 	

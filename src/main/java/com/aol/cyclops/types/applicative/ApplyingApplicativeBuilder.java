@@ -12,16 +12,16 @@ import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.AllArgsConstructor;
 @AllArgsConstructor
-public class ApplyingApplicativeBuilder<T,R, A extends Applicativable<R> >  {
+public class ApplyingApplicativeBuilder<T,R, A extends ApplicativeFunctor<R> >  {
 
 		
 		private final Unit unit;
 		private final Functor functor;
 		
-		private Applicativable unit(Function fn){
-			return (Applicativable)unit.unit(fn);
+		private ApplicativeFunctor unit(Function fn){
+			return (ApplicativeFunctor)unit.unit(fn);
 		}
-		public Applicative<T,R,A> applicative(Applicativable<Function<? super T,? extends R>> fn){
+		public Applicative<T,R,A> applicative(ApplicativeFunctor<Function<? super T,? extends R>> fn){
 			
 			return ()->fn;
 		}
@@ -29,7 +29,7 @@ public class ApplyingApplicativeBuilder<T,R, A extends Applicativable<R> >  {
 			
 			return applicative(unit(fn));
 		}
-		public <T2> Applicative<T2,R,A> applicative2(Applicativable<Function<? super T,Function<? super T2,? extends R>>> fn){
+		public <T2> Applicative<T2,R,A> applicative2(ApplicativeFunctor<Function<? super T,Function<? super T2,? extends R>>> fn){
 			Applicative2<T,T2,R,A> app = ()->fn;
 			return app.ap(functor);
 			
@@ -42,7 +42,7 @@ public class ApplyingApplicativeBuilder<T,R, A extends Applicativable<R> >  {
 			
 			return applicative2(unit(CurryVariance.curry2(fn)));
 		}
-		public <T2,T3> Applicative2<T2,T3,R,A> applicative3(Applicativable<Function<? super T,Function<? super T2,Function<? super T3,? extends R>>>> fn){
+		public <T2,T3> Applicative2<T2,T3,R,A> applicative3(ApplicativeFunctor<Function<? super T,Function<? super T2,Function<? super T3,? extends R>>>> fn){
 			Applicative3<T,T2,T3,R,A> app =  ()->fn;
 			return app.ap(functor);
 		}
@@ -54,7 +54,7 @@ public class ApplyingApplicativeBuilder<T,R, A extends Applicativable<R> >  {
 			
 			return applicative3(unit(CurryVariance.curry3(fn)));
 		}
-		public <T2,T3,T4> Applicative3<T2,T3,T4,R,A> applicative4(Applicativable<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>>> fn){
+		public <T2,T3,T4> Applicative3<T2,T3,T4,R,A> applicative4(ApplicativeFunctor<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,? extends R>>>>> fn){
 			Applicative4<T,T2,T3,T4,R,A> app =  ()->fn;
 			return app.ap(functor);
 		}
@@ -66,7 +66,7 @@ public class ApplyingApplicativeBuilder<T,R, A extends Applicativable<R> >  {
 			
 			return applicative4(unit(CurryVariance.curry4(fn)));
 		}
-		public <T2,T3,T4,T5> Applicative4<T2,T3,T4,T5,R,A> applicative5(Applicativable<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>>> fn){
+		public <T2,T3,T4,T5> Applicative4<T2,T3,T4,T5,R,A> applicative5(ApplicativeFunctor<Function<? super T,Function<? super T2,Function<? super T3,Function<? super T4,Function<? super T5,? extends R>>>>>> fn){
 			Applicative5<T,T2,T3,T4,T5,R,A> app =  ()->fn;
 			return app.ap(functor);
 		}

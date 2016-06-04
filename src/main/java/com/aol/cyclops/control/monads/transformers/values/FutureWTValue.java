@@ -23,7 +23,7 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.val;
 
@@ -45,7 +45,7 @@ public class FutureWTValue<A> implements FutureWT<A>,
                                                 Supplier<A>, 
                                                 ConvertableFunctor<A>, 
                                                 Filterable<A>,
-                                                Applicativable<A>,
+                                                ApplicativeFunctor<A>,
                                                 Matchable.ValueAndOptionalMatcher<A>
                                                 {
    

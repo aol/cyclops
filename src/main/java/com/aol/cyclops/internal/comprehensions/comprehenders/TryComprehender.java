@@ -63,8 +63,8 @@ public class TryComprehender implements ValueComprehender<Try> {
 	@Override
 	public Try of(Object o) {
 		if(o instanceof Throwable)
-			return Failure.of((Throwable)o);
-		return Success.of(o);
+			return Try.failure((Throwable)o);
+		return Try.success(o);
 	}
 	
 	/* 

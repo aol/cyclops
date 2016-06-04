@@ -25,7 +25,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.val;
 
@@ -47,7 +47,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
                                                 Supplier<A>, 
                                                 ConvertableFunctor<A>, 
                                                 Filterable<A>,
-                                                Applicativable<A>,
+                                                ApplicativeFunctor<A>,
                                                 Matchable.ValueAndOptionalMatcher<A>
                                                 {
    

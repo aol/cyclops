@@ -257,7 +257,7 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
 	 */
 	@SuppressWarnings("unchecked")
 	public static <A, X extends Throwable> TryTSeq<A,X> fromAnyM(AnyMSeq<A> anyM) {
-		return (TryTSeq<A, X>) of(anyM.map(Success::of));
+		return (TryTSeq<A, X>) of(anyM.map(Try::success));
 	}
    
 	/**

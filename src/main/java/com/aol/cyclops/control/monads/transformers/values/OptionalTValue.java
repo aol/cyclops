@@ -21,7 +21,7 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 
@@ -45,7 +45,7 @@ public class OptionalTValue<T> implements OptionalT<T>,
                                     Supplier<T>, 
                                     ConvertableFunctor<T>, 
                                     Filterable<T>,
-                                    Applicativable<T>,
+                                    ApplicativeFunctor<T>,
                                     Matchable.ValueAndOptionalMatcher<T>
                                     {
    

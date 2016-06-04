@@ -4,10 +4,10 @@ import static com.aol.cyclops.control.For.Values.each2;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -19,14 +19,17 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.control.Eval.Module.EvalSemigroupApplyer;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Memoize;
 
@@ -63,7 +66,7 @@ public interface Eval<T> extends Supplier<T>,
                                  MonadicValue<T>, 
                                  Functor<T>, 
                                  Filterable<T>, 
-                                 Applicativable<T>,
+                                 ApplicativeFunctor<T>,
                                  Matchable.ValueAndOptionalMatcher<T>{
 
     public static <T> Eval<T> fromPublisher(Publisher<T> pub){
@@ -162,14 +165,14 @@ public interface Eval<T> extends Supplier<T>,
 	 */
 	@Override
 	default <U> Eval<U> cast(Class<? extends U> type) {
-		return (Eval<U>)Applicativable.super.cast(type);
+		return (Eval<U>)ApplicativeFunctor.super.cast(type);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
 	 */
 	@Override
 	default Eval<T> peek(Consumer<? super T> c) {
-		return (Eval<T>)Applicativable.super.peek(c);
+		return (Eval<T>)ApplicativeFunctor.super.peek(c);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
@@ -177,7 +180,7 @@ public interface Eval<T> extends Supplier<T>,
 	@Override
 	default <R> Eval<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 		
-		return (Eval<R>)Applicativable.super.trampoline(mapper);
+		return (Eval<R>)ApplicativeFunctor.super.trampoline(mapper);
 	}
 	default Eval<CompletableFuture<T>> asyncNow(Executor ex){
 		return Eval.now(this.toCompletableFutureAsync(ex));
@@ -209,9 +212,83 @@ public interface Eval<T> extends Supplier<T>,
 		return (Eval<R>)broad;
 	}
 
+    @Override
+    default  EvalSemigroupApplyer<T> ap(BiFunction<T,T,T> fn){
+        return  new EvalSemigroupApplyer<T>(fn, this);
+    }
+    @Override
+    default  EvalSemigroupApplyer<T> ap(Semigroup<T> fn){
+        return  new EvalSemigroupApplyer<>(fn.combiner(), this);
+    }
+    /**
+     * Apply a function across two values at once.
+     * 
+     * @param app
+     * @param fn
+     * @return
+     */
+    @Override
+    default <T2,R> Eval<R> ap(Value<T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+        
+        return  (Eval<R> )ApplicativeFunctor.super.ap(app, fn);
+    }
+    /**
+     * Equivalent to ap, but accepts an Iterable and takes the first value only from that iterable.
+     * 
+     * @param app
+     * @param fn
+     * @return
+     */
+    @Override
+    default <T2,R> Eval<R> zip(Iterable<T2> app,BiFunction<? super T,? super T2,? extends R> fn){
+        
+        return  (Eval<R> )ApplicativeFunctor.super.zip(app, fn);
+    } 
+    /**
+     * Equivalent to ap, but accepts a Publisher and takes the first value only from that publisher.
+     * 
+     * @param app
+     * @param fn
+     * @return
+     */
+    @Override
+    default <T2,R> Eval<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<T2> app){
+        return  (Eval<R> )ApplicativeFunctor.super.zip(fn,app);
+        
+    } 
+     
 	
     
 	static class Module{
+	    public static class EvalSemigroupApplyer<T> extends SemigroupApplyer<T> {
+            
+	           public Eval<T> eval(){
+	                return (Eval<T>)super.functor;
+	            }
+	            
+	           
+	            /* (non-Javadoc)
+	             * @see com.aol.cyclops.types.applicative.Applicativable.SemigroupApplyer#withFunctor(com.aol.cyclops.types.ConvertableFunctor)
+	             */
+	            @Override
+	            public EvalSemigroupApplyer<T> withFunctor(ConvertableFunctor<T> functor) {
+	               
+	                return new EvalSemigroupApplyer<T>(super.combiner,super.functor);
+	            }
+
+
+	            public EvalSemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
+	                
+	              return  withFunctor(eval().ap(fn, super.combiner));
+	             
+	            }
+	            
+
+	            public EvalSemigroupApplyer(BiFunction<T, T, T> combiner, ConvertableFunctor<T> functor) {
+	                super(combiner, functor);
+	                
+	            }
+	        }
 	    public static class Later<T> extends Rec<T> implements Eval<T>{
 	        
 	        

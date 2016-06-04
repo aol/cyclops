@@ -21,7 +21,7 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 /**
  * Monad transformer for JDK Maybe
@@ -46,7 +46,7 @@ public class MaybeTValue<T> implements MaybeT<T>,
                                     Supplier<T>, 
                                     ConvertableFunctor<T>, 
                                     Filterable<T>,
-                                    Applicativable<T>,
+                                    ApplicativeFunctor<T>,
                                     Matchable.ValueAndOptionalMatcher<T>
                                     {
 

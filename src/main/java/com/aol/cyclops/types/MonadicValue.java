@@ -5,7 +5,9 @@ import java.util.function.Function;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
-public interface MonadicValue<T> extends Value<T>, Unit<T>,Functor<T> {
+public interface MonadicValue<T> extends Value<T>, 
+                                            Unit<T>,
+                                            Functor<T> {
 
    
     public <T> MonadicValue<T> unit(T unit);

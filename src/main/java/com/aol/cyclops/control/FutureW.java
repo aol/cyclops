@@ -27,8 +27,8 @@ import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.applicative.Applicativable;
-import com.aol.cyclops.types.applicative.Applicativable.SemigroupApplyer;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor.SemigroupApplyer;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
 
@@ -38,7 +38,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class FutureW<T> implements ConvertableFunctor<T>,
-											Applicativable<T>, 
+											ApplicativeFunctor<T>, 
 											MonadicValue1<T>, 
 											FlatMap<T>,
 											Filterable<T>{
@@ -171,7 +171,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	public <R> FutureW<R> patternMatch(
 			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (FutureW<R>)Applicativable.super.patternMatch(case1,otherwise);
+		return (FutureW<R>)ApplicativeFunctor.super.patternMatch(case1,otherwise);
 	}
 
 	@Override
@@ -319,7 +319,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	@Override
 	public <U> FutureW<U> cast(Class<? extends U> type) {
 		
-		return (FutureW<U>)Applicativable.super.cast(type);
+		return (FutureW<U>)ApplicativeFunctor.super.cast(type);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
@@ -327,7 +327,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	@Override
 	public FutureW<T> peek(Consumer<? super T> c) {
 		
-		return (FutureW<T>)Applicativable.super.peek(c);
+		return (FutureW<T>)ApplicativeFunctor.super.peek(c);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
@@ -335,7 +335,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	@Override
 	public <R> FutureW<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 		
-		return(FutureW<R>)Applicativable.super.trampoline(mapper);
+		return(FutureW<R>)ApplicativeFunctor.super.trampoline(mapper);
 	}
 	@Override
 	public String toString() {
@@ -396,7 +396,45 @@ public class FutureW<T> implements ConvertableFunctor<T>,
     public FutureW<T> toFutureWAsync(Executor ex){
         return this;
     }
- 
+    
+    /**
+     * Apply a function across two values at once.
+     * 
+     * @param app
+     * @param fn
+     * @return
+     */
+    @Override
+    public <T2,R> FutureW<R> ap(Value<T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+        if(app instanceof FutureW){
+            return FutureW.of(future.thenCombine( ((FutureW<T2>)app).getFuture(),fn));
+        }
+        return   (FutureW<R> )ApplicativeFunctor.super.zip(app, fn);
+    }
+    /**
+     * Equivalent to ap, but accepts an Iterable and takes the first value only from that iterable.
+     * 
+     * @param app
+     * @param fn
+     * @return
+     */
+    @Override
+    public <T2,R> FutureW<R> zip(Iterable<T2> app,BiFunction<? super T,? super T2,? extends R> fn){
+        
+        return  (FutureW<R> )ApplicativeFunctor.super.zip(app, fn);
+    } 
+    /**
+     * Equivalent to ap, but accepts a Publisher and takes the first value only from that publisher.
+     * 
+     * @param app
+     * @param fn
+     * @return
+     */
+    @Override
+    public <T2,R> FutureW<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<T2> app){
+        return  (FutureW<R> )ApplicativeFunctor.super.zip(fn,app);
+        
+    } 
 
     public static <T> FutureW<T> ofSupplier(Supplier<T> s) {
        return FutureW.of(CompletableFuture.supplyAsync(s));

@@ -24,7 +24,7 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
     
     
      /**
-      * Eagerly combine two MonadicValues using the supplied monoid
+      * Eagerly combine two MonadicValues using the supplied monoid (@see ApplicativeFunctor for type appropraite i.e. lazy / async alternatives)
       * 
       * <pre>
       * {@code 

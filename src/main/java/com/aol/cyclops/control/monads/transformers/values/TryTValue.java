@@ -23,7 +23,7 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 
 /**
@@ -46,7 +46,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
                                                     Supplier<T>, 
                                                     ConvertableFunctor<T>, 
                                                     Filterable<T>,
-                                                    Applicativable<T>,
+                                                    ApplicativeFunctor<T>,
                                                     Matchable.ValueAndOptionalMatcher<T>
                                                     {
    
@@ -235,7 +235,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	 */
 	@SuppressWarnings("unchecked")
 	public static <A, X extends Throwable> TryTValue<A,X> fromAnyM(AnyMValue<A> anyM) {
-		return (TryTValue<A, X>) of(anyM.map(Success::of));
+		return (TryTValue<A, X>) of(anyM.map(Try::success));
 	}
    
 	/**

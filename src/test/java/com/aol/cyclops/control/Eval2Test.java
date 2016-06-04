@@ -39,7 +39,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.types.applicative.Applicativable.Applicatives;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 
@@ -531,7 +531,14 @@ public class Eval2Test {
 	private int add(int a, int b){
 		return a+b;
 	}
-
+	@Test
+    public void testApEval() {
+        assertThat(just.ap(Eval.later(()->20),this::add),equalTo(Eval.now(30)));
+    }
+	@Test
+	public void testApEvalLazy(){
+	    System.out.println(Eval.later(()->10).ap(Eval.later(()->20),this::add));
+	}
 	@Test
 	public void testAp2() {
 		assertThat(Maybe.of(1).ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
