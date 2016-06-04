@@ -44,7 +44,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
     public static <T> FutureW<T> empty(){
         return new FutureW(CompletableFuture.completedFuture(null));
     }
-    static <T> FutureW<T> fromPublisher(Publisher<T> pub,Executor ex){
+    public static <T> FutureW<T> fromPublisher(Publisher<T> pub,Executor ex){
         ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toFutureWAsync(ex);
@@ -53,7 +53,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         Iterator<T> it = iterable.iterator();
         return FutureW.ofSupplier(()->Eval.fromIterable(iterable)).map(e->e.get());
     }
-    static <T> FutureW<T> fromPublisher(Publisher<T> pub){
+    public static <T> FutureW<T> fromPublisher(Publisher<T> pub){
         ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toFutureW();

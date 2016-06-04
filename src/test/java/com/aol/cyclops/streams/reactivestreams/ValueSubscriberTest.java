@@ -6,10 +6,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 import java.util.NoSuchElementException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -19,6 +22,7 @@ import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 
 public class ValueSubscriberTest {
 
+    Executor ex = Executors.newFixedThreadPool(5);
     @Test
     public void maybeTest(){
         ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
@@ -31,7 +35,7 @@ public class ValueSubscriberTest {
     }
     @Test
     public void maybeFromPublisherTest(){
-        ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
+        
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Maybe<Integer> maybe = Maybe.fromPublisher(stream);
@@ -39,8 +43,27 @@ public class ValueSubscriberTest {
         
     }
     @Test
+    public void futureWFromPublisherTest(){
+     
+        ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        FutureW<Integer> maybe = FutureW.fromPublisher(stream);
+        assertThat(maybe.get(),equalTo(1));
+        
+    }
+    @Test
+    public void futureWAsyncFromPublisherTest(){
+      
+        ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        FutureW<Integer> maybe = FutureW.fromPublisher(stream,ex);
+        assertThat(maybe.get(),equalTo(1));
+        
+    }
+ 
+    @Test
     public void evalFromPublisherTest(){
-        ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
+        
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Eval<Integer> maybe = Eval.fromPublisher(stream);
@@ -49,7 +72,7 @@ public class ValueSubscriberTest {
     }
     @Test
     public void xorFromPublisherTest(){
-        ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
+       
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Xor<Throwable,Integer> maybe = Xor.fromPublisher(stream);
@@ -58,7 +81,7 @@ public class ValueSubscriberTest {
     }
     @Test
     public void iorFromPublisherTest(){
-        ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
+        
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Ior<Throwable,Integer> maybe = Ior.fromPublisher(stream);
@@ -66,8 +89,8 @@ public class ValueSubscriberTest {
         
     }
     @Test
-    public void truFromPublisherTest(){
-        ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
+    public void tryFromPublisherTest(){
+       
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Try<Integer,Throwable> maybe = Try.fromPublisher(stream);
