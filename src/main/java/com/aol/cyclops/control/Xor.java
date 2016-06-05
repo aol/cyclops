@@ -1,8 +1,5 @@
 package com.aol.cyclops.control;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -14,7 +11,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.jooq.lambda.tuple.Tuple;
-import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;

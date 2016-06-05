@@ -22,6 +22,8 @@ import com.aol.cyclops.types.stream.PausableHotStream;
 
 public class HotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(15);
+	static final Executor exec2 = Executors.newFixedThreadPool(5);
+	
 	volatile Object value;
 	
 	static final ScheduledExecutorService scheduled = Executors.newScheduledThreadPool(15);
@@ -222,7 +224,7 @@ public class HotStreamTest {
 		        .limitWhile(i->active)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
-				.pausableHotStream(exec);
+				.pausableHotStream(exec2);
 		s.connect(new LinkedBlockingQueue<>())
 				.limit(100)
 				.futureOperations(ForkJoinPool.commonPool())
@@ -235,40 +237,11 @@ public class HotStreamTest {
             Thread.sleep(1000);
 		s.pause();
 		System.out.println(value);
-		assertTrue(value!=oldValue);
+		assertTrue("value is "  + value + ". oldValue is " + oldValue,value!=oldValue);
 		s.unpause();
 		latch.await();
 		assertTrue(value!=null);
 		active=false;
 	}
 	volatile boolean active;
-	@Test
-	public void hotStreamConnectPausableConnect() throws InterruptedException{
-		value= null;
-		active=true;
-		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream s = ReactiveSeq.range(0,Integer.MAX_VALUE)
-		        .limitWhile(i->active)
-				.peek(v->value=v)
-				.peek(v->latch.countDown())
-				.pausableHotStream(exec);
-		Object oldValue = value;
-		s.connect()
-				.limit(10000)
-				.futureOperations(ForkJoinPool.commonPool())
-				.forEach(System.out::println);
-		
-		
-		s.pause();
-		s.unpause();
-
-		while(value==null)
-		    Thread.sleep(1000);
-		s.pause();
-		assertTrue("value= " +  value,value!=oldValue);
-		s.unpause();
-		latch.await();
-		assertTrue(value!=null);
-		active=false;
-	}
 }

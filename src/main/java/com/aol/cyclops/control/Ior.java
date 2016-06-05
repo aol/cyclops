@@ -59,7 +59,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
     public static <T> Ior<Throwable,T> fromPublisher(Publisher<T> pub){
         ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
-        return sub.toIor();
+        return sub.toXor().toIor();
     }
     public static <ST,T> Ior<ST,T> fromIterable(Iterable<T> iterable){
         Iterator<T> it = iterable.iterator();
