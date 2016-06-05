@@ -543,11 +543,14 @@ public class Eval2Test {
 	
 	@Test
 	public void testApCombiner(){
-	    assertThat(just.ap(this::add).ap(Eval.later(()->20)).eval(),equalTo(Eval.now(30)));
+	    assertThat(just.applyFunctions().ap(this::add).ap(Eval.later(()->20)).convertable().toEvalNow(),equalTo(Eval.now(30)));
 	}
 	@Test
     public void testApMonoid(){
-        assertThat(just.ap(Semigroups.intSum).ap(Eval.later(()->20)).eval(),equalTo(Eval.now(30)));
+        assertThat(just.applyFunctions()
+                        .ap(Semigroups.intSum)
+                        .ap(Eval.later(()->20))
+                       .convertable().toEvalNow(),equalTo(Eval.now(30)));
     }
 	@Test
     public void testZipEval() {

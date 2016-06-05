@@ -62,14 +62,7 @@ public class Ior2Test {
         assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
     }
    
-    @Test
-    public void testApCombiner(){
-        assertThat(just.ap(this::add).ap(FeatureToggle.enable(20)).ior().get(),equalTo(30));
-    }
-    @Test
-    public void testApMonoid(){
-        assertThat(just.ap(Semigroups.intSum).ap(FeatureToggle.enable(20)).ior().get(),equalTo(30));
-    }
+    
    
 
     @Test

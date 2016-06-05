@@ -38,7 +38,7 @@ public class XorTest {
 	@Test
 	public void accumulate(){
 	    Xor<String,String> fail1 = Xor.secondary("failed1");
-	    assertThat(fail1.swap()
+	    assertThat(fail1.swap().applyFunctions()
 	                    .ap(Semigroups.stringConcat)
 	                    .ap(Xor.secondary("failed2").swap()).ap(Xor.<String,String>primary("success").swap())
 	                                .convertable().get(),equalTo("failed1failed2"));
@@ -46,7 +46,7 @@ public class XorTest {
 	@Test
     public void accumulateSuccessFail(){
         Xor<String,String> fail1 = Xor.primary("success1");
-        assertThat(fail1.swap().ap((a,b)->a+b)
+        assertThat(fail1.swap().applyFunctions().ap((a,b)->a+b)
                                 .ap(Xor.secondary("failed2").swap())
                                 .ap(Xor.<String,String>primary("success2").swap())
                                 .convertable()
@@ -55,7 +55,7 @@ public class XorTest {
 	@Test
     public void accumulateSuccessFail2(){
         Xor<String,String> fail1 = Xor.primary("success1");
-        assertThat(fail1.swap().ap((a,b)->a+b)
+        assertThat(fail1.swap().applyFunctions().ap((a,b)->a+b)
                                 .ap(Xor.<String,String>primary("success2").swap())
                                 .ap(Xor.secondary("failed2").swap())
                                 .convertable()
@@ -64,7 +64,7 @@ public class XorTest {
 	@Test
     public void accumulate2(){
         Xor<String,String> fail1 = Xor.secondary("failed1");
-        assertThat(fail1.swap().ap((a,b)->a+b)
+        assertThat(fail1.swap().applyFunctions().ap((a,b)->a+b)
                                 .ap(Xor.secondary("failed2").swap())
                                 .ap(Xor.<String,String>primary("success").swap())
                                 .convertable()
@@ -73,7 +73,7 @@ public class XorTest {
 	@Test
     public void accumulate3(){
         Xor<String,String> fail1 = Xor.secondary("failed1");
-        assertThat(fail1.swap().ap((a,b)->a+b)
+        assertThat(fail1.swap().applyFunctions().ap((a,b)->a+b)
                                 .ap(Xor.secondary("failed2").swap())
                                 .ap(Xor.secondary("failed3").swap())
                                 .ap(Xor.<String,String>primary("success").swap())
@@ -82,8 +82,14 @@ public class XorTest {
 	@Test
     public void accumulateNone(){
         Xor<String,String> fail1 = Xor.secondary("failed1");
-        assertThat(fail1.swap().ap((a,b)->a+b).ap(Xor.secondary("failed2"))
+        assertThat(fail1.swap().applyFunctions().ap((a,b)->a+b).ap(Xor.secondary("failed2"))
                                     .convertable().get(),equalTo("failed1"));
     }
+	@Test
+	public void applicative(){
+	    Xor<String,String> fail1 =  Xor.secondary("failed1");
+	    Xor<String,String> result = fail1.ap(Xor.secondary("failed2"), Semigroups.stringConcat,(a,b)->a+b);
+	    assertThat(result.secondaryGet(),equalTo("failed2failed1"));
+	}
 
 }

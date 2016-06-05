@@ -64,14 +64,7 @@ public class MaybeTest implements Printable {
           assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
       }
      
-      @Test
-      public void testApCombiner(){
-          assertThat(just.ap(this::add).ap(FeatureToggle.enable(20)).maybe().get(),equalTo(30));
-      }
-      @Test
-      public void testApMonoid(){
-          assertThat(just.ap(Semigroups.intSum).ap(FeatureToggle.enable(20)).maybe().get(),equalTo(30));
-      }
+     
      
 
       @Test

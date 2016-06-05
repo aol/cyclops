@@ -73,11 +73,11 @@ public class FeatureToggleTest {
    
     @Test
     public void testApCombiner(){
-        assertThat(just.ap(this::add).ap(FeatureToggle.enable(20)).featureToggle(),equalTo(FeatureToggle.enable(30)));
+        assertThat(just.applyFunctions().ap(this::add).ap(FeatureToggle.enable(20)).convertable().toFeatureToggle(),equalTo(FeatureToggle.enable(30)));
     }
     @Test
     public void testApMonoid(){
-        assertThat(just.ap(Semigroups.intSum).ap(FeatureToggle.enable(20)).featureToggle(),equalTo(FeatureToggle.enable(30)));
+        assertThat(just.applyFunctions().ap(Semigroups.intSum).ap(FeatureToggle.enable(20)).convertable().toFeatureToggle(),equalTo(FeatureToggle.enable(30)));
     }
    
 

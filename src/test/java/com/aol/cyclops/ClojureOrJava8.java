@@ -50,7 +50,7 @@ public class ClojureOrJava8 {
     }
     @Test
     public void applicative(){
-        AnyM.fromOptional(Optional.of(1)).ap(Semigroups.intMult)
+        AnyM.fromOptional(Optional.of(1)).applyFunctions().ap(Semigroups.intMult)
                                          .ap(AnyM.fromOptional(Optional.of(10)));
     }
     
