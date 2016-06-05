@@ -4,6 +4,7 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.monads.transformers.ListT;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 import static org.junit.Assert.assertThat;
@@ -91,5 +92,18 @@ public class XorTest {
 	    Xor<String,String> result = fail1.ap(Xor.secondary("failed2"), Semigroups.stringConcat,(a,b)->a+b);
 	    assertThat(result.secondaryGet(),equalTo("failed2failed1"));
 	}
+	@Test
+    public void applicativeColleciton(){
+        Xor<String,String> fail1 =  Xor.secondary("failed1");
+        Xor<PStackX<String>,String> result = fail1.list().ap(Xor.secondary("failed2").list(), Semigroups.collectionXConcat(),(a,b)->a+b);
+        assertThat(result.secondaryGet(),equalTo(PStackX.of("failed1","failed2")));
+    }
+	@Test
+    public void applicativePStack(){
+        Xor<String,String> fail1 =  Xor.secondary("failed1");
+        Xor<PStackX<String>,String> result = fail1.apToList(Xor.<String,String>secondary("failed2"),(a,b)->a+b);
+        assertThat(result.secondaryGet(),equalTo(PStackX.of("failed1","failed2")));
+    }
+	
 
 }

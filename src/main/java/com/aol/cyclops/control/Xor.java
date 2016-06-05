@@ -1,9 +1,13 @@
 package com.aol.cyclops.control;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -16,6 +20,7 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
@@ -268,12 +273,37 @@ public interface Xor<ST,PT> extends Supplier<PT>,
     }
     
 
-    default <T2, R> Xor<PStackX<ST>,R> ap(Xor<PStackX<ST>,? extends T2> app,BiFunction<? super PT, ? super T2, ? extends R> fn){
-      return this.visit(secondary-> app.visit(s2->Xor.secondary(s2.plus(secondary)), p2->Xor.secondary(PStackX.of(secondary)))
-                  , primary->   app.visit(s2->Xor.secondary(s2), p2->Xor.primary(fn.apply(primary,p2))));
+    /**
+     * Accumulate secondarys into a PStackX (extended Persistent List) and Primary with the supplied combiner function
+     * Primary accumulation only occurs if all phases are primary
+     * 
+     * @param app Value to combine with
+     * @param fn Combiner function for primary values
+     * @return Combined Xor
+     */
+    default <T2, R> Xor<PStackX<ST>,R> apToList(Xor<ST,? extends T2> app,BiFunction<? super PT, ? super T2, ? extends R> fn){
+      return list().ap(app.list(),Semigroups.collectionXConcat(),fn);
     }
-    default <T2, R> Xor<ST,R> ap(Xor<? extends ST,? extends T2> app,Semigroup<ST> st,BiFunction<? super PT, ? super T2, ? extends R> fn){
-        return this.visit(secondary-> app.visit(s2->Xor.secondary( st.combiner().apply(s2, secondary)), p2->Xor.secondary(secondary))
+    /**
+     * Accumulate secondary values with the provided BinaryOperator / Semigroup {@link Semigroups}
+     * Primary accumulation only occurs if all phases are primary
+     * 
+     * <pre>
+     * {@code 
+     *  Xor<String,String> fail1 =  Xor.secondary("failed1");
+        Xor<PStackX<String>,String> result = fail1.list().ap(Xor.secondary("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
+        
+        //Secondary of [PStackX.of("failed1","failed2")))]
+     * }
+     * </pre>
+     * 
+     * @param app Value to combine with
+     * @param semigroup to combine secondary types
+     * @param fn To combine primary types
+     * @return Combined Xor
+     */
+    default <T2, R> Xor<ST,R> ap(Xor<? extends ST,? extends T2> app, BinaryOperator<ST> semigroup,BiFunction<? super PT, ? super T2, ? extends R> fn){
+        return this.visit(secondary-> app.visit(s2->Xor.secondary( semigroup.apply(s2, secondary)), p2->Xor.secondary(secondary))
                     , primary->   app.visit(s2->Xor.secondary(s2), p2->Xor.primary(fn.apply(primary,p2))));
       }
     

@@ -93,9 +93,7 @@ public class FutureWTest {
 	public void apNonBlocking(){
 	    
 	  val f =  FutureW.ofSupplier(()->{ sleep(1000l); return "hello";},ex)
-	                  .ap(String::concat)
-	                  .ap(FutureW.ofSupplier(()->" world",ex))
-	                  .futureW();
+	            	  .ap(FutureW.ofSupplier(()->" world",ex),String::concat);
 	  
 	  
 	  System.out.println("hello");

@@ -9,7 +9,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 
 public interface Semigroups {
 
-	static <T, C extends FluentCollectionX<T>> Semigroup<C> combineFluentCollection() {
+	static <T, C extends FluentCollectionX<T>> Semigroup<C> collectionXConcat() {
 		return () -> (a, b) -> (C) a.plusAll(b);
 	}
 

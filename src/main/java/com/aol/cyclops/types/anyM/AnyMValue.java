@@ -56,7 +56,32 @@ public interface AnyMValue<T> extends AnyM<T>,
         
     }
     
-    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> AnyMValue<R> ap(Value<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn){
+        return (AnyMValue<R>)ApplicativeFunctor.super.ap(app, fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> AnyMValue<R> zip(Iterable<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return (AnyMValue<R>)ApplicativeFunctor.super.zip(app, fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    default <T2, R> AnyMValue<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
+            Publisher<? extends T2> app) {
+       
+        return (AnyMValue<R>)ApplicativeFunctor.super.zip(fn, app);
+    }
     
     
     /* (non-Javadoc)

@@ -3,6 +3,7 @@ package com.aol.cyclops.control.monads.transformers.values;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -12,6 +13,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
@@ -175,12 +177,12 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
         return new XorTValue<>(run.map(o -> o.list()));
     }
     
-
-    public <T2, R> XorTValue<PStackX<ST>,R> ap(Xor<PStackX<ST>,? extends T2> app,BiFunction<? super T, ? super T2, ? extends R> fn){
-        return new XorTValue<>(run.map(o -> o.ap(app,fn)));
+ 
+    public <T2, R> XorTValue<PStackX<ST>,R> apToList(Xor<ST,? extends T2> app,BiFunction<? super T, ? super T2, ? extends R> fn){
+        return new XorTValue<>(run.map(o -> o.apToList(app,fn)));
     }
-   public <T2, R> XorTValue<ST,R> ap(Xor<? extends ST,? extends T2> app,Semigroup<ST> st,BiFunction<? super T, ? super T2, ? extends R> fn){
-       return new XorTValue<>(run.map(o -> o.ap(app,st,fn)));
+   public <T2, R> XorTValue<ST,R> ap(Xor<? extends ST,? extends T2> app, BinaryOperator<ST> semigroup,BiFunction<? super T, ? super T2, ? extends R> fn){
+       return new XorTValue<>(run.map(o -> o.ap(app,semigroup,fn)));
       }
     /**
      * Flat Map the wrapped Xor

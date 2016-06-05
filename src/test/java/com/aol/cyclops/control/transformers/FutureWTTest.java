@@ -63,10 +63,12 @@ public class FutureWTTest implements Printable {
 
 	FutureWTValue<Integer> just;
 	FutureWTValue<Integer> none;
+	FutureWTValue<Integer> one;
 	@Before
 	public void setUp() throws Exception {
 		just = FutureWTValue.of(FutureW.ofResult(10));
 		none = FutureWT.emptyOptional();
+		one = FutureWTValue.of(FutureW.ofResult(1));
 	}
 	
 	@Test
@@ -508,7 +510,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testAp1() {
-		assertThat(Maybe.of(1).ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
+		assertThat(one.applyFunctions().ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
 	}
 	
 	private int add(int a, int b){
@@ -517,7 +519,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testAp2() {
-		assertThat(Maybe.of(1).ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
+		assertThat(one.applyFunctions().ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
 	}
 	private int add3(int a, int b, int c){
 		return a+b+c;
@@ -526,13 +528,13 @@ public class FutureWTTest implements Printable {
 	public void testAp3() {
 	    
 	    
-	    Maybe.of(1)
+	    one.applyFunctions()
 	         .ap3(this::add3)
 	         .ap(Optional.of(3))
 	         .ap(Maybe.of(4));
 	    
 		
-	    assertThat(Maybe.of(1).ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
+	    assertThat(one.applyFunctions().ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
 	}
 	private int add4(int a, int b, int c,int d){
 		return a+b+c+d;
@@ -540,7 +542,7 @@ public class FutureWTTest implements Printable {
 	@Test
 	public void testAp4() {
 	   
-		assertThat(Maybe.of(1).ap4(this::add4)
+		assertThat(one.applyFunctions().ap4(this::add4)
 						.ap(Optional.of(3))
 						.ap(Maybe.of(4))
 						.ap(Maybe.of(6)).toMaybe(),equalTo(Maybe.of(14)));
@@ -550,7 +552,7 @@ public class FutureWTTest implements Printable {
 	}
 	@Test
 	public void testAp5() {
-		assertThat(Maybe.of(1).ap5(this::add5)
+		assertThat(one.applyFunctions().ap5(this::add5)
 				.ap(Optional.of(3))
 				.ap(Maybe.of(4))
 				.ap(Maybe.of(6))
