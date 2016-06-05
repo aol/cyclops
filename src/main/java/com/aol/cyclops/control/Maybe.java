@@ -15,7 +15,6 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.control.FutureW.FutureSemigroupApplyer;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -25,8 +24,6 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor.SemigroupApplyer;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
 
@@ -149,14 +146,7 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	public static <T> Maybe<T> accumulateJust(CollectionX<Maybe<T>> maybes,Semigroup<T> reducer){
 		return sequenceJust(maybes).map(s->s.reduce(reducer.reducer()).get());
 	}
-	@Override
-	default  MaybeSemigroupApplyer<T> ap(BiFunction<T,T,T> fn){
-        return  new MaybeSemigroupApplyer<T>(fn, this);
-    }
-	@Override
-    default  MaybeSemigroupApplyer<T> ap(Semigroup<T> fn){
-        return  new MaybeSemigroupApplyer<>(fn.combiner(), this);
-    }
+
 	/**
 	 * Apply a function across to values at once. If this Maybe is none, or the supplied value represents none Maybe.none is returned.
 	 * Otherwise a Maybe with the function applied with this value and the supplied value is returned
@@ -166,7 +156,7 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	 * @return
 	 */
 	@Override
-	default <T2,R> Maybe<R> ap(Value<T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+	default <T2,R> Maybe<R> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
         
         return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
                   .flatMap(tuple-> app.visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
@@ -179,7 +169,7 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	 * @return
 	 */
 	@Override
-	default <T2,R> Maybe<R> zip(Iterable<T2> app,BiFunction<? super T,? super T2,? extends R> fn){
+	default <T2,R> Maybe<R> zip(Iterable<? extends T2> app,BiFunction<? super T,? super T2,? extends R> fn){
         
         return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
                     .flatMap(tuple-> Maybe.fromIterable(app).visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
@@ -192,41 +182,12 @@ public interface Maybe<T> extends MonadicValue1<T>,
      * @return
      */
 	@Override
-    default <T2,R> Maybe<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<T2> app){
+    default <T2,R> Maybe<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<? extends T2> app){
         return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
                     .flatMap(tuple-> Maybe.fromPublisher(app).visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
         
     } 
-	 public static class MaybeSemigroupApplyer<T> extends SemigroupApplyer<T> {
-	        
-	        
-	       public Maybe<T> maybe(){
-	            return (Maybe<T>)super.functor;
-	        }
-	        
-	       
-	        /* (non-Javadoc)
-	         * @see com.aol.cyclops.types.applicative.Applicativable.SemigroupApplyer#withFunctor(com.aol.cyclops.types.ConvertableFunctor)
-	         */
-	        @Override
-	        public MaybeSemigroupApplyer<T> withFunctor(ConvertableFunctor<T> functor) {
-	           
-	            return new MaybeSemigroupApplyer<T>(super.combiner,functor);
-	        }
 
-
-	        public MaybeSemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
-	            
-	          return  withFunctor(maybe().ap(fn, super.combiner));
-	         
-	        }
-	        
-
-	        public MaybeSemigroupApplyer(BiFunction<T, T, T> combiner, ConvertableFunctor<T> functor) {
-	            super(combiner, functor);
-	            
-	        }
-	    }
 	
 	default <T> Maybe<T> unit(T unit){
 		return  Maybe.of(unit);

@@ -11,17 +11,13 @@ import java.util.function.Supplier;
 import org.jooq.lambda.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.control.Maybe.MaybeSemigroupApplyer;
-import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor.SemigroupApplyer;
 import com.aol.cyclops.util.function.Curry;
 
 
@@ -508,14 +504,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 			}
 		}
 		
-		  @Override
-		    default  FeatureToggleSemigroupApplyer<F> ap(BiFunction<F,F,F> fn){
-		        return  new FeatureToggleSemigroupApplyer<F>(fn, this);
-		    }
-		    @Override
-		    default  FeatureToggleSemigroupApplyer<F> ap(Semigroup<F> fn){
-		        return  new FeatureToggleSemigroupApplyer<>(fn.combiner(), this);
-		    }
+		 
 		    /**
 		     * Apply a function across to values at once. If this Featue is disabled, or the supplied value represents null, none or disabled then a disabled Feature is returned.
 		     * Otherwise a Maybe with the function applied with this value and the supplied value is returned
@@ -525,7 +514,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 		     * @return
 		     */
 		    @Override
-		    default <T2,R> FeatureToggle<R> ap(Value<T2> app, BiFunction<? super F,? super T2,? extends R> fn){
+		    default <T2,R> FeatureToggle<R> ap(Value<? extends T2> app, BiFunction<? super F,? super T2,? extends R> fn){
 		        
 		        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
 		                  .flatMap(tuple-> app.visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
@@ -538,7 +527,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 		     * @return
 		     */
 		    @Override
-		    default <T2,R> FeatureToggle<R> zip(Iterable<T2> app,BiFunction<? super F,? super T2,? extends R> fn){
+		    default <T2,R> FeatureToggle<R> zip(Iterable<? extends T2> app,BiFunction<? super F,? super T2,? extends R> fn){
 		        
 		        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
 		                    .flatMap(tuple-> Maybe.fromIterable(app).visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
@@ -551,41 +540,12 @@ public interface FeatureToggle<F> extends Supplier<F>,
 		     * @return
 		     */
 		    @Override
-		    default <T2,R> FeatureToggle<R> zip(BiFunction<? super F,? super T2,? extends R> fn,Publisher<T2> app){
+		    default <T2,R> FeatureToggle<R> zip(BiFunction<? super F,? super T2,? extends R> fn,Publisher<? extends T2> app){
 		        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
 		                    .flatMap(tuple-> Maybe.fromPublisher(app).visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
 		        
 		    } 
-		     public static class FeatureToggleSemigroupApplyer<T> extends SemigroupApplyer<T> {
-		            
-		            
-		           public FeatureToggle<T> featureToggle(){
-		                return (FeatureToggle<T>)super.functor;
-		            }
-		            
-		           
-		            /* (non-Javadoc)
-		             * @see com.aol.cyclops.types.applicative.Applicativable.SemigroupApplyer#withFunctor(com.aol.cyclops.types.ConvertableFunctor)
-		             */
-		            @Override
-		            public FeatureToggleSemigroupApplyer<T> withFunctor(ConvertableFunctor<T> functor) {
-		               
-		                return new FeatureToggleSemigroupApplyer<T>(super.combiner,functor);
-		            }
-
-
-		            public FeatureToggleSemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
-		                
-		              return  withFunctor(featureToggle().ap(fn, super.combiner));
-		             
-		            }
-		            
-
-		            public FeatureToggleSemigroupApplyer(BiFunction<T, T, T> combiner, ConvertableFunctor<T> functor) {
-		                super(combiner, functor);
-		                
-		            }
-		        }
+		     
 		    
 	
 }

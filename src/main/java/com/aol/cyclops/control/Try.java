@@ -19,10 +19,9 @@ import org.jooq.lambda.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
@@ -953,7 +952,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 
 		 
 	    @Override
-	    public <T2,R> Try<R,X> ap(Value<T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+	    public <T2,R> Try<R,X> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
 	     return  app.toTry().visit(s->safeApply( ()->success(fn.apply(get(),app.get()))), f->Try.failure(null));
 	     
 	    }
@@ -1259,7 +1258,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		}
 
         @Override
-        public <T2, R> Try<R, X> ap(Value<T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        public <T2, R> Try<R, X> ap(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
             return (Try<R, X>)this;
 
         }
@@ -1291,20 +1290,13 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
         }
 	}
 
-	@Override
-    default  TrySemigroupApplyer<T,X> ap(BiFunction<T,T,T> fn){
-        return  new TrySemigroupApplyer<T,X>(fn, this);
-    }
-    @Override
-    default  TrySemigroupApplyer<T,X> ap(Semigroup<T> fn){
-        return  new TrySemigroupApplyer<>(fn.combiner(), this);
-    }
+	
    
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> Try<R, X> ap(Value<T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> Try<R, X> ap(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
         return (Try<R, X>)ApplicativeFunctor.super.ap(app, fn);
     }
     /**
@@ -1316,7 +1308,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
      * @return
      */
     @Override
-    default <T2, R> Try<R, X> zip(Iterable<T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> Try<R, X> zip(Iterable<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
 
         return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(
                 tuple -> Try.fromIterable(app).visit(i -> Try.success(tuple.v2.apply(i)), () -> Try.failure(null)));
@@ -1331,40 +1323,11 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
      * @return
      */
     @Override
-    default <T2, R> Try<R, X> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<T2> app) {
+    default <T2, R> Try<R, X> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(tuple -> Try.fromPublisher(app)
                 .visit(i -> Try.success(tuple.v2.apply(i)), () -> Try.failure(null)));
 
     }
-     public static class TrySemigroupApplyer<T,X extends Throwable> extends SemigroupApplyer<T> {
-            
-            
-           public Try<T,X> toTry(){
-                return (Try<T,X>)super.functor;
-            }
-            
-           
-            /* (non-Javadoc)
-             * @see com.aol.cyclops.types.applicative.Applicativable.SemigroupApplyer#withFunctor(com.aol.cyclops.types.ConvertableFunctor)
-             */
-            @Override
-            public TrySemigroupApplyer<T,X> withFunctor(ConvertableFunctor<T> functor) {
-               
-                return new TrySemigroupApplyer<T,X>(super.combiner,functor);
-            }
-
-
-            public TrySemigroupApplyer<T,X> ap(ConvertableFunctor<T> fn) {
-                
-              return  withFunctor(toTry().ap(fn, super.combiner));
-             
-            }
-            
-
-            public TrySemigroupApplyer(BiFunction<T, T, T> combiner, ConvertableFunctor<T> functor) {
-                super(combiner, functor);
-                
-            }
-        }
+    
 	
 }

@@ -11,6 +11,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
@@ -24,8 +25,10 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.util.CompletableFutures;
 
 import lombok.val;
 
@@ -124,7 +127,40 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
    public <B> CompletableFutureTValue<B> map(Function<? super A,? extends B> f){
        return new CompletableFutureTValue<B>(run.map(o-> o.thenApply(f)));
    }
-   /**
+   
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.
+     * types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> CompletableFutureTValue<R> ap(Value<? extends T2> app,
+            BiFunction<? super A, ? super T2, ? extends R> fn) {
+        return new CompletableFutureTValue<R>(run.map(o-> CompletableFutures.ap(o, app, fn)));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.
+     * Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> CompletableFutureTValue<R> zip(Iterable<? extends T2> app,
+            BiFunction<? super A, ? super T2, ? extends R> fn) {
+        return new CompletableFutureTValue<R>(run.map(o-> CompletableFutures.zip(o, app, fn)));
+    }
+/* (non-Javadoc)
+ * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+ */
+@Override
+public <T2, R> CompletableFutureTValue<R> zip(BiFunction<? super A, ? super T2, ? extends R> fn,
+        Publisher<? extends T2> app) {
+    return new CompletableFutureTValue<R>(run.map(o-> CompletableFutures.zip( app, o, fn)));
+}
+/**
 	* Flat Map the wrapped CompletableFuture
 	* <pre>
 	* {@code 

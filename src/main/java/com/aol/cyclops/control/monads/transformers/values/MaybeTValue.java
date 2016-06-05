@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
@@ -20,6 +21,7 @@ import com.aol.cyclops.control.monads.transformers.MaybeT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
@@ -133,6 +135,33 @@ public class MaybeTValue<T> implements MaybeT<T>,
      */
     public <B> MaybeTValue<B> map(Function<? super T, ? extends B> f) {
         return new MaybeTValue<B>(run.map(o -> o.map(f)));
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> MaybeTValue<R> ap(Value<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new MaybeTValue<>(run.map(o -> o.ap(app,fn)));
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> MaybeTValue<R> zip(Iterable<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new MaybeTValue<>(run.map(o -> o.zip(app,fn)));
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    public <T2, R> MaybeTValue<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
+            Publisher<? extends T2> app) {
+        return new MaybeTValue<>(run.map(o -> o.zip(fn,app)));
     }
 
     /**

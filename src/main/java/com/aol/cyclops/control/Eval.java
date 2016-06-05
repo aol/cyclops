@@ -19,12 +19,10 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.control.Eval.Module.EvalSemigroupApplyer;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
@@ -212,14 +210,7 @@ public interface Eval<T> extends Supplier<T>,
 		return (Eval<R>)broad;
 	}
 
-    @Override
-    default  EvalSemigroupApplyer<T> ap(BiFunction<T,T,T> fn){
-        return  new EvalSemigroupApplyer<T>(fn, this);
-    }
-    @Override
-    default  EvalSemigroupApplyer<T> ap(Semigroup<T> fn){
-        return  new EvalSemigroupApplyer<>(fn.combiner(), this);
-    }
+   
     /**
      * Apply a function across two values at once.
      * 
@@ -228,7 +219,7 @@ public interface Eval<T> extends Supplier<T>,
      * @return
      */
     @Override
-    default <T2,R> Eval<R> ap(Value<T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+    default <T2,R> Eval<R> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
         
         return  (Eval<R> )ApplicativeFunctor.super.ap(app, fn);
     }
@@ -240,7 +231,7 @@ public interface Eval<T> extends Supplier<T>,
      * @return
      */
     @Override
-    default <T2,R> Eval<R> zip(Iterable<T2> app,BiFunction<? super T,? super T2,? extends R> fn){
+    default <T2,R> Eval<R> zip(Iterable<? extends T2> app,BiFunction<? super T,? super T2,? extends R> fn){
         
         return  (Eval<R> )ApplicativeFunctor.super.zip(app, fn);
     } 
@@ -252,7 +243,7 @@ public interface Eval<T> extends Supplier<T>,
      * @return
      */
     @Override
-    default <T2,R> Eval<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<T2> app){
+    default <T2,R> Eval<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<? extends T2> app){
         return  (Eval<R> )ApplicativeFunctor.super.zip(fn,app);
         
     } 
@@ -260,35 +251,7 @@ public interface Eval<T> extends Supplier<T>,
 	
     
 	static class Module{
-	    public static class EvalSemigroupApplyer<T> extends SemigroupApplyer<T> {
-            
-	           public Eval<T> eval(){
-	                return (Eval<T>)super.functor;
-	            }
-	            
-	           
-	            /* (non-Javadoc)
-	             * @see com.aol.cyclops.types.applicative.Applicativable.SemigroupApplyer#withFunctor(com.aol.cyclops.types.ConvertableFunctor)
-	             */
-	            @Override
-	            public EvalSemigroupApplyer<T> withFunctor(ConvertableFunctor<T> functor) {
-	               
-	                return new EvalSemigroupApplyer<T>(super.combiner,functor);
-	            }
-
-
-	            public EvalSemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
-	                
-	              return  withFunctor(eval().ap(fn, super.combiner));
-	             
-	            }
-	            
-
-	            public EvalSemigroupApplyer(BiFunction<T, T, T> combiner, ConvertableFunctor<T> functor) {
-	                super(combiner, functor);
-	                
-	            }
-	        }
+	    
 	    public static class Later<T> extends Rec<T> implements Eval<T>{
 	        
 	        

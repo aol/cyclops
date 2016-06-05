@@ -7,6 +7,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
@@ -42,73 +43,22 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>,
 		}
 	}
 	
-	
-
-    @AllArgsConstructor(access=AccessLevel.PROTECTED)
-    public static class SemigroupApplyer<T> {
-        protected BiFunction<T, T, T> combiner;
-        @Wither(AccessLevel.PROTECTED)
-        protected ConvertableFunctor<T> functor;
-
-        public SemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
-            
-            return functor.visit(p-> fn.visit(p2-> withFunctor(functor.map(v1 -> combiner.apply(v1, fn.get()))),
-                                                     ()-> this),
-                                    ()->withFunctor(fn));
-           
-        }
-
-        public Value<T> convertable() {
-            return functor;
-        }
-    }
 	    
-	    
-	    /**
-	     * Apply the provided function to combine multiple different Applicatives, wrapping the same type.
-	     * 
-	  
-	     * We can combine Applicative types together without unwrapping the values.
-	     * 
-	     * <pre>
-	     * {@code
-	     *   Xor<String,String> fail1 = Xor.secondary("failed1");
-            
-            fail1.swap().ap(Semigroups.stringConcat)
-                        .ap(Xor.secondary("failed2").swap())
-                        .ap(Xor.<String,String>primary("success").swap())
-                                    .
-                                    
-            // [failed1failed2]
-	     *  }
-	     *  </pre>
-	     * 
-	     * @param fn
-	     * @return
-	     */
-	    default  SemigroupApplyer<T> ap(BiFunction<T,T,T> fn){
-	        return  new SemigroupApplyer<T>(fn, this);
-	    }
-	    default  SemigroupApplyer<T> ap(Semigroup<T> fn){
-	        return  new SemigroupApplyer<>(fn.combiner(), this);
-	    }
-	    
-	    
-	    default <T2,R> ApplicativeFunctor<R> ap(Value<T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+	default <T2,R> ApplicativeFunctor<R> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
 	       
 	        return (ApplicativeFunctor<R>)map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
 	                                  .map(tuple-> app.visit(i->tuple.v2.apply(i),()->tuple.v1 ));
-	    } 
-	    default <T2,R> ApplicativeFunctor<R> zip(Iterable<T2> app,BiFunction<? super T,? super T2,? extends R> fn){
+	} 
+	default <T2,R> ApplicativeFunctor<R> zip(Iterable<? extends T2> app,BiFunction<? super T,? super T2,? extends R> fn){
 	           
             return (ApplicativeFunctor<R>)map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
                                       .map(tuple-> Maybe.fromIterable(app).visit(i->tuple.v2.apply(i),()->tuple.v1 ));
-        } 
-	    default <T2,R> ApplicativeFunctor<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<T2> app){
+   } 
+   default <T2,R> ApplicativeFunctor<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<? extends T2> app){
             
             return (ApplicativeFunctor<R>)map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
                                       .map(tuple-> Maybe.fromPublisher(app).visit(i->tuple.v2.apply(i),()->tuple.v1 ));
-        } 
+   } 
 	    
 	    default ApplyFunctions<T> applyFunctions(){
 	        return new ApplyFunctions<T>(this);

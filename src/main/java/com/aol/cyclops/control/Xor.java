@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.jooq.lambda.tuple.Tuple;
+import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
@@ -17,8 +18,8 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
@@ -26,7 +27,6 @@ import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor.SemigroupApplyer;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
 import com.aol.cyclops.util.stream.StreamUtils;
@@ -258,21 +258,31 @@ public interface Xor<ST,PT> extends Supplier<PT>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    <T2, R> Xor<ST,R> ap(Value<T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn);
-    @Override
-    default  XorSemigroupApplyer<ST,PT> ap(BiFunction<PT, PT, PT> fn){
-        return  new XorSemigroupApplyer<>(fn, this);
+    <T2, R> Xor<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn);
+    
+    /**
+     * @return An Xor with the secondary type converted to a persistent list, for use with accumulating app function  {@link Xor#ap(Xor,BiFunction)}
+     */
+    default Xor<PStackX<ST>,PT> list(){
+        return secondaryMap(PStackX::of);
     }
-    @Override
-    default  XorSemigroupApplyer<ST,PT> ap(Semigroup<PT> fn){
-        return  new XorSemigroupApplyer<>(fn.combiner(), this);
+    
+
+    default <T2, R> Xor<PStackX<ST>,R> ap(Xor<PStackX<ST>,? extends T2> app,BiFunction<? super PT, ? super T2, ? extends R> fn){
+      return this.visit(secondary-> app.visit(s2->Xor.secondary(s2.plus(secondary)), p2->Xor.secondary(PStackX.of(secondary)))
+                  , primary->   app.visit(s2->Xor.secondary(s2), p2->Xor.primary(fn.apply(primary,p2))));
     }
+    default <T2, R> Xor<ST,R> ap(Xor<? extends ST,? extends T2> app,Semigroup<ST> st,BiFunction<? super PT, ? super T2, ? extends R> fn){
+        return this.visit(secondary-> app.visit(s2->Xor.secondary( st.combiner().apply(s2, secondary)), p2->Xor.secondary(secondary))
+                    , primary->   app.visit(s2->Xor.secondary(s2), p2->Xor.primary(fn.apply(primary,p2))));
+      }
+    
 	
 	/* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> Xor<ST,R> zip(Iterable<T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+    default <T2, R> Xor<ST,R> zip(Iterable<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(
                 tuple -> Xor.fromIterable(app).visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
     }
@@ -280,7 +290,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> Xor<ST,R> zip(BiFunction<? super PT, ? super T2, ? extends R> fn, Publisher<T2> app) {
+    default <T2, R> Xor<ST,R> zip(BiFunction<? super PT, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(
                 tuple -> Xor.fromPublisher(app).visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
     }
@@ -456,7 +466,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
          * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override
-        public <T2, R> Xor<ST,R> ap(Value<T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+        public <T2, R> Xor<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
             return  app.toXor().visit(s->Xor.secondary(null), f->Xor.primary(fn.apply(get(),app.get())));
         }
 
@@ -581,7 +591,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
          * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override
-        public <T2, R> Xor<ST,R> ap(Value<T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+        public <T2, R> Xor<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
            return (Xor<ST,R>)this;
         }
 
@@ -589,34 +599,5 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 		
 	}
 	
-	   public static class XorSemigroupApplyer<ST,T> extends SemigroupApplyer<T> {
-           
-           
-           public Xor<ST,T> xor(){
-                return (Xor<ST,T>)super.functor;
-            }
-            
-           
-            /* (non-Javadoc)
-             * @see com.aol.cyclops.types.applicative.Applicativable.SemigroupApplyer#withFunctor(com.aol.cyclops.types.ConvertableFunctor)
-             */
-            @Override
-            public XorSemigroupApplyer<ST,T> withFunctor(ConvertableFunctor<T> functor) {
-               
-                return new XorSemigroupApplyer<ST,T>(super.combiner,functor);
-            }
-
-
-            public XorSemigroupApplyer<ST,T> ap(ConvertableFunctor<T> fn) {
-                
-              return  withFunctor(xor().ap(fn, super.combiner));
-             
-            }
-            
-
-            public XorSemigroupApplyer(BiFunction<T, T, T> combiner, ConvertableFunctor<T> functor) {
-                super(combiner, functor);
-                
-            }
-        }
+	   
 }

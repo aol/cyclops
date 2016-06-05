@@ -28,7 +28,6 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor.SemigroupApplyer;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
 
@@ -184,45 +183,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
 	}
 	
 	
-    public static class FutureSemigroupApplyer<T> extends SemigroupApplyer<T> {
-        
-        
-       public FutureW<T> futureW(){
-            return (FutureW<T>)super.functor;
-        }
-        
-       
-        /* (non-Javadoc)
-         * @see com.aol.cyclops.types.applicative.Applicativable.SemigroupApplyer#withFunctor(com.aol.cyclops.types.ConvertableFunctor)
-         */
-        @Override
-        public FutureSemigroupApplyer<T> withFunctor(ConvertableFunctor<T> functor) {
-           
-            return new FutureSemigroupApplyer<T>(super.combiner,functor);
-        }
-
-
-        public FutureSemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
-            
-          return  withFunctor(FutureW.of(futureW().getFuture().thenCombine(fn.toFutureW().getFuture(), super.combiner)));
-         
-        }
-        
-
-        public FutureSemigroupApplyer(BiFunction<T, T, T> combiner, ConvertableFunctor<T> functor) {
-            super(combiner, functor);
-            
-        }
-    }
-	@Override
-	public  FutureSemigroupApplyer<T> ap(BiFunction<T,T,T> fn){
-        return  new FutureSemigroupApplyer<T>(fn, this);
-    }
-	@Override
-	public  FutureSemigroupApplyer<T> ap(Semigroup<T> fn){
-        return  new FutureSemigroupApplyer<>(fn.combiner(), this);
-    }
-
+    
 	public boolean isSuccess(){
 	    return future.isDone() && !future.isCompletedExceptionally();
 	}
@@ -405,7 +366,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
      * @return
      */
     @Override
-    public <T2,R> FutureW<R> ap(Value<T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+    public <T2,R> FutureW<R> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
         if(app instanceof FutureW){
             return FutureW.of(future.thenCombine( ((FutureW<T2>)app).getFuture(),fn));
         }
@@ -419,7 +380,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
      * @return
      */
     @Override
-    public <T2,R> FutureW<R> zip(Iterable<T2> app,BiFunction<? super T,? super T2,? extends R> fn){
+    public <T2,R> FutureW<R> zip(Iterable<? extends T2> app,BiFunction<? super T,? super T2,? extends R> fn){
         
         return  (FutureW<R> )ApplicativeFunctor.super.zip(app, fn);
     } 
@@ -431,7 +392,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
      * @return
      */
     @Override
-    public <T2,R> FutureW<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<T2> app){
+    public <T2,R> FutureW<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<? extends T2> app){
         return  (FutureW<R> )ApplicativeFunctor.super.zip(fn,app);
         
     } 
