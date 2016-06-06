@@ -53,7 +53,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.types.applicative.Applicativable.Applicatives;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.types.mixins.Printable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
@@ -506,58 +506,6 @@ public class OptionalTTest implements Printable {
 	
 
 
-	@Test
-	public void testAp1() {
-		assertThat(Maybe.of(1).ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
-	}
-	
-	private int add(int a, int b){
-		return a+b;
-	}
-
-	@Test
-	public void testAp2() {
-		assertThat(Maybe.of(1).ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
-	}
-	private int add3(int a, int b, int c){
-		return a+b+c;
-	}
-	@Test
-	public void testAp3() {
-	    
-	    
-	    Maybe.of(1)
-	         .ap3(this::add3)
-	         .ap(Optional.of(3))
-	         .ap(Maybe.of(4));
-	    
-		
-	    assertThat(Maybe.of(1).ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
-	}
-	private int add4(int a, int b, int c,int d){
-		return a+b+c+d;
-	}
-	@Test
-	public void testAp4() {
-	   
-		assertThat(Maybe.of(1).ap4(this::add4)
-						.ap(Optional.of(3))
-						.ap(Maybe.of(4))
-						.ap(Maybe.of(6)).toMaybe(),equalTo(Maybe.of(14)));
-	}
-	private int add5(int a, int b, int c,int d,int e){
-		return a+b+c+d+e;
-	}
-	@Test
-	public void testAp5() {
-		assertThat(Maybe.of(1).ap5(this::add5)
-				.ap(Optional.of(3))
-				.ap(Maybe.of(4))
-				.ap(Maybe.of(6))
-				.ap(Maybe.of(10)).toMaybe(),equalTo(Maybe.of(24)));
-	}
-
-	
 
 	@Test
 	public void testMapReduceReducerOfR() {

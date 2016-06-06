@@ -28,7 +28,7 @@ public class FailureTest {
 	FileNotFoundException error = new FileNotFoundException();
 	@Before
 	public void setup(){
-		failure = Failure.of(error);
+		failure = Try.failure(error);
 	}
 	@Test
 	public void testUnapply() {
@@ -62,30 +62,30 @@ public class FailureTest {
 
 	@Test
 	public void testRecoverWithFor() {
-		assertThat(failure.recoverWithFor(FileNotFoundException.class, e-> Success.of(10)),equalTo(Success.of(10)));
+		assertThat(failure.recoverWithFor(FileNotFoundException.class, e-> Try.success(10)),equalTo(Try.success(10)));
 	}
 	@Test
 	public void testRecoverWithForSubclass() {
-		Failure<Integer,IOException> failure = Failure.of(error);
-		assertThat(failure.recoverWithFor(FileSystemException.class, e-> Success.of(10)),equalTo(Failure.of(error)));
-		assertThat(failure.recoverWithFor(FileNotFoundException.class, e-> Success.of(10)),equalTo(Success.of(10)));
+		Failure<Integer,IOException> failure = Try.failure(error);
+		assertThat(failure.recoverWithFor(FileSystemException.class, e-> Try.success(10)),equalTo(Try.failure(error)));
+		assertThat(failure.recoverWithFor(FileNotFoundException.class, e-> Try.success(10)),equalTo(Try.success(10)));
 		
 	}
 	
 	@Test
 	public void testRecoverWithForIgnore() {
-		assertThat(failure.recoverWithFor((Class)RuntimeException.class, e-> Success.of(10)),equalTo(failure));
+		assertThat(failure.recoverWithFor((Class)RuntimeException.class, e-> Try.success(10)),equalTo(failure));
 	}
 
 	@Test
 	public void testRecoverFor() {
-		assertThat(failure.recoverFor(FileNotFoundException.class, e-> 10),equalTo(Success.of(10)));
+		assertThat(failure.recoverFor(FileNotFoundException.class, e-> 10),equalTo(Try.success(10)));
 	}
 	@Test
 	public void testRecoverForInherited() {
-		Failure<Integer,IOException> failure = Failure.of(error);
-		assertThat(failure.recoverFor(FileSystemException.class, e-> 10),equalTo(Failure.of(error)));
-		assertThat(failure.recoverFor(FileNotFoundException.class, e-> 10),equalTo(Success.of(10)));
+		Failure<Integer,IOException> failure = Try.failure(error);
+		assertThat(failure.recoverFor(FileSystemException.class, e-> 10),equalTo(Try.failure(error)));
+		assertThat(failure.recoverFor(FileNotFoundException.class, e-> 10),equalTo(Try.success(10)));
 		
 	}
 	@Test
@@ -96,12 +96,12 @@ public class FailureTest {
 
 	@Test
 	public void testRecover() {
-		assertThat(failure.recover(e-> 10),equalTo(Success.of(10)));
+		assertThat(failure.recover(e-> 10),equalTo(Try.success(10)));
 	}
 
 	@Test
 	public void testRecoverWith() {
-		assertThat(failure.recoverWith(e-> Success.of(10)),equalTo(Success.of(10)));
+		assertThat(failure.recoverWith(e-> Try.success(10)),equalTo(Try.success(10)));
 	}
 
 	@Test
@@ -164,7 +164,7 @@ public class FailureTest {
 	}
 	@Test
 	public void testOnFailClassOfQextendsXConsumerOfXInherited() {
-		Failure<Integer,IOException> failure =  Failure.of(error);
+		Failure<Integer,IOException> failure =  Try.failure(error);
 		errorCaptured = null;
 		failure.onFail(FileNotFoundException.class, e -> errorCaptured =e);
 		assertThat(error,equalTo(errorCaptured));

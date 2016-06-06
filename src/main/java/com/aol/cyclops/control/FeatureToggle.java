@@ -2,16 +2,23 @@ package com.aol.cyclops.control;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
+import org.jooq.lambda.tuple.Tuple;
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.util.function.Curry;
 
 
 
@@ -27,7 +34,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
                                           MonadicValue<F>,
                                           Filterable<F>,
                                           Functor<F>, 
-                                          Applicativable<F>,
+                                          ApplicativeFunctor<F>,
                                           Matchable.ValueAndOptionalMatcher<F>{
 
 	boolean isEnabled();
@@ -40,12 +47,12 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	
 	@Override
     default <U> FeatureToggle<U> cast(Class<? extends U> type) {
-        return (FeatureToggle<U>)Applicativable.super.cast(type);
+        return (FeatureToggle<U>)ApplicativeFunctor.super.cast(type);
     }
     @Override
     default <R> FeatureToggle<R> trampoline(Function<? super F, ? extends Trampoline<? extends R>> mapper) {
       
-        return (FeatureToggle<R>)Applicativable.super.trampoline(mapper);
+        return (FeatureToggle<R>)ApplicativeFunctor.super.trampoline(mapper);
     }
     @Override
     default <U> FeatureToggle<U> ofType(Class<? extends U> type) {
@@ -72,7 +79,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 	default <R> FeatureToggle<R> patternMatch(
 			Function<CheckValue1<F, R>, CheckValue1<F, R>> case1, Supplier<? extends R> otherwise) {
 		
-		return (FeatureToggle<R>)Applicativable.super.patternMatch(case1,otherwise);
+		return (FeatureToggle<R>)ApplicativeFunctor.super.patternMatch(case1,otherwise);
 	}
 	
 	default FeatureToggle<F> toFeatureToggle(){
@@ -496,5 +503,49 @@ public interface FeatureToggle<F> extends Supplier<F>,
 				return disabled.apply(get());
 			}
 		}
+		
+		 
+		    /**
+		     * Apply a function across to values at once. If this Featue is disabled, or the supplied value represents null, none or disabled then a disabled Feature is returned.
+		     * Otherwise a Maybe with the function applied with this value and the supplied value is returned
+		     * 
+		     * @param app
+		     * @param fn
+		     * @return
+		     */
+		    @Override
+		    default <T2,R> FeatureToggle<R> ap(Value<? extends T2> app, BiFunction<? super F,? super T2,? extends R> fn){
+		        
+		        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
+		                  .flatMap(tuple-> app.visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
+		    }
+		    /**
+		     * Equivalent to ap, but accepts an Iterable and takes the first value only from that iterable.
+		     * 
+		     * @param app
+		     * @param fn
+		     * @return
+		     */
+		    @Override
+		    default <T2,R> FeatureToggle<R> zip(Iterable<? extends T2> app,BiFunction<? super F,? super T2,? extends R> fn){
+		        
+		        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
+		                    .flatMap(tuple-> Maybe.fromIterable(app).visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
+		    } 
+		    /**
+		     * Equivalent to ap, but accepts a Publisher and takes the first value only from that publisher.
+		     * 
+		     * @param app
+		     * @param fn
+		     * @return
+		     */
+		    @Override
+		    default <T2,R> FeatureToggle<R> zip(BiFunction<? super F,? super T2,? extends R> fn,Publisher<? extends T2> app){
+		        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
+		                    .flatMap(tuple-> Maybe.fromPublisher(app).visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
+		        
+		    } 
+		     
+		    
 	
 }

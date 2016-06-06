@@ -37,6 +37,10 @@ import reactor.core.publisher.Flux;
 
 public class AnyMTest {
     @Test
+    public void testApEval() {
+        assertThat(AnyM.fromEval(Eval.now(10)).ap(Eval.later(()->20),this::add).unwrap(),equalTo(Eval.now(30)));
+    }
+    @Test
     public void anyMSetConversion() {
       AnyMSeq<Integer> wrapped = AnyM.fromSet(SetX.of(1, 2, 3, 4, 5));
 

@@ -39,7 +39,7 @@ public abstract class BaseAnyMImpl<T> {
 	
 	public <R> R unwrap(){
 	    return (R)monad.unwrap();
-	//	return (R)new ComprehenderSelector().selectComprehender(initialType).unwrap(monad.unwrap());
+	
 	}
 	protected <R> AnyM<R> fromIterable(Iterable<R> it){
         if(it instanceof AnyM)

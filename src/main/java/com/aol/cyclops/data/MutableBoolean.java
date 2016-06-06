@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

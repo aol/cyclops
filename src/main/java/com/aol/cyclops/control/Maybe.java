@@ -2,12 +2,14 @@ package com.aol.cyclops.control;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
@@ -20,8 +22,10 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops.util.function.Curry;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -70,7 +74,7 @@ public interface Maybe<T> extends MonadicValue1<T>,
 								Supplier<T>, 
 								ConvertableFunctor<T>, 
 								Filterable<T>,
-								Applicativable<T>,
+								ApplicativeFunctor<T>,
 								Matchable.ValueAndOptionalMatcher<T>
 								{
 
@@ -142,6 +146,49 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	public static <T> Maybe<T> accumulateJust(CollectionX<Maybe<T>> maybes,Semigroup<T> reducer){
 		return sequenceJust(maybes).map(s->s.reduce(reducer.reducer()).get());
 	}
+
+	/**
+	 * Apply a function across to values at once. If this Maybe is none, or the supplied value represents none Maybe.none is returned.
+	 * Otherwise a Maybe with the function applied with this value and the supplied value is returned
+	 * 
+	 * @param app
+	 * @param fn
+	 * @return
+	 */
+	@Override
+	default <T2,R> Maybe<R> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+        
+        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
+                  .flatMap(tuple-> app.visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
+    }
+	/**
+	 * Equivalent to ap, but accepts an Iterable and takes the first value only from that iterable.
+	 * 
+	 * @param app
+	 * @param fn
+	 * @return
+	 */
+	@Override
+	default <T2,R> Maybe<R> zip(Iterable<? extends T2> app,BiFunction<? super T,? super T2,? extends R> fn){
+        
+        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
+                    .flatMap(tuple-> Maybe.fromIterable(app).visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
+    } 
+	/**
+     * Equivalent to ap, but accepts a Publisher and takes the first value only from that publisher.
+     * 
+     * @param app
+     * @param fn
+     * @return
+     */
+	@Override
+    default <T2,R> Maybe<R> zip(BiFunction<? super T,? super T2,? extends R> fn,Publisher<? extends T2> app){
+        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
+                    .flatMap(tuple-> Maybe.fromPublisher(app).visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
+        
+    } 
+
+	
 	default <T> Maybe<T> unit(T unit){
 		return  Maybe.of(unit);
 	}
@@ -235,7 +282,7 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	@Override
 	default <U> Maybe<U> cast(Class<? extends U> type) {
 		
-		return (Maybe<U>)Applicativable.super.cast(type);
+		return (Maybe<U>)ApplicativeFunctor.super.cast(type);
 	}
 
 	/* (non-Javadoc)
@@ -244,7 +291,7 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	@Override
 	default Maybe<T> peek(Consumer<? super T> c) {
 		
-		return (Maybe<T>)Applicativable.super.peek(c);
+		return (Maybe<T>)ApplicativeFunctor.super.peek(c);
 	}
 
 	/* (non-Javadoc)
@@ -253,20 +300,14 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	@Override
 	default <R> Maybe<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 		
-		return (Maybe<R>)Applicativable.super.trampoline(mapper);
+		return (Maybe<R>)ApplicativeFunctor.super.trampoline(mapper);
 	}
 	@Override
 	default <R> Maybe<R> patternMatch(
 			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (Maybe<R>)Applicativable.super.patternMatch(case1,otherwise);
+		return (Maybe<R>)ApplicativeFunctor.super.patternMatch(case1,otherwise);
 	}
-
-
-
-
-	
-
 
 
 

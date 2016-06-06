@@ -3,6 +3,8 @@ package com.aol.cyclops.control;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -14,20 +16,20 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.matcher2.MatchableCase;
-import com.aol.cyclops.internal.matcher2.MatchingInstance;
-import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops.util.function.Curry;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.AccessLevel;
@@ -75,7 +77,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
                                     MonadicValue2<ST,PT>,
                                     Functor<PT>, 
                                     Filterable<PT>,
-                                    Applicativable<PT>{
+                                    ApplicativeFunctor<PT>{
 
     public static <T> Xor<Throwable,T> fromPublisher(Publisher<T> pub){
         ValueSubscriber<T> sub = ValueSubscriber.subscriber();
@@ -228,7 +230,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	default <R> Xor<ST,R> patternMatch(
 			Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (Xor<ST,R>)Applicativable.super.patternMatch(case1,otherwise);
+		return (Xor<ST,R>)ApplicativeFunctor.super.patternMatch(case1,otherwise);
 	}
 	<R> Eval<R>  matches(Function<CheckValue1<ST,R>,CheckValue1<ST,R>> fn1,Function<CheckValue1<PT,R>,CheckValue1<PT,R>> fn2,Supplier<? extends R> otherwise);
         
@@ -252,8 +254,75 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	
 	
 	
+   
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    <T2, R> Xor<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn);
+    
+    /**
+     * @return An Xor with the secondary type converted to a persistent list, for use with accumulating app function  {@link Xor#ap(Xor,BiFunction)}
+     */
+    default Xor<PStackX<ST>,PT> list(){
+        return secondaryMap(PStackX::of);
+    }
+    
+
+    /**
+     * Accumulate secondarys into a PStackX (extended Persistent List) and Primary with the supplied combiner function
+     * Primary accumulation only occurs if all phases are primary
+     * 
+     * @param app Value to combine with
+     * @param fn Combiner function for primary values
+     * @return Combined Xor
+     */
+    default <T2, R> Xor<PStackX<ST>,R> apToList(Xor<ST,? extends T2> app,BiFunction<? super PT, ? super T2, ? extends R> fn){
+      return list().ap(app.list(),Semigroups.collectionXConcat(),fn);
+    }
+    /**
+     * Accumulate secondary values with the provided BinaryOperator / Semigroup {@link Semigroups}
+     * Primary accumulation only occurs if all phases are primary
+     * 
+     * <pre>
+     * {@code 
+     *  Xor<String,String> fail1 =  Xor.secondary("failed1");
+        Xor<PStackX<String>,String> result = fail1.list().ap(Xor.secondary("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
+        
+        //Secondary of [PStackX.of("failed1","failed2")))]
+     * }
+     * </pre>
+     * 
+     * @param app Value to combine with
+     * @param semigroup to combine secondary types
+     * @param fn To combine primary types
+     * @return Combined Xor
+     */
+    default <T2, R> Xor<ST,R> ap(Xor<? extends ST,? extends T2> app, BinaryOperator<ST> semigroup,BiFunction<? super PT, ? super T2, ? extends R> fn){
+        return this.visit(secondary-> app.visit(s2->Xor.secondary( semigroup.apply(s2, secondary)), p2->Xor.secondary(secondary))
+                    , primary->   app.visit(s2->Xor.secondary(s2), p2->Xor.primary(fn.apply(primary,p2))));
+      }
+    
 	
-	
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> Xor<ST,R> zip(Iterable<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+        return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(
+                tuple -> Xor.fromIterable(app).visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    default <T2, R> Xor<ST,R> zip(BiFunction<? super PT, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
+        return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(
+                tuple -> Xor.fromPublisher(app).visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
+    }
+    
+
+    
 	
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
@@ -286,7 +355,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	@Override
 	default <U> Xor<ST,U> cast(Class<? extends U> type) {
 		
-		return (Xor<ST,U>)Applicativable.super.cast(type);
+		return (Xor<ST,U>)ApplicativeFunctor.super.cast(type);
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
@@ -294,7 +363,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	@Override
 	default <R> Xor<ST,R> trampoline(Function<? super PT, ? extends Trampoline<? extends R>> mapper) {
 		
-		return (Xor<ST,R>)Applicativable.super.trampoline(mapper);
+		return (Xor<ST,R>)ApplicativeFunctor.super.trampoline(mapper);
 	}
 	
 
@@ -419,6 +488,13 @@ public interface Xor<ST,PT> extends Supplier<PT>,
         }
         
         
+        /* (non-Javadoc)
+         * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+         */
+        @Override
+        public <T2, R> Xor<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+            return  app.toXor().visit(s->Xor.secondary(null), f->Xor.primary(fn.apply(get(),app.get())));
+        }
 
         
 		
@@ -537,8 +613,17 @@ public interface Xor<ST,PT> extends Supplier<PT>,
         public Ior<ST, PT> toIor() {
             return Ior.secondary(value);
         }
+        /* (non-Javadoc)
+         * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+         */
+        @Override
+        public <T2, R> Xor<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+           return (Xor<ST,R>)this;
+        }
 
         
 		
 	}
+	
+	   
 }

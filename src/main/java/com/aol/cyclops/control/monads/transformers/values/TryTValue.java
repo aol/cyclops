@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
@@ -22,8 +23,9 @@ import com.aol.cyclops.control.monads.transformers.TryT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 
 /**
@@ -46,7 +48,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
                                                     Supplier<T>, 
                                                     ConvertableFunctor<T>, 
                                                     Filterable<T>,
-                                                    Applicativable<T>,
+                                                    ApplicativeFunctor<T>,
                                                     Matchable.ValueAndOptionalMatcher<T>
                                                     {
    
@@ -75,7 +77,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	 * Peek at the current value of the Try
 	 * <pre>
 	 * {@code 
-	 *    TryT.of(AnyM.fromStream(Success.of(10))
+	 *    TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .peek(System.out::println);
 	 *             
 	 *     //prints 10        
@@ -96,7 +98,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	 * Filter the wrapped Try
 	 * <pre>
 	 * {@code 
-	 *    TryT.of(AnyM.fromStream(Success.of(10))
+	 *    TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .filter(t->t!=10);
 	 *             
 	 *     //TryT<AnyMValue<Stream<Optional.empty>>>
@@ -114,7 +116,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  TryT.of(AnyM.fromStream(Success.of(10))
+	 *  TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .map(t->t=t+1);
 	 *  
 	 *  
@@ -129,12 +131,36 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 		return new TryTValue<B,X>(run.map(o -> o.map(f)));
 	}
 
-	/**
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> TryTValue<R,X> ap(Value<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new TryTValue<>(run.map(o -> o.ap(app,fn)));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> TryTValue<R,X> zip(Iterable<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new TryTValue<>(run.map(o -> o.zip(app,fn)));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    public <T2, R> TryTValue<R,X> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
+            Publisher<? extends T2> app) {
+        return new TryTValue<>(run.map(o -> o.zip(fn,app)));
+    }
+    /**
 	 * Flat Map the wrapped Try
 	  * <pre>
 	 * {@code 
-	 *  TryT.of(AnyM.fromStream(Success.of(10))
-	 *             .flatMap(t->Failure.of(new Exception());
+	 *  TryT.of(AnyM.fromStream(Try.success(10))
+	 *             .flatMap(t->Try.failure(new Exception());
 	 *  
 	 *  
 	 *  //TryT<AnyMValue<Stream<Failure[Excption]>>>
@@ -235,7 +261,7 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
 	 */
 	@SuppressWarnings("unchecked")
 	public static <A, X extends Throwable> TryTValue<A,X> fromAnyM(AnyMValue<A> anyM) {
-		return (TryTValue<A, X>) of(anyM.map(Success::of));
+		return (TryTValue<A, X>) of(anyM.map(Try::success));
 	}
    
 	/**

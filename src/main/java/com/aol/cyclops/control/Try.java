@@ -2,31 +2,36 @@
 package com.aol.cyclops.control;
 
 import static com.aol.cyclops.control.For.Values.each2;
+
 import java.io.Closeable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue2;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops.util.function.Curry;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -63,7 +68,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
                                                     ToStream<T>,
                                                     Filterable<T>,
                                                     Functor<T>,
-                                                    Applicativable<T> {
+                                                    ApplicativeFunctor<T> {
     
     public static <T,X extends Throwable> Try<T,X> fromPublisher(Publisher<T> pub,Class<X>... classes){
         ValueSubscriber<T> sub = ValueSubscriber.subscriber();
@@ -124,14 +129,14 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 	 */
 	@Override
     default <U> Try<U,X> cast(Class<? extends U> type) {
-        return (Try<U,X>)Applicativable.super.cast(type);
+        return (Try<U,X>)ApplicativeFunctor.super.cast(type);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Try<R,X> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Try<R,X>)Applicativable.super.trampoline(mapper);
+        return (Try<R,X>)ApplicativeFunctor.super.trampoline(mapper);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
@@ -188,7 +193,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 	default <R> Try<R,X> patternMatch(
 			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (Try<R,X>)Applicativable.super.patternMatch(case1,otherwise);
+		return (Try<R,X>)ApplicativeFunctor.super.patternMatch(case1,otherwise);
 	}
 	
 	public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure);
@@ -354,7 +359,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 	@Override
 	default Iterator<T> iterator() {
 		
-		return Applicativable.super.iterator();
+		return ApplicativeFunctor.super.iterator();
 	}
 	/**
 	 * Return a Try that will catch specified exceptions when map / flatMap called
@@ -385,10 +390,10 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 			return Try.success(cf.get());
 		}catch(Throwable t){
 			if(classes.length==0)
-				return Failure.of((X)t);
+				return Try.failure((X)t);
 			val error = Stream.of(classes).filter(c -> c.isAssignableFrom(t.getClass())).findFirst();
 			if(error.isPresent())
-				return Failure.of((X)t);
+				return Try.failure((X)t);
 			else
 				throw ExceptionSoftener.throwSoftenedException(t);
 		}
@@ -407,14 +412,14 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		Objects.requireNonNull(cf);
 		try{
 			cf.run();
-			return Success.of(null);
+			return Try.success(null);
 		}catch(Throwable t){
 			t.printStackTrace();
 			if(classes.length==0)
-				return Failure.of((X)t);
+				return Try.failure((X)t);
 			val error = Stream.of(classes).filter(c -> c.isAssignableFrom(t.getClass())).findFirst();
 			if(error.isPresent())
-				return Failure.of((X)t);
+				return Try.failure((X)t);
 			else
 				throw ExceptionSoftener.throwSoftenedException(t);
 		}
@@ -695,14 +700,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		public AnyM<T> anyMSuccess(){
 			return anyM();
 		}
-		/**
-		 * @param value Successful value
-		 * @return new Success with value
-		 */
-		@Deprecated //use Try.success instead
-		public static <T,X extends Throwable> Success<T,X> of(T value){
-			return new Success<>(value,new Class[0]);
-		}
+		
 		/**
 		 * @param value Successful value
 		 * @return new Success with value
@@ -732,14 +730,14 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		 */
 		@Override
 		public <R> Try<R,X> map(Function<? super T,? extends R> fn) {
-			return safeApply( ()->of(fn.apply(get())));
+			return safeApply( ()->success(fn.apply(get())));
 		}
 		
 		private <R> R safeApply(Supplier<R> s){
 			try{
 				return s.get();
 			}catch(Throwable t){
-				return (R)Failure.of(orThrow(Stream.of(classes).filter(c->c.isAssignableFrom(t.getClass())).map(c->t).findFirst(),t));
+				return (R)Try.failure(orThrow(Stream.of(classes).filter(c->c.isAssignableFrom(t.getClass())).map(c->t).findFirst(),t));
 				
 			}
 		}
@@ -952,8 +950,13 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 			
 		}
 
-
-
+		 
+	    @Override
+	    public <T2,R> Try<R,X> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+	     return  app.toTry().visit(s->safeApply( ()->success(fn.apply(get(),app.get()))), f->Try.failure(null));
+	     
+	    }
+	
 		/* (non-Javadoc)
 		 * @see com.aol.cyclops.trycatch.Try#when(java.util.function.Function, java.util.function.Function)
 		 */
@@ -1031,16 +1034,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
         public X failureGet(){
            return error;
         }
-		/**
-		 * Construct a Failure instance from a throwable
-		 * 
-		 * @param error for Failure
-		 * @return new Failure with error
-		 */
-		@Deprecated //use Try.failuer instead
-		public static <T,X extends Throwable> Failure<T,X> of(X error){
-			return new Failure<>(error);
-		}
+		
 		/**
 		 * Construct a Failure instance from a throwable
 		 * 
@@ -1123,7 +1117,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		 */
 		@Override
 		public Success<T,X> recover(Function<? super X,? extends T> fn) {
-			return Success.of(fn.apply(error));
+			return Try.success(fn.apply(error));
 		}
 		
 		/* 
@@ -1262,6 +1256,15 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 			consumer.accept(error);
 			
 		}
+
+        @Override
+        public <T2, R> Try<R, X> ap(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+            return (Try<R, X>)this;
+
+        }
+
+    
+
 		/* (non-Javadoc)
 		 * @see com.aol.cyclops.trycatch.Try#when(java.util.function.Function, java.util.function.Function)
 		 */
@@ -1269,6 +1272,9 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure) {
 			return failure.apply(error);
 		}
+		
+		
+		
 		@Override
         public int hashCode(){
             return Objects.hash(error);
@@ -1285,5 +1291,43 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 	}
 
 	
+   
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> Try<R, X> ap(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (Try<R, X>)ApplicativeFunctor.super.ap(app, fn);
+    }
+    /**
+     * Equivalent to ap, but accepts an Iterable and takes the first value
+     * only from that iterable.
+     * 
+     * @param app
+     * @param fn
+     * @return
+     */
+    @Override
+    default <T2, R> Try<R, X> zip(Iterable<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+
+        return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(
+                tuple -> Try.fromIterable(app).visit(i -> Try.success(tuple.v2.apply(i)), () -> Try.failure(null)));
+    }
+
+    /**
+     * Equivalent to ap, but accepts a Publisher and takes the first value
+     * only from that publisher.
+     * 
+     * @param app
+     * @param fn
+     * @return
+     */
+    @Override
+    default <T2, R> Try<R, X> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
+        return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(tuple -> Try.fromPublisher(app)
+                .visit(i -> Try.success(tuple.v2.apply(i)), () -> Try.failure(null)));
+
+    }
+    
 	
 }

@@ -14,7 +14,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.ToString;
 
@@ -43,7 +43,7 @@ import lombok.ToString;
 @ToString
 
 public class LazyImmutable<T> implements Supplier<T>, 
-                                Consumer<T>, Matchable.ValueAndOptionalMatcher<T>, Functor<T>, Applicativable<T>{
+                                Consumer<T>, Matchable.ValueAndOptionalMatcher<T>, Functor<T>, ApplicativeFunctor<T>{
 	private final static Object UNSET = new Object();
 	private AtomicReference value = new AtomicReference<>(UNSET);
 	private final AtomicBoolean set= new AtomicBoolean(false);
@@ -101,7 +101,7 @@ public class LazyImmutable<T> implements Supplier<T>,
 	public <R> LazyImmutable<R> patternMatch(
 			Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,Supplier<? extends R> otherwise) {
 		
-		return (com.aol.cyclops.data.LazyImmutable<R>)Applicativable.super.patternMatch(case1,otherwise);
+		return (com.aol.cyclops.data.LazyImmutable<R>)ApplicativeFunctor.super.patternMatch(case1,otherwise);
 	}
 	
 	/**
@@ -193,7 +193,7 @@ public class LazyImmutable<T> implements Supplier<T>,
 	@Override
 	public <U> LazyImmutable<U> cast(Class<? extends U> type) {
 		
-		return (LazyImmutable<U>)Applicativable.super.cast(type);
+		return (LazyImmutable<U>)ApplicativeFunctor.super.cast(type);
 	}
 
 	/* (non-Javadoc)
@@ -202,7 +202,7 @@ public class LazyImmutable<T> implements Supplier<T>,
 	@Override
 	public LazyImmutable<T> peek(Consumer<? super T> c) {
 		
-		return (LazyImmutable<T>)Applicativable.super.peek(c);
+		return (LazyImmutable<T>)ApplicativeFunctor.super.peek(c);
 	}
 
 	/* (non-Javadoc)
@@ -211,7 +211,7 @@ public class LazyImmutable<T> implements Supplier<T>,
 	@Override
 	public <R> LazyImmutable<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 		
-		return (LazyImmutable<R>)Applicativable.super.trampoline(mapper);
+		return (LazyImmutable<R>)ApplicativeFunctor.super.trampoline(mapper);
 	}
 
 

@@ -3,13 +3,17 @@ package com.aol.cyclops.control.monads.transformers.values;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
@@ -18,12 +22,14 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.XorT;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 /**
  * Monad transformer for JDK Xor
@@ -48,7 +54,7 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
                                 Supplier<T>, 
                                 ConvertableFunctor<T>, 
                                 Filterable<T>,
-                                Applicativable<T>,
+                                ApplicativeFunctor<T>,
                                 Matchable.ValueAndOptionalMatcher<T>
                                 {
 
@@ -141,6 +147,43 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
         return new XorTValue<ST,B>(run.map(o -> o.map(f)));
     }
 
+    
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> XorTValue<ST,R> ap(Value<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new XorTValue<>(run.map(o -> o.ap(app,fn)));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> XorTValue<ST,R> zip(Iterable<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new XorTValue<>(run.map(o -> o.zip(app,fn)));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    public <T2, R> XorTValue<ST,R> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
+            Publisher<? extends T2> app) {
+        return new XorTValue<>(run.map(o -> o.zip(fn,app)));
+    }
+    public XorTValue<PStackX<ST>,T> list(){
+        return new XorTValue<>(run.map(o -> o.list()));
+    }
+    
+ 
+    public <T2, R> XorTValue<PStackX<ST>,R> apToList(Xor<ST,? extends T2> app,BiFunction<? super T, ? super T2, ? extends R> fn){
+        return new XorTValue<>(run.map(o -> o.apToList(app,fn)));
+    }
+   public <T2, R> XorTValue<ST,R> ap(Xor<? extends ST,? extends T2> app, BinaryOperator<ST> semigroup,BiFunction<? super T, ? super T2, ? extends R> fn){
+       return new XorTValue<>(run.map(o -> o.ap(app,semigroup,fn)));
+      }
     /**
      * Flat Map the wrapped Xor
      * 

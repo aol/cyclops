@@ -2,6 +2,7 @@ package com.aol.cyclops.internal.monads;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -17,6 +18,7 @@ import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.util.function.Predicates;
 
 public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
@@ -39,7 +41,36 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 		return (AnyMValueImpl<T>)anyM;
 	}
 	
-	@Override
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.anyM.AnyMValue#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> AnyMValue<R> ap(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        if(this.unwrap() instanceof ApplicativeFunctor){
+            return AnyM.<R>ofValue(((ApplicativeFunctor)unwrap()).ap(app, fn));
+        }
+        return with((AnyM)AnyMValue.super.ap(app, fn));
+    }
+    @Override
+    public <T2, R> AnyMValue<R> zip(Iterable<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        if(this.unwrap() instanceof ApplicativeFunctor){
+            return AnyM.<R>ofValue(((ApplicativeFunctor)unwrap()).zip(app, fn));
+        }
+        return (AnyMValue<R>)AnyMValue.super.zip(app, fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    public <T2, R> AnyMValue<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
+            Publisher<? extends T2> app) {
+        if(this.unwrap() instanceof ApplicativeFunctor){
+            return AnyM.<R>ofValue(((ApplicativeFunctor)unwrap()).zip(fn,app));
+        }
+        return (AnyMValue<R>)AnyMValue.super.zip(fn, app);
+    }
+    @Override
 	public <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return with(super.flatMapInternal(fn.andThen(it->fromIterable(it))));
     }

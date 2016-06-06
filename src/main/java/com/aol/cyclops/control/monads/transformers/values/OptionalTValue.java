@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
@@ -20,8 +21,10 @@ import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.util.Optionals;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 
@@ -45,7 +48,7 @@ public class OptionalTValue<T> implements OptionalT<T>,
                                     Supplier<T>, 
                                     ConvertableFunctor<T>, 
                                     Filterable<T>,
-                                    Applicativable<T>,
+                                    ApplicativeFunctor<T>,
                                     Matchable.ValueAndOptionalMatcher<T>
                                     {
    
@@ -130,7 +133,31 @@ public class OptionalTValue<T> implements OptionalT<T>,
 		return new OptionalTValue<B>(run.map(o -> o.map(f)));
 	}
 
-	/**
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> OptionalTValue<R> ap(Value<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new OptionalTValue<>(run.map(o -> Optionals.ap(o,app,fn)));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> OptionalTValue<R> zip(Iterable<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new OptionalTValue<>(run.map(o -> Optionals.zip(o,app,fn)));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    public <T2, R> OptionalTValue<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
+            Publisher<? extends T2> app) {
+        return new OptionalTValue<>(run.map(o -> Optionals.zip(app,o,fn)));
+    }
+    /**
 	 * Flat Map the wrapped Optional
 	  * <pre>
 	 * {@code 

@@ -40,7 +40,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.types.applicative.Applicativable.Applicatives;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 
@@ -64,6 +64,29 @@ public class FeatureToggleTest {
 	private int add1(int i){
 		return i+1;
 	}
+	
+	@Test
+    public void testApFeatureToggle() {
+	    
+        assertThat(just.ap(FeatureToggle.enable(20),this::add),equalTo(FeatureToggle.enable(30)));
+    }
+   
+    @Test
+    public void testApCombiner(){
+        assertThat(just.applyFunctions().ap(this::add).ap(FeatureToggle.enable(20)).convertable().toFeatureToggle(),equalTo(FeatureToggle.enable(30)));
+    }
+    @Test
+    public void testApMonoid(){
+        assertThat(just.applyFunctions().ap(Semigroups.intSum).ap(FeatureToggle.enable(20)).convertable().toFeatureToggle(),equalTo(FeatureToggle.enable(30)));
+    }
+   
+
+    @Test
+    public void testZipPubFeatureToggle() {
+        assertThat(just.zip(FeatureToggle.enable(20),this::add),equalTo(FeatureToggle.enable(30)));
+    }
+   
+     
 	@Test
 	public void testApplicativeBuilder() {
 		assertThat(Applicatives.<Integer,Integer>applicatives(just, just)
@@ -84,21 +107,16 @@ public class FeatureToggleTest {
 
 	@Test
 	public void testOfT() {
-		assertThat(Maybe.of(1),equalTo(Maybe.of(1)));
+		assertThat(FeatureToggle.enable(1),equalTo(FeatureToggle.enable(1)));
 	}
 
 	
 
-	@Test
-	public void testOfNullable() {
-		assertFalse(Maybe.ofNullable(null).isPresent());
-		assertThat(Maybe.ofNullable(1),equalTo(Maybe.of(1)));
-		
-	}
+	
 
 	@Test
 	public void testNarrow() {
-		assertThat(Maybe.ofNullable(1),equalTo(Maybe.narrow(Maybe.of(1))));
+		assertThat(FeatureToggle.enable(1),equalTo(FeatureToggle.narrow(FeatureToggle.enable(1))));
 	}
 
 	
@@ -458,7 +476,7 @@ public class FeatureToggleTest {
 
 	@Test
 	public void testAp1() {
-		assertThat(Maybe.of(1).ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
+		assertThat(FeatureToggle.enable(1).applyFunctions().ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
 	}
 	
 	private int add(int a, int b){
@@ -467,21 +485,21 @@ public class FeatureToggleTest {
 
 	@Test
 	public void testAp2() {
-		assertThat(Maybe.of(1).ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
+		assertThat(FeatureToggle.enable(1).applyFunctions().ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
 	}
 	private int add3(int a, int b, int c){
 		return a+b+c;
 	}
 	@Test
 	public void testAp3() {
-		assertThat(Maybe.of(1).ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
+		assertThat(FeatureToggle.enable(1).applyFunctions().ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
 	}
 	private int add4(int a, int b, int c,int d){
 		return a+b+c+d;
 	}
 	@Test
 	public void testAp4() {
-		assertThat(Maybe.of(1).ap4(this::add4)
+		assertThat(FeatureToggle.enable(1).applyFunctions().ap4(this::add4)
 						.ap(Optional.of(3))
 						.ap(Maybe.of(4))
 						.ap(Maybe.of(6)).toMaybe(),equalTo(Maybe.of(14)));
@@ -491,7 +509,7 @@ public class FeatureToggleTest {
 	}
 	@Test
 	public void testAp5() {
-		assertThat(Maybe.of(1).ap5(this::add5)
+		assertThat(FeatureToggle.enable(1).applyFunctions().ap5(this::add5)
 				.ap(Optional.of(3))
 				.ap(Maybe.of(4))
 				.ap(Maybe.of(6))

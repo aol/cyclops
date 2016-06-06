@@ -327,7 +327,7 @@ public class Matchables {
 		return supplier3(()->time.getHour(),()->time.getMinute(),()->time.getSecond());
 	}
     public static <T> MXor<BlockingQueue<T>,java.util.Queue<T>> blocking(java.util.Queue<T> queue) {
-        System.out.println(queue instanceof BlockingQueue);
+       
         return ()-> queue instanceof BlockingQueue ? Xor.<BlockingQueue<T>,java.util.Queue<T>>secondary((BlockingQueue)queue) : 
             Xor.<BlockingQueue<T>,java.util.Queue<T>>primary(queue);
     }

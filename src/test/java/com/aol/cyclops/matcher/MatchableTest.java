@@ -160,6 +160,7 @@ public class MatchableTest implements Printable{
 							   			 .visit((house,street)-> 
 							   			 	    just(house).matches(c->c.is(when(this::isValidHouse),then("valid house")),
 							   			 	                        otherwise("incorrectly configured house"))
+							   			 	               .applyFunctions()
 							   			 	               .ap2(this::concat)
 							   			 	               .ap(just(street)
 							   		      						.matches(c->c.is(when(this::isValidStreet),then(()->"valid street")),
@@ -180,6 +181,7 @@ public class MatchableTest implements Printable{
 							   					just(house).filter(this::isValidHouse)
 							   						 .map(i->"valid house")
 							   						 .recover("incorrectly configured house")
+							   						 .applyFunctions()
 							   		                 .ap2(this::concat)
 							   		            	 .ap(just(street).filter(this::isValidStreet)
 							   		            			   .map(s->"valid street")
@@ -202,6 +204,7 @@ public class MatchableTest implements Printable{
 							   									just(house).filter(this::isValidHouse)
 							   										 .map(i->"valid house")
 							   										 .recover("incorrectly configured house")
+							   										 .applyFunctions()
 							   									 	 .ap2(this::concat)
 							   									 	 .ap(just(street).filter(this::isValidStreet)
 							   									 			   .map(s->"valid street")

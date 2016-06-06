@@ -78,7 +78,7 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
 	 * Peek at the current value of the Try
 	 * <pre>
 	 * {@code 
-	 *    TryT.of(AnyM.fromStream(Success.of(10))
+	 *    TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .peek(System.out::println);
 	 *             
 	 *     //prints 10        
@@ -100,7 +100,7 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
 	 * Filter the wrapped Try
 	 * <pre>
 	 * {@code 
-	 *    TryT.of(AnyM.fromStream(Success.of(10))
+	 *    TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .filter(t->t!=10);
 	 *             
 	 *     //TryT<AnyMSeq<Stream<Optional.empty>>>
@@ -119,7 +119,7 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
 	 * 
 	 * <pre>
 	 * {@code 
-	 *  TryT.of(AnyM.fromStream(Success.of(10))
+	 *  TryT.of(AnyM.fromStream(Try.success(10))
 	 *             .map(t->t=t+1);
 	 *  
 	 *  
@@ -139,8 +139,8 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
 	 * Flat Map the wrapped Try
 	  * <pre>
 	 * {@code 
-	 *  TryT.of(AnyM.fromStream(Success.of(10))
-	 *             .flatMap(t->Failure.of(new Exception());
+	 *  TryT.of(AnyM.fromStream(Try.success(10))
+	 *             .flatMap(t->Try.failure(new Exception());
 	 *  
 	 *  
 	 *  //TryT<AnyMSeq<Stream<Failure[Excption]>>>
@@ -257,7 +257,7 @@ public class TryTSeq<T,X extends Throwable> implements TryT<T,X>,
 	 */
 	@SuppressWarnings("unchecked")
 	public static <A, X extends Throwable> TryTSeq<A,X> fromAnyM(AnyMSeq<A> anyM) {
-		return (TryTSeq<A, X>) of(anyM.map(Success::of));
+		return (TryTSeq<A, X>) of(anyM.map(Try::success));
 	}
    
 	/**

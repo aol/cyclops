@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.AnyM;
@@ -22,8 +23,9 @@ import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.val;
 
@@ -45,7 +47,7 @@ public class FutureWTValue<A> implements FutureWT<A>,
                                                 Supplier<A>, 
                                                 ConvertableFunctor<A>, 
                                                 Filterable<A>,
-                                                Applicativable<A>,
+                                                ApplicativeFunctor<A>,
                                                 Matchable.ValueAndOptionalMatcher<A>
                                                 {
    
@@ -121,7 +123,46 @@ public class FutureWTValue<A> implements FutureWT<A>,
    public <B> FutureWTValue<B> map(Function<? super A,? extends B> f){
        return new FutureWTValue<B>(run.map(o-> o.map(f)));
    }
-   /**
+   
+   
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.
+     * types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> FutureWTValue<R> ap(Value<? extends T2> app,
+            BiFunction<? super A, ? super T2, ? extends R> fn) {
+        return new FutureWTValue<>(run.map(o-> o.ap(app,fn)));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.
+     * Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    public <T2, R> FutureWTValue<R> zip(Iterable<? extends T2> app,
+            BiFunction<? super A, ? super T2, ? extends R> fn) {
+       
+        return new FutureWTValue<>(run.map(o-> o.zip(app,fn)));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.
+     * function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    public <T2, R> FutureWTValue<R> zip(BiFunction<? super A, ? super T2, ? extends R> fn,
+            Publisher<? extends T2> app) {
+        return new FutureWTValue<>(run.map(o-> o.zip(fn,app)));
+    }
+/**
 	 * Flat Map the wrapped CompletableFuture
 	  * <pre>
 	 * {@code 
