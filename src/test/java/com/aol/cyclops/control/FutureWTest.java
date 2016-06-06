@@ -6,6 +6,7 @@ import static com.aol.cyclops.control.Matchable.when;
 import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -48,11 +49,14 @@ import com.aol.cyclops.util.CompletableFutures;
 import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.stream.StreamUtils;
 
+import lombok.val;
+
 
 
 
 public class FutureWTest {
 
+    Executor ex = Executors.newFixedThreadPool(5);
 	FutureW<Integer> just;
 	FutureW<Integer> none;
 	NoSuchElementException exception = new NoSuchElementException();
@@ -62,6 +66,49 @@ public class FutureWTest {
 		none = FutureW.ofError(exception);
 	}
 	
+	private void sleep(long time){
+	    try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	}
+	@Test
+	public void apNonBlocking(){
+	    
+	  val f =  FutureW.ofSupplier(()->{ sleep(1000l); return "hello";},ex)
+	                  .ap(String::concat)
+	                  .ap(FutureW.ofSupplier(()->" world",ex))
+	                  .futureW();
+	  
+	  
+	  System.out.println("hello");
+	  long start=System.currentTimeMillis();
+	  System.out.println(f.get());
+	  assertThat(System.currentTimeMillis()-start,greaterThan(400l));
+	}
+	
+    @Test
+    public void futureWFromIterableTest() {
+
+        ReactiveSeq<Integer> stream = ReactiveSeq.of(1, 2, 3);
+
+        FutureW<Integer> maybe = FutureW.fromPublisher(stream);
+        assertThat(maybe.get(), equalTo(1));
+
+    }
+
+    @Test
+    public void futureWAsyncFromIterableTest() {
+
+        ReactiveSeq<Integer> stream = ReactiveSeq.of(1, 2, 3);
+
+        FutureW<Integer> maybe = FutureW.fromIterable(stream, ex);
+        assertThat(maybe.get(), equalTo(1));
+
+    }
+
 	@Test
 	public void scheduleDelay(){
 	    

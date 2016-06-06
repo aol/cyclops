@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -39,7 +41,16 @@ public abstract class BaseAnyMImpl<T> {
 	    return (R)monad.unwrap();
 	//	return (R)new ComprehenderSelector().selectComprehender(initialType).unwrap(monad.unwrap());
 	}
-	
+	protected <R> AnyM<R> fromIterable(Iterable<R> it){
+        if(it instanceof AnyM)
+            return (AnyM<R>)it;
+        return AnyM.fromIterable(it);
+    }
+	protected <R> AnyM<R> fromPublisher(Publisher<R> it){
+        if(it instanceof AnyM)
+            return (AnyM<R>)it;
+        return AnyM.fromPublisher(it);
+    }
 	
 	
 

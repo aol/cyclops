@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
@@ -28,6 +29,7 @@ import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.AccessLevel;
@@ -52,6 +54,15 @@ public interface Ior<ST,PT> extends Supplier<PT>,
 									Filterable<PT>,
 									Applicativable<PT>{
 
+    public static <T> Ior<Throwable,T> fromPublisher(Publisher<T> pub){
+        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+        pub.subscribe(sub);
+        return sub.toIor();
+    }
+    public static <ST,T> Ior<ST,T> fromIterable(Iterable<T> iterable){
+        Iterator<T> it = iterable.iterator();
+        return Ior.primary(it.hasNext() ? it.next() : null);
+    }
 	public static <ST,PT> Ior<ST,PT> primary(PT primary){ 
 		return new Primary<>(primary);
 	}

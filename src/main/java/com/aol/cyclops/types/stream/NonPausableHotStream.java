@@ -4,6 +4,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.Matchables;
+import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.internal.stream.BaseHotStreamImpl;
 
 public class NonPausableHotStream<T>  extends BaseHotStreamImpl<T> {
@@ -20,7 +22,9 @@ public class NonPausableHotStream<T>  extends BaseHotStreamImpl<T> {
 					
 					for(int i=0;i<local;i++){
 					
-						connections.get(i).add(a);
+					    Matchables.blocking(connections.get(i))
+                                  .visit(FluentFunctions.ofChecked(in->{ in.put(a); return true;}),
+                                          q-> q.offer(a));
 					}
 					
 					

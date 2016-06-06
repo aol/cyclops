@@ -1,5 +1,5 @@
 package com.aol.cyclops.react.lazy.sequenceM;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -93,12 +93,12 @@ public class RetryTest {
 	@Test
 	public void shouldSucceedAfterFewAsynchronousRetries() throws Exception {
 
+	    
 		given(serviceMock.apply(anyInt())).willThrow(
 				new RuntimeException(new SocketException("First")),
 				new RuntimeException(new IOException("Second"))).willReturn(
 				"42");
 
-	
 		String result = LazyFutureStream.of( 1,  2, 3)
 				.retry(serviceMock)
 				.firstValue();

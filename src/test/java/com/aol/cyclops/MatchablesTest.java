@@ -23,7 +23,9 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
 
+import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;
@@ -305,6 +307,17 @@ public class MatchablesTest {
       Matchables.url(new URL("http://www.aol.com/path?q=hello"))
                 .on$12_45()
                 .matches(c->c.is(when(eq("http"),in("www.aol.com","aol.com"),any(),not(eq("q=hello!"))), then("correct")),otherwise("miss"));
+    }
+	
+	@Test
+	public void nonBlocking(){
+	    assertThat(Matchables.blocking(new ManyToManyConcurrentArrayQueue(10))
+	                                  .visit(c->"blocking", c->"not"),equalTo("not"));
+	}
+	@Test
+    public void blocking(){
+        assertThat(Matchables.blocking(new LinkedBlockingQueue(10))
+                                      .visit(c->"blocking", c->"not"),equalTo("blocking"));
     }
 
 }

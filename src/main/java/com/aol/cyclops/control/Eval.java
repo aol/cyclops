@@ -14,6 +14,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
@@ -25,6 +27,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Memoize;
 
 /**
@@ -63,6 +66,11 @@ public interface Eval<T> extends Supplier<T>,
                                  Applicativable<T>,
                                  Matchable.ValueAndOptionalMatcher<T>{
 
+    public static <T> Eval<T> fromPublisher(Publisher<T> pub){
+        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+        pub.subscribe(sub);
+        return sub.toEvalLater();
+    }
     public static <T> Eval<T> fromIterable(Iterable<T> iterable){
         Iterator<T> it = iterable.iterator();
         return Eval.later(()->it.hasNext() ? it.next() : null);

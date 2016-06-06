@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
+import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
@@ -62,8 +63,11 @@ public interface AnyMValue<T> extends AnyM<T>,
      * @see com.aol.cyclops.control.AnyM#flatMapFirst(java.util.function.Function)
      */
     @Override
-    <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn) ;
-
+    <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn) ;
+    
+    @Override
+    <R> AnyMValue<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn); 
+    
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)

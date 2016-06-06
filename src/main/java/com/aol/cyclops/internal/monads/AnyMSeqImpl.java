@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.control.AnyM;
@@ -182,8 +183,14 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T> implements AnyMSeq<T> {
 		return with(super.flatMapInternal(fn));
 
 	}
-	public <R> AnyMSeq<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn) {
-        return with(super.flatMapInternal(fn));
+	@Override
+	public <R> AnyMSeq<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return with(super.flatMapInternal(fn.andThen(it->fromIterable(it))));
+
+    }
+	@Override
+    public  <R> AnyMSeq<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return with(super.flatMapInternal(fn.andThen(it->fromPublisher(it))));
 
     }
 

@@ -41,9 +41,9 @@ public interface Applicativable<T> extends ConvertableFunctor<T>, Unit<T>{
 
     @AllArgsConstructor
     public static class SemigroupApplyer<T> {
-        BiFunction<T, T, T> combiner;
+        protected BiFunction<T, T, T> combiner;
         @Wither
-        ConvertableFunctor<T> functor;
+        protected ConvertableFunctor<T> functor;
 
         public SemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
             

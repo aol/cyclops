@@ -115,7 +115,26 @@ public interface AnyM<T> extends    Unwrapable,
         return Predicates.eqvIterable(t).test(this);
     }
     Xor<AnyMValue<T>,AnyMSeq<T>> matchable();
-    <R> AnyM<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn);
+
+    /**
+     * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
+     * will take the first value from the Iterable returned.
+     * 
+     * @param fn FlatMaping function
+     * @return AnyM with flattening transformation
+     */
+    <R> AnyM<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn) ;
+    
+    /**
+     * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
+     * will take the first value from the Publisher returned.
+     * 
+     * @param fn FlatMaping function
+     * @return AnyM with flattening transformation
+     */
+    <R> AnyM<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn); 
+
+    
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
      */

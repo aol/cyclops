@@ -7,6 +7,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -37,10 +39,16 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
 		return (AnyMValueImpl<T>)anyM;
 	}
 	
-	
-	public <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends AnyM<? extends R>> fn) {
-        return with(super.flatMapInternal(fn));
+	@Override
+	public <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return with(super.flatMapInternal(fn.andThen(it->fromIterable(it))));
     }
+	
+	@Override
+	public <R> AnyMValue<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn){
+        return with(super.flatMapInternal(fn.andThen(it->fromPublisher(it))));
+    }
+	
 	@Override
 	public ReactiveSeq<T> reactiveSeq() {
 		return stream();

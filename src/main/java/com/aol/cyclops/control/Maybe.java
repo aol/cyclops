@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
@@ -19,6 +21,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.applicative.Applicativable;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -77,6 +80,11 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	
 	static <T> Maybe<T> none(){
 		return  EMPTY;
+	}
+	public static <T> Maybe<T> fromPublisher(Publisher<T> pub){
+	        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+	        pub.subscribe(sub);
+	        return sub.toMaybe();
 	}
 	static <T> Maybe<T> fromIterable(Iterable<T> iterable){
         return Maybe.fromEvalOf(Eval.fromIterable(iterable));

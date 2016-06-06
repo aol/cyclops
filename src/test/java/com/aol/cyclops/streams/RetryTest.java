@@ -1,5 +1,6 @@
 package com.aol.cyclops.streams;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -98,11 +100,11 @@ public class RetryTest {
 				new RuntimeException(new IOException("Second"))).willReturn(
 				"42");
 
-	
+		long time = System.currentTimeMillis();
 		String result = ReactiveSeq.of( 1,  2, 3)
-				.retry(serviceMock)
+				.retry(serviceMock,7,200,TimeUnit.MILLISECONDS)
 				.firstValue();
-
+		assertThat(System.currentTimeMillis()-time,greaterThan(200l));
 		assertThat(result, is("42"));
 	}
 

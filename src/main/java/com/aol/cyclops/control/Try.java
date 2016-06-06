@@ -13,6 +13,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -23,6 +25,7 @@ import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.Applicativable;
 import com.aol.cyclops.types.stream.ToStream;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
@@ -62,7 +65,16 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
                                                     Functor<T>,
                                                     Applicativable<T> {
     
-    
+    public static <T,X extends Throwable> Try<T,X> fromPublisher(Publisher<T> pub,Class<X>... classes){
+        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+        pub.subscribe(sub);
+        return sub.toTry(classes);
+    }
+    public static <T> Try<T,Throwable> fromPublisher(Publisher<T> pub){
+        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+        pub.subscribe(sub);
+        return sub.toTry();
+    }
     public static <T,X extends Throwable> Try<T,X> fromIterable(Iterable<T> iterable){
         Iterator<T> it = iterable.iterator();
         return Try.success(it.hasNext() ? it.next() : null);
