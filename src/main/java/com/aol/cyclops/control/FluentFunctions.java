@@ -474,7 +474,7 @@ public class FluentFunctions {
 			return withFn(Memoize.memoizeFunction(fn));
 		}
 		public FluentFunction<T,R> memoize(Cacheable<R> cache){
-			return withFn(Memoize.memoizeFunction(fn));
+			return withFn(Memoize.memoizeFunction(fn, cache));
 		}
 		public FluentFunction<T,R> name(String name){
 			return this.withName(name);

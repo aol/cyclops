@@ -4,6 +4,7 @@ import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -257,4 +258,32 @@ public class FluentFunctionTest {
 														  .println();
 		supplier.get();
 	}
+	
+    @Test
+    public void memoizeWithCache() throws InterruptedException {
+        
+        Cache<Object, Integer> cache = CacheBuilder.newBuilder()
+                .maximumSize(1)
+                .expireAfterWrite(1, TimeUnit.SECONDS)
+                .build();
+        
+        int[] requests = new int[1];
+        
+        Function<Integer, Integer> addOne = i -> { 
+            requests[0]++;
+            return i + 1;
+        };
+        Function fn = FluentFunctions.of(addOne).name("myFunction")
+                .memoize((key, f) -> cache.get(key, () -> f.apply(key)));
+
+        fn.apply(10);
+        fn.apply(10);
+        
+        Thread.sleep(2000);
+        
+        fn.apply(10);
+
+        assertEquals(2, requests[0]);
+        
+    }
 }
