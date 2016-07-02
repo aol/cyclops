@@ -158,6 +158,7 @@ public class FutureWTest {
         assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50).get(),equalTo(just.get()));
         assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50).get(),equalTo(50));
     }
+    
     @Test
     public void combine(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
@@ -850,4 +851,9 @@ public class FutureWTest {
 		assertThat(none.unit(10).get(),equalTo(just.get()));
 	}
 
+	@Test
+	public void testRecover() {
+	    assertThat(FutureW.ofError(new RuntimeException()).recover(__ -> true).get(), equalTo(true));
+	}
+	
 }

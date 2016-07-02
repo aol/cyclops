@@ -222,6 +222,20 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         return FutureW.<R>of(future.<R>thenCompose(t->(CompletionStage<R>)mapper.apply(t))); 
     }
 	
+	/**
+	 * Returns a new FutureW that, when this FutureW completes
+	 * exceptionally is executed with this FutureW exception as the
+	 * argument to the supplied function.  Otherwise, if this FutureW
+	 * completes normally, then the returned FutureW also completes
+	 * normally with the same value.
+	 * @param fn the function to use to compute the value of the
+     * returned FutureW if this FutureW completed exceptionally
+	 * @return the new FutureW
+	 */
+	public FutureW<T> recover(Function<Throwable, ? extends T> fn) {
+	    return FutureW.of(toCompletableFuture().exceptionally(fn));
+	}
+	
 	public  Xor<Throwable,T> toXor(){
 		try{
 			return Xor.primary(future.join());
