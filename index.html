@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Future & functional based programming via JDK compatible extensions for Java 8 and above.">
+    <meta name="author" content="cmaher">
 
-    <title>One Page Wonder - Start Bootstrap Template</title>
+    <title>Cyclops React</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -27,99 +27,176 @@
 </head>
 
 <body>
-
     <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Start Bootstrap</a>
+        <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+            <div class="container topnav">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand topnav" href="http://engineering.aol.com">AOL Engineering</a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="http://aol.github.io/">AOL Open</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/aol/cyclops-react">Download</a>
+                        </li>
+                        <li>
+                            <a href="#quick_start">Quick Start</a>
+                        </li>
+                        <li>
+                            <a href="#why">Why Cyclops-react?</a>
+                        </li>
+                        <li>
+                            <a href="#user_guide">User Guide</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
             </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="#about">About</a>
-                    </li>
-                    <li>
-                        <a href="#services">Services</a>
-                    </li>
-                    <li>
-                        <a href="#contact">Contact</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
-
+            <!-- /.container -->
+        </nav>
     <!-- Full Width Image Header -->
     <header class="header-image">
         <div class="headline">
             <div class="container">
-                <h1>One Page Wonder</h1>
-                <h2>Will Knock Your Socks Off</h2>
+                <h1>Cyclops-react</h1>
+
             </div>
         </div>
     </header>
 
     <!-- Page Content -->
     <div class="container">
-
+<a  name="quick_start"></a>
         <hr class="featurette-divider">
-
         <!-- First Featurette -->
         <div class="featurette" id="about">
-            <img class="featurette-image img-circle img-responsive pull-right" src="http://placehold.it/500x500">
-            <h2 class="featurette-heading">This First Heading
-                <span class="text-muted">Will Catch Your Eye</span>
+            <img class="featurette-image img-circle img-responsive pull-right" src="img/quickstart.jpg" width="50%">
+            <h2 class="featurette-heading">Quickstart<br>
+                <span class="text-muted">and Documentation</span>
             </h2>
-            <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+            <pre><code class="language-xml"><span class="hljs-title">compile 'com.aol.simplereact:cyclops-react:x.y.z'</span>
+            </code></pre>
+            <ul>
+            <li><a href="https://github.com/aol/cyclops-react/tree/master/user-guide">user-guide : work in progress</a></li>
+            <li><a href="https://github.com/aol/simple-react/wiki">simple-react wiki</a></li>
+            <li><a href="https://github.com/aol/cyclops/wiki">cyclops wiki</a></li>
+            <li><a href="http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/">javadoc</a></li>
+            </ul>
         </div>
-
+<a  name="why"></a>
         <hr class="featurette-divider">
-
         <!-- Second Featurette -->
         <div class="featurette" id="services">
-            <img class="featurette-image img-circle img-responsive pull-left" src="http://placehold.it/500x500">
-            <h2 class="featurette-heading">The Second Heading
-                <span class="text-muted">Is Pretty Cool Too.</span>
+            <img class="featurette-image img-circle img-responsive pull-left" src="img/tuning.jpg" width="50%">
+            <h2 class="featurette-heading">Cyclops-react is used in Aol to build robust,
+                <span class="text-muted">performant & scalable asynchronous systems</span>
             </h2>
-            <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+            <p class="lead"> Features include:
+                <ul>
+                    <li>Compatible extensions to JDK interfaces (Collections, Streams, Functions)</li>
+                    <li>Built with jOOλ, reactive-streams, Agrona and pCollections</li>
+                    <li>Extensions for efficient JDK compatible persistent collections (pCollections)</li>
+                    <li>Single-threaded asynchronous streaming</li>
+                    <li>Scheduling of data emission</li>
+                    <li>Powerful extended type hierarchy for aggregrations (Collections & Streams) and single values</li>
+                    <li>FutureStreams for managing aggregates for Future Tasks (e.g. for multi-threaded execution of large numbers of I/O tasks)</li>
+                    <li>Powerful functional-style control structures, implemented in Java friendly manner (Maybe, Eval, FutureW, Xor, Ior, Try, AnyM, structural & guard based pattern matching, for-comprehensions)</li>
+                    <li>Execute functions between wrapped values (Optional / CompletableFutre etc) without tedious unwrapping (Java friendly Applicative support).</li>
+                    <li>Java friendly abstractions for wrapping any Monad type (Stream, CompletableFuture, Optional, cyclops-react types and types from other Java projects too). AnyM and it's two subtypes AnyMSeq for aggregates (Steam, List etc) and AnyMValue for Values</li>
+                    <li>Monad Transformers - for manipulating nesting monadic types (e.g. Optionals within a Stream as if it were just an Optional)</li>
+                    <li>Applicatives - apply functions across wrapped types (e.g. Optional / Maybe / Xor) without unwrapping & aggregate without terminate on failure</li>
+                    <li>Structural pattern matching & pattern matching via Guards (see Matchable and Matchables)</li>
+                    <li>Full strength for comprehensions / generators (reference elements from other generators)</li>
+                    <li>Tight integration with reactive-streams : collections, streams and datatypes are publishers & can be generated via subscribers</li>
+                    <li>Very Extensible & integration with other projects via cyclops-integration modules.</li>
+                </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </p>
         </div>
-
+<a  name="user_guide"></a>
         <hr class="featurette-divider">
-
         <!-- Third Featurette -->
         <div class="featurette" id="contact">
-            <img class="featurette-image img-circle img-responsive pull-right" src="http://placehold.it/500x500">
-            <h2 class="featurette-heading">The Third Heading
-                <span class="text-muted">Will Seal the Deal.</span>
+            <a href="https://cloud.githubusercontent.com/assets/9964792/14741656/cf3d8494-088f-11e6-9189-b2bed00365d1.png" target="_blank"><img class="featurette-image img-circle img-responsive pull-right" src="img/chart.jpg" width="50%"></a>
+            <h2 class="featurette-heading">Future & functional based programming via JDK compatible extensions
+                <span class="text-muted">for Java 8 and above.</span>
             </h2>
-            <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+            <p class="lead">Cyclops-react adds a series of extensions to standard (mutable) Java collections as well as support for pCollections, a set of persistent collections that also implement the JDK interfaces.</p>
+            <ul>
+            <li><a href="http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/Collections.adoc">working with collections user guide</a></li>
+            <li><a href="http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc">working with streams user guide</a></li>
+            <li><a href="http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc">working with lambdas user guide</a></li>
+            <li><a href="http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc">working with pattern matching user guide</a></li>
+            <li><a href="http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/visitor-pattern.adoc">working with vistor pattern user guide</a></li>
+            <li><a href="http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/future-streams.adoc">working with FutureStreams (WIP) user guide</a></li>
+            <li><a href="http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/datatypes.adoc">working with datatypes (WIP) user guide</a></li>
+            </ul>
         </div>
 
         <hr class="featurette-divider">
-
-        <!-- Footer -->
-        <footer>
-            <div class="row">
-                <div class="col-lg-12">
-                    <p>Copyright &copy; Your Website 2014</p>
+    </div>
+    <!-- /.container -->
+    <!-- Footer -->
+    <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 footer-left">
+                    <p>
+                        <iframe id="gh-fork" src="http://ghbtns.com/github-btn.html?user=aol&amp;repo=cyclops-react&amp;type=fork" allowtransparency="true" frameborder="0" scrolling="0" width="55px" height="20px"></iframe>
+                        <iframe id="gh-star" src="http://ghbtns.com/github-btn.html?user=aol&amp;repo=cyclops-react&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110px" height="20px"></iframe>
+                        <iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-follow-button twitter-follow-button-rendered" title="Twitter Follow Button" src="http://platform.twitter.com/widgets/follow_button.b7de008f493a5185d8df1aedd62d77c6.en.html#dnt=false&amp;id=twitter-widget-0&amp;lang=en&amp;screen_name=aolireland&amp;show_count=false&amp;show_screen_name=true&amp;size=m&amp;time=1467285061527" style="position: static; visibility: visible; width: 130px; height: 20px;" data-screen-name="aolireland"></iframe>
+                        <br>
+                        <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Faolireland%2F&tabs&width=340&height=154&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&appId" width="340" height="154" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+                    </p>
+                </div>
+                    <div class="col-lg-12">
+                        <ul class="list-inline">
+                            <li>
+                                <a href="#">Home</a>
+                            </li>
+                            <li class="footer-menu-divider">&sdot;</li>
+                            <li>
+                                <a href="http://corp.aol.com/about-aol">About</a>
+                            </li>
+                            <li class="footer-menu-divider">&sdot;</li>
+                            <li>
+                                <a href="http://corp.aol.com/products-servicesa">Services</a>
+                            </li>
+                            <li class="footer-menu-divider">&sdot;</li>
+                            <li>
+                                <a href="https://github.com/aol/cyclops-react/issues">Contact</a>
+                            </li>
+                        </ul>
+                        <p class="copyright text-muted small">Cyclops-react is a free and open source Java Web Framework, released under the <a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)" target="_blank">Apache 2 License</a></p>
+                    </div>
                 </div>
             </div>
         </footer>
-
-    </div>
-    <!-- /.container -->
-
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
 

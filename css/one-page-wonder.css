@@ -12,11 +12,13 @@ body {
     display: block;
     width: 100%;
     text-align: center;
-    background: url('http://placehold.it/1900x500') no-repeat center center scroll;
+    /*background: url('http://placehold.it/1900x500') no-repeat center center scroll;*/
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
     -o-background-size: cover;
+    background: url(../img/intro-bg.png) no-repeat center center;
+    background-size: cover;
 }
 
 .headline {
@@ -25,8 +27,8 @@ body {
 
 .headline h1 {
     font-size: 130px;
-    background: #fff;
-    background: rgba(255,255,255,0.9);
+
+    background: rgba(255,255,255,0.75);
 }
 
 .headline h2 {
