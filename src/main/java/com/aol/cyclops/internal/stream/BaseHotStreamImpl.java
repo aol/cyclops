@@ -5,11 +5,8 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.internal.stream.spliterators.ClosingSpliterator;
@@ -54,22 +51,12 @@ public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T> implemen
 	}
 	
 	@Override
-	public ReactiveSeq<T> connect(){
-		return connect(new OneToOneConcurrentArrayQueue<T>(256));
-	}
-	
-	@Override
 	public ReactiveSeq<T> connect(Queue<T> queue) {
 		connections.getAndSet(connected, queue);
 		connected++;
 		unpause();
 		return StreamUtils.reactiveSeq(StreamSupport.stream(
                 new ClosingSpliterator(Long.MAX_VALUE, queue,open), false),Optional.empty());
-	}
-
-	@Override
-	public <R extends Stream<T>> R connectTo(Queue<T> queue,Function<ReactiveSeq<T>,R> to) {
-		return to.apply(connect(queue));
 	}
 	
 }
