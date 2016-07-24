@@ -162,7 +162,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
         
         return Matchables.tuple2(both().get()).visit((a,b)-> both.apply(a, b));
     }
-	default <R1,R2> Ior<R1,R2> visitIor(Function<? super ST,? extends R1> secondary, 
+	default <R1,R2> Ior<R1,R2> mapBoth(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
 		if(isSecondary())
 			return (Ior<R1,R2>)swap().map(secondary).swap();

@@ -57,6 +57,7 @@ public class MaybeTest implements Printable {
 	public void setUp() throws Exception {
 		just = Maybe.of(10);
 		none = Maybe.none();
+		just.toLazyImmutable().visit(present, absent)
 	}
 	  @Test
       public void testApFeatureToggle() {

@@ -220,7 +220,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
 	<R> R visit(Function<? super ST,? extends R> secondary, 
             Function<? super PT,? extends R> primary);
 	
-	default <R1,R2> Xor<R1,R2> visitXor(Function<? super ST,? extends R1> secondary, 
+	default <R1,R2> Xor<R1,R2> mapBoth(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
 		if(isSecondary())
 			return (Xor<R1,R2>)swap().map(secondary).swap();

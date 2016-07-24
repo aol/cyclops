@@ -99,9 +99,9 @@ public class Ior2Test {
     }
     @Test
     public void visitIor(){
-        assertThat(just.visitIor(secondary->"no", primary->"yes"),equalTo(Ior.primary("yes")));
-        assertThat(none.visitIor(secondary->"no", primary->"yes"),equalTo(Ior.secondary("no")));
-        assertThat(Ior.both(10, "eek").visitIor(secondary->"no", primary->"yes"),equalTo(Ior.both("no","yes")));
+        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(Ior.primary("yes")));
+        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(Ior.secondary("no")));
+        assertThat(Ior.both(10, "eek").mapBoth(secondary->"no", primary->"yes"),equalTo(Ior.both("no","yes")));
     }
 	@Test
 	public void testToMaybe() {
