@@ -162,9 +162,9 @@ public class FutureWTest {
     public void combine(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
         
-        assertThat(just.combine(add,Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
+        assertThat(just.combineEager(add,Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        assertThat(just.combine(firstNonNull,none).get(),equalTo(just.get()));
+        assertThat(just.combineEager(firstNonNull,none).get(),equalTo(just.get()));
          
     }
 	@Test

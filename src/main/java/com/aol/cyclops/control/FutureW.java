@@ -159,8 +159,8 @@ public class FutureW<T> implements ConvertableFunctor<T>,
      * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
      */
     @Override
-    public FutureW<T> combine(Monoid<T> monoid, MonadicValue<? extends T> v2){
-        return (FutureW<T>)MonadicValue1.super.combine(monoid,v2);
+    public FutureW<T> combineEager(Monoid<T> monoid, MonadicValue<? extends T> v2){
+        return (FutureW<T>)MonadicValue1.super.combineEager(monoid,v2);
     }
 	@Override
 	public <R> FutureW<R> map(Function<? super T, ? extends R> fn) {

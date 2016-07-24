@@ -107,12 +107,12 @@ public class MaybeTest implements Printable {
 	@Test
 	public void combine(){
 	    Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-	    assertThat(just.combine(add,none),equalTo(just));
-	    assertThat(none.combine(add,just),equalTo(Maybe.of(0))); 
-	    assertThat(none.combine(add,none),equalTo(Maybe.of(0))); 
-	    assertThat(just.combine(add,Maybe.just(10)),equalTo(Maybe.just(20)));
+	    assertThat(just.combineEager(add,none),equalTo(just));
+	    assertThat(none.combineEager(add,just),equalTo(Maybe.of(0))); 
+	    assertThat(none.combineEager(add,none),equalTo(Maybe.of(0))); 
+	    assertThat(just.combineEager(add,Maybe.just(10)),equalTo(Maybe.just(20)));
 	    Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-	    assertThat(just.combine(firstNonNull,none),equalTo(just));
+	    assertThat(just.combineEager(firstNonNull,none),equalTo(just));
 	     
 	}
 	
