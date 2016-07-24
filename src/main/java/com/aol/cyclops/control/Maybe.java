@@ -156,7 +156,7 @@ public interface Maybe<T> extends MonadicValue1<T>,
 	 * @return
 	 */
 	@Override
-	default <T2,R> Maybe<R> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+	default <T2,R> Maybe<R> combine(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
         
         return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
                   .flatMap(tuple-> app.visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));

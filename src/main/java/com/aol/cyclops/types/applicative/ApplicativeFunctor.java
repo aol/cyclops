@@ -44,7 +44,14 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>,
 	}
 	
 	    
-	default <T2,R> ApplicativeFunctor<R> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+	/**
+	 * Lazily combine this ApplicativeFunctor with the supplied value via the supplied BiFunction
+	 * 
+	 * @param app Value to combine with this one.
+	 * @param fn BiFunction to combine them
+	 * @return New Applicativefunctor that represents the combined values
+	 */
+	default <T2,R> ApplicativeFunctor<R> combine(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
 	       
 	        return (ApplicativeFunctor<R>)map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
 	                                  .map(tuple-> app.visit(i->tuple.v2.apply(i),()->tuple.v1 ));
@@ -60,6 +67,11 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>,
                                       .map(tuple-> Maybe.fromPublisher(app).visit(i->tuple.v2.apply(i),()->tuple.v1 ));
    } 
 	    
+	    /**
+	     * Eagerly apply functions across one or more Functor instances
+	     * 
+	     * @return ApplyFunctions builder
+	     */
 	    default ApplyFunctions<T> applyFunctions(){
 	        return new ApplyFunctions<T>(this);
 	    }
@@ -141,7 +153,7 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>,
         	 * @param fn
         	 * @return
         	 */
-        	public <T2,R> Applicative<T2,R, ?> ap2( BiFunction<? super T,? super T2,? extends R> fn){
+        	public <T2,R> EagerApplicative<T2,R, ?> ap2( BiFunction<? super T,? super T2,? extends R> fn){
         		return  Applicatives.<T,R>applicatives(app,app).applicative2(fn);
         	}
         	public <T2,T3,R> Applicative2<T2,T3,R, ?> ap3( TriFunction<? super T,? super T2,? super T3,? extends R> fn){

@@ -29,18 +29,18 @@ public interface Applicative2<T,T2,R, D extends ConvertableFunctor<R>> extends F
 	//<U extends Functor<Function<? super T,? extends R>> & Convertable<Function<? super T,? extends R>>> U delegate();
 	ConvertableFunctor<Function<? super T,Function<? super T2,? extends R>>>  delegate();
 	
-	default Applicative<T2,R,D> ap(Functor<T> f){
+	default EagerApplicative<T2,R,D> ap(Functor<T> f){
 	    
 		return ()->(ConvertableFunctor)delegate().visit(myFn->f.map(t->myFn.apply(t)),()->Maybe.none());
 		
 	}
-	default Applicative<T2,R,D> ap(Optional<T> f){
+	default EagerApplicative<T2,R,D> ap(Optional<T> f){
 		
 		return ap(Maybe.fromOptional(f));
 		
 		
 	}
-	default Applicative<T2,R,D> ap(CompletableFuture<T> f){
+	default EagerApplicative<T2,R,D> ap(CompletableFuture<T> f){
 		return ap(FutureW.of(f));
 		
 	}

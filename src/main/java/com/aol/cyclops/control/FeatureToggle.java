@@ -514,7 +514,7 @@ public interface FeatureToggle<F> extends Supplier<F>,
 		     * @return
 		     */
 		    @Override
-		    default <T2,R> FeatureToggle<R> ap(Value<? extends T2> app, BiFunction<? super F,? super T2,? extends R> fn){
+		    default <T2,R> FeatureToggle<R> combine(Value<? extends T2> app, BiFunction<? super F,? super T2,? extends R> fn){
 		        
 		        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
 		                  .flatMap(tuple-> app.visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));

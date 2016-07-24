@@ -61,7 +61,7 @@ public class MaybeTest implements Printable {
 	  @Test
       public void testApFeatureToggle() {
         
-          assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+          assertThat(just.combine(FeatureToggle.enable(20),this::add).get(),equalTo(30));
       }
      
      

@@ -219,9 +219,9 @@ public interface Eval<T> extends Supplier<T>,
      * @return
      */
     @Override
-    default <T2,R> Eval<R> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+    default <T2,R> Eval<R> combine(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
         
-        return  (Eval<R> )ApplicativeFunctor.super.ap(app, fn);
+        return  (Eval<R> )ApplicativeFunctor.super.combine(app, fn);
     }
     /**
      * Equivalent to ap, but accepts an Iterable and takes the first value only from that iterable.

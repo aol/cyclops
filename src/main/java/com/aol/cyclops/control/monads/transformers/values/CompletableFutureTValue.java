@@ -136,9 +136,9 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
      * types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> CompletableFutureTValue<R> ap(Value<? extends T2> app,
+    public <T2, R> CompletableFutureTValue<R> combine(Value<? extends T2> app,
             BiFunction<? super A, ? super T2, ? extends R> fn) {
-        return new CompletableFutureTValue<R>(run.map(o-> CompletableFutures.ap(o, app, fn)));
+        return new CompletableFutureTValue<R>(run.map(o-> CompletableFutures.combine(o, app, fn)));
     }
 
     /*

@@ -135,9 +135,9 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> TryTValue<R,X> ap(Value<? extends T2> app,
+    public <T2, R> TryTValue<R,X> combine(Value<? extends T2> app,
             BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return new TryTValue<>(run.map(o -> o.ap(app,fn)));
+        return new TryTValue<>(run.map(o -> o.combine(app,fn)));
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)

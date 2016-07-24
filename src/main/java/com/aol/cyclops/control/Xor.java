@@ -259,10 +259,10 @@ public interface Xor<ST,PT> extends Supplier<PT>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    <T2, R> Xor<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn);
+    <T2, R> Xor<ST,R> combine(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn);
     
     /**
-     * @return An Xor with the secondary type converted to a persistent list, for use with accumulating app function  {@link Xor#ap(Xor,BiFunction)}
+     * @return An Xor with the secondary type converted to a persistent list, for use with accumulating app function  {@link Xor#combine(Xor,BiFunction)}
      */
     default Xor<PStackX<ST>,PT> list(){
         return secondaryMap(PStackX::of);
@@ -277,8 +277,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,
      * @param fn Combiner function for primary values
      * @return Combined Xor
      */
-    default <T2, R> Xor<PStackX<ST>,R> apToList(Xor<ST,? extends T2> app,BiFunction<? super PT, ? super T2, ? extends R> fn){
-      return list().ap(app.list(),Semigroups.collectionXConcat(),fn);
+    default <T2, R> Xor<PStackX<ST>,R> combineToList(Xor<ST,? extends T2> app,BiFunction<? super PT, ? super T2, ? extends R> fn){
+      return list().combine(app.list(),Semigroups.collectionXConcat(),fn);
     }
     /**
      * Accumulate secondary values with the provided BinaryOperator / Semigroup {@link Semigroups}
@@ -298,7 +298,8 @@ public interface Xor<ST,PT> extends Supplier<PT>,
      * @param fn To combine primary types
      * @return Combined Xor
      */
-    default <T2, R> Xor<ST,R> ap(Xor<? extends ST,? extends T2> app, BinaryOperator<ST> semigroup,BiFunction<? super PT, ? super T2, ? extends R> fn){
+   
+    default <T2, R> Xor<ST,R> combine(Xor<? extends ST,? extends T2> app, BinaryOperator<ST> semigroup,BiFunction<? super PT, ? super T2, ? extends R> fn){
         return this.visit(secondary-> app.visit(s2->Xor.secondary( semigroup.apply(s2, secondary)), p2->Xor.secondary(secondary))
                     , primary->   app.visit(s2->Xor.secondary(s2), p2->Xor.primary(fn.apply(primary,p2))));
       }
@@ -492,7 +493,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
          * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override
-        public <T2, R> Xor<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+        public <T2, R> Xor<ST,R> combine(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
             return  app.toXor().visit(s->Xor.secondary(null), f->Xor.primary(fn.apply(get(),app.get())));
         }
 
@@ -617,7 +618,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
          * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override
-        public <T2, R> Xor<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+        public <T2, R> Xor<ST,R> combine(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
            return (Xor<ST,R>)this;
         }
 

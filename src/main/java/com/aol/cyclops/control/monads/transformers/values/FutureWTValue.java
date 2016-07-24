@@ -133,9 +133,9 @@ public class FutureWTValue<A> implements FutureWT<A>,
      * types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> FutureWTValue<R> ap(Value<? extends T2> app,
+    public <T2, R> FutureWTValue<R> combine(Value<? extends T2> app,
             BiFunction<? super A, ? super T2, ? extends R> fn) {
-        return new FutureWTValue<>(run.map(o-> o.ap(app,fn)));
+        return new FutureWTValue<>(run.map(o-> o.combine(app,fn)));
     }
 
     /*

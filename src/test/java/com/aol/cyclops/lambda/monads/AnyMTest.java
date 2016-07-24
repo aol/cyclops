@@ -38,7 +38,7 @@ import reactor.core.publisher.Flux;
 public class AnyMTest {
     @Test
     public void testApEval() {
-        assertThat(AnyM.fromEval(Eval.now(10)).ap(Eval.later(()->20),this::add).unwrap(),equalTo(Eval.now(30)));
+        assertThat(AnyM.fromEval(Eval.now(10)).combine(Eval.later(()->20),this::add).unwrap(),equalTo(Eval.now(30)));
     }
     @Test
     public void anyMSetConversion() {

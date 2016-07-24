@@ -68,7 +68,7 @@ public class FeatureToggleTest {
 	@Test
     public void testApFeatureToggle() {
 	    
-        assertThat(just.ap(FeatureToggle.enable(20),this::add),equalTo(FeatureToggle.enable(30)));
+        assertThat(just.combine(FeatureToggle.enable(20),this::add),equalTo(FeatureToggle.enable(30)));
     }
    
     @Test

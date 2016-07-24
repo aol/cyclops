@@ -137,9 +137,9 @@ public class OptionalTValue<T> implements OptionalT<T>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> OptionalTValue<R> ap(Value<? extends T2> app,
+    public <T2, R> OptionalTValue<R> combine(Value<? extends T2> app,
             BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return new OptionalTValue<>(run.map(o -> Optionals.ap(o,app,fn)));
+        return new OptionalTValue<>(run.map(o -> Optionals.combine(o,app,fn)));
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)

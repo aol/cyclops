@@ -141,9 +141,9 @@ public class MaybeTValue<T> implements MaybeT<T>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> MaybeTValue<R> ap(Value<? extends T2> app,
+    public <T2, R> MaybeTValue<R> combine(Value<? extends T2> app,
             BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return new MaybeTValue<>(run.map(o -> o.ap(app,fn)));
+        return new MaybeTValue<>(run.map(o -> o.combine(app,fn)));
     }
 
     /* (non-Javadoc)

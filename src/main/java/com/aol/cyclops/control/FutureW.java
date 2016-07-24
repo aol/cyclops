@@ -366,7 +366,7 @@ public class FutureW<T> implements ConvertableFunctor<T>,
      * @return
      */
     @Override
-    public <T2,R> FutureW<R> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+    public <T2,R> FutureW<R> combine(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
         if(app instanceof FutureW){
             return FutureW.of(future.thenCombine( ((FutureW<T2>)app).getFuture(),fn));
         }

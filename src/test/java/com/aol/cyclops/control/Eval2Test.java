@@ -534,11 +534,11 @@ public class Eval2Test {
 	}
 	@Test
     public void testApEval() {
-        assertThat(just.ap(Eval.later(()->20),this::add),equalTo(Eval.now(30)));
+        assertThat(just.combine(Eval.later(()->20),this::add),equalTo(Eval.now(30)));
     }
 	@Test
 	public void testApEvalLazy(){
-	    assertTrue(Eval.later(()->10).ap(Eval.later(()->20),this::add) instanceof Later);
+	    assertTrue(Eval.later(()->10).combine(Eval.later(()->20),this::add) instanceof Later);
 	}
 	
 	@Test
