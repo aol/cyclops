@@ -1,13 +1,13 @@
 package com.aol.cyclops.control;
 
-import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
+
 import com.aol.cyclops.Semigroups;
-import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-
-import static org.junit.Assert.assertThat;
 public class XorTest {
 
 	private String concat(String a,String b){

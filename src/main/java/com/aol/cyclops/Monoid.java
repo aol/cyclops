@@ -2,7 +2,6 @@ package com.aol.cyclops;
 
 
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -55,32 +54,40 @@ public interface Monoid<T> extends Semigroup<T> {
 	
 	public static <T> Monoid<T> of(T zero, Semigroup<T> group){
 		return new Monoid<T>(){
-			public T zero(){
+		    @Override
+		    public T zero(){
 				return zero;
 			}
-			public BiFunction<T,T,T> combiner(){
-				return group.combiner();
-			}
+			
+            @Override
+            public T apply(T t, T u) {
+                return group.apply(t, u);
+            }
 		};
 	}
 	public static <T> Monoid<T> of(T zero, Function<T,Function<T,T>> combiner){
 		return new Monoid<T>(){
-			public T zero(){
+			@Override
+		    public T zero(){
 				return zero;
 			}
-			public BiFunction<T,T,T> combiner(){
-				return (a,b) -> combiner.apply(a).apply(b);
-			}
+			@Override
+            public T apply(T t, T u) {
+                return combiner.apply(t).apply(u);
+            }
+			
 		};
 	}
-	public static <T> Monoid<T> of(T zero, BiFunction<T,T,T> combiner){
+	public static <T> Monoid<T> fromBiFunction(T zero, BiFunction<T,T,T> combiner){
 		return new Monoid<T>(){
-			public T zero(){
+			@Override
+		    public T zero(){
 				return zero;
 			}
-			public BiFunction<T,T,T> combiner(){
-				return combiner;
-			}
+			@Override
+            public T apply(T t, T u) {
+                return combiner.apply(t,u);
+            }
 		};
 	}
 }
