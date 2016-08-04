@@ -3,6 +3,7 @@ package com.aol.cyclops.data.collections.extensions.standard;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -30,11 +31,11 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 
-public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
-												BiFunctor<K, V>, 
-												Functor<V>, 
+public interface 	MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
+												BiFunctor<K, V>,
+												Functor<V>,
 												IterableFilterable<Tuple2<K, V>>,
-												ExtendedTraversable<Tuple2<K, V>>, 
+												ExtendedTraversable<Tuple2<K, V>>,
 												Foldable<Tuple2<K,V>>,
 												CyclopsCollectable<Tuple2<K,V>>
 												{
@@ -48,14 +49,16 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	}
 	static <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> toMapX(){
 		return Collectors.collectingAndThen(defaultCollector(), (Map<K,V> d)->new MapXImpl<K,V>(d,defaultCollector()));
-		
+
 	}
 	public <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> getCollector();
 	default ReactiveSeq<Tuple2<K, V>> stream(){
 		return ReactiveSeq.fromIterable(this.entrySet())
 					    .map(e->Tuple.tuple(e.getKey(),e.getValue()));
 	}
-	
+	static <K,V> MapX<K,V> empty(){
+		return fromMap(new HashMap<K, V>());
+	}
 	public static <K,V> MapX<K,V> fromMap(Map<? extends K,? extends V> it){
 		return fromMap(defaultCollector(),it);
 	}
@@ -70,8 +73,8 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	default MapX<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream){
 		return new MapXImpl<>(stream.toMap(t->t.v1, t->t.v2),getCollector());
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
@@ -93,7 +96,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
 	 */
 	default <KR,VR> MapX<KR,VR> flatMap(BiFunction<? super K,? super V, ? extends MapX<KR,VR>> fn) {
-		
+
 		ReactiveSeq<Tuple2<KR,VR>> s = stream().flatMap(t -> fn.apply(t.v1,t.v2).stream());
 		return new MapXImpl<>(s.<KR,VR>toMap(t->t.v1, t->t.v2),getCollector());
 	}
@@ -103,7 +106,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 */
 	@Override
 	default <R> MapX<K,R> map(Function<? super V, ? extends R> fn) {
-		
+
 		ReactiveSeq<Tuple2<K,R>> s = stream().map(t->t.map2(v->fn.apply(v)));
 		return new MapXImpl<>(s.<K,R>toMap(t->t.v1, t->t.v2),getCollector());
 	}
@@ -120,7 +123,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 		return new MapXImpl<>(s2.<R1,R2>toMap(t->t.v1, t->t.v2),getCollector());
 	}
 
-	
+
 
 	@Override
 	int size();
@@ -153,27 +156,27 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	default MapX<K,V> plus(K key, V value){
 		return (MapX<K,V>)FluentMapX.super.plus(key,value);
 	}
-	
+
 	@Override
 	default MapX<K,V> plusAll(Map<? extends K, ? extends V> map){
 		return (MapX<K,V>)FluentMapX.super.plusAll(map);
 	}
-	
+
 	default MapX<K,V> minus(Object key){
 		return (MapX<K,V>)FluentMapX.super.minus(key);
 	}
-	
+
 	default MapX<K,V> minusAll(Collection<?> keys){
 		return (MapX<K,V>)FluentMapX.super.minusAll(keys);
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
 	 */
 	@Override
 	default <U> MapX<K,U> cast(Class<? extends U> type) {
-		
+
 		return (MapX<K,U>)Functor.super.cast(type);
 	}
 	/* (non-Javadoc)
@@ -181,7 +184,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 */
 	@Override
 	default MapX<K,V> peek(Consumer<? super V> c) {
-		
+
 		return (MapX<K,V>)Functor.super.peek(c);
 	}
 	/* (non-Javadoc)
@@ -189,11 +192,11 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 */
 	@Override
 	default <R> MapX<K,R> trampoline(Function<? super V, ? extends Trampoline<? extends R>> mapper) {
-		
+
 		return (MapX<K,R>)Functor.super.trampoline(mapper);
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
 	 */
@@ -201,13 +204,13 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	default MapX<K, V> filter(Predicate<? super Tuple2<K, V>> fn) {
 		return stream().filter(fn).toMapX(t->t.v1,t->t.v2);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
 	 */
 	@Override
 	default MapX<K, V> filterNot(Predicate<? super Tuple2<K, V>> fn) {
-	
+
 		return (MapX<K, V>)IterableFilterable.super.filterNot(fn);
 	}
 	/* (non-Javadoc)
@@ -215,7 +218,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 */
 	@Override
 	default MapX<K, V> notNull() {
-		
+
 		return (MapX<K, V>)IterableFilterable.super.notNull();
 	}
 	/* (non-Javadoc)
@@ -223,7 +226,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 */
 	@Override
 	default MapX<K, V> removeAll(Stream<? extends Tuple2<K, V>> stream) {
-		
+
 		return (MapX<K, V>)IterableFilterable.super.removeAll(stream);
 	}
 	/* (non-Javadoc)
@@ -231,7 +234,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 */
 	@Override
 	default MapX<K, V> removeAll(Iterable<? extends Tuple2<K, V>> it) {
-		
+
 		return (MapX<K, V>)IterableFilterable.super.removeAll(it);
 	}
 	/* (non-Javadoc)
@@ -239,7 +242,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 */
 	@Override
 	default MapX<K, V> removeAll(Tuple2<K, V>... values) {
-		
+
 		return (MapX<K, V>)IterableFilterable.super.removeAll(values);
 	}
 	/* (non-Javadoc)
@@ -247,7 +250,7 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 */
 	@Override
 	default MapX<K, V> retainAll(Iterable<? extends Tuple2<K, V>> it) {
-		
+
 		return (MapX<K, V>)IterableFilterable.super.retainAll(it);
 	}
 	/* (non-Javadoc)
@@ -255,19 +258,19 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	 */
 	@Override
 	default MapX<K, V> retainAll(Stream<? extends Tuple2<K, V>> stream) {
-		
+
 		return (MapX<K, V>)IterableFilterable.super.retainAll(stream);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
 	 */
 	@Override
 	default MapX<K, V> retainAll(Tuple2<K, V>... values) {
-		
+
 		return (MapX<K, V>)IterableFilterable.super.retainAll(values);
 	}
-	
-	
+
+
 
 }
