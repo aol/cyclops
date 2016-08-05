@@ -110,10 +110,10 @@ public interface MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.lambda.monads.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
+	 * @see com.aol.cyclops.lambda.monads.MapX#bimap(java.util.function.Function, java.util.function.Function)
 	 */
 	@Override
-	default <R1, R2> BiFunctor<R1, R2> bimap(Function<? super K, ? extends R1> fn1,
+	default <R1, R2> MapX<R1, R2> bimap(Function<? super K, ? extends R1> fn1,
 			Function<? super V, ? extends R2> fn2) {
 		ReactiveSeq<Tuple2<R1,V>> s1 = stream().map(t->t.map1(v->fn1.apply(v)));
 		ReactiveSeq<Tuple2<R1,R2>> s2 =	s1.map(t->t.map2(v->fn2.apply(v)));
