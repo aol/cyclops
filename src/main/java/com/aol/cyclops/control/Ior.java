@@ -127,8 +127,8 @@ public interface Ior<ST,PT> extends Supplier<PT>,
      * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
      */
     @Override
-    default Ior<ST,PT> combine(Monoid<PT> monoid, MonadicValue2<? extends ST,? extends PT> v2){
-        return (Ior<ST,PT>)MonadicValue2.super.combine(monoid, v2);
+    default Ior<ST,PT> combineEager(Monoid<PT> monoid, MonadicValue2<? extends ST,? extends PT> v2){
+        return (Ior<ST,PT>)MonadicValue2.super.combineEager(monoid, v2);
     }
   
     

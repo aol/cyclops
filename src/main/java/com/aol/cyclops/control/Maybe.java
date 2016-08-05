@@ -214,8 +214,8 @@ public interface Maybe<T> extends MonadicValue1<T>,
      * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
      */
     @Override
-    default Maybe<T> combine(Monoid<T> monoid, MonadicValue<? extends T> v2){
-        return (Maybe<T>)MonadicValue1.super.combine(monoid,v2);
+    default Maybe<T> combineEager(Monoid<T> monoid, MonadicValue<? extends T> v2){
+        return (Maybe<T>)MonadicValue1.super.combineEager(monoid,v2);
     }
 
     

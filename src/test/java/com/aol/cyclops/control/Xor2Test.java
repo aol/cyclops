@@ -79,12 +79,12 @@ public class Xor2Test {
     @Test
     public void combine(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-        assertThat(just.combine(add,none),equalTo(Xor.primary(10)));
-        assertThat(none.combine(add,just),equalTo(Xor.primary(0))); 
-        assertThat(none.combine(add,none),equalTo(Xor.primary(0))); 
-        assertThat(just.combine(add,Xor.primary(10)),equalTo(Xor.primary(20)));
+        assertThat(just.combineEager(add,none),equalTo(Xor.primary(10)));
+        assertThat(none.combineEager(add,just),equalTo(Xor.primary(0))); 
+        assertThat(none.combineEager(add,none),equalTo(Xor.primary(0))); 
+        assertThat(just.combineEager(add,Xor.primary(10)),equalTo(Xor.primary(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        assertThat(just.combine(firstNonNull,Xor.primary(null)),equalTo(just));
+        assertThat(just.combineEager(firstNonNull,Xor.primary(null)),equalTo(just));
          
     }
 	@Test
