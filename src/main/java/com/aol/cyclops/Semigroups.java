@@ -2,7 +2,12 @@ package com.aol.cyclops;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Deque;
+import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
@@ -11,6 +16,17 @@ import org.pcollections.PCollection;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
+import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
+import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import com.aol.cyclops.data.collections.extensions.standard.DequeX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.QueueX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 
 
 
@@ -63,6 +79,103 @@ public interface Semigroups {
             return a;
         };
     }
+	/**
+	 * @return A combiner for mutable lists
+	 */
+	static <T> Semigroup<List<T>> mutableListConcat(){
+	    return Semigroups.mutableCollectionConcat();
+	}
+	/**
+	 * @return A combiner for mutable sets
+	 */
+	static <T> Semigroup<Set<T>> mutableSetConcat(){
+        return Semigroups.mutableCollectionConcat();
+    }
+	/**
+	 * @return A combiner for mutable SortedSets
+	 */
+	static <T> Semigroup<SortedSet<T>> mutableSortedSetConcat(){
+        return Semigroups.mutableCollectionConcat();
+    }
+	/**
+	 * @return A combiner for mutable Queues
+	 */
+	static <T> Semigroup<Queue<T>> mutableQueueConcat(){
+        return Semigroups.mutableCollectionConcat();
+    }
+	/**
+	 * @return A combiner for mutable Deques
+	 */
+	static <T> Semigroup<Deque<T>> mutableDequeConcat(){
+        return Semigroups.mutableCollectionConcat();
+    }
+	/**
+	 * @return A combiner for ListX (concatenates two ListX into a single ListX)
+	 */
+	static <T> Semigroup<ListX<T>> listXConcat(){
+        return Semigroups.collectionXConcat();
+	}
+	/**
+     * @return A combiner for SetX (concatenates two SetX into a single SetX)
+     */
+	static <T> Semigroup<SetX<T>> setXConcat(){
+        return Semigroups.collectionXConcat();
+    }
+	/**
+     * @return A combiner for SortedSetX (concatenates two SortedSetX into a single SortedSetX)
+     */
+	static <T> Semigroup<SortedSetX<T>> sortedSetXConcat(){
+        return Semigroups.collectionXConcat();
+    }
+	/**
+     * @return A combiner for QueueX (concatenates two QueueX into a single QueueX)
+     */
+	static <T> Semigroup<QueueX<T>> queueXConcat(){
+        return Semigroups.collectionXConcat();
+    }
+	/**
+     * @return A combiner for DequeX (concatenates two DequeX into a single DequeX)
+     */
+	static <T> Semigroup<DequeX<T>> dequeXConcat(){
+        return Semigroups.collectionXConcat();
+    }
+	/**
+     * @return A combiner for PStackX (concatenates two PStackX into a single PStackX)
+     */
+	static <T> Semigroup<PStackX<T>> pStackXConcat(){
+        return Semigroups.collectionXConcat();
+    }
+	/**
+     * @return A combiner for PVectorX (concatenates two PVectorX into a single PVectorX)
+     */
+    static <T> Semigroup<PVectorX<T>> pVectorXConcat(){
+        return Semigroups.collectionXConcat();
+    }
+	/**
+     * @return A combiner for PSetX (concatenates two PSetX into a single PSetX)
+     */
+    static <T> Semigroup<PSetX<T>> pSetXConcat(){
+        return Semigroups.collectionXConcat();
+    }
+    /**
+     * @return A combiner for POrderedSetX (concatenates two POrderedSetX into a single POrderedSetX)
+     */
+    static <T> Semigroup<POrderedSetX<T>> pOrderedSetXConcat(){
+        return Semigroups.collectionXConcat();
+    }
+    /**
+     * @return A combiner for PQueueX (concatenates two PQueueX into a single PQueueX)
+     */
+    static <T> Semigroup<PQueueX<T>> pQueueXConcat(){
+        return Semigroups.collectionXConcat();
+    }
+    /**
+     * @return A combiner for PBagX (concatenates two PBagX into a single PBagX)
+     */
+    static <T> Semigroup<PBagX<T>> pBagXConcat(){
+        return Semigroups.collectionXConcat();
+    }
+    
 	/**
 	 * This Semigroup will attempt to combine JDK Collections. If the Supplied are instances of cyclops-react extended Collections
 	 * or a pCollection persisent collection a new Collection type is created that contains the entries from both supplied collections.
@@ -292,5 +405,7 @@ public interface Semigroups {
 	 * Combine two booleans by AND'ing them (conjunction)
 	 */
 	static Semigroup<Boolean> booleanConjunction = (a, b) -> a && b;
+	
+	
 
 }
