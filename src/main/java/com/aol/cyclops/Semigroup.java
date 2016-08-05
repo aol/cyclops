@@ -3,15 +3,16 @@ package com.aol.cyclops;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 
+@FunctionalInterface
 public interface Semigroup<T> extends BinaryOperator<T>{
-	BiFunction<T,T,T> combiner();
+	default BiFunction<T,T,T> combiner(){
+	    return this;
+	}
 	
 	
 	
 	@Override
-    default T apply(T t, T u) {
-       return combiner().apply(t, u);
-    }
+    T apply(T t, T u);
 
 
 
