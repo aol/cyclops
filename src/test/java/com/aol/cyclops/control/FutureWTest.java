@@ -77,7 +77,7 @@ public class FutureWTest {
 	@Test
     public void testApFeatureToggle() {
         
-        assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+        assertThat(just.combine(FeatureToggle.enable(20),this::add).get(),equalTo(30));
     }
    
    
@@ -93,7 +93,7 @@ public class FutureWTest {
 	public void apNonBlocking(){
 	    
 	  val f =  FutureW.ofSupplier(()->{ sleep(1000l); return "hello";},ex)
-	            	  .ap(FutureW.ofSupplier(()->" world",ex),String::concat);
+	            	  .combine(FutureW.ofSupplier(()->" world",ex),String::concat);
 	  
 	  
 	  System.out.println("hello");

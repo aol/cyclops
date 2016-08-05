@@ -139,8 +139,8 @@ public class EvalTValue<T> implements EvalT<T>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> EvalTValue<R> ap(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return new EvalTValue<R>(run.map(o -> o.ap(app,fn)));
+    public <T2, R> EvalTValue<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new EvalTValue<R>(run.map(o -> o.combine(app,fn)));
         
     }
     /* (non-Javadoc)

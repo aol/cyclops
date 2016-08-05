@@ -56,7 +56,7 @@ public class Xor2Test {
 	@Test
     public void testApFeatureToggle() {
       
-        assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+        assertThat(just.combine(FeatureToggle.enable(20),this::add).get(),equalTo(30));
     }
    
     
@@ -95,8 +95,8 @@ public class Xor2Test {
 	}
 	@Test
     public void visitXor(){
-        assertThat(just.visitXor(secondary->"no", primary->"yes"),equalTo(Xor.primary("yes")));
-        assertThat(none.visitXor(secondary->"no", primary->"yes"),equalTo(Xor.secondary("no")));
+        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(Xor.primary("yes")));
+        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(Xor.secondary("no")));
     }
 	@Test
 	public void testToMaybe() {

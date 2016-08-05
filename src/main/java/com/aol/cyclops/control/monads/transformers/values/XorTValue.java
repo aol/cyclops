@@ -12,14 +12,11 @@ import java.util.function.Supplier;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
@@ -153,9 +150,9 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> XorTValue<ST,R> ap(Value<? extends T2> app,
+    public <T2, R> XorTValue<ST,R> combine(Value<? extends T2> app,
             BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return new XorTValue<>(run.map(o -> o.ap(app,fn)));
+        return new XorTValue<>(run.map(o -> o.combine(app,fn)));
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -178,11 +175,12 @@ public class XorTValue<ST,T> implements XorT<ST,T>,
     }
     
  
-    public <T2, R> XorTValue<PStackX<ST>,R> apToList(Xor<ST,? extends T2> app,BiFunction<? super T, ? super T2, ? extends R> fn){
-        return new XorTValue<>(run.map(o -> o.apToList(app,fn)));
+    public <T2, R> XorTValue<PStackX<ST>,R> combineToList(Xor<ST,? extends T2> app,BiFunction<? super T, ? super T2, ? extends R> fn){
+        return new XorTValue<>(run.map(o -> o.combineToList(app,fn)));
     }
-   public <T2, R> XorTValue<ST,R> ap(Xor<? extends ST,? extends T2> app, BinaryOperator<ST> semigroup,BiFunction<? super T, ? super T2, ? extends R> fn){
-       return new XorTValue<>(run.map(o -> o.ap(app,semigroup,fn)));
+    
+   public <T2, R> XorTValue<ST,R> combine(Xor<? extends ST,? extends T2> app, BinaryOperator<ST> semigroup,BiFunction<? super T, ? super T2, ? extends R> fn){
+       return new XorTValue<>(run.map(o -> o.combine(app,semigroup,fn)));
       }
     /**
      * Flat Map the wrapped Xor

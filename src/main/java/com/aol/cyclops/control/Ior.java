@@ -162,7 +162,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
         
         return Matchables.tuple2(both().get()).visit((a,b)-> both.apply(a, b));
     }
-	default <R1,R2> Ior<R1,R2> visitIor(Function<? super ST,? extends R1> secondary, 
+	default <R1,R2> Ior<R1,R2> mapBoth(Function<? super ST,? extends R1> secondary, 
 			Function<? super PT,? extends R2> primary){
 		if(isSecondary())
 			return (Ior<R1,R2>)swap().map(secondary).swap();
@@ -441,7 +441,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
          * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override
-        public <T2, R> Ior<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+        public <T2, R> Ior<ST,R> combine(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
            
             return  app.toXor().visit(s->Ior.secondary(null), f->Ior.primary(fn.apply(get(),app.get())));
         }
@@ -593,7 +593,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
          * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override
-        public <T2, R> Ior<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+        public <T2, R> Ior<ST,R> combine(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
             return (Ior<ST,R>)this;
         }
 	}
@@ -738,7 +738,7 @@ public interface Ior<ST,PT> extends Supplier<PT>,
          * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override
-        public <T2, R> Ior<ST,R> ap(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
+        public <T2, R> Ior<ST,R> combine(Value<? extends T2> app, BiFunction<? super PT, ? super T2, ? extends R> fn) {
             return  app.toXor().visit(s->Ior.secondary(this.secondaryGet()), f->Ior.both(this.secondaryGet(),fn.apply(get(),app.get())));
         }
 	}

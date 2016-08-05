@@ -10,7 +10,7 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
 
 @FunctionalInterface
-public interface Applicative<T,R, D extends ConvertableFunctor<R>> 
+public interface EagerApplicative<T,R, D extends ConvertableFunctor<R>> 
                                     extends Functor<Function<? super T,? extends R>> {
 
     /**
@@ -27,7 +27,6 @@ public interface Applicative<T,R, D extends ConvertableFunctor<R>>
 		return delegate().map(fn);
 	}
 
-	//<U extends Functor<Function<? super T,? extends R>> & Convertable<Function<? super T,? extends R>>> U delegate();
 	ConvertableFunctor<Function<? super T,? extends R>>  delegate();
 	
 	default D ap(ConvertableFunctor<T> f){

@@ -952,7 +952,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 
 		 
 	    @Override
-	    public <T2,R> Try<R,X> ap(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
+	    public <T2,R> Try<R,X> combine(Value<? extends T2> app, BiFunction<? super T,? super T2,? extends R> fn){
 	     return  app.toTry().visit(s->safeApply( ()->success(fn.apply(get(),app.get()))), f->Try.failure(null));
 	     
 	    }
@@ -1258,7 +1258,7 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
 		}
 
         @Override
-        public <T2, R> Try<R, X> ap(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        public <T2, R> Try<R, X> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
             return (Try<R, X>)this;
 
         }
@@ -1296,8 +1296,8 @@ public interface Try<T,X extends Throwable> extends Supplier<T>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> Try<R, X> ap(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (Try<R, X>)ApplicativeFunctor.super.ap(app, fn);
+    default <T2, R> Try<R, X> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (Try<R, X>)ApplicativeFunctor.super.combine(app, fn);
     }
     /**
      * Equivalent to ap, but accepts an Iterable and takes the first value

@@ -21,24 +21,24 @@ public class ApplyingApplicativeBuilder<T,R, A extends ApplicativeFunctor<R> >  
 		private ApplicativeFunctor unit(Function fn){
 			return (ApplicativeFunctor)unit.unit(fn);
 		}
-		public Applicative<T,R,A> applicative(ApplicativeFunctor<Function<? super T,? extends R>> fn){
+		public EagerApplicative<T,R,A> applicative(ApplicativeFunctor<Function<? super T,? extends R>> fn){
 			
 			return ()->fn;
 		}
-		public  Applicative<T,R,A> applicative(Function<? super T,? extends R> fn){
+		public  EagerApplicative<T,R,A> applicative(Function<? super T,? extends R> fn){
 			
 			return applicative(unit(fn));
 		}
-		public <T2> Applicative<T2,R,A> applicative2(ApplicativeFunctor<Function<? super T,Function<? super T2,? extends R>>> fn){
+		public <T2> EagerApplicative<T2,R,A> applicative2(ApplicativeFunctor<Function<? super T,Function<? super T2,? extends R>>> fn){
 			Applicative2<T,T2,R,A> app = ()->fn;
 			return app.ap(functor);
 			
 		}
-		public <T2> Applicative<T2,R,A> applicative2(Function<? super T,Function<? super T2,? extends R>> fn){
+		public <T2> EagerApplicative<T2,R,A> applicative2(Function<? super T,Function<? super T2,? extends R>> fn){
 			
 			return applicative2(unit(fn));
 		}
-		public <T2> Applicative<T2,R,A> applicative2(BiFunction<? super T,? super T2,? extends R> fn){
+		public <T2> EagerApplicative<T2,R,A> applicative2(BiFunction<? super T,? super T2,? extends R> fn){
 			
 			return applicative2(unit(CurryVariance.curry2(fn)));
 		}

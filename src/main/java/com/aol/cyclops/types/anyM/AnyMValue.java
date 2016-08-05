@@ -60,9 +60,9 @@ public interface AnyMValue<T> extends AnyM<T>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> AnyMValue<R> ap(Value<? extends T2> app,
+    default <T2, R> AnyMValue<R> combine(Value<? extends T2> app,
             BiFunction<? super T, ? super T2, ? extends R> fn){
-        return (AnyMValue<R>)ApplicativeFunctor.super.ap(app, fn);
+        return (AnyMValue<R>)ApplicativeFunctor.super.combine(app, fn);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)

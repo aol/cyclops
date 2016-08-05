@@ -53,8 +53,8 @@ public class CompletableFutures {
         return FutureW.schedule(delay, ex, t).getFuture();
     }
     
-    public static <T1,T2,R> CompletableFuture<R> ap(CompletableFuture<? extends T1> f, Value<? extends T2> v, BiFunction<? super T1,? super T2,? extends R> fn){
-        return narrow(FutureW.of(f).ap(v, fn).getFuture());
+    public static <T1,T2,R> CompletableFuture<R> combine(CompletableFuture<? extends T1> f, Value<? extends T2> v, BiFunction<? super T1,? super T2,? extends R> fn){
+        return narrow(FutureW.of(f).combine(v, fn).getFuture());
     }
     public static <T1,T2,R> CompletableFuture<R> zip(CompletableFuture<? extends T1> f, Iterable<? extends T2> v, BiFunction<? super T1,? super T2,? extends R> fn){
         return narrow(FutureW.of(f).zip(v, fn).getFuture());

@@ -40,8 +40,8 @@ public class Optionals {
 	public static <T,R> Optional<R> accumulatePresent(CollectionX<Optional<T>> maybes,Function<? super T, R> mapper,Semigroup<R> reducer){
 		return sequencePresent(maybes).map(s->s.map(mapper).reduce(reducer.reducer()).get());
 	}
-	  public static <T1,T2,R> Optional<R> ap(Optional<? extends T1> f, Value<? extends T2> v, BiFunction<? super T1,? super T2,? extends R> fn){
-	        return narrow(Maybe.fromOptional(f).ap(v, fn).toOptional());
+	  public static <T1,T2,R> Optional<R> combine(Optional<? extends T1> f, Value<? extends T2> v, BiFunction<? super T1,? super T2,? extends R> fn){
+	        return narrow(Maybe.fromOptional(f).combine(v, fn).toOptional());
 	    }
 	    public static <T1,T2,R> Optional<R> zip(Optional<? extends T1> f, Iterable<? extends T2> v, BiFunction<? super T1,? super T2,? extends R> fn){
 	        return narrow(Maybe.fromOptional(f).zip(v, fn).toOptional());

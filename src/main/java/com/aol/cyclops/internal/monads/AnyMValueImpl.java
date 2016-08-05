@@ -45,11 +45,11 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T> implements AnyMValue<T> {
      * @see com.aol.cyclops.types.anyM.AnyMValue#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> AnyMValue<R> ap(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    public <T2, R> AnyMValue<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
         if(this.unwrap() instanceof ApplicativeFunctor){
-            return AnyM.<R>ofValue(((ApplicativeFunctor)unwrap()).ap(app, fn));
+            return AnyM.<R>ofValue(((ApplicativeFunctor)unwrap()).combine(app, fn));
         }
-        return with((AnyM)AnyMValue.super.ap(app, fn));
+        return with((AnyM)AnyMValue.super.combine(app, fn));
     }
     @Override
     public <T2, R> AnyMValue<R> zip(Iterable<? extends T2> app,

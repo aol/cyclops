@@ -57,11 +57,12 @@ public class MaybeTest implements Printable {
 	public void setUp() throws Exception {
 		just = Maybe.of(10);
 		none = Maybe.none();
+		
 	}
 	  @Test
       public void testApFeatureToggle() {
         
-          assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+          assertThat(just.combine(FeatureToggle.enable(20),this::add).get(),equalTo(30));
       }
      
      
