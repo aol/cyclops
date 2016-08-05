@@ -128,7 +128,7 @@ public class SimpleReact implements ReactBuilder{
 	 *            downstream jobs will react too
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> fromStreamAsync(final Stream<Supplier<U>> actions) {
+	public <U> SimpleReactStream<U> fromStreamAsync(final Stream<? extends Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,actions.map(
 				next -> CompletableFuture.supplyAsync(next, executor)));
@@ -156,7 +156,7 @@ public class SimpleReact implements ReactBuilder{
 	 *            downstream jobs will react too
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> fromIteratorAsync(final Iterator<Supplier<U>> actions) {
+	public <U> SimpleReactStream<U> fromIteratorAsync(final Iterator<? extends Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, executor)));
@@ -171,7 +171,7 @@ public class SimpleReact implements ReactBuilder{
 	 *            downstream jobs will react too
 	 * @return Next stage in the reactive flow
 	 */
-	public <U> SimpleReactStream<U> fromIterableAsync(final Iterable<Supplier<U>> actions) {
+	public <U> SimpleReactStream<U> fromIterableAsync(final Iterable<? extends Supplier<U>> actions) {
 
 		return new SimpleReactStreamImpl<U>(this,StreamSupport.stream(Spliterators.spliteratorUnknownSize(actions.iterator(), Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, executor)));

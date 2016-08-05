@@ -434,7 +434,7 @@ public class LazyReact implements ReactBuilder {
 	 *	@return LazyFutureStream
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#react(java.util.stream.Stream)
 	 */
-	public <U> LazyFutureStream<U> fromStreamAsync(Stream<Supplier<U>> actions) {
+	public <U> LazyFutureStream<U> fromStreamAsync(Stream<? extends Supplier<U>> actions) {
 	
 		return constructFutures(actions.map(
 				next -> CompletableFuture.supplyAsync(next, getExecutor())));
@@ -448,7 +448,7 @@ public class LazyReact implements ReactBuilder {
 	 *	@return LazyFutureStream
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#react(java.util.Iterator)
 	 */
-	public <U> LazyFutureStream<U> fromIteratorAsync(Iterator<Supplier<U>> actions) {
+	public <U> LazyFutureStream<U> fromIteratorAsync(Iterator<? extends Supplier<U>> actions) {
 		
 		return this.<U>constructFutures(StreamSupport.<Supplier<U>>stream(Spliterators.<Supplier<U>>spliteratorUnknownSize(actions, Spliterator.ORDERED),false).map(
 				next -> CompletableFuture.supplyAsync(next, getExecutor())));
@@ -462,8 +462,8 @@ public class LazyReact implements ReactBuilder {
 	 *	@return
 	 * @see com.aol.cyclops.react.stream.BaseSimpleReact#reactIterable(java.lang.Iterable)
 	 */
-	public <U> LazyFutureStream<U> fromIterableAsync(Iterable<Supplier<U>> actions) {
-		ReactiveSeq<Supplier<U>> seq = actions instanceof List ? ReactiveSeq.fromList((List)actions) : ReactiveSeq.fromIterable(actions);
+	public <U> LazyFutureStream<U> fromIterableAsync(Iterable<? extends Supplier<U>> actions) {
+		ReactiveSeq<? extends Supplier<U>> seq = actions instanceof List ? ReactiveSeq.fromList((List)actions) : ReactiveSeq.fromIterable(actions);
 		return this.<U>constructFutures(seq.map(
 				next -> CompletableFuture.supplyAsync(next, getExecutor())));
 	}

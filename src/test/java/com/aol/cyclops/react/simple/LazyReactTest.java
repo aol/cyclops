@@ -1,0 +1,107 @@
+package com.aol.cyclops.react.simple;
+
+
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import org.junit.Test;
+
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+
+
+public class LazyReactTest {
+	
+	@Test
+	public void testReactListWithExtendedSuppliers() throws InterruptedException, ExecutionException {
+
+		class DummySupplier implements Supplier<Integer> {
+
+			private Integer i;
+			public DummySupplier(Integer i) {
+				this.i = i;
+			}
+			
+			@Override
+			public Integer get() {
+				return i;
+			}
+			
+		}
+		
+		DummySupplier s1 = new DummySupplier(1);
+		DummySupplier s2 = new DummySupplier(2);
+		DummySupplier s3 = new DummySupplier(3);
+		
+		Iterable<DummySupplier> iterable = Arrays.asList(s1, s2, s3);
+		LazyFutureStream<Integer> futures = new LazyReact()
+				.<Integer> fromIterableAsync(iterable)
+				.withAsync(false);
+
+		assertThat(futures.get(0).get(), is(lessThan(99)));
+	}
+	
+	@Test
+	public void testFromStreamAsyncWithExtendedSuppliers() throws InterruptedException, ExecutionException {
+
+		class DummySupplier implements Supplier<Integer> {
+
+			private Integer i;
+			public DummySupplier(Integer i) {
+				this.i = i;
+			}
+			
+			@Override
+			public Integer get() {
+				return i;
+			}
+			
+		}
+		
+		DummySupplier s1 = new DummySupplier(1);
+		DummySupplier s2 = new DummySupplier(2);
+		DummySupplier s3 = new DummySupplier(3);
+		
+		Stream<DummySupplier> stream = Arrays.asList(s1, s2, s3).stream();
+		LazyFutureStream<Integer> futures = new LazyReact()
+				.<Integer> fromStreamAsync(stream).withAsync(false);
+
+		assertThat(futures.get(0).get(), is(lessThan(99)));
+	}
+	
+	@Test
+	public void testReactListFromIteratorAsync() throws InterruptedException, ExecutionException {
+
+		class DummySupplier implements Supplier<Integer> {
+
+			private Integer i;
+			public DummySupplier(Integer i) {
+				this.i = i;
+			}
+			
+			@Override
+			public Integer get() {
+				return i;
+			}
+			
+		}
+		
+		DummySupplier s1 = new DummySupplier(1);
+		DummySupplier s2 = new DummySupplier(2);
+		DummySupplier s3 = new DummySupplier(3);
+		
+		Iterator<DummySupplier> iterator = Arrays.asList(s1, s2, s3).iterator();
+		LazyFutureStream<Integer> futures = new LazyReact()
+				.<Integer> fromIteratorAsync(iterator)
+				.withAsync(false);
+
+		assertThat(futures.get(0).get(), is(lessThan(99)));
+	}
+}
