@@ -29,9 +29,10 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
+public interface DequeX<T> extends Deque<T>, MutableCollectionX<T>, OnEmptySwitch<T,Deque<T>> {
 	
     /**
      * Create a DequeX that contains the Integers between start and end
@@ -814,6 +815,15 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T> {
         return (DequeX<T>)MutableCollectionX.super.retainAll(stream);
     }
     
-	
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     */
+    @Override
+    default DequeX<T> onEmptySwitch(
+            Supplier<? extends Deque<T>> supplier) {
+        if(this.isEmpty())
+            return DequeX.fromIterable(supplier.get());
+        return this;
+    }
 	
 }

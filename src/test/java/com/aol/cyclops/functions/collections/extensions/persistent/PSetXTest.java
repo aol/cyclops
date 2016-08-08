@@ -1,13 +1,18 @@
 package com.aol.cyclops.functions.collections.extensions.persistent;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
 
@@ -17,6 +22,10 @@ public class PSetXTest extends AbstractCollectionXTest{
 	public <T> FluentCollectionX<T> of(T... values) {
 		return PSetX.of(values);
 	}
+	@Test
+    public void onEmptySwitch(){
+            assertThat(PSetX.empty().onEmptySwitch(()->PSetX.of(1,2,3)),equalTo(PSetX.of(1,2,3)));
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
 	 */

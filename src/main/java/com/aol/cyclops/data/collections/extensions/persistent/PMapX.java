@@ -30,6 +30,7 @@ import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.OnEmpty;
+import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 public interface PMapX<K, V> extends PMap<K, V>, 
@@ -38,6 +39,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 									 Functor<V>, 
 									 IterableFilterable<Tuple2<K, V>>,				
 									 OnEmpty<Tuple2<K, V>>,
+									 OnEmptySwitch<Tuple2<K, V>,PMap<K, V>>,
                                      Publisher<Tuple2<K, V>>,
 									 Foldable<Tuple2<K,V>>,
 									 CyclopsCollectable<Tuple2<K,V>>{
@@ -287,7 +289,16 @@ public interface PMapX<K, V> extends PMap<K, V>,
     }
 	
 
-	
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     */
+    @Override
+    default PMapX<K, V> onEmptySwitch(
+            Supplier<? extends PMap<K, V>> supplier) {
+        if(this.isEmpty())
+            return PMapX.fromMap(supplier.get());
+        return this;
+    }
 
 	
 }

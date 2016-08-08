@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.IterableFunctor;
+import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
@@ -39,7 +41,7 @@ public interface ListX<T> extends List<T>,
                                   MutableSequenceX<T>, 
                                   Comparable<T>,
                                   IterableFunctor<T>,
-                                  ZippingApplicativable<T> {
+                                  ZippingApplicativable<T>, OnEmptySwitch<T,List<T>> {
 	
 
     /**
@@ -946,5 +948,16 @@ public interface ListX<T> extends List<T>,
 	    default ListX<T> retainAll(Seq<? extends T> stream) {
 	        return (ListX<T>) MutableCollectionX.super.retainAll(stream);
 	    }
+	    /* (non-Javadoc)
+	     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+	     */
+	    @Override
+	    default ListX<T> onEmptySwitch(
+	            Supplier<? extends List<T>> supplier) {
+	        if(this.isEmpty())
+	            return ListX.fromIterable(supplier.get());
+	        return this;
+	    }
+	    
 	
 }

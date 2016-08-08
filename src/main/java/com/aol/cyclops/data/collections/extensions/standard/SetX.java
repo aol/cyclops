@@ -3,6 +3,7 @@ package com.aol.cyclops.data.collections.extensions.standard;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
@@ -27,11 +28,12 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
+public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,Set<T>> {
     
     /**
      * Create a SetX that contains the Integers between start and end
@@ -556,6 +558,17 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T> {
 		
 		return (SetX<T>)MutableCollectionX.super.limitLast(num);
 	}
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     */
+    @Override
+    default SetX<T> onEmptySwitch(
+            Supplier<? extends Set<T>> supplier) {
+        if(this.isEmpty())
+            return SetX.fromIterable(supplier.get());
+        return this;
+    }
+    
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmpty(java.lang.Object)
 	 */

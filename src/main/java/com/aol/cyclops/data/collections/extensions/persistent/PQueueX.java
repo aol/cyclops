@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Random;
+import java.util.SortedSet;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -20,6 +21,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.AmortizedPQueue;
+import org.pcollections.POrderedSet;
 import org.pcollections.PQueue;
 import org.reactivestreams.Publisher;
 
@@ -30,8 +32,9 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.OnEmptySwitch;
 
-public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
+public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>, OnEmptySwitch<T,PQueue<T>> {
 
     /**
      * Create a PQueueX that contains the Integers between start and end
@@ -792,6 +795,16 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T> {
         return (PQueueX<T>) PersistentCollectionX.super.limitLast(num);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     */
+    @Override
+    default PQueueX<T> onEmptySwitch(
+            Supplier<? extends PQueue<T>> supplier) {
+        if(this.isEmpty())
+            return PQueueX.fromIterable(supplier.get());
+        return this;
+    }
     /*
      * (non-Javadoc)
      * 

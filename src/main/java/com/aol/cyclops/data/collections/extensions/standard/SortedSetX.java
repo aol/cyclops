@@ -5,6 +5,7 @@ import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,11 +31,12 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
+public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T>, OnEmptySwitch<T,SortedSet<T>> {
 	static <T> Collector<T,?,SortedSet<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new TreeSet<T>((Comparator)Comparator.<Comparable>naturalOrder()));
 	}
@@ -553,6 +555,17 @@ public interface SortedSetX<T> extends SortedSet<T>,MutableCollectionX<T> {
 		
 		return (SortedSetX<T>)MutableCollectionX.super.limitLast(num);
 	}
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     */
+    @Override
+    default SortedSetX<T> onEmptySwitch(
+            Supplier<? extends SortedSet<T>> supplier) {
+        if(this.isEmpty())
+            return SortedSetX.fromIterable(supplier.get());
+        return this;
+    }
+    
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmpty(java.lang.Object)
 	 */

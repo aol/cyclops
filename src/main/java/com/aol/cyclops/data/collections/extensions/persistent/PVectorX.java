@@ -20,6 +20,7 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.pcollections.POrderedSet;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 import org.reactivestreams.Publisher;
@@ -31,8 +32,9 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.OnEmptySwitch;
 
-public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
+public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>, OnEmptySwitch<T,PVector<T>>{
 	
     /**
      * Create a PVectorX that contains the Integers between start and end
@@ -655,6 +657,16 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>{
 		
 		return (PVectorX<T>)PersistentCollectionX.super.limitLast(num);
 	}
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     */
+    @Override
+    default PVectorX<T> onEmptySwitch(
+            Supplier<? extends PVector<T>> supplier) {
+        if(this.isEmpty())
+            return PVectorX.fromIterable(supplier.get());
+        return this;
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmpty(java.lang.Object)
 	 */

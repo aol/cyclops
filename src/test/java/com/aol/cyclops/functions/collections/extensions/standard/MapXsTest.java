@@ -26,6 +26,11 @@ public class MapXsTest {
        MapX.empty().onEmptyThrow(()->new RuntimeException("hello"));
     }
     @Test
+    public void onEmptySwitch(){
+       
+        assertThat(MapX.<String,Integer>empty().onEmptySwitch(()->MapX.fromMap(MapXs.of("hello",10))).get("hello"),equalTo(10));
+    }
+    @Test
     public void testOf() {
         assertThat(MapXs.of(),equalTo(new HashMap()));
     }
