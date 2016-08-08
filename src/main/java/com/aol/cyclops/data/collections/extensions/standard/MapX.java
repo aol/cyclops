@@ -19,16 +19,18 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
 import com.aol.cyclops.types.BiFunctor;
-import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFilterable;
+import com.aol.cyclops.types.OnEmpty;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
@@ -37,7 +39,8 @@ public interface 	MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 												BiFunctor<K, V>,
 												Functor<V>,
 												IterableFilterable<Tuple2<K, V>>,
-												ExtendedTraversable<Tuple2<K, V>>,
+												OnEmpty<Tuple2<K, V>>,
+												Publisher<Tuple2<K, V>>,
 												Foldable<Tuple2<K,V>>,
 												CyclopsCollectable<Tuple2<K,V>>
 												{
@@ -75,7 +78,7 @@ public interface 	MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 	default MapX<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream){
 		return new MapXImpl<>(stream.toMap(t->t.v1, t->t.v2),getCollector());
 	}
-
+	
 
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
@@ -306,6 +309,43 @@ public interface 	MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
         
         return (MapX<R1, R2>)BiFunctor.super.bitrampoline(mapper1, mapper2);
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Traversable#subscribe(org.reactivestreams.Subscriber)
+     */
+    @Override
+    default void subscribe(Subscriber<? super Tuple2<K, V>> s) {
+        
+        stream().subscribe(s);
+    }
+   
+   
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmpty#onEmpty(java.lang.Object)
+     */
+    @Override
+    default MapX<K, V> onEmpty(Tuple2<K, V> value) {
+        
+        return fromStream(stream().onEmpty(value));
+    }
+   
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmpty#onEmptyGet(java.util.function.Supplier)
+     */
+    @Override
+    default MapX<K, V> onEmptyGet(Supplier<? extends Tuple2<K, V>> supplier) {
+        
+        return fromStream(stream().onEmptyGet(supplier));
+    }
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmpty#onEmptyThrow(java.util.function.Supplier)
+     */
+    @Override
+    default <X extends Throwable> MapX<K, V> onEmptyThrow(Supplier<? extends X> supplier) {
+        
+        return fromStream(stream().onEmptyThrow(supplier));
+    }
+    
 
 
 
