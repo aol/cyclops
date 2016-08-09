@@ -53,10 +53,18 @@ public interface Value<T> extends Supplier<T>,
                                   Foldable<T>, 
                                   Convertable<T>,
                                   Publisher<T>,
-                                  Predicate<T>{
+                                  Predicate<T>,
+                                  Zippable<T>{
     
     
-
+    /* An Iterator over the list returned from toList()
+     * 
+     *  (non-Javadoc)
+     * @see java.lang.Iterable#iterator()
+     */
+    default Iterator<T> iterator(){
+        return Convertable.super.iterator();
+    }
 
     default boolean test(T t){
         if(!(t instanceof Value))
