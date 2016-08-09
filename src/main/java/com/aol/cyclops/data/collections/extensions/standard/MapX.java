@@ -11,6 +11,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,6 +20,7 @@ import org.jooq.lambda.Collectable;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
@@ -270,6 +272,40 @@ public interface 	MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 
 		return (MapX<K, V>)IterableFilterable.super.retainAll(values);
 	}
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    default <R> MapX<K,R> patternMatch(Function<CheckValue1<V, R>, CheckValue1<V, R>> case1,
+            Supplier<? extends R> otherwise) {
+       
+        return (MapX<K,R>)Functor.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     */
+    @Override
+    default MapX<K, V> bipeek(Consumer<? super K> c1, Consumer<? super V> c2) {
+        
+        return (MapX<K, V>)BiFunctor.super.bipeek(c1, c2);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.BiFunctor#bicast(java.lang.Class, java.lang.Class)
+     */
+    @Override
+    default <U1, U2> MapX<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
+       
+        return (MapX<U1, U2>)BiFunctor.super.bicast(type1, type2);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
+     */
+    @Override
+    default <R1, R2> MapX<R1, R2> bitrampoline(Function<? super K, ? extends Trampoline<? extends R1>> mapper1,
+            Function<? super V, ? extends Trampoline<? extends R2>> mapper2) {
+        
+        return (MapX<R1, R2>)BiFunctor.super.bitrampoline(mapper1, mapper2);
+    }
 
 
 

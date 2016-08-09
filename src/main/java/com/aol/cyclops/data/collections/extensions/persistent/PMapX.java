@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Collectable;
@@ -13,6 +14,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 
+import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
@@ -84,7 +86,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 
 	@Override
 	default ReactiveSeq<Tuple2<K, V>> stream() {
-		// TODO Auto-generated method stub
+		b
 		return ExtendedTraversable.super.stream();
 	}
 
@@ -110,7 +112,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 	 */
 	@Override
 	default PMapX<K, V> bipeek(Consumer<? super K> c1, Consumer<? super V> c2) {
-		// TODO Auto-generated method stub
+		b
 		return (PMapX<K, V>)BiFunctor.super.bipeek(c1, c2);
 	}
 
@@ -119,7 +121,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 	 */
 	@Override
 	default <U1, U2> PMapX<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
-		// TODO Auto-generated method stub
+		b
 		return (PMapX<U1, U2>)BiFunctor.super.bicast(type1, type2);
 	}
 
@@ -229,6 +231,15 @@ public interface PMapX<K, V> extends PMap<K, V>,
 		
 		return (PMapX<K, V>)IterableFilterable.super.retainAll(values);
 	}
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+    @Override
+    default <R> PMapX<K,R> patternMatch(Function<CheckValue1<V, R>, CheckValue1<V, R>> case1,
+            Supplier<? extends R> otherwise) {
+        
+        return (PMapX<K,R>)Functor.super.patternMatch(case1, otherwise);
+    }
 	
 
 	
