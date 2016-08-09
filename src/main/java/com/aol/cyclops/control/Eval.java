@@ -14,6 +14,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
@@ -27,6 +29,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Memoize;
@@ -67,19 +70,72 @@ public interface Eval<T> extends Supplier<T>,
                                  ApplicativeFunctor<T>,
                                  Matchable.ValueAndOptionalMatcher<T>{
 
+    /**
+     * Create an Eval instance from a reactive-streams publisher
+     * 
+     * <pre>
+     * {@code
+     *    Eval<Integer> e = Eval.fromPublisher(Mono.just(10));
+     *    //Eval[10]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param pub Publisher to create the Eval from
+     * @return Eval created from Publisher
+     */
     public static <T> Eval<T> fromPublisher(Publisher<T> pub){
         ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toEvalLater();
     }
+    /**
+     * Create an Eval instance from an Iterable
+     * 
+     * <pre>
+     * {@code
+     *    Eval<Integer> e = Eval.fromIterable(Arrays.asList(10));
+     *    //Eval[10]
+     * }
+     * </pre>
+     * @param iterable to create the Eval from
+     * @return Eval created from Publisher
+     */
     public static <T> Eval<T> fromIterable(Iterable<T> iterable){
         Iterator<T> it = iterable.iterator();
         return Eval.later(()->it.hasNext() ? it.next() : null);
     }
+	/**
+	 * Create an Eval with the value specified
+	 * 
+	 * <pre>
+	 * @{code
+	 *   Eval<Integer> e = Eval.now(10);
+	 *   //Eval[10]
+	 * }</pre>
+	 * 
+	 * @param value of Eval
+	 * @return Eval with specified value
+	 */
 	public static<T> Eval<T> now(T value){
 	    return always(()->value);
 		
 	}
+	/**
+	 * Lazily create an Eval from the specified Supplier. Supplier#get will only be called once. Return values of Eval operations will also
+	 * be cached (later indicates lazy and caching - characteristics can be changed using flatMap).
+	 * 
+	 * <pre>
+     * @{code
+     *   Eval<Integer> e = Eval.now(()->10)
+     *                         .map(i->i*2);
+     *   //Eval[20] - lazy so will not be executed until the value is accessed
+     * }</pre>
+	 * 
+	 * 
+	 * @param value Supplier to (lazily) populate this Eval
+	 * @return Eval with specified value
+	 */
 	public static<T> Eval<T> later(Supplier<T> value){
 		
 		return new Module.Later<T>(in->value.get());
@@ -132,6 +188,9 @@ public interface Eval<T> extends Supplier<T>,
                 .orElseGet(()->this.orElseGet(()->monoid.zero())));
     }
     
+    
+    
+   
     default Eval<MonadicValue<T>> nest(){
         return (Eval<MonadicValue<T>>)MonadicValue.super.nest();
     }
@@ -224,7 +283,7 @@ public interface Eval<T> extends Supplier<T>,
         return  (Eval<R> )ApplicativeFunctor.super.combine(app, fn);
     }
     /**
-     * Equivalent to ap, but accepts an Iterable and takes the first value only from that iterable.
+     * Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
      * 
      * @param app
      * @param fn
@@ -236,7 +295,7 @@ public interface Eval<T> extends Supplier<T>,
         return  (Eval<R> )ApplicativeFunctor.super.zip(app, fn);
     } 
     /**
-     * Equivalent to ap, but accepts a Publisher and takes the first value only from that publisher.
+     * Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
      * 
      * @param app
      * @param fn
@@ -248,7 +307,43 @@ public interface Eval<T> extends Supplier<T>,
         
     } 
      
-	
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+     */
+    @Override
+    default <U, R> Eval<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (Eval<R>)MonadicValue.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     */
+    @Override
+    default <U, R> Eval<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (Eval<R>)MonadicValue.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
+     */
+    @Override
+    default <U> Eval<Tuple2<T, U>> zip(Stream<? extends U> other) {
+        return (Eval)MonadicValue.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
+     */
+    @Override
+    default <U> Eval<Tuple2<T, U>> zip(Seq<? extends U> other) {
+        return (Eval)MonadicValue.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+     */
+    @Override
+    default <U> Eval<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        return (Eval)MonadicValue.super.zip(other);
+    }
+    
     
 	static class Module{
 	    

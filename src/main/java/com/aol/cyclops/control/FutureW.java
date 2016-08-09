@@ -13,6 +13,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
@@ -27,6 +29,7 @@ import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -34,6 +37,18 @@ import com.aol.cyclops.util.ExceptionSoftener;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+/**
+ * A Wrapper around CompletableFuture that implements cyclops-react interfaces and provides a more standard api
+ * 
+ * e.g.
+ *   map instead of thenApply
+ *   flatMap instead of thenCompose
+ *   combine instead of thenCombine (applicative functor ap)
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Type of wrapped future value
+ */
 @AllArgsConstructor
 @EqualsAndHashCode
 public class FutureW<T> implements ConvertableFunctor<T>,
@@ -396,6 +411,8 @@ public class FutureW<T> implements ConvertableFunctor<T>,
         return  (FutureW<R> )ApplicativeFunctor.super.zip(fn,app);
         
     } 
+    
+    
 
     public static <T> FutureW<T> ofSupplier(Supplier<T> s) {
        return FutureW.of(CompletableFuture.supplyAsync(s));
@@ -403,6 +420,41 @@ public class FutureW<T> implements ConvertableFunctor<T>,
     public static <T> FutureW<T> ofSupplier(Supplier<T> s,Executor ex) {
         return FutureW.of(CompletableFuture.supplyAsync(s,ex));
      }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> FutureW<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (FutureW<R>)ApplicativeFunctor.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> FutureW<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (FutureW<R>)ApplicativeFunctor.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
+     */
+    @Override
+    public <U> FutureW<Tuple2<T, U>> zip(Stream<? extends U> other) {
+        return (FutureW)ApplicativeFunctor.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
+     */
+    @Override
+    public <U> FutureW<Tuple2<T, U>> zip(Seq<? extends U> other) {
+        return (FutureW)ApplicativeFunctor.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+     */
+    @Override
+    public <U> FutureW<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        return (FutureW)ApplicativeFunctor.super.zip(other);
+    }
    
     
 	

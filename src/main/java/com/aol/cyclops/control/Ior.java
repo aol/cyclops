@@ -8,7 +8,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -20,7 +22,6 @@ import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Matchable.CheckValue2;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
@@ -28,6 +29,7 @@ import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
@@ -39,6 +41,8 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 /**
+ * Inclusive Or (can be one of Primary, Secondary or Both Primary and Secondary)
+ * 
  * An Either or Union type, but right biased. Primary and Secondary are used instead of Right & Left.
  * 'Right' (or primary type) biased disjunct union.
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
@@ -309,10 +313,51 @@ public interface Ior<ST,PT> extends Supplier<PT>,
                 tuple -> Xor.fromPublisher(app).visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
     }
     
-	
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+     */
+    @Override
+    default <U, R> Ior<ST,R> zip(Seq<? extends U> other, BiFunction<? super PT, ? super U, ? extends R> zipper) {
+       
+        return (Ior<ST,R>)MonadicValue2.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     */
+    @Override
+    default <U, R> Ior<ST,R> zip(Stream<? extends U> other, BiFunction<? super PT, ? super U, ? extends R> zipper) {
+        
+        return (Ior<ST,R>)MonadicValue2.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
+     */
+    @Override
+    default <U> Ior<ST,Tuple2<PT, U>> zip(Stream<? extends U> other) {
+        
+        return (Ior)MonadicValue2.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
+     */
+    @Override
+    default <U> Ior<ST,Tuple2<PT, U>> zip(Seq<? extends U> other) {
+        
+        return (Ior)MonadicValue2.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+     */
+    @Override
+    default <U> Ior<ST,Tuple2<PT, U>> zip(Iterable<? extends U> other) {
+        
+        return (Ior)MonadicValue2.super.zip(other);
+    }
 
 
-	@AllArgsConstructor(access=AccessLevel.PRIVATE)
+
+
+    @AllArgsConstructor(access=AccessLevel.PRIVATE)
 	@EqualsAndHashCode(of={"value"})
 	public static class Primary<ST,PT> implements Ior<ST,PT>{
 		private final PT value;

@@ -18,7 +18,8 @@ import lombok.ToString;
  * In Java 8 because of the effectively final rule references to captured
  * variables can't be changed.
  * e.g.
- *<pre>{@code 
+ *<pre>
+ * {@code 
  * String var = "hello";
  * Runnable r = () -> var ="world";
  * }</pre>

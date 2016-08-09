@@ -7,8 +7,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.control.Matchable.CheckValue1;
@@ -16,6 +19,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.util.function.Curry;
@@ -544,7 +548,49 @@ public interface FeatureToggle<F> extends Supplier<F>,
 		        return map(v->Tuple.tuple(v,Curry.curry2(fn).apply(v)))
 		                    .flatMap(tuple-> Maybe.fromPublisher(app).visit(i->Maybe.just(tuple.v2.apply(i)),()->Maybe.none() ));
 		        
-		    } 
+		    }
+            /* (non-Javadoc)
+             * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+             */
+            @Override
+            default <U, R> FeatureToggle<R> zip(Seq<? extends U> other,
+                    BiFunction<? super F, ? super U, ? extends R> zipper) {
+                
+                return (FeatureToggle<R>)MonadicValue.super.zip(other, zipper);
+            }
+            /* (non-Javadoc)
+             * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+             */
+            @Override
+            default <U, R> FeatureToggle<R> zip(Stream<? extends U> other,
+                    BiFunction<? super F, ? super U, ? extends R> zipper) {
+                
+                return (FeatureToggle<R>)MonadicValue.super.zip(other, zipper);
+            }
+            /* (non-Javadoc)
+             * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
+             */
+            @Override
+            default <U> FeatureToggle<Tuple2<F, U>> zip(Stream<? extends U> other) {
+                
+                return (FeatureToggle)MonadicValue.super.zip(other);
+            }
+            /* (non-Javadoc)
+             * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
+             */
+            @Override
+            default <U> FeatureToggle<Tuple2<F, U>> zip(Seq<? extends U> other) {
+                
+                return (FeatureToggle)MonadicValue.super.zip(other);
+            }
+            /* (non-Javadoc)
+             * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+             */
+            @Override
+            default <U> FeatureToggle<Tuple2<F, U>> zip(Iterable<? extends U> other) {
+                
+                return (FeatureToggle)MonadicValue.super.zip(other);
+            } 
 		     
 		    
 	
