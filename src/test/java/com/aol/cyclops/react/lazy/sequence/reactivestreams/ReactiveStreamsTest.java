@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.lazy.sequenceM.reactivestreams;
+package com.aol.cyclops.react.lazy.sequence.reactivestreams;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

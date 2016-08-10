@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.seq;
+package com.aol.cyclops.streams;
 
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertTrue;

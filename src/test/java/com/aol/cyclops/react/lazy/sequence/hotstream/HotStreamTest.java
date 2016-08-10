@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.lazy.sequenceM.hotstream;
+package com.aol.cyclops.react.lazy.sequence.hotstream;
 
 import static org.junit.Assert.assertTrue;
 

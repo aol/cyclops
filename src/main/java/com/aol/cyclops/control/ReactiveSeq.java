@@ -934,14 +934,14 @@ public interface ReactiveSeq<T> extends Unwrapable,
 	 */
 	@Override
 	default ReactiveSeq<T> drop(long drop){
-	    return (ReactiveSeq<T>)JoolWindowing.super.drop(drop);
+	    return skip(drop);
 	}
 	/* (non-Javadoc)
      * @see org.jooq.lambda.Seq#drop(long)
      */
 	@Override
     default ReactiveSeq<T> take(long take){
-        return (ReactiveSeq<T>)JoolWindowing.super.take(take);
+        return limit(take);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)

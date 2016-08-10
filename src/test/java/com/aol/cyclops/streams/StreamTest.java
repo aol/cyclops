@@ -86,6 +86,14 @@ public class StreamTest {
 		assertThat(of(1,2,3,4,5).skip(2).collect(Collectors.toList()).size(),equalTo(3));
 	}
 	@Test
+    public void testTake(){
+        assertThat(of(1,2,3,4,5).take(2).collect(Collectors.toList()).size(),equalTo(2));
+    }
+    @Test
+    public void testDrop(){
+        assertThat(of(1,2,3,4,5).drop(2).collect(Collectors.toList()).size(),equalTo(3));
+    }
+	@Test
 	public void testMax(){
 		assertThat(of(1,2,3,4,5).max((t1,t2) -> t1-t2).get(),equalTo(5));
 	}
