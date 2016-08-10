@@ -96,6 +96,8 @@ public interface ReactiveSeq<T> extends Unwrapable,
 										ReactiveStreamsTerminalOperations<T>,
 										ZippingApplicativable<T>, Unit<T>,
 										ConvertableSequence<T>{
+    
+    
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
 	 */
@@ -927,6 +929,20 @@ public interface ReactiveSeq<T> extends Unwrapable,
         return (ReactiveSeq<T>)ExtendedTraversable.super.takeWhile(p);
     }
 
+	/* (non-Javadoc)
+	 * @see org.jooq.lambda.Seq#drop(long)
+	 */
+	@Override
+	default ReactiveSeq<T> drop(long drop){
+	    return (ReactiveSeq<T>)JoolWindowing.super.drop(drop);
+	}
+	/* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#drop(long)
+     */
+	@Override
+    default ReactiveSeq<T> take(long take){
+        return (ReactiveSeq<T>)JoolWindowing.super.take(take);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)
      */
