@@ -828,8 +828,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
-    default  <R> R block(final Collector collector,
+    default  <A,R> R block(final Collector<? super U, A, R> collector,
             final Predicate<Status<U>> breakout) {
+       
         return (R) block(breakout).stream().collect(collector);
     }
     /**
