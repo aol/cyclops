@@ -1,6 +1,5 @@
 package com.aol.cyclops.react.collectors.lazy;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -12,15 +11,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.pcollections.ConsPStack;
-
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.Status;
 import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.ThrowsSoftened;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
 @AllArgsConstructor
@@ -67,7 +65,7 @@ public class Blocker<U> {
 		}
 		
 		return new Status(completed.get(), errors.get(),
-				lastActive.size(), timer.getElapsedNanoseconds(),ConsPStack.from(currentResults));
+				lastActive.size(), timer.getElapsedNanoseconds(),PStackX.fromIterable(currentResults));
 		
 	}
 	private void testBreakoutConditionsBeforeUnblockingCurrentThread(
