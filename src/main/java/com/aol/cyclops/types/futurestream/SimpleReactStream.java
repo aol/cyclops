@@ -811,7 +811,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         first). throws InterruptedException,ExecutionException
      */
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
-    default ListX<U> block(final Predicate<Status> breakout) {
+    default ListX<U> block(final Predicate<Status<U>> breakout) {
         return new Blocker<U>(getLastActive().list(), getErrorHandler()).block(breakout);
     }
     /**
@@ -829,7 +829,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
     default  <R> R block(final Collector collector,
-            final Predicate<Status> breakout) {
+            final Predicate<Status<U>> breakout) {
         return (R) block(breakout).stream().collect(collector);
     }
     /**

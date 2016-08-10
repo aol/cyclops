@@ -41,7 +41,7 @@ public class Blocker<U> {
 
 	@SuppressWarnings("unchecked")
 	@ThrowsSoftened({InterruptedException.class,ExecutionException.class})
-	public ListX<U> block(final Predicate<Status> breakout) {
+	public ListX<U> block(final Predicate<Status<U>> breakout) {
 
 		if(lastActive.size()==0)
 			return ListX.empty();
@@ -71,7 +71,7 @@ public class Blocker<U> {
 		
 	}
 	private void testBreakoutConditionsBeforeUnblockingCurrentThread(
-			final Predicate<Status> breakout, final Object result,
+			final Predicate<Status<U>> breakout, final Object result,
 			final Throwable ex) {
 	
 		if (result != null)
@@ -95,7 +95,7 @@ public class Blocker<U> {
 		return localComplete == lastActive.size();
 	}
 
-	private boolean breakoutConditionsMet(final Predicate<Status> breakout,
+	private boolean breakoutConditionsMet(final Predicate<Status<U>> breakout,
 			final Status status) {
 		return breakout.test(status);
 	}
