@@ -9,8 +9,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
@@ -26,6 +29,7 @@ import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
@@ -60,9 +64,9 @@ import lombok.EqualsAndHashCode;
  *  //failed1failed2
  *  
  *   Xor<String,String> fail1 = Xor.secondary("failed1");
-     fail1.swap().ap((a,b)->a+b)
-                 .ap(Xor.secondary("failed2").swap())
-                 .ap(Xor.<String,String>primary("success").swap())
+     fail1.swap().combine((a,b)->a+b)
+                 .combine(Xor.secondary("failed2").swap())
+                 .combine(Xor.<String,String>primary("success").swap())
  *  
  *  //failed1failed2
  *  }
@@ -287,7 +291,7 @@ public interface Xor<ST,PT> extends Supplier<PT>,
      * <pre>
      * {@code 
      *  Xor<String,String> fail1 =  Xor.secondary("failed1");
-        Xor<PStackX<String>,String> result = fail1.list().ap(Xor.secondary("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
+        Xor<PStackX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
         
         //Secondary of [PStackX.of("failed1","failed2")))]
      * }
@@ -321,11 +325,48 @@ public interface Xor<ST,PT> extends Supplier<PT>,
         return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(
                 tuple -> Xor.fromPublisher(app).visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
     }
-    
-
-    
-	
+    	
 	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+     */
+    @Override
+    default <U, R> Xor<ST,R> zip(Seq<? extends U> other, BiFunction<? super PT, ? super U, ? extends R> zipper) {
+       
+        return (Xor<ST,R>)MonadicValue2.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     */
+    @Override
+    default <U, R> Xor<ST,R> zip(Stream<? extends U> other, BiFunction<? super PT, ? super U, ? extends R> zipper) {
+        
+        return (Xor<ST,R>)MonadicValue2.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
+     */
+    @Override
+    default <U> Xor<ST,Tuple2<PT, U>> zip(Stream<? extends U> other) {
+        
+        return (Xor)MonadicValue2.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
+     */
+    @Override
+    default <U> Xor<ST,Tuple2<PT, U>> zip(Seq<? extends U> other) {
+        
+        return (Xor)MonadicValue2.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+     */
+    @Override
+    default <U> Xor<ST,Tuple2<PT, U>> zip(Iterable<? extends U> other) {
+        
+        return (Xor)MonadicValue2.super.zip(other);
+    }
+    /* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
 	 */
 	@Override

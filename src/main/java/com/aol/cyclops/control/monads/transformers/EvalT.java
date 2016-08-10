@@ -28,15 +28,8 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.ToStream;
 
 /**
- * Monad transformer for JDK Maybe
+ * Monad transformer for Eval
  * 
- * MaybeT consists of an AnyM instance that in turns wraps anoter Monad type
- * that contains an Maybe
- * 
- * MaybeT<AnyM<*SOME_MONAD_TYPE*<Maybe<T>>>>
- * 
- * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested
- * /contained context
  * 
  * 
  * @author johnmcclean

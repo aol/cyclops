@@ -8,7 +8,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -24,6 +27,7 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
@@ -154,6 +158,48 @@ public class TryTValue<T,X extends Throwable> implements TryT<T,X>,
     public <T2, R> TryTValue<R,X> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
             Publisher<? extends T2> app) {
         return new TryTValue<>(run.map(o -> o.zip(fn,app)));
+    }
+    
+   
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> TryTValue<R,X> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (TryTValue<R,X>)TransformerValue.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> TryTValue<R,X> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (TryTValue<R,X>)TransformerValue.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
+     */
+    @Override
+    public <U> TryTValue<Tuple2<T, U>,X> zip(Stream<? extends U> other) {
+        
+        return (TryTValue)TransformerValue.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
+     */
+    @Override
+    public <U> TryTValue<Tuple2<T, U>,X> zip(Seq<? extends U> other) {
+        
+        return (TryTValue)TransformerValue.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+     */
+    @Override
+    public <U> TryTValue<Tuple2<T, U>,X> zip(Iterable<? extends U> other) {
+        
+        return (TryTValue)TransformerValue.super.zip(other);
     }
     /**
 	 * Flat Map the wrapped Try
