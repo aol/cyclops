@@ -7,22 +7,29 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Collectable;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.data.collections.extensions.standard.MapXImpl;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFilterable;
+import com.aol.cyclops.types.OnEmpty;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 public interface PMapX<K, V> extends PMap<K, V>, 
@@ -30,7 +37,8 @@ public interface PMapX<K, V> extends PMap<K, V>,
 									 BiFunctor<K, V>, 
 									 Functor<V>, 
 									 IterableFilterable<Tuple2<K, V>>,				
-									 ExtendedTraversable<Tuple2<K, V>>, 
+									 OnEmpty<Tuple2<K, V>>,
+                                     Publisher<Tuple2<K, V>>,
 									 Foldable<Tuple2<K,V>>,
 									 CyclopsCollectable<Tuple2<K,V>>{
 
@@ -43,6 +51,9 @@ public interface PMapX<K, V> extends PMap<K, V>,
 	public static<K,V> PMapX<K,V> fromMap(Map<? extends K,? extends V> map){
 		return new PMapXImpl<K,V>(HashTreePMap.from(map));
 	}
+	default PMapX<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream){
+        return stream.toPMapX(k->k.v1, v->v.v2);
+    }
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
@@ -86,9 +97,11 @@ public interface PMapX<K, V> extends PMap<K, V>,
 
 	@Override
 	default ReactiveSeq<Tuple2<K, V>> stream() {
-		b
-		return ExtendedTraversable.super.stream();
+		
+		return ReactiveSeq.fromIterable(this.entrySet())
+                .map(e->Tuple.tuple(e.getKey(),e.getValue()));
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
@@ -112,7 +125,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 	 */
 	@Override
 	default PMapX<K, V> bipeek(Consumer<? super K> c1, Consumer<? super V> c2) {
-		b
+		
 		return (PMapX<K, V>)BiFunctor.super.bipeek(c1, c2);
 	}
 
@@ -121,7 +134,7 @@ public interface PMapX<K, V> extends PMap<K, V>,
 	 */
 	@Override
 	default <U1, U2> PMapX<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
-		b
+		
 		return (PMapX<U1, U2>)BiFunctor.super.bicast(type1, type2);
 	}
 
@@ -239,6 +252,38 @@ public interface PMapX<K, V> extends PMap<K, V>,
             Supplier<? extends R> otherwise) {
         
         return (PMapX<K,R>)Functor.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
+     */
+    @Override
+    default void subscribe(Subscriber<? super Tuple2<K, V>> s) {
+       stream().subscribe(s);
+        
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmpty#onEmpty(java.lang.Object)
+     */
+    @Override
+    default PMapX<K, V> onEmpty(Tuple2<K, V> value) {
+       return fromStream(stream().onEmpty(value));
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmpty#onEmptyGet(java.util.function.Supplier)
+     */
+    @Override
+    default PMapX<K, V> onEmptyGet(Supplier<? extends Tuple2<K, V>> supplier) {
+        
+        return fromStream(stream().onEmptyGet(supplier));
+    }
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmpty#onEmptyThrow(java.util.function.Supplier)
+     */
+    @Override
+    default <X extends Throwable> PMapX<K, V> onEmptyThrow(Supplier<? extends X> supplier) {
+        
+        return fromStream(stream().onEmptyThrow(supplier));
     }
 	
 

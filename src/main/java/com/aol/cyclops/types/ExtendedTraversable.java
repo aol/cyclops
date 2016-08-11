@@ -13,11 +13,11 @@ public interface ExtendedTraversable<T> extends Traversable<T>,
 	
 	
 	/**
-	 * Generate the permutations based on values in the SequenceM Makes use of
+	 * Generate the permutations based on values in the ReactiveSeq Makes use of
 	 * Streamable to store intermediate stages in a collection
 	 * 
 	 * 
-	 * @return Permutations from this SequenceM
+	 * @return Permutations from this ReactiveSeq
 	 */
 	 default ExtendedTraversable<ReactiveSeq<T>> permutations(){
 		 return stream().permutations();
@@ -29,7 +29,7 @@ public interface ExtendedTraversable<T> extends Traversable<T>,
 	 * {@code
 	 *   ReactiveSeq.of(1,2,3).combinations(2)
 	 *   
-	 *   //SequenceM[SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]]
+	 *   //ReactiveSeq[ReactiveSeq[1,2],ReactiveSeq[1,3],ReactiveSeq[2,3]]
 	 * }
 	 * </pre>
 	 * 
@@ -48,8 +48,8 @@ public interface ExtendedTraversable<T> extends Traversable<T>,
 	 * {@code
 	 *   ReactiveSeq.of(1,2,3).combinations()
 	 *   
-	 *   //SequenceM[SequenceM[],SequenceM[1],SequenceM[2],SequenceM[3].SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]
-	 *   			,SequenceM[1,2,3]]
+	 *   //ReactiveSeq[ReactiveSeq[],ReactiveSeq[1],ReactiveSeq[2],ReactiveSeq[3].ReactiveSeq[1,2],ReactiveSeq[1,3],ReactiveSeq[2,3]
+	 *   			,ReactiveSeq[1,2,3]]
 	 * }
 	 * </pre>
 	 * 
