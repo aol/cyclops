@@ -9,45 +9,44 @@ import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 import com.aol.cyclops.types.mixins.Printable;
 
+public class CompletableFutureTValueComprehender implements ValueComprehender<CompletableFutureTValue>, Printable {
 
+    @Override
+    public Object resolveForCrossTypeFlatMap(Comprehender comp, CompletableFutureTValue apply) {
 
-public class CompletableFutureTValueComprehender implements ValueComprehender<CompletableFutureTValue>, Printable{
-	
-	@Override
-	public Object resolveForCrossTypeFlatMap(Comprehender comp, CompletableFutureTValue apply) {
-	 
-		return apply.isFuturePresent() ? comp.of(apply.get()) : comp.empty();
-	}
-	@Override
-    public Object filter(CompletableFutureTValue t, Predicate p){
+        return apply.isFuturePresent() ? comp.of(apply.get()) : comp.empty();
+    }
+
+    @Override
+    public Object filter(CompletableFutureTValue t, Predicate p) {
         return t.filter(p);
     }
-	@Override
-	public Object map(CompletableFutureTValue t, Function fn) {
-		return t.map(r->fn.apply(r));
-	}
 
-	@Override
-	public Object flatMap(CompletableFutureTValue t, Function fn) {
-	   
-		return t.flatMapT(r->fn.apply(r));
-	}
+    @Override
+    public Object map(CompletableFutureTValue t, Function fn) {
+        return t.map(r -> fn.apply(r));
+    }
 
-	@Override
-	public CompletableFutureTValue of(Object o) {
-	    
-		return CompletableFutureTValue.of(CompletableFuture.completedFuture(o));
-	}
+    @Override
+    public Object flatMap(CompletableFutureTValue t, Function fn) {
 
-	@Override
-	public CompletableFutureTValue empty() {
-		return CompletableFutureTValue.emptyOptional();
-	}
+        return t.flatMapT(r -> fn.apply(r));
+    }
 
-	@Override
-	public Class getTargetClass() {
-		return CompletableFutureTValue.class;
-	}
-	
+    @Override
+    public CompletableFutureTValue of(Object o) {
+
+        return CompletableFutureTValue.of(CompletableFuture.completedFuture(o));
+    }
+
+    @Override
+    public CompletableFutureTValue empty() {
+        return CompletableFutureTValue.emptyOptional();
+    }
+
+    @Override
+    public Class getTargetClass() {
+        return CompletableFutureTValue.class;
+    }
 
 }

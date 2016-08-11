@@ -1,7 +1,5 @@
 package com.aol.cyclops.internal.matcher2;
 
-import java.io.Serializable;
-import java.lang.invoke.MethodType;
 import java.util.function.Function;
 
 /**
@@ -14,13 +12,12 @@ import java.util.function.Function;
  * @param <T> Input type
  * @param <R> Return type
  */
-public interface Extractor<T,R> extends Function<T,R>{
-	
-	/* 
-	 * @see java.util.function.Function#apply(java.lang.Object)
-	 */
-	@Override
-	public R apply(T t);
-	
-	
+public interface Extractor<T, R> extends Function<T, R> {
+
+    /* 
+     * @see java.util.function.Function#apply(java.lang.Object)
+     */
+    @Override
+    public R apply(T t);
+
 }

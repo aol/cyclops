@@ -11,24 +11,26 @@ import com.aol.cyclops.util.ExceptionSoftener;
 
 public class FileToStreamConverter implements MonadicConverter<Stream> {
 
-	public static int priority = 5;
-	public int priority(){
-		return priority;
-	}
-	@Override
-	public boolean accept(Object o) {
-		return o instanceof File;
-	}
+    public static int priority = 5;
 
-	@Override
-	public Stream convertToMonadicForm(Object f) {
-		try {
-			return Files.lines(Paths.get( ((File)f).getAbsolutePath()));
-		} catch (IOException e) {
-			throw ExceptionSoftener.throwSoftenedException(e);
-			
-		}
-	
-	}
+    public int priority() {
+        return priority;
+    }
+
+    @Override
+    public boolean accept(Object o) {
+        return o instanceof File;
+    }
+
+    @Override
+    public Stream convertToMonadicForm(Object f) {
+        try {
+            return Files.lines(Paths.get(((File) f).getAbsolutePath()));
+        } catch (IOException e) {
+            throw ExceptionSoftener.throwSoftenedException(e);
+
+        }
+
+    }
 
 }

@@ -26,20 +26,21 @@ import com.aol.cyclops.util.ExceptionSoftener;
  */
 public interface Cacheable<OUT> {
 
-	default SoftenedCacheable<OUT> soften(){
-		return (key,fn) -> {
-			try{
-				return computeIfAbsent(key,fn);
-			}catch(Throwable t){
-				throw ExceptionSoftener.throwSoftenedException(t);
-			}
-		};
-	}
-	/**
-	 * Implementation should call the underlying cache
-	 * @param key To lookup cached value
-	 * @param fn Function to compute value, if it is not in the cache
-	 * @return Cached (or computed) result
-	 */
-	public OUT computeIfAbsent(Object key, Function<Object,OUT> fn) throws Throwable;
+    default SoftenedCacheable<OUT> soften() {
+        return (key, fn) -> {
+            try {
+                return computeIfAbsent(key, fn);
+            } catch (Throwable t) {
+                throw ExceptionSoftener.throwSoftenedException(t);
+            }
+        };
+    }
+
+    /**
+     * Implementation should call the underlying cache
+     * @param key To lookup cached value
+     * @param fn Function to compute value, if it is not in the cache
+     * @return Cached (or computed) result
+     */
+    public OUT computeIfAbsent(Object key, Function<Object, OUT> fn) throws Throwable;
 }

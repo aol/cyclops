@@ -6,18 +6,20 @@ import com.aol.cyclops.types.extensability.MonadicConverter;
 
 public class NullToOptionalConverter implements MonadicConverter<Optional> {
 
-	public static int priority = 5;
-	public int priority(){
-		return priority;
-	}
-	@Override
-	public boolean accept(Object o) {
-		return o==null;
-	}
+    public static int priority = 5;
 
-	@Override
-	public Optional convertToMonadicForm(Object f) {
-		return Optional.ofNullable(f);
-	}
+    public int priority() {
+        return priority;
+    }
+
+    @Override
+    public boolean accept(Object o) {
+        return o == null;
+    }
+
+    @Override
+    public Optional convertToMonadicForm(Object f) {
+        return Optional.ofNullable(f);
+    }
 
 }

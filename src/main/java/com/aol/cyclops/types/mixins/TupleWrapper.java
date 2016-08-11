@@ -9,24 +9,26 @@ import com.aol.cyclops.util.ExceptionSoftener;
 public interface TupleWrapper {
 
     public Object getInstance();
-    
+
     @SuppressWarnings("unchecked")
-    default List<Object> values(){
-        
+    default List<Object> values() {
+
         try {
-            return  (List)ReflectionCache.getFields(getInstance().getClass()).stream().map(f ->{
-                try {
-                
-                    return f.get(getInstance());
-                } catch (Exception e) {
-                    ExceptionSoftener.throwSoftenedException(e);
-                    return null;
-                }
-            }).collect(Collectors.toList());
+            return (List) ReflectionCache.getFields(getInstance().getClass())
+                                         .stream()
+                                         .map(f -> {
+                                             try {
+
+                                                 return f.get(getInstance());
+                                             } catch (Exception e) {
+                                                 ExceptionSoftener.throwSoftenedException(e);
+                                                 return null;
+                                             }
+                                         })
+                                         .collect(Collectors.toList());
         } catch (Exception e) {
-            throw ExceptionSoftener
-                    .throwSoftenedException(e);
-          
+            throw ExceptionSoftener.throwSoftenedException(e);
+
         }
     }
 }

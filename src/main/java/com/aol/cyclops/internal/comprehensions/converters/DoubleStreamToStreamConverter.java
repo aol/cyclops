@@ -7,24 +7,24 @@ import com.aol.cyclops.types.extensability.MonadicConverter;
 
 import lombok.val;
 
-public class DoubleStreamToStreamConverter implements MonadicConverter<Stream>{
+public class DoubleStreamToStreamConverter implements MonadicConverter<Stream> {
 
-	public static int priority = 5;
-	public int priority(){
-		return priority;
-	}
-	@Override
-	public boolean accept(Object o) {
-		return (o instanceof DoubleStream);
-			
-	}
+    public static int priority = 5;
 
-	@Override
-	public Stream convertToMonadicForm(Object f) {
-		val s = (DoubleStream)f;
-		return s.boxed();
-	}
-	
-	
+    public int priority() {
+        return priority;
+    }
+
+    @Override
+    public boolean accept(Object o) {
+        return (o instanceof DoubleStream);
+
+    }
+
+    @Override
+    public Stream convertToMonadicForm(Object f) {
+        val s = (DoubleStream) f;
+        return s.boxed();
+    }
 
 }

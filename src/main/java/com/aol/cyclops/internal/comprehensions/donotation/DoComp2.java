@@ -16,101 +16,110 @@ import com.aol.cyclops.internal.comprehensions.donotation.DoBuilderModule.Guard;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.util.function.CurryVariance;
+
 public class DoComp2<T1, T2> extends DoComp {
-	
-	public DoComp2(PStack<Entry> assigned, Class orgType) {
-		super(assigned,orgType);
 
-	}
-
-
-	public <T3> DoComp3<T1, T2, T3> reader(Function<? super T1, Function<? super T2, Reader<?, ? extends T3>>> f) {
-		return new DoComp3<>(addToAssigned(f),getOrgType());
-
-	}
-	
-	public <T3> DoComp3<T1, T2, T3> iterable(Function<? super T1, Function<? super T2, Iterable<T3>>> f) {
-		return new DoComp3<>(addToAssigned(f),getOrgType());
-
-	}
-	public <T3> DoComp3<T1, T2, T3> publisher(Function<? super T1, Function<? super T2, Publisher<T3>>> f) {
-        return new DoComp3<>(addToAssigned(f),getOrgType());
+    public DoComp2(PStack<Entry> assigned, Class orgType) {
+        super(assigned, orgType);
 
     }
-	
-	public <T3> DoComp3<T1, T2, T3> stream(Function<? super T1, Function<? super T2, BaseStream<T3, ?>>> f) {
-		return new DoComp3<>(addToAssigned(f),getOrgType());
 
-	}
+    public <T3> DoComp3<T1, T2, T3> reader(Function<? super T1, Function<? super T2, Reader<?, ? extends T3>>> f) {
+        return new DoComp3<>(
+                             addToAssigned(f), getOrgType());
 
-	
-	public <T3> DoComp3<T1, T2, T3> optional(Function<? super T1, Function<? super T2, Optional<T3>>> f) {
-		return new DoComp3<>(addToAssigned(f),getOrgType());
-
-	}
-
-	
-	public <T3> DoComp3<T1, T2, T3> future(Function<? super T1, Function<? super T2, CompletableFuture<T3>>> f) {
-		return new DoComp3<>(addToAssigned(f),getOrgType());
-
-	}
-
-	
-	public <T3> DoComp3<T1, T2, T3> anyM(Function<? super T1, Function<? super T2, AnyM<T3>>> f) {
-		return new DoComp3<>(addToAssigned(f),getOrgType());
-
-	}
-
-	
-
-	/**
-	 * Execute and Yield a result from this for comprehension using the supplied
-	 * function
-	 * 
-	 * e.g. sum every element across nested structures
-	 * 
-	 * <pre>
-	 * {@code   Do.iterable(list1).iterable(i->list2)
-	 * 					  	   .yield((Integer i1)->(Integer i2) -> i1+i2);
-	 * 								
-	 * 			}
-	 * </pre>
-	 * 
-	 * 
-	 * @param f
-	 *            To be applied to every element in the for comprehension
-	 * @return For comprehension result
-	 */
-	public <R> AnyMSeq<R> yield(Function<? super T1, Function<? super T2, ? extends R>> f) {
-		if(getOrgType()!=null)
-			return new MonadWrapper<>(this.yieldInternal(f),this.getOrgType()).anyMSeq();
-		else
-			return AnyM.ofSeq(this.yieldInternal(f));
-	}
-	public <R> AnyMSeq<R> yield2(BiFunction<? super T1, ? super T2, ? extends R> f) {
-       return this.yield(CurryVariance.curry2(f));
     }
 
-	/**
-	 * Filter data
-	 * 
-	 * 
-	 * 
-	 * <pre>
-	 * {@code   Do.iterable(list1).iterable(i->list2)
-	 * 		 				   .filter((Integer i1)->(Integer i2) -> i1>5)
-	 * 					  	   .yield((Integer i1)->(Integer i2) -> i1+i2);
-	 * 								
-	 * 			}
-	 * </pre>
-	 * 
-	 * 
-	 * @param f
-	 *            To be applied to every element in the for comprehension
-	 * @return Current stage  guard / filter applied
-	 */
-	public DoComp2<T1, T2> filter(Function<? super T1, Function<? super T2, Boolean>> f) {
-		return new DoComp2<>(getAssigned().plus(getAssigned().size(), new Entry("$$internalGUARD" + getAssigned().size(), new Guard(f))),getOrgType());
-	}
-	
+    public <T3> DoComp3<T1, T2, T3> iterable(Function<? super T1, Function<? super T2, Iterable<T3>>> f) {
+        return new DoComp3<>(
+                             addToAssigned(f), getOrgType());
+
+    }
+
+    public <T3> DoComp3<T1, T2, T3> publisher(Function<? super T1, Function<? super T2, Publisher<T3>>> f) {
+        return new DoComp3<>(
+                             addToAssigned(f), getOrgType());
+
+    }
+
+    public <T3> DoComp3<T1, T2, T3> stream(Function<? super T1, Function<? super T2, BaseStream<T3, ?>>> f) {
+        return new DoComp3<>(
+                             addToAssigned(f), getOrgType());
+
+    }
+
+    public <T3> DoComp3<T1, T2, T3> optional(Function<? super T1, Function<? super T2, Optional<T3>>> f) {
+        return new DoComp3<>(
+                             addToAssigned(f), getOrgType());
+
+    }
+
+    public <T3> DoComp3<T1, T2, T3> future(Function<? super T1, Function<? super T2, CompletableFuture<T3>>> f) {
+        return new DoComp3<>(
+                             addToAssigned(f), getOrgType());
+
+    }
+
+    public <T3> DoComp3<T1, T2, T3> anyM(Function<? super T1, Function<? super T2, AnyM<T3>>> f) {
+        return new DoComp3<>(
+                             addToAssigned(f), getOrgType());
+
+    }
+
+    /**
+     * Execute and Yield a result from this for comprehension using the supplied
+     * function
+     * 
+     * e.g. sum every element across nested structures
+     * 
+     * <pre>
+     * {@code   Do.iterable(list1).iterable(i->list2)
+     * 					  	   .yield((Integer i1)->(Integer i2) -> i1+i2);
+     * 								
+     * 			}
+     * </pre>
+     * 
+     * 
+     * @param f
+     *            To be applied to every element in the for comprehension
+     * @return For comprehension result
+     */
+    public <R> AnyMSeq<R> yield(Function<? super T1, Function<? super T2, ? extends R>> f) {
+        if (getOrgType() != null)
+            return new MonadWrapper<>(
+                                      this.yieldInternal(f), this.getOrgType()).anyMSeq();
+        else
+            return AnyM.ofSeq(this.yieldInternal(f));
+    }
+
+    public <R> AnyMSeq<R> yield2(BiFunction<? super T1, ? super T2, ? extends R> f) {
+        return this.yield(CurryVariance.curry2(f));
+    }
+
+    /**
+     * Filter data
+     * 
+     * 
+     * 
+     * <pre>
+     * {@code   Do.iterable(list1).iterable(i->list2)
+     * 		 				   .filter((Integer i1)->(Integer i2) -> i1>5)
+     * 					  	   .yield((Integer i1)->(Integer i2) -> i1+i2);
+     * 								
+     * 			}
+     * </pre>
+     * 
+     * 
+     * @param f
+     *            To be applied to every element in the for comprehension
+     * @return Current stage  guard / filter applied
+     */
+    public DoComp2<T1, T2> filter(Function<? super T1, Function<? super T2, Boolean>> f) {
+        return new DoComp2<>(
+                             getAssigned().plus(getAssigned().size(), new Entry(
+                                                                                "$$internalGUARD" + getAssigned().size(), new Guard(
+                                                                                                                                    f))),
+                             getOrgType());
+    }
+
 }

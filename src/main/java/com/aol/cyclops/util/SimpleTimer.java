@@ -1,6 +1,5 @@
 package com.aol.cyclops.util;
 
-
 /**
  * 
  * Simple Timer class that returns elapsed milliseconds since construction
@@ -10,14 +9,12 @@ package com.aol.cyclops.util;
  */
 public final class SimpleTimer {
 
-	private final long startNanoSeconds =System.nanoTime();
-	
-	
-	/**
-	 * @return Time elapsed in nanoseconds since object construction
-	 */
-	public final long getElapsedNanoseconds() {
-		return System.nanoTime() - startNanoSeconds;
-	}
-}
+    private final long startNanoSeconds = System.nanoTime();
 
+    /**
+     * @return Time elapsed in nanoseconds since object construction
+     */
+    public final long getElapsedNanoseconds() {
+        return System.nanoTime() - startNanoSeconds;
+    }
+}

@@ -1,8 +1,5 @@
 package com.aol.cyclops.internal.matcher2;
 
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -11,7 +8,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 
 /**
  * A functionally compositional class that represents a pattern matching Case
@@ -26,16 +22,15 @@ import lombok.Getter;
  * @param <R> Return type for function (action) which is executed if the predicate tests positive
  * @param <X> Type of Function - cyclops pattern matching builders use ActionWithReturn which is serialisable and retains type info
  */
-@AllArgsConstructor(access=AccessLevel.PACKAGE)
-public final class ActiveCase<T,R> implements Case<T,R>{
-	
-	private final Tuple2<Predicate<? super T>,Function<? super T, ? extends R>> pattern;
-	@Getter
-	private final boolean empty=false;
-	
-	public Tuple2<Predicate<? super T>,Function<? super T, ? extends R>> get(){
-		return pattern;
-	}
-	
-	
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+public final class ActiveCase<T, R> implements Case<T, R> {
+
+    private final Tuple2<Predicate<? super T>, Function<? super T, ? extends R>> pattern;
+    @Getter
+    private final boolean empty = false;
+
+    public Tuple2<Predicate<? super T>, Function<? super T, ? extends R>> get() {
+        return pattern;
+    }
+
 }

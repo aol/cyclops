@@ -4,6 +4,7 @@ import com.aol.cyclops.types.futurestream.Continuation;
 
 public interface ContinuationStrategy {
 
-	public void addContinuation(Continuation c);
-	public void handleContinuation();
+    public void addContinuation(Continuation c);
+
+    public void handleContinuation();
 }

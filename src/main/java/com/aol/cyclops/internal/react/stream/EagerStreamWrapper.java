@@ -22,136 +22,137 @@ import lombok.experimental.Wither;
 @Wither
 @AllArgsConstructor
 public class EagerStreamWrapper implements StreamWrapper {
-	@SuppressWarnings("rawtypes")
-	private final List<CompletableFuture> list;
-	private final Stream<CompletableFuture> stream;
-	private final AsyncList async;
-	private final Optional<Consumer<Throwable>> errorHandler;
+    @SuppressWarnings("rawtypes")
+    private final List<CompletableFuture> list;
+    private final Stream<CompletableFuture> stream;
+    private final AsyncList async;
+    private final Optional<Consumer<Throwable>> errorHandler;
 
-	
-	public EagerStreamWrapper(List<CompletableFuture> list,Optional<Consumer<Throwable>> errorHandler) {
-		this.list = list;
-		this.stream = null;
-		this.errorHandler = errorHandler;
-		async = null;
-	}
+    public EagerStreamWrapper(List<CompletableFuture> list, Optional<Consumer<Throwable>> errorHandler) {
+        this.list = list;
+        this.stream = null;
+        this.errorHandler = errorHandler;
+        async = null;
+    }
 
-	public EagerStreamWrapper(AsyncList async,Optional<Consumer<Throwable>> errorHandler) {
-		this.list = null;
-		this.stream = null;
-		this.async = async;
-		this.errorHandler = errorHandler;
-	}
+    public EagerStreamWrapper(AsyncList async, Optional<Consumer<Throwable>> errorHandler) {
+        this.list = null;
+        this.stream = null;
+        this.async = async;
+        this.errorHandler = errorHandler;
+    }
 
-	public EagerStreamWrapper(Stream<CompletableFuture> stream,Optional<Consumer<Throwable>> errorHandler) {
-		this.stream = stream;
+    public EagerStreamWrapper(Stream<CompletableFuture> stream, Optional<Consumer<Throwable>> errorHandler) {
+        this.stream = stream;
 
-		list = stream.collect(Collectors.toList());
-		this.errorHandler = errorHandler;
-		async = null;
+        list = stream.collect(Collectors.toList());
+        this.errorHandler = errorHandler;
+        async = null;
 
-	}
+    }
 
-	public EagerStreamWrapper(Stream<CompletableFuture> stream, Collector c,Optional<Consumer<Throwable>> errorHandler) {
-		this.stream = stream;
-		async = null;
-		this.errorHandler = errorHandler;
-		list =  (List)stream.collect(c);
+    public EagerStreamWrapper(Stream<CompletableFuture> stream, Collector c, Optional<Consumer<Throwable>> errorHandler) {
+        this.stream = stream;
+        async = null;
+        this.errorHandler = errorHandler;
+        list = (List) stream.collect(c);
 
-	}
-	public void collect(){
-	    if(list!=null)
-	         collect(list.stream(),Collectors.toList(),this.errorHandler);
-	    else
-	        collect(stream,Collectors.toList(),this.errorHandler);
-	}
-	static  List<CompletableFuture> collect(Stream<CompletableFuture> stream,Collector c,Optional<Consumer<Throwable>> errorHandler){
-	   
-	    Function<Throwable,Object> captureFn = t->{BlockingStreamHelper.captureUnwrap(t, errorHandler); throw ExceptionSoftener.throwSoftenedException(t);};
-	    if(errorHandler.isPresent())
-	        return (List<CompletableFuture>)stream
-	                                .map(cf->cf.exceptionally(captureFn))
-	                               
-	                                .collect(c);
-	   
-	    return (List<CompletableFuture>)stream.filter(cf->cf.isCompletedExceptionally()).collect(c);
-       
-	}
+    }
 
-	
-	public EagerStreamWrapper(CompletableFuture cf,Optional<Consumer<Throwable>> errorHandler) {
-		async = null;
-		list = Arrays.asList(cf);
-		this.errorHandler = errorHandler;
-		stream = null;
+    public void collect() {
+        if (list != null)
+            collect(list.stream(), Collectors.toList(), this.errorHandler);
+        else
+            collect(stream, Collectors.toList(), this.errorHandler);
+    }
 
-	}
+    static List<CompletableFuture> collect(Stream<CompletableFuture> stream, Collector c, Optional<Consumer<Throwable>> errorHandler) {
 
-	public EagerStreamWrapper withNewStream(Stream<CompletableFuture> stream,
-			SimpleReact simple) {
+        Function<Throwable, Object> captureFn = t -> {
+            BlockingStreamHelper.captureUnwrap(t, errorHandler);
+            throw ExceptionSoftener.throwSoftenedException(t);
+        };
+        if (errorHandler.isPresent())
+            return (List<CompletableFuture>) stream.map(cf -> cf.exceptionally(captureFn))
 
-		return new EagerStreamWrapper(new AsyncList(stream,
-				simple.getQueueService()),this.errorHandler);
-	}
+                                                   .collect(c);
 
-	public EagerStreamWrapper stream(
-			Function<Stream<CompletableFuture>, Stream<CompletableFuture>> action) {
-		if (async != null)
-			return new EagerStreamWrapper(async.stream(action),this.errorHandler);
-		else
-			return new EagerStreamWrapper(action.apply(list.stream()),this.errorHandler);
+        return (List<CompletableFuture>) stream.filter(cf -> cf.isCompletedExceptionally())
+                                               .collect(c);
 
-	}
+    }
 
-	public Stream<CompletableFuture> stream() {
-		if (async != null)
-			return async.async.join().stream();
+    public EagerStreamWrapper(CompletableFuture cf, Optional<Consumer<Throwable>> errorHandler) {
+        async = null;
+        list = Arrays.asList(cf);
+        this.errorHandler = errorHandler;
+        stream = null;
 
-		return list.stream();
+    }
 
-	}
+    public EagerStreamWrapper withNewStream(Stream<CompletableFuture> stream, SimpleReact simple) {
 
-	public List<CompletableFuture> list() {
-		if (async != null)
-			return async.async.join();
+        return new EagerStreamWrapper(
+                                      new AsyncList(
+                                                    stream, simple.getQueueService()),
+                                      this.errorHandler);
+    }
 
-		return list;
-	}
+    public EagerStreamWrapper stream(Function<Stream<CompletableFuture>, Stream<CompletableFuture>> action) {
+        if (async != null)
+            return new EagerStreamWrapper(
+                                          async.stream(action), this.errorHandler);
+        else
+            return new EagerStreamWrapper(
+                                          action.apply(list.stream()), this.errorHandler);
 
-	static class AsyncList {
+    }
 
-		private final Executor service;
-		// = Executors.newSingleThreadExecutor();
-		private final CompletableFuture<List<CompletableFuture>> async;
+    public Stream<CompletableFuture> stream() {
+        if (async != null)
+            return async.async.join()
+                              .stream();
 
-		public AsyncList(Stream<CompletableFuture> stream, Executor service) {
+        return list.stream();
 
-			if (stream instanceof SimpleReactStream)
-				async = CompletableFuture.completedFuture(stream
-						.collect(Collectors.toList()));
-			else
-				async = CompletableFuture.supplyAsync(
-						() -> stream.collect(Collectors.toList()), service);
+    }
 
-			this.service = service;
-		}
+    public List<CompletableFuture> list() {
+        if (async != null)
+            return async.async.join();
 
-		public AsyncList(CompletableFuture<Stream<CompletableFuture>> cf,
-				Executor service) {
-			// use elastic pool to execute asyn
+        return list;
+    }
 
-			async = cf.thenApplyAsync(st -> st.collect(Collectors.toList()),
-					service);
-			this.service = service;
+    static class AsyncList {
 
-		}
+        private final Executor service;
+        // = Executors.newSingleThreadExecutor();
+        private final CompletableFuture<List<CompletableFuture>> async;
 
-		public AsyncList stream(
-				Function<Stream<CompletableFuture>, Stream<CompletableFuture>> action) {
-			return new AsyncList(async.thenApply(list -> action.apply(list
-					.stream())), service);
+        public AsyncList(Stream<CompletableFuture> stream, Executor service) {
 
-		}
-	}
+            if (stream instanceof SimpleReactStream)
+                async = CompletableFuture.completedFuture(stream.collect(Collectors.toList()));
+            else
+                async = CompletableFuture.supplyAsync(() -> stream.collect(Collectors.toList()), service);
+
+            this.service = service;
+        }
+
+        public AsyncList(CompletableFuture<Stream<CompletableFuture>> cf, Executor service) {
+            // use elastic pool to execute asyn
+
+            async = cf.thenApplyAsync(st -> st.collect(Collectors.toList()), service);
+            this.service = service;
+
+        }
+
+        public AsyncList stream(Function<Stream<CompletableFuture>, Stream<CompletableFuture>> action) {
+            return new AsyncList(
+                                 async.thenApply(list -> action.apply(list.stream())), service);
+
+        }
+    }
 
 }

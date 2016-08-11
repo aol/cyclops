@@ -13,38 +13,39 @@ import com.aol.cyclops.util.ExceptionSoftener;
  * @author johnmcclean
  *
  */
-public interface Decomposable{
-	
-	
-	default  <T> T unwrap(){
-		return (T)this;
-	}
-	/**
-	 * @return Values of the fields of this Decomposable instance
-	 */
-	@SuppressWarnings("unchecked")
-	default <I extends Iterable<?>> I unapply(){
-		
-		if(unwrap() instanceof Iterable)
-			return (I)unwrap();
-		try {
-			
-			return (I)ReflectionCache.getFields(unwrap().getClass()).stream().map(f ->{
-				try {
-				
-					return f.get(unwrap());
-				} catch (Exception e) {
-					throw ExceptionSoftener.throwSoftenedException(e);
-					
-				
-				}
-			}).collect(Collectors.toList());
-		} catch (Exception e) {
-			throw ExceptionSoftener.throwSoftenedException(e);
-			
-		}
-		
-	}
-	
-	
+public interface Decomposable {
+
+    default <T> T unwrap() {
+        return (T) this;
+    }
+
+    /**
+     * @return Values of the fields of this Decomposable instance
+     */
+    @SuppressWarnings("unchecked")
+    default <I extends Iterable<?>> I unapply() {
+
+        if (unwrap() instanceof Iterable)
+            return (I) unwrap();
+        try {
+
+            return (I) ReflectionCache.getFields(unwrap().getClass())
+                                      .stream()
+                                      .map(f -> {
+                                          try {
+
+                                              return f.get(unwrap());
+                                          } catch (Exception e) {
+                                              throw ExceptionSoftener.throwSoftenedException(e);
+
+                                          }
+                                      })
+                                      .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw ExceptionSoftener.throwSoftenedException(e);
+
+        }
+
+    }
+
 }

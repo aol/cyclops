@@ -17,38 +17,42 @@ import lombok.AllArgsConstructor;
 public class MultiReduceOperator<R> {
 
     private final Stream<R> stream;
-    @SuppressWarnings({"rawtypes","unchecked"})
-	public List<R> reduce(Iterable<? extends Monoid<R>> reducers){
-		Reducer<List<R>> m = new Reducer<List<R>>(){
-			@Override
-            public List<R> zero(){
-				return StreamUtils.stream(reducers).map(r->r.zero()).collect(Collectors.toList());
-			}
-			
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public List<R> reduce(Iterable<? extends Monoid<R>> reducers) {
+        Reducer<List<R>> m = new Reducer<List<R>>() {
             @Override
-			public BiFunction<List<R>,List<R>,List<R>> combiner(){
-				return (c1,c2) -> { 
-					List l= new ArrayList<>();
-					int i =0;
-					for(Monoid next : reducers){
-						l.add(next.combiner().apply(c1.get(i),c2.get(0)));
-						i++;
-					}
-					
-					
-					return l;
-				};
-			}
-			
-			@Override
-			public Stream mapToType(Stream stream){
-				return (Stream) stream.map(value->Arrays.asList(value));
-			}
+            public List<R> zero() {
+                return StreamUtils.stream(reducers)
+                                  .map(r -> r.zero())
+                                  .collect(Collectors.toList());
+            }
+
+            @Override
+            public BiFunction<List<R>, List<R>, List<R>> combiner() {
+                return (c1, c2) -> {
+                    List l = new ArrayList<>();
+                    int i = 0;
+                    for (Monoid next : reducers) {
+                        l.add(next.combiner()
+                                  .apply(c1.get(i), c2.get(0)));
+                        i++;
+                    }
+
+                    return l;
+                };
+            }
+
+            @Override
+            public Stream mapToType(Stream stream) {
+                return (Stream) stream.map(value -> Arrays.asList(value));
+            }
+
             @Override
             public List<R> apply(List<R> t, List<R> u) {
-                return combiner().apply(t,u);
+                return combiner().apply(t, u);
             }
-		};
-		return (List)m.mapReduce(stream);
-	}
+        };
+        return (List) m.mapReduce(stream);
+    }
 }

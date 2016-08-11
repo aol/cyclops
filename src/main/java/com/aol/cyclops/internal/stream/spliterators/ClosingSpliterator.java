@@ -9,19 +9,16 @@ import java.util.function.Consumer;
 
 public class ClosingSpliterator<T> implements Spliterator<T> {
     private long estimate;
-   
-   
+
     private final Queue<T> queue;
     private final AtomicBoolean open;
 
-    public ClosingSpliterator(long estimate,	
-    		Queue queue, AtomicBoolean open) {
+    public ClosingSpliterator(long estimate, Queue queue, AtomicBoolean open) {
         this.estimate = estimate;
         this.open = open;
         this.queue = queue;
-       
+
     }
-   
 
     @Override
     public long estimateSize() {
@@ -32,47 +29,41 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
     public int characteristics() {
         return IMMUTABLE;
     }
-    
 
+    @Override
+    public boolean tryAdvance(Consumer<? super T> action) {
+        Objects.requireNonNull(action);
 
-	@Override
-	public boolean tryAdvance(Consumer<? super T> action) {
-		 Objects.requireNonNull(action);
-		
+        if (!open.get() && queue.size() == 0) {
 
-			if(!open.get() && queue.size()==0){
-				
-				return false;
-			}
+            return false;
+        }
 
-			while(open.get() || queue.size()>0){
-				long nanos=1l;
+        while (open.get() || queue.size() > 0) {
+            long nanos = 1l;
 
-        
-				T value;
-				if((value=queue.poll())!=null){
-					action.accept(nullSafe(value));
-        	
-					return true;
-				}
-				LockSupport.parkNanos(nanos);
-				nanos= nanos*2;
-        	
-		}
-			return false;
-        
-	}
+            T value;
+            if ((value = queue.poll()) != null) {
+                action.accept(nullSafe(value));
 
-	private T nullSafe(T value) {
-		return value;
-	}
+                return true;
+            }
+            LockSupport.parkNanos(nanos);
+            nanos = nanos * 2;
 
+        }
+        return false;
 
-	@Override
-	public Spliterator<T> trySplit() {
-		
-		return this;
-	}
+    }
 
-   
+    private T nullSafe(T value) {
+        return value;
+    }
+
+    @Override
+    public Spliterator<T> trySplit() {
+
+        return this;
+    }
+
 }

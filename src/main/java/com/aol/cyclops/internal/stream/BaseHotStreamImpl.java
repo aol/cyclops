@@ -13,50 +13,51 @@ import com.aol.cyclops.internal.stream.spliterators.ClosingSpliterator;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T> implements HotStream<T>{
+public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T>implements HotStream<T> {
 
-	protected final Stream<T> stream;
-	
-	
-	public BaseHotStreamImpl(Stream<T> stream){
-		this.stream = stream;	
-	}
-	
-	public HotStream<T> paused(Executor exec){
-		pause();
-		return init(exec);
-	}
-	public abstract HotStream<T> init(Executor exec);
-	
-	public HotStream<T> schedule(String cron,ScheduledExecutorService ex){
-		final Iterator<T> it = stream.iterator();
-		scheduleInternal(it,cron,ex);
-		return this;
-		
-	}
-	
-	
-	
-	public HotStream<T> scheduleFixedDelay(long delay,ScheduledExecutorService ex){
-		final Iterator<T> it = stream.iterator();
-		scheduleFixedDelayInternal(it,delay,ex);
-		return this;
-		
-	}
-	public HotStream<T> scheduleFixedRate(long rate,ScheduledExecutorService ex){
-		final Iterator<T> it = stream.iterator();
-		scheduleFixedRate(it,rate,ex);
-		return this;
-		 
-	}
-	
-	@Override
-	public ReactiveSeq<T> connect(Queue<T> queue) {
-		connections.getAndSet(connected, queue);
-		connected++;
-		unpause();
-		return StreamUtils.reactiveSeq(StreamSupport.stream(
-                new ClosingSpliterator(Long.MAX_VALUE, queue,open), false),Optional.empty());
-	}
-	
+    protected final Stream<T> stream;
+
+    public BaseHotStreamImpl(Stream<T> stream) {
+        this.stream = stream;
+    }
+
+    public HotStream<T> paused(Executor exec) {
+        pause();
+        return init(exec);
+    }
+
+    public abstract HotStream<T> init(Executor exec);
+
+    public HotStream<T> schedule(String cron, ScheduledExecutorService ex) {
+        final Iterator<T> it = stream.iterator();
+        scheduleInternal(it, cron, ex);
+        return this;
+
+    }
+
+    public HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex) {
+        final Iterator<T> it = stream.iterator();
+        scheduleFixedDelayInternal(it, delay, ex);
+        return this;
+
+    }
+
+    public HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
+        final Iterator<T> it = stream.iterator();
+        scheduleFixedRate(it, rate, ex);
+        return this;
+
+    }
+
+    @Override
+    public ReactiveSeq<T> connect(Queue<T> queue) {
+        connections.getAndSet(connected, queue);
+        connected++;
+        unpause();
+        return StreamUtils.reactiveSeq(StreamSupport.stream(new ClosingSpliterator(
+                                                                                   Long.MAX_VALUE, queue, open),
+                                                            false),
+                                       Optional.empty());
+    }
+
 }

@@ -23,274 +23,336 @@ import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
 
+public interface LazyStream<U> extends BlockingStream<U> {
 
-public interface LazyStream<U> extends BlockingStream<U>{
-	
-	LazyStreamWrapper<U> getLastActive();
-	Supplier<LazyResultConsumer<U>> getLazyCollector();
-	
-	
-	Optional<Consumer<Throwable>> getErrorHandler();
-	
-	 MaxActive getMaxActive();
-	 
-	 public Iterator<U> iterator();
-	/**
-	 * Trigger a lazy stream as a task on the provided Executor
-	 * 
-	 *
-	 * 
-	 * 
-	 */
-	default void run() {
-		SimpleReact reactor  = SequentialElasticPools.simpleReact.nextReactor();
-		reactor.ofAsync(() -> run(new NonCollector<>()))
-								.peek(n-> SequentialElasticPools.simpleReact.populate(reactor))
-								.onFail(n-> { SequentialElasticPools.simpleReact.populate(reactor); return 1;});
+    LazyStreamWrapper<U> getLastActive();
 
-	}
-	
+    Supplier<LazyResultConsumer<U>> getLazyCollector();
 
-	default void runThread(Runnable r) {
-		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		new Thread(() -> new Runner(r).run(getLastActive(),new EmptyCollector(getMaxActive(),safeJoin))).start();
+    Optional<Consumer<Throwable>> getErrorHandler();
 
-	}
-	
-	default Continuation runContinuation(Runnable r) {
-		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		return new Runner(r).runContinuations(getLastActive(),new EmptyCollector(getMaxActive(),safeJoin));
+    MaxActive getMaxActive();
 
-	}
-	/**
-	 * Trigger a lazy stream
-	 */
-	default void runOnCurrent() {
-		
-		
-		run(new NonCollector());
+    public Iterator<U> iterator();
 
-	}
-	
-	
+    /**
+     * Trigger a lazy stream as a task on the provided Executor
+     * 
+     *
+     * 
+     * 
+     */
+    default void run() {
+        SimpleReact reactor = SequentialElasticPools.simpleReact.nextReactor();
+        reactor.ofAsync(() -> run(new NonCollector<>()))
+               .peek(n -> SequentialElasticPools.simpleReact.populate(reactor))
+               .onFail(n -> {
+                   SequentialElasticPools.simpleReact.populate(reactor);
+                   return 1;
+               });
 
-	/**
-	 * Trigger a lazy stream and return the results in the Collection created by
-	 * the collector
-	 * 
-	 * @param collector
-	 *            Supplier that creates a collection to store results in
-	 * @return Collection of results
-	 */
-	default <A,R> R run(Collector<U,A,R> collector) {
-		if(getLastActive().isSequential()){ 
-			//if single threaded we can simply push from each Future into the collection to be returned
-			if(collector.supplier().get()==null){
-				forEach(r->{});
-				return null;
-			}
-			A col = collector.supplier().get();
-			forEach(r->collector.accumulator().accept(col,r));
-			return collector.finisher().apply(col);
-		
-		}
-	
-		Function<FastFuture<U>,U> safeJoin = (FastFuture<U> cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		LazyResultConsumer<U> batcher = collector.supplier().get() != null ? getLazyCollector().get().withResults( new ArrayList<>())
-				: new EmptyCollector<>(this.getMaxActive(),safeJoin);
+    }
 
-		try {
-		
-			this.getLastActive().injectFutures().forEach(n -> {
-				
-				batcher.accept(n);
-			
-				
-			});
-		} catch (SimpleReactProcessingException e) {
-			
-		}
-		if (collector.supplier().get() == null){
-			batcher.block(safeJoin);
-			return null;
-		}
-		
-		return (R)batcher.getAllResults().stream()
-									.map(cf -> BlockingStreamHelper.getSafe(cf,getErrorHandler()))
-									.filter(v -> v != MissingValue.MISSING_VALUE)
-									.collect((Collector)collector);
-		
+    default void runThread(Runnable r) {
+        Function<FastFuture, U> safeJoin = (FastFuture cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
+        new Thread(
+                   () -> new Runner(
+                                    r).run(getLastActive(),
+                                           new EmptyCollector(
+                                                              getMaxActive(), safeJoin))).start();
 
-	}
-	
-	
-	
-	
-	default void forEach(Consumer<? super U> c){
-		Function<FastFuture<U>,U> safeJoin = (FastFuture<U> cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
+    }
 
-		if(getLastActive().isSequential()){ 
-			//if single threaded we can simply push from each Future into the collection to be returned
-			try {
-				this.getLastActive().operation(f-> f.peek(c)).injectFutures().forEach( next -> {
-					safeJoin.apply(next);
-			
-					
-				});
-			} catch (SimpleReactProcessingException e) {
-				
-			}
-		
-			return;
-		}
-	
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this);
-		try {
-			this.getLastActive().operation(f-> f.peek(c)).injectFutures().forEach( next -> {
-				
-			 collector.getConsumer().accept(next);
-			
-			});
-		} catch (SimpleReactProcessingException e) {
-			
-		}
-		collector.getConsumer().block(safeJoin);
-	
-		
-		
+    default Continuation runContinuation(Runnable r) {
+        Function<FastFuture, U> safeJoin = (FastFuture cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
+        return new Runner(
+                          r).runContinuations(getLastActive(),
+                                              new EmptyCollector(
+                                                                 getMaxActive(), safeJoin));
 
-	}
-	
-	default Optional<U> reduce(BinaryOperator<U> accumulator){
-		if(getLastActive().isSequential()){ 
-			Object[] result = {null};
-			forEach(r-> {
-				if(result[0]==null)
-					result[0]=r;
-				else{
-					result[0]=accumulator.apply((U)result[0], r);
-				}
-			});
-			return (Optional)Optional.ofNullable(result[0]);
-		
-		}
-		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this);
-		Optional[] result =  {Optional.empty()};
-		try {
-			this.getLastActive().injectFutures().forEach(next -> {
-				collector.getConsumer().accept(next);
-				if(!result[0].isPresent())
-					result[0] = collector.reduce(safeJoin,accumulator);
-				else
-					result[0] = result[0].map(v ->collector.reduce(safeJoin,(U)v,accumulator));	
-				
-			});
-		} catch (SimpleReactProcessingException e) {
-			
-		}
-	
-		 if(result[0].isPresent())
-					return result[0].map(v-> collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin,(U)v, accumulator));
-			
-			return		collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin, accumulator);
-			
-	}
-   
-	default U reduce(U identity, BinaryOperator<U> accumulator){
-		if(getLastActive().isSequential()){ 
-			Object[] result = {identity};
-			forEach(r-> {
-				if(result[0]==null)
-					result[0]=r;
-				else{
-					result[0]=accumulator.apply((U)result[0], r);
-				}
-			});
-			return (U)result[0];
-		
-		}
-		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this);
-		Object[] result =  {identity};
-		try {
-			this.getLastActive().injectFutures().forEach(next -> {
+    }
 
-				
-				collector.getConsumer().accept(next);
-			
-				result[0] = collector.reduce(safeJoin,(U)result[0],accumulator);	
-			});
-		} catch (SimpleReactProcessingException e) {
-			
-		}
-		return collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin,(U)result[0], accumulator);
-	}
-	
-	default<T> T reduce(T identity, BiFunction<T,? super U,T> accumulator, BinaryOperator<T> combiner){
-		
-		if(getLastActive().isSequential()){ 
-			Object[] result = {identity};
-			forEach(r-> {
-				if(result[0]==null)
-					result[0]=r;
-				else{
-					result[0]= accumulator.apply((T)result[0], r);
-				}
-			});
-			return (T)result[0];
-		
-		}
-		
-		Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-		IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this);
-		Object[] result =  {identity};
-		try {
-			this.getLastActive().injectFutures().forEach(next -> {
+    /**
+     * Trigger a lazy stream
+     */
+    default void runOnCurrent() {
 
-				
-				collector.getConsumer().accept(next);
-				result[0] = collector.reduce(safeJoin,(T)result[0],accumulator,combiner);	
-			});
-		} catch (SimpleReactProcessingException e) {
-			
-		}
-		return collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin,(T)result[0], accumulator,combiner);
-	}
-	default<T> T reduce(T identity, BiFunction<T,? super U,T> accumulator){
-        
-        if(getLastActive().isSequential()){ 
-            Object[] result = {identity};
-            forEach(r-> {
-                if(result[0]==null)
-                    result[0]=r;
-                else{
-                    result[0]= accumulator.apply((T)result[0], r);
+        run(new NonCollector());
+
+    }
+
+    /**
+     * Trigger a lazy stream and return the results in the Collection created by
+     * the collector
+     * 
+     * @param collector
+     *            Supplier that creates a collection to store results in
+     * @return Collection of results
+     */
+    default <A, R> R run(Collector<U, A, R> collector) {
+        if (getLastActive().isSequential()) {
+            //if single threaded we can simply push from each Future into the collection to be returned
+            if (collector.supplier()
+                         .get() == null) {
+                forEach(r -> {
+                });
+                return null;
+            }
+            A col = collector.supplier()
+                             .get();
+            forEach(r -> collector.accumulator()
+                                  .accept(col, r));
+            return collector.finisher()
+                            .apply(col);
+
+        }
+
+        Function<FastFuture<U>, U> safeJoin = (FastFuture<U> cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
+        LazyResultConsumer<U> batcher = collector.supplier()
+                                                 .get() != null
+                                                         ? getLazyCollector().get()
+                                                                             .withResults(new ArrayList<>())
+                                                         : new EmptyCollector<>(
+                                                                                this.getMaxActive(), safeJoin);
+
+        try {
+
+            this.getLastActive()
+                .injectFutures()
+                .forEach(n -> {
+
+                    batcher.accept(n);
+
+                });
+        } catch (SimpleReactProcessingException e) {
+
+        }
+        if (collector.supplier()
+                     .get() == null) {
+            batcher.block(safeJoin);
+            return null;
+        }
+
+        return (R) batcher.getAllResults()
+                          .stream()
+                          .map(cf -> BlockingStreamHelper.getSafe(cf, getErrorHandler()))
+                          .filter(v -> v != MissingValue.MISSING_VALUE)
+                          .collect((Collector) collector);
+
+    }
+
+    default void forEach(Consumer<? super U> c) {
+        Function<FastFuture<U>, U> safeJoin = (FastFuture<U> cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
+
+        if (getLastActive().isSequential()) {
+            //if single threaded we can simply push from each Future into the collection to be returned
+            try {
+                this.getLastActive()
+                    .operation(f -> f.peek(c))
+                    .injectFutures()
+                    .forEach(next -> {
+                        safeJoin.apply(next);
+
+                    });
+            } catch (SimpleReactProcessingException e) {
+
+            }
+
+            return;
+        }
+
+        IncrementalReducer<U> collector = new IncrementalReducer(
+                                                                 this.getLazyCollector()
+                                                                     .get()
+                                                                     .withResults(new ArrayList<>()),
+                                                                 this);
+        try {
+            this.getLastActive()
+                .operation(f -> f.peek(c))
+                .injectFutures()
+                .forEach(next -> {
+
+                    collector.getConsumer()
+                             .accept(next);
+
+                });
+        } catch (SimpleReactProcessingException e) {
+
+        }
+        collector.getConsumer()
+                 .block(safeJoin);
+
+    }
+
+    default Optional<U> reduce(BinaryOperator<U> accumulator) {
+        if (getLastActive().isSequential()) {
+            Object[] result = { null };
+            forEach(r -> {
+                if (result[0] == null)
+                    result[0] = r;
+                else {
+                    result[0] = accumulator.apply((U) result[0], r);
                 }
             });
-            return (T)result[0];
-        
-        }
-        
-        Function<FastFuture,U> safeJoin = (FastFuture cf)->(U) BlockingStreamHelper.getSafe(cf,getErrorHandler());
-        IncrementalReducer<U> collector = new IncrementalReducer(this.getLazyCollector().get().withResults(new ArrayList<>()), this);
-        Object[] result =  {identity};
-        try {
-            this.getLastActive().injectFutures().forEach(next -> {
+            return (Optional) Optional.ofNullable(result[0]);
 
-                
-                collector.getConsumer().accept(next);
-                result[0] = collector.reduce(safeJoin,(T)result[0],accumulator);   
-            });
-        } catch (SimpleReactProcessingException e) {
-            
         }
-        return collector.reduceResults(collector.getConsumer().getAllResults(), safeJoin,(T)result[0], accumulator);
+        Function<FastFuture, U> safeJoin = (FastFuture cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
+        IncrementalReducer<U> collector = new IncrementalReducer(
+                                                                 this.getLazyCollector()
+                                                                     .get()
+                                                                     .withResults(new ArrayList<>()),
+                                                                 this);
+        Optional[] result = { Optional.empty() };
+        try {
+            this.getLastActive()
+                .injectFutures()
+                .forEach(next -> {
+                    collector.getConsumer()
+                             .accept(next);
+                    if (!result[0].isPresent())
+                        result[0] = collector.reduce(safeJoin, accumulator);
+                    else
+                        result[0] = result[0].map(v -> collector.reduce(safeJoin, (U) v, accumulator));
+
+                });
+        } catch (SimpleReactProcessingException e) {
+
+        }
+
+        if (result[0].isPresent())
+            return result[0].map(v -> collector.reduceResults(collector.getConsumer()
+                                                                       .getAllResults(),
+                                                              safeJoin, (U) v, accumulator));
+
+        return collector.reduceResults(collector.getConsumer()
+                                                .getAllResults(),
+                                       safeJoin, accumulator);
+
     }
-	
-	default <R> R collect(Supplier<R> supplier, BiConsumer<R,? super U> accumulator, BiConsumer<R,R> combiner){
-		return (R)this.run((Collector)Collector.of(supplier, accumulator, ( a,b)-> { combiner.accept(a, b); return a;}));
-		
-	}
-	
+
+    default U reduce(U identity, BinaryOperator<U> accumulator) {
+        if (getLastActive().isSequential()) {
+            Object[] result = { identity };
+            forEach(r -> {
+                if (result[0] == null)
+                    result[0] = r;
+                else {
+                    result[0] = accumulator.apply((U) result[0], r);
+                }
+            });
+            return (U) result[0];
+
+        }
+        Function<FastFuture, U> safeJoin = (FastFuture cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
+        IncrementalReducer<U> collector = new IncrementalReducer(
+                                                                 this.getLazyCollector()
+                                                                     .get()
+                                                                     .withResults(new ArrayList<>()),
+                                                                 this);
+        Object[] result = { identity };
+        try {
+            this.getLastActive()
+                .injectFutures()
+                .forEach(next -> {
+
+                    collector.getConsumer()
+                             .accept(next);
+
+                    result[0] = collector.reduce(safeJoin, (U) result[0], accumulator);
+                });
+        } catch (SimpleReactProcessingException e) {
+
+        }
+        return collector.reduceResults(collector.getConsumer()
+                                                .getAllResults(),
+                                       safeJoin, (U) result[0], accumulator);
+    }
+
+    default <T> T reduce(T identity, BiFunction<T, ? super U, T> accumulator, BinaryOperator<T> combiner) {
+
+        if (getLastActive().isSequential()) {
+            Object[] result = { identity };
+            forEach(r -> {
+                if (result[0] == null)
+                    result[0] = r;
+                else {
+                    result[0] = accumulator.apply((T) result[0], r);
+                }
+            });
+            return (T) result[0];
+
+        }
+
+        Function<FastFuture, U> safeJoin = (FastFuture cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
+        IncrementalReducer<U> collector = new IncrementalReducer(
+                                                                 this.getLazyCollector()
+                                                                     .get()
+                                                                     .withResults(new ArrayList<>()),
+                                                                 this);
+        Object[] result = { identity };
+        try {
+            this.getLastActive()
+                .injectFutures()
+                .forEach(next -> {
+
+                    collector.getConsumer()
+                             .accept(next);
+                    result[0] = collector.reduce(safeJoin, (T) result[0], accumulator, combiner);
+                });
+        } catch (SimpleReactProcessingException e) {
+
+        }
+        return collector.reduceResults(collector.getConsumer()
+                                                .getAllResults(),
+                                       safeJoin, (T) result[0], accumulator, combiner);
+    }
+
+    default <T> T reduce(T identity, BiFunction<T, ? super U, T> accumulator) {
+
+        if (getLastActive().isSequential()) {
+            Object[] result = { identity };
+            forEach(r -> {
+                if (result[0] == null)
+                    result[0] = r;
+                else {
+                    result[0] = accumulator.apply((T) result[0], r);
+                }
+            });
+            return (T) result[0];
+
+        }
+
+        Function<FastFuture, U> safeJoin = (FastFuture cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
+        IncrementalReducer<U> collector = new IncrementalReducer(
+                                                                 this.getLazyCollector()
+                                                                     .get()
+                                                                     .withResults(new ArrayList<>()),
+                                                                 this);
+        Object[] result = { identity };
+        try {
+            this.getLastActive()
+                .injectFutures()
+                .forEach(next -> {
+
+                    collector.getConsumer()
+                             .accept(next);
+                    result[0] = collector.reduce(safeJoin, (T) result[0], accumulator);
+                });
+        } catch (SimpleReactProcessingException e) {
+
+        }
+        return collector.reduceResults(collector.getConsumer()
+                                                .getAllResults(),
+                                       safeJoin, (T) result[0], accumulator);
+    }
+
+    default <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super U> accumulator, BiConsumer<R, R> combiner) {
+        return (R) this.run((Collector) Collector.of(supplier, accumulator, (a, b) -> {
+            combiner.accept(a, b);
+            return a;
+        }));
+
+    }
+
 }

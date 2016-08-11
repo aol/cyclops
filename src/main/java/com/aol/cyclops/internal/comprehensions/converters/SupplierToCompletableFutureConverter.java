@@ -7,19 +7,21 @@ import com.aol.cyclops.types.extensability.MonadicConverter;
 
 public class SupplierToCompletableFutureConverter implements MonadicConverter<CompletableFuture> {
 
-	public static int priority = 5;
-	public int priority(){
-		return priority;
-	}
-	@Override
-	public boolean accept(Object o) {
-		return o instanceof Supplier;
-	}
+    public static int priority = 5;
 
-	@Override
-	public CompletableFuture convertToMonadicForm(Object f) {
-		
-		return CompletableFuture.supplyAsync((Supplier)f);
-	}
+    public int priority() {
+        return priority;
+    }
+
+    @Override
+    public boolean accept(Object o) {
+        return o instanceof Supplier;
+    }
+
+    @Override
+    public CompletableFuture convertToMonadicForm(Object f) {
+
+        return CompletableFuture.supplyAsync((Supplier) f);
+    }
 
 }

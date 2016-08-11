@@ -10,9 +10,11 @@ import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 public class PublisherToStreamConverter implements MonadicConverter<Stream> {
 
     public static int priority = 5;
-    public int priority(){
+
+    public int priority() {
         return priority;
     }
+
     @Override
     public boolean accept(Object o) {
         return o instanceof Publisher;
@@ -20,12 +22,12 @@ public class PublisherToStreamConverter implements MonadicConverter<Stream> {
 
     @Override
     public Stream convertToMonadicForm(Object f) {
-        
-        Publisher p = (Publisher)f;
+
+        Publisher p = (Publisher) f;
         SeqSubscriber sub = SeqSubscriber.subscriber();
         p.subscribe(sub);
         return sub.stream();
-   
+
     }
 
 }

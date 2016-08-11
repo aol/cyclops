@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  * @param <T> container type
  */
 public interface OnEmpty<T> {
-   
+
     /**
      * If this Container instance is empty, create a new instance containing the provided value
      * 
@@ -18,7 +18,7 @@ public interface OnEmpty<T> {
      * @return New instance containing value if container is empty, otherwise returns this container
      */
     OnEmpty<T> onEmpty(T value);
-    
+
     /**
      * If this Container instance is empty, create a new instance containing the value returned from the provided Supplier
      * 
@@ -26,9 +26,7 @@ public interface OnEmpty<T> {
      * @return New Container with value if this is empty, otherwise this container
      */
     OnEmpty<T> onEmptyGet(Supplier<? extends T> supplier);
-    
-    
-    
+
     /**
      * If this container instance is empty, throw the exception returned by the provided Supplier
      * 
@@ -36,5 +34,5 @@ public interface OnEmpty<T> {
      * @return Throw exception if empty, otherwise this container
      */
     <X extends Throwable> OnEmpty<T> onEmptyThrow(Supplier<? extends X> supplier);
-   
+
 }

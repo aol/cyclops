@@ -25,7 +25,6 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
@@ -46,29 +45,23 @@ import com.aol.cyclops.types.applicative.ApplicativeFunctor;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class MaybeTValue<T> implements MaybeT<T>, 
-                                    TransformerValue<T>,
-                                    MonadicValue<T>,
-                                    Supplier<T>, 
-                                    ConvertableFunctor<T>, 
-                                    Filterable<T>,
-                                    ApplicativeFunctor<T>,
-                                    Matchable.ValueAndOptionalMatcher<T>
-                                    {
+public class MaybeTValue<T> implements MaybeT<T>, TransformerValue<T>, MonadicValue<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,
+        ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 
-    
     private final AnyMValue<Maybe<T>> run;
 
     private MaybeTValue(final AnyMValue<Maybe<T>> run) {
         this.run = run;
     }
 
-    public Maybe<T> value(){
+    public Maybe<T> value() {
         return run.get();
     }
-    public boolean isValuePresent(){
+
+    public boolean isValuePresent() {
         return !run.isEmpty();
     }
+
     /**
      * @return The wrapped AnyM
      */
@@ -93,11 +86,11 @@ public class MaybeTValue<T> implements MaybeT<T>,
      * @return MaybeT with peek call
      */
     public MaybeTValue<T> peek(Consumer<? super T> peek) {
-        return map(in->{
+        return map(in -> {
             peek.accept(in);
             return in;
         });
-       
+
     }
 
     /**
@@ -138,36 +131,35 @@ public class MaybeTValue<T> implements MaybeT<T>,
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
     public <B> MaybeTValue<B> map(Function<? super T, ? extends B> f) {
-        return new MaybeTValue<B>(run.map(o -> o.map(f)));
+        return new MaybeTValue<B>(
+                                  run.map(o -> o.map(f)));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> MaybeTValue<R> combine(Value<? extends T2> app,
-            BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return new MaybeTValue<>(run.map(o -> o.combine(app,fn)));
+    public <T2, R> MaybeTValue<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new MaybeTValue<>(
+                                 run.map(o -> o.combine(app, fn)));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> MaybeTValue<R> zip(Iterable<? extends T2> app,
-            BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return new MaybeTValue<>(run.map(o -> o.zip(app,fn)));
+    public <T2, R> MaybeTValue<R> zip(Iterable<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return new MaybeTValue<>(
+                                 run.map(o -> o.zip(app, fn)));
     }
 
-    
-    
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
      */
     @Override
     public <U, R> MaybeTValue<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        
-        return (MaybeTValue<R>)TransformerValue.super.zip(other, zipper);
+
+        return (MaybeTValue<R>) TransformerValue.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -175,8 +167,8 @@ public class MaybeTValue<T> implements MaybeT<T>,
      */
     @Override
     public <U, R> MaybeTValue<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        
-        return (MaybeTValue<R>)TransformerValue.super.zip(other, zipper);
+
+        return (MaybeTValue<R>) TransformerValue.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -184,8 +176,8 @@ public class MaybeTValue<T> implements MaybeT<T>,
      */
     @Override
     public <U> MaybeTValue<Tuple2<T, U>> zip(Stream<? extends U> other) {
-        
-        return (MaybeTValue)TransformerValue.super.zip(other);
+
+        return (MaybeTValue) TransformerValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -193,8 +185,8 @@ public class MaybeTValue<T> implements MaybeT<T>,
      */
     @Override
     public <U> MaybeTValue<Tuple2<T, U>> zip(Seq<? extends U> other) {
-        
-        return (MaybeTValue)TransformerValue.super.zip(other);
+
+        return (MaybeTValue) TransformerValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -202,17 +194,17 @@ public class MaybeTValue<T> implements MaybeT<T>,
      */
     @Override
     public <U> MaybeTValue<Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        
-        return (MaybeTValue)TransformerValue.super.zip(other);
+
+        return (MaybeTValue) TransformerValue.super.zip(other);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> MaybeTValue<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
-            Publisher<? extends T2> app) {
-        return new MaybeTValue<>(run.map(o -> o.zip(fn,app)));
+    public <T2, R> MaybeTValue<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
+        return new MaybeTValue<>(
+                                 run.map(o -> o.zip(fn, app)));
     }
 
     /**
@@ -237,13 +229,16 @@ public class MaybeTValue<T> implements MaybeT<T>,
         return of(run.bind(opt -> {
             if (opt.isPresent())
                 return f.apply(opt.get()).run.unwrap();
-            return run.unit(Maybe.<B> none()).unwrap();
+            return run.unit(Maybe.<B> none())
+                      .unwrap();
         }));
 
     }
+
     public <B> MaybeTValue<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f) {
 
-        return new MaybeTValue<B>(run.map(o -> o.flatMap(f)));
+        return new MaybeTValue<B>(
+                                  run.map(o -> o.flatMap(f)));
 
     }
 
@@ -314,12 +309,14 @@ public class MaybeTValue<T> implements MaybeT<T>,
      *            another monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U1, U2, R> BiFunction<MaybeTValue<U1>, MaybeTValue<U2>, MaybeTValue<R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
+    public static <U1, U2, R> BiFunction<MaybeTValue<U1>, MaybeTValue<U2>, MaybeTValue<R>> lift2(BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
-    public static <A,V extends MonadicValue<Maybe<A>>> MaybeTValue<A> fromValue(V monadicValue){
+
+    public static <A, V extends MonadicValue<Maybe<A>>> MaybeTValue<A> fromValue(V monadicValue) {
         return of(AnyM.ofValue(monadicValue));
     }
+
     /**
      * Construct an MaybeT from an AnyM that contains a monad type that contains
      * type other than Maybe The values in the underlying monad will be mapped
@@ -341,11 +338,13 @@ public class MaybeTValue<T> implements MaybeT<T>,
      * @return MaybeT
      */
     public static <A> MaybeTValue<A> of(AnyMValue<Maybe<A>> monads) {
-        
-        return new MaybeTValue<>(monads);
+
+        return new MaybeTValue<>(
+                                 monads);
     }
+
     public static <A> MaybeTValue<A> of(Maybe<A> maybe) {
-        
+
         return fromValue(Maybe.just(maybe));
     }
 
@@ -355,111 +354,120 @@ public class MaybeTValue<T> implements MaybeT<T>,
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return String.format("MaybeTValue[%s]", run );
+        return String.format("MaybeTValue[%s]", run);
     }
 
     @Override
     public T get() {
-        return run.get().get();
+        return run.get()
+                  .get();
     }
-    
-    
-    
-    public boolean isPresent(){
-        return run.orElse(Maybe.none()).isPresent();
+
+    public boolean isPresent() {
+        return run.orElse(Maybe.none())
+                  .isPresent();
     }
 
     @Override
     public ReactiveSeq<T> stream() {
-      return run.orElse(Maybe.none()).stream();
+        return run.orElse(Maybe.none())
+                  .stream();
     }
 
     @Override
     public Iterator<T> iterator() {
-       return run.orElse(Maybe.none()).iterator();
+        return run.orElse(Maybe.none())
+                  .iterator();
     }
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-        run.orElse(Maybe.none()).subscribe(s);
-        
+        run.orElse(Maybe.none())
+           .subscribe(s);
+
     }
 
     @Override
     public boolean test(T t) {
-       return run.get().test(t);
+        return run.get()
+                  .test(t);
     }
 
-
-    public <R> MaybeTValue<R> unit(R value){
-       return of(run.unit(Maybe.of(value)));
+    public <R> MaybeTValue<R> unit(R value) {
+        return of(run.unit(Maybe.of(value)));
     }
-    public <R> MaybeTValue<R> empty(){
+
+    public <R> MaybeTValue<R> empty() {
         return of(run.unit(Maybe.none()));
-     }
+    }
 
-    public static<T>  MaybeTValue<T> emptyOptional() {
+    public static <T> MaybeTValue<T> emptyOptional() {
         return MaybeT.fromOptional(Optional.empty());
     }
- 
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
     public <U> MaybeTValue<U> cast(Class<? extends U> type) {
-       
-        return (MaybeTValue<U>)TransformerValue.super.cast(type);
+
+        return (MaybeTValue<U>) TransformerValue.super.cast(type);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
     public <R> MaybeTValue<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-       
-        return (MaybeTValue<R>)TransformerValue.super.trampoline(mapper);
+
+        return (MaybeTValue<R>) TransformerValue.super.trampoline(mapper);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    public <R> MaybeTValue<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
-            Supplier<? extends R> otherwise) {
-       
-        return (MaybeTValue<R>)TransformerValue.super.patternMatch(case1, otherwise);
+    public <R> MaybeTValue<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
+
+        return (MaybeTValue<R>) TransformerValue.super.patternMatch(case1, otherwise);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
     public <U> MaybeTValue<U> ofType(Class<? extends U> type) {
-       
-        return (MaybeTValue<U>)MaybeT.super.ofType(type);
+
+        return (MaybeTValue<U>) MaybeT.super.ofType(type);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
     public MaybeTValue<T> filterNot(Predicate<? super T> fn) {
-       
-        return (MaybeTValue<T>)MaybeT.super.filterNot(fn);
+
+        return (MaybeTValue<T>) MaybeT.super.filterNot(fn);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
      */
     @Override
     public MaybeTValue<T> notNull() {
-       
-        return (MaybeTValue<T>)MaybeT.super.notNull();
+
+        return (MaybeTValue<T>) MaybeT.super.notNull();
     }
+
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return run.hashCode();
     }
-    
+
     @Override
-    public boolean equals(Object o){
-        if(o instanceof MaybeTValue){
-            return run.equals( ((MaybeTValue)o).run);
+    public boolean equals(Object o) {
+        if (o instanceof MaybeTValue) {
+            return run.equals(((MaybeTValue) o).run);
         }
         return false;
     }

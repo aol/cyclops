@@ -37,18 +37,16 @@ import com.aol.cyclops.types.stream.ToStream;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public interface EvalT<T>  extends Publisher<T>,
-                                   Functor<T>,
-                                   Filterable<T>,
-                                   ToStream<T>{
+public interface EvalT<T> extends Publisher<T>, Functor<T>, Filterable<T>, ToStream<T> {
 
     public <R> EvalT<R> unit(R value);
+
     public <R> EvalT<R> empty();
 
     /**
      * @return The wrapped AnyM
      */
-    public AnyM<Eval<T>> unwrap() ;
+    public AnyM<Eval<T>> unwrap();
 
     /**
      * Peek at the current value of the Maybe
@@ -84,7 +82,8 @@ public interface EvalT<T>  extends Publisher<T>,
      *            Predicate to filter the wrapped Maybe
      * @return MaybeT that applies the provided filter
      */
-    public MaybeT<T> filter(Predicate<? super T> test) ;
+    public MaybeT<T> filter(Predicate<? super T> test);
+
     /**
      * Map the wrapped Maybe
      * 
@@ -102,7 +101,7 @@ public interface EvalT<T>  extends Publisher<T>,
      *            Mapping function for the wrapped Maybe
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
-    public <B> EvalT<B> map(Function<? super T, ? extends B> f) ;
+    public <B> EvalT<B> map(Function<? super T, ? extends B> f);
 
     /**
      * Flat Map the wrapped Maybe
@@ -124,13 +123,15 @@ public interface EvalT<T>  extends Publisher<T>,
     default <B> EvalT<B> bind(Function<? super T, EvalT<? extends B>> f) {
 
         return of(unwrap().bind(opt -> {
-            
-                return f.apply(opt.get()).unwrap().unwrap();
-           
+
+            return f.apply(opt.get())
+                    .unwrap()
+                    .unwrap();
+
         }));
 
     }
-    
+
     public <B> EvalT<B> flatMap(Function<? super T, ? extends Eval<? extends B>> f);
 
     /**
@@ -200,7 +201,7 @@ public interface EvalT<T>  extends Publisher<T>,
      *            another monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U1, U2, R> BiFunction<EvalT<U1>, EvalT<U2>, EvalT<R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
+    public static <U1, U2, R> BiFunction<EvalT<U1>, EvalT<U2>, EvalT<R>> lift2(BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -214,7 +215,7 @@ public interface EvalT<T>  extends Publisher<T>,
      * @return MaybeT
      */
     public static <A> EvalT<A> fromAnyM(AnyM<A> anyM) {
-        return of(anyM.map(a->Eval.later(()->a)));
+        return of(anyM.map(a -> Eval.later(() -> a)));
     }
 
     /**
@@ -225,10 +226,10 @@ public interface EvalT<T>  extends Publisher<T>,
      * @return MaybeT
      */
     public static <A> EvalT<A> of(AnyM<Eval<A>> monads) {
-        return Matchables.anyM(monads).visit(v-> EvalTValue.of(v), s->EvalTSeq.of(s));
+        return Matchables.anyM(monads)
+                         .visit(v -> EvalTValue.of(v), s -> EvalTSeq.of(s));
 
     }
- 
 
     public static <A> EvalTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
         return EvalTValue.fromAnyM(anyM);
@@ -238,8 +239,7 @@ public interface EvalT<T>  extends Publisher<T>,
         return EvalTSeq.fromAnyM(anyM);
     }
 
-    public static <A> EvalTSeq<A> fromIterable(
-            Iterable<Eval<A>> iterableOfEvals) {
+    public static <A> EvalTSeq<A> fromIterable(Iterable<Eval<A>> iterableOfEvals) {
         return EvalTSeq.of(AnyM.fromIterable(iterableOfEvals));
     }
 
@@ -247,13 +247,11 @@ public interface EvalT<T>  extends Publisher<T>,
         return EvalTSeq.of(AnyM.fromStream(streamOfEvals));
     }
 
-    public static <A> EvalTSeq<A> fromPublisher(
-            Publisher<Eval<A>> publisherOfEvals) {
+    public static <A> EvalTSeq<A> fromPublisher(Publisher<Eval<A>> publisherOfEvals) {
         return EvalTSeq.of(AnyM.fromPublisher(publisherOfEvals));
     }
 
-    public static <A, V extends MonadicValue<Eval<A>>> EvalTValue<A> fromValue(
-            V monadicValue) {
+    public static <A, V extends MonadicValue<Eval<A>>> EvalTValue<A> fromValue(V monadicValue) {
         return EvalTValue.fromValue(monadicValue);
     }
 
@@ -265,62 +263,67 @@ public interface EvalT<T>  extends Publisher<T>,
         return EvalTValue.of(AnyM.fromCompletableFuture(future));
     }
 
-    public static <A> EvalTValue<A> fromIterableValue(
-            Iterable<Eval<A>> iterableOfEvals) {
+    public static <A> EvalTValue<A> fromIterableValue(Iterable<Eval<A>> iterableOfEvals) {
         return EvalTValue.of(AnyM.fromIterableValue(iterableOfEvals));
     }
+
     public static <T> EvalTValue<T> emptyMaybe() {
         return fromValue(Maybe.none());
-     }
-    public static <T> EvalTSeq<T> emptyList(){
+    }
+
+    public static <T> EvalTSeq<T> emptyList() {
         return EvalT.fromIterable(ListX.of());
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
     default <U> EvalT<U> cast(Class<? extends U> type) {
-        return (EvalT<U>)Functor.super.cast(type);
+        return (EvalT<U>) Functor.super.cast(type);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
     default <R> EvalT<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (EvalT<R>)Functor.super.trampoline(mapper);
+        return (EvalT<R>) Functor.super.trampoline(mapper);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> EvalT<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
-            Supplier<? extends R> otherwise) {
-       return (EvalT<R>)Functor.super.patternMatch(case1, otherwise);
+    default <R> EvalT<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
+        return (EvalT<R>) Functor.super.patternMatch(case1, otherwise);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
     default <U> MaybeT<U> ofType(Class<? extends U> type) {
-        
-        return (MaybeT<U>)Filterable.super.ofType(type);
+
+        return (MaybeT<U>) Filterable.super.ofType(type);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
     default MaybeT<T> filterNot(Predicate<? super T> fn) {
-       
-        return (MaybeT<T>)Filterable.super.filterNot(fn);
+
+        return (MaybeT<T>) Filterable.super.filterNot(fn);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
      */
     @Override
     default MaybeT<T> notNull() {
-       
-        return (MaybeT<T>)Filterable.super.notNull();
-    }
 
+        return (MaybeT<T>) Filterable.super.notNull();
+    }
 
 }

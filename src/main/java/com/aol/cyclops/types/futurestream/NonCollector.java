@@ -19,33 +19,33 @@ import java.util.stream.Collector;
  */
 class NonCollector<T, A, R> implements Collector<T, A, R> {
 
-	@Override
-	public Supplier<A> supplier() {
-		
-		return ()->null;
-	}
+    @Override
+    public Supplier<A> supplier() {
 
-	@Override
-	public BiConsumer<A, T> accumulator() {
-		
-		return null;
-	}
+        return () -> null;
+    }
 
-	@Override
-	public BinaryOperator<A> combiner() {
-		
-		return null;
-	}
+    @Override
+    public BiConsumer<A, T> accumulator() {
 
-	@Override
-	public Function<A, R> finisher() {
-		
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public Set<java.util.stream.Collector.Characteristics> characteristics() {
-			return null;
-	}
+    @Override
+    public BinaryOperator<A> combiner() {
+
+        return null;
+    }
+
+    @Override
+    public Function<A, R> finisher() {
+
+        return null;
+    }
+
+    @Override
+    public Set<java.util.stream.Collector.Characteristics> characteristics() {
+        return null;
+    }
 
 }
