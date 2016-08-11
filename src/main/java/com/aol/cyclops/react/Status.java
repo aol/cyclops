@@ -1,9 +1,10 @@
 package com.aol.cyclops.react;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-
 import org.pcollections.PStack;
+
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
+
+import lombok.AllArgsConstructor;
 
 /**
  * Class that returned to blocking predicates for short circuiting result collection
@@ -19,7 +20,7 @@ public class Status<T> {
 	private final int errors;
 	private final int total;
 	private final long elapsedNanos;
-	private final PStack<T> resultsSoFar;
+	private final PStackX<T> resultsSoFar;
 
 	public final int getAllCompleted(){
 		return completed + errors;

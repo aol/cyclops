@@ -1707,7 +1707,22 @@ public interface LazyFutureStream<U> extends Functor<U>,
 
 
     }
-
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#take(long)
+     */
+    @Override
+    default LazyFutureStream<U> drop(long drop){
+        return skip(drop);
+    }
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#take(long)
+     */
+    @Override
+    default LazyFutureStream<U> take(long take){
+        return limit(take);
+    }
+    
     @Override
     default  LazyFutureStream<U> takeWhile(Predicate<? super U> p) {
        

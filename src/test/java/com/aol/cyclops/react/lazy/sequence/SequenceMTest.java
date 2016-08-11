@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.lazy.sequenceM;
+package com.aol.cyclops.react.lazy.sequence;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;

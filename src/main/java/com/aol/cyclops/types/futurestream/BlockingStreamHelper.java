@@ -22,7 +22,7 @@ public class BlockingStreamHelper {
 	
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	static <R> R block(BlockingStream blocking,final Collector collector, final EagerStreamWrapper lastActive) {
+	static <T,A,R> R block(BlockingStream<T> blocking,final Collector collector, final EagerStreamWrapper lastActive) {
 		Stream<CompletableFuture> stream = lastActive.stream();
 		
 		return (R) stream.map((future) -> {

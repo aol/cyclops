@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.lazy.sequenceM;
+package com.aol.cyclops.react.lazy.sequence;
 
 import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
 import static org.hamcrest.Matchers.equalTo;

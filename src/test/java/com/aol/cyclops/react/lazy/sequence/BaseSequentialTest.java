@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.lazy.sequenceM;
+package com.aol.cyclops.react.lazy.sequence;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
@@ -67,6 +67,14 @@ public class BaseSequentialTest {
 	    @Test
 	    public void dropWhileEmpty(){
 	        assertThat(of().dropWhile(p->true).toList(),equalTo(Arrays.asList()));
+	    }
+	    @Test
+	    public void testTake(){
+	        assertThat(of(1,2,3,4,5).take(2).collect(Collectors.toList()).size(),equalTo(2));
+	    }
+	    @Test
+	    public void testDrop(){
+	        assertThat(of(1,2,3,4,5).drop(2).collect(Collectors.toList()).size(),equalTo(3));
 	    }
 	    @Test
 	    public void takeRight(){

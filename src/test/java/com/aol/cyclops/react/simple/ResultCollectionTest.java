@@ -76,7 +76,7 @@ public class ResultCollectionTest {
 					return it;
 				}).onFail(e -> 1).then((it) -> "*" + it)
 				
-				.<Set<String>>block(Collectors.toSet(),status -> status.getCompleted() > 1);
+				.block(Collectors.toSet(),status -> status.getCompleted() > 1);
 
 		assertThat(strings.size(), is(2));
 
