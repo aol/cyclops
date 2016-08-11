@@ -131,8 +131,8 @@ public class BaseSequentialTest {
     }
 	@Test
     public void zap1(){
-	    
-        assertThat(of(1,2,3).ap1(this::addOne)
+	   
+        assertThat(of(1,2,3).peek(System.out::println).ap1(this::addOne)
                   .toListX(),equalTo(Arrays.asList(2,3,4)));
         
     }

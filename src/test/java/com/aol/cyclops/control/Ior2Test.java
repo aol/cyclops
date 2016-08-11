@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -56,6 +58,16 @@ public class Ior2Test {
 		just = Ior.primary(10);
 		none = Ior.secondary("none");
 	}
+	@Test
+    public void testZip(){
+        assertThat(Ior.primary(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Ior.primary(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
+        assertThat(Ior.primary(10).zip(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Ior.primary(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Ior.primary(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Ior.primary(10).zip(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Ior.primary(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+    }
 	@Test
     public void testApFeatureToggle() {
 	  

@@ -10,7 +10,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -26,6 +29,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.util.CompletableFutures;
@@ -152,14 +156,59 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>,
             BiFunction<? super A, ? super T2, ? extends R> fn) {
         return new CompletableFutureTValue<R>(run.map(o-> CompletableFutures.zip(o, app, fn)));
     }
-/* (non-Javadoc)
- * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
- */
-@Override
-public <T2, R> CompletableFutureTValue<R> zip(BiFunction<? super A, ? super T2, ? extends R> fn,
-        Publisher<? extends T2> app) {
-    return new CompletableFutureTValue<R>(run.map(o-> CompletableFutures.zip( app, o, fn)));
-}
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.
+     * function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    public <T2, R> CompletableFutureTValue<R> zip(BiFunction<? super A, ? super T2, ? extends R> fn,
+            Publisher<? extends T2> app) {
+        return new CompletableFutureTValue<R>(run.map(o -> CompletableFutures.zip(app, o, fn)));
+    }
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> CompletableFutureTValue<R> zip(Seq<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+        
+        return (CompletableFutureTValue<R>)TransformerValue.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> CompletableFutureTValue<R> zip(Stream<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+        
+        return (CompletableFutureTValue<R>)TransformerValue.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
+     */
+    @Override
+    public <U> CompletableFutureTValue<Tuple2<A, U>> zip(Stream<? extends U> other) {
+        
+        return (CompletableFutureTValue)TransformerValue.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
+     */
+    @Override
+    public <U> CompletableFutureTValue<Tuple2<A, U>> zip(Seq<? extends U> other) {
+        
+        return (CompletableFutureTValue)TransformerValue.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+     */
+    @Override
+    public <U> CompletableFutureTValue<Tuple2<A, U>> zip(Iterable<? extends U> other) {
+        
+        return (CompletableFutureTValue)TransformerValue.super.zip(other);
+    }
 /**
 	* Flat Map the wrapped CompletableFuture
 	* <pre>

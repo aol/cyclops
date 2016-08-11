@@ -26,13 +26,21 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
 /**
- * Monad transformer for JDK Maybe
+ * Monad transformer for Maybe
  * 
  * MaybeT consists of an AnyM instance that in turns wraps anoter Monad type
  * that contains an Maybe
  * 
- * MaybeT<AnyM<*SOME_MONAD_TYPE*<Maybe<T>>>>
+ * <pre>
+ * {@code 
  * 
+ * The structure 
+ * MaybeT[*SOME_MONAD_TYPE*[Maybe[T]]]
+ * 
+ * can be represented as
+ * MaybeT<T>
+ * 
+ * }
  * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested
  * /contained context
  * 

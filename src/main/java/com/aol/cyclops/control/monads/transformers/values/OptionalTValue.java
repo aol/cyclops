@@ -7,7 +7,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -22,6 +25,7 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.util.Optionals;
@@ -156,6 +160,48 @@ public class OptionalTValue<T> implements OptionalT<T>,
     public <T2, R> OptionalTValue<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
             Publisher<? extends T2> app) {
         return new OptionalTValue<>(run.map(o -> Optionals.zip(app,o,fn)));
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> OptionalTValue<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (OptionalTValue<R>)TransformerValue.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     */
+    @Override
+    public <U, R> OptionalTValue<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return (OptionalTValue<R>)TransformerValue.super.zip(other, zipper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
+     */
+    @Override
+    public <U> OptionalTValue<Tuple2<T, U>> zip(Stream<? extends U> other) {
+        
+        return (OptionalTValue)TransformerValue.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
+     */
+    @Override
+    public <U> OptionalTValue<Tuple2<T, U>> zip(Seq<? extends U> other) {
+        
+        return (OptionalTValue)TransformerValue.super.zip(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+     */
+    @Override
+    public <U> OptionalTValue<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        
+        return (OptionalTValue)TransformerValue.super.zip(other);
     }
     /**
 	 * Flat Map the wrapped Optional

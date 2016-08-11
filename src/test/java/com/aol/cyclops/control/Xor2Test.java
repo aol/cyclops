@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,7 +61,16 @@ public class Xor2Test {
         assertThat(just.combine(FeatureToggle.enable(20),this::add).get(),equalTo(30));
     }
    
-    
+	@Test
+    public void testZip(){
+        assertThat(Xor.primary(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Xor.primary(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
+        assertThat(Xor.primary(10).zip(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Xor.primary(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Xor.primary(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Xor.primary(10).zip(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Xor.primary(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+    }
    
 
     @Test

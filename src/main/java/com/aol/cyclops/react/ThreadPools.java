@@ -10,7 +10,7 @@ import lombok.Getter;
 public class ThreadPools {
 	@Getter
 	private static final Executor commonFreeThread =  Executors.newFixedThreadPool(1);
-	//(Runnable r)  -> r.run();
+
 	
 	@Getter
 	private static final  Executor currentThreadExecutor = (Runnable r)  -> r.run();
