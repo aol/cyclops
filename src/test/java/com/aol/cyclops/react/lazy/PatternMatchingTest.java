@@ -12,7 +12,6 @@ import java.util.List;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.function.Predicates;
 

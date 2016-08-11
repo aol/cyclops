@@ -9,8 +9,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.FeatureToggle;
 
 
 public class SwitchMonadTest {

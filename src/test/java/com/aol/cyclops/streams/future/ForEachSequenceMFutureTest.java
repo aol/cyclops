@@ -15,9 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.reactive.ReactiveTask;

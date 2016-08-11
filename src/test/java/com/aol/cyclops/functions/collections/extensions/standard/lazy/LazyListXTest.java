@@ -1,16 +1,13 @@
 package com.aol.cyclops.functions.collections.extensions.standard.lazy;
 
-import org.junit.Test;
-
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.standard.DequeX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.functions.collections.extensions.AbstractLazyTest;
-import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
+
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.functions.collections.extensions.AbstractLazyTest;
 public class LazyListXTest extends AbstractLazyTest{
 
 	@Override

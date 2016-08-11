@@ -1,19 +1,5 @@
 package com.aol.cyclops.value;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Value;
-
-import org.junit.Test;
-
-import com.aol.cyclops.control.Matchable;
 public class AsValueTest {
 /**
 	@Test

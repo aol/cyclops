@@ -2,12 +2,13 @@ package com.aol.cyclops.featuretoggle;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import lombok.val;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.FeatureToggle;
+
+import lombok.val;
 
 public class LiftTest {
 

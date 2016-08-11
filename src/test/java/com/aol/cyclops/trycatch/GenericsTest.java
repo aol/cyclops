@@ -1,7 +1,6 @@
 package com.aol.cyclops.trycatch;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 

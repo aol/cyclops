@@ -4,12 +4,9 @@ package com.aol.cyclops.comprehensions;
 //import static fj.data.Option.some;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -19,9 +16,6 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.For;
-
-//import fj.data.Option;
-import lombok.val;
 
 
 	

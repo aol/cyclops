@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.monads.transformers.StreamableT;
-import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
 import com.aol.cyclops.types.AbstractTraversableTest;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.util.stream.Streamable;

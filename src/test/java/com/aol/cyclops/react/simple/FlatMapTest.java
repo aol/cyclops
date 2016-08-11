@@ -1,9 +1,11 @@
 package com.aol.cyclops.react.simple;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
-import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 
 import com.aol.cyclops.control.SimpleReact;

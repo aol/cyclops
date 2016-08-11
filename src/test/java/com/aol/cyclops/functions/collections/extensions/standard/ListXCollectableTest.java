@@ -2,7 +2,6 @@ package com.aol.cyclops.functions.collections.extensions.standard;
 
 import org.jooq.lambda.Collectable;
 
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.lazy.sequence.CollectableTest;
 

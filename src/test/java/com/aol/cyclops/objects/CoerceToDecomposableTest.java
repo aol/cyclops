@@ -5,11 +5,11 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
-import lombok.Value;
-
 import org.junit.Test;
 
 import com.aol.cyclops.internal.matcher2.AsDecomposable;
+
+import lombok.Value;
 public class CoerceToDecomposableTest {
 
 	@Test

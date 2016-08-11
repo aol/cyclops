@@ -1,13 +1,15 @@
 package com.aol.cyclops.control;
 
-import static com.aol.cyclops.util.function.Predicates.*;
+import static com.aol.cyclops.util.function.Predicates.anyOf;
+import static com.aol.cyclops.util.function.Predicates.greaterThan;
+import static com.aol.cyclops.util.function.Predicates.hasItems;
+import static com.aol.cyclops.util.function.Predicates.in;
+import static com.aol.cyclops.util.function.Predicates.not;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
 
 import org.junit.Test;
-
-import com.aol.cyclops.util.function.Predicates;
 
 public class ReactiveSeqTest {
 

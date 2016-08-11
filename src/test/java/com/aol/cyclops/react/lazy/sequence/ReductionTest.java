@@ -4,14 +4,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 

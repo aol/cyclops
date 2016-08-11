@@ -1,10 +1,10 @@
 package com.aol.cyclops.streams.anyM;
+import static com.aol.cyclops.streams.anyM.StateMachines.newStateMachine;
+import static com.aol.cyclops.streams.anyM.StateMachinesTest.State.state;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static com.aol.cyclops.streams.anyM.StateMachines.newStateMachine;
-import static com.aol.cyclops.streams.anyM.StateMachinesTest.State.state;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -12,9 +12,8 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import com.google.common.collect.ArrayTable;
-
 import com.aol.cyclops.streams.anyM.StateMachines.StateMachine;
+import com.google.common.collect.ArrayTable;
 
 public class StateMachinesTest {
 

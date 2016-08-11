@@ -1,8 +1,15 @@
 package com.aol.cyclops.util.function;
 
+import static com.aol.cyclops.util.function.Predicates.anyOf;
+import static com.aol.cyclops.util.function.Predicates.eq;
 import static com.aol.cyclops.util.function.Predicates.eqv;
 import static com.aol.cyclops.util.function.Predicates.eqv2;
-import static com.aol.cyclops.util.function.Predicates.*;
+import static com.aol.cyclops.util.function.Predicates.greaterThan;
+import static com.aol.cyclops.util.function.Predicates.greaterThanOrEquals;
+import static com.aol.cyclops.util.function.Predicates.in;
+import static com.aol.cyclops.util.function.Predicates.lessThan;
+import static com.aol.cyclops.util.function.Predicates.lessThanOrEquals;
+import static com.aol.cyclops.util.function.Predicates.not;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;

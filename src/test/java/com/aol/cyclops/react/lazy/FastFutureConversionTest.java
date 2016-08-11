@@ -1,8 +1,10 @@
 package com.aol.cyclops.react.lazy;
 
-import java.util.concurrent.CompletableFuture;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+
+import java.util.concurrent.CompletableFuture;
+
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;

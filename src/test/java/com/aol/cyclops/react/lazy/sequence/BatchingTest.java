@@ -24,7 +24,6 @@ import org.junit.Test;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.SimpleTimer;
-import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.Value;
 public class BatchingTest {

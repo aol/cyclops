@@ -4,7 +4,8 @@ package com.aol.cyclops.react.lazy;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +16,6 @@ import org.junit.Test;
 
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazyTest {

@@ -1,6 +1,8 @@
 package com.aol.cyclops.comprehensions.donotation.typed;
 
-import static com.aol.cyclops.control.For.Publishers.*;
+import static com.aol.cyclops.control.For.Publishers.each2;
+import static com.aol.cyclops.control.For.Publishers.each3;
+import static com.aol.cyclops.control.For.Publishers.each4;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -8,7 +10,6 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Test;
-
 
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;

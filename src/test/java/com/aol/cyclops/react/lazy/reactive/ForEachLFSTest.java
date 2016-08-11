@@ -12,14 +12,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public class ForEachLFSTest {
 	boolean complete =false;

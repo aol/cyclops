@@ -1,7 +1,8 @@
 package com.aol.cyclops.control;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

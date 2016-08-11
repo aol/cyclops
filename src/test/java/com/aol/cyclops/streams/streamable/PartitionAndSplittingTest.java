@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.util.stream.Streamable;
 
 public class PartitionAndSplittingTest {

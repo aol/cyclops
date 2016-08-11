@@ -1,7 +1,9 @@
 package com.aol.cyclops.streams;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
@@ -9,12 +11,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import lombok.val;
-
 import org.junit.Test;
 
 import com.aol.cyclops.util.stream.AsStreamable;
 import com.aol.cyclops.util.stream.Streamable;
+
+import lombok.val;
 public class AsStreamableTest {
 
 	@Test
