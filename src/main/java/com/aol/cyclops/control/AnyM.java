@@ -98,14 +98,42 @@ import com.aol.cyclops.util.stream.Streamable;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-
 public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, FlatMap<T>, ToStream<T> {
-
+    /**
+     * Tests for equivalency between two AnyM types
+     * 
+     * <pre>
+     * {@code
+     *    boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(Stream.of(1)));
+     *    //true
+     *     boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(Stream.of(1,2)));
+     *    //false
+     * }
+     * </pre>
+     * 
+     * @param t AnyM to check for equivalence with this AnyM
+     * @return true if monads are equivalent
+     */
     default boolean eqv(AnyM<T> t) {
         return Predicates.eqvIterable(t)
                          .test(this);
     }
-
+    /**
+     * Allows structural matching on the value / seq nature of this AnyM.
+     * If this AnyM can only store a single value an Xor.secondary with type AnyMValue is returned
+     * If this AnyM can  store one or many values an Xor.primary with type AnyMSeq is returned
+     * 
+     * <pre>
+     * {@code
+     *    AnyM<String> monad;
+     *    
+     *    monad.matchable().visit(v->handleValue(v.get()),s->handleSequence(s.toList()));
+     * }
+     * </pre>
+     * 
+     * 
+     * @return An Xor for pattern matching either an AnyMValue or AnyMSeq
+     */
     Xor<AnyMValue<T>, AnyMSeq<T>> matchable();
 
     /**
@@ -125,14 +153,41 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @return AnyM with flattening transformation
      */
     <R> AnyM<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
+     
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
+     * A mutable reduction operation equivalent to Stream#collect
+     * 
+     * <pre>
+     * {@code 
+     *      AnyM<Integer> monad1 = AnyM.fromStream(Stream.of(1,2,3));
+     *      AnyM<Integer> monad2 = AnyM.fromOptional(Optional.of(1));
+     *      
+     *      List<Integer> list1 = monad1.collect(Collectors.toList());
+     *      List<Integer> list2 = monad2.collect(Collectors.toList());
+     *      
+     * }
+     * </pre>
+     * 
+     * 
+     * @param collector JDK collector to perform mutable reduction
+     * @return Reduced value
      */
-
     <R, A> R collect(Collector<? super T, A, R> collector);
 
-    /* Convert this AnyM to a Stream
+    /* 
+     * Convert this AnyM to an extended Stream (ReactiveSeq)
+     * 
+     * <pre>
+     * {@code 
+     *    AnyM<Integer> monad =  AnyM.fromOptional(Optional.of(10));
+     *    
+     *    Stream<Integer> stream = monad.stream();
+     *    //ReactiveSeq[10]
+     * }
+     * </pre>
+     * 
      */
     public ReactiveSeq<T> stream();
 
@@ -157,8 +212,16 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn);
 
     /* 
-     * Unwraps the wrapped monad, in it's current state.
-     * i.e. Lists or Sets may be Streams
+     * Unwraps the wrapped monad
+     * 
+     * <pre>
+     * {@code 
+     *    AnyM<Integer> monad = AnyM.fromStream(Stream.of(1,2,3));
+     *    
+     *    Stream<Integer> stream = monad.unwrap();
+     * }
+     * </pre>
+     * 
      * (non-Javadoc)
     * @see com.aol.cyclops.sequence.Unwrapable#unwrap()
     */
@@ -197,7 +260,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      *   AnyM.fromStream(Stream.of(1,2,3))
      *       .map(i->i+2);
      *   
-     *   AnyM[Stream[3,4,5]]
+     *   //AnyM[Stream[3,4,5]]
      * }
      * </pre>
      * @param fn
@@ -239,18 +302,6 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     */
     <R> AnyM<R> bind(Function<? super T, ?> fn);
 
-    /**
-     * Perform a bind operation (@see #bind) but also lift the return value into a Monad using configured
-     * MonadicConverters
-     
-     * Note the modified javaslang monad laws are not applied during the looser typed bind operation
-     * The modification being used to work around the limits of the Java type system.
-     * 
-     * @param fn flatMap function
-     * @return flatMapped monad
-     *
-     <R> AnyM<R> liftAndBind(Function<? super T,?> fn);
-      */
 
     /**
      * join / flatten one level of a nested hierarchy
@@ -299,7 +350,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     public <T> AnyM<T> unit(T value);
 
     /**
-     * Construct an AnyM wrapping an empty instance of the wrapped type 
+     * Construct an AnyM wrapping a new empty instance of the wrapped type 
      * 
      * e.g.
      * <pre>
@@ -313,10 +364,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     public <T> AnyM<T> empty();
 
     /**
-     * Perform a reduction using a Monoid that combines AnyM types.
-     * 
-     *
-     * 
+     * Perform a monadic reduction using a Monoid that combines AnyM types.
      * 
      * 
      * e.g. 
@@ -327,9 +375,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     	
     	//AnyM[Optional(14)];
     	  
-    	 
-    	
-    	 
+    	 	 
     	}</pre>
     * 
     * 
@@ -338,7 +384,26 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     * @return Reduced AnyM
     */
     AnyMValue<T> reduceMValue(Monoid<AnyMValue<T>> reducer);
-
+    /**
+     * Perform a monadic reduction using a Monoid that combines AnyM types.
+     * 
+     * 
+     * e.g. 
+     * <pre>{@code 
+     *   Monoid<AnyMSeq<Integer>> listAddFirst = Monoid.of(AnyM.fromList(Arrays.asList(0)), (a,b)-> AnyM.fromList(Arrays.asList(a.get(0)+b.get(0))));
+        
+        AnyM.fromStream(Stream.of(2,8,3,1)).reduceM(listAddFirst);
+        
+        //AnyM[Optional(14)];
+          
+             
+        }</pre>
+    * 
+    * 
+    * 
+    * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
+    * @return Reduced AnyM
+    */
     AnyMSeq<T> reduceMSeq(Monoid<AnyMSeq<T>> reducer);
 
     /**
@@ -438,6 +503,27 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
         return AnyMFactory.instance.seq(Stream.of(streamData));
     }
 
+    /**
+     * Construct an AnyM that wraps a reactive-streams Publisher. If there is no registered Comprehender for the supplied Publisher, this method
+     *  will attempt to convert the Publisher to a type that cyclops-react can understand.
+     *  
+     *  <pre>
+     *  {@code 
+     *       AnyMSeq<Integer> flux = AnyM.fromPublisher(Flux.just(10,20,30));
+     *       
+     *       //with cyclops-reactor
+     *       //AnyM[Flux[Integer]]]
+     *       
+     *       //without cyclops-reactor
+     *       //AnyM[ReactiveSeq[Integer]]]
+     *  }
+     *  </pre>
+     *  It is generally safer to define a Comprehender and use a non-converting call to generate the wrapped AnyM
+     *       (e.g. Reactor.Flux in cyclops-reactor for Pivotal Reactor Publishers)
+     * 
+     * @param publisher Publisher to wrap inside an AnyM
+     * @return AnyMSeq that wraps a Publisher
+     */
     public static <T> AnyMSeq<T> fromPublisher(Publisher<T> publisher) {
         return AnyMFactory.instance.convertSeq(publisher);
     }
