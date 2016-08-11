@@ -14,45 +14,43 @@ import com.aol.cyclops.types.Decomposable;
  *
  */
 public class Extractors {
-	
-	
-	
-	
-	
-	
-	/**
-	 * @return Extractor that decomposes Case classes into iterables 
-	 */
-	public static final <T,R> Extractor<T,R> decompose() {
-		return input -> {
-			if(input instanceof  Decomposable)
-				return (R)((Decomposable)input).unapply();
-			else if(input instanceof Iterable)
-				return (R)input;
-			if(input instanceof Optional){
-				return (R)Maybe.fromOptional((Optional)(input));
-			}
-			return (R)input;
-			
 
-		};
-	}
-	/**
-	 * @return Extractor that decomposes Case classes into iterables 
-	 */
-	public static final <T,R> Extractor<T,R> decomposeCoerced() {
-		return input -> {
-			if(input instanceof  Decomposable)
-				return (R)((Decomposable)input).unapply();
-			else if(input instanceof Iterable)
-				return (R)input;
-			if(input instanceof Optional){
-				return (R)Maybe.fromOptional((Optional)(input));
-			}
-			
-			return (R)ReflectionCache.getUnapplyMethod(input.getClass()).map(FluentFunctions.ofChecked(m->m.invoke(input))).orElse(AsDecomposable.asDecomposable(input).unapply());
+    /**
+     * @return Extractor that decomposes Case classes into iterables 
+     */
+    public static final <T, R> Extractor<T, R> decompose() {
+        return input -> {
+            if (input instanceof Decomposable)
+                return (R) ((Decomposable) input).unapply();
+            else if (input instanceof Iterable)
+                return (R) input;
+            if (input instanceof Optional) {
+                return (R) Maybe.fromOptional((Optional) (input));
+            }
+            return (R) input;
 
-		};
-	}
-	
+        };
+    }
+
+    /**
+     * @return Extractor that decomposes Case classes into iterables 
+     */
+    public static final <T, R> Extractor<T, R> decomposeCoerced() {
+        return input -> {
+            if (input instanceof Decomposable)
+                return (R) ((Decomposable) input).unapply();
+            else if (input instanceof Iterable)
+                return (R) input;
+            if (input instanceof Optional) {
+                return (R) Maybe.fromOptional((Optional) (input));
+            }
+
+            return (R) ReflectionCache.getUnapplyMethod(input.getClass())
+                                      .map(FluentFunctions.ofChecked(m -> m.invoke(input)))
+                                      .orElse(AsDecomposable.asDecomposable(input)
+                                                            .unapply());
+
+        };
+    }
+
 }

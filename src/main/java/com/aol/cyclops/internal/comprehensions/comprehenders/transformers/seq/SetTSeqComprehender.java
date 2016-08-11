@@ -12,46 +12,49 @@ import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.mixins.Printable;
 
+public class SetTSeqComprehender implements Comprehender<SetTSeq>, Printable {
 
+    @Override
+    public Object resolveForCrossTypeFlatMap(Comprehender comp, SetTSeq apply) {
+        List list = (List) apply.stream()
+                                .toSetX()
+                                .collect(Collectors.toCollection(MaterializedList::new));
+        return list.size() > 0 ? comp.of(list) : comp.empty();
+    }
 
-public class SetTSeqComprehender implements Comprehender<SetTSeq>, Printable{
-	
-	@Override
-	public Object resolveForCrossTypeFlatMap(Comprehender comp, SetTSeq apply) {
-	    List list = (List) apply.stream().toSetX().collect(Collectors.toCollection(MaterializedList::new));
-		return list.size()>0 ? comp.of(list)  : comp.empty();
-	}
-	@Override
-    public Object filter(SetTSeq t, Predicate p){
+    @Override
+    public Object filter(SetTSeq t, Predicate p) {
         return t.filter(p);
     }
-	@Override
-	public Object map(SetTSeq t, Function fn) {
-		return t.map(r->fn.apply(r));
-	}
 
-	@Override
-	public Object flatMap(SetTSeq t, Function fn) {
-		return t.flatMapT(r->fn.apply(r));
-	}
+    @Override
+    public Object map(SetTSeq t, Function fn) {
+        return t.map(r -> fn.apply(r));
+    }
 
-	@Override
-	public SetTSeq of(Object o) {
-		return SetTSeq.of(SetX.of(o));
-	}
+    @Override
+    public Object flatMap(SetTSeq t, Function fn) {
+        return t.flatMapT(r -> fn.apply(r));
+    }
 
-	@Override
-	public SetTSeq empty() {
-		return SetTSeq.emptySet();
-	}
+    @Override
+    public SetTSeq of(Object o) {
+        return SetTSeq.of(SetX.of(o));
+    }
 
-	@Override
-	public Class getTargetClass() {
-		return SetTSeq.class;
-	}
+    @Override
+    public SetTSeq empty() {
+        return SetTSeq.emptySet();
+    }
+
+    @Override
+    public Class getTargetClass() {
+        return SetTSeq.class;
+    }
+
     @Override
     public SetTSeq fromIterator(Iterator o) {
-        return SetTSeq.of(SetX.fromIterable(()->o));
+        return SetTSeq.of(SetX.fromIterable(() -> o));
     }
 
 }

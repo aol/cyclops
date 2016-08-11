@@ -1,10 +1,7 @@
 package com.aol.cyclops.control.anym;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +10,6 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.data.Mutable;

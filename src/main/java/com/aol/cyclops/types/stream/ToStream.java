@@ -11,46 +11,55 @@ import com.aol.cyclops.internal.stream.ReversedIterator;
 import com.aol.cyclops.internal.stream.SeqUtils;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
-public interface ToStream<T> extends Iterable<T>,ConvertableToReactiveSeq<T>{
-    
-    
-    default LazyFutureStream<T> futureStream(LazyReact react){
+public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
+
+    default LazyFutureStream<T> futureStream(LazyReact react) {
         return react.fromIterable(this);
     }
-    default ReactiveSeq<T> reactiveSeq(){
+
+    default ReactiveSeq<T> reactiveSeq() {
         return ReactiveSeq.fromStream(StreamSupport.stream(getStreamable().spliterator(), false));
     }
-	default Iterator<T> iterator(){
-		return stream().iterator();
-	}
-	default  Iterable<T> getStreamable(){
-		return this;
-	}
-	default ReactiveSeq<T> reveresedStream(){
-		return ReactiveSeq.fromStream(reveresedStream());
-	}
-	/**
-	 * @return SequenceM from this Streamable
-	 */
-	default ReactiveSeq<T> stream(){
-		return ReactiveSeq.fromStream(StreamSupport.stream(getStreamable().spliterator(), false));
-	}
-	default Stream<T> reveresedJDKStream(){
-		Iterable<T> streamable = getStreamable();
-		if(streamable instanceof List){
-			return StreamSupport.stream(new ReversedIterator((List)streamable).spliterator(),false);
-		}
-		
-		return SeqUtils.reverse(jdkStream());
-	}
-	default boolean isEmpty(){
-	   
-		return this.reactiveSeq().isEmpty();
-	}
-	default Stream<T> jdkStream(){
-	    return StreamSupport.stream(getStreamable().spliterator(), false);
-		
-	}
-	
-	
+
+    default Iterator<T> iterator() {
+        return stream().iterator();
+    }
+
+    default Iterable<T> getStreamable() {
+        return this;
+    }
+
+    default ReactiveSeq<T> reveresedStream() {
+        return ReactiveSeq.fromStream(reveresedStream());
+    }
+
+    /**
+     * @return SequenceM from this Streamable
+     */
+    default ReactiveSeq<T> stream() {
+        return ReactiveSeq.fromStream(StreamSupport.stream(getStreamable().spliterator(), false));
+    }
+
+    default Stream<T> reveresedJDKStream() {
+        Iterable<T> streamable = getStreamable();
+        if (streamable instanceof List) {
+            return StreamSupport.stream(new ReversedIterator(
+                                                             (List) streamable).spliterator(),
+                                        false);
+        }
+
+        return SeqUtils.reverse(jdkStream());
+    }
+
+    default boolean isEmpty() {
+
+        return this.reactiveSeq()
+                   .isEmpty();
+    }
+
+    default Stream<T> jdkStream() {
+        return StreamSupport.stream(getStreamable().spliterator(), false);
+
+    }
+
 }

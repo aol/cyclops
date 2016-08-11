@@ -7,14 +7,14 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.Test;
+
+import com.aol.cyclops.types.mixins.WrappingFunctor;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.val;
 import lombok.experimental.Wither;
-
-import org.junit.Test;
-
-import com.aol.cyclops.types.mixins.WrappingFunctor;
 public class FunctorTest {
 
 	@Test

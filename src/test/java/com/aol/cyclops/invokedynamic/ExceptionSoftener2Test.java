@@ -2,7 +2,6 @@ package com.aol.cyclops.invokedynamic;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 

@@ -9,8 +9,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.FileSystemException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;

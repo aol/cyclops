@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
-import com.aol.cyclops.react.base.BaseSeqFutureTest;
 import com.aol.cyclops.react.base.BaseSeqLazyTest;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 

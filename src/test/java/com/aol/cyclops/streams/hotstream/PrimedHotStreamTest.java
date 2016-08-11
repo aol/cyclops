@@ -1,5 +1,7 @@
 package com.aol.cyclops.streams.hotstream;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -11,11 +13,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.LockSupport;
 
-import static org.hamcrest.Matchers.equalTo;
-
 import org.junit.Test;
-
-import static org.junit.Assert.assertThat;
 
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.PausableHotStream;

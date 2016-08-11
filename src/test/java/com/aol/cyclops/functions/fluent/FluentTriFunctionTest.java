@@ -15,22 +15,18 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FluentFunctions;
-import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.FluentFunctions.FluentBiFunction;
 import com.aol.cyclops.control.FluentFunctions.FluentFunction;
 import com.aol.cyclops.control.FluentFunctions.FluentSupplier;
 import com.aol.cyclops.control.FluentFunctions.FluentTriFunction;
-import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.control.Try;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 

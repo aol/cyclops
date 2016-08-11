@@ -1,15 +1,14 @@
 package com.aol.cyclops.functions.collections.extensions;
 
-import static com.aol.cyclops.control.Matchable.when;
-import static com.aol.cyclops.control.ReactiveSeq.of;
 import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -25,16 +24,12 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.streams.SQLTest.X;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.types.Decomposable;
-import com.aol.cyclops.types.Traversable;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.function.Predicates;
 

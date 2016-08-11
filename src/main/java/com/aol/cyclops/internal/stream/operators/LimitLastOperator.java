@@ -11,31 +11,33 @@ public class LimitLastOperator<T> {
     private final Stream<T> stream;
     private final ArrayDeque<T> buffer;
     private final int limit;
-	public LimitLastOperator(Stream<T> stream,int limit){
-		buffer = new ArrayDeque<>(limit);
-		this.stream = stream;
-		this.limit = limit;
-	}
-	
-	public Stream<T> limitLast(){
-		Iterator<T> it = stream.iterator();
-		return StreamUtils.stream(new Iterator<T>(){
 
-			@Override
-			public boolean hasNext() {
-				while(it.hasNext()){
-					buffer.add(it.next());
-					if(buffer.size()>limit)
-						buffer.pop();
-				}
-				return buffer.size()>0;
-			}
+    public LimitLastOperator(Stream<T> stream, int limit) {
+        buffer = new ArrayDeque<>(
+                                  limit);
+        this.stream = stream;
+        this.limit = limit;
+    }
 
-			@Override
-			public T next() {
-				return buffer.pop();
-			}
-			
-		});
-	}
+    public Stream<T> limitLast() {
+        Iterator<T> it = stream.iterator();
+        return StreamUtils.stream(new Iterator<T>() {
+
+            @Override
+            public boolean hasNext() {
+                while (it.hasNext()) {
+                    buffer.add(it.next());
+                    if (buffer.size() > limit)
+                        buffer.pop();
+                }
+                return buffer.size() > 0;
+            }
+
+            @Override
+            public T next() {
+                return buffer.pop();
+            }
+
+        });
+    }
 }

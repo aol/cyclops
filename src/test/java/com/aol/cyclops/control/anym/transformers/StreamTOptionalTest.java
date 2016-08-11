@@ -11,14 +11,11 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
-
-import lombok.val;
 public class StreamTOptionalTest extends AbstractAnyMSeqOrderedDependentTest{
 
 	@Override

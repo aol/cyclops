@@ -1,17 +1,17 @@
 package com.aol.cyclops.functions.collections.extensions;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.control.ReactiveSeq;
 
 public class SchedulingTest {
 

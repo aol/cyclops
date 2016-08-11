@@ -19,19 +19,18 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class ReaderTSeq<T,R> {
+public class ReaderTSeq<T, R> {
 
-    
-    private final AnyMSeq<Reader<T,R>> run;
+    private final AnyMSeq<Reader<T, R>> run;
 
-    private ReaderTSeq(final AnyMSeq<Reader<T,R>> run) {
+    private ReaderTSeq(final AnyMSeq<Reader<T, R>> run) {
         this.run = run;
     }
 
     /**
      * @return The wrapped AnyM
      */
-    public AnyMSeq<Reader<T,R>> unwrap() {
+    public AnyMSeq<Reader<T, R>> unwrap() {
         return run;
     }
 
@@ -51,7 +50,7 @@ public class ReaderTSeq<T,R> {
      *            Consumer to accept current value of Maybe
      * @return MaybeT with peek call
      */
-    public ReaderTSeq<T,R> peek(Consumer<? super R> peek) {
+    public ReaderTSeq<T, R> peek(Consumer<? super R> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
             return a;
@@ -95,8 +94,9 @@ public class ReaderTSeq<T,R> {
      *            Mapping function for the wrapped Maybe
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
-    public <B> ReaderTSeq<T,B> map(Function<? super R, ? extends B> f) {
-        return new ReaderTSeq<T,B>(run.map(o -> o.map(f)));
+    public <B> ReaderTSeq<T, B> map(Function<? super R, ? extends B> f) {
+        return new ReaderTSeq<T, B>(
+                                    run.map(o -> o.map(f)));
     }
 
     /**
@@ -108,18 +108,18 @@ public class ReaderTSeq<T,R> {
      *            FlatMap function
      * @return ReaderT that applies the flatMap function to the wrapped Maybe
      */
-    public <B> ReaderTSeq<T,B> flatMapT(Function<? super R, ReaderTSeq<T,B>> mapper) {
-      
-        return of(run.bind(reader -> reader.flatMap(r->mapper.apply(r).run.unwrap())));
+    public <B> ReaderTSeq<T, B> flatMapT(Function<? super R, ReaderTSeq<T, B>> mapper) {
+
+        return of(run.bind(reader -> reader.flatMap(r -> mapper.apply(r).run.unwrap())));
 
     }
-    public <B> ReaderTSeq<T,B> flatMap(Function<? super R, ? extends Reader<T,B>> f) {
 
-        return new ReaderTSeq<T,B>(run.map(o -> o.flatMap(f)));
+    public <B> ReaderTSeq<T, B> flatMap(Function<? super R, ? extends Reader<T, B>> f) {
+
+        return new ReaderTSeq<T, B>(
+                                    run.map(o -> o.flatMap(f)));
 
     }
-    
-   
 
     /**
      * Lift a function into one that accepts and returns an MaybeT This allows
@@ -152,7 +152,7 @@ public class ReaderTSeq<T,R> {
      *            monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <T,U, R> Function<ReaderTSeq<T,U>, ReaderTSeq<T,R>> lift(Function<? super U, ? extends R> fn) {
+    public static <T, U, R> Function<ReaderTSeq<T, U>, ReaderTSeq<T, R>> lift(Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -188,10 +188,11 @@ public class ReaderTSeq<T,R> {
      *            another monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <T,U1, U2, R> BiFunction<ReaderTSeq<T,U1>, ReaderTSeq<T,U2>, ReaderTSeq<T,R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
+    public static <T, U1, U2, R> BiFunction<ReaderTSeq<T, U1>, ReaderTSeq<T, U2>, ReaderTSeq<T, R>> lift2(
+            BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
-    
+
     /**
      * Construct an MaybeT from an AnyM that contains a monad type that contains
      * type other than Maybe The values in the underlying monad will be mapped
@@ -201,7 +202,7 @@ public class ReaderTSeq<T,R> {
      *            AnyM that doesn't contain a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <T,A> ReaderTSeq<T,A> fromAnyM(AnyMSeq<Function<T,A>> anyM) {
+    public static <T, A> ReaderTSeq<T, A> fromAnyM(AnyMSeq<Function<T, A>> anyM) {
         return of(anyM.map(FluentFunctions::of));
     }
 
@@ -212,9 +213,10 @@ public class ReaderTSeq<T,R> {
      *            AnyM that contains a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <T,A> ReaderTSeq<T,A> of(AnyMSeq<Reader<T,A>> monads) {
-        
-        return new ReaderTSeq<>(monads);
+    public static <T, A> ReaderTSeq<T, A> of(AnyMSeq<Reader<T, A>> monads) {
+
+        return new ReaderTSeq<>(
+                                monads);
     }
 
     /*
@@ -226,27 +228,28 @@ public class ReaderTSeq<T,R> {
         return run.toString();
     }
 
-   
     public R apply(T t, Monoid<R> combiner) {
-        return run.map(r->r.apply(t)).reduce(combiner);
-      
+        return run.map(r -> r.apply(t))
+                  .reduce(combiner);
+
     }
-    
+
     public ReactiveSeq<R> streamApply(T t) {
-       return run.map(fn->fn.apply(t)).stream();
+        return run.map(fn -> fn.apply(t))
+                  .stream();
     }
+
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return run.hashCode();
     }
-    
+
     @Override
-    public boolean equals(Object o){
-        if(o instanceof ReaderTSeq){
-            return run.equals( ((ReaderTSeq)o).run);
+    public boolean equals(Object o) {
+        if (o instanceof ReaderTSeq) {
+            return run.equals(((ReaderTSeq) o).run);
         }
         return false;
     }
 
- 
 }

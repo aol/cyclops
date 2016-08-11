@@ -3,18 +3,19 @@ package com.aol.cyclops.closures.immutable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import lombok.val;
-
 import org.junit.Test;
 
 import com.aol.cyclops.data.LazyImmutable;
+
+import lombok.val;
 public class ImmutableClosedValueTest {
 
 	@Test

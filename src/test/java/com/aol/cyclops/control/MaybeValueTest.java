@@ -1,6 +1,5 @@
 package com.aol.cyclops.control;
 
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.AbstractValueTest;
 import com.aol.cyclops.types.Value;
 

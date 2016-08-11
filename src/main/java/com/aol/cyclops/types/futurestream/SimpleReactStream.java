@@ -40,35 +40,36 @@ import com.aol.cyclops.util.stream.StreamUtils;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
-
-public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,  
-                BlockingStream<U>,
-                ConfigurableStream<U,CompletableFuture<U>>,
-                ToQueue<U>{
+public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, BlockingStream<U>, ConfigurableStream<U, CompletableFuture<U>>, ToQueue<U> {
 
     SimpleReact getSimpleReact();
-    SimpleReactStream<U> withLastActive(EagerStreamWrapper streamWrapper);
-    abstract EagerStreamWrapper getLastActive();
-    SimpleReactStream<U> withTaskExecutor(Executor e);
-    SimpleReactStream<U> withRetrier(RetryExecutor retry);
 
+    SimpleReactStream<U> withLastActive(EagerStreamWrapper streamWrapper);
+
+    abstract EagerStreamWrapper getLastActive();
+
+    SimpleReactStream<U> withTaskExecutor(Executor e);
+
+    SimpleReactStream<U> withRetrier(RetryExecutor retry);
 
     SimpleReactStream<U> withQueueFactory(QueueFactory<U> queue);
 
-    SimpleReactStream<U>  withErrorHandler(Optional<Consumer<Throwable>> errorHandler);
+    SimpleReactStream<U> withErrorHandler(Optional<Consumer<Throwable>> errorHandler);
+
     SimpleReactStream<U> withSubscription(Continueable sub);
+
     SimpleReactStream<U> withAsync(boolean b);
 
     Continueable getSubscription();
 
-    default  <T2> Seq<Tuple2<U, T2>> combineLatest(
-            SimpleReactStream<T2> right) {
-        return EagerFutureStreamFunctions.combineLatest(this,right);
+    default <T2> Seq<Tuple2<U, T2>> combineLatest(SimpleReactStream<T2> right) {
+        return EagerFutureStreamFunctions.combineLatest(this, right);
     }
-    default  <T2> Seq<Tuple2<U, T2>> withLatest(
-            SimpleReactStream<T2> right) {
-        return EagerFutureStreamFunctions.withLatest(this,right);
+
+    default <T2> Seq<Tuple2<U, T2>> withLatest(SimpleReactStream<T2> right) {
+        return EagerFutureStreamFunctions.withLatest(this, right);
     }
+
     /**
      * Give a function access to the current stage of a SimpleReact Stream
      *
@@ -77,12 +78,13 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @return Self (current stage)
      */
     default SimpleReactStream<U> self(Consumer<SimpleReactStream<U>> consumer) {
-        return peek(n->consumer.accept(this));
+        return peek(n -> consumer.accept(this));
     }
-    
-    default void run(){
+
+    default void run() {
         getLastActive().collect();
     }
+
     /**
      * Split a stream at a given position. (Operates on futures)
      * <pre>
@@ -95,16 +97,16 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *
      *
      */
-    default Tuple2<SimpleReactStream<U>, SimpleReactStream<U>> splitAt(
-            long position) {
+    default Tuple2<SimpleReactStream<U>, SimpleReactStream<U>> splitAt(long position) {
         Stream stream = getLastActive().stream();
-        Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> split = Seq
-                .seq((Stream<CompletableFuture<U>>) stream).splitAt(position);
+        Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> split = Seq.seq((Stream<CompletableFuture<U>>) stream)
+                                                                                .splitAt(position);
 
         return new Tuple2(
-                fromListCompletableFuture(split.v1.collect(Collectors.toList())),
-                fromListCompletableFuture(split.v2.collect(Collectors.toList())));
+                          fromListCompletableFuture(split.v1.collect(Collectors.toList())),
+                          fromListCompletableFuture(split.v2.collect(Collectors.toList())));
     }
+
     /**
      * Duplicate a Stream into two equivalent LazyFutureStreams, underlying
      * Stream of Futures is duplicated
@@ -126,31 +128,31 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
     default Tuple2<SimpleReactStream<U>, SimpleReactStream<U>> duplicate() {
         // unblocking impl
         Stream stream = getLastActive().stream();
-        Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq
-                .seq((Stream<CompletableFuture<U>>) stream).duplicate();
-        Tuple2 dup =new Tuple2(fromStreamOfFutures(duplicated.v1),
-                fromStreamOfFutures(duplicated.v2));
+        Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq.seq((Stream<CompletableFuture<U>>) stream)
+                                                                                     .duplicate();
+        Tuple2 dup = new Tuple2(
+                                fromStreamOfFutures(duplicated.v1), fromStreamOfFutures(duplicated.v2));
 
-        return (Tuple2<SimpleReactStream<U>,SimpleReactStream<U>>) dup;
+        return (Tuple2<SimpleReactStream<U>, SimpleReactStream<U>>) dup;
     }
+
     /**
      * Zip two Streams, zipping against the underlying futures of this stream
      *
      * @param other
      * @return
      */
-    default <R> SimpleReactStream<Tuple2<U,R>> zip(Stream<R> other) {
+    default <R> SimpleReactStream<Tuple2<U, R>> zip(Stream<R> other) {
 
-        Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other));
-        Seq<Tuple2<CompletableFuture<U>,R>> withType = (Seq<Tuple2<CompletableFuture<U>,R>>)seq;
-        SimpleReactStream futureStream = fromStreamOfFutures((Stream)withType.map(t ->t.v1.thenApply(v -> Tuple.tuple(t.v1.join(),t.v2)))
-                );
+        Seq seq = Seq.seq(getLastActive().stream())
+                     .zip(Seq.seq(other));
+        Seq<Tuple2<CompletableFuture<U>, R>> withType = (Seq<Tuple2<CompletableFuture<U>, R>>) seq;
+        SimpleReactStream futureStream = fromStreamOfFutures((Stream) withType.map(t -> t.v1.thenApply(v -> Tuple.tuple(t.v1.join(), t.v2))));
 
-
-        return (SimpleReactStream<Tuple2<U,R>>)futureStream;
-
+        return (SimpleReactStream<Tuple2<U, R>>) futureStream;
 
     }
+
     /**
      * Zip two Streams, zipping against the underlying futures of both Streams
      * Placeholders (Futures) will be populated immediately in the new zipped Stream and results
@@ -159,14 +161,16 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param other  Another FutureStream to zip Futures with
      * @return New Sequence of CompletableFutures
      */
-    default <R> SimpleReactStream<Tuple2<U,R>> zip(SimpleReactStream<R> other) {
-        Seq seq = Seq.seq(getLastActive().stream()).zip(Seq.seq(other.getLastActive().stream()));
-        Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>,CompletableFuture<R>>>)seq;
-        SimpleReactStream futureStream =  fromStreamOfFutures((Stream)withType.map(t ->CompletableFuture.allOf(t.v1,t.v2).thenApply(v -> Tuple.tuple(t.v1.join(),t.v2.join())))
-                );
+    default <R> SimpleReactStream<Tuple2<U, R>> zip(SimpleReactStream<R> other) {
+        Seq seq = Seq.seq(getLastActive().stream())
+                     .zip(Seq.seq(other.getLastActive()
+                                       .stream()));
+        Seq<Tuple2<CompletableFuture<U>, CompletableFuture<R>>> withType = (Seq<Tuple2<CompletableFuture<U>, CompletableFuture<R>>>) seq;
+        SimpleReactStream futureStream = fromStreamOfFutures((Stream) withType.map(t -> CompletableFuture.allOf(t.v1, t.v2)
+                                                                                                         .thenApply(v -> Tuple.tuple(t.v1.join(),
+                                                                                                                                     t.v2.join()))));
 
-        return (SimpleReactStream<Tuple2<U,R>>)futureStream;
-
+        return (SimpleReactStream<Tuple2<U, R>>) futureStream;
 
     }
 
@@ -187,15 +191,17 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * </code>
      * </pre>
      */
-    default SimpleReactStream<Tuple2<U,Long>> zipWithIndex() {
+    default SimpleReactStream<Tuple2<U, Long>> zipWithIndex() {
 
-        Seq seq = Seq.seq(getLastActive().stream().iterator()).zipWithIndex();
-        Seq<Tuple2<CompletableFuture<U>,Long>> withType = (Seq<Tuple2<CompletableFuture<U>,Long>>)seq;
-        SimpleReactStream futureStream =  fromStreamOfFutures((Stream)withType.map(t -> t.v1.thenApply(v ->
-                            Tuple.tuple(t.v1.join(),t.v2))));
-        return (SimpleReactStream<Tuple2<U,Long>>)futureStream;
+        Seq seq = Seq.seq(getLastActive().stream()
+                                         .iterator())
+                     .zipWithIndex();
+        Seq<Tuple2<CompletableFuture<U>, Long>> withType = (Seq<Tuple2<CompletableFuture<U>, Long>>) seq;
+        SimpleReactStream futureStream = fromStreamOfFutures((Stream) withType.map(t -> t.v1.thenApply(v -> Tuple.tuple(t.v1.join(), t.v2))));
+        return (SimpleReactStream<Tuple2<U, Long>>) futureStream;
 
     }
+
     /**
      * Return first Stream out of provided Streams that starts emitted results
      *
@@ -203,7 +209,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @return First Stream to start emitting values
      */
     @SafeVarargs
-    public static <U> SimpleReactStream<U> firstOf(SimpleReactStream<U>... futureStreams){
+    public static <U> SimpleReactStream<U> firstOf(SimpleReactStream<U>... futureStreams) {
         return EagerFutureStreamFunctions.firstOf(futureStreams);
     }
 
@@ -219,15 +225,17 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
     default SimpleReactStream<U> reverse() {
         EagerStreamWrapper lastActive = getLastActive();
-        ListIterator<CompletableFuture> it = lastActive.list().listIterator();
+        ListIterator<CompletableFuture> it = lastActive.list()
+                                                       .listIterator();
         List<CompletableFuture> result = new ArrayList<>();
-        while(it.hasPrevious())
+        while (it.hasPrevious())
             result.add(it.previous());
 
-        EagerStreamWrapper limited = lastActive.withList( result);
+        EagerStreamWrapper limited = lastActive.withList(result);
         return this.withLastActive(limited);
 
     }
+
     /**
      * Returns a limited interval from a given Stream.
      *
@@ -240,10 +248,12 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
 
     default SimpleReactStream<U> slice(long from, long to) {
-        List noType = Seq.seq(getLastActive().stream()).slice(from, to)
-                .collect(Collectors.toList());
+        List noType = Seq.seq(getLastActive().stream())
+                         .slice(from, to)
+                         .collect(Collectors.toList());
         return fromListCompletableFuture(noType);
     }
+
     /**
      * Perform a limit operation on the underlying Stream of Futures
      * In contrast to EagerFutureStream#limit this removes entries basaed on their
@@ -267,10 +277,12 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
 
         EagerStreamWrapper lastActive = getLastActive();
         EagerStreamWrapper limited = lastActive.withList(lastActive.stream()
-                .limit(maxSize).collect(Collectors.toList()));
+                                                                   .limit(maxSize)
+                                                                   .collect(Collectors.toList()));
         return this.withLastActive(limited);
 
     }
+
     /**
      * In contast to EagerFutureStream#skip skipFutures will skip the first n entries
      * of the underlying Stream of Futures.
@@ -288,10 +300,12 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
     default SimpleReactStream<U> skip(long n) {
         EagerStreamWrapper lastActive = getLastActive();
-        EagerStreamWrapper limited = lastActive.withList(lastActive.stream().skip(n)
-                .collect(Collectors.toList()));
+        EagerStreamWrapper limited = lastActive.withList(lastActive.stream()
+                                                                   .skip(n)
+                                                                   .collect(Collectors.toList()));
         return this.withLastActive(limited);
     }
+
     /**
      * Return a Stream with the same values as this Stream, but with all values omitted until the provided stream starts emitting values.
      * Provided Stream ends the stream of values from this stream.
@@ -299,9 +313,10 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param s Stream that will start the emission of values from this stream
      * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
      */
-    default<T>  Seq<U> skipUntil(SimpleReactStream<T> s) {
+    default <T> Seq<U> skipUntil(SimpleReactStream<T> s) {
         return EagerFutureStreamFunctions.skipUntil(this, s);
     }
+
     /**
      * Return a Stream with the same values, but will stop emitting values once the provided Stream starts to emit values.
      * e.g. if the provided Stream is asynchronously refreshing state from some remote store, this stream can proceed until
@@ -310,25 +325,30 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param s Stream that will stop the emission of values from this stream
      * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
      */
-    default<T>  Seq<U> takeUntil(SimpleReactStream<T> s) {
+    default <T> Seq<U> takeUntil(SimpleReactStream<T> s) {
         return EagerFutureStreamFunctions.takeUntil(this, s);
     }
 
     /**
      * Cancel the CompletableFutures in this stage of the stream
      */
-    default void cancel(){
-        this.streamCompletableFutures().forEach(next-> next.cancel(true));
+    default void cancel() {
+        this.streamCompletableFutures()
+            .forEach(next -> next.cancel(true));
     }
 
-    default ListX<SimpleReactStream<U>> copySimpleReactStream(final int times){
+    default ListX<SimpleReactStream<U>> copySimpleReactStream(final int times) {
 
-        return (ListX)StreamUtils.toBufferingCopier(getLastActive().stream().iterator(), times)
-                .stream()
-                .map(it->StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false))
-                .<BaseSimpleReactStream<U>>map(fs-> this.getSimpleReact().construct(fs))
-                .toListX();
+        return (ListX) StreamUtils.toBufferingCopier(getLastActive().stream()
+                                                                    .iterator(),
+                                                     times)
+                                  .stream()
+                                  .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false))
+                                  .<BaseSimpleReactStream<U>> map(fs -> this.getSimpleReact()
+                                                                            .construct(fs))
+                                  .toListX();
     }
+
     /*
      * React to new events with the supplied function on the supplied Executor
      *
@@ -337,14 +357,12 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *	@return next stage in the Stream
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	default <R> SimpleReactStream<R> then(final Function<? super U,? extends R> fn, Executor service) {
+    default <R> SimpleReactStream<R> then(final Function<? super U, ? extends R> fn, Executor service) {
 
-
-
-        return (SimpleReactStream<R>) this.withLastActive(
-                getLastActive().stream(s -> s.<CompletableFuture>map(
-                        (ft) -> ft.thenApplyAsync(SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()))));
+        return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(s -> s.<CompletableFuture> map((
+                ft) -> ft.thenApplyAsync(SimpleReactStream.<U, R> handleExceptions(fn), getTaskExecutor()))));
     }
+
     /*
      * React to new events with the supplied function on the supplied Executor
      *
@@ -352,14 +370,11 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *	@param service Service to execute function on
      *	@return next stage in the Stream
      */
-    default <R> SimpleReactStream<R> thenSync(final Function<? super U,? extends R> fn) {
+    default <R> SimpleReactStream<R> thenSync(final Function<? super U, ? extends R> fn) {
 
-
-        return (SimpleReactStream<R>) this.withLastActive(
-                getLastActive().stream(s -> s.<CompletableFuture>map(
-                        (ft) -> ft.thenApply(SimpleReactStream.<U,R>handleExceptions(fn)))));
+        return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(s -> s.<CompletableFuture> map((
+                ft) -> ft.thenApply(SimpleReactStream.<U, R> handleExceptions(fn)))));
     }
-
 
     /**
      * @param collector
@@ -372,25 +387,30 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    default <R1,R2> SimpleReactStream<R2> allOf(final Collector<? super U, ?, R1> collector,
-            final Function<? super R1,? extends R2> fn) {
-       
+    default <R1, R2> SimpleReactStream<R2> allOf(final Collector<? super U, ?, R1> collector, final Function<? super R1, ? extends R2> fn) {
+
         CompletableFuture[] array = lastActiveArray(getLastActive());
         CompletableFuture cf = CompletableFuture.allOf(array);
         Function<Exception, R2> f = (Exception e) -> {
-            BlockingStreamHelper.capture(e,getErrorHandler());
-            return BlockingStreamHelper.block(this,Collectors.toList(),
-                    new EagerStreamWrapper(Stream.of(array),this.getErrorHandler()));
+            BlockingStreamHelper.capture(e, getErrorHandler());
+            return BlockingStreamHelper.block(this, Collectors.toList(), new EagerStreamWrapper(
+                                                                                                Stream.of(array), this.getErrorHandler()));
         };
         CompletableFuture onFail = cf.exceptionally(f);
         CompletableFuture onSuccess = onFail.thenApplyAsync((result) -> {
-            return new StageWithResults(this.getTaskExecutor(),null, result).submit(() -> (R2)fn
-                    .apply(BlockingStreamHelper.aggregateResultsCompletable(collector, Stream.of(array)
-                            .collect(Collectors.toList()),getErrorHandler())));
-        }, getTaskExecutor());
-        return (SimpleReactStream<R2>) withLastActive(new EagerStreamWrapper(onSuccess,this.getErrorHandler()));
+            return new StageWithResults(
+                                        this.getTaskExecutor(),
+                                        null, result)
+                                                     .submit(() -> (R2) fn.apply(BlockingStreamHelper.aggregateResultsCompletable(collector,
+                                                                                                                                  Stream.of(array)
+                                                                                                                                        .collect(Collectors.toList()),
+                                                                                                                                  getErrorHandler())));
+        } , getTaskExecutor());
+        return (SimpleReactStream<R2>) withLastActive(new EagerStreamWrapper(
+                                                                             onSuccess, this.getErrorHandler()));
 
     }
+
     /**
      * React to the completion of any of the events in the previous stage. Will not work reliably with Streams
      * where filter has been applied in earlier stages. (As Filter completes the Stream for events that are filtered out, they
@@ -399,22 +419,20 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param fn Function to apply when any of the previous events complete
      * @return Next stage in the stream
      */
-    default <R> SimpleReactStream<R> anyOf(
-            final Function<? super U, ? extends R> fn) {
+    default <R> SimpleReactStream<R> anyOf(final Function<? super U, ? extends R> fn) {
         CompletableFuture[] array = lastActiveArray(getLastActive());
         CompletableFuture cf = CompletableFuture.anyOf(array);
-        CompletableFuture onSuccess = cf.thenApplyAsync(fn,getTaskExecutor());
+        CompletableFuture onSuccess = cf.thenApplyAsync(fn, getTaskExecutor());
 
-        return (SimpleReactStream<R>) withLastActive(new EagerStreamWrapper(onSuccess,this.getErrorHandler()));
+        return (SimpleReactStream<R>) withLastActive(new EagerStreamWrapper(
+                                                                            onSuccess, this.getErrorHandler()));
 
     }
 
-
-
-
     @SuppressWarnings("rawtypes")
     static CompletableFuture[] lastActiveArray(EagerStreamWrapper lastActive) {
-        return lastActive.list().toArray(new CompletableFuture[0]);
+        return lastActive.list()
+                         .toArray(new CompletableFuture[0]);
     }
 
     /**
@@ -431,23 +449,21 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @return Next Stage in the Strea,
      */
     @SuppressWarnings("unchecked")
-    default <R> SimpleReactStream<R> retry(final Function<? super U,? extends R> fn) {
-        Function<Stream<CompletableFuture>,Stream<CompletableFuture>>  mapper = stream -> stream.map(
-                (ft) -> ft.thenApplyAsync(res ->
-                getRetrier().getWithRetry( ()->SimpleReactStream.<U,R>handleExceptions(fn).apply((U)res)).join(),getTaskExecutor() ));
+    default <R> SimpleReactStream<R> retry(final Function<? super U, ? extends R> fn) {
+        Function<Stream<CompletableFuture>, Stream<CompletableFuture>> mapper = stream -> stream.map((
+                ft) -> ft.thenApplyAsync(res -> getRetrier().getWithRetry(() -> SimpleReactStream.<U, R> handleExceptions(fn)
+                                                                                                 .apply((U) res))
+                                                            .join(),
+                                         getTaskExecutor()));
 
         return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(mapper));
     }
 
-
-
     default <R> SimpleReactStream<R> fromStream(Stream<R> stream) {
 
-
-        return (SimpleReactStream<R>) this.withLastActive(getLastActive()
-                .withNewStream(stream.map(CompletableFuture::completedFuture),this.getSimpleReact()));
+        return (SimpleReactStream<R>) this.withLastActive(getLastActive().withNewStream(stream.map(CompletableFuture::completedFuture),
+                                                                                        this.getSimpleReact()));
     }
-
 
     /**
      * Construct a SimpleReactStream from provided Stream of CompletableFutures
@@ -455,24 +471,19 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param stream JDK Stream to construct new SimpleReactStream from
      * @return SimpleReactStream
      */
-    default <R> SimpleReactStream<R> fromStreamOfFutures(
-            Stream<CompletableFuture<R>> stream) {
+    default <R> SimpleReactStream<R> fromStreamOfFutures(Stream<CompletableFuture<R>> stream) {
         Stream noType = stream;
-        return (SimpleReactStream<R>) this.withLastActive(getLastActive()
-                .withNewStream(noType,this.getSimpleReact()));
-    }
-    default <R> SimpleReactStream<R> fromStreamCompletableFutureReplace(
-            Stream<CompletableFuture<R>> stream) {
-        Stream noType = stream;
-        return (SimpleReactStream<R>) this.withLastActive(getLastActive()
-                .withStream(noType));
+        return (SimpleReactStream<R>) this.withLastActive(getLastActive().withNewStream(noType, this.getSimpleReact()));
     }
 
-    default <R> SimpleReactStream<R> fromListCompletableFuture(
-            List<CompletableFuture<R>> list) {
+    default <R> SimpleReactStream<R> fromStreamCompletableFutureReplace(Stream<CompletableFuture<R>> stream) {
+        Stream noType = stream;
+        return (SimpleReactStream<R>) this.withLastActive(getLastActive().withStream(noType));
+    }
+
+    default <R> SimpleReactStream<R> fromListCompletableFuture(List<CompletableFuture<R>> list) {
         List noType = list;
-        return (SimpleReactStream<R>) this.withLastActive(getLastActive()
-                .withList(noType));
+        return (SimpleReactStream<R>) this.withLastActive(getLastActive().withList(noType));
     }
 
     /**
@@ -488,7 +499,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
         new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
                 .then((it) -> it * 100)
                 .then((it) -> "*" + it)
-
+    
                 }
     </pre>
      *
@@ -515,17 +526,14 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     @SuppressWarnings("unchecked")
-    default  <R> SimpleReactStream<R> then(final Function<? super U,? extends R> fn) {
-        if(!this.isAsync())
+    default <R> SimpleReactStream<R> then(final Function<? super U, ? extends R> fn) {
+        if (!this.isAsync())
             return thenSync(fn);
-        Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->s.<CompletableFuture>map(ft ->
-        	ft.thenApplyAsync( SimpleReactStream.<U,R>handleExceptions(fn),getTaskExecutor()));
+        Function<Stream<CompletableFuture>, Stream<CompletableFuture>> streamMapper = s -> s.<CompletableFuture> map(ft -> ft.thenApplyAsync(SimpleReactStream.<U, R> handleExceptions(fn),
+                                                                                                                                             getTaskExecutor()));
         return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
     }
 
-
-    
-    
     /**
      * Peek asynchronously at the results in the current stage. Current results
      * are passed through to the next stage.
@@ -536,15 +544,13 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     default SimpleReactStream<U> peek(final Consumer<? super U> consumer) {
-        if(!isAsync())
+        if (!isAsync())
             return peekSync(consumer);
         return (SimpleReactStream<U>) then((t) -> {
             consumer.accept(t);
             return (U) t;
         });
     }
-
-
 
     /**
      * Synchronous peek operator
@@ -559,18 +565,20 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
         });
     }
 
-    static <U,R> Function<U, R> handleExceptions(Function<? super U,? extends R> fn) {
+    static <U, R> Function<U, R> handleExceptions(Function<? super U, ? extends R> fn) {
         return (input) -> {
             try {
                 return fn.apply(input);
             } catch (Throwable t) {
-                if(t instanceof AbortRetryException)//special case for retry
+                if (t instanceof AbortRetryException) //special case for retry
                     throw t;
-                throw new SimpleReactFailedStageException(input, t);
+                throw new SimpleReactFailedStageException(
+                                                          input, t);
 
             }
         };
     }
+
     /**
      * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
      * If in async mode this operation is performed asyncrhonously
@@ -592,14 +600,14 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @return Flatten Stream with flatFn applied
      */
     @Override
-    default <R> SimpleReactStream<R> flatMapToCompletableFuture(
-            Function<? super U,  CompletableFuture<? extends R>> flatFn) {
-        if(!this.isAsync())
+    default <R> SimpleReactStream<R> flatMapToCompletableFuture(Function<? super U, CompletableFuture<? extends R>> flatFn) {
+        if (!this.isAsync())
             return flatMapToCompletableFutureSync(flatFn);
-        Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->(Stream)s.<CompletableFuture>map(ft ->
-            ft.thenComposeAsync(SimpleReactStream.handleExceptions(flatFn),getTaskExecutor()));
+        Function<Stream<CompletableFuture>, Stream<CompletableFuture>> streamMapper = s -> (Stream) s.<CompletableFuture> map(ft -> ft.thenComposeAsync(SimpleReactStream.handleExceptions(flatFn),
+                                                                                                                                                        getTaskExecutor()));
         return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
     }
+
     /**
      * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
      * This operation is performed synchronously
@@ -619,10 +627,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @return Flatten Stream with flatFn applied
      */
     @Override
-    default <R> SimpleReactStream<R> flatMapToCompletableFutureSync(
-            Function<? super U, CompletableFuture<? extends R>> flatFn) {
+    default <R> SimpleReactStream<R> flatMapToCompletableFutureSync(Function<? super U, CompletableFuture<? extends R>> flatFn) {
 
-        Function<Stream<CompletableFuture>,Stream<CompletableFuture>> streamMapper = s ->(Stream)s.<CompletableFuture>map(ft -> ft.thenCompose(SimpleReactStream.handleExceptions(flatFn)));
+        Function<Stream<CompletableFuture>, Stream<CompletableFuture>> streamMapper = s -> (Stream) s.<CompletableFuture> map(ft -> ft.thenCompose(SimpleReactStream.handleExceptions(flatFn)));
         return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(streamMapper));
     }
 
@@ -634,22 +641,15 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
      * @return SimpleReactStream
      */
-    default <R> SimpleReactStream<R> flatMap(
-            Function<? super U, ? extends Stream<? extends R>> flatFn) {
+    default <R> SimpleReactStream<R> flatMap(Function<? super U, ? extends Stream<? extends R>> flatFn) {
 
         //need to pass in a builder in the constructor and build using it
-        return (SimpleReactStream)getSimpleReact().construct( Stream.of()).withSubscription(getSubscription())
-                            .withQueueFactory((QueueFactory<Object>) getQueueFactory())
-                .fromStream(
-                        toQueue()
-                                .stream(getSubscription())
-                                .flatMap(flatFn));
+        return (SimpleReactStream) getSimpleReact().construct(Stream.of())
+                                                   .withSubscription(getSubscription())
+                                                   .withQueueFactory((QueueFactory<Object>) getQueueFactory())
+                                                   .fromStream(toQueue().stream(getSubscription())
+                                                                        .flatMap(flatFn));
     }
-
-
-
-
-
 
     /**
      *
@@ -684,15 +684,12 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         application of the supplied function
      */
     @SuppressWarnings("unchecked")
-    default <R> List<CompletableFuture<R>> with(final Function<? super U,? extends R> fn) {
+    default <R> List<CompletableFuture<R>> with(final Function<? super U, ? extends R> fn) {
 
-        return getLastActive()
-                .stream()
-                .map(future -> (CompletableFuture<R>) future.thenApplyAsync(fn,
-                        getTaskExecutor())).collect(Collectors.toList());
+        return getLastActive().stream()
+                              .map(future -> (CompletableFuture<R>) future.thenApplyAsync(fn, getTaskExecutor()))
+                              .collect(Collectors.toList());
     }
-
-
 
     /**
      * Removes elements that do not match the supplied predicate from the
@@ -706,18 +703,18 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
     @SuppressWarnings("unchecked")
     default SimpleReactStream<U> filter(final Predicate<? super U> p) {
-        if(!isAsync())
+        if (!isAsync())
             return filterSync(p);
-    Function<Stream<CompletableFuture>,Stream<CompletableFuture>> fn = s -> s.map(ft -> ft.thenApplyAsync((in) -> {
+        Function<Stream<CompletableFuture>, Stream<CompletableFuture>> fn = s -> s.map(ft -> ft.thenApplyAsync((in) -> {
             if (!p.test((U) in)) {
                 throw new FilteredExecutionPathException();
             }
             return in;
         }));
-        return (SimpleReactStream<U>) this.withLastActive(getLastActive()
-                .stream(fn));
+        return (SimpleReactStream<U>) this.withLastActive(getLastActive().stream(fn));
 
     }
+
     /**
      * Synchronous filtering operation
      *
@@ -731,23 +728,24 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     default SimpleReactStream<U> filterSync(final Predicate<? super U> p) {
-        Function<Stream<CompletableFuture>,Stream<CompletableFuture>> fn = s -> s.map(ft -> ft.thenApply((in) -> {
-                if (!p.test((U) in)) {
-                    throw new FilteredExecutionPathException();
-                }
-                return in;
-            }));
-            return (SimpleReactStream<U>) this.withLastActive(getLastActive()
-                    .stream(fn));
+        Function<Stream<CompletableFuture>, Stream<CompletableFuture>> fn = s -> s.map(ft -> ft.thenApply((in) -> {
+            if (!p.test((U) in)) {
+                throw new FilteredExecutionPathException();
+            }
+            return in;
+        }));
+        return (SimpleReactStream<U>) this.withLastActive(getLastActive().stream(fn));
 
-        }
+    }
+
     /**
      * @return A Stream of CompletableFutures that represent this stage in the
      *         dataflow
      */
     @SuppressWarnings({ "unchecked" })
     default <T> Stream<CompletableFuture<T>> streamCompletableFutures() {
-        Stream s = this.getLastActive().stream();
+        Stream s = this.getLastActive()
+                       .stream();
         return s;
 
     }
@@ -780,11 +778,15 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
     @SuppressWarnings({ "unchecked", "rawtypes" })
     default SimpleReactStream<U> merge(SimpleReactStream<U>... s) {
 
-        List merged = Stream.concat(Stream.of(this),Stream.of(s))
-                .map(stream -> ((SimpleReactStream)stream).getLastActive().list())
-                .flatMap(Collection::stream).collect(Collectors.toList());
-        return (SimpleReactStream<U>) this.withLastActive(new EagerStreamWrapper(merged,this.getErrorHandler()));
+        List merged = Stream.concat(Stream.of(this), Stream.of(s))
+                            .map(stream -> ((SimpleReactStream) stream).getLastActive()
+                                                                       .list())
+                            .flatMap(Collection::stream)
+                            .collect(Collectors.toList());
+        return (SimpleReactStream<U>) this.withLastActive(new EagerStreamWrapper(
+                                                                                 merged, this.getErrorHandler()));
     }
+
     /**
      * React and <b>block</b> with <b>breakout</b>
      *
@@ -812,8 +814,10 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
     default ListX<U> block(final Predicate<Status<U>> breakout) {
-        return new Blocker<U>(getLastActive().list(), getErrorHandler()).block(breakout);
+        return new Blocker<U>(
+                              getLastActive().list(), getErrorHandler()).block(breakout);
     }
+
     /**
      * @param collector
      *            to perform aggregation / reduction operation on the results
@@ -828,11 +832,12 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
-    default  <A,R> R block(final Collector<? super U, A, R> collector,
-            final Predicate<Status<U>> breakout) {
-       
-        return (R) block(breakout).stream().collect(collector);
+    default <A, R> R block(final Collector<? super U, A, R> collector, final Predicate<Status<U>> breakout) {
+
+        return (R) block(breakout).stream()
+                                  .collect(collector);
     }
+
     /**
      * Merge this reactive dataflow with another - recommended for merging
      * different types. To merge flows of the same type the instance method
@@ -846,9 +851,14 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <R> SimpleReactStream<R> merge(SimpleReactStream s1, SimpleReactStream s2) {
-        List merged = Stream.of(s1.getLastActive().list(), s2.getLastActive().list())
-                .flatMap(Collection::stream).collect(Collectors.toList());
-        return (SimpleReactStream<R>) s1.withLastActive(new EagerStreamWrapper(merged,s1.getErrorHandler()));
+        List merged = Stream.of(s1.getLastActive()
+                                  .list(),
+                                s2.getLastActive()
+                                  .list())
+                            .flatMap(Collection::stream)
+                            .collect(Collectors.toList());
+        return (SimpleReactStream<R>) s1.withLastActive(new EagerStreamWrapper(
+                                                                               merged, s1.getErrorHandler()));
     }
 
     /**
@@ -873,17 +883,17 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
                     .then(it -> {
                         if (it == 100)
                             throw new RuntimeException("boo!");
-
+    
                         return it;
                     })
                     .onFail(e -> 1)
                     .then(it -> "*" + it)
                     .block();
-
-
-
+    
+    
+    
       }
-
+    
           </pre>
      *
      *
@@ -897,8 +907,8 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    default SimpleReactStream<U> onFail(final Function<? super SimpleReactFailedStageException,? extends U> fn) {
-        return onFail(Throwable.class,fn);
+    default SimpleReactStream<U> onFail(final Function<? super SimpleReactFailedStageException, ? extends U> fn) {
+        return onFail(Throwable.class, fn);
     }
 
     /**
@@ -920,7 +930,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
             .onFail(IOException.class, recoveryFunction1)
         }
         </pre>
-
+    
      * recoveryFunction1 will not be called
      *
      *
@@ -928,33 +938,33 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param fn Recovery function
      * @return recovery value
      */
-    default SimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass, 
-                        final Function<? super SimpleReactFailedStageException, ? extends U> fn){
+    default SimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass,
+            final Function<? super SimpleReactFailedStageException, ? extends U> fn) {
 
-        Function<Stream<CompletableFuture>,Stream<CompletableFuture>> mapper = s -> s.map((ft) -> ft.exceptionally((t) -> {
+        Function<Stream<CompletableFuture>, Stream<CompletableFuture>> mapper = s -> s.map((ft) -> ft.exceptionally((t) -> {
             if (t instanceof FilteredExecutionPathException)
                 throw (FilteredExecutionPathException) t;
-            Throwable throwable =(Throwable)t;
-            if(t instanceof CompletionException)
-                throwable = ((Exception)t).getCause();
+            Throwable throwable = (Throwable) t;
+            if (t instanceof CompletionException)
+                throwable = ((Exception) t).getCause();
 
-            SimpleReactFailedStageException simpleReactException = assureSimpleReactException( throwable);//exceptions from initial supplier won't be wrapper in SimpleReactFailedStageException
-            if(exceptionClass.isAssignableFrom(simpleReactException.getCause().getClass()))
+            SimpleReactFailedStageException simpleReactException = assureSimpleReactException(throwable);//exceptions from initial supplier won't be wrapper in SimpleReactFailedStageException
+            if (exceptionClass.isAssignableFrom(simpleReactException.getCause()
+                                                                    .getClass()))
                 return ((Function) fn).apply(simpleReactException);
             throw simpleReactException;
 
         }));
-        return (SimpleReactStream<U>) this.withLastActive(getLastActive()
-                .stream(mapper));
+        return (SimpleReactStream<U>) this.withLastActive(getLastActive().stream(mapper));
     }
 
-
-    static SimpleReactFailedStageException assureSimpleReactException(
-            Throwable throwable){
-        if(throwable instanceof SimpleReactFailedStageException)
-            return (SimpleReactFailedStageException)throwable;
-        return new SimpleReactFailedStageException(null,(throwable));
+    static SimpleReactFailedStageException assureSimpleReactException(Throwable throwable) {
+        if (throwable instanceof SimpleReactFailedStageException)
+            return (SimpleReactFailedStageException) throwable;
+        return new SimpleReactFailedStageException(
+                                                   null, (throwable));
     }
+
     /**
      * React <b>capture</b>
      *
@@ -969,16 +979,16 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
             .then(it -> {
                 if (it == 100)
                     throw new RuntimeException("boo!");
-
+    
                 return it;
             })
             .onFail(e -> 1)
             .then(it -> "*" + it)
             .then(it -> {
-
+    
                 if ("*200".equals(it))
                     throw new RuntimeException("boo!");
-
+    
                 return it;
             })
             .capture(e -> logger.error(e.getMessage(),e))
@@ -1001,12 +1011,10 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      */
     @SuppressWarnings("unchecked")
     default SimpleReactStream<U> capture(final Consumer<Throwable> errorHandler) {
-        return this.withLastActive(this.getLastActive().withErrorHandler(Optional.of(errorHandler)))
-                .withErrorHandler(Optional
-                .of((Consumer<Throwable>) errorHandler));
+        return this.withLastActive(this.getLastActive()
+                                       .withErrorHandler(Optional.of(errorHandler)))
+                   .withErrorHandler(Optional.of((Consumer<Throwable>) errorHandler));
     }
-
-
 
     /**
      * React and <b>allOf</b>
@@ -1020,20 +1028,20 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
       {@code
       boolean blocked[] = {false};
         new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-
+    
                 .then(it -> {
                     try {
                         Thread.sleep(50000);
                     } catch (Exception e) {
-
+    
                     }
                     blocked[0] =true;
                     return 10;
                 })
                 .allOf( it -> it.size());
-
+    
         assertThat(blocked[0],is(false));
-
+    
       }
         </pre>
      *
@@ -1047,9 +1055,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *         the dataflow
      */
     @SuppressWarnings("unchecked")
-    default <R> SimpleReactStream<R> allOf(final Function<? super List<U>,? extends R> fn) {
+    default <R> SimpleReactStream<R> allOf(final Function<? super List<U>, ? extends R> fn) {
 
-        return (SimpleReactStream<R>) allOf(Collectors.<U>toList(),  fn);
+        return (SimpleReactStream<R>) allOf(Collectors.<U> toList(), fn);
 
     }
 
@@ -1059,17 +1067,11 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *
      * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
      */
-    default LazyFutureStream<U> convertToLazyStream(){
-        return new LazyReact(getTaskExecutor()).withRetrier(getRetrier())
-                .fromStreamFutures((Stream)getLastActive().stream());
+    default LazyFutureStream<U> convertToLazyStream() {
+        return new LazyReact(
+                             getTaskExecutor()).withRetrier(getRetrier())
+                                               .fromStreamFutures((Stream) getLastActive().stream());
     }
-
-
-
-
-
-
-
 
     /*
      * Execute subsequent stages on the completing thread (until async called)
@@ -1080,7 +1082,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *	@return Version of FutureStream that will use sync CompletableFuture methods
      *
      */
-    default SimpleReactStream<U> sync(){
+    default SimpleReactStream<U> sync() {
         return this.withAsync(false);
     }
 
@@ -1094,7 +1096,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      *	@return Version of FutureStream that will use async CompletableFuture methods
      *
      */
-    default SimpleReactStream<U> async(){
+    default SimpleReactStream<U> async() {
         return this.withAsync(true);
     }
 
@@ -1106,8 +1108,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param flatFn flatMap function
      * @return
      */
-    static <U,R> SimpleReactStream<R> bind(SimpleReactStream<U> stream,
-            Function< U, BaseSimpleReactStream<R>> flatFn) {
+    static <U, R> SimpleReactStream<R> bind(SimpleReactStream<U> stream, Function<U, BaseSimpleReactStream<R>> flatFn) {
 
         return join(stream.then(flatFn));
 
@@ -1119,14 +1120,14 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>,
      * @param stream Stream to flatten
      * @return flattened Stream
      */
-    static <U,R> SimpleReactStream<R> join(SimpleReactStream<BaseSimpleReactStream<U>> stream){
-        Queue queue =  stream.getQueueFactory().build();
-        stream.then(it -> it.sync().then(queue::offer)).allOf(it ->queue.close());
-         return stream.fromStream(queue.stream(stream.getSubscription()));
+    static <U, R> SimpleReactStream<R> join(SimpleReactStream<BaseSimpleReactStream<U>> stream) {
+        Queue queue = stream.getQueueFactory()
+                            .build();
+        stream.then(it -> it.sync()
+                            .then(queue::offer))
+              .allOf(it -> queue.close());
+        return stream.fromStream(queue.stream(stream.getSubscription()));
 
     }
-
-
-
 
 }

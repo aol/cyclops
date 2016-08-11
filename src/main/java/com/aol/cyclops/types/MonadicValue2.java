@@ -12,8 +12,7 @@ public interface MonadicValue2<T1, T2> extends MonadicValue<T2> {
      *            transformation function
      * @return Transformed MonadicValue2
      */
-    <R1, R2> MonadicValue2<R1, R2> flatMap(
-            Function<? super T2, ? extends MonadicValue2<? extends R1, ? extends R2>> mapper);
+    <R1, R2> MonadicValue2<R1, R2> flatMap(Function<? super T2, ? extends MonadicValue2<? extends R1, ? extends R2>> mapper);
 
     /**
      * Eagerly combine two MonadicValues using the supplied monoid
@@ -45,8 +44,9 @@ public interface MonadicValue2<T1, T2> extends MonadicValue<T2> {
      * @return
      */
     default MonadicValue2<T1, T2> combineEager(Monoid<T2> monoid, MonadicValue2<? extends T1, ? extends T2> v2) {
-        return unit(this.<T1, T2> flatMap(t1 -> v2.map(t2 -> monoid.combiner().apply(t1, t2)))
-                .orElseGet(() -> this.orElseGet(() -> monoid.zero())));
+        return unit(this.<T1, T2> flatMap(t1 -> v2.map(t2 -> monoid.combiner()
+                                                                   .apply(t1, t2)))
+                        .orElseGet(() -> this.orElseGet(() -> monoid.zero())));
     }
 
     /*

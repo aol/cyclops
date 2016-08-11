@@ -20,7 +20,6 @@ import org.junit.Test;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Try.Failure;
-import com.aol.cyclops.control.Try.Success;
 
 public class FailureTest {
 

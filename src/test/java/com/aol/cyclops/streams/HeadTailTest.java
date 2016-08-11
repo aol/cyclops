@@ -1,14 +1,14 @@
 package com.aol.cyclops.streams;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
-
-import java.util.Optional;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
 public class HeadTailTest {

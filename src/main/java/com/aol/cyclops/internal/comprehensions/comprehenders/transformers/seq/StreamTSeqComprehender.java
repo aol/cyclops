@@ -12,46 +12,48 @@ import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.mixins.Printable;
 
+public class StreamTSeqComprehender implements Comprehender<StreamTSeq>, Printable {
 
+    @Override
+    public Object resolveForCrossTypeFlatMap(Comprehender comp, StreamTSeq apply) {
+        List list = (List) apply.stream()
+                                .collect(Collectors.toCollection(MaterializedList::new));
+        return list.size() > 0 ? comp.of(list) : comp.empty();
+    }
 
-public class StreamTSeqComprehender implements Comprehender<StreamTSeq>, Printable{
-	
-	@Override
-	public Object resolveForCrossTypeFlatMap(Comprehender comp, StreamTSeq apply) {
-	    List list = (List) apply.stream().collect(Collectors.toCollection(MaterializedList::new));
-        return list.size()>0 ? comp.of(list) : comp.empty();
-     }
-	@Override
-    public Object filter(StreamTSeq t, Predicate p){
+    @Override
+    public Object filter(StreamTSeq t, Predicate p) {
         return t.filter(p);
     }
-	@Override
-	public Object map(StreamTSeq t, Function fn) {
-		return t.map(r->fn.apply(r));
-	}
 
-	@Override
-	public Object flatMap(StreamTSeq t, Function fn) {
-		return t.flatMapT(r->fn.apply(r));
-	}
+    @Override
+    public Object map(StreamTSeq t, Function fn) {
+        return t.map(r -> fn.apply(r));
+    }
 
-	@Override
-	public StreamTSeq of(Object o) {
-		return StreamTSeq.of(ReactiveSeq.of(o));
-	}
+    @Override
+    public Object flatMap(StreamTSeq t, Function fn) {
+        return t.flatMapT(r -> fn.apply(r));
+    }
 
-	@Override
-	public StreamTSeq empty() {
-		return StreamTSeq.emptyStream();
-	}
+    @Override
+    public StreamTSeq of(Object o) {
+        return StreamTSeq.of(ReactiveSeq.of(o));
+    }
 
-	@Override
-	public Class getTargetClass() {
-		return StreamTSeq.class;
-	}
+    @Override
+    public StreamTSeq empty() {
+        return StreamTSeq.emptyStream();
+    }
+
+    @Override
+    public Class getTargetClass() {
+        return StreamTSeq.class;
+    }
+
     @Override
     public StreamTSeq fromIterator(Iterator o) {
-        return StreamTSeq.of(ReactiveSeq.fromIterable(()->o));
+        return StreamTSeq.of(ReactiveSeq.fromIterable(() -> o));
     }
 
 }

@@ -24,13 +24,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.jooq.lambda.Seq;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.util.SimpleTimer;
-import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.Value;
 public class BatchingTest {

@@ -7,14 +7,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class Continuation {
 
-	private final Supplier<Continuation> remainderOfWorkToBeDone;
-	
-	public Continuation proceed(){
-		return remainderOfWorkToBeDone.get();
-	}
+    private final Supplier<Continuation> remainderOfWorkToBeDone;
 
-	public static Continuation empty() {
-		
-		return new Continuation( ()-> empty());
-	}
+    public Continuation proceed() {
+        return remainderOfWorkToBeDone.get();
+    }
+
+    public static Continuation empty() {
+
+        return new Continuation(
+                                () -> empty());
+    }
 }

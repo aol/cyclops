@@ -2,8 +2,6 @@ package com.aol.cyclops.types;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -18,12 +16,8 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops.types.stream.reactive.QueueBasedSubscriber.Counter;
 
-public interface IterableFunctor<T> extends Iterable<T>,
-                                            Functor<T>, 
-                                            Foldable<T>, 
-                                            Traversable<T>,
-											ConvertableSequence<T>{
-  
+public interface IterableFunctor<T> extends Iterable<T>, Functor<T>, Foldable<T>, Traversable<T>, ConvertableSequence<T> {
+
     /**
       A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergeublisher(Collection, FlatMapConfig)} 
@@ -33,10 +27,10 @@ public interface IterableFunctor<T> extends Iterable<T>,
      * @param publishers
      * @return
      */
-    default  ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers){
-        return mergePublisher(publishers,QueueFactories.boundedQueue(5_000));
+    default ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers) {
+        return mergePublisher(publishers, QueueFactories.boundedQueue(5_000));
     }
-    
+
     /**
      * A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the @see {@link FlatMapConfig} class to configure an executor for asynchronous subscription.
@@ -44,25 +38,27 @@ public interface IterableFunctor<T> extends Iterable<T>,
      * 
      * 
      */
-    default  ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers, QueueFactory<T> factory){
+    default ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers, QueueFactory<T> factory) {
         Counter c = new Counter();
-        c.active.set(publishers.size()+1);
-        QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory,c,publishers.size());
-       
-        Supplier<Continuation> sp = ()->{
-              subscribe(init);
-              for(Publisher next : publishers){
-                     next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c,publishers.size()));
-               }
-                   
-               init.close();
-                
+        c.active.set(publishers.size() + 1);
+        QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory, c, publishers.size());
+
+        Supplier<Continuation> sp = () -> {
+            subscribe(init);
+            for (Publisher next : publishers) {
+                next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.size()));
+            }
+
+            init.close();
+
             return Continuation.empty();
         };
-        Continuation continuation = new Continuation(sp);
+        Continuation continuation = new Continuation(
+                                                     sp);
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }
+
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, FlatMapConfig)} 
@@ -72,9 +68,10 @@ public interface IterableFunctor<T> extends Iterable<T>,
      * @param mapper
      * @return
      */
-    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper){
-        return flatMapPublisher(mapper,10_000);
+    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return flatMapPublisher(mapper, 10_000);
     }
+
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, FlatMapConfig)} 
@@ -84,9 +81,10 @@ public interface IterableFunctor<T> extends Iterable<T>,
      * @param mapper
      * @return
      */
-    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper, int maxConcurrency){
-        return flatMapPublisher(mapper,maxConcurrency, QueueFactories.boundedQueue(5_000));
+    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper, int maxConcurrency) {
+        return flatMapPublisher(mapper, maxConcurrency, QueueFactories.boundedQueue(5_000));
     }
+
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the @see {@link FlatMapConfig} class to configure an executor for asynchronous subscription.
@@ -94,39 +92,42 @@ public interface IterableFunctor<T> extends Iterable<T>,
      * 
      * 
      */
-    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper, int maxConcurrency,QueueFactory<R> factory){
+    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper, int maxConcurrency,
+            QueueFactory<R> factory) {
         Counter c = new Counter();
-        QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory,c,maxConcurrency);
-       
+        QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
+
         ReactiveSeq<T> stream = stream();
-        Supplier<Continuation> sp = ()->{
-            
-            stream.map(mapper).forEachEvent(p->{
+        Supplier<Continuation> sp = () -> {
+
+            stream.map(mapper)
+                  .forEachEvent(p -> {
                 c.active.incrementAndGet();
-                p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(),c,maxConcurrency)); 
-                
-                } ,
-                i->{} ,
-                ()->{ init.close(); });
-            
+                p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
+
+            } , i -> {
+            } , () -> {
+                init.close();
+            });
+
             return Continuation.empty();
         };
-        Continuation continuation = new Continuation(sp);
+        Continuation continuation = new Continuation(
+                                                     sp);
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }
-	<U> IterableFunctor<U> unitIterator(Iterator<U> U);
-	<R> IterableFunctor<R>  map(Function<? super T,? extends R> fn);
-	
-	default  ReactiveSeq<T> stream(){
-		return ReactiveSeq.fromIterable(this);
-	}
-	default  Collectable<T> collectable(){
-		return stream().collectable();
-	}
-	
-	
-	
-	
-   
+
+    <U> IterableFunctor<U> unitIterator(Iterator<U> U);
+
+    <R> IterableFunctor<R> map(Function<? super T, ? extends R> fn);
+
+    default ReactiveSeq<T> stream() {
+        return ReactiveSeq.fromIterable(this);
+    }
+
+    default Collectable<T> collectable() {
+        return stream().collectable();
+    }
+
 }

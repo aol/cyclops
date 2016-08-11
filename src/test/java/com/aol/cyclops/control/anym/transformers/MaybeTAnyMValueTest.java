@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.anym.BaseAnyMValueTest;
 import com.aol.cyclops.control.monads.transformers.MaybeT;

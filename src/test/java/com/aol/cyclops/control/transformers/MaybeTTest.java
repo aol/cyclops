@@ -1,9 +1,9 @@
 package com.aol.cyclops.control.transformers;
 
 import static com.aol.cyclops.control.Matchable.otherwise;
+import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
-import static com.aol.cyclops.control.Matchable.otherwise;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;

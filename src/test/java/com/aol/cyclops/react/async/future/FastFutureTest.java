@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import io.netty.util.internal.chmv8.ForkJoinPool;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,6 +19,8 @@ import org.junit.Test;
 import com.aol.cyclops.internal.react.async.future.FastFuture;
 import com.aol.cyclops.internal.react.async.future.FinalPipeline;
 import com.aol.cyclops.internal.react.async.future.PipelineBuilder;
+
+import io.netty.util.internal.chmv8.ForkJoinPool;
 
 public class FastFutureTest {
 	private static final int TIMES = 10_000;

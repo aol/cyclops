@@ -28,226 +28,229 @@ import com.aol.cyclops.util.stream.Streamable;
 public interface Foldable<T> {
 
     ReactiveSeq<T> stream();
-	default Foldable<T> foldable(){
-	    return stream();
-	}
-	
-    	
-	/**
-	 * Attempt to map this Sequence to the same type as the supplied Monoid
-	 * (Reducer) Then use Monoid to reduce values
-	 * 
-	 * <pre>
-	 * {@code 
-	 * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
-	 * 
-	 * //4
-	 * }
-	 * </pre>
-	 * 
-	 * @param reducer
-	 *            Monoid to reduce values
-	 * @return Reduce result
-	 */
-	default <R> R mapReduce(Reducer<R> reducer){
-		return foldable().mapReduce(reducer);
-	}
 
-	/**
-	 * Attempt to map this Monad to the same type as the supplied Monoid, using
-	 * supplied function Then use Monoid to reduce values
-	 * 
-	 * <pre>
-	 *  {@code
-	 *  ReactiveSeq.of("one","two","three","four")
-	 *           .mapReduce(this::toInt,Reducers.toTotalInt());
-	 *  
-	 *  //10
-	 *  
-	 *  int toInt(String s){
-	 * 		if("one".equals(s))
-	 * 			return 1;
-	 * 		if("two".equals(s))
-	 * 			return 2;
-	 * 		if("three".equals(s))
-	 * 			return 3;
-	 * 		if("four".equals(s))
-	 * 			return 4;
-	 * 		return -1;
-	 * 	   }
-	 *  }
-	 * </pre>
-	 * 
-	 * @param mapper
-	 *            Function to map Monad type
-	 * @param reducer
-	 *            Monoid to reduce values
-	 * @return Reduce result
-	 */
-	default <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer){
-		return foldable().mapReduce(mapper,reducer);
-	}
-	/**
-	 * <pre>
-	 * {@code 
-	 * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
-	 * 
-	 * //hello,2,world,4
-	 * }
-	 * </pre>
-	 * 
-	 * @param reducer
-	 *            Use supplied Monoid to reduce values
-	 * @return reduced values
-	 */
-	default T reduce(Monoid<T> reducer){
-		return foldable().reduce(reducer);
-	}
-
-	/*
-	 * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
-	 * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
-	 */
-	default Optional<T> reduce(BinaryOperator<T> accumulator){
-		return foldable().reduce(accumulator);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.stream.Stream#reduce(java.lang.Object,
-	 * java.util.function.BinaryOperator)
-	 */
-	default T reduce(T identity, BinaryOperator<T> accumulator){
-		return foldable().reduce(identity, accumulator);
-	}
-	default <U> U reduce(U identity, BiFunction<U, ? super T,U> accumulator){
-	    Foldable<T> foldable = foldable();
-        return foldable.reduce(identity,accumulator);
+    default Foldable<T> foldable() {
+        return stream();
     }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.stream.Stream#reduce(java.lang.Object,
-	 * java.util.function.BiFunction, java.util.function.BinaryOperator)
-	 */
-	default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner){
-		return foldable().reduce(identity,accumulator,combiner);
-	}
-
-	/**
-	 * Reduce with multiple reducers in parallel NB if this Monad is an Optional
-	 * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
-	 * was one value To reduce over the values on the list, called
-	 * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
-	 * 
-	 * <pre>
-	 * {
-	 * 	&#064;code
-	 * 	Monoid&lt;Integer&gt; sum = Monoid.of(0, (a, b) -&gt; a + b);
-	 * 	Monoid&lt;Integer&gt; mult = Monoid.of(1, (a, b) -&gt; a * b);
-	 * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).foldable());
-	 * 
-	 * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
-	 * 
-	 * }
-	 * </pre>
-	 * 
-	 * 
-	 * @param reducers
-	 * @return
-	 */
-	default ListX<T> reduce(Stream<? extends Monoid<T>> reducers){
-		return foldable().reduce(reducers);
-	}
-
-	/**
-	 * Reduce with multiple reducers in parallel NB if this Monad is an Optional
-	 * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
-	 * was one value To reduce over the values on the list, called
-	 * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
-	 * 
-	 * <pre>
-	 * {@code 
-	 * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
-	 * 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-	 * 		List<Integer> result = ReactiveSeq.of(1,2,3,4))
-	 * 										.reduce(Arrays.asList(sum,mult) );
-	 * 				
-	 * 		 
-	 * 		assertThat(result,equalTo(Arrays.asList(10,24)));
-	 * 
-	 * }
-	 * </pre>
-	 * 
-	 * @param reducers
-	 * @return
-	 */
-	default ListX<T> reduce(Iterable<? extends Monoid<T>> reducers){
-		return foldable().reduce(reducers);
-	}
-
-
-	/**
-	 * 
-	 * <pre>
-	 * 		{@code
-	 * 		ReactiveSeq.of("a","b","c").foldRight(Reducers.toString(""));
-	 *        
-	 *         // "cab"
-	 *         }
-	 * </pre>
-	 * 
-	 * @param reducer
-	 *            Use supplied Monoid to reduce values starting via foldRight
-	 * @return Reduced result
-	 */
-	default T foldRight(Monoid<T> reducer){
-		return foldable().foldRight(reducer);
-	}
-
-	/**
-	 * Immutable reduction from right to left
-	 * 
-	 * <pre>
-	 * {@code 
-	 *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", String::concat).equals("cba"));
-	 * }
-	 * </pre>
-	 * 
-	 * @param identity
-	 * @param accumulator
-	 * @return
-	 */
-	default T foldRight(T identity, BinaryOperator<T> accumulator){
-		return foldable().foldRight(identity,accumulator);
-	}
-	default <U> U foldRight(U identity, BiFunction<? super T, ? super U,? extends U> accumulator){
-        return (foldable()).foldRight(identity,accumulator);
+    /**
+     * Attempt to map this Sequence to the same type as the supplied Monoid
+     * (Reducer) Then use Monoid to reduce values
+     * 
+     * <pre>
+     * {@code 
+     * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+     * 
+     * //4
+     * }
+     * </pre>
+     * 
+     * @param reducer
+     *            Monoid to reduce values
+     * @return Reduce result
+     */
+    default <R> R mapReduce(Reducer<R> reducer) {
+        return foldable().mapReduce(reducer);
     }
 
-	/**
-	 * Attempt to map this Monad to the same type as the supplied Monoid (using
-	 * mapToType on the monoid interface) Then use Monoid to reduce values
-	 * 
-	 * <pre>
-	 * 		{@code
-	 * 		ReactiveSeq.of(1,2,3).foldRightMapToType(Reducers.toString(""));
-	 *        
-	 *         // "321"
-	 *         }
-	 * </pre>
-	 * 
-	 * 
-	 * @param reducer
-	 *            Monoid to reduce values
-	 * @return Reduce result
-	 */
-	default <T> T foldRightMapToType(Reducer<T> reducer){
-		return foldable().foldRightMapToType(reducer);
-	}
-	/**
+    /**
+     * Attempt to map this Monad to the same type as the supplied Monoid, using
+     * supplied function Then use Monoid to reduce values
+     * 
+     * <pre>
+     *  {@code
+     *  ReactiveSeq.of("one","two","three","four")
+     *           .mapReduce(this::toInt,Reducers.toTotalInt());
+     *  
+     *  //10
+     *  
+     *  int toInt(String s){
+     * 		if("one".equals(s))
+     * 			return 1;
+     * 		if("two".equals(s))
+     * 			return 2;
+     * 		if("three".equals(s))
+     * 			return 3;
+     * 		if("four".equals(s))
+     * 			return 4;
+     * 		return -1;
+     * 	   }
+     *  }
+     * </pre>
+     * 
+     * @param mapper
+     *            Function to map Monad type
+     * @param reducer
+     *            Monoid to reduce values
+     * @return Reduce result
+     */
+    default <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
+        return foldable().mapReduce(mapper, reducer);
+    }
+
+    /**
+     * <pre>
+     * {@code 
+     * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
+     * 
+     * //hello,2,world,4
+     * }
+     * </pre>
+     * 
+     * @param reducer
+     *            Use supplied Monoid to reduce values
+     * @return reduced values
+     */
+    default T reduce(Monoid<T> reducer) {
+        return foldable().reduce(reducer);
+    }
+
+    /*
+     * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
+     * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
+     */
+    default Optional<T> reduce(BinaryOperator<T> accumulator) {
+        return foldable().reduce(accumulator);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
+     * java.util.function.BinaryOperator)
+     */
+    default T reduce(T identity, BinaryOperator<T> accumulator) {
+        return foldable().reduce(identity, accumulator);
+    }
+
+    default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator) {
+        Foldable<T> foldable = foldable();
+        return foldable.reduce(identity, accumulator);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
+     * java.util.function.BiFunction, java.util.function.BinaryOperator)
+     */
+    default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+        return foldable().reduce(identity, accumulator, combiner);
+    }
+
+    /**
+     * Reduce with multiple reducers in parallel NB if this Monad is an Optional
+     * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
+     * was one value To reduce over the values on the list, called
+     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * 
+     * <pre>
+     * {
+     * 	&#064;code
+     * 	Monoid&lt;Integer&gt; sum = Monoid.of(0, (a, b) -&gt; a + b);
+     * 	Monoid&lt;Integer&gt; mult = Monoid.of(1, (a, b) -&gt; a * b);
+     * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).foldable());
+     * 
+     * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param reducers
+     * @return
+     */
+    default ListX<T> reduce(Stream<? extends Monoid<T>> reducers) {
+        return foldable().reduce(reducers);
+    }
+
+    /**
+     * Reduce with multiple reducers in parallel NB if this Monad is an Optional
+     * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
+     * was one value To reduce over the values on the list, called
+     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * 
+     * <pre>
+     * {@code 
+     * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
+     * 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
+     * 		List<Integer> result = ReactiveSeq.of(1,2,3,4))
+     * 										.reduce(Arrays.asList(sum,mult) );
+     * 				
+     * 		 
+     * 		assertThat(result,equalTo(Arrays.asList(10,24)));
+     * 
+     * }
+     * </pre>
+     * 
+     * @param reducers
+     * @return
+     */
+    default ListX<T> reduce(Iterable<? extends Monoid<T>> reducers) {
+        return foldable().reduce(reducers);
+    }
+
+    /**
+     * 
+     * <pre>
+     * 		{@code
+     * 		ReactiveSeq.of("a","b","c").foldRight(Reducers.toString(""));
+     *        
+     *         // "cab"
+     *         }
+     * </pre>
+     * 
+     * @param reducer
+     *            Use supplied Monoid to reduce values starting via foldRight
+     * @return Reduced result
+     */
+    default T foldRight(Monoid<T> reducer) {
+        return foldable().foldRight(reducer);
+    }
+
+    /**
+     * Immutable reduction from right to left
+     * 
+     * <pre>
+     * {@code 
+     *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", String::concat).equals("cba"));
+     * }
+     * </pre>
+     * 
+     * @param identity
+     * @param accumulator
+     * @return
+     */
+    default T foldRight(T identity, BinaryOperator<T> accumulator) {
+        return foldable().foldRight(identity, accumulator);
+    }
+
+    default <U> U foldRight(U identity, BiFunction<? super T, ? super U, ? extends U> accumulator) {
+        return (foldable()).foldRight(identity, accumulator);
+    }
+
+    /**
+     * Attempt to map this Monad to the same type as the supplied Monoid (using
+     * mapToType on the monoid interface) Then use Monoid to reduce values
+     * 
+     * <pre>
+     * 		{@code
+     * 		ReactiveSeq.of(1,2,3).foldRightMapToType(Reducers.toString(""));
+     *        
+     *         // "321"
+     *         }
+     * </pre>
+     * 
+     * 
+     * @param reducer
+     *            Monoid to reduce values
+     * @return Reduce result
+     */
+    default <T> T foldRightMapToType(Reducer<T> reducer) {
+        return foldable().foldRightMapToType(reducer);
+    }
+
+    /**
      * <pre>
      * {@code
      *  assertEquals("123".length(),ReactiveSeq.of(1, 2, 3).join().length());
@@ -256,8 +259,8 @@ public interface Foldable<T> {
      * 
      * @return Stream as concatenated String
      */
-    default String join(){
-        
+    default String join() {
+
         return foldable().join();
     }
 
@@ -270,7 +273,7 @@ public interface Foldable<T> {
      * 
      * @return Stream as concatenated String
      */
-    default String join(String sep){
+    default String join(String sep) {
         return foldable().join(sep);
     }
 
@@ -283,24 +286,25 @@ public interface Foldable<T> {
      * 
      * @return Stream as concatenated String
      */
-    default String join(String sep, String start, String end){
-        return foldable().join(sep,start,end);
+    default String join(String sep, String start, String end) {
+        return foldable().join(sep, start, end);
     }
-    
-    default void print(PrintStream str){
+
+    default void print(PrintStream str) {
         foldable().print(str);
     }
-    default void print(PrintWriter writer){
+
+    default void print(PrintWriter writer) {
         foldable().print(writer);
     }
-    default void printOut(){
+
+    default void printOut() {
         foldable().printOut();
     }
-    default void printErr(){
+
+    default void printErr() {
         foldable().printErr();
     }
-    
-    
 
     /**
      * Use classifier function to group elements in this Sequence into a Map
@@ -317,12 +321,10 @@ public interface Foldable<T> {
      * 
      * </pre>
      */
-    default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier){
+    default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
         return foldable().groupBy(classifier);
     }
-    
 
-  
     /**
      * @return First matching element in sequential order
      * 
@@ -337,7 +339,7 @@ public interface Foldable<T> {
      *         (deterministic)
      * 
      */
-    default Optional<T> findFirst(){
+    default Optional<T> findFirst() {
         return foldable().findFirst();
     }
 
@@ -355,10 +357,10 @@ public interface Foldable<T> {
      * 
      *         (non-deterministic)
      */
-    default Optional<T> findAny(){
+    default Optional<T> findAny() {
         return foldable().findAny();
     }
-    
+
     /**
      * 
      * <pre>
@@ -370,7 +372,7 @@ public interface Foldable<T> {
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
-    default boolean startsWithIterable(Iterable<T> iterable){
+    default boolean startsWithIterable(Iterable<T> iterable) {
         return foldable().startsWithIterable(iterable);
     }
 
@@ -382,9 +384,10 @@ public interface Foldable<T> {
      * @param iterator
      * @return True if Monad starts with Iterators sequence of data
      */
-    default boolean startsWith(Stream<T> stream){
+    default boolean startsWith(Stream<T> stream) {
         return foldable().startsWith(stream);
     }
+
     /**
      * <pre>
      * {@code
@@ -396,7 +399,7 @@ public interface Foldable<T> {
      * @param iterable Values to check
      * @return true if SequenceM ends with values in the supplied iterable
      */
-    default boolean endsWithIterable(Iterable<T> iterable){
+    default boolean endsWithIterable(Iterable<T> iterable) {
         return foldable().endsWithIterable(iterable);
     }
 
@@ -412,10 +415,10 @@ public interface Foldable<T> {
      *            Values to check
      * @return true if SequenceM endswith values in the supplied Stream
      */
-    default boolean endsWith(Stream<T> stream){
+    default boolean endsWith(Stream<T> stream) {
         return foldable().endsWith(stream);
     }
-    
+
     /**
      * Lazily converts this SequenceM into a Collection. This does not trigger
      * the Stream. E.g. Collection is not thread safe on the first iteration.
@@ -433,7 +436,7 @@ public interface Foldable<T> {
      * 
      * @return
      */
-    default CollectionX<T> toLazyCollection(){
+    default CollectionX<T> toLazyCollection() {
         return foldable().toLazyCollection();
     }
 
@@ -454,7 +457,7 @@ public interface Foldable<T> {
      * 
      * @return
      */
-    default CollectionX<T> toConcurrentLazyCollection(){
+    default CollectionX<T> toConcurrentLazyCollection() {
         return foldable().toConcurrentLazyCollection();
     }
 
@@ -472,10 +475,10 @@ public interface Foldable<T> {
      * @return Streamable that replay this SequenceM, populated lazily and can
      *         be populated across threads
      */
-    default Streamable<T> toConcurrentLazyStreamable(){
+    default Streamable<T> toConcurrentLazyStreamable() {
         return foldable().toConcurrentLazyStreamable();
     }
-    
+
     /**
      * <pre>
      * {@code 
@@ -488,7 +491,7 @@ public interface Foldable<T> {
      * 
      * @return first value in this Stream
      */
-    default T firstValue(){
+    default T firstValue() {
         return foldable().firstValue();
     }
 
@@ -515,7 +518,7 @@ public interface Foldable<T> {
 
     }
 
-    default T single(Predicate<? super T> predicate){
+    default T single(Predicate<? super T> predicate) {
         return foldable().single(predicate);
     }
 
@@ -555,11 +558,10 @@ public interface Foldable<T> {
      *            to extract element from
      * @return elementAt index
      */
-    default Optional<T> get(long index){
+    default Optional<T> get(long index) {
         return foldable().get(index);
     }
-    
-    
+
     /**
      * Execute this Stream on a schedule
      * 
@@ -592,7 +594,7 @@ public interface Foldable<T> {
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
-    default HotStream<T> schedule(String cron, ScheduledExecutorService ex){
+    default HotStream<T> schedule(String cron, ScheduledExecutorService ex) {
         return foldable().schedule(cron, ex);
     }
 
@@ -628,7 +630,7 @@ public interface Foldable<T> {
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
-    default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
+    default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex) {
         return foldable().scheduleFixedDelay(delay, ex);
     }
 
@@ -662,20 +664,25 @@ public interface Foldable<T> {
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
-    default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
+    default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
         return foldable().scheduleFixedRate(rate, ex);
     }
-   
+
     default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(Validator<T, S, F> validator) {
 
-		Tuple2<ReactiveSeq<Xor<F, S>>, ReactiveSeq<Xor<F, S>>> xors = stream()
-				.<Xor<F, S>> flatMap(s -> validator.accumulate(s).toXors().stream()).duplicateSequence();
+        Tuple2<ReactiveSeq<Xor<F, S>>, ReactiveSeq<Xor<F, S>>> xors = stream().<Xor<F, S>> flatMap(s -> validator.accumulate(s)
+                                                                                                                 .toXors()
+                                                                                                                 .stream())
+                                                                              .duplicateSequence();
 
-        Predicate<Xor<F,S>> primaryPredicate = e -> e.isPrimary();
-        
-        return Ior.both(xors.v1.filter(primaryPredicate.negate()).map(x -> x.secondaryGet()),
-                xors.v2.filter(primaryPredicate).map(x -> x.get()));
+        Predicate<Xor<F, S>> primaryPredicate = e -> e.isPrimary();
+
+        return Ior.both(xors.v1.filter(primaryPredicate.negate())
+                               .map(x -> x.secondaryGet()),
+                        xors.v2.filter(primaryPredicate)
+                               .map(x -> x.get()));
     }
+
     /**
      * Check that there are specified number of matches of predicate in the
      * Stream
@@ -687,7 +694,7 @@ public interface Foldable<T> {
      * </pre>
      * 
      */
-    default boolean xMatch(int num, Predicate<? super T> c){
+    default boolean xMatch(int num, Predicate<? super T> c) {
         return foldable().xMatch(num, c);
     }
 }

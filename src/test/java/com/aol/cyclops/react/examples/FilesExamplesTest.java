@@ -3,9 +3,7 @@ package com.aol.cyclops.react.examples;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.stream.Stream;
 
-import org.jooq.lambda.Unchecked;
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;

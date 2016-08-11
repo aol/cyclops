@@ -16,7 +16,6 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.util.stream.Streamable;
 
 

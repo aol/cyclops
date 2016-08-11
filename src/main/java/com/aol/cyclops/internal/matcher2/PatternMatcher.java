@@ -2,12 +2,10 @@ package com.aol.cyclops.internal.matcher2;
 
 import static com.aol.cyclops.internal.matcher2.SeqUtils.seq;
 
-import java.lang.invoke.MethodType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple;
 
@@ -18,8 +16,6 @@ import com.aol.cyclops.types.Decomposable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
-
-
 
 /**
  * PatternMatcher supports advanced pattern matching for Java 8
@@ -53,106 +49,104 @@ import lombok.experimental.Wither;
  */
 @SuppressWarnings("unchecked")
 @AllArgsConstructor
-public class PatternMatcher implements Function{
-	
-	@Wither @Getter
-	private final Cases cases;
-	
-	public PatternMatcher(){
-		cases = Cases.of();
-	}
-	/**
-	 * @return Pattern Matcher as function that will return the 'unwrapped' result when apply is called.
-	 *  i.e. Optional#get will be called.
-	 * 
-	 */
-	public <T,X> Function<T,X> asUnwrappedFunction(){
-		return cases.asUnwrappedFunction();
-	}
-	
-	
-	
-	/* 
-	 *	@param t Object to match against
-	 *	@return Value from matched case if present
-	 * @see java.util.function.Function#apply(java.lang.Object)
-	 */
-	public Maybe<Object> apply(Object t){
-		return match(t);
-	}
-	
-	
-	/**
-	 * Aggregates supplied objects into a List for matching against
-	 * 
-	 * 
-	 * @param t Array to match on
-	 * @return Matched value wrapped in Optional
-	 */
-	public <R> Maybe<R> match(Object... t){
-		return cases.match(t);
-	}
-	/**
-	 * Decomposes the supplied input via it's unapply method
-	 * Provides a List to the Matcher of values to match on
-	 * 
-	 * @param t Object to decompose and match on
-	 * @return Matched result wrapped in an Optional
-	 */
-	public <R> Maybe<R> unapply(Decomposable t){
-		return cases.unapply(t);
-	}
-	/**
-	 * @param t Object to match against supplied cases
-	 * @return Value returned from matched case (if present) otherwise Optional.empty()
-	 */
-	public <R> Maybe<R> match(Object t){
-			
-		return cases.match(t);
-		
-	}
+public class PatternMatcher implements Function {
 
-	private Function extractorAction(Extractor extractor, Function action) {
-		if (extractor == null)
-			return action;
-		return input -> action.apply(extractor.apply(input));
-	}
+    @Wither
+    @Getter
+    private final Cases cases;
 
-	public <T, V, X> PatternMatcher inCaseOfManyType(Predicate master, Function<? super T, ? extends X> a,
-			Predicate<V>... predicates) {
+    public PatternMatcher() {
+        cases = Cases.of();
+    }
 
-		ReactiveSeq<Predicate<V>> pred = ReactiveSeq.of(predicates);
+    /**
+     * @return Pattern Matcher as function that will return the 'unwrapped' result when apply is called.
+     *  i.e. Optional#get will be called.
+     * 
+     */
+    public <T, X> Function<T, X> asUnwrappedFunction() {
+        return cases.asUnwrappedFunction();
+    }
 
-		return inCaseOf(it -> master.test(it)
-				&& seq(Extractors.decompose().apply(it))
-											.zip(pred, (a1, b1) -> Tuple.tuple(a1, b1))
-						.map(t -> t.v2.test((V) t.v1)).allMatch(v -> v == true),
-				a);
+    /* 
+     *	@param t Object to match against
+     *	@return Value from matched case if present
+     * @see java.util.function.Function#apply(java.lang.Object)
+     */
+    public Maybe<Object> apply(Object t) {
+        return match(t);
+    }
 
-	}
+    /**
+     * Aggregates supplied objects into a List for matching against
+     * 
+     * 
+     * @param t Array to match on
+     * @return Matched value wrapped in Optional
+     */
+    public <R> Maybe<R> match(Object... t) {
+        return cases.match(t);
+    }
 
-	private List wrapInList(Object a) {
-		if (a instanceof List)
-			return (List) a;
-		else
-			return Arrays.asList(a);
-	}
-	
-		
-	public <V,X> PatternMatcher inCaseOf(Predicate<V> match,Function<? super V,? extends X> a){
-		return inCaseOfThenExtract(match, a, null);
-		
-	}
-	public <R,T,X> PatternMatcher inCaseOfThenExtract(Predicate<T> match,Function<? super R,? extends X> a, Extractor<T,R> extractor){
-		
-		return withCases(cases.append(index(),Case.of(match,extractorAction(extractor,a))));
-		
-	}
-	
-	private int index() {
-		return cases.size();
-	}
+    /**
+     * Decomposes the supplied input via it's unapply method
+     * Provides a List to the Matcher of values to match on
+     * 
+     * @param t Object to decompose and match on
+     * @return Matched result wrapped in an Optional
+     */
+    public <R> Maybe<R> unapply(Decomposable t) {
+        return cases.unapply(t);
+    }
 
+    /**
+     * @param t Object to match against supplied cases
+     * @return Value returned from matched case (if present) otherwise Optional.empty()
+     */
+    public <R> Maybe<R> match(Object t) {
 
-	
+        return cases.match(t);
+
+    }
+
+    private Function extractorAction(Extractor extractor, Function action) {
+        if (extractor == null)
+            return action;
+        return input -> action.apply(extractor.apply(input));
+    }
+
+    public <T, V, X> PatternMatcher inCaseOfManyType(Predicate master, Function<? super T, ? extends X> a, Predicate<V>... predicates) {
+
+        ReactiveSeq<Predicate<V>> pred = ReactiveSeq.of(predicates);
+
+        return inCaseOf(it -> master.test(it) && seq(Extractors.decompose()
+                                                               .apply(it)).zip(pred, (a1, b1) -> Tuple.tuple(a1, b1))
+                                                                          .map(t -> t.v2.test((V) t.v1))
+                                                                          .allMatch(v -> v == true),
+                        a);
+
+    }
+
+    private List wrapInList(Object a) {
+        if (a instanceof List)
+            return (List) a;
+        else
+            return Arrays.asList(a);
+    }
+
+    public <V, X> PatternMatcher inCaseOf(Predicate<V> match, Function<? super V, ? extends X> a) {
+        return inCaseOfThenExtract(match, a, null);
+
+    }
+
+    public <R, T, X> PatternMatcher inCaseOfThenExtract(Predicate<T> match, Function<? super R, ? extends X> a, Extractor<T, R> extractor) {
+
+        return withCases(cases.append(index(), Case.of(match, extractorAction(extractor, a))));
+
+    }
+
+    private int index() {
+        return cases.size();
+    }
+
 }

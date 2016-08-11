@@ -4,9 +4,10 @@ import java.util.concurrent.TimeUnit;
 
 import com.aol.cyclops.control.ReactiveSeq;
 
-public interface Sequential<T>{
-    
+public interface Sequential<T> {
+
     ReactiveSeq<T> stream();
+
     /**
      * emit x elements per time period
      * 
@@ -27,7 +28,7 @@ public interface Sequential<T>{
      *            Time unit
      * @return SequenceM that emits x elements per time period
      */
-    default ReactiveSeq<T> xPer(int x, long time, TimeUnit t){
+    default ReactiveSeq<T> xPer(int x, long time, TimeUnit t) {
         return stream().xPer(x, time, t);
     }
 
@@ -50,10 +51,9 @@ public interface Sequential<T>{
      * @param t Time unit
      * @return SequenceM that emits 1 element per time period
      */
-    default ReactiveSeq<T> onePer(long time, TimeUnit t){
+    default ReactiveSeq<T> onePer(long time, TimeUnit t) {
         return stream().onePer(time, t);
     }
-
 
     /**
      * emit elements after a fixed delay
@@ -73,7 +73,7 @@ public interface Sequential<T>{
      *            for the delay
      * @return SequenceM that emits each element after a fixed delay
      */
-    default ReactiveSeq<T> fixedDelay(long l, TimeUnit unit){
+    default ReactiveSeq<T> fixedDelay(long l, TimeUnit unit) {
         return stream().fixedDelay(l, unit);
     }
 }

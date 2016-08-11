@@ -4,7 +4,6 @@ import org.junit.Before;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.Maybe;
 
 public class FutureWAnyMValueTest extends BaseAnyMValueTest {
     @Before

@@ -12,8 +12,6 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
-
 public class ConcatTest {
 	@Test
 	public void concatStreamsJDK(){

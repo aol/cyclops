@@ -51,12 +51,8 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public class EvalTSeq<T> implements EvalT<T>,
-                                    ValueTransformerSeq<T>,
-                                    IterableFoldable<T>,
-                                    ConvertableSequence<T>,
-                                    CyclopsCollectable<T>,
-                                    Sequential<T>{
+public class EvalTSeq<T>
+        implements EvalT<T>, ValueTransformerSeq<T>, IterableFoldable<T>, ConvertableSequence<T>, CyclopsCollectable<T>, Sequential<T> {
 
     private final AnyMSeq<Eval<T>> run;
 
@@ -113,6 +109,7 @@ public class EvalTSeq<T> implements EvalT<T>,
     public MaybeTSeq<T> filter(Predicate<? super T> test) {
         return MaybeTSeq.of(run.map(opt -> opt.filter(test)));
     }
+
     /**
      * Map the wrapped Maybe
      * 
@@ -131,7 +128,8 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
     public <B> EvalTSeq<B> map(Function<? super T, ? extends B> f) {
-        return new EvalTSeq<B>(run.map(o -> o.map(f)));
+        return new EvalTSeq<B>(
+                               run.map(o -> o.map(f)));
     }
 
     /**
@@ -154,29 +152,33 @@ public class EvalTSeq<T> implements EvalT<T>,
     public <B> EvalTSeq<B> flatMapT(Function<? super T, EvalTSeq<? extends B>> f) {
 
         return of(run.bind(opt -> {
-                return f.apply(opt.get()).run.unwrap();
-           
+            return f.apply(opt.get()).run.unwrap();
+
         }));
 
     }
+
     public <B> EvalTSeq<B> flatMap(Function<? super T, ? extends Eval<? extends B>> f) {
 
-        return new EvalTSeq<B>(run.map(o -> o.flatMap(f)));
+        return new EvalTSeq<B>(
+                               run.map(o -> o.flatMap(f)));
 
     }
+
     @Override
-    public <T>  EvalTSeq<T> unitStream(ReactiveSeq<T> traversable) {
+    public <T> EvalTSeq<T> unitStream(ReactiveSeq<T> traversable) {
         return EvalT.fromStream(traversable.map(Eval::now));
-       
+
     }
 
     @Override
-    public <T>  EvalTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
-        return of((AnyMSeq)traversable.map(t->Eval.fromIterable(t)));
+    public <T> EvalTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+        return of((AnyMSeq) traversable.map(t -> Eval.fromIterable(t)));
     }
+
     @Override
     public AnyMSeq<? extends Traversable<T>> transformerStream() {
-       
+
         return AnyM.fromList(ListX.of(stream().peek(System.out::println)));
     }
 
@@ -247,7 +249,7 @@ public class EvalTSeq<T> implements EvalT<T>,
      *            another monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U1, U2, R> BiFunction<EvalTSeq<U1>, EvalTSeq<U2>, EvalTSeq<R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
+    public static <U1, U2, R> BiFunction<EvalTSeq<U1>, EvalTSeq<U2>, EvalTSeq<R>> lift2(BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -261,7 +263,7 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @return MaybeT
      */
     public static <A> EvalTSeq<A> fromAnyM(AnyMSeq<A> anyM) {
-        return of(anyM.map(a->Eval.later(()->a)));
+        return of(anyM.map(a -> Eval.later(() -> a)));
     }
 
     /**
@@ -272,18 +274,21 @@ public class EvalTSeq<T> implements EvalT<T>,
      * @return MaybeT
      */
     public static <A> EvalTSeq<A> of(AnyMSeq<Eval<A>> monads) {
-        return new EvalTSeq<>(monads);
+        return new EvalTSeq<>(
+                              monads);
     }
-    public static <A> EvalTSeq<A> of(Eval<A> monads){
+
+    public static <A> EvalTSeq<A> of(Eval<A> monads) {
         return EvalT.fromIterable(ListX.of(monads));
     }
+
     /*
      * (non-Javadoc)
      * 
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return String.format("EvalTSeq[%s]", run );
+        return String.format("EvalTSeq[%s]", run);
     }
 
     /* (non-Javadoc)
@@ -291,372 +296,413 @@ public class EvalTSeq<T> implements EvalT<T>,
      */
     @Override
     public EvalTSeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.combine(predicate, op);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.combine(predicate, op);
     }
-    
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(int)
      */
     @Override
     public EvalTSeq<T> cycle(int times) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.cycle(times);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.cycle(times);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(com.aol.cyclops.Monoid, int)
      */
     @Override
     public EvalTSeq<T> cycle(Monoid<T> m, int times) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.cycle(m, times);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.cycle(m, times);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleWhile(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<T> cycleWhile(Predicate<? super T> predicate) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.cycleWhile(predicate);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.cycleWhile(predicate);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleUntil(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<T> cycleUntil(Predicate<? super T> predicate) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.cycleUntil(predicate);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.cycleUntil(predicate);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     public <U, R> EvalTSeq<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-       
-        return (EvalTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+
+        return (EvalTSeq<R>) ValueTransformerSeq.super.zip(other, zipper);
     }
+
     @Override
     public <U, R> EvalTSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-       
-        return (EvalTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+
+        return (EvalTSeq<R>) ValueTransformerSeq.super.zip(other, zipper);
     }
+
     @Override
     public <U, R> EvalTSeq<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-       
-        return (EvalTSeq<R>)ValueTransformerSeq.super.zip(other, zipper);
+
+        return (EvalTSeq<R>) ValueTransformerSeq.super.zip(other, zipper);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.util.stream.Stream)
      */
     @Override
     public <U> EvalTSeq<Tuple2<T, U>> zip(Stream<? extends U> other) {
-       
-        return (EvalTSeq)ValueTransformerSeq.super.zip(other);
+
+        return (EvalTSeq) ValueTransformerSeq.super.zip(other);
     }
+
     @Override
     public <U> EvalTSeq<Tuple2<T, U>> zip(Iterable<? extends U> other) {
-       
-        return (EvalTSeq)ValueTransformerSeq.super.zip(other);
+
+        return (EvalTSeq) ValueTransformerSeq.super.zip(other);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
     public <U> EvalTSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
-       
-        return (EvalTSeq)ValueTransformerSeq.super.zip(other);
+
+        return (EvalTSeq) ValueTransformerSeq.super.zip(other);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     public <S, U> EvalTSeq<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
-       
-        return (EvalTSeq)ValueTransformerSeq.super.zip3(second, third);
+
+        return (EvalTSeq) ValueTransformerSeq.super.zip3(second, third);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> EvalTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
-            Stream<? extends T4> fourth) {
-       
-        return (EvalTSeq)ValueTransformerSeq.super.zip4(second, third, fourth);
+    public <T2, T3, T4> EvalTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third, Stream<? extends T4> fourth) {
+
+        return (EvalTSeq) ValueTransformerSeq.super.zip4(second, third, fourth);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zipWithIndex()
      */
     @Override
     public EvalTSeq<Tuple2<T, Long>> zipWithIndex() {
-       
-        return (EvalTSeq<Tuple2<T, Long>>)ValueTransformerSeq.super.zipWithIndex();
+
+        return (EvalTSeq<Tuple2<T, Long>>) ValueTransformerSeq.super.zipWithIndex();
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int)
      */
     @Override
     public EvalTSeq<ListX<T>> sliding(int windowSize) {
-       
-        return (EvalTSeq<ListX<T>>)ValueTransformerSeq.super.sliding(windowSize);
+
+        return (EvalTSeq<ListX<T>>) ValueTransformerSeq.super.sliding(windowSize);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int, int)
      */
     @Override
     public EvalTSeq<ListX<T>> sliding(int windowSize, int increment) {
-       
-        return (EvalTSeq<ListX<T>>)ValueTransformerSeq.super.sliding(windowSize, increment);
+
+        return (EvalTSeq<ListX<T>>) ValueTransformerSeq.super.sliding(windowSize, increment);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int, java.util.function.Supplier)
      */
     @Override
     public <C extends Collection<? super T>> EvalTSeq<C> grouped(int size, Supplier<C> supplier) {
-       
-        return (EvalTSeq<C> )ValueTransformerSeq.super.grouped(size, supplier);
+
+        return (EvalTSeq<C>) ValueTransformerSeq.super.grouped(size, supplier);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-       
-        return (EvalTSeq<ListX<T>>)ValueTransformerSeq.super.groupedUntil(predicate);
+
+        return (EvalTSeq<ListX<T>>) ValueTransformerSeq.super.groupedUntil(predicate);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
      */
     @Override
     public EvalTSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
-       
-        return (EvalTSeq<ListX<T>>)ValueTransformerSeq.super.groupedStatefullyWhile(predicate);
+
+        return (EvalTSeq<ListX<T>>) ValueTransformerSeq.super.groupedStatefullyWhile(predicate);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-       
-        return (EvalTSeq<ListX<T>>)ValueTransformerSeq.super.groupedWhile(predicate);
+
+        return (EvalTSeq<ListX<T>>) ValueTransformerSeq.super.groupedWhile(predicate);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> EvalTSeq<C> groupedWhile(Predicate<? super T> predicate,
-            Supplier<C> factory) {
-       
-        return (EvalTSeq<C>)ValueTransformerSeq.super.groupedWhile(predicate, factory);
+    public <C extends Collection<? super T>> EvalTSeq<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+
+        return (EvalTSeq<C>) ValueTransformerSeq.super.groupedWhile(predicate, factory);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> EvalTSeq<C> groupedUntil(Predicate<? super T> predicate,
-            Supplier<C> factory) {
-       
-        return (EvalTSeq<C>)ValueTransformerSeq.super.groupedUntil(predicate, factory);
+    public <C extends Collection<? super T>> EvalTSeq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+
+        return (EvalTSeq<C>) ValueTransformerSeq.super.groupedUntil(predicate, factory);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int)
      */
     @Override
     public EvalTSeq<ListX<T>> grouped(int groupSize) {
-       
-        return ( EvalTSeq<ListX<T>>)ValueTransformerSeq.super.grouped(groupSize);
+
+        return (EvalTSeq<ListX<T>>) ValueTransformerSeq.super.grouped(groupSize);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
-    public <K, A, D> EvalTSeq<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier,
-            Collector<? super T, A, D> downstream) {
-       
-        return (EvalTSeq)ValueTransformerSeq.super.grouped(classifier, downstream);
+    public <K, A, D> EvalTSeq<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+
+        return (EvalTSeq) ValueTransformerSeq.super.grouped(classifier, downstream);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function)
      */
     @Override
     public <K> EvalTSeq<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
-       
-        return (EvalTSeq)ValueTransformerSeq.super.grouped(classifier);
+
+        return (EvalTSeq) ValueTransformerSeq.super.grouped(classifier);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#distinct()
      */
     @Override
     public EvalTSeq<T> distinct() {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.distinct();
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.distinct();
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(com.aol.cyclops.Monoid)
      */
     @Override
     public EvalTSeq<T> scanLeft(Monoid<T> monoid) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.scanLeft(monoid);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.scanLeft(monoid);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     public <U> EvalTSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
-       
-        return (EvalTSeq<U>)ValueTransformerSeq.super.scanLeft(seed, function);
+
+        return (EvalTSeq<U>) ValueTransformerSeq.super.scanLeft(seed, function);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(com.aol.cyclops.Monoid)
      */
     @Override
     public EvalTSeq<T> scanRight(Monoid<T> monoid) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.scanRight(monoid);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.scanRight(monoid);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> EvalTSeq<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
-       
-        return (EvalTSeq<U>)ValueTransformerSeq.super.scanRight(identity, combiner);
+    public <U> EvalTSeq<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+
+        return (EvalTSeq<U>) ValueTransformerSeq.super.scanRight(identity, combiner);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted()
      */
     @Override
     public EvalTSeq<T> sorted() {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.sorted();
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.sorted();
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.Comparator)
      */
     @Override
     public EvalTSeq<T> sorted(Comparator<? super T> c) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.sorted(c);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.sorted(c);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<T> takeWhile(Predicate<? super T> p) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.takeWhile(p);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.takeWhile(p);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<T> dropWhile(Predicate<? super T> p) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.dropWhile(p);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.dropWhile(p);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<T> takeUntil(Predicate<? super T> p) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.takeUntil(p);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.takeUntil(p);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<T> dropUntil(Predicate<? super T> p) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.dropUntil(p);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.dropUntil(p);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropRight(int)
      */
     @Override
     public EvalTSeq<T> dropRight(int num) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.dropRight(num);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.dropRight(num);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeRight(int)
      */
     @Override
     public EvalTSeq<T> takeRight(int num) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.takeRight(num);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.takeRight(num);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skip(long)
      */
     @Override
     public EvalTSeq<T> skip(long num) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.skip(num);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.skip(num);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipWhile(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<T> skipWhile(Predicate<? super T> p) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.skipWhile(p);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.skipWhile(p);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipUntil(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<T> skipUntil(Predicate<? super T> p) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.skipUntil(p);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.skipUntil(p);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limit(long)
      */
     @Override
     public EvalTSeq<T> limit(long num) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.limit(num);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.limit(num);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitWhile(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<T> limitWhile(Predicate<? super T> p) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.limitWhile(p);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.limitWhile(p);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitUntil(java.util.function.Predicate)
      */
     @Override
     public EvalTSeq<T> limitUntil(Predicate<? super T> p) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.limitUntil(p);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.limitUntil(p);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#intersperse(java.lang.Object)
      */
     @Override
     public EvalTSeq<T> intersperse(T value) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.intersperse(value);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.intersperse(value);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#reverse()
      */
     @Override
     public EvalTSeq<T> reverse() {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.reverse();
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.reverse();
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle()
      */
     @Override
     public EvalTSeq<T> shuffle() {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.shuffle();
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.shuffle();
     }
 
     /* (non-Javadoc)
@@ -664,86 +710,95 @@ public class EvalTSeq<T> implements EvalT<T>,
      */
     @Override
     public EvalTSeq<T> skipLast(int num) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.skipLast(num);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.skipLast(num);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitLast(int)
      */
     @Override
     public EvalTSeq<T> limitLast(int num) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.limitLast(num);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.limitLast(num);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmpty(java.lang.Object)
      */
     @Override
     public EvalTSeq<T> onEmpty(T value) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.onEmpty(value);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.onEmpty(value);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     public EvalTSeq<T> onEmptyGet(Supplier<? extends T> supplier) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.onEmptyGet(supplier);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.onEmptyGet(supplier);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     public <X extends Throwable> EvalTSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.onEmptyThrow(supplier);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.onEmptyThrow(supplier);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle(java.util.Random)
      */
     @Override
     public EvalTSeq<T> shuffle(Random random) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.shuffle(random);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.shuffle(random);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#slice(long, long)
      */
     @Override
     public EvalTSeq<T> slice(long from, long to) {
-       
-        return (EvalTSeq<T>)ValueTransformerSeq.super.slice(from, to);
+
+        return (EvalTSeq<T>) ValueTransformerSeq.super.slice(from, to);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.function.Function)
      */
     @Override
     public <U extends Comparable<? super U>> EvalTSeq<T> sorted(Function<? super T, ? extends U> function) {
-        return (EvalTSeq)ValueTransformerSeq.super.sorted(function);
+        return (EvalTSeq) ValueTransformerSeq.super.sorted(function);
     }
-    
-   
 
     @Override
     public ReactiveSeq<T> stream() {
-        return run.stream().map(e->e.get());
+        return run.stream()
+                  .map(e -> e.get());
     }
 
     @Override
     public Iterator<T> iterator() {
-       return stream().iterator();
+        return stream().iterator();
     }
 
-    public <R> EvalTSeq<R> unitIterator(Iterator<R> it){
-        return of(run.unitIterator(it).map(i->Eval.now(i)));
+    public <R> EvalTSeq<R> unitIterator(Iterator<R> it) {
+        return of(run.unitIterator(it)
+                     .map(i -> Eval.now(i)));
     }
-    public <R> EvalTSeq<R> unit(R value){
-       return of(run.unit(Eval.now(value)));
+
+    public <R> EvalTSeq<R> unit(R value) {
+        return of(run.unit(Eval.now(value)));
     }
-    public <R> EvalTSeq<R> empty(){
-        return of(run.unit(Eval.later(()->null)));
-     }
+
+    public <R> EvalTSeq<R> empty() {
+        return of(run.unit(Eval.later(() -> null)));
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
@@ -752,25 +807,26 @@ public class EvalTSeq<T> implements EvalT<T>,
     public Collectable<T> collectable() {
         return stream();
     }
+
     public boolean isSeqPresent() {
         return !run.isEmpty();
-     }
-     public static <T> EvalTSeq<T> emptyList() {
-         return EvalT.fromIterable(ListX.of());
-     }
-     @Override
-     public int hashCode(){
-         return run.hashCode();
-     }
-     
-     @Override
-     public boolean equals(Object o){
-         if(o instanceof EvalTSeq){
-             return run.equals( ((EvalTSeq)o).run);
-         }
-         return false;
-     }
-    
-    
- 
+    }
+
+    public static <T> EvalTSeq<T> emptyList() {
+        return EvalT.fromIterable(ListX.of());
+    }
+
+    @Override
+    public int hashCode() {
+        return run.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof EvalTSeq) {
+            return run.equals(((EvalTSeq) o).run);
+        }
+        return false;
+    }
+
 }

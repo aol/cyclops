@@ -7,50 +7,51 @@ import java.util.stream.Stream;
 import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.AllArgsConstructor;
-import lombok.Value;
+
 @AllArgsConstructor
 public class SkipWhileOperator<U> {
 
-    private final  Stream<U> stream;
-    
-	public Stream<U> skipWhile(Predicate<? super U> predicate){
-		Iterator<U> it = stream.iterator();
-		return StreamUtils.stream(new Iterator<U>(){
-			U next;
-			boolean nextSet = false;
-			boolean init =false;
-			@Override
-			public boolean hasNext() {
-				if(init)
-					return it.hasNext();
-				try{
-					while(it.hasNext()){
-						
-						next = it.next();
-						nextSet = true;
-						
-						if(!predicate.test(next))
-							return true;
-					
-					}
-					return false;
-				}finally{
-					init =true;
-				}
-			}
+    private final Stream<U> stream;
 
-			@Override
-			public U next() {
-				if(!init){
-					hasNext();
-				}
-				if(nextSet){
-					nextSet = false;
-					return next;
-				}
-				return it.next();
-			}
-			
-		});
-	}
+    public Stream<U> skipWhile(Predicate<? super U> predicate) {
+        Iterator<U> it = stream.iterator();
+        return StreamUtils.stream(new Iterator<U>() {
+            U next;
+            boolean nextSet = false;
+            boolean init = false;
+
+            @Override
+            public boolean hasNext() {
+                if (init)
+                    return it.hasNext();
+                try {
+                    while (it.hasNext()) {
+
+                        next = it.next();
+                        nextSet = true;
+
+                        if (!predicate.test(next))
+                            return true;
+
+                    }
+                    return false;
+                } finally {
+                    init = true;
+                }
+            }
+
+            @Override
+            public U next() {
+                if (!init) {
+                    hasNext();
+                }
+                if (nextSet) {
+                    nextSet = false;
+                    return next;
+                }
+                return it.next();
+            }
+
+        });
+    }
 }

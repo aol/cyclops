@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Ior;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.Mutable;
 
 public class IorAnyMValueTest extends BaseAnyMValueTest {

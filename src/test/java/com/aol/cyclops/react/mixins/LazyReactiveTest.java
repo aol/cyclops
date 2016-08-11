@@ -1,12 +1,9 @@
 package com.aol.cyclops.react.mixins;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
 import com.aol.cyclops.control.Pipes;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.async.Queue;
 public class LazyReactiveTest {
 	

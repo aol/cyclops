@@ -2,11 +2,10 @@ package com.aol.cyclops.react.async.vertx;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.jooq.lambda.tuple.Tuple.tuple;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.CompletableFuture;
 
-import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -21,7 +20,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.streams.ReadStream;
 
 
 public class VertxTest {

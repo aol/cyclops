@@ -28,10 +28,8 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.*;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.Window;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Test;

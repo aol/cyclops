@@ -3,11 +3,6 @@ package com.aol.cyclops.comprehensions;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,14 +11,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.control.For;
-import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.ReactiveSeq;
-
-import lombok.val;
+import com.aol.cyclops.control.Trampoline;
 
 public class StreamTest {
 	@Test

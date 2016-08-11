@@ -1,8 +1,8 @@
 package com.aol.cyclops.react.simple;
 
 
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;

@@ -24,11 +24,11 @@ import java.util.function.Function;
  */
 public interface SoftenedCacheable<OUT> {
 
-	/**
-	 * Implementation should call the underlying cache
-	 * @param key To lookup cached value
-	 * @param fn Function to compute value, if it is not in the cache
-	 * @return Cached (or computed) result
-	 */
-	public OUT computeIfAbsent(Object key, Function<Object,OUT> fn);
+    /**
+     * Implementation should call the underlying cache
+     * @param key To lookup cached value
+     * @param fn Function to compute value, if it is not in the cache
+     * @return Cached (or computed) result
+     */
+    public OUT computeIfAbsent(Object key, Function<Object, OUT> fn);
 }

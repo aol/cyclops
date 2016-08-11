@@ -3,6 +3,7 @@ package com.aol.cyclops.react.base;
 import static java.util.Arrays.asList;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
+
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 

@@ -17,10 +17,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
-import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.Pipes;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamSource;
 import com.aol.cyclops.data.async.Queue;
@@ -28,18 +25,15 @@ import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.async.Signal;
 import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.stream.pushable.MultipleStreamSource;
 import com.aol.cyclops.util.stream.pushable.PushableLazyFutureStream;
 import com.aol.cyclops.util.stream.pushable.PushableReactiveSeq;
 import com.aol.cyclops.util.stream.pushable.PushableStream;
 
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 
 public class PushableStreamTest {

@@ -13,6 +13,12 @@ import com.aol.cyclops.control.SimpleReact;
  *
  */
 public class ParallelElasticPools {
-	public final static ReactPool<SimpleReact> simpleReact = ReactPool.elasticPool(()->new SimpleReact(new ForkJoinPool(Runtime.getRuntime().availableProcessors())));
-	public final static ReactPool<LazyReact> lazyReact = ReactPool.elasticPool(()->new LazyReact(new ForkJoinPool(Runtime.getRuntime().availableProcessors())));
+    public final static ReactPool<SimpleReact> simpleReact = ReactPool.elasticPool(() -> new SimpleReact(
+                                                                                                         new ForkJoinPool(
+                                                                                                                          Runtime.getRuntime()
+                                                                                                                                 .availableProcessors())));
+    public final static ReactPool<LazyReact> lazyReact = ReactPool.elasticPool(() -> new LazyReact(
+                                                                                                   new ForkJoinPool(
+                                                                                                                    Runtime.getRuntime()
+                                                                                                                           .availableProcessors())));
 }

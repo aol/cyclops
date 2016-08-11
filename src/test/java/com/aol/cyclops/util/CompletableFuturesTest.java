@@ -1,13 +1,12 @@
 package com.aol.cyclops.util;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.CompletableFuture;
 
 import org.junit.Before;
 import org.junit.Test;
-
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 

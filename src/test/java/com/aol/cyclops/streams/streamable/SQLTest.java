@@ -8,11 +8,8 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 
 import java.util.function.BiPredicate;
-import java.util.function.Supplier;
 
 import org.junit.Test;
-
-import com.aol.cyclops.util.stream.Streamable;
 
 public class SQLTest  {
 		 

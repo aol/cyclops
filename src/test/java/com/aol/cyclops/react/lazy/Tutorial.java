@@ -31,7 +31,6 @@ import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
-import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
@@ -39,7 +38,6 @@ import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.val;
 
 
 public class Tutorial {

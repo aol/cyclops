@@ -1,16 +1,5 @@
 package com.aol.cyclops.comprehensions.donotation.typed;
 
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.function.BiFunction;
-
-import org.junit.Test;
-
-import com.aol.cyclops.control.For;
-import com.aol.cyclops.control.AnyM;
-
 //import fj.data.Option;
 
 public class DoFJOptionTest {

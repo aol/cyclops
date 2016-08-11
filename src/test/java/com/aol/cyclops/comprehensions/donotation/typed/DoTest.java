@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple;
@@ -16,9 +15,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 import lombok.val;
 public class DoTest {

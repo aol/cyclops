@@ -12,7 +12,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
 import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
 

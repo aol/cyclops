@@ -4,13 +4,7 @@ package com.aol.cyclops.comprehensions
 
 
 
-import java.util.function.Function
-import java.io.BufferedReader;
-import java.io.File;
-import java.util.Iterator;
-import java.util.stream.Stream;
-
-import org.pcollections.PStack;
+import java.util.List;;
 
 
 

@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.lazy;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -10,7 +10,6 @@ import org.junit.Test;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.aol.cyclops.util.SimpleTimer;
 
 public class ParallelTest {
 

@@ -15,12 +15,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import lombok.val;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.util.function.Memoize;
+
+import lombok.val;
 public class MemoiseTest {
 
 	int called= 0;

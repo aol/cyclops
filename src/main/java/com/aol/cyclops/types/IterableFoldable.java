@@ -3,15 +3,14 @@ package com.aol.cyclops.types;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
-public interface IterableFoldable<T> extends Foldable<T>, 
-                                             Iterable<T> {
-    default IterableFoldable<T> foldable(){
+public interface IterableFoldable<T> extends Foldable<T>, Iterable<T> {
+    default IterableFoldable<T> foldable() {
         return stream();
     }
+
     /**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
      * whenStream may be more efficient (as it is guaranteed to be lazy).
@@ -34,15 +33,15 @@ public interface IterableFoldable<T> extends Foldable<T>,
      * @param match
      * @return
      */
-    default <R> R visit(BiFunction<? super T,? super ReactiveSeq<T>,? extends R> match, Supplier<? extends R> ifEmpty){
-        
+    default <R> R visit(BiFunction<? super T, ? super ReactiveSeq<T>, ? extends R> match, Supplier<? extends R> ifEmpty) {
+
         HeadAndTail<T> ht = foldable().headAndTail();
-        if(ht.isHeadPresent())
-            return match.apply(ht.head(),ht.tail());
+        if (ht.isHeadPresent())
+            return match.apply(ht.head(), ht.tail());
         return ifEmpty.get();
-        
+
     }
-    
+
     /**
      * extract head and tail together, where head is expected to be present
      * 
@@ -61,8 +60,8 @@ public interface IterableFoldable<T> extends Foldable<T>,
      * 
      * @return
      */
-    default HeadAndTail<T> headAndTail(){
+    default HeadAndTail<T> headAndTail() {
         return foldable().headAndTail();
     }
-    
+
 }
