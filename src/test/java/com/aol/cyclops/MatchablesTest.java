@@ -36,6 +36,8 @@ import com.aol.cyclops.control.Try;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.util.function.Predicates;
 
+import lombok.val;
+
 public class MatchablesTest {
     @Test
     public void cFuture(){
