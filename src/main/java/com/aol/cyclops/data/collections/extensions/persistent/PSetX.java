@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Random;
+import java.util.SortedSet;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -21,6 +22,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.HashTreePSet;
+import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
 import org.reactivestreams.Publisher;
 
@@ -31,8 +33,9 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.OnEmptySwitch;
 
-public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
+public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T,PSet<T>>{
 	
     /**
      * Create a PSetX that contains the Integers between start and end
@@ -581,6 +584,16 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>{
 		
 		return (PSetX<T>)PersistentCollectionX.super.limitLast(num);
 	}
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     */
+    @Override
+    default PSetX<T> onEmptySwitch(
+            Supplier<? extends PSet<T>> supplier) {
+        if(this.isEmpty())
+            return PSetX.fromIterable(supplier.get());
+        return this;
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmpty(java.lang.Object)
 	 */

@@ -32,8 +32,9 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.OnEmptySwitch;
 
-public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
+public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>, OnEmptySwitch<T,PBag<T>>{
     /**
      * Create a PBagX that contains the Integers between start and end
      * 
@@ -630,7 +631,17 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>{
 		
 		return (PBagX<T>)PersistentCollectionX.super.limitLast(num);
 	}
-
+	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     */
+    @Override
+    default PBagX<T> onEmptySwitch(
+            Supplier<? extends PBag<T>> supplier) {
+        if(this.isEmpty())
+            return PBagX.fromIterable(supplier.get());
+        return this;
+    }
+    
 
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmpty(java.lang.Object)

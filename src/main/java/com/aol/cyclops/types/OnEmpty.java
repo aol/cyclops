@@ -27,6 +27,8 @@ public interface OnEmpty<T> {
      */
     OnEmpty<T> onEmptyGet(Supplier<? extends T> supplier);
     
+    
+    
     /**
      * If this container instance is empty, throw the exception returned by the provided Supplier
      * 

@@ -28,11 +28,12 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.util.stream.StreamUtils;
 
-public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
+public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T>, OnEmptySwitch<T,Queue<T>> {
 	
 	static <T> Collector<T,?,Queue<T>> defaultCollector(){
 		return Collectors.toCollection(()-> new LinkedList<>());
@@ -595,6 +596,17 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	}
 
 	/* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     */
+    @Override
+    default QueueX<T> onEmptySwitch(
+            Supplier<? extends Queue<T>> supplier) {
+        if(this.isEmpty())
+            return QueueX.fromIterable(supplier.get());
+        return this;
+    }
+    
+	/* (non-Javadoc)
 	 * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#onEmpty(java.lang.Object)
 	 */
 	@Override
@@ -767,4 +779,5 @@ public interface QueueX<T> extends Queue<T>,  MutableCollectionX<T> {
 	       
 	        return (QueueX<T>)MutableCollectionX.super.retainAll(stream);
 	    }
+	    
 }

@@ -1,14 +1,19 @@
 package com.aol.cyclops.functions.collections.extensions.standard;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
 
 public class DequeXTest extends AbstractCollectionXTest{
@@ -18,6 +23,10 @@ public class DequeXTest extends AbstractCollectionXTest{
 		return DequeX.of(values);
 	}
 
+    @Test
+    public void onEmptySwitch() {
+        assertThat(DequeX.empty().onEmptySwitch(() -> DequeX.of(1, 2, 3)).toList(), equalTo(ListX.of(1, 2, 3)));
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
 	 */

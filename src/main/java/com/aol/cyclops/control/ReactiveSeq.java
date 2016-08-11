@@ -57,6 +57,7 @@ import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFoldable;
+import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -81,6 +82,7 @@ import lombok.val;
 
 public interface ReactiveSeq<T> extends Unwrapable, 
                                         Stream<T>,
+                                        OnEmptySwitch<T,Stream<T>>,
                                         JoolManipulation<T>,
                                         IterableFilterable<T>,
                                         FilterableFunctor<T>, 

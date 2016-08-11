@@ -160,6 +160,7 @@ public interface LazyFutureStream<U> extends Functor<U>,
     default LazyFutureStream<U> combine(BiPredicate<? super U, ? super U> predicate, BinaryOperator<U> op){
         return fromStream(StreamUtils.combine(this, predicate, op));
      }
+    
     /**
      * If this SequenceM is empty replace it with a another Stream
      *

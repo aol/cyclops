@@ -31,6 +31,7 @@ import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.OnEmpty;
+import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
@@ -40,12 +41,14 @@ public interface 	MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
 												Functor<V>,
 												IterableFilterable<Tuple2<K, V>>,
 												OnEmpty<Tuple2<K, V>>,
+												OnEmptySwitch<Tuple2<K, V>,Map<K, V>>,
 												Publisher<Tuple2<K, V>>,
 												Foldable<Tuple2<K,V>>,
 												CyclopsCollectable<Tuple2<K,V>>
 												{
 
-	static <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> defaultCollector(){
+	
+    static <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> defaultCollector(){
 		return Collectors.toMap(t->t.v1, t->t.v2);
 	}
 	static <K,V> Collector<Tuple2<? extends K,? extends V>,?,Map<K,V>> immutableCollector(){
@@ -346,6 +349,16 @@ public interface 	MapX<K,V> extends Map<K, V>, FluentMapX<K,V>,
         return fromStream(stream().onEmptyThrow(supplier));
     }
     
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     */
+    @Override
+    default MapX<K, V> onEmptySwitch(
+            Supplier<? extends Map<K, V>> supplier) {
+        if(this.isEmpty())
+            return MapX.fromMap(supplier.get());
+        return this;
+    }
 
 
 

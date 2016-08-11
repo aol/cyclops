@@ -1,13 +1,19 @@
 package com.aol.cyclops.functions.collections.extensions.standard;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
 
@@ -18,7 +24,10 @@ public class SetXTest extends AbstractCollectionXTest{
 		return SetX.of(values);
 	}
 
-	
+	@Test
+	public void onEmptySwitch(){
+	        assertThat(SetX.empty().onEmptySwitch(()->SetX.of(1,2,3)),equalTo(SetX.of(1,2,3)));
+	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
 	 */
