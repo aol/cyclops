@@ -13,6 +13,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -134,12 +135,33 @@ public class FluentFunctionTest {
 		return input + " world"; 
 	}
 	
+	public Integer exceptionalLessThanZero(Integer input) throws IOException{
+		if(input < 0){
+			throw new IOException();
+		}
+		return input * 2; 
+	}
+	
 	@Test
 	public void retry(){
 		assertThat(FluentFunctions.ofChecked(this::exceptionalFirstTime)
 					   .println()
 					   .retry(2,500)
 					   .apply("hello"),equalTo("hello world"));
+	}
+	
+	@Test
+	public void visitEvent(){
+		CompletableFuture<Integer> future = new CompletableFuture<>();
+		Integer i = FluentFunctions.ofChecked(this::exceptionalLessThanZero).visitEvent(value-> future.complete(value), error-> future.completeExceptionally(error)).apply(10);
+		assertThat(i ,equalTo(20));
+	}
+	
+	@Test(expected=Exception.class)
+	public void visitEventExceptional(){
+		CompletableFuture<Integer> future = new CompletableFuture<>();
+		Integer i = FluentFunctions.ofChecked(this::exceptionalLessThanZero).visitEvent(value-> future.complete(value), error-> future.completeExceptionally(error)).apply(-10);
+		assertThat(i ,equalTo(20));
 	}
 	
 	@Test
