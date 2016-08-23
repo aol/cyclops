@@ -16,9 +16,25 @@ import org.junit.Test;
 
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazyTest {
+    @Test
+    public void combineNoOrder(){
+        assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX(),equalTo(ListX.of(1,2,3))); 
+                   
+    }
+    @Test
+    public void combine(){
+        
+        assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)
+                   .combine((a, b)->true,Semigroups.intSum).toListX(),
+                   equalTo(Arrays.asList(6))); 
+                   
+    }
 	@Test
 	public void onePerSecond() {
 

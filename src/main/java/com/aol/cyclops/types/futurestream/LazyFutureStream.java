@@ -156,6 +156,9 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
                                      .elapsed());
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     */
     default LazyFutureStream<U> combine(BiPredicate<? super U, ? super U> predicate, BinaryOperator<U> op) {
         return fromStream(StreamUtils.combine(this, predicate, op));
     }

@@ -1,5 +1,8 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.Matchers.equivalent;
+import static org.junit.Assert.assertThat;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -627,14 +630,26 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
         return AnyMFactory.instance.value(future);
     }
 
-    public static <T> AnyMValue<T> fromXor(Xor<?, T> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     * Create an AnyMValue instance that wraps an Xor
+     * 
+     * @param xor Xor to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Xor
+     */
+    public static <T> AnyMValue<T> fromXor(Xor<?, T> xor) {
+        Objects.requireNonNull(xor);
+        return AnyMFactory.instance.value(xor);
     }
 
-    public static <T> AnyMValue<T> fromFeatureToggle(FeatureToggle<T> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     * Create an AnyMValue instance that wraps an FeatureToggle
+     * 
+     * @param featureToggle to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided FeatureToggle
+     */
+    public static <T> AnyMValue<T> fromFeatureToggle(FeatureToggle<T> featureToggle) {
+        Objects.requireNonNull(featureToggle);
+        return AnyMFactory.instance.value(featureToggle);
     }
 
     public static <T> AnyMValue<T> fromTry(Try<T, ?> future) {
@@ -1003,7 +1018,24 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
 
     /**
      * Convert a Stream of Monads to a Monad with a Stream
-     *
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  
+        Supplier<AnyM<Stream<Integer>>> unitEmpty = ()->AnyM.fromOptional(Optional.of(Stream.<Integer>empty()));
+        
+        AnyMValue<Integer> just = AnyM.fromOptional(Optional.of(10));
+        Stream<AnyM<Integer>> streamOfOptionals = ReactiveSeq.of(just,AnyM.fromOptional(Optional.of(1)));
+        
+        AnyM<Stream<Integer>> optionalWithAStream  =AnyM.sequence(streamOfOptionals, unitEmpty);
+        Optional<Stream<Integer>> optional = optionalWithAStream.unwrap();
+       
+     * }
+     * </pre>
+     * @param source Stream of monads to sequence
+     * @param unitEmpty Supplier to generate an AnyM with an Empty Stream
+     * @return  AnyM wrapping a Monad with a Stream
      */
     public static <T> AnyM<Stream<T>> sequence(Stream<? extends AnyM<T>> source, Supplier<? extends AnyM<Stream<T>>> unitEmpty) {
         Stream<AnyM<T>> narrowed = (Stream<AnyM<T>>) source;
@@ -1218,10 +1250,30 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     static class AnyMFactory {
         static AnyMFactory instance = new AnyMFactory();
 
-        /* 
-         * This will convert the supplied Object if possible into a supported Monad type (or more efficient type)
-         * (non-Javadoc)
-         * @see com.aol.cyclops.monad.AnyMFactory#of(java.lang.Object)
+     
+        /**
+         * Convert an object to an AnyMValue type if possible. If a registered monad comprehender exists the supplied object will
+         * be wrapped as is, otherwise it will be converted into a support type (if possible). 
+         * 
+         * <pre>
+         * {@code
+         *     //Wrapped as is 
+         *      
+         *     AnyMValue<Integer> maybe = factory.convertValue(Maybe.just(10));
+         *     //AnyMValue[Maybe[Integer]]]
+         *     
+         *     //Converted 
+         *     
+         *     AnyMValue<Integer> maybe = factory.convertValue(null);
+         *     
+         *     //AnyMValue[Optional[Integer]]
+         *     
+         * }
+         * </pre>
+         * 
+         * 
+         * @param o Object to convert
+         * @return AnyMValue wrapping supplied Object
          */
         public <T> AnyMValue<T> convertValue(Object o) {
 
@@ -1232,6 +1284,30 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                       o).anyMValue();
         }
 
+        /**
+         * Convert an object to an AnyMSeq type if possible. If a registered monad comprehender exists the supplied object will
+         * be wrapped as is, otherwise it will be converted into a support type (if possible). 
+         * 
+         * <pre>
+         * {@code
+         *     //Wrapped as is 
+         *      
+         *     AnyMSeq<Integer> maybe = factory.convertSeq(Stream.of(10));
+         *     //AnyMValue[Stream[Integer]]]
+         *     
+         *     //Converted 
+         *     BufferedReader reader;
+         *     AnyMSeq<Integer> maybe = factory.convertSeq(reader);
+         *     
+         *     //AnyMSeq[ReactiveSeq[String]]
+         *     
+         * }
+         * </pre>
+         * 
+         * 
+         * @param o Object to convert
+         * @return AnyMSeq wrapping supplied Object
+         */
         public <T> AnyMSeq<T> convertSeq(Object o) {
 
             if (new ComprehenderSelector().selectComprehender(o) instanceof InvokeDynamicComprehender)
@@ -1241,10 +1317,12 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                       o).anyMSeq();
         }
 
-        /* This will accept the supplied monad as is
+        
+        /**
+         * Non-type safe way to wrap a supported monad type in an AnyMValue
          * 
-         * (non-Javadoc)
-         * @see com.aol.cyclops.monad.AnyMFactory#monad(java.lang.Object)
+         * @param o Monad to wrap
+         * @return AnyMValue wrapping supplied monad
          */
         public <T> AnyMValue<T> value(Object o) {
             if (o instanceof AnyMValue)
@@ -1253,6 +1331,12 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                       o).anyMValue();
         }
 
+        /**
+         * Non-type safe way to wrap a supported monad type in an AnyMSeq
+         * 
+         * @param o Monad to wrap
+         * @return AnyMValue wrapping supplied monad
+         */
         public <T> AnyMSeq<T> seq(Object o) {
             if (o instanceof AnyMSeq)
                 return (AnyMSeq<T>) o;
