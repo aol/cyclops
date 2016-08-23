@@ -1494,8 +1494,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      */
     @Override
     default <R> LazyFutureStream<R> flatMap(Function<? super U, ? extends Stream<? extends R>> flatFn) {
-
-        return (LazyFutureStream) LazySimpleReactStream.super.flatMap(flatFn);
+	return map(flatFn).flatten();
     }
 
     @Override

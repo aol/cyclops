@@ -23,7 +23,7 @@ public class PQueueXTest extends AbstractCollectionXTest{
 	}
 	@Test
     public void onEmptySwitch(){
-            assertThat(PQueueX.empty().onEmptySwitch(()->PQueueX.of(1,2,3)),equalTo(PQueueX.of(1,2,3)));
+            assertThat(PQueueX.empty().onEmptySwitch(()->PQueueX.of(1,2,3)).toList(), equalTo(PQueueX.of(1,2,3).toList()));
     }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
