@@ -772,7 +772,8 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * }
      * </pre> 
      * @param monad1 Nested monad to flatMap over
-     * @param stream2 Nested monad to flatMap over
+     * @param monad2 Nested monad to flatMap over
+     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
      * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
@@ -798,7 +799,6 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * 
      * @param monad1 Nested Stream to iterate over
      * @param monad2 Nested Stream to iterate over
-     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
      * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
@@ -905,7 +905,6 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
        //where AnyM wraps  CompletableFuture<List<Integer>>
       }</pre>
      * 
-     * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */

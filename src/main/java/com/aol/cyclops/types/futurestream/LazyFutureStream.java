@@ -3146,7 +3146,6 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @param numberOfElements To consume from the Stream at this time
      * @param consumer To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
-     * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
      */
     default <X extends Throwable> Subscription forEachXWithError(long numberOfElements, Consumer<? super U> consumer,
@@ -3219,11 +3218,11 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      *     
      * }
      * </pre>	 
-     * @param consumer To accept incoming elements from the Stream
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
-     * @return Subscription so that further processing can be continued or cancelled.
      */
-    default <X extends Throwable> void forEachWithError(Consumer<? super U> consumerElement, Consumer<? super Throwable> consumerError) {
+    default <X extends Throwable> void forEachWithError(Consumer<? super U> consumerElement, 
+                                                Consumer<? super Throwable> consumerError) {
         val t2 = LazyFutureStreamUtils.forEachWithError(this, consumerElement, consumerError);
         t2.v2.run();
     }
@@ -3251,10 +3250,9 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      *     
      * }
      * </pre>	
-     * @param consumer To accept incoming elements from the Stream
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event
-     * @return Subscription so that further processing can be continued or cancelled.
      */
     default <X extends Throwable> void forEachEvent(Consumer<? super U> consumerElement, Consumer<? super Throwable> consumerError,
             Runnable onComplete) {

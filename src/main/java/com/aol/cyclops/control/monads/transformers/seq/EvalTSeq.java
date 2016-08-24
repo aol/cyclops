@@ -209,8 +209,8 @@ public class EvalTSeq<T>
      * asynchronous execution (CompletableFuture) to an existing function
      * 
      * <pre>
-     * {
-     *     &#64;code
+     * {@code
+     *    
      *     BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
      *     BiFunction<MaybeT<Integer>, MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift2(add);
      * 
