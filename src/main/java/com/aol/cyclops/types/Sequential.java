@@ -47,6 +47,7 @@ public interface Sequential<T> {
      *                      + individual))
      *              .forEach(a->{});
      * }
+     * </pre>
      * @param time period
      * @param t Time unit
      * @return SequenceM that emits 1 element per time period

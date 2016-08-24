@@ -36,7 +36,7 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad transformer for JDK Maybe
+ * Monad transformer for  Maybe
  * 
  * MaybeT consists of an AnyM instance that in turns wraps anoter Monad type
  * that contains an Maybe

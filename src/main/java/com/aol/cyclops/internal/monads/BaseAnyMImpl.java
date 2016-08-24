@@ -174,7 +174,7 @@ public abstract class BaseAnyMImpl<T> {
      * 
      * @return A Sequence that wraps a Stream
      */
-    public <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
+    public <NT> ReactiveSeq<NT> toReactiveSeq(Function<? super T, ? extends Stream<? extends NT>> fn) {
         return monad.flatMapToStream((Function) fn)
                     .sequence();
     }

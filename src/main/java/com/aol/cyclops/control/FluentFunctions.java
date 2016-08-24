@@ -996,7 +996,7 @@ public class FluentFunctions {
         }
 
         public FluentTriFunction<AnyM<T1>, AnyM<T2>, AnyM<T3>, AnyM<R>> liftM() {
-            return FluentFunctions.of(AnyM.liftM3Cyclops(fn));
+            return FluentFunctions.of(AnyM.liftM3(fn));
         }
 
         public FluentTriFunction<T1, T2, T3, CompletableFuture<R>> liftAsync(Executor ex) {

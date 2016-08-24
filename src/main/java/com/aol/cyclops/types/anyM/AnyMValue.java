@@ -453,7 +453,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
      * 
      * @return A Sequence that wraps a Stream
      */
-    <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn);
+    <NT> ReactiveSeq<NT> toReactiveSeq(Function<? super T, ? extends Stream<? extends NT>> fn);
 
     /**
      *  <pre>

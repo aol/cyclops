@@ -26,11 +26,14 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
 /**
- * Monad transformer for JDK Try
+ * Monad transformer for cyclops-react Try
  * 
  * TryT consists of an AnyM instance that in turns wraps another Monad type that contains an Try
  * 
+ * <pre>
+ * {@code
  * TryT<AnyM<*SOME_MONAD_TYPE*<Try<T>>>>
+ * }</pre>
  * 
  * TryT allows the deeply wrapped Try to be manipulating within it's nested /contained context
  * 

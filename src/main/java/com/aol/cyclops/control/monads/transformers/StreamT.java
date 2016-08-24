@@ -40,8 +40,10 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * Monad Transformer for Cyclops Streams
  * 
  * StreamT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Stream
- * 
+ * <pre>
+ * {@code 
  * StreamT<AnyM<*SOME_MONAD_TYPE*<Stream<T>>>>
+ * }</pre>
  * 
  * StreamT allows the deeply wrapped Stream to be manipulating within it's nested /contained context
  * @author johnmcclean

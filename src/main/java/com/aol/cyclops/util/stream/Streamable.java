@@ -365,7 +365,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
-     * @param values to prepend
+     * </pre>
+     * @param t value to prepend
      * @return Streamable with values prepended
      */
     default Streamable<T> prepend(T t) {
@@ -414,6 +415,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     *   
     *   //"world:hello"
     * }
+    * </pre>
+    * 
     * @param seed - identity value 
     * @param function folding function
     * @return Single reduced value
@@ -527,6 +530,9 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
         return reactiveSeq().collect(supplier, accumulator, combiner);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collect(java.util.stream.Collector)
+     */
     default <R, A> R collect(Collector<? super T, A, R> collector) {
 
         return reactiveSeq().collect(collector);
@@ -554,6 +560,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
 
     /**
      * Generate the permutations based on values in the Streamable
+     * @return  Streamable containing the permutations in this Streamable
     
      * 
      */
@@ -697,7 +704,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * }
      * 
      * </pre>
-     * @return
+     * @return this Streamable converted to an Optional List
      */
     default Optional<ListX<T>> toOptional() {
         return reactiveSeq().toOptional();
@@ -711,7 +718,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     	assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
      * }
      * </pre>
-     * @return
+     * @return The Streamable converted to a CompletableFuture List
      */
     default CompletableFuture<ListX<T>> toCompletableFuture() {
         return reactiveSeq().toCompletableFuture();
@@ -877,7 +884,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 
      * <pre>
      * {@code
-     * count =0;
+     * 
+     *   count =0;
     	assertThat(Streamable.of(1,2,2)
     						.cycleWhile(next -> count++<6)
     						.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
@@ -903,7 +911,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     
      * 
      * }
-     * 
+     * </pre>
      * 
      * @param predicate
      *            repeat while true
@@ -1108,8 +1116,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *         }
      * </pre>
      * 
-     * @param monoid
-     * @return
+     * @param monoid To combine values
+     * @return Streamable 
      */
     default Streamable<T> scanLeft(Monoid<T> monoid) {
         return fromStream(reactiveSeq().scanLeft(monoid));
@@ -1563,7 +1571,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     	assertThat(result,equalTo(Arrays.asList(10,24)));
      * 
      * }
-     * 
+     * </pre>
      * @param reducers
      * @return
      */
@@ -1884,6 +1892,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
+     * </pre>
      * @param values to prepend
      * @return Streamable with values prepended
      */
@@ -1969,6 +1978,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     			.endsWith(Arrays.asList(5,6)));
      * 
      * }
+     * </pre>
      * 
      * @param iterable Values to check 
      * @return true if Streamable ends with values in the supplied iterable
@@ -2057,6 +2067,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     						.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
      * 
      * }
+     * </pre>
      * 
      * @param num of elements to return (last elements)
      * @return Streamable limited to last num elements
@@ -2460,6 +2471,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     					+ individual))
     			.forEach(a->{});
      * }
+     * </pre>
      * @param time period
      * @param t Time unit
      * @return Streamable that emits 1 element per time period
@@ -2500,6 +2512,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     		
      * //[[1,2,3],[4,5,6]] 
      * }
+     * </pre>
      * 
      * @param size Max size of a batch
      * @param time (Max) time period to build a single batch in
@@ -2579,6 +2592,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 						.get(0)
      * 						.size(),is(1));
      * }
+     * </pre>
      * 
      * @param size batch size
      * @param supplier Collection factory

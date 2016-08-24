@@ -234,8 +234,8 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T>implements AnyMSeq<T> {
     }
 
     @Override
-    public <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
-        return super.toSequence(fn);
+    public <NT> ReactiveSeq<NT> toReactiveSeq(Function<? super T, ? extends Stream<? extends NT>> fn) {
+        return super.toReactiveSeq(fn);
     }
 
     /* (non-Javadoc)

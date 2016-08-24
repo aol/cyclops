@@ -191,8 +191,7 @@ public class EvalTSeq<T>
      * existing function
      * 
      * <pre>
-     * {
-     *     &#64;code
+     * {@code
      *     Function<Integer, Integer> add2 = i -> i + 2;
      *     Function<MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift(add2);
      * 

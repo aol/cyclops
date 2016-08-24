@@ -46,7 +46,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * CompletableFutureT allows the deeply wrapped CompletableFuture to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <A>
  */
 public class CompletableFutureTSeq<A>
         implements CompletableFutureT<A>, ValueTransformerSeq<A>, IterableFoldable<A>, ConvertableSequence<A>, CyclopsCollectable<A>, Sequential<A> {

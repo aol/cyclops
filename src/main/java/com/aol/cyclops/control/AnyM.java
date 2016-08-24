@@ -23,9 +23,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.jooq.lambda.function.Function3;
-import org.jooq.lambda.function.Function4;
-import org.jooq.lambda.function.Function5;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
@@ -206,10 +203,11 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
         
      * 
      * }</pre>
+     * @param fn Function used to convert contents to Stream
      * 
      * @return A Sequence that wraps a Stream
      */
-    <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn);
+    <NT> ReactiveSeq<NT> toReactiveSeq(Function<? super T, ? extends Stream<? extends NT>> fn);
 
     /* 
      * Unwraps the wrapped monad
@@ -225,6 +223,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * (non-Javadoc)
     * @see com.aol.cyclops.sequence.Unwrapable#unwrap()
     */
+    @Override
     <R> R unwrap();
 
     /**
@@ -263,8 +262,8 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      *   //AnyM[Stream[3,4,5]]
      * }
      * </pre>
-     * @param fn
-     * @return
+     * @param fn Mapping function
+     * @return AnyM transformed by the mapping function
      */
     <R> AnyM<R> map(Function<? super T, ? extends R> fn);
 
@@ -444,7 +443,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * Wrap a Streamable inside an AnyM
      * 
      * @param streamable wrap
-     * @return
+     * @return AnyMSeq generated from a ToStream type
      */
     public static <T> AnyMSeq<T> fromStreamable(ToStream<T> streamable) {
         Objects.requireNonNull(streamable);
@@ -473,7 +472,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * if wrap() is called
      * 
      * 
-     * @param list to wrap inside an AnyM
+     * @param set to wrap inside an AnyM
      * @return AnyM wrapping a Set
      */
     public static <T> AnyMSeq<T> fromSet(Set<T> set) {
@@ -485,7 +484,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * Create an AnyM wrapping a Stream of the supplied data
      * 
      * @param streamData values to populate a Stream
-     * @return
+     * @return AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
     public static <T> AnyMSeq<T> fromArray(T... streamData) {
         return AnyMFactory.instance.seq(Stream.of(streamData));
@@ -497,7 +496,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * Identical to fromArray, exists as it may appear functionally more obvious to users than fromArray (which fits the convention)
      * 
      * @param streamData values to populate a Stream
-     * @return
+     * @return  AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
     public static <T> AnyMSeq<T> streamOf(T... streamData) {
         return AnyMFactory.instance.seq(Stream.of(streamData));
@@ -575,7 +574,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps an Optional
      * 
-     * @param stream Optional to wrap
+     * @param optional Optional to wrap
      * @return AnyM that wraps the provided Optonal
      */
     public static <T> AnyMValue<T> fromOptional(Optional<T> optional) {
@@ -586,7 +585,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps an OptionalDouble
      * 
-     * @param stream Optional to wrap
+     * @param optional Optional to wrap
      * @return AnyM that wraps the provided OptonalDouble
      */
     public static AnyMValue<Double> fromOptionalDouble(OptionalDouble optional) {
@@ -597,7 +596,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps an OptionalLong
      * 
-     * @param stream OptionalLong to wrap
+     * @param optional OptionalLong to wrap
      * @return AnyM that wraps the provided OptonalLong
      */
     public static AnyMValue<Long> fromOptionalLong(OptionalLong optional) {
@@ -608,7 +607,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps an OptionalInt
      * 
-     * @param stream OptionalInt to wrap
+     * @param optional OptionalInt to wrap
      * @return AnyM that wraps the provided OptonalInt
      */
     public static AnyMValue<Integer> fromOptionalInt(OptionalInt optional) {
@@ -619,7 +618,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps a CompletableFuture
      * 
-     * @param stream CompletableFuture to wrap
+     * @param future CompletableFuture to wrap
      * @return AnyM that wraps the provided CompletableFuture
      */
     public static <T> AnyMValue<T> fromCompletableFuture(CompletableFuture<T> future) {
@@ -767,7 +766,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps an Iterable
      * 
-     * @param stream Iterable to wrap
+     * @param iterable Iterable to wrap
      * @return AnyM that wraps the provided Iterable
      */
     public static <T> AnyMSeq<T> fromIterable(Iterable<T> iterable) {
@@ -786,8 +785,8 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * This exists as many monadic value types in Java libraries implement iterable (such 
      * as Optional in Javaslang or FunctionalJava).
      * 
-     * @param iterable
-     * @return
+     * @param iterable To generate AnyMValue from
+     * @return AnyMValue wrapping the supplied Iterable
      */
     public static <T> AnyMValue<T> fromIterableValue(Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
@@ -797,8 +796,8 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Take the supplied object and always attempt to convert it to a Monad type
      * 
-     * @param monad
-     * @return
+     * @param monad Monad to convert to a supported type and wrap inside an AnyMValue
+     * @return AnyMValue that wraps the supplied converted
      */
     public static <T> AnyMValue<T> ofConvertableValue(Object monad) {
         Objects.requireNonNull(monad);
@@ -979,7 +978,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
        //where AnyM wraps  CompletableFuture<List<Integer>>
       }</pre>
      * 
-     * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
+     * 
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */
@@ -1007,6 +1006,11 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
 
     /**
      * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
+     * 
+     * @param source  Stream to traverse
+     * @param unitEmpty  Supplier to generate an AnyM with an Empty Stream
+     * @param fn Mapping function
+     * @return AnyM wrapping a Monad with a Stream transformed by the supplied mapping function
      *
      */
     public static <T, R> AnyM<Stream<R>> traverse(Stream<AnyM<T>> source, Supplier<AnyM<Stream<T>>> unitEmpty, Function<? super T, ? extends R> fn) {
@@ -1046,8 +1050,8 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
      * 
      * 
-     * @param fn
-     * @return
+     * @param fn Function to Lift into monadic form
+     * @return A monadic function
      */
     public static <U, R> Function<AnyM<U>, AnyM<R>> liftM(Function<? super U, ? extends R> fn) {
         return u -> u.map(input -> fn.apply(input));
@@ -1058,7 +1062,8 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * 
      * e.g.
      * 
-     * <pre>{@code
+     * <pre>
+     * {@code
      * 	BiFunction<AnyM<Integer>,AnyM<Integer>,AnyM<Integer>> add = Monads.liftM2(this::add);
      *   
      *  Optional<Integer> result = add.apply(getBase(),getIncrease());

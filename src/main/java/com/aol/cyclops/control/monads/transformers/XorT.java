@@ -27,7 +27,7 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
 /**
- * Monad transformer for JDK Xor
+ * Monad transformer for cyclops-react Xor
  * 
  * XorT consists of an AnyM instance that in turns wraps anoter Monad type
  * that contains an Xor

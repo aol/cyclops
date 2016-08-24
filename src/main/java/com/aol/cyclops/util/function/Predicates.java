@@ -1,13 +1,7 @@
 package com.aol.cyclops.util.function;
 
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -22,8 +16,6 @@ import com.aol.cyclops.control.Matchable.MTuple5;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqTest.MyCase;
-import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqTest.MyCase2;
 import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
 import com.aol.cyclops.types.Value;
 
