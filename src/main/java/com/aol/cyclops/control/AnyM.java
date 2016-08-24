@@ -1,8 +1,5 @@
 package com.aol.cyclops.control;
 
-import static com.aol.cyclops.Matchers.equivalent;
-import static org.junit.Assert.assertThat;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -1047,7 +1044,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
 
     /**
      * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
-     * AnyM view simplifies type related challenges.
+     * 
      * 
      * @param fn
      * @return
@@ -1057,8 +1054,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     }
 
     /**
-     * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)
-     * AnyM view simplifies type related challenges. The actual native type is not specified here.
+     * Lift a function so it accepts an AnyM wrapped Monad and returns an AnyMwrapped Monad.
      * 
      * e.g.
      * 
@@ -1084,28 +1080,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     }
 
     /**
-     * Lift a jOOλ Function3  into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
-     * 
-     * <pre>
-     * {@code
-     * Function3 <AnyM<Double>,AnyM<Entity>,AnyM<String>,AnyM<Integer>> fn = liftM3(this::myMethod);
-     *    
-     * }
-     * </pre>
-     * 
-     * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
-     * 
-     * @param fn Function to lift
-     * @return Lifted function
-     */
-    public static <U1, U2, U3, R> Function3<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<R>> liftM3(
-            Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
-        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
-                                                   .unwrap());
-    }
-
-    /**
-     * Lift a TriFunction into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
+     * Lift a TriFunction  into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
      * 
      * <pre>
      * {@code
@@ -1119,25 +1094,14 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <U1, U2, U3, R> TriFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<R>> liftM3Cyclops(
+    public static <U1, U2, U3, R> TriFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<R>> liftM3(
             TriFunction<? super U1, ? super U2, ? super U3, ? extends R> fn) {
-        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))
-                                                                     .unwrap())
+        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
                                                    .unwrap());
     }
 
-    /**
-     * Lift a  jOOλ Function4 into Monadic form.
-     * 
-     * @param fn Quad funciton to lift
-     * @return Lifted Quad function
-     */
-    public static <U1, U2, U3, U4, R> Function4<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<R>> liftM4(
-            Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
-
-        return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))))
-                                                       .unwrap());
-    }
+   
+    
 
     /**
      * Lift a QuadFunction into Monadic form.
@@ -1145,7 +1109,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <U1, U2, U3, U4, R> QuadFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<R>> liftM4Cyclops(
+    public static <U1, U2, U3, U4, R> QuadFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<R>> liftM4(
             QuadFunction<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))
@@ -1154,28 +1118,14 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                                        .unwrap());
     }
 
-    /**
-     * Lift a  jOOλ Function5 (5 parameters) into Monadic form
-     * 
-     * @param fn Function to lift
-     * @return Lifted Function
-     */
-    public static <U1, U2, U3, U4, U5, R> Function5<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<U5>, AnyM<R>> liftM5(
-            Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
-
-        return (u1, u2, u3, u4,
-                u5) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,
-                                                                                                                         input4, input5)))))
-                                           .unwrap());
-    }
-
+    
     /**
      * Lift a QuintFunction (5 parameters) into Monadic form
      * 
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <U1, U2, U3, U4, U5, R> QuintFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<U5>, AnyM<R>> liftM5Cyclops(
+    public static <U1, U2, U3, U4, U5, R> QuintFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<U5>, AnyM<R>> liftM5(
             QuintFunction<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
