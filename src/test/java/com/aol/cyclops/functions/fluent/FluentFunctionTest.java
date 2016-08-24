@@ -142,6 +142,20 @@ public class FluentFunctionTest {
 		return input * 2; 
 	}
 	
+	public Integer exceptionalLessThanZeroWithBiParams(Integer input1, Integer input2) throws IOException{
+		if(input1 + input2 < 0){
+			throw new IOException();
+		}
+		return input1 * input2; 
+	}
+	
+	public Integer exceptionalLessThanZeroWithTriParams(Integer input1, Integer input2, Integer input3) throws IOException{
+		if(input1 + input2 + input3 < 0){
+			throw new IOException();
+		}
+		return input1 * input2 * input3; 
+	}
+	
 	@Test
 	public void retry(){
 		assertThat(FluentFunctions.ofChecked(this::exceptionalFirstTime)
@@ -151,16 +165,44 @@ public class FluentFunctionTest {
 	}
 	
 	@Test
-	public void visitEvent(){
+	public void fluentFunctionVisitEvent(){
 		CompletableFuture<Integer> future = new CompletableFuture<>();
 		Integer i = FluentFunctions.ofChecked(this::exceptionalLessThanZero).visitEvent(value-> future.complete(value), error-> future.completeExceptionally(error)).apply(10);
 		assertThat(i ,equalTo(20));
 	}
 	
 	@Test(expected=Exception.class)
-	public void visitEventExceptional(){
+	public void fluentFunctionVisitEventexceptional(){
 		CompletableFuture<Integer> future = new CompletableFuture<>();
 		Integer i = FluentFunctions.ofChecked(this::exceptionalLessThanZero).visitEvent(value-> future.complete(value), error-> future.completeExceptionally(error)).apply(-10);
+		assertThat(i ,equalTo(20));
+	}
+	
+	@Test
+	public void fluentBiFunctionVisitEvent(){
+		CompletableFuture<Integer> future = new CompletableFuture<>();
+		Integer i = FluentFunctions.ofChecked(this::exceptionalLessThanZeroWithBiParams).visitEvent(value-> future.complete(value), error-> future.completeExceptionally(error)).apply(10, 10);
+		assertThat(i ,equalTo(100));
+	}
+	
+	@Test(expected=Exception.class)
+	public void fluentBiFunctionVisitEventexceptional(){
+		CompletableFuture<Integer> future = new CompletableFuture<>();
+		Integer i = FluentFunctions.ofChecked(this::exceptionalLessThanZeroWithBiParams).visitEvent(value-> future.complete(value), error-> future.completeExceptionally(error)).apply(-10, 9);
+		assertThat(i ,equalTo(20));
+	}
+	
+	@Test
+	public void fluentTriFunctionVisitEvent(){
+		CompletableFuture<Integer> future = new CompletableFuture<>();
+		Integer i = FluentFunctions.ofChecked(this::exceptionalLessThanZeroWithTriParams).visitEvent(value-> future.complete(value), error-> future.completeExceptionally(error)).apply(10, 10, 10);
+		assertThat(i ,equalTo(1000));
+	}
+	
+	@Test(expected=Exception.class)
+	public void fluentTriFunctionVisitEventexceptional(){
+		CompletableFuture<Integer> future = new CompletableFuture<>();
+		Integer i = FluentFunctions.ofChecked(this::exceptionalLessThanZeroWithTriParams).visitEvent(value-> future.complete(value), error-> future.completeExceptionally(error)).apply(-10, 1, 1);
 		assertThat(i ,equalTo(20));
 	}
 	

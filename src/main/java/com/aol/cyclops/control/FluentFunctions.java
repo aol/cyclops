@@ -762,6 +762,21 @@ public class FluentFunctions {
             });
         }
 
+        public FluentBiFunction<T1, T2, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
+        	return FluentFunctions.of((t1, t2) -> {
+
+                try {
+                    R result = fn.apply(t1, t2);
+                    eventConsumer.accept(result);
+                    return result;
+                } catch (Throwable t) {
+                    errorConsumer.accept(t);
+                    throw ExceptionSoftener.throwSoftenedException(t);
+                }
+
+            });
+        }
+        
         public FluentBiFunction<T1, T2, R> println() {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
         }
@@ -940,6 +955,21 @@ public class FluentFunctions {
                     error.accept(t);
                     throw ExceptionSoftener.throwSoftenedException(t);
                 }
+            });
+        }
+        
+        public FluentTriFunction<T1, T2, T3, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
+        	return FluentFunctions.of((t1, t2, t3) -> {
+
+                try {
+                    R result = fn.apply(t1, t2, t3);
+                    eventConsumer.accept(result);
+                    return result;
+                } catch (Throwable t) {
+                    errorConsumer.accept(t);
+                    throw ExceptionSoftener.throwSoftenedException(t);
+                }
+
             });
         }
 
