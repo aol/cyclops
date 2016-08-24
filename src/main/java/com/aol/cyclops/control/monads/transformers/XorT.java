@@ -31,9 +31,11 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * 
  * XorT consists of an AnyM instance that in turns wraps anoter Monad type
  * that contains an Xor
- * 
+ * <pre>
+ * {@code 
  * XorT<AnyM<*SOME_MONAD_TYPE*<Xor<T>>>>
- * 
+ * }
+ * </pre>
  * XorT allows the deeply wrapped Xor to be manipulating within it's nested
  * /contained context
  * 
@@ -150,8 +152,8 @@ public interface XorT<ST, T> extends Publisher<T>, Functor<T>, Filterable<T> {
      * existing function
      * 
      * <pre>
-     * {
-     *     &#64;code
+     * {@code
+     *     
      *     Function<Integer, Integer> add2 = i -> i + 2;
      *     Function<XorT<Integer>, XorT<Integer>> optTAdd2 = XorT.lift(add2);
      * 
@@ -185,8 +187,8 @@ public interface XorT<ST, T> extends Publisher<T>, Functor<T>, Filterable<T> {
      * asynchronous execution (CompletableFuture) to an existing function
      * 
      * <pre>
-     * {
-     *     &#64;code
+     * {@code 
+     *     
      *     BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
      *     BiFunction<XorT<Integer>, XorT<Integer>, XorT<Integer>> optTAdd2 = XorT.lift2(add);
      * 

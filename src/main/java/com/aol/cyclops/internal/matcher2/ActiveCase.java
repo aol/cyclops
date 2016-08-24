@@ -20,7 +20,6 @@ import lombok.Getter;
  *
  * @param <T> Input type for predicate and function (action)
  * @param <R> Return type for function (action) which is executed if the predicate tests positive
- * @param <X> Type of Function - cyclops pattern matching builders use ActionWithReturn which is serialisable and retains type info
  */
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 public final class ActiveCase<T, R> implements Case<T, R> {

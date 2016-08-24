@@ -28,7 +28,6 @@ import lombok.AllArgsConstructor;
  * 
  * @author johnmcclean
  *
- * @param <T>
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAnyMImpl<T> {

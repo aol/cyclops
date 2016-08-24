@@ -34,23 +34,7 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
-/**
- * Monad transformer for JDK Maybe
- * 
- * MaybeT consists of an AnyM instance that in turns wraps anoter Monad type
- * that contains an Maybe
- * 
- * MaybeT<AnyMSeq<*SOME_MONAD_TYPE*<Maybe<T>>>>
- * 
- * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested
- * /contained context
- * 
- * 
- * @author johnmcclean
- *
- * @param <T>
- *            The type contained on the Maybe within
- */
+
 public class EvalTSeq<T>
         implements EvalT<T>, ValueTransformerSeq<T>, IterableFoldable<T>, ConvertableSequence<T>, CyclopsCollectable<T>, Sequential<T> {
 

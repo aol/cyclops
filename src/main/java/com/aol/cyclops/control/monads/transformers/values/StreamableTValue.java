@@ -22,8 +22,10 @@ import com.aol.cyclops.util.stream.Streamable;
  * Monad Transformer for Cyclops Streamables
  * 
  * StreamableT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Streamable
- * 
+ * <pre>
+ * {@code 
  * StreamableT<AnyM<*SOME_MONAD_TYPE*<Streamable<T>>>>
+ * }</pre>
  * 
  * StreamableT allows the deeply wrapped Streamable to be manipulating within it's nested /contained context
  * @author johnmcclean

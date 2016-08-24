@@ -33,8 +33,6 @@ import com.aol.cyclops.util.stream.Streamable;
  * 
  * @author johnmcclean
  *
- * @param <T>
- * @param <MONAD>
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
@@ -281,8 +279,6 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
         assertThat(applied.toSequence().toList(),equalTo(Arrays.asList(3)));
         }
      * </pre>
-     * @param fn
-     * @return
      */
     default <R> Monad<R> applyM(Monad<Function<? super T, ? extends R>> fn) {
 
@@ -325,8 +321,6 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
         }</pre>
      * 
      * 
-     * @param reducer
-     * @return
      */
     default <R> Monad<R> reduceM(Monoid<R> reducer) {
         //  List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)

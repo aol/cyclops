@@ -40,8 +40,11 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * Monad transformer for JDK Optional
  * 
  * OptionalT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Optional
- * 
+ * <pre>
+ * {@code 
  * OptionalT<AnyMSeq<*SOME_MONAD_TYPE*<Optional<T>>>>
+ * }
+ * </pre>
  * 
  * OptionalT allows the deeply wrapped Optional to be manipulating within it's nested /contained context
  * 

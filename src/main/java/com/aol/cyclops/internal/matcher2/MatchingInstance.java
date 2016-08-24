@@ -10,8 +10,6 @@ import lombok.AllArgsConstructor;
  * 
  * @author johnmcclean
  *
- * @param <T>
- * @param <X>
  */
 @AllArgsConstructor
 public class MatchingInstance<T, X> {

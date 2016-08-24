@@ -351,7 +351,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * 
      * <pre>
       {@code
-    List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
+        List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
     				.then(it -> {
     					if (it == 100)
     						throw new RuntimeException("boo!");

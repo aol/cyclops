@@ -71,7 +71,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,
      * 
      * //(1,2,3,4,5)
      * 
-     * }</code>
+     * }</pre>
      * 
      * @param seed Initial value 
      * @param unfolder Iteratively applied function, terminated by an empty Optional
@@ -145,7 +145,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,
     /**
      * Construct a SetX from an Publisher
      * 
-     * @param iterable
+     * @param publisher
      *            to construct SetX from
      * @return SetX
      */
@@ -172,7 +172,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,
 
     /**
      * Combine two adjacent elements in a SetX using the supplied BinaryOperator
-     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
      * with it's neighbor
      * <pre>
      * {@code 

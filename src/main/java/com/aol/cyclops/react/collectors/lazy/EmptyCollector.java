@@ -19,7 +19,6 @@ import lombok.experimental.Wither;
  * 
  * @author johnmcclean
  *
- * @param <T>
  */
 @Wither
 @AllArgsConstructor

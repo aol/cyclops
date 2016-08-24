@@ -39,9 +39,10 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * Monad Transformer for Java  FutureWs
  * 
  * FutureWT consists of an AnyM instance that in turns wraps anoter Monad type that contains an FutureW
- * 
+ * <pre>
+ * {@code 
  * FutureWT<AnyMSeq<*SOME_MONAD_TYPE*<FutureW<T>>>>
- * 
+ * }</pre>
  * FutureWT allows the deeply wrapped FutureW to be manipulating within it's nested /contained context
  * @author johnmcclean
  *

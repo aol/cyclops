@@ -71,7 +71,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T>, OnEmptySwitc
      * 
      * //(1,2,3,4,5)
      * 
-     * }</code>
+     * }</pre>
      * 
      * @param seed Initial value 
      * @param unfolder Iteratively applied function, terminated by an empty Optional

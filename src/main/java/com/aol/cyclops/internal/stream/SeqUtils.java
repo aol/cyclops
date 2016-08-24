@@ -91,8 +91,6 @@ public class SeqUtils {
     /**
      * Lazily constructs a Collection from specified Stream. Collections iterator may be safely used
      * concurrently by multiple threads.
-    * @param stream
-    * @return
     */
     public static final <A> CollectionX<A> toConcurrentLazyCollection(Stream<A> stream) {
         return toConcurrentLazyCollection(stream.iterator());

@@ -3084,8 +3084,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * 
      * e.g.
      * <pre>
-     * @{code
-     *     Subscription next = ReactiveSeq.of(1,2,3,4)
+     * {@code
+     *     Subscription next = LazyFutureStream.of(1,2,3,4)
      *          					    .forEachX(2,System.out::println);
      *          
      *     System.out.println("First batch processed!");
@@ -3119,8 +3119,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
      * <pre>
-     * @{code
-     *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     * {@code
+     *     Subscription next = LazyFutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
      *          					    .forEachXWithError(2,System.out::println, e->e.printStackTrace());
      *          
@@ -3162,8 +3162,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * when the entire Stream has been processed an onComplete event will be recieved.
      * 
      * <pre>
-     * @{code
-     *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     * {@code
+     *     Subscription next = LazyFurtureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
      *          					    .forEachXEvents(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
      *          
@@ -3201,8 +3201,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     /**
      *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
      * <pre>
-     * @{code
-     *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     * {@code
+     *     Subscription next = LazyFutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
      *          					    .forEachWithError(System.out::println, e->e.printStackTrace());
      *          
@@ -3233,8 +3233,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * when the entire Stream has been processed an onComplete event will be recieved.
      * 
      * <pre>
-     * @{code
-     *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     * {@code
+     *     Subscription next = LazyFutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
      *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
      *          

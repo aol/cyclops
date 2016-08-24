@@ -158,7 +158,7 @@ public interface Foldable<T> {
      * 
      * 
      * @param reducers
-     * @return
+     * @return List of reduced values
      */
     default ListX<T> reduce(Stream<? extends Monoid<T>> reducers) {
         return foldable().reduce(reducers);
@@ -219,7 +219,7 @@ public interface Foldable<T> {
      * 
      * @param identity
      * @param accumulator
-     * @return
+     * @return Reduced value
      */
     default T foldRight(T identity, BinaryOperator<T> accumulator) {
         return foldable().foldRight(identity, accumulator);
@@ -434,7 +434,7 @@ public interface Foldable<T> {
      * // Will print out &quot;first!&quot; before anything else
      * </pre>
      * 
-     * @return
+     * @return Lazy Collection
      */
     default CollectionX<T> toLazyCollection() {
         return foldable().toLazyCollection();
@@ -455,7 +455,7 @@ public interface Foldable<T> {
      * // Will print out &quot;first!&quot; before anything else
      * </pre>
      * 
-     * @return
+     * @return Concurrent Lazy Collection
      */
     default CollectionX<T> toConcurrentLazyCollection() {
         return foldable().toConcurrentLazyCollection();
@@ -483,7 +483,7 @@ public interface Foldable<T> {
      * <pre>
      * {@code 
      *  assertThat(ReactiveSeq.of(1,2,3,4)
-     *                  .map(u->{throw new RuntimeException();})
+     *                  .map(u->throw new RuntimeException())
      *                  .recover(e->"hello")
      *                  .firstValue(),equalTo("hello"));
      * }

@@ -22,7 +22,7 @@ import com.aol.cyclops.util.ExceptionSoftener;
  * }
  * </pre>
  *
- * @param <OUT>
+ * @param <OUT> Return type of Cacheable
  */
 public interface Cacheable<OUT> {
 

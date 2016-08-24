@@ -40,8 +40,10 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * 
  * MaybeT consists of an AnyM instance that in turns wraps anoter Monad type
  * that contains an Maybe
- * 
+ * <pre>
+ * {@code 
  * MaybeT<AnyMSeq<*SOME_MONAD_TYPE*<Maybe<T>>>>
+ * }</pre>
  * 
  * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested
  * /contained context

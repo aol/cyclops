@@ -8,7 +8,7 @@ import java.util.function.Predicate;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Type of this Filterable
  */
 public interface Filterable<T> {
 

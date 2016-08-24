@@ -11,7 +11,6 @@ import com.aol.cyclops.internal.react.async.future.FastFuture;
  * 
  * @author johnmcclean
  *
- * @param <T>
  */
 public interface LazyResultConsumer<T> extends Consumer<FastFuture<T>> {
 
