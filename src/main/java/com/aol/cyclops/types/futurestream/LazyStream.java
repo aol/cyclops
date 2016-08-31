@@ -116,23 +116,9 @@ public interface LazyStream<U> extends BlockingStream<U> {
                                                                                 this.getMaxActive(), safeJoin);
 
         try {
-            ;
-            
-            LazyFutureStream<U> stream = (LazyFutureStream)this;
-            stream.grouped(2)
-                   .map(l-> {
-                     A  a = collector.supplier().get();
-                     for(U n : l)
-                         collector.accumulator().accept(a,n);
-                     return a;
-                   }
-                  )
-                   .combine((l1,l2)->true, (l1,l2)->collector.combiner().apply(l1, l2))
-                  
-                  .getLastActive();
+
             this.getLastActive()
                 .injectFutures()
-                
                 .forEach(n -> {
 
                     batcher.accept(n);

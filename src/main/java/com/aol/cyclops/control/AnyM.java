@@ -648,19 +648,37 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
         return AnyMFactory.instance.value(featureToggle);
     }
 
-    public static <T> AnyMValue<T> fromTry(Try<T, ?> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     * Create an AnyMValue instance that wraps a Try
+     * 
+     * @param trySomething to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Try
+     */
+    public static <T> AnyMValue<T> fromTry(Try<T, ?> trySomething) {
+        Objects.requireNonNull(trySomething);
+        return AnyMFactory.instance.value(trySomething);
     }
 
-    public static <T> AnyMValue<T> fromIor(Ior<?, T> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     *  Create an AnyMValue instance that wraps an Ior
+     * 
+     * @param ior to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Ior
+     */
+    public static <T> AnyMValue<T> fromIor(Ior<?, T> ior) {
+        Objects.requireNonNull(ior);
+        return AnyMFactory.instance.value(ior);
     }
 
-    public static <T> AnyMValue<T> fromEval(Eval<T> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     * Create an AnyMValue instance that wraps an Eval
+     * 
+     * @param eval to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Eval
+     */
+    public static <T> AnyMValue<T> fromEval(Eval<T> eval) {
+        Objects.requireNonNull(eval);
+        return AnyMFactory.instance.value(eval);
     }
 
     public static <T> AnyMValue<T> fromFutureW(FutureW<T> future) {

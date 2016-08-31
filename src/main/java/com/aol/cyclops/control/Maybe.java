@@ -171,7 +171,7 @@ public interface Maybe<T>
     }
 
     /**
-     * Equivalent to ap, but accepts an Iterable and takes the first value only from that iterable.
+     * Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
      * 
      * @param app
      * @param fn
@@ -186,7 +186,7 @@ public interface Maybe<T>
     }
 
     /**
-     * Equivalent to ap, but accepts a Publisher and takes the first value only from that publisher.
+     * Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
      * 
      * @param app
      * @param fn

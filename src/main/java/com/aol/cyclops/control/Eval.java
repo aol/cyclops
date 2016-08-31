@@ -1,6 +1,8 @@
 package com.aol.cyclops.control;
 
 import static com.aol.cyclops.control.For.Values.each2;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +30,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
@@ -63,7 +66,7 @@ import com.aol.cyclops.util.function.Memoize;
  * @param <T>
  */
 public interface Eval<T>
-        extends Supplier<T>, MonadicValue<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
+        extends Supplier<T>, MonadicValue1<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 
     /**
      * Create an Eval instance from a reactive-streams publisher
@@ -125,7 +128,7 @@ public interface Eval<T>
      * 
      * <pre>
      * @{code
-     *   Eval<Integer> e = Eval.now(()->10)
+     *   Eval<Integer> e = Eval.later(()->10)
      *                         .map(i->i*2);
      *   //Eval[20] - lazy so will not be executed until the value is accessed
      * }</pre>
@@ -140,16 +143,59 @@ public interface Eval<T>
                                    in -> value.get());
     }
 
+    /**
+     * Lazily create an Eval from the specified Supplier. Supplier#get will only be every time get is called on the resulting Eval.
+     * 
+     * <pre>
+     * @{code
+     *   Eval<Integer> e = Eval.always(()->10)
+     *                         .map(i->i*2);
+     *   //Eval[20] - lazy so will not be executed until the value is accessed
+     * }</pre>
+     * 
+     * 
+     * @param value  Supplier to (lazily) populate this Eval
+     * @return Eval with specified value
+     */
     public static <T> Eval<T> always(Supplier<T> value) {
         return new Module.Always<T>(
                                     in -> value.get());
     }
 
+    /**
+     * Turn a collection of Evals into a single Eval with a List of values.
+     * 
+     * <pre>
+     * {@code 
+     *  Eval<ListX<Integer>> maybes =Eval.sequence(ListX.of(Eval.now(10),Eval.now(1)));
+        //Eval.now(ListX.of(10,1)));
+     * 
+     * }
+     * </pre>
+     * 
+     * @param evals Collection of evals to convert into a single eval with a List of values
+     * @return  Eval with a  list of values
+     */
     public static <T> Eval<ListX<T>> sequence(CollectionX<Eval<T>> evals) {
         return sequence(evals.stream()).map(s -> s.toListX());
 
     }
 
+
+    /**
+     * Turn a Stream of Evals into a single Eval with a Stream of values.
+     * 
+     * <pre>
+     * {@code 
+     *  Eval<ReactiveSeq<Integer>> maybes =Eval.sequence(Stream.of(Eval.now(10),Eval.now(1)));
+        //Eval.now(ReactiveSeq.of(10,1)));
+     * 
+     * }
+     * </pre>
+     * 
+     * @param evals Collection of evals to convert into a single eval with a List of values
+     * @return  Eval with a  list of values
+     */
     public static <T> Eval<ReactiveSeq<T>> sequence(Stream<Eval<T>> evals) {
         return AnyM.sequence(evals.map(f -> AnyM.fromEval(f)), () -> AnyM.fromEval(Eval.now(ReactiveSeq.<T> empty())))
                    .map(s -> ReactiveSeq.fromStream(s))
@@ -173,11 +219,23 @@ public interface Eval<T>
                                           .get());
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
+     */
+    @Override
     public <T> Eval<T> unit(T unit);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#map(java.util.function.Function)
+     */
+    @Override
     public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
 
-    public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper);
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue1#flatMap(java.util.function.Function)
+     */
+    @Override
+    public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
     default PVectorX<Function<Object, Object>> steps() {
         return PVectorX.of(__ -> get());
@@ -188,38 +246,59 @@ public interface Eval<T>
      */
     @Override
     default <R> Eval<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
-        return (Eval<R>) MonadicValue.super.coflatMap(mapper);
+        return (Eval<R>) MonadicValue1.super.coflatMap(mapper);
     }
-
-    default Eval<T> combine(Monoid<T> monoid, Eval<? extends T> v2) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue1#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
+     */
+    @Override
+    default Eval<T> combineEager(Monoid<T> monoid, MonadicValue<? extends T> v2) {
         return unit(each2(this, t1 -> v2, (t1, t2) -> monoid.combiner()
                                                             .apply(t1, t2)).orElseGet(() -> this.orElseGet(() -> monoid.zero())));
     }
-
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
     default Eval<MonadicValue<T>> nest() {
-        return (Eval<MonadicValue<T>>) MonadicValue.super.nest();
+        return (Eval<MonadicValue<T>>) MonadicValue1.super.nest();
     }
-
+    /* (non-Javadoc)
+     * @see java.util.function.Supplier#get()
+     */
+    @Override
     public T get();
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
     @Override
     default <U> Maybe<U> ofType(Class<? extends U> type) {
 
         return (Maybe<U>) Filterable.super.ofType(type);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
     @Override
     default Maybe<T> filterNot(Predicate<? super T> fn) {
 
         return (Maybe<T>) Filterable.super.filterNot(fn);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
     @Override
     default Maybe<T> notNull() {
 
         return (Maybe<T>) Filterable.super.notNull();
     }
-
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     */
+    @Override
     default Maybe<T> filter(Predicate<? super T> pred) {
         return toMaybe().filter(pred);
     }
@@ -249,30 +328,11 @@ public interface Eval<T>
         return (Eval<R>) ApplicativeFunctor.super.trampoline(mapper);
     }
 
-    default Eval<CompletableFuture<T>> asyncNow(Executor ex) {
-        return Eval.now(this.toCompletableFutureAsync(ex));
-    }
+    
 
-    default Eval<CompletableFuture<T>> asyncNow() {
-        return Eval.now(this.toCompletableFuture());
-    }
-
-    default Eval<CompletableFuture<T>> asyncLater(Executor ex) {
-        return Eval.later(() -> this.toCompletableFutureAsync(ex));
-    }
-
-    default Eval<CompletableFuture<T>> asyncLater() {
-        return Eval.later(() -> this.toCompletableFutureAsync());
-    }
-
-    default Eval<CompletableFuture<T>> asyncAlways(Executor ex) {
-        return Eval.always(() -> this.toCompletableFutureAsync(ex));
-    }
-
-    default Eval<CompletableFuture<T>> asyncAlways() {
-        return Eval.always(() -> this.toCompletableFutureAsync());
-    }
-
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
+     */
     @Override
     default <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
         T value = get();
@@ -281,16 +341,19 @@ public interface Eval<T>
         return absent.get();
     }
 
+    /**
+     * Narrow covariant type parameter
+     * 
+     * @param broad Eval with covariant type parameter
+     * @return Narrowed Eval
+     */
     static <R> Eval<R> narrow(Eval<? extends R> broad) {
         return (Eval<R>) broad;
     }
 
-    /**
-     * Apply a function across two values at once.
-     * 
-     * @param app
-     * @param fn
-     * @return
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Eval<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -298,12 +361,10 @@ public interface Eval<T>
         return (Eval<R>) ApplicativeFunctor.super.combine(app, fn);
     }
 
-    /**
-     * Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
-     * 
-     * @param app
-     * @param fn
-     * @return
+    
+    /* Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
+     * (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Eval<R> zip(Iterable<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -311,12 +372,11 @@ public interface Eval<T>
         return (Eval<R>) ApplicativeFunctor.super.zip(app, fn);
     }
 
-    /**
-     * Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
+   
+    /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
      * 
-     * @param app
-     * @param fn
-     * @return
+     * (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
     default <T2, R> Eval<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
@@ -329,7 +389,7 @@ public interface Eval<T>
      */
     @Override
     default <U, R> Eval<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (Eval<R>) MonadicValue.super.zip(other, zipper);
+        return (Eval<R>) MonadicValue1.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -338,7 +398,7 @@ public interface Eval<T>
     @Override
     default <U, R> Eval<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (Eval<R>) MonadicValue.super.zip(other, zipper);
+        return (Eval<R>) MonadicValue1.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -346,7 +406,7 @@ public interface Eval<T>
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zip(Stream<? extends U> other) {
-        return (Eval) MonadicValue.super.zip(other);
+        return (Eval) MonadicValue1.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -354,7 +414,7 @@ public interface Eval<T>
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zip(Seq<? extends U> other) {
-        return (Eval) MonadicValue.super.zip(other);
+        return (Eval) MonadicValue1.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -362,11 +422,16 @@ public interface Eval<T>
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        return (Eval) MonadicValue.super.zip(other);
+        return (Eval) MonadicValue1.super.zip(other);
     }
 
     static class Module {
 
+        static <T> Eval<T> asEval(MonadicValue<T> value){
+            if(value instanceof Eval)
+                return (Eval<T>)value;
+            return value.toEvalAlways();
+        }
         public static class Later<T> extends Rec<T>implements Eval<T> {
 
             Later(Function<Object, ? extends T> s) {
@@ -384,8 +449,8 @@ public interface Eval<T>
                                     super.fns.plus(Rec.raw(Memoize.memoizeFunction(mapper))));
             }
 
-            public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper) {
-                RecFunction s = __ -> mapper.apply(super.apply())
+            public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
+                RecFunction s = __ -> asEval(mapper.apply(super.apply()))
                                             .steps();
                 return new Later<R>(
                                     PVectorX.of(s));
@@ -456,8 +521,8 @@ public interface Eval<T>
 
             }
 
-            public <R> Eval<R> flatMap(Function<? super T, ? extends Eval<? extends R>> mapper) {
-                RecFunction s = __ -> mapper.apply(apply())
+            public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
+                RecFunction s = __ -> asEval(mapper.apply(apply()))
                                             .steps();
                 return new Always<R>(
                                      PVectorX.of(s));
