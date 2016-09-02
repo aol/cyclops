@@ -365,7 +365,19 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return this.future;
     }
 
-    
+   /**
+    * Returns a new FutureW that, when this FutureW completes
+    * exceptionally is executed with this FutureW exception as the
+    * argument to the supplied function.  Otherwise, if this FutureW
+    * completes normally, then the returned FutureW also completes
+    * normally with the same value.
+    * @param fn the function to use to compute the value of the
+    * returned FutureW if this FutureW completed exceptionally
+    * @return the new FutureW
+    */
+    public FutureW<T> recover(Function<Throwable, ? extends T> fn) {
+        return FutureW.of(toCompletableFuture().exceptionally(fn));
+    }
     /**
      * Map this FutureW differently depending on whether the previous stage completed successfully or failed
      * 
