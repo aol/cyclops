@@ -141,15 +141,28 @@ public class Queue<T> implements Adapter<T> {
     /**
      * @return Sequential Infinite (until Queue is closed) Stream of data from
      *         this Queue
-     * <pre>
-     *         use queue.stream().parallel() to convert to a parallel Stream
-     * </pre>
+     * 
      */
     public ReactiveSeq<T> stream() {
         listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
         return ReactiveSeq.fromStream(closingStream(this::get, new AlwaysContinue()));
     }
-
+    /**
+     * Return a standard (unextended) JDK Stream connected to this Queue
+     * To disconnect cleanly close the queue
+     * 
+     * <pre>
+     * {@code 
+     *        use queue.stream().parallel() to convert to a parallel Stream
+     *  }
+     * </pre>
+     * 
+     * @return Java 8 Stream connnected to this Queue
+     */
+    public Stream<T> jdkStream() {
+        listeningStreams.incrementAndGet(); 
+        return closingStream(this::get, new AlwaysContinue());
+    }
     public ReactiveSeq<T> stream(Continueable s) {
         this.sub = s;
         listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
