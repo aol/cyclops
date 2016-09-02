@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,6 +36,27 @@ public class QueueTest {
 
 	private final AtomicInteger found = new AtomicInteger(0);
 
+	volatile boolean success = false;
+	@Test
+	public void parallelStream(){
+	    success = false;
+	    AtomicLong threadId = new AtomicLong(Thread.currentThread().getId());
+	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();
+        for(int i=0;i<10000;i++){
+            q.add(i);
+        }
+        q.jdkStream()
+          .parallel()
+          .peek(i-> { if(threadId.get()!= Thread.currentThread().getId()){
+              success=true;
+              q.close();
+          }})
+          .peek(i->System.out.println(Thread.currentThread().getId()))
+          .forEach(System.out::println);
+        
+        assertTrue(success);
+            
+	}
 	@Test
 	public void closeQueue(){
 	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();
