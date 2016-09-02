@@ -381,7 +381,7 @@ public interface Foldable<T> {
      * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
      * </pre>
      * 
-     * @param iterator
+     * @param stream Stream to check if this Foldable has the same elements in the same order, at the start
      * @return True if Monad starts with Iterators sequence of data
      */
     default boolean startsWith(Stream<T> stream) {

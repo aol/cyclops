@@ -1,14 +1,10 @@
 package com.aol.cyclops.control;
 
 import static com.aol.cyclops.control.For.Values.each2;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -109,7 +105,7 @@ public interface Eval<T>
      * Create an Eval with the value specified
      * 
      * <pre>
-     * @{code
+     * {@code
      *   Eval<Integer> e = Eval.now(10);
      *   //Eval[10]
      * }</pre>
@@ -127,7 +123,7 @@ public interface Eval<T>
      * be cached (later indicates lazy and caching - characteristics can be changed using flatMap).
      * 
      * <pre>
-     * @{code
+     * {@code
      *   Eval<Integer> e = Eval.later(()->10)
      *                         .map(i->i*2);
      *   //Eval[20] - lazy so will not be executed until the value is accessed
@@ -147,7 +143,7 @@ public interface Eval<T>
      * Lazily create an Eval from the specified Supplier. Supplier#get will only be every time get is called on the resulting Eval.
      * 
      * <pre>
-     * @{code
+     * {@code
      *   Eval<Integer> e = Eval.always(()->10)
      *                         .map(i->i*2);
      *   //Eval[20] - lazy so will not be executed until the value is accessed

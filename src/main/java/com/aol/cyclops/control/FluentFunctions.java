@@ -171,6 +171,7 @@ public class FluentFunctions {
     				   .apply("hello","woo!","h")
     				   
        } 
+       </pre>
      * @param fn CheckedTriFunction to convert
      * @return FluentTriFunction
      */
@@ -188,6 +189,7 @@ public class FluentFunctions {
     				  .matches(-1,c->c.hasValues(3).then(i->3))
     				  .apply(1,1,1)		   
        }  
+       </pre>
      * @param fn TriFunction to convert
      * @return FluentTriFunction
      */

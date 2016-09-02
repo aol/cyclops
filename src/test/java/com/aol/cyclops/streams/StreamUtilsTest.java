@@ -144,7 +144,7 @@ utilResultList:[1]
 
 	@Test
 	public void testCycleStreamableOfU() {
-		assertThat(StreamUtils.cycle(AsStreamable.fromStream(Stream.of(1,2,3))).limit(6).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3,1,2,3)));
+		assertThat(StreamUtils.cycle(Streamable.fromStream(Stream.of(1,2,3))).limit(6).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3,1,2,3)));
 	}
 
 	@Test
