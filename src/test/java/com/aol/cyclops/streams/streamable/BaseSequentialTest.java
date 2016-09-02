@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.util.stream.Streamable;
+import com.aol.cyclops.control.Streamable;
 public class BaseSequentialTest {
 
 	<U> Streamable<U> of(U... array){

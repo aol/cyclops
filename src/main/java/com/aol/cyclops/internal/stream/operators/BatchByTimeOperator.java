@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public class BatchByTimeOperator<T, C extends Collection<? super T>> {
     private final Stream<T> stream;

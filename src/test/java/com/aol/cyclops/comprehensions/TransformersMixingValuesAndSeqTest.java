@@ -14,6 +14,7 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
@@ -40,7 +41,6 @@ import com.aol.cyclops.control.monads.transformers.values.TryTValue;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.util.stream.Streamable;
 
 public class TransformersMixingValuesAndSeqTest {
 

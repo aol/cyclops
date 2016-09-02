@@ -28,9 +28,9 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface DequeX<T> extends Deque<T>, MutableCollectionX<T>, OnEmptySwitch<T, Deque<T>> {
 
@@ -71,7 +71,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T>, OnEmptySwitc
      * 
      * //(1,2,3,4,5)
      * 
-     * }</code>
+     * }</pre>
      * 
      * @param seed Initial value 
      * @param unfolder Iteratively applied function, terminated by an empty Optional

@@ -29,9 +29,9 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface QueueX<T> extends Queue<T>, MutableCollectionX<T>, OnEmptySwitch<T, Queue<T>> {
 

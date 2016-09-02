@@ -42,7 +42,7 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
      *  Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
      *  Maybe.of(10).combineEager(firstNonNull,Maybe.of(10));
      *  //Maybe[10]
-     * }
+     * }</pre>
      * 
      * @param monoid
      * @param v2

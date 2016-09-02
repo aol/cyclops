@@ -36,9 +36,10 @@ import com.aol.cyclops.types.applicative.ApplicativeFunctor;
  * 
  * XorT consists of an AnyM instance that in turns wraps anoter Monad type
  * that contains an Xor
- * 
+ * <pre>
+ * {@code 
  * XorT<AnyMValue<*SOME_MONAD_TYPE*<Xor<T>>>>
- * 
+ * }</pre>
  * XorT allows the deeply wrapped Xor to be manipulating within it's nested
  * /contained context
  * 

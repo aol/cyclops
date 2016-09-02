@@ -5,10 +5,10 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
 import com.aol.cyclops.types.AbstractTraversableTest;
 import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.util.stream.Streamable;
 
 
 public class StreamableTValueTraversableTest extends AbstractTraversableTest {

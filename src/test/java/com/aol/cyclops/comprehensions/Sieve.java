@@ -3,8 +3,8 @@ package com.aol.cyclops.comprehensions;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.util.stream.Streamable;
 
 public class Sieve {
 

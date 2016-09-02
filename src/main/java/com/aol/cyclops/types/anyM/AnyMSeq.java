@@ -33,6 +33,7 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -53,7 +54,6 @@ import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
-import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.val;
 
@@ -772,7 +772,8 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * }
      * </pre> 
      * @param monad1 Nested monad to flatMap over
-     * @param stream2 Nested monad to flatMap over
+     * @param monad2 Nested monad to flatMap over
+     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
      * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
@@ -798,7 +799,6 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * 
      * @param monad1 Nested Stream to iterate over
      * @param monad2 Nested Stream to iterate over
-     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
      * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
@@ -905,7 +905,6 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
        //where AnyM wraps  CompletableFuture<List<Integer>>
       }</pre>
      * 
-     * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */

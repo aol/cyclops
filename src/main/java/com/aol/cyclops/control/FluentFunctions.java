@@ -172,6 +172,7 @@ public class FluentFunctions {
     				   .apply("hello","woo!","h")
     				   
        } 
+       </pre>
      * @param fn CheckedTriFunction to convert
      * @return FluentTriFunction
      */
@@ -189,6 +190,7 @@ public class FluentFunctions {
     				  .matches(-1,c->c.hasValues(3).then(i->3))
     				  .apply(1,1,1)		   
        }  
+       </pre>
      * @param fn TriFunction to convert
      * @return FluentTriFunction
      */
@@ -1042,7 +1044,7 @@ public class FluentFunctions {
         }
 
         public FluentTriFunction<AnyM<T1>, AnyM<T2>, AnyM<T3>, AnyM<R>> liftM() {
-            return FluentFunctions.of(AnyM.liftM3Cyclops(fn));
+            return FluentFunctions.of(AnyM.liftM3(fn));
         }
 
         public FluentTriFunction<T1, T2, T3, CompletableFuture<R>> liftAsync(Executor ex) {

@@ -47,7 +47,10 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * 
  * SetT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Set
  * 
+ * <pre>
+ * {@code 
  * SetT<AnyM<*SOME_MONAD_TYPE*<Set<T>>>>
+ * }</pre>
  * 
  * SetT allows the deeply wrapped Set to be manipulating within it's nested /contained context
  * @author johnmcclean

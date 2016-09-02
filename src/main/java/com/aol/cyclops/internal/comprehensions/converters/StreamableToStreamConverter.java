@@ -2,8 +2,8 @@ package com.aol.cyclops.internal.comprehensions.converters;
 
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.types.extensability.MonadicConverter;
-import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.val;
 

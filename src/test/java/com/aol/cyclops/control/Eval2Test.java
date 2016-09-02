@@ -41,7 +41,6 @@ import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 
 
@@ -81,12 +80,12 @@ public class Eval2Test {
      
         
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-        assertThat(just.combine(add,Eval.now(10)),equalTo(Eval.now(20)));
+        assertThat(just.combineEager(add,Eval.now(10)),equalTo(Eval.now(20)));
       
       
       
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        assertThat(just.combine(firstNonNull,none),equalTo(just));
+        assertThat(just.combineEager(firstNonNull,none),equalTo(just));
          
     }
 	@Test

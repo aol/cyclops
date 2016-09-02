@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
  * 
  * @author johnmcclean
  *
- * @param <T>
  */
 @AllArgsConstructor
 public class ADTPredicateBuilder<T> {

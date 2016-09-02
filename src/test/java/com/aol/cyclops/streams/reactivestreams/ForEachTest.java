@@ -17,7 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.control.StreamUtils;
 
 public class ForEachTest {
 	boolean complete =false;

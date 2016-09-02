@@ -25,6 +25,7 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.SimpleReact;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.QueueFactory;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -36,7 +37,6 @@ import com.aol.cyclops.react.Status;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.Blocker;
 import com.aol.cyclops.util.ThrowsSoftened;
-import com.aol.cyclops.util.stream.StreamUtils;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 

@@ -39,13 +39,14 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * Monad Transformer for Java  FutureWs
  * 
  * FutureWT consists of an AnyM instance that in turns wraps anoter Monad type that contains an FutureW
- * 
+ * <pre>
+ * {@code 
  * FutureWT<AnyMSeq<*SOME_MONAD_TYPE*<FutureW<T>>>>
- * 
+ * }</pre>
  * FutureWT allows the deeply wrapped FutureW to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <A>
  */
 public class FutureWTSeq<A>
         implements FutureWT<A>, ValueTransformerSeq<A>, IterableFoldable<A>, ConvertableSequence<A>, CyclopsCollectable<A>, Sequential<A> {
@@ -81,22 +82,7 @@ public class FutureWTSeq<A>
         return run.map(f -> f.toListX());
     }
 
-    /**
-    * Filter the wrapped Maybe
-    * 
-    * <pre>
-    * {@code 
-    *    MaybeT.of(AnyM.fromStream(Maybe.of(10))
-    *             .filter(t->t!=10);
-    *             
-    *     //MaybeT<AnyMSeq<Stream<Maybe.empty>>>
-    * }
-    * </pre>
-    * 
-    * @param test
-    *            Predicate to filter the wrapped Maybe
-    * @return MaybeT that applies the provided filter
-    */
+    
     public MaybeTSeq<A> filter(Predicate<? super A> test) {
         return MaybeTSeq.of(run.map(opt -> opt.filter(test)));
     }

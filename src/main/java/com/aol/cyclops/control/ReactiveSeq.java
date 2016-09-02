@@ -74,8 +74,6 @@ import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.stream.StreamUtils;
-import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.val;
 
@@ -269,7 +267,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * }
      * </pre>
      * 
-     * @return
+     * @return Tuple4 containing 4 duplicated ReactiveSeqs
      */
     @SuppressWarnings("unchecked")
     Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate();
@@ -685,7 +683,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *                      .get(0)
      *                      .size(),is(1));
      * }
-     * 
+     * </pre>
      * @param size batch size
      * @param supplier Collection factory
      * @return ReactiveSeq batched into collection types by size
@@ -836,7 +834,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * </pre>
      * 
      * @param monoid
-     * @return
+     * @return ReactiveSeq with values combined scanning left
      */
     ReactiveSeq<T> scanLeft(Monoid<T> monoid);
 
@@ -1180,7 +1178,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * }
      * </pre>
      * 
-     * @return
+     * @return HeadAndTail
      */
     HeadAndTail<T> headAndTail();
 
@@ -1413,9 +1411,6 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * }
      * </pre>
      * 
-     * @param identity
-     * @param accumulator
-     * @return
      */
     public T foldRight(T identity, BinaryOperator<T> accumulator);
 

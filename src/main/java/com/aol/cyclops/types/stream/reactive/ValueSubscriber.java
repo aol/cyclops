@@ -34,7 +34,7 @@ import com.aol.cyclops.util.function.Memoize;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Subscriber type
  */
 public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
 

@@ -47,7 +47,6 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.types.mixins.Printable;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public class MaybeTest implements Printable {
 

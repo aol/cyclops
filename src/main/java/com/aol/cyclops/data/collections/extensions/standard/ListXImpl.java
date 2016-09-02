@@ -33,304 +33,181 @@ public class ListXImpl<T> implements ListX<T> {
                                          .get();
     }
 
-    /**
-     * @param action
-     * @see java.lang.Iterable#forEach(java.util.function.Consumer)
-     */
+    
+    @Override
     public void forEach(Consumer<? super T> action) {
         list.forEach(action);
     }
 
-    /**
-     * @return
-     * @see org.pcollections.MapPSet#iterator()
-     */
+    @Override
     public Iterator<T> iterator() {
         return list.iterator();
     }
 
-    /**
-     * @return
-     * @see org.pcollections.MapPSet#size()
-     */
+    @Override
     public int size() {
         return list.size();
     }
 
-    /**
-     * @param e
-     * @return
-     * @see org.pcollections.MapPSet#contains(java.lang.Object)
-     */
+    @Override
     public boolean contains(Object e) {
         return list.contains(e);
     }
 
-    /**
-     * @param o
-     * @return
-     * @see java.util.AbstractSet#equals(java.lang.Object)
-     */
+    @Override
     public boolean equals(Object o) {
         return list.equals(o);
     }
 
-    /**
-     * @return
-     * @see java.util.AbstractCollection#isEmpty()
-     */
+    @Override
     public boolean isEmpty() {
         return list.isEmpty();
     }
 
-    /**
-     * @return
-     * @see java.util.AbstractSet#hashCode()
-     */
+    @Override
     public int hashCode() {
         return list.hashCode();
     }
 
-    /**
-     * @return
-     * @see java.util.AbstractCollection#toArray()
-     */
+    @Override
     public Object[] toArray() {
         return list.toArray();
     }
 
-    /**
-     * @param c
-     * @return
-     * @see java.util.AbstractSet#removeAll(java.util.Collection)
-     */
+    @Override
     public boolean removeAll(Collection<?> c) {
         return list.removeAll(c);
     }
 
-    /**
-     * @param a
-     * @return
-     * @see java.util.AbstractCollection#toArray(java.lang.Object[])
-     */
+    @Override
     public <T> T[] toArray(T[] a) {
         return list.toArray(a);
     }
 
-    /**
-     * @param e
-     * @return
-     * @see java.util.AbstractCollection#add(java.lang.Object)
-     */
+    @Override
     public boolean add(T e) {
         return list.add(e);
     }
 
-    /**
-     * @param o
-     * @return
-     * @see java.util.AbstractCollection#remove(java.lang.Object)
-     */
+    @Override
     public boolean remove(Object o) {
         return list.remove(o);
     }
 
-    /**
-     * @param c
-     * @return
-     * @see java.util.AbstractCollection#containsAll(java.util.Collection)
-     */
+    @Override
     public boolean containsAll(Collection<?> c) {
         return list.containsAll(c);
     }
 
-    /**
-     * @param c
-     * @return
-     * @see java.util.AbstractCollection#addAll(java.util.Collection)
-     */
+    @Override
     public boolean addAll(Collection<? extends T> c) {
         return list.addAll(c);
     }
 
-    /**
-     * @param c
-     * @return
-     * @see java.util.AbstractCollection#retainAll(java.util.Collection)
-     */
+    @Override
     public boolean retainAll(Collection<?> c) {
         return list.retainAll(c);
     }
 
-    /**
-     * 
-     * @see java.util.AbstractCollection#clear()
-     */
+    @Override
     public void clear() {
         list.clear();
     }
 
-    /**
-     * @return
-     * @see java.util.AbstractCollection#toString()
-     */
+    @Override
     public String toString() {
         return list.toString();
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
-     */
+    
     @Override
     public <R, A> R collect(Collector<? super T, A, R> collector) {
         return stream().collect(collector);
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#count()
-     */
+    
     @Override
     public long count() {
         return this.size();
     }
-
-    /**
-     * @param index
-     * @param c
-     * @return
-     * @see java.util.List#addAll(int, java.util.Collection)
-     */
+    
+    @Override
     public boolean addAll(int index, Collection<? extends T> c) {
         return list.addAll(index, c);
     }
 
-    /**
-     * @param operator
-     * @see java.util.List#replaceAll(java.util.function.UnaryOperator)
-     */
+    @Override
     public void replaceAll(UnaryOperator<T> operator) {
         list.replaceAll(operator);
     }
 
-    /**
-     * @param filter
-     * @return
-     * @see java.util.Collection#removeIf(java.util.function.Predicate)
-     */
+    @Override
     public boolean removeIf(Predicate<? super T> filter) {
         return list.removeIf(filter);
     }
 
-    /**
-     * @param c
-     * @see java.util.List#sort(java.util.Comparator)
-     */
+    @Override
     public void sort(Comparator<? super T> c) {
         list.sort(c);
     }
 
-    /**
-     * @param index
-     * @return
-     * @see java.util.List#get(int)
-     */
+    @Override
     public T get(int index) {
         return list.get(index);
     }
 
-    /**
-     * @param index
-     * @param element
-     * @return
-     * @see java.util.List#set(int, java.lang.Object)
-     */
+    @Override
     public T set(int index, T element) {
         return list.set(index, element);
     }
 
-    /**
-     * @param index
-     * @param element
-     * @see java.util.List#add(int, java.lang.Object)
-     */
+    @Override
     public void add(int index, T element) {
         list.add(index, element);
     }
 
-    /**
-     * @param index
-     * @return
-     * @see java.util.List#remove(int)
-     */
+    @Override
     public T remove(int index) {
         return list.remove(index);
     }
 
-    /**
-     * @return
-     * @see java.util.Collection#parallelStream()
-     */
+    @Override
     public Stream<T> parallelStream() {
         return list.parallelStream();
     }
 
-    /**
-     * @param o
-     * @return
-     * @see java.util.List#indexOf(java.lang.Object)
-     */
+    @Override
     public int indexOf(Object o) {
         return list.indexOf(o);
     }
 
-    /**
-     * @param o
-     * @return
-     * @see java.util.List#lastIndexOf(java.lang.Object)
-     */
+    @Override
     public int lastIndexOf(Object o) {
         return list.lastIndexOf(o);
     }
 
-    /**
-     * @return
-     * @see java.util.List#listIterator()
-     */
+    @Override
     public ListIterator<T> listIterator() {
         return list.listIterator();
     }
 
-    /**
-     * @param index
-     * @return
-     * @see java.util.List#listIterator(int)
-     */
+    @Override
     public ListIterator<T> listIterator(int index) {
         return list.listIterator(index);
     }
 
-    /**
-     * @param fromIndex
-     * @param toIndex
-     * @return
-     * @see java.util.List#subList(int, int)
-     */
+    @Override
     public ListX<T> subList(int fromIndex, int toIndex) {
         return new ListXImpl<>(
                                list.subList(fromIndex, toIndex), getCollector());
     }
 
-    /**
-     * @return
-     * @see java.util.List#spliterator()
-     */
+    @Override
     public Spliterator<T> spliterator() {
         return list.spliterator();
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
+   
     @Override
     public int compareTo(T o) {
         if (o instanceof List) {

@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.control.StreamUtils;
 
 public interface IterableFilterable<T> extends Filterable<T> {
 

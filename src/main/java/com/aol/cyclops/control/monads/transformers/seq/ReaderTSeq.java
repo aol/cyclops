@@ -104,7 +104,7 @@ public class ReaderTSeq<T, R> {
      * 
      
      * 
-     * @param f
+     * @param mapper
      *            FlatMap function
      * @return ReaderT that applies the flatMap function to the wrapped Maybe
      */

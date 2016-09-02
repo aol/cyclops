@@ -12,7 +12,7 @@ import org.jooq.lambda.Seq;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.control.StreamUtils;
 public class FlatMapStreamUtilsTest {
 
 	@Test

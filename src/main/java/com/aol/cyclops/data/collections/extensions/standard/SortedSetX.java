@@ -31,9 +31,9 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEmptySwitch<T, SortedSet<T>> {
     static <T> Collector<T, ?, SortedSet<T>> defaultCollector() {
@@ -83,7 +83,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
      * 
      * //(1,2,3,4,5)
      * 
-     * }</code>
+     * }</pre>
      * 
      * @param seed Initial value 
      * @param unfolder Iteratively applied function, terminated by an empty Optional
@@ -143,7 +143,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
     /**
      * Construct a SortedSetX from an Publisher
      * 
-     * @param iterable
+     * @param publisher
      *            to construct SortedSetX from
      * @return SortedSetX
      */
@@ -178,7 +178,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
 
     /**
      * Combine two adjacent elements in a SortedSetX using the supplied BinaryOperator
-     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
      * with it's neighbor
      * <pre>
      * {@code 

@@ -19,6 +19,7 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.types.ConvertableFunctor;
@@ -28,15 +29,15 @@ import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.util.Optionals;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 /**
  * Monad transformer for JDK Optional
  * 
  * OptionalT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Optional
- * 
+ * <pre>
+ * {@code 
  * OptionalT<AnyMValue<*SOME_MONAD_TYPE*<Optional<T>>>>
- * 
+ * }</pre>
  * OptionalT allows the deeply wrapped Optional to be manipulating within it's nested /contained context
  * 
  * 

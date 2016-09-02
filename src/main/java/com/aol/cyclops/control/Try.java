@@ -66,30 +66,31 @@ import lombok.val;
  */
 public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T>, ToStream<T>, Filterable<T>, Functor<T>, ApplicativeFunctor<T> {
 
-    public static <T, X extends Throwable> Try<T, X> fromPublisher(Publisher<T> pub, Class<X>... classes) {
-        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+    public static <T, X extends Throwable> Try<T, X> fromPublisher(final Publisher<T> pub, final Class<X>... classes) {
+        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toTry(classes);
     }
 
-    public static <T> Try<T, Throwable> fromPublisher(Publisher<T> pub) {
-        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+    public static <T> Try<T, Throwable> fromPublisher(final Publisher<T> pub) {
+        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toTry();
     }
 
-    public static <T, X extends Throwable> Try<T, X> fromIterable(Iterable<T> iterable) {
-        Iterator<T> it = iterable.iterator();
+    public static <T, X extends Throwable> Try<T, X> fromIterable(final Iterable<T> iterable) {
+        final Iterator<T> it = iterable.iterator();
         return Try.success(it.hasNext() ? it.next() : null);
     }
 
+    @Override
     default Try<T, Throwable> toTry() {
         return (Try<T, Throwable>) this;
 
     }
 
-    default <R> Eval<R> matches(Function<CheckValue1<T, R>, CheckValue1<T, R>> secondary, Function<CheckValue1<X, R>, CheckValue1<X, R>> primary,
-            Supplier<? extends R> otherwise) {
+    default <R> Eval<R> matches(final Function<CheckValue1<T, R>, CheckValue1<T, R>> secondary,
+            final Function<CheckValue1<X, R>, CheckValue1<X, R>> primary, final Supplier<? extends R> otherwise) {
         return toXor().swap()
                       .matches(secondary, primary, otherwise);
     }
@@ -112,7 +113,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
-    default <R> Try<R, X> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+    default <R> Try<R, X> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
         return mapper.andThen(r -> unit(r))
                      .apply(this);
     }
@@ -126,7 +127,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         return this.map(t -> unit(t));
     }
 
-    default Try<T, X> combine(Monoid<T> monoid, Try<? extends T, X> v2) {
+    default Try<T, X> combine(final Monoid<T> monoid, final Try<? extends T, X> v2) {
         return unit(each2(this, t1 -> v2, (t1, t2) -> monoid.combiner()
                                                             .apply(t1, t2)).orElseGet(() -> this.orElseGet(() -> monoid.zero())));
     }
@@ -135,7 +136,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> Try<U, X> cast(Class<? extends U> type) {
+    default <U> Try<U, X> cast(final Class<? extends U> type) {
         return (Try<U, X>) ApplicativeFunctor.super.cast(type);
     }
 
@@ -143,7 +144,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> Try<R, X> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+    default <R> Try<R, X> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return (Try<R, X>) ApplicativeFunctor.super.trampoline(mapper);
     }
 
@@ -151,7 +152,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> Maybe<U> ofType(Class<? extends U> type) {
+    default <U> Maybe<U> ofType(final Class<? extends U> type) {
 
         return (Maybe<U>) Filterable.super.ofType(type);
     }
@@ -160,7 +161,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default Maybe<T> filterNot(Predicate<? super T> fn) {
+    default Maybe<T> filterNot(final Predicate<? super T> fn) {
 
         return (Maybe<T>) Filterable.super.filterNot(fn);
     }
@@ -180,7 +181,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @param error for Failure
      * @return new Failure with error
      */
-    public static <T, X extends Throwable> Failure<T, X> failure(X error) {
+    public static <T, X extends Throwable> Failure<T, X> failure(final X error) {
         return new Failure<>(
                              error);
     }
@@ -190,7 +191,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @return new Success with value
      */
 
-    public static <T, X extends Throwable> Success<T, X> success(T value) {
+    public static <T, X extends Throwable> Success<T, X> success(final T value) {
         return new Success<>(
                              value, new Class[0]);
     }
@@ -203,12 +204,13 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
                                             .get());
     }
 
-    default <T> Try<T, X> unit(T value) {
+    @Override
+    default <T> Try<T, X> unit(final T value) {
         return success(value);
     }
 
     @Override
-    default <R> Try<R, X> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
+    default <R> Try<R, X> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
         return (Try<R, X>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
     }
@@ -218,6 +220,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
     /**
      * @return This monad, wrapped as AnyM of Success
      */
+    @Override
     public AnyMValue<T> anyM();
 
     /**
@@ -233,6 +236,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
     /**
      * @return Successful value or will throw Throwable (X) if Failire
      */
+    @Override
     public T get();
 
     /**
@@ -244,6 +248,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @param value Return value supplied if Failure, otherwise return Success value
      * @return Success value or supplied value
      */
+    @Override
     public T orElse(T value);
 
     /**
@@ -251,6 +256,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @param value from supplied Supplier if Failure otherwise return Success value
      * @return Success value
      */
+    @Override
     public T orElseGet(Supplier<? extends T> value);
 
     /**
@@ -258,6 +264,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @return New Try with mapped value (Success) or this (Failure)
      */
 
+    @Override
     public <R> Try<R, X> map(Function<? super T, ? extends R> fn);
 
     /**
@@ -271,6 +278,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      *          Do nothing to a Failure
      * @return this if Success and Predicate holds, or if Failure. New Failure if Success and Predicate fails
      */
+    @Override
     public Maybe<T> filter(Predicate<? super T> p);
 
     /**
@@ -327,11 +335,13 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
     /**
      * @return Optional present if Success, Optional empty if failure
      */
+    @Override
     public Optional<T> toOptional();
 
     /**
      * @return Stream with value if Sucess, Empty Stream if failure
      */
+    @Override
     public ReactiveSeq<T> stream();
 
     /**
@@ -357,6 +367,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
     /**
      * @param consumer Accept value if Success / not called on Failure
      */
+    @Override
     public void forEach(Consumer<? super T> consumer);
 
     /**
@@ -373,7 +384,8 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @param consumer Accept value if Success
      * @return this
      */
-    default Try<T, X> peek(Consumer<? super T> consumer) {
+    @Override
+    default Try<T, X> peek(final Consumer<? super T> consumer) {
         forEach(consumer);
         return this;
     }
@@ -382,7 +394,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @param consumer Accept Exception if Failure
      * @return this
      */
-    default Try<T, X> peekFailed(Consumer<? super X> consumer) {
+    default Try<T, X> peekFailed(final Consumer<? super X> consumer) {
         forEachFailed(consumer);
         return this;
     }
@@ -402,7 +414,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @return Try instance
      */
     @SafeVarargs
-    public static <T, X extends Throwable> Try<T, X> of(T value, Class<? extends Throwable>... classes) {
+    public static <T, X extends Throwable> Try<T, X> of(final T value, final Class<? extends Throwable>... classes) {
         return new Success<>(
                              value, classes);
     }
@@ -416,11 +428,11 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @return New Try
      */
     @SafeVarargs
-    public static <T, X extends Throwable> Try<T, X> withCatch(CheckedSupplier<T, X> cf, Class<? extends X>... classes) {
+    public static <T, X extends Throwable> Try<T, X> withCatch(final CheckedSupplier<T, X> cf, final Class<? extends X>... classes) {
         Objects.requireNonNull(cf);
         try {
             return Try.success(cf.get());
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             if (classes.length == 0)
                 return Try.failure((X) t);
             val error = Stream.of(classes)
@@ -443,12 +455,12 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @return New Try
      */
     @SafeVarargs
-    public static <X extends Throwable> Try<Void, X> runWithCatch(CheckedRunnable<X> cf, Class<? extends X>... classes) {
+    public static <X extends Throwable> Try<Void, X> runWithCatch(final CheckedRunnable<X> cf, final Class<? extends X>... classes) {
         Objects.requireNonNull(cf);
         try {
             cf.run();
             return Try.success(null);
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             t.printStackTrace();
             if (classes.length == 0)
                 return Try.failure((X) t);
@@ -471,7 +483,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @return Next step in the fluent Step Builder
      */
     @SafeVarargs
-    public static <X extends Throwable> Init<X> catchExceptions(Class<? extends X>... classes) {
+    public static <X extends Throwable> Init<X> catchExceptions(final Class<? extends X>... classes) {
         return new MyInit<X>(
                              (Class[]) classes);
     }
@@ -486,18 +498,18 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try.Init#init(com.aol.cyclops.trycatch.Try.CheckedSupplier)
          */
         @Override
-        public <V> TryCatch<V, X> init(CheckedSupplier<V, X> input) {
+        public <V> TryCatch<V, X> init(final CheckedSupplier<V, X> input) {
             return new MyTryCatch(
                                   classes, input);
         }
 
         @Override
-        public Try<Void, X> run(CheckedRunnable<X> input) {
+        public Try<Void, X> run(final CheckedRunnable<X> input) {
             return runWithCatch(input, classes);
         }
 
         @Override
-        public <V> Try<V, X> tryThis(CheckedSupplier<V, X> input) {
+        public <V> Try<V, X> tryThis(final CheckedSupplier<V, X> input) {
             return withCatch(input, classes);
         }
 
@@ -509,13 +521,13 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         private final CheckedSupplier<V, X> inputSupplier;
 
         @Override
-        public <T> AndFinally<T, V, X> tryThis(CheckedFunction<V, T, X> catchBlock) {
+        public <T> AndFinally<T, V, X> tryThis(final CheckedFunction<V, T, X> catchBlock) {
             return new MyFinallyBlock<>(
                                         classes, inputSupplier, catchBlock);
         }
 
         @Override
-        public <T> Try<T, X> tryWithResources(CheckedFunction<V, T, X> catchBlock) {
+        public <T> Try<T, X> tryWithResources(final CheckedFunction<V, T, X> catchBlock) {
             return new MyFinallyBlock<>(
                                         classes, inputSupplier, catchBlock).close();
         }
@@ -528,7 +540,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         private final CheckedSupplier<V, X> inputSupplier;
         private final CheckedFunction<V, T, X> catchBlock;
 
-        private void invokeClose(Object in) {
+        private void invokeClose(final Object in) {
             if (in instanceof Closeable)
                 invokeCloseableClose((Closeable) in);
             else if (in instanceof AutoCloseable)
@@ -539,25 +551,25 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
                 _invokeClose(in);
         }
 
-        private void invokeClose(Iterable in) {
-            for (Object next : in)
+        private void invokeClose(final Iterable in) {
+            for (final Object next : in)
                 invokeClose(next);
 
         }
 
-        private void invokeCloseableClose(Closeable in) {
+        private void invokeCloseableClose(final Closeable in) {
 
             Try.runWithCatch(() -> in.close());
 
         }
 
-        private void invokeAutocloseableClose(AutoCloseable in) {
+        private void invokeAutocloseableClose(final AutoCloseable in) {
 
             Try.runWithCatch(() -> in.close());
 
         }
 
-        private void _invokeClose(Object in) {
+        private void _invokeClose(final Object in) {
 
             Try.withCatch(() -> in.getClass()
                                   .getMethod("close"))
@@ -567,6 +579,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
 
         }
 
+        @Override
         public Try<T, X> close() {
 
             return andFinally(in -> {
@@ -577,13 +590,13 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         @Override
         public Try<T, X> andFinally(final CheckedConsumer<V, X> finallyBlock) {
 
-            Try<V, X> input = Try.withCatch(() -> inputSupplier.get(), classes);
+            final Try<V, X> input = Try.withCatch(() -> inputSupplier.get(), classes);
             Try<T, X> result = null;
             try {
                 result = input.flatMap(in -> withCatch(() -> catchBlock.apply(in), classes));
 
             } finally {
-                Try finalResult = result.flatMap(i -> Try.runWithCatch(() -> finallyBlock.accept(inputSupplier.get()), classes));
+                final Try finalResult = result.flatMap(i -> Try.runWithCatch(() -> finallyBlock.accept(inputSupplier.get()), classes));
                 if (finalResult instanceof Failure)
                     return finalResult;
 
@@ -740,6 +753,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          *	@return Current value
          * @see com.aol.cyclops.trycatch.Try#get()
          */
+        @Override
         public T get() {
             return value;
         }
@@ -747,6 +761,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         /**
          * @return This monad wrapped as AnyM
          */
+        @Override
         public AnyMValue<T> anyM() {
             return AnyM.fromTry(this);
         }
@@ -754,6 +769,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         /**
          * @return This monad, wrapped as AnyM of Failure
          */
+        @Override
         public AnyM<X> anyMFailure() {
             return AnyM.fromOptional(Optional.empty());
         }
@@ -761,6 +777,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         /**
          * @return This monad, wrapped as AnyM of Success
          */
+        @Override
         public AnyM<T> anyMSuccess() {
             return anyM();
         }
@@ -769,7 +786,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @param value Successful value
          * @return new Success with value
          */
-        public static <T, X extends Throwable> AnyM<T> anyMOf(T value, Class<? extends Throwable>[] classes) {
+        public static <T, X extends Throwable> AnyM<T> anyMOf(final T value, final Class<? extends Throwable>[] classes) {
             return new Success<>(
                                  value, classes).anyM();
         }
@@ -778,7 +795,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @param value Successful value
          * @return new Success with value
          */
-        public static <T, X extends Throwable> AnyM<T> anyMOf(T value) {
+        public static <T, X extends Throwable> AnyM<T> anyMOf(final T value) {
             return new Success<>(
                                  value, new Class[0]).anyM();
         }
@@ -787,7 +804,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @param value Successful value
          * @return new Success with value
          */
-        public static <T, X extends Throwable> Success<T, X> of(T value, Class<? extends Throwable>[] classes) {
+        public static <T, X extends Throwable> Success<T, X> of(final T value, final Class<? extends Throwable>[] classes) {
             return new Success<>(
                                  value, classes);
         }
@@ -798,14 +815,14 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#map(java.util.function.Function)
          */
         @Override
-        public <R> Try<R, X> map(Function<? super T, ? extends R> fn) {
+        public <R> Try<R, X> map(final Function<? super T, ? extends R> fn) {
             return safeApply(() -> success(fn.apply(get())));
         }
 
-        private <R> R safeApply(Supplier<R> s) {
+        private <R> R safeApply(final Supplier<R> s) {
             try {
                 return s.get();
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 return (R) Try.failure(orThrow(Stream.of(classes)
                                                      .filter(c -> c.isAssignableFrom(t.getClass()))
                                                      .map(c -> t)
@@ -815,7 +832,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
             }
         }
 
-        private Throwable orThrow(Optional<Throwable> findFirst, Throwable t) {
+        private Throwable orThrow(final Optional<Throwable> findFirst, final Throwable t) {
             if (findFirst.isPresent())
                 return findFirst.get();
             ExceptionSoftener.throwSoftenedException(t);
@@ -828,7 +845,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#flatMap(java.util.function.Function)
          */
         @Override
-        public <R> Try<R, X> flatMap(Function<? super T, ? extends Try<R, X>> fn) {
+        public <R> Try<R, X> flatMap(final Function<? super T, ? extends Try<R, X>> fn) {
             return safeApply(() -> fn.apply(get()));
 
         }
@@ -840,7 +857,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#filter(java.util.function.Predicate)
          */
         @Override
-        public Maybe<T> filter(Predicate<? super T> p) {
+        public Maybe<T> filter(final Predicate<? super T> p) {
             if (p.test(value))
                 return Maybe.of(get());
             else
@@ -852,7 +869,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#recover(java.util.function.Function)
          */
         @Override
-        public Success<T, X> recover(Function<? super X, ? extends T> fn) {
+        public Success<T, X> recover(final Function<? super X, ? extends T> fn) {
             return this;
         }
 
@@ -861,7 +878,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#recoverWith(java.util.function.Function)
          */
         @Override
-        public Success<T, X> recoverWith(Function<? super X, ? extends Success<T, X>> fn) {
+        public Success<T, X> recoverWith(final Function<? super X, ? extends Success<T, X>> fn) {
             return this;
         }
 
@@ -870,7 +887,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
          */
         @Override
-        public Success<T, X> recoverFor(Class<? extends X> t, Function<? super X, ? extends T> fn) {
+        public Success<T, X> recoverFor(final Class<? extends X> t, final Function<? super X, ? extends T> fn) {
             return this;
         }
 
@@ -879,7 +896,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#recoverWithFor(java.lang.Class, java.util.function.Function)
          */
         @Override
-        public Success<T, X> recoverWithFor(Class<? extends X> t, Function<? super X, ? extends Success<T, X>> fn) {
+        public Success<T, X> recoverWithFor(final Class<? extends X> t, final Function<? super X, ? extends Success<T, X>> fn) {
             return this;
         }
 
@@ -901,7 +918,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#orElse(java.lang.Object)
          */
         @Override
-        public T orElse(T value) {
+        public T orElse(final T value) {
             return get();
         }
 
@@ -917,7 +934,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#orElseGet(java.util.function.Supplier)
          */
         @Override
-        public T orElseGet(Supplier<? extends T> value) {
+        public T orElseGet(final Supplier<? extends T> value) {
             return get();
         }
 
@@ -962,7 +979,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#foreach(java.util.function.Consumer)
          */
         @Override
-        public void forEach(Consumer<? super T> consumer) {
+        public void forEach(final Consumer<? super T> consumer) {
             consumer.accept(value);
 
         }
@@ -972,7 +989,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#onFail(java.util.function.Consumer)
          */
         @Override
-        public Try<T, X> onFail(Consumer<? super X> consumer) {
+        public Try<T, X> onFail(final Consumer<? super X> consumer) {
             return this;
         }
 
@@ -981,7 +998,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#onFail(java.lang.Class, java.util.function.Consumer)
          */
         @Override
-        public Try<T, X> onFail(Class<? extends X> t, Consumer<X> consumer) {
+        public Try<T, X> onFail(final Class<? extends X> t, final Consumer<X> consumer) {
             return this;
         }
 
@@ -1017,12 +1034,12 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#foreachFailed(java.util.function.Consumer)
          */
         @Override
-        public void forEachFailed(Consumer<? super X> consumer) {
+        public void forEachFailed(final Consumer<? super X> consumer) {
 
         }
 
         @Override
-        public <T2, R> Try<R, X> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        public <T2, R> Try<R, X> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
             return app.toTry()
                       .visit(s -> safeApply(() -> success(fn.apply(get(), app.get()))), f -> Try.failure(null));
 
@@ -1032,7 +1049,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#when(java.util.function.Function, java.util.function.Function)
          */
         @Override
-        public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure) {
+        public <R> R visit(final Function<? super T, ? extends R> success, final Function<? super X, ? extends R> failure) {
             return success.apply(get());
         }
 
@@ -1042,9 +1059,9 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (o instanceof Success) {
-                Success s = ((Success) o);
+                final Success s = (Success) o;
                 return Objects.equals(this.value, s.value);
             }
             return false;
@@ -1095,6 +1112,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         /**
          * @return This monad, wrapped as AnyM of Success
          */
+        @Override
         public AnyMValue<T> anyM() {
             return this.anyMSuccess();
         }
@@ -1102,6 +1120,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         /**
          * @return This monad, wrapped as AnyM of Failure
          */
+        @Override
         public AnyMValue<X> anyMFailure() {
             return AnyM.ofValue(this);
         }
@@ -1109,6 +1128,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         /**
          * @return This monad, wrapped as AnyM of Success
          */
+        @Override
         public AnyMValue<T> anyMSuccess() {
             return AnyM.fromOptional(Optional.empty());
         }
@@ -1124,7 +1144,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @param error for Failure
          * @return new Failure with error
          */
-        public static <T, X extends Throwable> AnyM<X> anyMOf(X error) {
+        public static <T, X extends Throwable> AnyM<X> anyMOf(final X error) {
             return new Failure<>(
                                  error).anyMFailure();
         }
@@ -1133,8 +1153,9 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          *	@return throws an Exception
          * @see com.aol.cyclops.trycatch.Try#get()
          */
+        @Override
         public T get() {
-            throw ExceptionSoftener.throwSoftenedException((Throwable) error);
+            throw ExceptionSoftener.throwSoftenedException(error);
 
         }
 
@@ -1143,7 +1164,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#map(java.util.function.Function)
          */
         @Override
-        public <R> Try<R, X> map(Function<? super T, ? extends R> fn) {
+        public <R> Try<R, X> map(final Function<? super T, ? extends R> fn) {
             return (Failure) this;
         }
 
@@ -1152,7 +1173,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#flatMap(java.util.function.Function)
          */
         @Override
-        public <R> Try<R, X> flatMap(Function<? super T, ? extends Try<R, X>> fn) {
+        public <R> Try<R, X> flatMap(final Function<? super T, ? extends Try<R, X>> fn) {
             return (Try) this;
         }
 
@@ -1161,7 +1182,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#filter(java.util.function.Predicate)
          */
         @Override
-        public Maybe<T> filter(Predicate<? super T> p) {
+        public Maybe<T> filter(final Predicate<? super T> p) {
             return Maybe.none();
         }
 
@@ -1174,7 +1195,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#recoverWithFor(java.lang.Class, java.util.function.Function)
          */
         @Override
-        public Try<T, X> recoverWithFor(Class<? extends X> t, Function<? super X, ? extends Success<T, X>> fn) {
+        public Try<T, X> recoverWithFor(final Class<? extends X> t, final Function<? super X, ? extends Success<T, X>> fn) {
             if (t.isAssignableFrom(error.getClass()))
                 return recoverWith(fn);
             return this;
@@ -1188,7 +1209,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
          */
         @Override
-        public Try<T, X> recoverFor(Class<? extends X> t, Function<? super X, ? extends T> fn) {
+        public Try<T, X> recoverFor(final Class<? extends X> t, final Function<? super X, ? extends T> fn) {
             if (t.isAssignableFrom(error.getClass()))
                 return recover(fn);
             return this;
@@ -1200,7 +1221,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#recover(java.util.function.Function)
          */
         @Override
-        public Success<T, X> recover(Function<? super X, ? extends T> fn) {
+        public Success<T, X> recover(final Function<? super X, ? extends T> fn) {
             return Try.success(fn.apply(error));
         }
 
@@ -1212,7 +1233,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#recoverWith(java.util.function.Function)
          */
         @Override
-        public Success<T, X> recoverWith(Function<? super X, ? extends Success<T, X>> fn) {
+        public Success<T, X> recoverWith(final Function<? super X, ? extends Success<T, X>> fn) {
             return fn.apply(error);
         }
 
@@ -1232,7 +1253,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#orElse(java.lang.Object)
          */
         @Override
-        public T orElse(T value) {
+        public T orElse(final T value) {
             return value;
         }
 
@@ -1242,7 +1263,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#orElseGet(java.util.function.Supplier)
          */
         @Override
-        public T orElseGet(Supplier<? extends T> value) {
+        public T orElseGet(final Supplier<? extends T> value) {
             return value.get();
         }
 
@@ -1287,7 +1308,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#foreach(java.util.function.Consumer)
          */
         @Override
-        public void forEach(Consumer<? super T> consumer) {
+        public void forEach(final Consumer<? super T> consumer) {
 
         }
 
@@ -1297,7 +1318,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#onFail(java.util.function.Consumer)
          */
         @Override
-        public Try<T, X> onFail(Consumer<? super X> consumer) {
+        public Try<T, X> onFail(final Consumer<? super X> consumer) {
             consumer.accept(error);
             return this;
         }
@@ -1309,7 +1330,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#onFail(java.lang.Class, java.util.function.Consumer)
          */
         @Override
-        public Try<T, X> onFail(Class<? extends X> t, Consumer<X> consumer) {
+        public Try<T, X> onFail(final Class<? extends X> t, final Consumer<X> consumer) {
             if (t.isAssignableFrom(error.getClass()))
                 consumer.accept(error);
             return this;
@@ -1349,13 +1370,13 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#foreachFailed(java.util.function.Consumer)
          */
         @Override
-        public void forEachFailed(Consumer<? super X> consumer) {
+        public void forEachFailed(final Consumer<? super X> consumer) {
             consumer.accept(error);
 
         }
 
         @Override
-        public <T2, R> Try<R, X> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        public <T2, R> Try<R, X> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
             return (Try<R, X>) this;
 
         }
@@ -1364,7 +1385,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
          * @see com.aol.cyclops.trycatch.Try#when(java.util.function.Function, java.util.function.Function)
          */
         @Override
-        public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure) {
+        public <R> R visit(final Function<? super T, ? extends R> success, final Function<? super X, ? extends R> failure) {
             return failure.apply(error);
         }
 
@@ -1374,9 +1395,9 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (o instanceof Failure) {
-                Failure s = ((Failure) o);
+                final Failure s = (Failure) o;
                 return Objects.equals(this.error, s.error);
             }
             return false;
@@ -1387,7 +1408,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> Try<R, X> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> Try<R, X> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return (Try<R, X>) ApplicativeFunctor.super.combine(app, fn);
     }
 
@@ -1400,7 +1421,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @return
      */
     @Override
-    default <T2, R> Try<R, X> zip(Iterable<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> Try<R, X> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Try.fromIterable(app)
@@ -1416,7 +1437,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @return
      */
     @Override
-    default <T2, R> Try<R, X> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
+    default <T2, R> Try<R, X> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Try.fromPublisher(app)
                                                                             .visit(i -> Try.success(tuple.v2.apply(i)), () -> Try.failure(null)));
@@ -1427,7 +1448,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Try<R, X> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Try<R, X> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (Try<R, X>) MonadicValue.super.zip(other, zipper);
     }
@@ -1436,7 +1457,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Try<R, X> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Try<R, X> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (Try<R, X>) MonadicValue.super.zip(other, zipper);
     }
@@ -1445,7 +1466,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Try<Tuple2<T, U>, X> zip(Stream<? extends U> other) {
+    default <U> Try<Tuple2<T, U>, X> zip(final Stream<? extends U> other) {
 
         return (Try) MonadicValue.super.zip(other);
     }
@@ -1454,7 +1475,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    default <U> Try<Tuple2<T, U>, X> zip(Seq<? extends U> other) {
+    default <U> Try<Tuple2<T, U>, X> zip(final Seq<? extends U> other) {
 
         return (Try) MonadicValue.super.zip(other);
     }
@@ -1463,7 +1484,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
-    default <U> Try<Tuple2<T, U>, X> zip(Iterable<? extends U> other) {
+    default <U> Try<Tuple2<T, U>, X> zip(final Iterable<? extends U> other) {
 
         return (Try) MonadicValue.super.zip(other);
     }

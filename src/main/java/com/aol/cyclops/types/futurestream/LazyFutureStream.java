@@ -53,6 +53,8 @@ import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
+import com.aol.cyclops.control.StreamUtils;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.Queue.ClosedQueueException;
@@ -83,8 +85,6 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.FutureStreamSynchronousPublisher;
-import com.aol.cyclops.util.stream.StreamUtils;
-import com.aol.cyclops.util.stream.Streamable;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -156,6 +156,9 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
                                      .elapsed());
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     */
     default LazyFutureStream<U> combine(BiPredicate<? super U, ? super U> predicate, BinaryOperator<U> op) {
         return fromStream(StreamUtils.combine(this, predicate, op));
     }
@@ -3080,8 +3083,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * 
      * e.g.
      * <pre>
-     * @{code
-     *     Subscription next = ReactiveSeq.of(1,2,3,4)
+     * {@code
+     *     Subscription next = LazyFutureStream.of(1,2,3,4)
      *          					    .forEachX(2,System.out::println);
      *          
      *     System.out.println("First batch processed!");
@@ -3115,8 +3118,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
      * <pre>
-     * @{code
-     *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     * {@code
+     *     Subscription next = LazyFutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
      *          					    .forEachXWithError(2,System.out::println, e->e.printStackTrace());
      *          
@@ -3142,7 +3145,6 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @param numberOfElements To consume from the Stream at this time
      * @param consumer To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
-     * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
      */
     default <X extends Throwable> Subscription forEachXWithError(long numberOfElements, Consumer<? super U> consumer,
@@ -3158,8 +3160,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * when the entire Stream has been processed an onComplete event will be recieved.
      * 
      * <pre>
-     * @{code
-     *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     * {@code
+     *     Subscription next = LazyFurtureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
      *          					    .forEachXEvents(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
      *          
@@ -3197,8 +3199,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     /**
      *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
      * <pre>
-     * @{code
-     *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     * {@code
+     *     Subscription next = LazyFutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
      *          					    .forEachWithError(System.out::println, e->e.printStackTrace());
      *          
@@ -3215,11 +3217,11 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      *     
      * }
      * </pre>	 
-     * @param consumer To accept incoming elements from the Stream
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
-     * @return Subscription so that further processing can be continued or cancelled.
      */
-    default <X extends Throwable> void forEachWithError(Consumer<? super U> consumerElement, Consumer<? super Throwable> consumerError) {
+    default <X extends Throwable> void forEachWithError(Consumer<? super U> consumerElement, 
+                                                Consumer<? super Throwable> consumerError) {
         val t2 = LazyFutureStreamUtils.forEachWithError(this, consumerElement, consumerError);
         t2.v2.run();
     }
@@ -3229,8 +3231,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * when the entire Stream has been processed an onComplete event will be recieved.
      * 
      * <pre>
-     * @{code
-     *     Subscription next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     * {@code
+     *     Subscription next = LazyFutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
      *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
      *          
@@ -3247,10 +3249,9 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      *     
      * }
      * </pre>	
-     * @param consumer To accept incoming elements from the Stream
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event
-     * @return Subscription so that further processing can be continued or cancelled.
      */
     default <X extends Throwable> void forEachEvent(Consumer<? super U> consumerElement, Consumer<? super Throwable> consumerError,
             Runnable onComplete) {

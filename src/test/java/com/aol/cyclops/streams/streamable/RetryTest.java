@@ -19,8 +19,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.stream.Streamable;
 
 
 public class RetryTest {

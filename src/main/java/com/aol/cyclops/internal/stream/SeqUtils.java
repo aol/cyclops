@@ -11,8 +11,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.util.stream.Streamable;
 
 public class SeqUtils {
     /**
@@ -91,8 +91,6 @@ public class SeqUtils {
     /**
      * Lazily constructs a Collection from specified Stream. Collections iterator may be safely used
      * concurrently by multiple threads.
-    * @param stream
-    * @return
     */
     public static final <A> CollectionX<A> toConcurrentLazyCollection(Stream<A> stream) {
         return toConcurrentLazyCollection(stream.iterator());

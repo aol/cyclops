@@ -17,6 +17,20 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
+/**
+ * For comprehensions
+ * <pre>
+ * {@code 
+ *    For.Publishers.each2(Flux.range(1,10), 
+                            i-> ReactiveSeq.iterate(i,a->a+1).limit(10),
+                            Tuple::tuple)
+                           .toListX();
+ * }
+ * </pre>
+ * 
+ * @author johnmcclean
+ *
+ */
 public class For {
 
     public interface Publishers {
@@ -232,7 +246,7 @@ public class For {
          * @param yieldingFunction
          *            Function with pointers to the current element from both
          *            Streams that generates the new elements
-         * @return SequenceM with elements generated via nested iteration
+         * @returnAnyM with elements generated via nested iteration
          */
         static <T1, T2, T3, R1, R2, R3, R> AnyMValue<R> each4(MonadicValue<? extends T1> monadicValue,
                 Function<? super T1, ? extends MonadicValue<R1>> value2, BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
@@ -259,7 +273,7 @@ public class For {
          * @param yieldingFunction
          *            Function with pointers to the current element from both
          *            Streams that generates the new elements
-         * @return SequenceM with elements generated via nested iteration
+         * @returnAnyM with elements generated via nested iteration
          */
         static <T1, T2, T3, R1, R2, R3, R> AnyMValue<R> each4(MonadicValue<? extends T1> monadicValue,
                 Function<? super T1, ? extends MonadicValue<R1>> value2, BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
@@ -286,7 +300,7 @@ public class For {
          * @param yieldingFunction
          *            Function with pointers to the current element from both
          *            Streams that generates the new elements
-         * @return SequenceM with elements generated via nested iteration
+         * @returnAnyM with elements generated via nested iteration
          */
         static <T1, T2, R1, R2, R> AnyMValue<R> each3(MonadicValue<? extends T1> monadicValue,
                 Function<? super T1, ? extends MonadicValue<R1>> value2, BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
@@ -311,7 +325,7 @@ public class For {
          * @param yieldingFunction
          *            Function with pointers to the current element from both
          *            Streams that generates the new elements
-         * @return SequenceM with elements generated via nested iteration
+         * @return AnyM with elements generated via nested iteration
          */
         static <T1, T2, R1, R2, R> AnyMValue<R> each3(MonadicValue<? extends T1> monadicValue,
                 Function<? super T1, ? extends MonadicValue<R1>> value2, BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
@@ -335,14 +349,9 @@ public class For {
          * @param filterFunction
          *            Filter to apply over elements before passing non-filtered
          *            values to the yielding function
-         * @return SequenceM with elements generated via nested iteration
+         * @return AnyM with elements generated via nested iteration
          */
-        /**
-         * @param monadicValue
-         * @param value2
-         * @param yieldingFunction
-         * @return
-         */
+       
         static <T, R1, R> AnyMValue<R> each2(MonadicValue<? extends T> monadicValue, Function<? super T, MonadicValue<R1>> value2,
                 BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
@@ -364,7 +373,7 @@ public class For {
          * @param yieldingFunction
          *            Function with pointers to the current element from both
          *            Streams that generates the new elements
-         * @return SequenceM with elements generated via nested iteration
+         * @return AnyM with elements generated via nested iteration
          */
         static <T, R1, R> AnyMValue<R> each2(MonadicValue<? extends T> monadicValue, Function<? super T, ? extends MonadicValue<R1>> value2,
                 BiFunction<? super T, ? super R1, Boolean> filterFunction, BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {

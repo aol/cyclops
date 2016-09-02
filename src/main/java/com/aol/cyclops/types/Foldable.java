@@ -17,13 +17,13 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.util.stream.Streamable;
 
 public interface Foldable<T> {
 
@@ -158,7 +158,7 @@ public interface Foldable<T> {
      * 
      * 
      * @param reducers
-     * @return
+     * @return List of reduced values
      */
     default ListX<T> reduce(Stream<? extends Monoid<T>> reducers) {
         return foldable().reduce(reducers);
@@ -219,7 +219,7 @@ public interface Foldable<T> {
      * 
      * @param identity
      * @param accumulator
-     * @return
+     * @return Reduced value
      */
     default T foldRight(T identity, BinaryOperator<T> accumulator) {
         return foldable().foldRight(identity, accumulator);
@@ -381,7 +381,7 @@ public interface Foldable<T> {
      * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
      * </pre>
      * 
-     * @param iterator
+     * @param stream Stream to check if this Foldable has the same elements in the same order, at the start
      * @return True if Monad starts with Iterators sequence of data
      */
     default boolean startsWith(Stream<T> stream) {
@@ -434,7 +434,7 @@ public interface Foldable<T> {
      * // Will print out &quot;first!&quot; before anything else
      * </pre>
      * 
-     * @return
+     * @return Lazy Collection
      */
     default CollectionX<T> toLazyCollection() {
         return foldable().toLazyCollection();
@@ -455,7 +455,7 @@ public interface Foldable<T> {
      * // Will print out &quot;first!&quot; before anything else
      * </pre>
      * 
-     * @return
+     * @return Concurrent Lazy Collection
      */
     default CollectionX<T> toConcurrentLazyCollection() {
         return foldable().toConcurrentLazyCollection();
@@ -483,7 +483,7 @@ public interface Foldable<T> {
      * <pre>
      * {@code 
      *  assertThat(ReactiveSeq.of(1,2,3,4)
-     *                  .map(u->{throw new RuntimeException();})
+     *                  .map(u->throw new RuntimeException())
      *                  .recover(e->"hello")
      *                  .firstValue(),equalTo("hello"));
      * }

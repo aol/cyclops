@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public class BatchBySizeOperator<T, C extends Collection<? super T>> {
 

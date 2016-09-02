@@ -74,7 +74,6 @@ public class AnyMonads {
        //where AnyM wraps  CompletableFuture<List<Integer>>
       }</pre>
      * 
-     * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */
@@ -108,7 +107,6 @@ public class AnyMonads {
        //where AnyM wraps  CompletableFuture<List<Integer>>
       }</pre>
      * 
-     * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
      * @param seq Stream of monads to convert
      * @return Monad with a List
      */
