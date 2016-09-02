@@ -77,13 +77,26 @@ import lombok.EqualsAndHashCode;
  */
 public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functor<PT>, Filterable<PT>, ApplicativeFunctor<PT> {
 
+    /**
+     * Construct a Primary Xor from the supplied publisher
+     * 
+     * @param pub Publisher to construct an Xor from
+     * @return Xor constructed from the supplied Publisher
+     */
     public static <T> Xor<Throwable, T> fromPublisher(final Publisher<T> pub) {
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toXor();
     }
 
+    /**
+     * Construct a Primary Xor from the supplied Iterable
+     * 
+     * @param iterable Iterable to construct an Xor from
+     * @return Xor constructed from the supplied Iterable
+     */
     public static <ST, T> Xor<ST, T> fromIterable(final Iterable<T> iterable) {
+     
         final Iterator<T> it = iterable.iterator();
         return Xor.primary(it.hasNext() ? it.next() : null);
     }
@@ -111,6 +124,23 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
                                value);
     }
 
+    /**
+     * Create an instance of the primary type. Most methods are biased to the primary type,
+     * which means, for example, that the map method operates on the primary type but does nothing on secondary Xors
+     * 
+     * <pre>
+     * {@code 
+     *   Xor.<Integer,Integer>primary(10).map(i->i+1);
+     *   //Xor.primary[11]
+     *    
+     *   
+     * }
+     * </pre>
+     * 
+     * 
+     * @param value To construct an Xor from
+     * @return Primary type instanceof Xor
+     */
     public static <ST, PT> Xor<ST, PT> primary(final PT value) {
         return new Primary<>(
                              value);
