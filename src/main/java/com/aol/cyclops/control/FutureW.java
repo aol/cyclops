@@ -250,6 +250,7 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return future.isCompletedExceptionally();
     }
 
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Value#iterator()
      */
