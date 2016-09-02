@@ -33,7 +33,6 @@ import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.util.stream.AsStreamable;
 
 import lombok.val;
 public class StreamUtilsTest {

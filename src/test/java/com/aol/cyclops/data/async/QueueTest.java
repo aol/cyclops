@@ -35,6 +35,14 @@ public class QueueTest {
 
 	private final AtomicInteger found = new AtomicInteger(0);
 
+	@Test
+	public void closeQueue(){
+	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();
+	    q.add(1);
+	    
+	    new Thread(()->q.close()).run();
+	    q.stream().forEach(System.out::println);
+	}
 	
 	@Test
 	public void backPressureTest() {
