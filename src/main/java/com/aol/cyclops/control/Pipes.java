@@ -38,14 +38,23 @@ public class Pipes<K, V> {
 
     private final ConcurrentMap<K, Adapter<V>> registered = new ConcurrentHashMap<>();
 
+    /**
+     * @return Size of registered pipes
+     */
     public int size() {
         return registered.size();
     }
 
+    /**
+     * @return Persistent map of all registered pipes
+     */
     public PMapX<K, Adapter<V>> registered() {
         return PMapX.fromMap(registered);
     }
 
+    /**
+     * @return Construct an empty Pipes instance
+     */
     public static <K, V> Pipes<K, V> of() {
         return new Pipes<>();
     }

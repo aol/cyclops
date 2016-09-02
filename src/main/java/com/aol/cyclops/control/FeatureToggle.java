@@ -15,10 +15,12 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
@@ -31,58 +33,107 @@ import com.aol.cyclops.util.function.Curry;
  *
  * @param <F>
  */
+/**
+ * @author johnmcclean
+ *
+ * @param <F>
+ */
 public interface FeatureToggle<F>
-        extends Supplier<F>, MonadicValue<F>, Filterable<F>, Functor<F>, ApplicativeFunctor<F>, Matchable.ValueAndOptionalMatcher<F> {
+        extends Supplier<F>, MonadicValue1<F>, Filterable<F>, Functor<F>, ApplicativeFunctor<F>, Matchable.ValueAndOptionalMatcher<F> {
 
+    /**
+     * @return true if enabled
+     */
     boolean isEnabled();
 
+    /**
+     * @return false if disabled
+     * 
+     */
     boolean isDisabled();
-
+    /**
+     * Narrow covariant type parameter
+     * 
+     * @param toggle Eval with covariant type parameter
+     * @return Narrowed FeatureToggle
+     */
     static <T> FeatureToggle<T> narrow(FeatureToggle<? extends T> toggle) {
         return (FeatureToggle<T>) toggle;
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
     @Override
     default <U> FeatureToggle<U> cast(Class<? extends U> type) {
         return (FeatureToggle<U>) ApplicativeFunctor.super.cast(type);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
     @Override
     default <R> FeatureToggle<R> trampoline(Function<? super F, ? extends Trampoline<? extends R>> mapper) {
 
         return (FeatureToggle<R>) ApplicativeFunctor.super.trampoline(mapper);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
     @Override
     default <U> FeatureToggle<U> ofType(Class<? extends U> type) {
 
         return (FeatureToggle<U>) Filterable.super.ofType(type);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
     @Override
     default FeatureToggle<F> filterNot(Predicate<? super F> fn) {
 
         return (FeatureToggle<F>) Filterable.super.filterNot(fn);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
     @Override
     default FeatureToggle<F> notNull() {
 
         return (FeatureToggle<F>) Filterable.super.notNull();
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
+     */
     default <T> FeatureToggle<T> unit(T unit) {
         return FeatureToggle.enable(unit);
     }
 
+    /**
+     * If this FeatureToggle is enabled the enabled function will be executed
+     * If this FeatureToggle is disabled the disabled function will be executed
+     * 
+     * @param enabled Function to execute if enabled
+     * @param disabled Function to execute if disabled
+     * @return
+     */
     <R> R visit(Function<? super F, ? extends R> enabled, Function<? super F, ? extends R> disabled);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
     @Override
     default <R> FeatureToggle<R> patternMatch(Function<CheckValue1<F, R>, CheckValue1<F, R>> case1, Supplier<? extends R> otherwise) {
 
         return (FeatureToggle<R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toFeatureToggle()
+     */
     default FeatureToggle<F> toFeatureToggle() {
         return this;
     }
@@ -145,20 +196,49 @@ public interface FeatureToggle<F>
      * @param consumer Consumer to provide current value to
      * @return This Switch
      */
+    @Override
     default FeatureToggle<F> peek(Consumer<? super F> consumer) {
         if (this.isEnabled())
             consumer.accept(get());
         return this;
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    @Override
+    default FeatureToggle<MonadicValue<F>> nest() {
+       
+        return (FeatureToggle<MonadicValue<F>>)MonadicValue1.super.nest();
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue1#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> FeatureToggle<R> coflatMap(Function<? super MonadicValue<F>, R> mapper) {
+       
+        return (FeatureToggle<R>)MonadicValue1.super.coflatMap(mapper);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue1#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
+     */
+    @Override
+    default FeatureToggle<F> combineEager(Monoid<F> monoid, MonadicValue<? extends F> v2) {
+        
+        return (FeatureToggle<F>)MonadicValue1.super.combineEager(monoid, v2);
+    }
+
     /**
-     * @param map Create a new Switch with provided function
+     * @param flatMapper Create a new Switch with provided function
      * @return switch from function
      */
-    default <X> FeatureToggle<X> flatMap(Function<? super F, ? extends MonadicValue<? extends X>> map) {
+    @Override
+    default <X> FeatureToggle<X> flatMap(Function<? super F, ? extends MonadicValue<? extends X>> flatMapper) {
         if (isDisabled())
             return (FeatureToggle<X>) this;
-        return narrow(map.apply(get())
+        return narrow(flatMapper.apply(get())
                          .toFeatureToggle());
     }
 
@@ -166,6 +246,7 @@ public interface FeatureToggle<F>
      * @param map transform the value inside this Switch into new Switch object
      * @return new Switch with transformed value
      */
+    @Override
     default <X> FeatureToggle<X> map(Function<? super F, ? extends X> map) {
         if (isDisabled())
             return (FeatureToggle<X>) this;
@@ -179,6 +260,7 @@ public interface FeatureToggle<F>
      * @param p Predicate to test for
      * @return Filtered switch
      */
+    @Override
     default FeatureToggle<F> filter(Predicate<? super F> p) {
         if (isDisabled())
             return this;
@@ -191,6 +273,7 @@ public interface FeatureToggle<F>
      * Iterate over value in switch (single value, so one iteration)
      * @param consumer to provide value to.
      */
+    @Override
     default void forEach(Consumer<? super F> consumer) {
         if (isDisabled())
             return;

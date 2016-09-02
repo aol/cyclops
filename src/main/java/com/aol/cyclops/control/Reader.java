@@ -4,6 +4,14 @@ import java.util.function.Function;
 
 import com.aol.cyclops.types.Functor;
 
+/**
+ * An interface that represents the Reader monad
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Current input type of Function
+ * @param <R> Current return type of Function
+ */
 public interface Reader<T, R> extends Function<T, R>, Functor<R> {
 
     default <R1> Reader<T, R1> map(Function<? super R, ? extends R1> f2) {
