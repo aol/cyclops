@@ -390,12 +390,12 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default AnyMSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default AnyMSeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.groupedStatefullyWhile(predicate));
+        return AnyM.fromIterable(ZippingApplicativable.super.groupedStatefullyUntil(predicate));
     }
 
     /* (non-Javadoc)

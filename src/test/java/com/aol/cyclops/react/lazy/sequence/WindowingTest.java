@@ -60,7 +60,7 @@ public class WindowingTest {
 	@Test
 	public void windowStatefullyWhile(){
 	    assertThat(LazyFutureStream.of(1,2,3,4,5,6)
-	                .groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+	                .groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 	                .toList().size(),equalTo(5));
 		
 		
@@ -69,7 +69,7 @@ public class WindowingTest {
 	public void windowStatefullyWhileEmpty(){
 		
 		assertThat(LazyFutureStream.of()
-				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(0));
 		
 	}

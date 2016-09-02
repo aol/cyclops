@@ -793,9 +793,9 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T>, OnEmptySwitc
     }
 
     @Override
-    default QueueX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default QueueX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (QueueX<ListX<T>>) MutableCollectionX.super.groupedStatefullyWhile(predicate);
+        return (QueueX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override

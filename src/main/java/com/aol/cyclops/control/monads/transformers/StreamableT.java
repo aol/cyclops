@@ -487,12 +487,12 @@ public interface StreamableT<T> extends FoldableTransformerSeq<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default StreamableT<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default StreamableT<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (StreamableT<ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (StreamableT<ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

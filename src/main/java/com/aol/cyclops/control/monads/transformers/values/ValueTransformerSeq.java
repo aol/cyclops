@@ -187,11 +187,11 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default Traversable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return unitStream(stream().groupedStatefullyWhile(predicate));
+    default Traversable<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return unitStream(stream().groupedStatefullyUntil(predicate));
 
     }
 

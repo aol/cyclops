@@ -804,9 +804,9 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T>, OnEmptySwitc
     }
 
     @Override
-    default DequeX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default DequeX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (DequeX<ListX<T>>) MutableCollectionX.super.groupedStatefullyWhile(predicate);
+        return (DequeX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override

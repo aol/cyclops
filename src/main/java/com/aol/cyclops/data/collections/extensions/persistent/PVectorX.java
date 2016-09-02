@@ -866,9 +866,9 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>, OnEmp
     }
 
     @Override
-    default PVectorX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default PVectorX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (PVectorX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyWhile(predicate);
+        return (PVectorX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override

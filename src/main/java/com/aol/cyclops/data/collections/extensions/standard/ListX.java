@@ -952,12 +952,12 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default ListX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default ListX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (ListX<ListX<T>>) MutableCollectionX.super.groupedStatefullyWhile(predicate);
+        return (ListX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

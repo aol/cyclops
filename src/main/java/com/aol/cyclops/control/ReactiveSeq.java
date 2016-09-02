@@ -577,7 +577,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * <pre>
      * {@code 
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .groupedStatefullyWhile((s,i)-> s.contains(4) ? true : false)
+     *              .groupedStatefullyUntil((s,i)-> s.contains(4) ? true : false)
      *              .toList().size(),equalTo(5));
      * }
      * </pre>
@@ -587,7 +587,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @return ReactiveSeq windowed while predicate holds
      */
     @Override
-    ReactiveSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate);
+    ReactiveSeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate);
 
     /**
      * Batch elements by size into a List
