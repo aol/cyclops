@@ -19,6 +19,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 
+import com.aol.cyclops.control.FluentFunctions.FluentFunction;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.MutableInt;
 import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
@@ -37,7 +38,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
 public class FluentFunctions {
-
+	
     /**
      * Construct a FluentSupplier from a checked Supplier
      * <pre>
@@ -375,7 +376,7 @@ public class FluentFunctions {
                 }
             });
         }
-
+        
         public <X extends Throwable> FluentSupplier<R> recover(Class<X> type, Supplier<R> onError) {
             return FluentFunctions.of(() -> {
                 try {
@@ -529,6 +530,21 @@ public class FluentFunctions {
                     return result;
                 } catch (Throwable t) {
                     error.accept(t);
+                    throw ExceptionSoftener.throwSoftenedException(t);
+                }
+
+            });
+        }
+        
+        public FluentFunction<T, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
+        	return FluentFunctions.of(t1 -> {
+
+                try {
+                    R result = fn.apply(t1);
+                    eventConsumer.accept(result);
+                    return result;
+                } catch (Throwable t) {
+                    errorConsumer.accept(t);
                     throw ExceptionSoftener.throwSoftenedException(t);
                 }
 
@@ -746,6 +762,21 @@ public class FluentFunctions {
             });
         }
 
+        public FluentBiFunction<T1, T2, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
+        	return FluentFunctions.of((t1, t2) -> {
+
+                try {
+                    R result = fn.apply(t1, t2);
+                    eventConsumer.accept(result);
+                    return result;
+                } catch (Throwable t) {
+                    errorConsumer.accept(t);
+                    throw ExceptionSoftener.throwSoftenedException(t);
+                }
+
+            });
+        }
+        
         public FluentBiFunction<T1, T2, R> println() {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
         }
@@ -924,6 +955,21 @@ public class FluentFunctions {
                     error.accept(t);
                     throw ExceptionSoftener.throwSoftenedException(t);
                 }
+            });
+        }
+        
+        public FluentTriFunction<T1, T2, T3, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
+        	return FluentFunctions.of((t1, t2, t3) -> {
+
+                try {
+                    R result = fn.apply(t1, t2, t3);
+                    eventConsumer.accept(result);
+                    return result;
+                } catch (Throwable t) {
+                    errorConsumer.accept(t);
+                    throw ExceptionSoftener.throwSoftenedException(t);
+                }
+
             });
         }
 
