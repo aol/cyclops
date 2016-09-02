@@ -2,10 +2,10 @@ package com.aol.cyclops.control.transformers.seq.convertable;
 
 import java.util.Arrays;
 
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.types.AbstractConvertableSequenceTest;
 import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.util.stream.Streamable;
 
 
 public class StreamableTSeqTraversableTest extends AbstractConvertableSequenceTest {

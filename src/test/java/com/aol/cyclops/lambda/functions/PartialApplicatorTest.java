@@ -1,15 +1,25 @@
 package com.aol.cyclops.lambda.functions;
 
-import org.junit.Test;
-
-import com.aol.cyclops.util.function.*;
+import static com.aol.cyclops.util.function.PartialApplicator.partial3;
+import static com.aol.cyclops.util.function.PartialApplicator.partial4;
+import static com.aol.cyclops.util.function.PartialApplicator.partial5;
+import static com.aol.cyclops.util.function.PartialApplicator.partial6;
+import static com.aol.cyclops.util.function.PartialApplicator.partial7;
+import static com.aol.cyclops.util.function.PartialApplicator.partial8;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.aol.cyclops.util.function.PartialApplicator.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
+import com.aol.cyclops.util.function.HeptFunction;
+import com.aol.cyclops.util.function.HexFunction;
+import com.aol.cyclops.util.function.OctFunction;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.QuintFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 public class PartialApplicatorTest {
 

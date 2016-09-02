@@ -1,7 +1,8 @@
 package com.aol.cyclops.streams.reactivestreams;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;

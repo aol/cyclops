@@ -6,11 +6,31 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
+import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.data.collections.extensions.persistent.PMapXs;
+import com.aol.cyclops.data.collections.extensions.standard.MapXs;
 public class PMapXsTest {
 
+    @Test
+    public void onEmpty(){
+        assertThat(PMapX.empty().onEmpty(Tuple.tuple("hello",10)).get("hello"),equalTo(10));
+    }
+    @Test
+    public void onEmptyGet(){
+        assertThat(PMapX.empty().onEmptyGet(()->Tuple.tuple("hello",10)).get("hello"),equalTo(10));
+    }
+    @Test(expected=RuntimeException.class)
+    public void onEmptyThrow(){
+       PMapX.empty().onEmptyThrow(()->new RuntimeException("hello"));
+    }
+    @Test
+    public void onEmptySwitch(){
+       
+        assertThat(PMapX.<String,Integer>empty().onEmptySwitch(()->PMapX.fromMap(MapXs.of("hello",10))).get("hello"),equalTo(10));
+    }
     @Test
     public void testOf() {
         assertThat(PMapXs.of(),equalTo(new HashMap()));

@@ -2,7 +2,6 @@ package com.aol.cyclops.data.async.wait;
 
 import java.util.concurrent.locks.LockSupport;
 
-
 /**
  * Repeatedly retry to take or offer element to Queue if full or data unavailable,
  * with a wait of 1 nano second between retries
@@ -13,23 +12,23 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class SpinWait<T> implements WaitStrategy<T> {
 
-	@Override
-	public T take(WaitStrategy.Takeable<T> t) throws InterruptedException {
-		T result;
+    @Override
+    public T take(WaitStrategy.Takeable<T> t) throws InterruptedException {
+        T result;
 
-		while ((result = t.take()) == null) {
-			LockSupport.parkNanos(1l);
-		}
+        while ((result = t.take()) == null) {
+            LockSupport.parkNanos(1l);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public boolean offer(WaitStrategy.Offerable o) throws InterruptedException {
-		while (!o.offer()) {
-			LockSupport.parkNanos(1l);
-		}
-		return true;
-	}
+    @Override
+    public boolean offer(WaitStrategy.Offerable o) throws InterruptedException {
+        while (!o.offer()) {
+            LockSupport.parkNanos(1l);
+        }
+        return true;
+    }
 
 }

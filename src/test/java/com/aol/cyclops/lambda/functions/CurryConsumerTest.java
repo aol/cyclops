@@ -1,13 +1,11 @@
 package com.aol.cyclops.lambda.functions;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
 import com.aol.cyclops.util.function.CurryConsumer;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 
 public class CurryConsumerTest {
 

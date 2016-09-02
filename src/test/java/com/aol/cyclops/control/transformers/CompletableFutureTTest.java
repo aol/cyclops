@@ -1,9 +1,9 @@
 package com.aol.cyclops.control.transformers;
 
 import static com.aol.cyclops.control.Matchable.otherwise;
+import static com.aol.cyclops.control.Matchable.otherwise;
 import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
-import static com.aol.cyclops.control.Matchable.otherwise;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -35,11 +35,11 @@ import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
-import com.aol.cyclops.control.monads.transformers.MaybeT;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.Mutable;
@@ -56,7 +56,6 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.types.mixins.Printable;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 
 

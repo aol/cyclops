@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +44,6 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 
 
@@ -60,9 +61,18 @@ public class TryTest {
 	   @Test
 	    public void testApFeatureToggle() {
 	      
-	        assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+	        assertThat(just.combine(FeatureToggle.enable(20),this::add).get(),equalTo(30));
 	    }
-	   
+	   @Test
+	    public void testZip(){
+	        assertThat(Try.success(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+	        assertThat(Try.success(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
+	        assertThat(Try.success(10).zip(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+	        assertThat(Try.success(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
+	        assertThat(Try.success(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+	        assertThat(Try.success(10).zip(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+	        assertThat(Try.success(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+	    }  
 	    
 
 	    @Test

@@ -1,7 +1,5 @@
 package com.aol.cyclops.functions.collections.extensions.guava;
 
-import  junit.framework.Test;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -9,6 +7,7 @@ import com.google.common.collect.testing.SetTestSuiteBuilder;
 import com.google.common.collect.testing.features.CollectionFeature;
 import com.google.common.collect.testing.features.CollectionSize;
 
+import  junit.framework.Test;
 import junit.framework.TestSuite;
 
 @RunWith(Suite.class)

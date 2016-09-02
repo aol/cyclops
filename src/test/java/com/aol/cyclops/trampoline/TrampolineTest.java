@@ -8,12 +8,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import lombok.val;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Trampoline;
+
+import lombok.val;
 
 
 public class TrampolineTest {

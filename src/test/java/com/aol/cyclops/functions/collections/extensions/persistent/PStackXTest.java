@@ -1,5 +1,8 @@
 package com.aol.cyclops.functions.collections.extensions.persistent;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -30,7 +33,10 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 		return list.efficientOpsOff();
 		
 	}
-
+	@Test
+    public void onEmptySwitch(){
+            assertThat(PStackX.empty().onEmptySwitch(()->PStackX.of(1,2,3)),equalTo(PStackX.of(1,2,3)));
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
 	 */

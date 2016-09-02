@@ -6,10 +6,10 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.util.stream.Streamable;
 public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest{
 
 	@Override

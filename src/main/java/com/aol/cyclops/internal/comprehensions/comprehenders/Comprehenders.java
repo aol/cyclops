@@ -18,24 +18,25 @@ import com.aol.cyclops.types.extensability.Comprehender;
  *
  */
 public class Comprehenders {
-	
-	private final static PStack<Map.Entry<Class,Comprehender>> comprehenders;
-	static {	
-		ServiceLoader<Comprehender> loader  = ServiceLoader.load(Comprehender.class);
-		
 
-		comprehenders = Reducers.<Map.Entry<Class,Comprehender>>toPStack().mapReduce((Stream)Seq.seq(loader.iterator())
-													.sorted((a,b) ->  b.priority()-a.priority())
-													.map(comp->new AbstractMap.SimpleEntry(comp.getTargetClass(),comp)));
-	
-	}
-	
-	
-	/**
-	 * @return Registered Comprehenders
-	 */
-	public PStack<Map.Entry<Class,Comprehender>> getRegisteredComprehenders(){
-		return comprehenders;
-	}
-	
+    private final static PStack<Map.Entry<Class, Comprehender>> comprehenders;
+
+    static {
+        ServiceLoader<Comprehender> loader = ServiceLoader.load(Comprehender.class);
+
+        comprehenders = Reducers.<Map.Entry<Class, Comprehender>> toPStack()
+                                .mapReduce((Stream) Seq.seq(loader.iterator())
+                                                       .sorted((a, b) -> b.priority() - a.priority())
+                                                       .map(comp -> new AbstractMap.SimpleEntry(
+                                                                                                comp.getTargetClass(), comp)));
+
+    }
+
+    /**
+     * @return Registered Comprehenders
+     */
+    public PStack<Map.Entry<Class, Comprehender>> getRegisteredComprehenders() {
+        return comprehenders;
+    }
+
 }

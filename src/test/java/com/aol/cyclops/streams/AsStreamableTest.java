@@ -1,7 +1,9 @@
 package com.aol.cyclops.streams;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
@@ -9,18 +11,18 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import lombok.val;
-
 import org.junit.Test;
 
-import com.aol.cyclops.util.stream.AsStreamable;
-import com.aol.cyclops.util.stream.Streamable;
+import com.aol.cyclops.control.Streamable;
+
+import lombok.val;
+
 public class AsStreamableTest {
 
 	@Test
 	public void testAsStreamableT() {
 		
-		val result = AsStreamable.<Integer>fromIterable(Arrays.asList(1,2,3)).stream().map(i->i+2).collect(Collectors.toList());
+		val result = Streamable.<Integer>fromIterable(Arrays.asList(1,2,3)).stream().map(i->i+2).collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList(3,4,5)));
 	}
@@ -28,7 +30,7 @@ public class AsStreamableTest {
 	@Test
 	public void testAsStreamableStreamOfT() {
 		Stream<Integer> stream = Stream.of(1,2,3,4,5);
-		val streamable = AsStreamable.<Integer>fromStream(stream);
+		val streamable = Streamable.<Integer>fromStream(stream);
 		val result1 = streamable.stream().map(i->i+2).collect(Collectors.toList());
 		val result2 = streamable.stream().map(i->i+2).collect(Collectors.toList());
 		val result3 = streamable.stream().map(i->i+2).collect(Collectors.toList());
@@ -40,7 +42,7 @@ public class AsStreamableTest {
 	volatile boolean failed=false;
 	@Test
 	public void concurrentLazy() throws InterruptedException{
-		Streamable<Integer> streamable =   AsStreamable.synchronizedFromStream(IntStream.range(0,1000).boxed());
+		Streamable<Integer> streamable =   Streamable.synchronizedFromStream(IntStream.range(0,1000).boxed());
 
 		for(int i=0;i<100;i++){
 			CountDownLatch init = new CountDownLatch(4);

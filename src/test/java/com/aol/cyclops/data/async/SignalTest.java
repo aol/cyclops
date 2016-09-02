@@ -4,14 +4,12 @@ import static com.aol.cyclops.types.futurestream.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.data.async.Signal;
 
 public class SignalTest {
 

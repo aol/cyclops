@@ -1,13 +1,17 @@
 package com.aol.cyclops.invokedynamic;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.function.Supplier;
-import static org.hamcrest.Matchers.*;
+
 import org.junit.Test;
 
 import com.aol.cyclops.util.ExceptionSoftener;
-
-import static org.junit.Assert.*;
 public class ExceptionSoftenerTest {
 
 	@Test(expected=IOException.class)

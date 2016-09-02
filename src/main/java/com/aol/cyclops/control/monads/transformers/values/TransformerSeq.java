@@ -23,42 +23,31 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.FilterableFunctor;
-import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.types.anyM.NestedCollectable;
-import com.aol.cyclops.types.anyM.NestedFoldable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyOperations;
-import com.aol.cyclops.util.stream.Streamable;
 
-public interface TransformerSeq<T> extends  ConvertableSequence<T>,
-                                            Traversable<T>,
-                                            Sequential<T>,                                
-                                            Iterable<T>,
-                                            
-                                            ToStream<T>,
-                                            Publisher<T> {
-    
-  
-   
+public interface TransformerSeq<T> extends ConvertableSequence<T>, Traversable<T>, Sequential<T>, Iterable<T>,
+
+ToStream<T>, Publisher<T> {
+
     public boolean isSeqPresent();
-    
-    
-    
+
     <T> TransformerSeq<T> unitAnyM(AnyM<Traversable<T>> traversable);
+
     AnyM<? extends Traversable<T>> transformerStream();
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
     default Traversable<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
-        return unitAnyM(transformerStream().map(s->s.combine(predicate, op)));
+        return unitAnyM(transformerStream().map(s -> s.combine(predicate, op)));
     }
 
     /* (non-Javadoc)
@@ -66,19 +55,17 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default void subscribe(Subscriber<? super T> s) {
-        
-        transformerStream().forEach(n->n.subscribe(s));
-        
-    }
 
-    
+        transformerStream().forEach(n -> n.subscribe(s));
+
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#cycle(int)
      */
     @Override
     default Traversable<T> cycle(int times) {
-        return unitAnyM(transformerStream().map(s->s.cycle(times)));
+        return unitAnyM(transformerStream().map(s -> s.cycle(times)));
     }
 
     /* (non-Javadoc)
@@ -86,7 +73,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> cycle(Monoid<T> m, int times) {
-        return unitAnyM(transformerStream().map(s->s.cycle(m,times)));
+        return unitAnyM(transformerStream().map(s -> s.cycle(m, times)));
     }
 
     /* (non-Javadoc)
@@ -94,7 +81,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> cycleWhile(Predicate<? super T> predicate) {
-        return unitAnyM(transformerStream().map(s->s.cycleWhile(predicate)));
+        return unitAnyM(transformerStream().map(s -> s.cycleWhile(predicate)));
     }
 
     /* (non-Javadoc)
@@ -102,7 +89,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> cycleUntil(Predicate<? super T> predicate) {
-        return unitAnyM(transformerStream().map(s->s.cycleUntil(predicate)));
+        return unitAnyM(transformerStream().map(s -> s.cycleUntil(predicate)));
     }
 
     /* (non-Javadoc)
@@ -110,25 +97,27 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default <U, R> Traversable<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        AnyM<Traversable<R>> zipped = transformerStream().map(s->s.zip(other,zipper));
-       return unitAnyM(zipped);
-       
+        AnyM<Traversable<R>> zipped = transformerStream().map(s -> s.zip(other, zipper));
+        return unitAnyM(zipped);
+
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Traversable<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-       return zip((Iterable<? extends U>) other,zipper);
-       
+        return zip((Iterable<? extends U>) other, zipper);
+
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Traversable<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-       return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other),zipper);
-       
+        return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
+
     }
 
     /* (non-Javadoc)
@@ -137,7 +126,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
     @Override
     default <U> Traversable<Tuple2<T, U>> zip(Stream<? extends U> other) {
         Streamable<? extends U> streamable = Streamable.fromStream(other);
-        return unitAnyM(transformerStream().map(s->s.zip(streamable.stream())));
+        return unitAnyM(transformerStream().map(s -> s.zip(streamable.stream())));
     }
 
     /* (non-Javadoc)
@@ -145,14 +134,15 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default <U> Traversable<Tuple2<T, U>> zip(Seq<? extends U> other) {
-       return zip((Stream<? extends U>)other);
+        return zip((Stream<? extends U>) other);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
     default <U> Traversable<Tuple2<T, U>> zip(Iterable<? extends U> other) {
-       return zip((Stream<? extends U>)ReactiveSeq.fromIterable(other));
+        return zip((Stream<? extends U>) ReactiveSeq.fromIterable(other));
     }
 
     /* (non-Javadoc)
@@ -162,7 +152,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
     default <S, U> Traversable<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
         Streamable<? extends S> streamable2 = Streamable.fromStream(second);
         Streamable<? extends U> streamable3 = Streamable.fromStream(third);
-        AnyM<Traversable<Tuple3<T, S, U>>> zipped =transformerStream().map(s->s.zip3(streamable2.stream(),streamable3.stream()));
+        AnyM<Traversable<Tuple3<T, S, U>>> zipped = transformerStream().map(s -> s.zip3(streamable2.stream(), streamable3.stream()));
         return unitAnyM(zipped);
     }
 
@@ -175,7 +165,8 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
         Streamable<? extends T2> streamable2 = Streamable.fromStream(second);
         Streamable<? extends T3> streamable3 = Streamable.fromStream(third);
         Streamable<? extends T4> streamable4 = Streamable.fromStream(fourth);
-        AnyM<Traversable<Tuple4<T, T2, T3, T4>>> zipped =transformerStream().map(s->s.zip4(streamable2.stream(),streamable3.stream(),streamable4.stream()));
+        AnyM<Traversable<Tuple4<T, T2, T3, T4>>> zipped = transformerStream().map(s -> s.zip4(streamable2.stream(), streamable3.stream(),
+                                                                                              streamable4.stream()));
         return unitAnyM(zipped);
     }
 
@@ -184,7 +175,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<Tuple2<T, Long>> zipWithIndex() {
-       return unitAnyM(transformerStream().map(s->s.zipWithIndex()));
+        return unitAnyM(transformerStream().map(s -> s.zipWithIndex()));
     }
 
     /* (non-Javadoc)
@@ -192,8 +183,8 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<ListX<T>> sliding(int windowSize) {
-        return unitAnyM(transformerStream().map(s->s.sliding(windowSize)));
-        
+        return unitAnyM(transformerStream().map(s -> s.sliding(windowSize)));
+
     }
 
     /* (non-Javadoc)
@@ -201,18 +192,16 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<ListX<T>> sliding(int windowSize, int increment) {
-        return unitAnyM(transformerStream().map(s->s.sliding(windowSize,increment)));
+        return unitAnyM(transformerStream().map(s -> s.sliding(windowSize, increment)));
     }
-
-    
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#grouped(int, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> Traversable<C> grouped(int size, Supplier<C> supplier) {
-        return unitAnyM(transformerStream().map(s->s.grouped(size,supplier)));
-        
+        return unitAnyM(transformerStream().map(s -> s.grouped(size, supplier)));
+
     }
 
     /* (non-Javadoc)
@@ -220,49 +209,42 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-        return unitAnyM(transformerStream().map(s->s.groupedUntil(predicate)));
-        
-    }
+        return unitAnyM(transformerStream().map(s -> s.groupedUntil(predicate)));
 
-    
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
      */
     @Override
     default Traversable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return unitAnyM(transformerStream().map(s->s.groupedStatefullyWhile(predicate)));
-       
+        return unitAnyM(transformerStream().map(s -> s.groupedStatefullyWhile(predicate)));
+
     }
 
-    
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
     default Traversable<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-        return unitAnyM(transformerStream().map(s->s.groupedWhile(predicate)));
+        return unitAnyM(transformerStream().map(s -> s.groupedWhile(predicate)));
     }
-
-   
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> Traversable<C> groupedWhile(Predicate<? super T> predicate,
-            Supplier<C> factory) {
-        return unitAnyM(transformerStream().map(s->s.groupedWhile(predicate,factory)));
-       
+    default <C extends Collection<? super T>> Traversable<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+        return unitAnyM(transformerStream().map(s -> s.groupedWhile(predicate, factory)));
+
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> Traversable<C> groupedUntil(Predicate<? super T> predicate,
-            Supplier<C> factory) {
-        return unitAnyM(transformerStream().map(s->s.groupedUntil(predicate,factory)));
+    default <C extends Collection<? super T>> Traversable<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+        return unitAnyM(transformerStream().map(s -> s.groupedUntil(predicate, factory)));
     }
 
     /* (non-Javadoc)
@@ -270,18 +252,16 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<ListX<T>> grouped(int groupSize) {
-        return unitAnyM(transformerStream().map(s->s.grouped(groupSize)));
+        return unitAnyM(transformerStream().map(s -> s.grouped(groupSize)));
     }
 
-   
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
-    default <K, A, D> Traversable<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier,
-            Collector<? super T, A, D> downstream) {
-        return unitAnyM(transformerStream().map(s->s.grouped(classifier,downstream)));
-        
+    default <K, A, D> Traversable<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+        return unitAnyM(transformerStream().map(s -> s.grouped(classifier, downstream)));
+
     }
 
     /* (non-Javadoc)
@@ -289,18 +269,16 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default <K> Traversable<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
-       return unitAnyM(transformerStream().map(s->s.grouped(classifier)));
-       
-    }
+        return unitAnyM(transformerStream().map(s -> s.grouped(classifier)));
 
-    
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#distinct()
      */
     @Override
     default Traversable<T> distinct() {
-        return unitAnyM(transformerStream().map(s->s.distinct()));
+        return unitAnyM(transformerStream().map(s -> s.distinct()));
     }
 
     /* (non-Javadoc)
@@ -308,7 +286,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> scanLeft(Monoid<T> monoid) {
-        return unitAnyM(transformerStream().map(s->s.scanLeft(monoid)));
+        return unitAnyM(transformerStream().map(s -> s.scanLeft(monoid)));
     }
 
     /* (non-Javadoc)
@@ -316,7 +294,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default <U> Traversable<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
-        return unitAnyM(transformerStream().map(s->s.scanLeft(seed,function)));
+        return unitAnyM(transformerStream().map(s -> s.scanLeft(seed, function)));
     }
 
     /* (non-Javadoc)
@@ -324,15 +302,15 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> scanRight(Monoid<T> monoid) {
-        return unitAnyM(transformerStream().map(s->s.scanRight(monoid)));
+        return unitAnyM(transformerStream().map(s -> s.scanRight(monoid)));
     }
 
     /* (non-Javadoc)
      * @see com.aol).cyclops.types.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, ? super U,? extends U> combiner) {
-        return unitAnyM(transformerStream().map(s->s.scanRight(identity,combiner)));
+    default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+        return unitAnyM(transformerStream().map(s -> s.scanRight(identity, combiner)));
     }
 
     /* (non-Javadoc)
@@ -340,7 +318,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> sorted() {
-        return unitAnyM(transformerStream().map(s->s.sorted()));
+        return unitAnyM(transformerStream().map(s -> s.sorted()));
     }
 
     /* (non-Javadoc)
@@ -348,7 +326,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> sorted(Comparator<? super T> c) {
-        return unitAnyM(transformerStream().map(s->s.sorted(c)));
+        return unitAnyM(transformerStream().map(s -> s.sorted(c)));
     }
 
     /* (non-Javadoc)
@@ -356,7 +334,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> takeWhile(Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s->s.takeWhile(p)));
+        return unitAnyM(transformerStream().map(s -> s.takeWhile(p)));
     }
 
     /* (non-Javadoc)
@@ -364,7 +342,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> dropWhile(Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s->s.dropWhile(p)));
+        return unitAnyM(transformerStream().map(s -> s.dropWhile(p)));
     }
 
     /* (non-Javadoc)
@@ -372,7 +350,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> takeUntil(Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s->s.takeUntil(p)));
+        return unitAnyM(transformerStream().map(s -> s.takeUntil(p)));
     }
 
     /* (non-Javadoc)
@@ -380,7 +358,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> dropUntil(Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s->s.dropUntil(p)));
+        return unitAnyM(transformerStream().map(s -> s.dropUntil(p)));
     }
 
     /* (non-Javadoc)
@@ -388,7 +366,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> dropRight(int num) {
-        return unitAnyM(transformerStream().map(s->s.dropRight(num)));
+        return unitAnyM(transformerStream().map(s -> s.dropRight(num)));
     }
 
     /* (non-Javadoc)
@@ -396,7 +374,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> takeRight(int num) {
-        return unitAnyM(transformerStream().map(s->s.takeRight(num)));
+        return unitAnyM(transformerStream().map(s -> s.takeRight(num)));
     }
 
     /* (non-Javadoc)
@@ -404,7 +382,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> skip(long num) {
-        return unitAnyM(transformerStream().map(s->s.skip(num)));
+        return unitAnyM(transformerStream().map(s -> s.skip(num)));
     }
 
     /* (non-Javadoc)
@@ -412,7 +390,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> skipWhile(Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s->s.skipWhile(p)));
+        return unitAnyM(transformerStream().map(s -> s.skipWhile(p)));
     }
 
     /* (non-Javadoc)
@@ -420,7 +398,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> skipUntil(Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s->s.skipUntil(p)));
+        return unitAnyM(transformerStream().map(s -> s.skipUntil(p)));
     }
 
     /* (non-Javadoc)
@@ -428,7 +406,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> limit(long num) {
-        return unitAnyM(transformerStream().map(s->s.limit(num)));
+        return unitAnyM(transformerStream().map(s -> s.limit(num)));
     }
 
     /* (non-Javadoc)
@@ -436,7 +414,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> limitWhile(Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s->s.limitWhile(p)));
+        return unitAnyM(transformerStream().map(s -> s.limitWhile(p)));
     }
 
     /* (non-Javadoc)
@@ -444,17 +422,15 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> limitUntil(Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s->s.limitUntil(p)));
+        return unitAnyM(transformerStream().map(s -> s.limitUntil(p)));
     }
-
-    
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#intersperse(java.lang.Object)
      */
     @Override
     default Traversable<T> intersperse(T value) {
-        return unitAnyM(transformerStream().map(s->s.intersperse(value)));
+        return unitAnyM(transformerStream().map(s -> s.intersperse(value)));
     }
 
     /* (non-Javadoc)
@@ -462,7 +438,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> reverse() {
-        return unitAnyM(transformerStream().map(s->s.reverse()));
+        return unitAnyM(transformerStream().map(s -> s.reverse()));
     }
 
     /* (non-Javadoc)
@@ -470,7 +446,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> shuffle() {
-        return unitAnyM(transformerStream().map(s->s.shuffle()));
+        return unitAnyM(transformerStream().map(s -> s.shuffle()));
     }
 
     /* (non-Javadoc)
@@ -496,7 +472,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> skipLast(int num) {
-        return unitAnyM(transformerStream().map(s->s.skipLast(num)));
+        return unitAnyM(transformerStream().map(s -> s.skipLast(num)));
     }
 
     /* (non-Javadoc)
@@ -504,7 +480,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> limitLast(int num) {
-        return unitAnyM(transformerStream().map(s->s.limitLast(num)));
+        return unitAnyM(transformerStream().map(s -> s.limitLast(num)));
     }
 
     /* (non-Javadoc)
@@ -512,7 +488,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> onEmpty(T value) {
-        return unitAnyM(transformerStream().map(s->s.onEmpty(value)));
+        return unitAnyM(transformerStream().map(s -> s.onEmpty(value)));
     }
 
     /* (non-Javadoc)
@@ -520,7 +496,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> onEmptyGet(Supplier<? extends T> supplier) {
-        return unitAnyM(transformerStream().map(s->s.onEmptyGet(supplier)));
+        return unitAnyM(transformerStream().map(s -> s.onEmptyGet(supplier)));
     }
 
     /* (non-Javadoc)
@@ -528,8 +504,8 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default <X extends Throwable> Traversable<T> onEmptyThrow(Supplier<? extends X> supplier) {
-       return unitAnyM(transformerStream().map(s->s.onEmptyThrow(supplier)));
-       
+        return unitAnyM(transformerStream().map(s -> s.onEmptyThrow(supplier)));
+
     }
 
     /* (non-Javadoc)
@@ -537,7 +513,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> shuffle(Random random) {
-        return unitAnyM(transformerStream().map(s->s.shuffle(random)));
+        return unitAnyM(transformerStream().map(s -> s.shuffle(random)));
     }
 
     /* (non-Javadoc)
@@ -545,7 +521,7 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default Traversable<T> slice(long from, long to) {
-        return unitAnyM(transformerStream().map(s->s.slice(from, to)));
+        return unitAnyM(transformerStream().map(s -> s.slice(from, to)));
     }
 
     /* (non-Javadoc)
@@ -553,20 +529,12 @@ public interface TransformerSeq<T> extends  ConvertableSequence<T>,
      */
     @Override
     default <U extends Comparable<? super U>> Traversable<T> sorted(Function<? super T, ? extends U> function) {
-        return unitAnyM(transformerStream().map(s->s.sorted(function)));
+        return unitAnyM(transformerStream().map(s -> s.sorted(function)));
     }
-
 
     @Override
     default ReactiveSeq<T> stream() {
         return ConvertableSequence.super.stream();
     }
 
-
-   
-
-
-    
-
-    
 }

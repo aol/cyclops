@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 
 import lombok.Getter;
 
-
 /**
  * Datastructure that accepts a Stream of data and outputs a Stream of changes
  * 
@@ -21,80 +20,85 @@ import lombok.Getter;
  */
 public class Signal<T> {
 
-	private final AtomicReference<T> discreteState = new AtomicReference<>(null);
-	
-	@Getter
-	private final Adapter<T> continuous;
-	@Getter
-	private final Adapter<T> discrete;
-	
-	/**
-	 * 
-	 * Construct a new Signal
-	 * 
-	 * @param continuous Adapter to handle the continuous flow (not only different values)
-	 * @param discrete  Adapter to handle the discrete (changed) flow
-	 */
-	public Signal(Adapter<T> continuous, Adapter<T> discrete) {
-		
-		this.continuous = continuous;
-		this.discrete = discrete;
-	}
-	
-	/**
-	 * @return Signal backed by a queue
-	 */
-	public static <T> Signal<T> queueBackedSignal(){
-		return new Signal<T>(new Queue<T>(new LinkedBlockingQueue<T>(),null),
-				new Queue<T>(new LinkedBlockingQueue<T>(),null));
-	}
-	
-	/**
-	 * @return Signal backed by a topic
-	 */
-	public static <T> Signal<T> topicBackedSignal(){
-		return new Signal(new Topic<>(),new Topic<>());
-	}
-	
-	/**
-	 * @param stream Populate this Signal from a Stream
-	 */
-	public void fromStream(Stream<T> stream){
-		stream.forEach(next -> set(next));
-	}
-	
-	/**
-	 * Set the current value of this signal
-	 * 
-	 * @param newValue Replacement value
-	 * @return newValue
-	 */
-	public T set(T newValue){
-		continuous.offer(newValue);
-		
-		setDiscreteIfDiff(newValue);
-		return newValue;
-	}
+    private final AtomicReference<T> discreteState = new AtomicReference<>(
+                                                                           null);
 
-	private void setDiscreteIfDiff(T newValue) {
-		T oldVal = discreteState.get();
-		while (!discreteState.compareAndSet(oldVal, newValue)) {
-			oldVal = discreteState.get();
-		}
+    @Getter
+    private final Adapter<T> continuous;
+    @Getter
+    private final Adapter<T> discrete;
 
-		if (!Objects.equals(oldVal, newValue))
-			discrete.offer(newValue);
-	}
+    /**
+     * 
+     * Construct a new Signal
+     * 
+     * @param continuous Adapter to handle the continuous flow (not only different values)
+     * @param discrete  Adapter to handle the discrete (changed) flow
+     */
+    public Signal(Adapter<T> continuous, Adapter<T> discrete) {
 
-	/**
-	 * Close this Signal
-	 * 
-	 * 
-	 */
-	public void close(){
-		
-		continuous.close();
-		discrete.close();
-	}
+        this.continuous = continuous;
+        this.discrete = discrete;
+    }
+
+    /**
+     * @return Signal backed by a queue
+     */
+    public static <T> Signal<T> queueBackedSignal() {
+        return new Signal<T>(
+                             new Queue<T>(
+                                          new LinkedBlockingQueue<T>(), null),
+                             new Queue<T>(
+                                          new LinkedBlockingQueue<T>(), null));
+    }
+
+    /**
+     * @return Signal backed by a topic
+     */
+    public static <T> Signal<T> topicBackedSignal() {
+        return new Signal(
+                          new Topic<>(), new Topic<>());
+    }
+
+    /**
+     * @param stream Populate this Signal from a Stream
+     */
+    public void fromStream(Stream<T> stream) {
+        stream.forEach(next -> set(next));
+    }
+
+    /**
+     * Set the current value of this signal
+     * 
+     * @param newValue Replacement value
+     * @return newValue
+     */
+    public T set(T newValue) {
+        continuous.offer(newValue);
+
+        setDiscreteIfDiff(newValue);
+        return newValue;
+    }
+
+    private void setDiscreteIfDiff(T newValue) {
+        T oldVal = discreteState.get();
+        while (!discreteState.compareAndSet(oldVal, newValue)) {
+            oldVal = discreteState.get();
+        }
+
+        if (!Objects.equals(oldVal, newValue))
+            discrete.offer(newValue);
+    }
+
+    /**
+     * Close this Signal
+     * 
+     * 
+     */
+    public void close() {
+
+        continuous.close();
+        discrete.close();
+    }
 
 }

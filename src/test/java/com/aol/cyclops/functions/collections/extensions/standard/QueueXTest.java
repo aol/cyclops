@@ -1,13 +1,18 @@
 package com.aol.cyclops.functions.collections.extensions.standard;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
 
@@ -17,7 +22,10 @@ public class QueueXTest extends CollectionXTestsWithNulls {
     public <T> FluentCollectionX<T> of(T... values) {
         return QueueX.of(values);
     }
-
+    @Test
+    public void onEmptySwitch(){
+        assertThat(QueueX.empty().onEmptySwitch(()->QueueX.of(1,2,3)).toList(),equalTo(ListX.of(1,2,3)));
+    }
     /*
      * (non-Javadoc)
      * 

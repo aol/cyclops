@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.lazy.sequenceM;
+package com.aol.cyclops.react.lazy.sequence;
 
 
 import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
@@ -16,9 +16,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.aol.cyclops.util.stream.Streamable;
 
 public class WindowingTest {
 	LazyFutureStream<Integer> empty;
@@ -59,10 +59,10 @@ public class WindowingTest {
 	}
 	@Test
 	public void windowStatefullyWhile(){
+	    assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+	                .groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+	                .toList().size(),equalTo(5));
 		
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
-				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
-				.toList().size(),equalTo(5));
 		
 	}
 	@Test

@@ -1,28 +1,5 @@
 package com.aol.cyclops.react.simple;
 
-
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.LockSupport;
-import java.util.stream.Collectors;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
-import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.types.futurestream.SimpleReactStream;
-
 public class GeneratorTest {
 	volatile int  count;
 	volatile int  second;

@@ -1,11 +1,7 @@
 package com.aol.cyclops.react.lazy;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
-
 import org.junit.Test;
 
-import com.aol.cyclops.react.base.BaseSequentialSQLTest.X;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class ForEachParallelTest {

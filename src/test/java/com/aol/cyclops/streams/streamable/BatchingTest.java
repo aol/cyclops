@@ -1,9 +1,9 @@
 package com.aol.cyclops.streams.streamable;
 
 
-import static com.aol.cyclops.util.stream.Streamable.fromIntStream;
-import static com.aol.cyclops.util.stream.Streamable.iterate;
-import static com.aol.cyclops.util.stream.Streamable.of;
+import static com.aol.cyclops.control.Streamable.fromIntStream;
+import static com.aol.cyclops.control.Streamable.iterate;
+import static com.aol.cyclops.control.Streamable.of;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -27,9 +27,9 @@ import java.util.stream.IntStream;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.util.SimpleTimer;
-import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.Value;
 public class BatchingTest {

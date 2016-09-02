@@ -1,5 +1,5 @@
-package com.aol.cyclops.react.lazy.sequenceM;
-import static org.hamcrest.Matchers.*;
+package com.aol.cyclops.react.lazy.sequence;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

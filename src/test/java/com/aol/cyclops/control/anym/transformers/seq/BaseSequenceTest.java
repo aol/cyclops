@@ -183,7 +183,7 @@ public  class BaseSequenceTest {
     }
     @Test
     public void testScanRightStringConcatMonoid() {
-        assertThat(of("a", "b", "c").scanRight(Monoid.of("", String::concat)).toList().size(),
+        assertThat(of("a", "b", "c").scanRight(Monoid.fromBiFunction("", String::concat)).toList().size(),
             is(asList("", "c", "bc", "abc").size()));
     }
     @Test

@@ -1,7 +1,7 @@
 package com.aol.cyclops.streams.streamable;
 
 
-import static com.aol.cyclops.util.stream.Streamable.of;
+import static com.aol.cyclops.control.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,9 +17,9 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.util.stream.Streamable;
+import com.aol.cyclops.control.Streamable;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 public class WindowingTest {
 	Streamable<Integer> empty;

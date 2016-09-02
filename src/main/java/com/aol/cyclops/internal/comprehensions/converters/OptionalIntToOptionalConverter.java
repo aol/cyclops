@@ -7,24 +7,24 @@ import com.aol.cyclops.types.extensability.MonadicConverter;
 
 import lombok.val;
 
-public class OptionalIntToOptionalConverter implements
-		MonadicConverter<Optional> {
-	public static int priority = 5;
-	public int priority(){
-		return priority;
-	}
-	
-	@Override
-	public boolean accept(Object o) {
-		return (o instanceof OptionalInt);
-	}
+public class OptionalIntToOptionalConverter implements MonadicConverter<Optional> {
+    public static int priority = 5;
 
-	@Override
-	public Optional convertToMonadicForm(Object f) {
-		val optional = (OptionalInt)f;
-		if(optional.isPresent())
-			return Optional.of(optional.getAsInt());
-		return Optional.empty();
-	}
+    public int priority() {
+        return priority;
+    }
+
+    @Override
+    public boolean accept(Object o) {
+        return (o instanceof OptionalInt);
+    }
+
+    @Override
+    public Optional convertToMonadicForm(Object f) {
+        val optional = (OptionalInt) f;
+        if (optional.isPresent())
+            return Optional.of(optional.getAsInt());
+        return Optional.empty();
+    }
 
 }

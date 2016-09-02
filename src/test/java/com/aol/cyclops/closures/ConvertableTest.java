@@ -1,6 +1,8 @@
 package com.aol.cyclops.closures;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -10,10 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.types.Convertable;
-
-import static org.hamcrest.Matchers.equalTo;
 public class ConvertableTest {
 
 	@Test

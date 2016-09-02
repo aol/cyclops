@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,7 +49,6 @@ import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.util.CompletableFutures;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.val;
 
@@ -77,9 +78,18 @@ public class FutureWTest {
 	@Test
     public void testApFeatureToggle() {
         
-        assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+        assertThat(just.combine(FeatureToggle.enable(20),this::add).get(),equalTo(30));
     }
-   
+	@Test
+    public void testZip(){
+        assertThat(FutureW.ofResult(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(FutureW.ofResult(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
+        assertThat(FutureW.ofResult(10).zip(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(FutureW.ofResult(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(FutureW.ofResult(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(FutureW.ofResult(10).zip(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(FutureW.ofResult(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+    }
    
    
 
@@ -93,7 +103,7 @@ public class FutureWTest {
 	public void apNonBlocking(){
 	    
 	  val f =  FutureW.ofSupplier(()->{ sleep(1000l); return "hello";},ex)
-	            	  .ap(FutureW.ofSupplier(()->" world",ex),String::concat);
+	            	  .combine(FutureW.ofSupplier(()->" world",ex),String::concat);
 	  
 	  
 	  System.out.println("hello");
@@ -163,9 +173,9 @@ public class FutureWTest {
     public void combine(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
         
-        assertThat(just.combine(add,Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
+        assertThat(just.combineEager(add,Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        assertThat(just.combine(firstNonNull,none).get(),equalTo(just.get()));
+        assertThat(just.combineEager(firstNonNull,none).get(),equalTo(just.get()));
          
     }
 	@Test

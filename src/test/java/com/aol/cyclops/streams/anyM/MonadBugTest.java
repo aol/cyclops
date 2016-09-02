@@ -4,13 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.internal.Monad;
-import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 public class MonadBugTest {
 	@Test

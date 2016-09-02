@@ -29,9 +29,9 @@ import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.val;
 
@@ -227,7 +227,7 @@ public class AnyMTest {
 	@Test
 	public void traversableTestToList(){
 		 List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-								.toSequence(i->i.stream())
+								.toReactiveSeq(i->i.stream())
 								.toList();
 
 		 
@@ -236,7 +236,7 @@ public class AnyMTest {
 	@Test
 	public void traversableTest(){
 		 List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-								.toSequence(i->i.stream())
+								.toReactiveSeq(i->i.stream())
 								.collect(Collectors.toList());
 
 		 
@@ -245,7 +245,7 @@ public class AnyMTest {
 	@Test
 	public void traversableTestStream(){
 		 List<Integer> list = AnyM.fromStream(Stream.of(Arrays.asList(1,2,3,4,5,6)))
-								.toSequence(i->i.stream())
+								.toReactiveSeq(i->i.stream())
 								.collect(Collectors.toList());
 
 		 
@@ -254,7 +254,7 @@ public class AnyMTest {
 	@Test
 	public void traversableTestStreamNested(){
 		List<Integer> list = AnyM.fromStream(Stream.of(Stream.of(1,2,3,4,5,6)))
-								.toSequence(i->i)
+								.toReactiveSeq(i->i)
 								.collect(Collectors.toList());
 
 		 
@@ -344,7 +344,7 @@ public class AnyMTest {
 	public void groupedOptional(){
 		
 		List<List<Integer>> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-											.toSequence(i->i.stream())
+											.toReactiveSeq(i->i.stream())
 											.grouped(3)
 											.collect(Collectors.toList());
 		
@@ -367,7 +367,7 @@ public class AnyMTest {
 	@Test
 	public void distinctOptional(){
 		List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,2,2,5,6)))
-											.<Integer>toSequence(i->i.stream())
+											.<Integer>toReactiveSeq(i->i.stream())
 											.distinct()
 											.collect(Collectors.toList());
 		
@@ -403,7 +403,7 @@ public class AnyMTest {
 		Reducer<Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
 		Reducer<Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
 		val result = AnyM.fromOptional(Optional.of(Stream.of(1,2,3,4)))
-						.<Integer>toSequence(i->i)
+						.<Integer>toReactiveSeq(i->i)
 						.reduce(Arrays.asList(sum,mult) );
 				
 		 
@@ -425,7 +425,7 @@ public class AnyMTest {
 		Reducer<Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
 		Reducer<Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
 		val result = AnyM.<Stream<Integer>>fromOptional(Optional.empty())
-		                    .<Integer>toSequence(i->i)
+		                    .<Integer>toReactiveSeq(i->i)
 						.reduce(Arrays.asList(sum,mult) );
 				
 		 

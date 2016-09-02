@@ -1,31 +1,24 @@
 package com.aol.cyclops.matcher;
 
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.val;
-
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.internal.matcher2.Case;
 import com.aol.cyclops.internal.matcher2.Cases;
 import com.aol.cyclops.types.Decomposable;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.val;
 
 
 public class CasesTest {

@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertThat;
 
-import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Validator;

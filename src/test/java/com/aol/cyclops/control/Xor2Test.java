@@ -5,8 +5,11 @@ import static com.aol.cyclops.control.Matchable.then;
 import static com.aol.cyclops.control.Matchable.when;
 import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +45,6 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 
 
@@ -56,10 +60,19 @@ public class Xor2Test {
 	@Test
     public void testApFeatureToggle() {
       
-        assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+        assertThat(just.combine(FeatureToggle.enable(20),this::add).get(),equalTo(30));
     }
    
-    
+	@Test
+    public void testZip(){
+        assertThat(Xor.primary(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Xor.primary(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
+        assertThat(Xor.primary(10).zip(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Xor.primary(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Xor.primary(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Xor.primary(10).zip(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Xor.primary(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+    }
    
 
     @Test
@@ -79,12 +92,12 @@ public class Xor2Test {
     @Test
     public void combine(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-        assertThat(just.combine(add,none),equalTo(Xor.primary(10)));
-        assertThat(none.combine(add,just),equalTo(Xor.primary(0))); 
-        assertThat(none.combine(add,none),equalTo(Xor.primary(0))); 
-        assertThat(just.combine(add,Xor.primary(10)),equalTo(Xor.primary(20)));
+        assertThat(just.combineEager(add,none),equalTo(Xor.primary(10)));
+        assertThat(none.combineEager(add,just),equalTo(Xor.primary(0))); 
+        assertThat(none.combineEager(add,none),equalTo(Xor.primary(0))); 
+        assertThat(just.combineEager(add,Xor.primary(10)),equalTo(Xor.primary(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        assertThat(just.combine(firstNonNull,Xor.primary(null)),equalTo(just));
+        assertThat(just.combineEager(firstNonNull,Xor.primary(null)),equalTo(just));
          
     }
 	@Test
@@ -95,8 +108,8 @@ public class Xor2Test {
 	}
 	@Test
     public void visitXor(){
-        assertThat(just.visitXor(secondary->"no", primary->"yes"),equalTo(Xor.primary("yes")));
-        assertThat(none.visitXor(secondary->"no", primary->"yes"),equalTo(Xor.secondary("no")));
+        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(Xor.primary("yes")));
+        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(Xor.secondary("no")));
     }
 	@Test
 	public void testToMaybe() {

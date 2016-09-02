@@ -1,9 +1,5 @@
 package com.aol.cyclops.util.stream.pushable;
 
-import java.util.stream.Stream;
-
-import org.jooq.lambda.tuple.Tuple2;
-
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
@@ -16,14 +12,13 @@ import com.aol.cyclops.types.futurestream.LazyFutureStream;
  *
  * @param <T> data type
  */
-public class PushableLazyFutureStream<T> extends AbstractPushableStream<T,Queue<T>,LazyFutureStream<T>> {
+public class PushableLazyFutureStream<T> extends AbstractPushableStream<T, Queue<T>, LazyFutureStream<T>> {
 
-	
-	public PushableLazyFutureStream(Queue<T> v1, LazyFutureStream<T> v2) {
-		super(v1, v2);
-		
-	}
+    public PushableLazyFutureStream(Queue<T> v1, LazyFutureStream<T> v2) {
+        super(v1, v2);
 
-	private static final long serialVersionUID = 1L;
+    }
+
+    private static final long serialVersionUID = 1L;
 
 }

@@ -1,5 +1,4 @@
-package com.aol.cyclops.react.lazy.sequenceM;
-
+package com.aol.cyclops.react.lazy.sequence;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -14,19 +13,20 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.aol.cyclops.util.stream.StreamUtils;
 
-public class LiftAndBindSequenceMTest {
+public class LiftAndBindStreamUtilsTest {
 	@Test
 	public void testLiftAndBindFile(){
 		
 		
 		List<String> result = StreamUtils.flatMapFile(LazyFutureStream.of("input.file")
+								
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
-								.map(URL::getFile)
-								,File::new)
+								.map(URL::getFile),
+								File::new)
 								.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));
@@ -36,6 +36,7 @@ public class LiftAndBindSequenceMTest {
 		
 		
 		List<String> result = StreamUtils.flatMapURL(LazyFutureStream.of("input.file")
+								
 								,getClass().getClassLoader()::getResource)
 								.collect(Collectors.toList());
 		
@@ -45,8 +46,7 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindString(){
 		
 		
-		List<Character> result = StreamUtils.flatMapCharSequence(LazyFutureStream.of("input.file")
-									,i->"hello world")
+		List<Character> result = StreamUtils.flatMapCharSequence(LazyFutureStream.of("input.file"),i->"hello world")
 									.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
@@ -58,7 +58,8 @@ public class LiftAndBindSequenceMTest {
 		List<String> result = StreamUtils.flatMapBufferedReader(LazyFutureStream.of("input.file")
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
-								,r-> new BufferedReader(r))
+								,in-> new BufferedReader(in))
+								.peek(System.out::println)
 								.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList("hello","world")));

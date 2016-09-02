@@ -1,11 +1,15 @@
 package com.aol.cyclops.control;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
 import com.aol.cyclops.types.ConvertableFunctor;
@@ -20,6 +24,17 @@ public class EvalTest {
         
     }
 
+    @Test
+    public void testZip(){
+        assertThat(Eval.now(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Eval.now(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
+        assertThat(Eval.now(10).zip(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Eval.now(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Eval.now(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Eval.now(10).zip(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Eval.now(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+    }
+    
     private String loadData(){
         return "data";
     }

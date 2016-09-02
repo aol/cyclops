@@ -1,8 +1,10 @@
 package com.aol.cyclops.react.lazy;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertThat;
+
 import java.util.Set;
 import java.util.function.Supplier;
-import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;

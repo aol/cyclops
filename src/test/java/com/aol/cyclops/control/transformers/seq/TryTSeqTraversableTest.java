@@ -1,6 +1,5 @@
 package com.aol.cyclops.control.transformers.seq;
 
-import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.monads.transformers.TryT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;

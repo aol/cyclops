@@ -1,16 +1,14 @@
-package com.aol.cyclops.react.lazy.sequenceM;
+package com.aol.cyclops.react.lazy.sequence;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class ReverseTest {

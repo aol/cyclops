@@ -1,6 +1,7 @@
 package com.aol.cyclops.react.base;
 
 import static java.util.Arrays.asList;
+import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -42,8 +43,6 @@ import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.SimpleTimer;
-
-import static java.util.Comparator.comparing;
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {
 	abstract protected <U> LazyFutureStream<U> of(U... array);

@@ -1,7 +1,12 @@
 package com.aol.cyclops.streams.reactivestreams;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
-import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.control.StreamUtils;
 
 public class ForEachTest {
 	boolean complete =false;

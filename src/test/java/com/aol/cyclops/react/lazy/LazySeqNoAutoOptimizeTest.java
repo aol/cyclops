@@ -1,7 +1,5 @@
 package com.aol.cyclops.react.lazy;
 
-import static com.aol.cyclops.types.futurestream.LazyFutureStream.parallel;
-
 import java.util.function.Supplier;
 
 import com.aol.cyclops.control.LazyReact;

@@ -1,24 +1,9 @@
 package com.aol.cyclops.matcher;
 
-import static com.aol.cyclops.util.function.Predicates.__;
-import static com.aol.cyclops.util.function.Predicates.has;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.util.concurrent.ForkJoinPool;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
-import org.junit.Test;
 
 import com.aol.cyclops.internal.matcher2.Case;
-import com.aol.cyclops.internal.matcher2.EmptyCase;
 import com.aol.cyclops.types.Decomposable;
-import com.aol.cyclops.util.function.Predicates;
 
 import lombok.Value;
 

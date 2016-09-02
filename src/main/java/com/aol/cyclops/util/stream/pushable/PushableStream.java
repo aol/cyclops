@@ -2,12 +2,7 @@ package com.aol.cyclops.util.stream.pushable;
 
 import java.util.stream.Stream;
 
-import lombok.AllArgsConstructor;
-
-import org.jooq.lambda.tuple.Tuple2;
-
 import com.aol.cyclops.data.async.Queue;
-
 
 /**
  * A more concrete Tuple2 impl
@@ -18,14 +13,12 @@ import com.aol.cyclops.data.async.Queue;
  *
  * @param <T> data type
  */
-public class PushableStream<T> extends AbstractPushableStream<T,Queue<T>,Stream<T>> {
+public class PushableStream<T> extends AbstractPushableStream<T, Queue<T>, Stream<T>> {
 
-	
-	public PushableStream(Queue<T> v1, Stream<T> v2) {
-		super(v1, v2);
-	}
-	
+    public PushableStream(Queue<T> v1, Stream<T> v2) {
+        super(v1, v2);
+    }
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }

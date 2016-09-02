@@ -9,43 +9,42 @@ import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 import com.aol.cyclops.types.mixins.Printable;
 
+public class XorTValueComprehender implements ValueComprehender<XorTValue>, Printable {
 
+    @Override
+    public Object resolveForCrossTypeFlatMap(Comprehender comp, XorTValue apply) {
+        return apply.isPrimary() ? comp.of(apply.get()) : comp.empty();
+    }
 
-public class XorTValueComprehender implements ValueComprehender<XorTValue>, Printable{
-	
-	@Override
-	public Object resolveForCrossTypeFlatMap(Comprehender comp, XorTValue apply) {
-	    return apply.isPrimary() ? comp.of(apply.get()) : comp.empty();
-	}
-	@Override
-    public Object filter(XorTValue t, Predicate p){
+    @Override
+    public Object filter(XorTValue t, Predicate p) {
         return t.filter(p);
     }
-	@Override
-	public Object map(XorTValue t, Function fn) {
-		return t.map(r->fn.apply(r));
-	}
 
-	@Override
-	public Object flatMap(XorTValue t, Function fn) {
-	   return t.flatMapT(r->fn.apply(r));
-	}
+    @Override
+    public Object map(XorTValue t, Function fn) {
+        return t.map(r -> fn.apply(r));
+    }
 
-	@Override
-	public XorTValue of(Object o) {
-	   
-		return XorTValue.of(Xor.primary(o));
-	}
+    @Override
+    public Object flatMap(XorTValue t, Function fn) {
+        return t.flatMapT(r -> fn.apply(r));
+    }
 
-	@Override
-	public XorTValue empty() {
-		return XorTValue.emptyOptional();
-	}
+    @Override
+    public XorTValue of(Object o) {
 
-	@Override
-	public Class getTargetClass() {
-		return XorTValue.class;
-	}
-	
+        return XorTValue.of(Xor.primary(o));
+    }
+
+    @Override
+    public XorTValue empty() {
+        return XorTValue.emptyOptional();
+    }
+
+    @Override
+    public Class getTargetClass() {
+        return XorTValue.class;
+    }
 
 }

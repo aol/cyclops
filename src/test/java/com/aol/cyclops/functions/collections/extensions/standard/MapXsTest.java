@@ -6,11 +6,30 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.MapXs;
 public class MapXsTest {
 
+    @Test
+    public void onEmpty(){
+        assertThat(MapX.empty().onEmpty(Tuple.tuple("hello",10)).get("hello"),equalTo(10));
+    }
+    @Test
+    public void onEmptyGet(){
+        assertThat(MapX.empty().onEmptyGet(()->Tuple.tuple("hello",10)).get("hello"),equalTo(10));
+    }
+    @Test(expected=RuntimeException.class)
+    public void onEmptyThrow(){
+       MapX.empty().onEmptyThrow(()->new RuntimeException("hello"));
+    }
+    @Test
+    public void onEmptySwitch(){
+       
+        assertThat(MapX.<String,Integer>empty().onEmptySwitch(()->MapX.fromMap(MapXs.of("hello",10))).get("hello"),equalTo(10));
+    }
     @Test
     public void testOf() {
         assertThat(MapXs.of(),equalTo(new HashMap()));

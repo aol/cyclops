@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
  * 
  * @author johnmcclean
  *
- * @param <T>
  */
 @AllArgsConstructor
 public class ADTPredicateBuilder<T> {
@@ -26,36 +25,49 @@ public class ADTPredicateBuilder<T> {
         private final ADTPredicateBuilder<T> builder;
 
         public InternalADTPredicateBuilder(Class<T> type) {
-            builder = new ADTPredicateBuilder<T>(type);
+            builder = new ADTPredicateBuilder<T>(
+                                                 type);
         }
 
         @SafeVarargs
         final public <V> Predicate<V> hasWhere(Predicate<V>... values) {
-            ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values).map(nextValue -> convertToPredicate(nextValue));
+            ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
+                                                           .map(nextValue -> convertToPredicate(nextValue));
 
-            return t -> builder.toPredicate().test(t)
-                    && SeqUtils.seq(Extractors.decomposeCoerced().apply(t)).zip(predicates, (a, b) -> Tuple.tuple(a, b))
-                            .map(tuple -> tuple.v2.test(tuple.v1)).allMatch(v -> v == true);
+            return t -> builder.toPredicate()
+                               .test(t)
+                    && SeqUtils.seq(Extractors.decomposeCoerced()
+                                              .apply(t))
+                               .zip(predicates, (a, b) -> Tuple.tuple(a, b))
+                               .map(tuple -> tuple.v2.test(tuple.v1))
+                               .allMatch(v -> v == true);
         }
 
         @SafeVarargs
         final public <V> Predicate<V> isWhere(Predicate<V>... values) {
             Predicate p = test -> SeqUtils.EMPTY == test;
-            ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values).map(nextValue -> convertToPredicate(nextValue))
-                    .concat(p);
+            ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
+                                                           .map(nextValue -> convertToPredicate(nextValue))
+                                                           .concat(p);
             ;
 
-            return t -> builder.toPredicate().test(t)
+            return t -> builder.toPredicate()
+                               .test(t)
 
-            && SeqUtils.seq(Extractors.decomposeCoerced().apply(t)).zip(predicates, (a, b) -> Tuple.tuple(a, b))
-                    .map(tuple -> tuple.v2.test(tuple.v1)).allMatch(v -> v == true);
+            && SeqUtils.seq(Extractors.decomposeCoerced()
+                                      .apply(t))
+                       .zip(predicates, (a, b) -> Tuple.tuple(a, b))
+                       .map(tuple -> tuple.v2.test(tuple.v1))
+                       .allMatch(v -> v == true);
         }
 
     }
 
     Predicate toPredicate() {
 
-        return t -> Optional.ofNullable(t).map(v -> type.isAssignableFrom(v.getClass())).orElse(false);
+        return t -> Optional.ofNullable(t)
+                            .map(v -> type.isAssignableFrom(v.getClass()))
+                            .orElse(false);
     }
 
     final public <V> Predicate<V> anyValues() {
@@ -87,25 +99,32 @@ public class ADTPredicateBuilder<T> {
      */
     @SafeVarargs
     final public <V> Predicate<V> hasGuard(V... values) {
-        ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values).map(nextValue -> convertToPredicate(nextValue));
+        ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
+                                                       .map(nextValue -> convertToPredicate(nextValue));
 
-        return t -> toPredicate().test(t)
-                && SeqUtils.seq(Extractors.decomposeCoerced().apply(t)).zip(predicates, (a, b) -> Tuple.tuple(a, b))
-                        .map(tuple -> tuple.v2.test(tuple.v1)).allMatch(v -> v == true);
+        return t -> toPredicate().test(t) && SeqUtils.seq(Extractors.decomposeCoerced()
+                                                                    .apply(t))
+                                                     .zip(predicates, (a, b) -> Tuple.tuple(a, b))
+                                                     .map(tuple -> tuple.v2.test(tuple.v1))
+                                                     .allMatch(v -> v == true);
     }
 
     @SafeVarargs
     final public <V> Predicate<V> isGuard(V... values) {
         Predicate p = test -> SeqUtils.EMPTY == test;
-        ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values).map(nextValue -> convertToPredicate(nextValue))
-                .concat(p);
+        ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
+                                                       .map(nextValue -> convertToPredicate(nextValue))
+                                                       .concat(p);
 
         return t -> {
 
             return toPredicate().test(t)
 
-            && SeqUtils.seq(Extractors.decomposeCoerced().apply(t)).zip(predicates, (a, b) -> Tuple.tuple(a, b))
-                    .map(tuple -> tuple.v2.test(tuple.v1)).allMatch(v -> v == true);
+            && SeqUtils.seq(Extractors.decomposeCoerced()
+                                      .apply(t))
+                       .zip(predicates, (a, b) -> Tuple.tuple(a, b))
+                       .map(tuple -> tuple.v2.test(tuple.v1))
+                       .allMatch(v -> v == true);
         };
 
     }

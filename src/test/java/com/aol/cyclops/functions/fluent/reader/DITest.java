@@ -1,14 +1,13 @@
 package com.aol.cyclops.functions.fluent.reader;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Reader;

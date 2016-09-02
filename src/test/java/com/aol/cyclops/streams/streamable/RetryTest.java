@@ -1,5 +1,6 @@
 package com.aol.cyclops.streams.streamable;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -18,8 +19,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.stream.Streamable;
 
 
 public class RetryTest {

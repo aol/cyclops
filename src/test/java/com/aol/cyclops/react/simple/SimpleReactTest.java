@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -157,6 +158,100 @@ public class SimpleReactTest {
 		new SimpleReact().fromStream(futures.stream()).block();
 
 	}
+	
+	@Test
+	public void testReactListWithExtendedSuppliers() throws InterruptedException, ExecutionException {
+
+		class DummySupplier implements Supplier<Integer> {
+
+			private Integer i;
+			public DummySupplier(Integer i) {
+				this.i = i;
+			}
+			
+			@Override
+			public Integer get() {
+				return i;
+			}
+			
+		}
+		
+		DummySupplier s1 = new DummySupplier(1);
+		DummySupplier s2 = new DummySupplier(2);
+		DummySupplier s3 = new DummySupplier(3);
+		
+		Iterable<DummySupplier> iterable = Arrays.asList(s1, s2, s3);
+		List<CompletableFuture<Integer>> futures = new SimpleReact()
+				.<Integer> fromIterableAsync(iterable)
+				.with(it -> it * 100);
+
+		assertThat(futures.get(0).get(), is(greaterThan(99)));
+		
+		new SimpleReact().fromStream(futures.stream()).block();
+	}
+	
+	@Test
+	public void testFromStreamAsyncWithExtendedSuppliers() throws InterruptedException, ExecutionException {
+
+		class DummySupplier implements Supplier<Integer> {
+
+			private Integer i;
+			public DummySupplier(Integer i) {
+				this.i = i;
+			}
+			
+			@Override
+			public Integer get() {
+				return i;
+			}
+			
+		}
+		
+		DummySupplier s1 = new DummySupplier(1);
+		DummySupplier s2 = new DummySupplier(2);
+		DummySupplier s3 = new DummySupplier(3);
+		
+		Stream<DummySupplier> stream = Arrays.asList(s1, s2, s3).stream();
+		List<CompletableFuture<Integer>> futures = new SimpleReact()
+				.<Integer> fromStreamAsync(stream)
+				.with(it -> it * 100);
+
+		assertThat(futures.get(0).get(), is(greaterThan(99)));
+		
+		new SimpleReact().fromStream(futures.stream()).block();
+	}
+	
+	@Test
+	public void testReactListFromIteratorAsync() throws InterruptedException, ExecutionException {
+
+		class DummySupplier implements Supplier<Integer> {
+
+			private Integer i;
+			public DummySupplier(Integer i) {
+				this.i = i;
+			}
+			
+			@Override
+			public Integer get() {
+				return i;
+			}
+			
+		}
+		
+		DummySupplier s1 = new DummySupplier(1);
+		DummySupplier s2 = new DummySupplier(2);
+		DummySupplier s3 = new DummySupplier(3);
+		
+		Iterator<DummySupplier> iterator = Arrays.asList(s1, s2, s3).iterator();
+		List<CompletableFuture<Integer>> futures = new SimpleReact()
+				.<Integer> fromIteratorAsync(iterator)
+				.with(it -> it * 100);
+
+		assertThat(futures.get(0).get(), is(greaterThan(99)));
+		
+		new SimpleReact().fromStream(futures.stream()).block();
+	}
+	
 	@Test
 	public void testMultithreading() throws InterruptedException, ExecutionException {
 		

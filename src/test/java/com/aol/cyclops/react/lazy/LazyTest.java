@@ -4,7 +4,8 @@ package com.aol.cyclops.react.lazy;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,10 +16,25 @@ import org.junit.Test;
 
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazyTest {
+    @Test
+    public void combineNoOrder(){
+        assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)
+                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .toListX(),equalTo(ListX.of(1,2,3))); 
+                   
+    }
+    @Test
+    public void combine(){
+        
+        assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)
+                   .combine((a, b)->true,Semigroups.intSum).toListX(),
+                   equalTo(Arrays.asList(6))); 
+                   
+    }
 	@Test
 	public void onePerSecond() {
 

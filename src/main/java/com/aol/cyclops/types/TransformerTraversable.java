@@ -9,7 +9,7 @@ import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 public interface TransformerTraversable<T> {
-    
+
     /**
      * Group the elements in this Traversable into batches of the provided size.
      * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly. 
@@ -37,9 +37,10 @@ public interface TransformerTraversable<T> {
      * @param groupSize Size of each batch of elements to be grouped into Lists 
      * @return List Transformer view into batched / grouped data
      */
-    default ListTSeq<T> groupedT(int groupSize){
+    default ListTSeq<T> groupedT(int groupSize) {
         return ListT.fromStream(stream().grouped(groupSize));
     }
+
     /**
      * Create a Sliding window into the data in this traversble.
      * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly. 
@@ -61,9 +62,10 @@ public interface TransformerTraversable<T> {
      * @param increment Increment between windows
      * @return List Transformer view into the Sliding windows
      */
-    default ListTSeq<T> slidingT(int windowSize, int increment){
+    default ListTSeq<T> slidingT(int windowSize, int increment) {
         return ListT.fromStream(stream().sliding(windowSize, increment));
     }
+
     /**
      * Create a Sliding window into the data in this traversble.
      * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly. 
@@ -84,10 +86,10 @@ public interface TransformerTraversable<T> {
      * @param windowSize Size of sliding window
      * @return List Transformer view into the Sliding windows
      */
-    default ListTSeq<T> slidingT(int windowSize){
+    default ListTSeq<T> slidingT(int windowSize) {
         return ListT.fromStream(stream().sliding(windowSize));
     }
-    
+
     /**
      * Create a Traversable batched by List, where each batch is populated until
      * the predicate holds.
@@ -110,9 +112,10 @@ public interface TransformerTraversable<T> {
      * @param predicate Predicate to determine batch termination point
      * @return List Transformer view into batched Traversable
      */
-    default ListTSeq<T> groupedUntilT(Predicate<? super T> predicate){
+    default ListTSeq<T> groupedUntilT(Predicate<? super T> predicate) {
         return ListT.fromStream(stream().groupedUntil(predicate));
     }
+
     /**
      * Create Travesable of Lists where
      * each List is populated while the supplied bipredicate holds. The
@@ -133,10 +136,10 @@ public interface TransformerTraversable<T> {
      * @param predicate Predicate to determine batch
      * @return List Transformer view into batched Traversable
      */
-    default ListTSeq<T> groupedStatefullyWhileT(BiPredicate<ListX<? super T>, ? super T> predicate){
-        return ListT.fromStream(stream().groupedStatefullyWhile(predicate)); 
-      }
-    
+    default ListTSeq<T> groupedStatefullyWhileT(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return ListT.fromStream(stream().groupedStatefullyWhile(predicate));
+    }
+
     /**
      * Create a Traversable batched by List, where each batch is populated while
      * the predicate holds.
@@ -157,9 +160,9 @@ public interface TransformerTraversable<T> {
      * @param predicate Predicate to determine batch termination point
      * @return List Transformer view into batched Traversable
      */
-    default ListTSeq<T> groupedWhileT(Predicate<? super T> predicate){
+    default ListTSeq<T> groupedWhileT(Predicate<? super T> predicate) {
         return ListT.fromStream(stream().groupedUntil(predicate));
     }
-    
+
     public ReactiveSeq<T> stream();
 }

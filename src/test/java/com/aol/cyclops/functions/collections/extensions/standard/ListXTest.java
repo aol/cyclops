@@ -25,6 +25,10 @@ import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNull
 public class ListXTest extends CollectionXTestsWithNulls {
 
     @Test
+    public void onEmptySwitch(){
+        assertThat(ListX.empty().onEmptySwitch(()->ListX.of(1,2,3)),equalTo(ListX.of(1,2,3)));
+    }
+    @Test
     public void multipaths() {
 
         ListX<Integer> list = ListX.of(1, 2, 3);

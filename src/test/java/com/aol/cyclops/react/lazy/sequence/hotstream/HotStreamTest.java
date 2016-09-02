@@ -1,4 +1,4 @@
-package com.aol.cyclops.react.lazy.sequenceM.hotstream;
+package com.aol.cyclops.react.lazy.sequence.hotstream;
 
 import static org.junit.Assert.assertTrue;
 
@@ -7,12 +7,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.IntStream;
 
 import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 

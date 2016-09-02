@@ -1,22 +1,14 @@
 package com.aol.cyclops.matcher;
 
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple1;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.jooq.lambda.tuple.Tuple5;
-import org.junit.Before;
-import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import org.jooq.lambda.tuple.Tuple;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Matchable.MTuple1;
-import com.aol.cyclops.control.Matchable.MTuple2;
-import com.aol.cyclops.control.Matchable.MTuple3;
-import com.aol.cyclops.control.Matchable.MTuple4;
 
 public class MatchableTuple5Test {
 

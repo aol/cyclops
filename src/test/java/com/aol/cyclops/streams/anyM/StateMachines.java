@@ -1,21 +1,12 @@
 package com.aol.cyclops.streams.anyM;
 
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
-
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.For;
-import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.util.function.Predicates;
 
 public abstract class StateMachines {
 

@@ -1,11 +1,15 @@
 package com.aol.cyclops.functions.collections.extensions.standard;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
@@ -16,6 +20,10 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     @Override
     public <T> FluentCollectionX<T> of(T... values) {
         return SortedSetX.of(values);
+    }
+    @Test
+    public void onEmptySwitch(){
+            assertThat(SortedSetX.empty().onEmptySwitch(()->SortedSetX.of(1,2,3)),equalTo(SortedSetX.of(1,2,3)));
     }
 
     /*

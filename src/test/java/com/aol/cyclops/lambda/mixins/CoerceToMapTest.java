@@ -1,15 +1,16 @@
 package com.aol.cyclops.lambda.mixins;
 
-import java.util.Map;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 
-import lombok.Value;
+import java.util.Map;
 
 import org.junit.Test;
 
 import com.aol.cyclops.types.mixins.AsMappable;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import lombok.Value;
 
 public class CoerceToMapTest {
 

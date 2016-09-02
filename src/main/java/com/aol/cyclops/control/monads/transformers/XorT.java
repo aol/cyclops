@@ -27,13 +27,15 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
 /**
- * Monad transformer for JDK Xor
+ * Monad transformer for cyclops-react Xor
  * 
  * XorT consists of an AnyM instance that in turns wraps anoter Monad type
  * that contains an Xor
- * 
+ * <pre>
+ * {@code 
  * XorT<AnyM<*SOME_MONAD_TYPE*<Xor<T>>>>
- * 
+ * }
+ * </pre>
  * XorT allows the deeply wrapped Xor to be manipulating within it's nested
  * /contained context
  * 
@@ -43,18 +45,17 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Xor within
  */
-public interface XorT<ST,T>  extends Publisher<T>, 
-                                     Functor<T>,
-                                     Filterable<T>{
-    public <R> XorT<ST,R> unit(R value);
-    public <R> XorT<ST,R> empty();
-    
-    <ST2,B> XorT<ST2,B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST2,? extends B>> f);
+public interface XorT<ST, T> extends Publisher<T>, Functor<T>, Filterable<T> {
+    public <R> XorT<ST, R> unit(R value);
+
+    public <R> XorT<ST, R> empty();
+
+    <ST2, B> XorT<ST2, B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST2, ? extends B>> f);
 
     /**
      * @return The wrapped AnyM
      */
-    AnyM<Xor<ST,T>> unwrap();
+    AnyM<Xor<ST, T>> unwrap();
 
     /**
      * Peek at the current value of the Xor
@@ -72,7 +73,7 @@ public interface XorT<ST,T>  extends Publisher<T>,
      *            Consumer to accept current value of Xor
      * @return XorT with peek call
      */
-    public XorT<ST,T> peek(Consumer<? super T> peek);
+    public XorT<ST, T> peek(Consumer<? super T> peek);
 
     /**
      * Filter the wrapped Xor
@@ -90,7 +91,8 @@ public interface XorT<ST,T>  extends Publisher<T>,
      *            Predicate to filter the wrapped Xor
      * @return XorT that applies the provided filter
      */
-    public XorT<ST,T> filter(Predicate<? super T> test);
+    public XorT<ST, T> filter(Predicate<? super T> test);
+
     /**
      * Map the wrapped Xor
      * 
@@ -108,7 +110,7 @@ public interface XorT<ST,T>  extends Publisher<T>,
      *            Mapping function for the wrapped Xor
      * @return XorT that applies the map function to the wrapped Xor
      */
-    public <B> XorT<ST,B> map(Function<? super T, ? extends B> f);
+    public <B> XorT<ST, B> map(Function<? super T, ? extends B> f);
 
     /**
      * Flat Map the wrapped Xor
@@ -127,17 +129,20 @@ public interface XorT<ST,T>  extends Publisher<T>,
      *            FlatMap function
      * @return XorT that applies the flatMap function to the wrapped Xor
      */
-    default <B> XorT<ST,B> bind(Function<? super T, XorT<ST,? extends B>> f) {
+    default <B> XorT<ST, B> bind(Function<? super T, XorT<ST, ? extends B>> f) {
 
         return of(unwrap().bind(opt -> {
             if (opt.isPrimary())
-                return f.apply(opt.get()).unwrap().unwrap();
+                return f.apply(opt.get())
+                        .unwrap()
+                        .unwrap();
             return this;
         }));
 
     }
 
-    XorT<T,ST> swap();
+    XorT<T, ST> swap();
+
     /**
      * Lift a function into one that accepts and returns an XorT This allows
      * multiple monad types to add functionality to existing functions and
@@ -147,8 +152,8 @@ public interface XorT<ST,T>  extends Publisher<T>,
      * existing function
      * 
      * <pre>
-     * {
-     *     &#64;code
+     * {@code
+     *     
      *     Function<Integer, Integer> add2 = i -> i + 2;
      *     Function<XorT<Integer>, XorT<Integer>> optTAdd2 = XorT.lift(add2);
      * 
@@ -169,7 +174,7 @@ public interface XorT<ST,T>  extends Publisher<T>,
      *            monad type
      * @return Function that accepts and returns an XorT
      */
-    public static <ST,U, R> Function<XorT<ST,U>, XorT<ST,R>> lift(Function<? super U, ? extends R> fn) {
+    public static <ST, U, R> Function<XorT<ST, U>, XorT<ST, R>> lift(Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -182,8 +187,8 @@ public interface XorT<ST,T>  extends Publisher<T>,
      * asynchronous execution (CompletableFuture) to an existing function
      * 
      * <pre>
-     * {
-     *     &#64;code
+     * {@code 
+     *     
      *     BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
      *     BiFunction<XorT<Integer>, XorT<Integer>, XorT<Integer>> optTAdd2 = XorT.lift2(add);
      * 
@@ -205,7 +210,7 @@ public interface XorT<ST,T>  extends Publisher<T>,
      *            another monad type
      * @return Function that accepts and returns an XorT
      */
-    public static <ST,U1, U2, R> BiFunction<XorT<ST,U1>, XorT<ST,U2>, XorT<ST,R>> lift2(BiFunction<? super U1,? super U2, ? extends R> fn) {
+    public static <ST, U1, U2, R> BiFunction<XorT<ST, U1>, XorT<ST, U2>, XorT<ST, R>> lift2(BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -218,7 +223,7 @@ public interface XorT<ST,T>  extends Publisher<T>,
      *            AnyM that doesn't contain a monad wrapping an Xor
      * @return XorT
      */
-    public static <ST,A> XorT<ST,A> fromAnyM(AnyM<A> anyM) {
+    public static <ST, A> XorT<ST, A> fromAnyM(AnyM<A> anyM) {
         return of(anyM.map(Xor::primary));
     }
 
@@ -229,100 +234,103 @@ public interface XorT<ST,T>  extends Publisher<T>,
      *            AnyM that contains a monad wrapping an Xor
      * @return XorT
      */
-    public static <ST,A> XorT<ST,A> of(AnyM<Xor<ST,A>> monads) {
-        return Matchables.anyM(monads).visit(v-> XorTValue.of(v), s->XorTSeq.of(s));
+    public static <ST, A> XorT<ST, A> of(AnyM<Xor<ST, A>> monads) {
+        return Matchables.anyM(monads)
+                         .visit(v -> XorTValue.of(v), s -> XorTSeq.of(s));
     }
 
-    
-    public static <ST,A> XorTValue<ST,A> fromAnyMValue(AnyMValue<A> anyM) {
+    public static <ST, A> XorTValue<ST, A> fromAnyMValue(AnyMValue<A> anyM) {
         return XorTValue.fromAnyM(anyM);
     }
 
-    public static <ST,A> XorTSeq<ST,A> fromAnyMSeq(AnyMSeq<A> anyM) {
+    public static <ST, A> XorTSeq<ST, A> fromAnyMSeq(AnyMSeq<A> anyM) {
         return XorTSeq.fromAnyM(anyM);
     }
 
-    public static <ST,A> XorTSeq<ST,A> fromIterable(
-            Iterable<Xor<ST,A>> iterableOfXors) {
+    public static <ST, A> XorTSeq<ST, A> fromIterable(Iterable<Xor<ST, A>> iterableOfXors) {
         return XorTSeq.of(AnyM.fromIterable(iterableOfXors));
     }
 
-    public static <ST,A> XorTSeq<ST,A> fromStream(Stream<Xor<ST,A>> streamOfXors) {
+    public static <ST, A> XorTSeq<ST, A> fromStream(Stream<Xor<ST, A>> streamOfXors) {
         return XorTSeq.of(AnyM.fromStream(streamOfXors));
     }
 
-    public static <ST,A> XorTSeq<ST,A> fromPublisher(
-            Publisher<Xor<ST,A>> publisherOfXors) {
+    public static <ST, A> XorTSeq<ST, A> fromPublisher(Publisher<Xor<ST, A>> publisherOfXors) {
         return XorTSeq.of(AnyM.fromPublisher(publisherOfXors));
     }
 
-    public static <A, ST, V extends MonadicValue<Xor<ST,A>>> XorTValue<ST,A> fromValue(
-            V monadicValue) {
+    public static <A, ST, V extends MonadicValue<Xor<ST, A>>> XorTValue<ST, A> fromValue(V monadicValue) {
         return XorTValue.fromValue(monadicValue);
     }
 
-    public static <ST,A> XorTValue<ST,A> fromOptional(Optional<Xor<ST,A>> optional) {
+    public static <ST, A> XorTValue<ST, A> fromOptional(Optional<Xor<ST, A>> optional) {
         return XorTValue.of(AnyM.fromOptional(optional));
     }
 
-    public static <ST,A> XorTValue<ST,A> fromFuture(CompletableFuture<Xor<ST,A>> future) {
+    public static <ST, A> XorTValue<ST, A> fromFuture(CompletableFuture<Xor<ST, A>> future) {
         return XorTValue.of(AnyM.fromCompletableFuture(future));
     }
 
-    public static <ST,A> XorTValue<ST,A> fromIterablXorue(
-            Iterable<Xor<ST,A>> iterableOfXors) {
+    public static <ST, A> XorTValue<ST, A> fromIterablXorue(Iterable<Xor<ST, A>> iterableOfXors) {
         return XorTValue.of(AnyM.fromIterableValue(iterableOfXors));
     }
-    public static<ST,PT>  XorTValue<ST,PT> emptyOptional() {
+
+    public static <ST, PT> XorTValue<ST, PT> emptyOptional() {
         return XorT.fromOptional(Optional.empty());
     }
-    public static <ST,T> XorTSeq<ST,T> emptyList(){
+
+    public static <ST, T> XorTSeq<ST, T> emptyList() {
         return XorT.fromIterable(ListX.of());
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> XorT<ST,U> cast(Class<? extends U> type) {
-        return (XorT<ST,U>)Functor.super.cast(type);
+    default <U> XorT<ST, U> cast(Class<? extends U> type) {
+        return (XorT<ST, U>) Functor.super.cast(type);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> XorT<ST,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (XorT<ST,R>)Functor.super.trampoline(mapper);
+    default <R> XorT<ST, R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (XorT<ST, R>) Functor.super.trampoline(mapper);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> XorT<ST,R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
-            Supplier<? extends R> otherwise) {
-       return (XorT<ST,R>)Functor.super.patternMatch(case1, otherwise);
+    default <R> XorT<ST, R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
+        return (XorT<ST, R>) Functor.super.patternMatch(case1, otherwise);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> XorT<ST,U> ofType(Class<? extends U> type) {
-        
-        return (XorT<ST,U>)Filterable.super.ofType(type);
+    default <U> XorT<ST, U> ofType(Class<? extends U> type) {
+
+        return (XorT<ST, U>) Filterable.super.ofType(type);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default XorT<ST,T> filterNot(Predicate<? super T> fn) {
-       
-        return (XorT<ST,T>)Filterable.super.filterNot(fn);
+    default XorT<ST, T> filterNot(Predicate<? super T> fn) {
+
+        return (XorT<ST, T>) Filterable.super.filterNot(fn);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
      */
     @Override
-    default XorT<ST,T> notNull() {
-       
-        return (XorT<ST,T>)Filterable.super.notNull();
+    default XorT<ST, T> notNull() {
+
+        return (XorT<ST, T>) Filterable.super.notNull();
     }
 }

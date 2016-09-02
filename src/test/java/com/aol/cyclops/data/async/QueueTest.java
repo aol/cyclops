@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,8 +24,6 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
 
 public class QueueTest {
@@ -38,6 +35,14 @@ public class QueueTest {
 
 	private final AtomicInteger found = new AtomicInteger(0);
 
+	@Test
+	public void closeQueue(){
+	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();
+	    q.add(1);
+	    
+	    new Thread(()->q.close()).run();
+	    q.stream().forEach(System.out::println);
+	}
 	
 	@Test
 	public void backPressureTest() {

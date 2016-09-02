@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,7 +45,6 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 
 
@@ -57,9 +58,19 @@ public class Ior2Test {
 		none = Ior.secondary("none");
 	}
 	@Test
+    public void testZip(){
+        assertThat(Ior.primary(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Ior.primary(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
+        assertThat(Ior.primary(10).zip(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Ior.primary(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Ior.primary(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Ior.primary(10).zip(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Ior.primary(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+    }
+	@Test
     public void testApFeatureToggle() {
 	  
-        assertThat(just.ap(FeatureToggle.enable(20),this::add).get(),equalTo(30));
+        assertThat(just.combine(FeatureToggle.enable(20),this::add).get(),equalTo(30));
     }
    
     
@@ -83,12 +94,12 @@ public class Ior2Test {
     @Test
     public void combine(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-        assertThat(just.combine(add,none),equalTo(Ior.primary(10)));
-        assertThat(none.combine(add,just),equalTo(Ior.primary(0))); 
-        assertThat(none.combine(add,none),equalTo(Ior.primary(0))); 
-        assertThat(just.combine(add,Xor.primary(10)),equalTo(Ior.primary(20)));
+        assertThat(just.combineEager(add,none),equalTo(Ior.primary(10)));
+        assertThat(none.combineEager(add,just),equalTo(Ior.primary(0))); 
+        assertThat(none.combineEager(add,none),equalTo(Ior.primary(0))); 
+        assertThat(just.combineEager(add,Xor.primary(10)),equalTo(Ior.primary(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        assertThat(just.combine(firstNonNull,Xor.primary(null)),equalTo(just));
+        assertThat(just.combineEager(firstNonNull,Xor.primary(null)),equalTo(just));
          
     }
 	@Test
@@ -99,9 +110,9 @@ public class Ior2Test {
     }
     @Test
     public void visitIor(){
-        assertThat(just.visitIor(secondary->"no", primary->"yes"),equalTo(Ior.primary("yes")));
-        assertThat(none.visitIor(secondary->"no", primary->"yes"),equalTo(Ior.secondary("no")));
-        assertThat(Ior.both(10, "eek").visitIor(secondary->"no", primary->"yes"),equalTo(Ior.both("no","yes")));
+        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(Ior.primary("yes")));
+        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(Ior.secondary("no")));
+        assertThat(Ior.both(10, "eek").bimap(secondary->"no", primary->"yes"),equalTo(Ior.both("no","yes")));
     }
 	@Test
 	public void testToMaybe() {

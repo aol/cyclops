@@ -1,16 +1,5 @@
 package com.aol.cyclops.value;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import lombok.Value;
-import lombok.val;
-
-import org.junit.Test;
-
 public class AsStreamableValueTest {
 /**
 	@Test

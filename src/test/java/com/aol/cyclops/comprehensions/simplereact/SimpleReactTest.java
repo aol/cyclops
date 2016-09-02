@@ -1,16 +1,5 @@
 package com.aol.cyclops.comprehensions.simplereact;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.Test;
-
-import com.aol.cyclops.control.For;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 public class SimpleReactTest {
 	/**
 	@Test

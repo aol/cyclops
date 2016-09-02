@@ -2,17 +2,14 @@ package com.aol.cyclops.streams.streamable;
 
 
 
-import static com.aol.cyclops.util.stream.Streamable.of;
+import static com.aol.cyclops.control.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 
 import java.util.function.BiPredicate;
-import java.util.function.Supplier;
 
 import org.junit.Test;
-
-import com.aol.cyclops.util.stream.Streamable;
 
 public class SQLTest  {
 		 

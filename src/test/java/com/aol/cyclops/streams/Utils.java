@@ -1,5 +1,7 @@
 package com.aol.cyclops.streams;
 
+import java.util.function.Consumer;
+
 /**
  * Copyright (c) 2014-2016, Data Geekery GmbH, contact@datageekery.com
  *
@@ -18,8 +20,6 @@ package com.aol.cyclops.streams;
 
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.junit.Assert;
-
-import java.util.function.Consumer;
 
 /**
  * @author Lukas Eder

@@ -28,80 +28,70 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 @AllArgsConstructor
-public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>,EagerToQueue<U>{
-	
+public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>, EagerToQueue<U> {
 
+    private final Optional<Consumer<Throwable>> errorHandler;
+    private final EagerStreamWrapper lastActive;
+    private final QueueFactory<U> queueFactory;
+    private final SimpleReact simpleReact;
+    private final Continueable subscription;
 
-	private final Optional<Consumer<Throwable>> errorHandler;
-	private final EagerStreamWrapper lastActive;
-	private final QueueFactory<U> queueFactory;
-	private final SimpleReact simpleReact;
-	private final Continueable subscription;
-	
-	
-	public SimpleReactStreamImpl(final SimpleReact simpleReact, final Stream<CompletableFuture<U>> stream) {
-		this.simpleReact = simpleReact;
-		Stream s = stream;
-		
-		
-		this.errorHandler = Optional.of((e) -> {
-		    log.error(e.getMessage(), e);
-		});
-		this.lastActive = new EagerStreamWrapper(s,this.errorHandler);
-		this.queueFactory = QueueFactories.unboundedQueue();
-		this.subscription = new AlwaysContinue();
-		
-	}
-	
-	@Override
-	public SimpleReactStream<U> withAsync(boolean b) {
-		
-		return this.withSimpleReact(this.simpleReact.withAsync(b));
-	}
-	@Override
-	public <R> SimpleReactStream<R> thenSync(final Function<? super U,? extends R> fn){
-		return SimpleReactStream.super.thenSync(fn);
-	}
+    public SimpleReactStreamImpl(final SimpleReact simpleReact, final Stream<CompletableFuture<U>> stream) {
+        this.simpleReact = simpleReact;
+        Stream s = stream;
 
-	@Override
-	public <R1,R2> SimpleReactStream<R2> allOf(final Collector<? super U, ?, R1> collector,
-            final Function<? super R1,? extends R2> fn) {
-		return SimpleReactStream.super.allOf(collector,fn);
-	}
+        this.errorHandler = Optional.of((e) -> {
+            log.error(e.getMessage(), e);
+        });
+        this.lastActive = new EagerStreamWrapper(
+                                                 s, this.errorHandler);
+        this.queueFactory = QueueFactories.unboundedQueue();
+        this.subscription = new AlwaysContinue();
 
-	@Override
-	public Executor getTaskExecutor() {
-		return this.simpleReact.getExecutor();
-	}
+    }
 
+    @Override
+    public SimpleReactStream<U> withAsync(boolean b) {
 
+        return this.withSimpleReact(this.simpleReact.withAsync(b));
+    }
 
-	@Override
-	public RetryExecutor getRetrier() {
-		return this.simpleReact.getRetrier();
-	}
+    @Override
+    public <R> SimpleReactStream<R> thenSync(final Function<? super U, ? extends R> fn) {
+        return SimpleReactStream.super.thenSync(fn);
+    }
 
+    @Override
+    public <R1, R2> SimpleReactStream<R2> allOf(final Collector<? super U, ?, R1> collector, final Function<? super R1, ? extends R2> fn) {
+        return SimpleReactStream.super.allOf(collector, fn);
+    }
 
+    @Override
+    public Executor getTaskExecutor() {
+        return this.simpleReact.getExecutor();
+    }
 
-	@Override
-	public boolean isAsync() {
-		return this.simpleReact.isAsync();
-	}
+    @Override
+    public RetryExecutor getRetrier() {
+        return this.simpleReact.getRetrier();
+    }
 
-	public Queue<U> toQueue(){
-		return EagerToQueue.super.toQueue();
-	}
+    @Override
+    public boolean isAsync() {
+        return this.simpleReact.isAsync();
+    }
 
+    public Queue<U> toQueue() {
+        return EagerToQueue.super.toQueue();
+    }
 
-	@Override
-	public SimpleReactStream<U> withTaskExecutor(Executor e) {
-		return this.withSimpleReact(simpleReact.withExecutor(e));
-	}
+    @Override
+    public SimpleReactStream<U> withTaskExecutor(Executor e) {
+        return this.withSimpleReact(simpleReact.withExecutor(e));
+    }
 
-
-
-	@Override
-	public SimpleReactStream<U> withRetrier(RetryExecutor retry) {
-		return this.withSimpleReact(simpleReact.withRetrier(retry));
-	}
+    @Override
+    public SimpleReactStream<U> withRetrier(RetryExecutor retry) {
+        return this.withSimpleReact(simpleReact.withRetrier(retry));
+    }
 }

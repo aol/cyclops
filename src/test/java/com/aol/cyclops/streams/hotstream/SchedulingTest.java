@@ -1,12 +1,13 @@
 package com.aol.cyclops.streams.hotstream;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.Test;
 

@@ -1,14 +1,13 @@
 package com.aol.cyclops.functions.collections.extensions.standard.anyM;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
-import java.util.function.Supplier;
 
 import org.junit.Test;
+import java.util.stream.Stream;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -69,10 +68,12 @@ public class LazyFutureStreamTest extends AbstractAnyMSeqOrderedDependentTest{
     public void testCastPast() {
         of(1, "a", 2, "b", 3).cast(Date.class).map(d -> d.getTime())
                 .toList();
+    }
     
-
-
-
+    @Test
+    public void testParallelFlatMap() {
+        assertThat(LazyFutureStream.lazyFutureStream(Stream.generate(() -> 1).limit(1000)).parallel()
+                .map(a -> Thread.currentThread().getName()).toSet().size(), greaterThan(1));
     }
 
 }

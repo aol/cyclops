@@ -5,7 +5,6 @@ import java.util.concurrent.CompletableFuture;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.AbstractConvertableSequenceTest;
-import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 
 

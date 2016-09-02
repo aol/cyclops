@@ -8,7 +8,6 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 

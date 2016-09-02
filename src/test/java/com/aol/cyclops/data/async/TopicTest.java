@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,10 +21,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.Topic;
 import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
-import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
 public class TopicTest {
 
