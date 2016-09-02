@@ -660,7 +660,7 @@ public interface FeatureToggle<F>
     @Override
     default <U, R> FeatureToggle<R> zip(Seq<? extends U> other, BiFunction<? super F, ? super U, ? extends R> zipper) {
 
-        return (FeatureToggle<R>) MonadicValue.super.zip(other, zipper);
+        return (FeatureToggle<R>) MonadicValue1.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -669,7 +669,7 @@ public interface FeatureToggle<F>
     @Override
     default <U, R> FeatureToggle<R> zip(Stream<? extends U> other, BiFunction<? super F, ? super U, ? extends R> zipper) {
 
-        return (FeatureToggle<R>) MonadicValue.super.zip(other, zipper);
+        return (FeatureToggle<R>) MonadicValue1.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -678,7 +678,7 @@ public interface FeatureToggle<F>
     @Override
     default <U> FeatureToggle<Tuple2<F, U>> zip(Stream<? extends U> other) {
 
-        return (FeatureToggle) MonadicValue.super.zip(other);
+        return (FeatureToggle) MonadicValue1.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -687,7 +687,7 @@ public interface FeatureToggle<F>
     @Override
     default <U> FeatureToggle<Tuple2<F, U>> zip(Seq<? extends U> other) {
 
-        return (FeatureToggle) MonadicValue.super.zip(other);
+        return (FeatureToggle) MonadicValue1.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -696,7 +696,7 @@ public interface FeatureToggle<F>
     @Override
     default <U> FeatureToggle<Tuple2<F, U>> zip(Iterable<? extends U> other) {
 
-        return (FeatureToggle) MonadicValue.super.zip(other);
+        return (FeatureToggle) MonadicValue1.super.zip(other);
     }
 
 }

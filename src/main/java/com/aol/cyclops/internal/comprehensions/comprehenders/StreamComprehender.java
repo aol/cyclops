@@ -10,8 +10,8 @@ import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.types.extensability.Comprehender;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public class StreamComprehender implements Comprehender<Stream> {
     public Class getTargetClass() {

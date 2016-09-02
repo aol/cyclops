@@ -4,10 +4,10 @@ import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.monads.transformers.values.StreamableTValue;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.mixins.Printable;
-import com.aol.cyclops.util.stream.Streamable;
 
 public class StreamableTValueComprehender implements Comprehender<StreamableTValue>, Printable {
 

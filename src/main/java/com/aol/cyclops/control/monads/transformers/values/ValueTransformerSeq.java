@@ -20,9 +20,9 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.util.stream.Streamable;
 
 public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
     /* (non-Javadoc)

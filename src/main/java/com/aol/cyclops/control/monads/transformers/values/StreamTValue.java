@@ -9,13 +9,13 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 /**
  * Monad Transformer for Cyclops Streams

@@ -33,7 +33,6 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -86,29 +85,47 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
                                 Ior.secondary(secondary), Ior.primary(primary));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#anyM()
+     */
     @Override
     default AnyMValue<PT> anyM() {
         return AnyM.ofValue(this);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#unit(java.lang.Object)
+     */
     @Override
     default <T> Ior<ST, T> unit(final T unit) {
         return Ior.primary(unit);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     */
     @Override
     Ior<ST, PT> filter(Predicate<? super PT> test);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toXor()
+     */
     @Override
     Xor<ST, PT> toXor(); //drop ST
 
     Xor<ST, PT> toXorDropPrimary(); //drop ST
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toXor(java.lang.Object)
+     */
     @Override
     default <ST2> Xor<ST2, PT> toXor(final ST2 secondary) {
         return visit(s -> Xor.secondary(secondary), p -> Xor.primary(p), (s, p) -> Xor.primary(p));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toIor()
+     */
     @Override
     default Ior<ST, PT> toIor() {
         return this;
@@ -118,11 +135,17 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
 
     <R> Ior<R, PT> secondaryMap(Function<? super ST, ? extends R> fn);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#map(java.util.function.Function)
+     */
     @Override
     <R> Ior<ST, R> map(Function<? super PT, ? extends R> fn);
 
     Ior<ST, PT> secondaryPeek(Consumer<? super ST> action);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#peek(java.util.function.Consumer)
+     */
     @Override
     Ior<ST, PT> peek(Consumer<? super PT> action);
 
@@ -159,12 +182,18 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
         return () -> both();
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
     @Override
     default <R> Xor<ST, R> patternMatch(final Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1, final Supplier<? extends R> otherwise) {
 
         return (Xor<ST, R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
+     */
     @Override
     default <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
         final Eval<Ior<R1, R2>> ptMap = (Eval) Eval.later(() -> this.map(fn2)); //force unused secondary to required
@@ -180,6 +209,12 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
         return Ior.both(stMap.get(), ptMap.get());
     }
 
+    /**
+     * @param secondary
+     * @param primary
+     * @param both
+     * @return
+     */
     default <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
             final BiFunction<? super ST, ? super PT, ? extends R> both) {
 
@@ -192,21 +227,21 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
                          .visit((a, b) -> both.apply(a, b));
     }
 
-    default <R1, R2> Ior<R1, R2> mapBoth(final Function<? super ST, ? extends R1> secondary, final Function<? super PT, ? extends R2> primary) {
-        if (isSecondary())
-            return (Ior<R1, R2>) swap().map(secondary)
-                                       .swap();
-        if (isPrimary())
-            return (Ior<R1, R2>) map(primary);
-        return bimap(secondary, primary);
-    }
+    
+   
 
     <R> Eval<R> matches(Function<CheckValue1<ST, R>, CheckValue1<ST, R>> secondary, Function<CheckValue1<PT, R>, CheckValue1<PT, R>> primary,
             Function<CheckValue2<ST, PT, R>, CheckValue2<ST, PT, R>> both, Supplier<? extends R> otherwise);
 
+    /* (non-Javadoc)
+     * @see java.util.function.Supplier#get()
+     */
     @Override
     PT get();
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#isPresent()
+     */
     @Override
     default boolean isPresent() {
         return isPrimary() || isBoth();
@@ -220,6 +255,9 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
 
     ReactiveSeq<ST> secondaryToStream();
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#flatMap(java.util.function.Function)
+     */
     @Override
     <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper);
 

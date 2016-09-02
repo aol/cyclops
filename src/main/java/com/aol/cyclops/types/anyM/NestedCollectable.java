@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.control.monads.transformers.StreamT;
@@ -20,7 +21,6 @@ import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.util.stream.Streamable;
 
 public interface NestedCollectable<T> {
     public AnyM<? extends CyclopsCollectable<T>> nestedCollectables();

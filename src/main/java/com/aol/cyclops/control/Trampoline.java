@@ -55,7 +55,7 @@ public interface Trampoline<T> extends Supplier<T>, Value<T> {
      * @param result Completed result
      * @return Completed Trampoline
      */
-    public static <T> Trampoline<T> done(T result) {
+    public static <T> Trampoline<T> done(final T result) {
         return () -> result;
     }
 
@@ -65,7 +65,7 @@ public interface Trampoline<T> extends Supplier<T>, Value<T> {
      * @param trampoline Next stage in Trampoline
      * @return Trampoline with more work
      */
-    public static <T> Trampoline<T> more(Trampoline<Trampoline<T>> trampoline) {
+    public static <T> Trampoline<T> more(final Trampoline<Trampoline<T>> trampoline) {
         return new Trampoline<T>() {
 
             @Override
@@ -78,11 +78,12 @@ public interface Trampoline<T> extends Supplier<T>, Value<T> {
                 return trampoline.result();
             }
 
+            @Override
             public T get() {
                 return trampoline(this);
             }
 
-            T trampoline(Trampoline<T> trampoline) {
+            T trampoline(final Trampoline<T> trampoline) {
 
                 return Stream.iterate(trampoline, Trampoline::bounce)
                              .filter(Trampoline::complete)

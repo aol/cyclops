@@ -18,6 +18,7 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
@@ -31,7 +32,6 @@ import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.util.stream.Streamable;
 
 public interface NestedFoldable<T> {
     public AnyM<? extends IterableFoldable<T>> nestedFoldables();

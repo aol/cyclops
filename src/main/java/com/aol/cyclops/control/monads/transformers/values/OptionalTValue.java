@@ -19,6 +19,7 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.types.ConvertableFunctor;
@@ -28,7 +29,6 @@ import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.util.Optionals;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 /**
  * Monad transformer for JDK Optional

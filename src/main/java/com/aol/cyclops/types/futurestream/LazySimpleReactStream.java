@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.data.async.QueueFactory;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.react.async.future.FastFuture;
@@ -23,7 +24,6 @@ import com.aol.cyclops.internal.react.exceptions.FilteredExecutionPathException;
 import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.aol.cyclops.react.async.subscription.Continueable;
-import com.aol.cyclops.util.stream.StreamUtils;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 

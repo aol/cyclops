@@ -45,7 +45,6 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 
 
@@ -111,9 +110,9 @@ public class Ior2Test {
     }
     @Test
     public void visitIor(){
-        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(Ior.primary("yes")));
-        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(Ior.secondary("no")));
-        assertThat(Ior.both(10, "eek").mapBoth(secondary->"no", primary->"yes"),equalTo(Ior.both("no","yes")));
+        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(Ior.primary("yes")));
+        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(Ior.secondary("no")));
+        assertThat(Ior.both(10, "eek").bimap(secondary->"no", primary->"yes"),equalTo(Ior.both("no","yes")));
     }
 	@Test
 	public void testToMaybe() {

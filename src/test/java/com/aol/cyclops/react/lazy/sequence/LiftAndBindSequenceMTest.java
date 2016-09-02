@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public class LiftAndBindSequenceMTest {
 	@Test

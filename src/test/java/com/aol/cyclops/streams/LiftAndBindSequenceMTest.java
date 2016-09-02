@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.control.StreamUtils;
 
 public class LiftAndBindSequenceMTest {
 	@Test

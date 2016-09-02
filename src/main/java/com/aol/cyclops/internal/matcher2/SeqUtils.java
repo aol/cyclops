@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.util.stream.StreamUtils;
+import com.aol.cyclops.control.StreamUtils;
 
 public class SeqUtils {
 

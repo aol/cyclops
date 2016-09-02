@@ -78,9 +78,15 @@ public class LazyReact implements ReactBuilder {
     @Getter
     private final Cacheable memoizeCache;
 
-    public LazyReact autoMemoizeOn(Cacheable memoizeCache) {
-        return this.withAutoMemoize(true)
-                   .withMemoizeCache(memoizeCache);
+    /**
+     * Turn automatic caching of values on for the FutureStream to be generated
+     * by this Stream builder
+     * 
+     * @param memoizeCache Cacheable instance that controls memoization (Caching)
+     * @return LazyReact Stream builder
+     */
+    public LazyReact autoMemoizeOn(final Cacheable memoizeCache) {
+        return withAutoMemoize(true).withMemoizeCache(memoizeCache);
     }
 
     /* 
@@ -109,32 +115,32 @@ public class LazyReact implements ReactBuilder {
      * 
      * @param executor Executor to use
      */
-    public LazyReact(Executor executor) {
+    public LazyReact(final Executor executor) {
 
         this.executor = executor;
-        this.retrier = null;
-        this.async = true;
-        this.maxActive = MaxActive.IO;
+        retrier = null;
+        async = true;
+        maxActive = MaxActive.IO;
 
-        this.streamOfFutures = false;
-        this.poolingActive = false;
-        this.autoOptimize = true;
-        this.autoMemoize = false;
-        this.memoizeCache = null;
+        streamOfFutures = false;
+        poolingActive = false;
+        autoOptimize = true;
+        autoMemoize = false;
+        memoizeCache = null;
     }
 
-    public LazyReact(int maxActive, Executor executor) {
+    public LazyReact(final int maxActive, final Executor executor) {
 
         this.executor = executor;
-        this.retrier = null;
-        this.async = true;
+        retrier = null;
+        async = true;
         this.maxActive = MaxActive.IO;
 
-        this.streamOfFutures = false;
-        this.poolingActive = false;
-        this.autoOptimize = true;
-        this.autoMemoize = false;
-        this.memoizeCache = null;
+        streamOfFutures = false;
+        poolingActive = false;
+        autoOptimize = true;
+        autoMemoize = false;
+        memoizeCache = null;
     }
 
     /**
@@ -144,29 +150,29 @@ public class LazyReact implements ReactBuilder {
      * @param threadPoolSize
      * @param maxActiveTasks
      */
-    public LazyReact(int threadPoolSize, int maxActiveTasks) {
+    public LazyReact(final int threadPoolSize, final int maxActiveTasks) {
 
-        this.executor = Executors.newFixedThreadPool(threadPoolSize);
-        this.retrier = new RetryBuilder().parallelism(threadPoolSize);
-        this.async = true;
-        this.maxActive = new MaxActive(
-                                       maxActiveTasks, threadPoolSize);
+        executor = Executors.newFixedThreadPool(threadPoolSize);
+        retrier = new RetryBuilder().parallelism(threadPoolSize);
+        async = true;
+        maxActive = new MaxActive(
+                                  maxActiveTasks, threadPoolSize);
 
-        this.streamOfFutures = false;
-        this.poolingActive = false;
-        this.autoOptimize = true;
-        this.autoMemoize = false;
-        this.memoizeCache = null;
+        streamOfFutures = false;
+        poolingActive = false;
+        autoOptimize = true;
+        autoMemoize = false;
+        memoizeCache = null;
     }
 
-    public <U> LazyFutureStream<U> from(CompletableFuture<U> cf) {
+    public <U> LazyFutureStream<U> from(final CompletableFuture<U> cf) {
 
         return this.constructFutures(Stream.of(cf));
 
     }
 
-    public <U> LazyFutureStream<U> from(CompletableFuture<U>... cf) {
-        return (LazyFutureStream) this.constructFutures(Stream.of(cf));
+    public <U> LazyFutureStream<U> from(final CompletableFuture<U>... cf) {
+        return this.constructFutures(Stream.of(cf));
 
     }
 
@@ -178,16 +184,16 @@ public class LazyReact implements ReactBuilder {
      *	@return
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
      */
-    public <U> LazyFutureStream<U> construct(Stream<U> s) {
-        this.log.debug("Constructing Stream with {}", this);
-        return (LazyFutureStream) new LazyFutureStreamImpl<U>(
-                                                              this, s);
+    public <U> LazyFutureStream<U> construct(final Stream<U> s) {
+        log.debug("Constructing Stream with {}", this);
+        return new LazyFutureStreamImpl<U>(
+                                           this, s);
 
     }
 
-    public <U> LazyFutureStream<U> constructFutures(Stream<CompletableFuture<U>> s) {
-        LazyReact toUse = this.withStreamOfFutures(true);
-        this.log.debug("Constructing Stream with {}", toUse);
+    public <U> LazyFutureStream<U> constructFutures(final Stream<CompletableFuture<U>> s) {
+        final LazyReact toUse = withStreamOfFutures(true);
+        log.debug("Constructing Stream with {}", toUse);
         return toUse.construct((Stream<U>) s);
     }
 
@@ -207,7 +213,7 @@ public class LazyReact implements ReactBuilder {
      * @return New LazyReact builder with Object pooling on.
      */
     public LazyReact objectPoolingOn() {
-        return this.withPoolingActive(true);
+        return withPoolingActive(true);
     }
 
     /**
@@ -227,7 +233,7 @@ public class LazyReact implements ReactBuilder {
      * @return New LazyReact builder with Object pooling off.
      */
     public LazyReact objectPoolingOff() {
-        return this.withPoolingActive(false);
+        return withPoolingActive(false);
     }
 
     /**
@@ -252,7 +258,7 @@ public class LazyReact implements ReactBuilder {
      * @return
      */
     public LazyReact autoOptimizeOn() {
-        return this.withAutoOptimize(true);
+        return withAutoOptimize(true);
     }
 
     /**
@@ -275,7 +281,7 @@ public class LazyReact implements ReactBuilder {
      * @return
      */
     public LazyReact autoOptimizeOff() {
-        return this.withAutoOptimize(false);
+        return withAutoOptimize(false);
     }
 
     /**
@@ -284,7 +290,7 @@ public class LazyReact implements ReactBuilder {
      * @return LazyReact that creates Streams in async mode
      */
     public LazyReact async() {
-        return this.withAsync(true);
+        return withAsync(true);
     }
 
     /**
@@ -293,7 +299,7 @@ public class LazyReact implements ReactBuilder {
      * @return LazyReact that creates Streams in sync mode
      */
     public LazyReact sync() {
-        return this.withAsync(false);
+        return withAsync(false);
     }
 
     /**
@@ -303,9 +309,9 @@ public class LazyReact implements ReactBuilder {
      *            to construct LazyFutureStream from
      * @return LazyFutureStream
      */
-    public <T> LazyFutureStream<T> fromPublisher(Publisher<? extends T> publisher) {
+    public <T> LazyFutureStream<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
-        SeqSubscriber<T> sub = SeqSubscriber.subscriber();
+        final SeqSubscriber<T> sub = SeqSubscriber.subscriber();
         publisher.subscribe(sub);
         return sub.toFutureStream(this);
     }
@@ -318,7 +324,7 @@ public class LazyReact implements ReactBuilder {
      *	@return LazyFutureStream that is a range of Integers
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#range(int, int)
      */
-    public LazyFutureStream<Integer> range(int startInclusive, int endExclusive) {
+    public LazyFutureStream<Integer> range(final int startInclusive, final int endExclusive) {
         return fromStream(ReactiveSeq.range(startInclusive, endExclusive));
     }
 
@@ -329,7 +335,7 @@ public class LazyReact implements ReactBuilder {
      *	@return LazyFutureStream
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#fromStream(java.util.stream.Stream)
      */
-    public <U> LazyFutureStream<U> fromStreamFutures(Stream<CompletableFuture<U>> stream) {
+    public <U> LazyFutureStream<U> fromStreamFutures(final Stream<CompletableFuture<U>> stream) {
 
         return constructFutures(stream);
     }
@@ -344,7 +350,7 @@ public class LazyReact implements ReactBuilder {
     @SafeVarargs
     public final <U> LazyFutureStream<U> ofAsync(final Supplier<U>... actions) {
 
-        return (LazyFutureStream) reactI(actions);
+        return reactI(actions);
 
     }
 
@@ -355,7 +361,7 @@ public class LazyReact implements ReactBuilder {
      *	@return LazyFutureStream
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
      */
-    public <U> LazyFutureStream<U> fromStream(Stream<U> stream) {
+    public <U> LazyFutureStream<U> fromStream(final Stream<U> stream) {
 
         return construct(stream);
     }
@@ -369,17 +375,17 @@ public class LazyReact implements ReactBuilder {
      *	@return LazyFutureStream
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#react(java.util.List)
      */
-    public <U> LazyFutureStream<U> react(Collection<Supplier<U>> actions) {
+    public <U> LazyFutureStream<U> react(final Collection<Supplier<U>> actions) {
 
-        ReactiveSeq<Supplier<U>> seq = actions instanceof List ? ReactiveSeq.fromList((List) actions) : ReactiveSeq.fromIterable(actions);
+        final ReactiveSeq<Supplier<U>> seq = actions instanceof List ? ReactiveSeq.fromList((List) actions) : ReactiveSeq.fromIterable(actions);
         return fromStreamAsync(seq);
     }
 
     @SafeVarargs
-    private final <U> LazyFutureStream<U> reactI(Supplier<U>... actions) {
+    private final <U> LazyFutureStream<U> reactI(final Supplier<U>... actions) {
 
         return constructFutures(Stream.of(actions)
-                                      .map(next -> CompletableFuture.supplyAsync(next, this.getExecutor())));
+                                      .map(next -> CompletableFuture.supplyAsync(next, getExecutor())));
     }
 
     /**
@@ -387,8 +393,9 @@ public class LazyReact implements ReactBuilder {
      * @param retrier Async Retrier
      * @param async If true each task will be submitted to an executor service
      */
-    public LazyReact(Executor executor, RetryExecutor retrier, Boolean async, MaxActive maxActive, boolean streamOfFutures,
-            boolean objectPoolingActive, boolean autoOptimize, boolean autoMemoize, Cacheable memoizeCache) {
+    public LazyReact(final Executor executor, final RetryExecutor retrier, final Boolean async, final MaxActive maxActive,
+            final boolean streamOfFutures, final boolean objectPoolingActive, final boolean autoOptimize, final boolean autoMemoize,
+            final Cacheable memoizeCache) {
         super();
         this.executor = executor;
         this.retrier = retrier;
@@ -398,13 +405,13 @@ public class LazyReact implements ReactBuilder {
                                  .orElse(MaxActive.IO);
         this.streamOfFutures = streamOfFutures;
 
-        this.poolingActive = objectPoolingActive;
+        poolingActive = objectPoolingActive;
         this.autoOptimize = autoOptimize;
         this.autoMemoize = autoMemoize;
         this.memoizeCache = memoizeCache;
     }
 
-    public LazyReact(Executor currentThreadExecutor, AsyncRetryExecutor withScheduler, boolean async, MaxActive maxActive2) {
+    public LazyReact(final Executor currentThreadExecutor, final AsyncRetryExecutor withScheduler, final boolean async, final MaxActive maxActive2) {
         this(currentThreadExecutor, withScheduler, async, maxActive2, false, false, async, false, null);
     }
 
@@ -415,8 +422,8 @@ public class LazyReact implements ReactBuilder {
      *	@return LazyFutureStream
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#ofIterable(java.lang.Iterable)
      */
-    public <U> LazyFutureStream<U> fromIterable(Iterable<U> iter) {
-        ReactiveSeq<U> seq = iter instanceof List ? ReactiveSeq.fromList((List) iter) : ReactiveSeq.fromIterable(iter);
+    public <U> LazyFutureStream<U> fromIterable(final Iterable<U> iter) {
+        final ReactiveSeq<U> seq = iter instanceof List ? ReactiveSeq.fromList((List) iter) : ReactiveSeq.fromIterable(iter);
         return this.fromStream(seq);
     }
 
@@ -428,7 +435,7 @@ public class LazyReact implements ReactBuilder {
      *	@return LazyFutureStream
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#react(java.util.stream.Stream)
      */
-    public <U> LazyFutureStream<U> fromStreamAsync(Stream<? extends Supplier<U>> actions) {
+    public <U> LazyFutureStream<U> fromStreamAsync(final Stream<? extends Supplier<U>> actions) {
 
         return constructFutures(actions.map(next -> CompletableFuture.supplyAsync(next, getExecutor())));
     }
@@ -441,7 +448,7 @@ public class LazyReact implements ReactBuilder {
      *	@return LazyFutureStream
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#react(java.util.Iterator)
      */
-    public <U> LazyFutureStream<U> fromIteratorAsync(Iterator<? extends Supplier<U>> actions) {
+    public <U> LazyFutureStream<U> fromIteratorAsync(final Iterator<? extends Supplier<U>> actions) {
 
         return this.<U> constructFutures(StreamSupport.<Supplier<U>> stream(Spliterators.<Supplier<U>> spliteratorUnknownSize(actions,
                                                                                                                               Spliterator.ORDERED),
@@ -457,8 +464,9 @@ public class LazyReact implements ReactBuilder {
      *	@return
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#reactIterable(java.lang.Iterable)
      */
-    public <U> LazyFutureStream<U> fromIterableAsync(Iterable<? extends Supplier<U>> actions) {
-        ReactiveSeq<? extends Supplier<U>> seq = actions instanceof List ? ReactiveSeq.fromList((List) actions) : ReactiveSeq.fromIterable(actions);
+    public <U> LazyFutureStream<U> fromIterableAsync(final Iterable<? extends Supplier<U>> actions) {
+        final ReactiveSeq<? extends Supplier<U>> seq = actions instanceof List ? ReactiveSeq.fromList((List) actions)
+                : ReactiveSeq.fromIterable(actions);
         return this.<U> constructFutures(seq.map(next -> CompletableFuture.supplyAsync(next, getExecutor())));
     }
 
@@ -477,7 +485,7 @@ public class LazyReact implements ReactBuilder {
      *            Number of threads task executor should have
      * @return LazyReact instance
      */
-    public static LazyReact parallelBuilder(int parallelism) {
+    public static LazyReact parallelBuilder(final int parallelism) {
         return LazyReact.builder()
                         .executor(Executors.newFixedThreadPool(parallelism))
                         .retrier(new RetryBuilder().parallelism(parallelism))
@@ -555,14 +563,14 @@ public class LazyReact implements ReactBuilder {
      */
     public <U> LazyFutureStream<U> iterate(final U seed, final UnaryOperator<U> f) {
 
-        Subscription sub = new Subscription();
+        final Subscription sub = new Subscription();
         final Supplier<U> supplier = new Supplier<U>() {
             @SuppressWarnings("unchecked")
             U t = (U) NONE;
 
             @Override
             public U get() {
-                return t = (t == NONE) ? seed : f.apply(t);
+                return t = t == NONE ? seed : f.apply(t);
             }
         };
         return construct(StreamSupport.<U> stream(new InfiniteClosingSpliteratorFromSupplier<U>(
@@ -571,8 +579,8 @@ public class LazyReact implements ReactBuilder {
 
     }
 
-    public <U> LazyFutureStream<U> fromAdapter(Adapter<U> adapter) {
-        Subscription sub = new Subscription();
+    public <U> LazyFutureStream<U> fromAdapter(final Adapter<U> adapter) {
+        final Subscription sub = new Subscription();
         return this.construct(adapter.stream(sub));
     }
 
@@ -601,7 +609,7 @@ public class LazyReact implements ReactBuilder {
 
     public <U> LazyFutureStream<U> generateAsync(final Supplier<U> s) {
         return this.constructFutures(ReactiveSeq.generate(() -> 1)
-                                                .map(n -> CompletableFuture.supplyAsync(s, this.getExecutor())));
+                                                .map(n -> CompletableFuture.supplyAsync(s, getExecutor())));
 
     }
 
@@ -662,7 +670,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     @SafeVarargs
-    public final <U> LazyFutureStream<U> of(U... array) {
+    public final <U> LazyFutureStream<U> of(final U... array) {
         return fromStream(Stream.of(array));
     }
 

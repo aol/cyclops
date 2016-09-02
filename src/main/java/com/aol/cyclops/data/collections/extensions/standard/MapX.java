@@ -24,6 +24,7 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
 import com.aol.cyclops.types.BiFunctor;
@@ -33,7 +34,6 @@ import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.OnEmpty;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface MapX<K, V> extends Map<K, V>, FluentMapX<K, V>, BiFunctor<K, V>, Functor<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
         OnEmptySwitch<Tuple2<K, V>, Map<K, V>>, Publisher<Tuple2<K, V>>, Foldable<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {

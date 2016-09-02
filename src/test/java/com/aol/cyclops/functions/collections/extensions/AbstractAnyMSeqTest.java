@@ -52,6 +52,8 @@ import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -59,8 +61,6 @@ import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.stream.StreamUtils;
-import com.aol.cyclops.util.stream.Streamable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

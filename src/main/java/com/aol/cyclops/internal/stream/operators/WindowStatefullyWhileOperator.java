@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.AllArgsConstructor;
 

@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.AllArgsConstructor;
 

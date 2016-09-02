@@ -65,7 +65,6 @@ import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
-import com.aol.cyclops.util.stream.Streamable;
 
 /**
  * 
