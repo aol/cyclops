@@ -796,9 +796,9 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
     }
 
     @Override
-    default SortedSetX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default SortedSetX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (SortedSetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyWhile(predicate);
+        return (SortedSetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override

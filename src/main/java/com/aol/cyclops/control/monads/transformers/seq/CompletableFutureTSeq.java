@@ -483,12 +483,12 @@ public class CompletableFutureTSeq<A>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public CompletableFutureTSeq<ListX<A>> groupedStatefullyWhile(BiPredicate<ListX<? super A>, ? super A> predicate) {
+    public CompletableFutureTSeq<ListX<A>> groupedStatefullyUntil(BiPredicate<ListX<? super A>, ? super A> predicate) {
 
-        return (CompletableFutureTSeq<ListX<A>>) ValueTransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (CompletableFutureTSeq<ListX<A>>) ValueTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

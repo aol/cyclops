@@ -224,12 +224,12 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default Streamable<ListX<T>> groupedStatefullyWhile(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default Streamable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.groupedStatefullyWhile(predicate));
+        return Streamable.fromIterable(ZippingApplicativable.super.groupedStatefullyUntil(predicate));
     }
 
     /* (non-Javadoc)

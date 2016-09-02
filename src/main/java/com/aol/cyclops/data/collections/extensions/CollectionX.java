@@ -79,10 +79,10 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     CollectionX<ListX<T>> groupedUntil(Predicate<? super T> predicate);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    CollectionX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate);
+    CollectionX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#groupedWhile(java.util.function.Predicate)

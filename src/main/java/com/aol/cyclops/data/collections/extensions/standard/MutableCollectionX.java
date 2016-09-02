@@ -707,11 +707,11 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default MutableCollectionX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return fromStream(stream().groupedStatefullyWhile(predicate));
+    default MutableCollectionX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return fromStream(stream().groupedStatefullyUntil(predicate));
     }
 
 }

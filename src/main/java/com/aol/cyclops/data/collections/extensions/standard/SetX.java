@@ -798,9 +798,9 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,
     }
 
     @Override
-    default SetX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default SetX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (SetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyWhile(predicate);
+        return (SetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override

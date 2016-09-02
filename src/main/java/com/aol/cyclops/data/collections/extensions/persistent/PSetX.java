@@ -813,9 +813,9 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>, OnEmptySwit
     }
 
     @Override
-    default PSetX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default PSetX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (PSetX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyWhile(predicate);
+        return (PSetX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override

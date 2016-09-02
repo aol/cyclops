@@ -486,12 +486,12 @@ public class SetTSeq<T> implements SetT<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.SetT#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.SetT#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public SetTSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public SetTSeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (SetTSeq<ListX<T>>) SetT.super.groupedStatefullyWhile(predicate);
+        return (SetTSeq<ListX<T>>) SetT.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

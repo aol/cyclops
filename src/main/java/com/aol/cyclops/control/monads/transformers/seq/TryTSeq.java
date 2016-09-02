@@ -488,12 +488,12 @@ public class TryTSeq<T, X extends Throwable>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public TryTSeq<ListX<T>, X> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public TryTSeq<ListX<T>, X> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (TryTSeq<ListX<T>, X>) ValueTransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (TryTSeq<ListX<T>, X>) ValueTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

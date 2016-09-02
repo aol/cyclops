@@ -3006,12 +3006,12 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     }
 
     /*
-     * @see com.aol.cyclops.control.ReactiveSeq#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.ReactiveSeq#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default LazyFutureStream<ListX<U>> groupedStatefullyWhile(BiPredicate<ListX<? super U>, ? super U> predicate) {
+    default LazyFutureStream<ListX<U>> groupedStatefullyUntil(BiPredicate<ListX<? super U>, ? super U> predicate) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                                     .groupedStatefullyWhile(predicate));
+                                     .groupedStatefullyUntil(predicate));
     }
 
     /*

@@ -428,12 +428,12 @@ public class EvalTSeq<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public EvalTSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public EvalTSeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (EvalTSeq<ListX<T>>) ValueTransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (EvalTSeq<ListX<T>>) ValueTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

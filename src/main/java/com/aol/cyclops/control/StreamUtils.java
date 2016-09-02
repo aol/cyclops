@@ -2082,7 +2082,7 @@ public class StreamUtils {
 
     private static final Object UNSET = new Object();
 
-    public final static <T> Stream<ListX<T>> groupedStatefullyWhile(final Stream<T> stream,
+    public final static <T> Stream<ListX<T>> groupedStatefullyUntil(final Stream<T> stream,
             final BiPredicate<ListX<? super T>, ? super T> predicate) {
         return new WindowStatefullyWhileOperator<>(
                                                    stream).windowStatefullyWhile(predicate);

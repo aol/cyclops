@@ -330,7 +330,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * <pre>
      * {@code 
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+     *              .groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
      *              .toList().size(),equalTo(5));
      * }
      * </pre>
@@ -339,8 +339,8 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Window while true
      * @return Traversable windowed while predicate holds
      */
-    default Traversable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return traversable().groupedStatefullyWhile(predicate);
+    default Traversable<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return traversable().groupedStatefullyUntil(predicate);
     }
 
     /**

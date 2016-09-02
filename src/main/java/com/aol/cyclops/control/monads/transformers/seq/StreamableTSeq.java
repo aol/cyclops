@@ -473,12 +473,12 @@ public class StreamableTSeq<T> implements StreamableT<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public StreamableTSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public StreamableTSeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (StreamableTSeq<ListX<T>>) StreamableT.super.groupedStatefullyWhile(predicate);
+        return (StreamableTSeq<ListX<T>>) StreamableT.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

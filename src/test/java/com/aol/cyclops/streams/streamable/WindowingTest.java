@@ -65,10 +65,10 @@ public class WindowingTest {
 	@Test
 	public void windowStatefullyWhile(){
 		System.out.println(Streamable.of(1,2,3,4,5,6)
-				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				);
 		assertThat(Streamable.of(1,2,3,4,5,6)
-				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				
 				.toListX().size(),equalTo(5));
 		
@@ -77,7 +77,7 @@ public class WindowingTest {
 	public void windowStatefullyWhileEmpty(){
 		
 		assertThat(Streamable.of()
-				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				.toListX().size(),equalTo(0));
 		
 	}

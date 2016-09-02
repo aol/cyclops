@@ -664,9 +664,9 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default PersistentCollectionX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default PersistentCollectionX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
         return from(this.<ListX<T>> monoid()
-                        .mapReduce(stream().groupedStatefullyWhile(predicate)));
+                        .mapReduce(stream().groupedStatefullyUntil(predicate)));
     }
 
     /* (non-Javadoc)
