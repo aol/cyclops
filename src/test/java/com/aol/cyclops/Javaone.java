@@ -181,7 +181,7 @@ public class Javaone {
         return "produced on " + Thread.currentThread().getId();
     }
     
-    @Test
+    
     public void queue(){
         
         
@@ -210,7 +210,7 @@ public class Javaone {
         
     }
     
-    @Test
+   
     public void queue2(){
         
         
