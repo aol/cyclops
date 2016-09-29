@@ -841,6 +841,22 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
                                   .map(Comparables::comparable));
     }
 
+    /**
+     * Narrow a covariant SortedSet
+     * 
+     * <pre>
+     * {@code 
+     * SortedSetX<? extends Fruit> set = SortedSetX.of(apple,bannana);
+     * SortedSetX<Fruit> fruitSet = SortedSetX.narrow(set);
+     * }
+     * </pre>
+     * 
+     * @param sortedSetX to narrow generic type
+     * @return SortedSetX with narrowed type
+     */
+    public  static <T> SortedSetX<T> narrow(SortedSetX<? extends T> setX){
+        return (SortedSetX<T>)setX;
+    }
     static class Comparables {
 
         static <T, R extends ReactiveSeq<T> & Comparable<T>> R comparable(Seq<T> seq) {

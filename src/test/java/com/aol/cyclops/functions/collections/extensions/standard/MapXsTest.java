@@ -9,10 +9,44 @@ import java.util.Map;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.MapXs;
+import com.aol.cyclops.data.collections.extensions.standard.QueueX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 public class MapXsTest {
 
+    @Test
+    public void toListX(){
+        MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
+        ListX<String> strs = maps.toListX(t->""+t.v1+t.v2);
+        assertThat(strs,equalTo(ListX.of("a1","b2")));
+    }
+    @Test
+    public void toSetX(){
+        MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
+        SetX<String> strs = maps.toSetX(t->""+t.v1+t.v2);
+        assertThat(strs,equalTo(SetX.of("a1","b2")));
+    }
+    @Test
+    public void toSortedSetX(){
+        MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
+        SortedSetX<String> strs = maps.toSortedSetX(t->""+t.v1+t.v2);
+        assertThat(strs,equalTo(SortedSetX.of("a1","b2")));
+    }
+    @Test
+    public void toQueueX(){
+        MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
+        QueueX<String> strs = maps.toQueueX(t->""+t.v1+t.v2);
+        assertThat(strs,equalTo(QueueX.of("a1","b2")));
+    }
+    @Test
+    public void toDequeX(){
+        MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
+        QueueX<String> strs = maps.toQueueX(t->""+t.v1+t.v2);
+        assertThat(strs,equalTo(QueueX.of("a1","b2")));
+    }
     @Test
     public void onEmpty(){
         assertThat(MapX.empty().onEmpty(Tuple.tuple("hello",10)).get("hello"),equalTo(10));

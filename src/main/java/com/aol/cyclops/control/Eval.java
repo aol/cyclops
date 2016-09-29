@@ -215,6 +215,9 @@ public interface Eval<T>
                                           .get());
     }
 
+   
+    
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
@@ -445,6 +448,7 @@ public interface Eval<T>
                                     super.fns.plus(Rec.raw(Memoize.memoizeFunction(mapper))));
             }
 
+           
             public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
                 RecFunction s = __ -> asEval(mapper.apply(super.apply()))
                                             .steps();
