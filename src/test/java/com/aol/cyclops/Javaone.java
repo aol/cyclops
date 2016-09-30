@@ -247,7 +247,7 @@ public class Javaone {
         
     }
     
-    @Test
+   
     public void streamException(){
         
         try {
@@ -262,7 +262,7 @@ public class Javaone {
         
         
     }
-    @Test
+   
     public void reactiveSeqException(){
         
   
@@ -281,7 +281,7 @@ public class Javaone {
         
         
     }
-    @Test
+   
     public void streamEmission(){
         
         StreamUtils.scheduleFixedDelay(Stream.iterate(0,i->i+1)
@@ -299,7 +299,7 @@ public class Javaone {
         
     }
     
-    @Test
+  
     public void futureStream(){
         
         new LazyReact(Executors.newFixedThreadPool(4)).of(6,5,2,1)
