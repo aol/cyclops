@@ -46,7 +46,7 @@ public class MapXsTest {
     public void toDequeX(){
         MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
         DequeX<String> strs = maps.toDequeX(t->""+t.v1+t.v2);
-        assertThat(strs,equalTo(QueueX.of("a1","b2")));
+        assertThat(strs.toList(),equalTo(DequeX.of("a1","b2").toList()));
     }
     @Test
     public void onEmpty(){
