@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
@@ -500,5 +501,34 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
     public <U> FutureW<Tuple2<T, U>> zip(Iterable<? extends U> other) {
         return (FutureW) ApplicativeFunctor.super.zip(other);
     }
+
+	@Override
+	public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void subscribe(Subscriber<? super T> s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean test(T t) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public <R> FutureW<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+		return (FutureW<R>) MonadicValue1.super.flatMapIterable(mapper);
+	}
+
+	@Override
+	public <R> FutureW<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+		return (FutureW<R>) MonadicValue1.super.flatMapPublisher(mapper);
+	}
+
 
 }

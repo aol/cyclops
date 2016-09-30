@@ -49,6 +49,8 @@ import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.types.mixins.Printable;
 import com.aol.cyclops.util.stream.StreamUtils;
 
+import reactor.core.publisher.Flux;
+
 public class MaybeTest implements Printable {
 
     Maybe<Integer> just;
@@ -61,6 +63,18 @@ public class MaybeTest implements Printable {
 
     }
 
+    @Test
+    public void testFlatMapIterable() {
+    	Maybe<Integer> maybe = just.flatMapIterable(i -> Arrays.asList(i, 20, 30));
+    	assertThat(maybe.get(), equalTo(10));
+    }
+    
+    @Test
+    public void testFlatMapPublisher() {
+    	Maybe<Integer> maybe = Maybe.of(100).flatMapPublisher(i -> Flux.just(10, i));
+    	assertThat(maybe.get(), equalTo(10));
+    }
+    
     @Test
     public void testApFeatureToggle() {
 

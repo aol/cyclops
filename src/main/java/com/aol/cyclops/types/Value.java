@@ -50,29 +50,6 @@ import lombok.AllArgsConstructor;
 
 @FunctionalInterface
 public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publisher<T>, Predicate<T>, Zippable<T> {
-
-	/**
-     * Perform a flatMap operation that will work for Value and take the first value from the Iterable returned.
-     * 
-     * @param fn FlatMaping function
-     * @return Value with flattening transformation
-     */
-    default <R> Value<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn) {
-    	R r = Convertable.super.toStream().flatMap(fn.andThen(it -> ReactiveSeq.fromIterable(it))).findFirst().get();
-    	return Value.of(() -> r);
-    
-    }
-    
-    /**
-     * Perform a flatMap operation that will work for Value and take the first value from the Publisher returned.
-     * 
-     * @param fn FlatMaping function
-     * @return Value with flattening transformation
-     */
-    default <R> Value<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn) {
-    	R r = Convertable.super.toStream().flatMap(fn.andThen(it -> ReactiveSeq.fromPublisher(it))).findFirst().get();
-    	return Value.of(() -> r);
-    }
     
     /* An Iterator over the list returned from toList()
      * 
