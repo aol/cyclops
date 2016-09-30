@@ -9,6 +9,7 @@ import java.util.Map;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
+import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.data.collections.extensions.standard.MapXs;
@@ -39,12 +40,12 @@ public class MapXsTest {
     public void toQueueX(){
         MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
         QueueX<String> strs = maps.toQueueX(t->""+t.v1+t.v2);
-        assertThat(strs,equalTo(QueueX.of("a1","b2")));
+        assertThat(strs.toList(),equalTo(QueueX.of("a1","b2").toList()));
     }
     @Test
     public void toDequeX(){
         MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
-        QueueX<String> strs = maps.toQueueX(t->""+t.v1+t.v2);
+        DequeX<String> strs = maps.toDequeX(t->""+t.v1+t.v2);
         assertThat(strs,equalTo(QueueX.of("a1","b2")));
     }
     @Test
