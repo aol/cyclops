@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -17,6 +18,7 @@ import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.Ior;
@@ -48,7 +50,7 @@ import lombok.AllArgsConstructor;
 
 @FunctionalInterface
 public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publisher<T>, Predicate<T>, Zippable<T> {
-
+    
     /* An Iterator over the list returned from toList()
      * 
      *  (non-Javadoc)
