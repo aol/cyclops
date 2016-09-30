@@ -31,113 +31,67 @@ public class QueueXImpl<T> implements QueueX<T> {
                                           .get();
     }
 
-    /**
-     * @param action
-     * @see java.lang.Iterable#forEach(java.util.function.Consumer)
-     */
+    
     public void forEach(Consumer<? super T> action) {
         list.forEach(action);
     }
 
-    /**
-     * @return
-     * @see org.pcollections.MapPSet#iterator()
-     */
+   
     public Iterator<T> iterator() {
         return list.iterator();
     }
 
-    /**
-     * @return
-     * @see org.pcollections.MapPSet#size()
-     */
+    
     public int size() {
         return list.size();
     }
 
-    /**
-     * @param e
-     * @return
-     * @see org.pcollections.MapPSet#contains(java.lang.Object)
-     */
+    
     public boolean contains(Object e) {
         return list.contains(e);
     }
 
-    /**
-     * @param o
-     * @return
-     * @see java.util.AbstractSet#equals(java.lang.Object)
-     */
+    
     public boolean equals(Object o) {
         return list.equals(o);
     }
 
-    /**
-     * @return
-     * @see java.util.AbstractCollection#isEmpty()
-     */
+   
     public boolean isEmpty() {
         return list.isEmpty();
     }
 
-    /**
-     * @return
-     * @see java.util.AbstractSet#hashCode()
-     */
+    
     public int hashCode() {
         return list.hashCode();
     }
 
-    /**
-     * @return
-     * @see java.util.AbstractCollection#toArray()
-     */
+   
     public Object[] toArray() {
         return list.toArray();
     }
 
-    /**
-     * @param c
-     * @return
-     * @see java.util.AbstractSet#removeAll(java.util.Collection)
-     */
+    
     public boolean removeAll(Collection<?> c) {
         return list.removeAll(c);
     }
 
-    /**
-     * @param a
-     * @return
-     * @see java.util.AbstractCollection#toArray(java.lang.Object[])
-     */
+    
     public <T> T[] toArray(T[] a) {
         return list.toArray(a);
     }
 
-    /**
-     * @param e
-     * @return
-     * @see java.util.AbstractCollection#add(java.lang.Object)
-     */
+    
     public boolean add(T e) {
         return list.add(e);
     }
 
-    /**
-     * @param o
-     * @return
-     * @see java.util.AbstractCollection#remove(java.lang.Object)
-     */
+    
     public boolean remove(Object o) {
         return list.remove(o);
     }
 
-    /**
-     * @param c
-     * @return
-     * @see java.util.AbstractCollection#containsAll(java.util.Collection)
-     */
+   
     public boolean containsAll(Collection<?> c) {
         return list.containsAll(c);
     }

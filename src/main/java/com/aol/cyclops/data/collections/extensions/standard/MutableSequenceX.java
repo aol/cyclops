@@ -5,6 +5,11 @@ import java.util.Collection;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 
+/**
+ * @author johnmcclean
+ *
+ * @param <T> type of data held in this Collection
+ */
 public interface MutableSequenceX<T> extends CollectionX<T>, FluentSequenceX<T> {
     public MutableSequenceX<T> plus(T e);
 

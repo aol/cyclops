@@ -21,7 +21,7 @@ import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Type of publisher
  */
 public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
     LazyStreamWrapper getLastActive();

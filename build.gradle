@@ -8,7 +8,6 @@ buildscript {
 
 	dependencies {
 		classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
-	//	classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
 	
 	}
 }
@@ -23,7 +22,6 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.bmuschko.nexus'
-//apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'jacoco'
 apply from: custom('jacoco-version')
 
@@ -34,10 +32,7 @@ jar {
         attributes 'Implementation-Title': 'simple-react', 'Implementation-Version': version
     }
 }
-/**
-shadowJar {
-	mergeServiceFiles()
-  }**/
+
 apply from: custom('jacoco-config')
 apply from: custom('jacoco-excludes')
 
@@ -63,7 +58,7 @@ configurations {
 dependencies {
    
 	
-    compile 'io.javaslang:javaslang:2.0.2'
+   
 	compile 'com.nurkiewicz.asyncretry:asyncretry:'+asyncRetryVersion
 	compile 'org.pcollections:pcollections:'+pCollectionsVersion
 	compile "org.jooq:jool:${joolVersion}"
@@ -71,6 +66,7 @@ dependencies {
 	compile 'org.reactivestreams:reactive-streams:'+reactiveStreamsVersion
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.7.13'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.13'
     testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
     testCompile 'io.projectreactor:reactor-core:2.5.0.M2'
 	testCompile  'com.google.guava:guava:19.0'
@@ -81,6 +77,7 @@ dependencies {
 	testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
 	testCompile 'io.vertx:vertx-core:3.0.0'
 	testCompile group: 'org.testng', name: 'testng', version:'5.14.10'
+    testCompile 'io.javaslang:javaslang:2.0.2'
 	
 	
 

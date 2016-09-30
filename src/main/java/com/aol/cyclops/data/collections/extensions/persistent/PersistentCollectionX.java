@@ -22,11 +22,11 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     @Override
@@ -664,9 +664,9 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default PersistentCollectionX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default PersistentCollectionX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
         return from(this.<ListX<T>> monoid()
-                        .mapReduce(stream().groupedStatefullyWhile(predicate)));
+                        .mapReduce(stream().groupedStatefullyUntil(predicate)));
     }
 
     /* (non-Javadoc)

@@ -22,21 +22,22 @@ import org.jooq.lambda.tuple.Tuple4;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.util.stream.Streamable;
 
 /**
  * Monad Transformer for Cyclops Streamables
  * 
  * StreamableT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Streamable
- * 
+ * <pre>
+ * {@code 
  * StreamableT<AnyM<*SOME_MONAD_TYPE*<Streamable<T>>>>
- * 
+ * }</pre>
  * StreamableT allows the deeply wrapped Streamable to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
@@ -472,12 +473,12 @@ public class StreamableTSeq<T> implements StreamableT<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.StreamableT#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public StreamableTSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public StreamableTSeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (StreamableTSeq<ListX<T>>) StreamableT.super.groupedStatefullyWhile(predicate);
+        return (StreamableTSeq<ListX<T>>) StreamableT.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

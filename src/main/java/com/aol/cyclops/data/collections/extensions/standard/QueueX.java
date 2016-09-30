@@ -29,9 +29,9 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface QueueX<T> extends Queue<T>, MutableCollectionX<T>, OnEmptySwitch<T, Queue<T>> {
 
@@ -762,52 +762,92 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T>, OnEmptySwitc
         return (QueueX<T>) MutableCollectionX.super.retainAll(values);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(int, java.util.function.Supplier)
+     */
     @Override
     default <C extends Collection<? super T>> QueueX<C> grouped(int size, Supplier<C> supplier) {
 
         return (QueueX<C>) MutableCollectionX.super.grouped(size, supplier);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate)
+     */
     @Override
     default QueueX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
 
         return (QueueX<ListX<T>>) MutableCollectionX.super.groupedUntil(predicate);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate)
+     */
     @Override
     default QueueX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
 
         return (QueueX<ListX<T>>) MutableCollectionX.super.groupedWhile(predicate);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     */
     @Override
     default <C extends Collection<? super T>> QueueX<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
 
         return (QueueX<C>) MutableCollectionX.super.groupedWhile(predicate, factory);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     */
     @Override
     default <C extends Collection<? super T>> QueueX<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
 
         return (QueueX<C>) MutableCollectionX.super.groupedUntil(predicate, factory);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
+     */
     @Override
-    default QueueX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default QueueX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (QueueX<ListX<T>>) MutableCollectionX.super.groupedStatefullyWhile(predicate);
+        return (QueueX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#removeAll(org.jooq.lambda.Seq)
+     */
     @Override
     default QueueX<T> removeAll(Seq<? extends T> stream) {
 
         return (QueueX<T>) MutableCollectionX.super.removeAll(stream);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#retainAll(org.jooq.lambda.Seq)
+     */
     @Override
     default QueueX<T> retainAll(Seq<? extends T> stream) {
 
         return (QueueX<T>) MutableCollectionX.super.retainAll(stream);
     }
 
+    /**
+     * Narrow a covariant Queue
+     * 
+     * <pre>
+     * {@code 
+     * QueueX<? extends Fruit> set = QueueX.of(apple,bannana);
+     * QueueX<Fruit> fruitSet = QueueX.narrow(queue);
+     * }
+     * </pre>
+     * 
+     * @param queueX to narrow generic type
+     * @return QueueX with narrowed type
+     */
+    public  static <T> QueueX<T> narrow(QueueX<? extends T> queueX){
+        return (QueueX<T>)queueX;
+    }
 }

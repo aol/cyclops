@@ -1,7 +1,7 @@
 package com.aol.cyclops.streams.streamable;
 
 
-import static com.aol.cyclops.util.stream.Streamable.of;
+import static com.aol.cyclops.control.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -18,8 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.util.stream.Streamable;
 
 public class WindowingTest {
 	Streamable<Integer> empty;
@@ -65,10 +65,10 @@ public class WindowingTest {
 	@Test
 	public void windowStatefullyWhile(){
 		System.out.println(Streamable.of(1,2,3,4,5,6)
-				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				);
 		assertThat(Streamable.of(1,2,3,4,5,6)
-				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				
 				.toListX().size(),equalTo(5));
 		
@@ -77,7 +77,7 @@ public class WindowingTest {
 	public void windowStatefullyWhileEmpty(){
 		
 		assertThat(Streamable.of()
-				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				.toListX().size(),equalTo(0));
 		
 	}

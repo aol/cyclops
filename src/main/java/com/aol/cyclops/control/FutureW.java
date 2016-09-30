@@ -50,10 +50,20 @@ import lombok.Getter;
  *
  * @param <T> Type of wrapped future value
  */
+/**
+ * @author johnmcclean
+ *
+ * @param <T>
+ */
 @AllArgsConstructor
 @EqualsAndHashCode
 public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>, MonadicValue1<T>, FlatMap<T>, Filterable<T> {
 
+    /**
+     * An empty FutureW
+     * 
+     * @return A FutureW that wraps a CompletableFuture with a null result
+     */
     public static <T> FutureW<T> empty() {
         return new FutureW(
                            CompletableFuture.completedFuture(null));
@@ -197,18 +207,27 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return (FutureW<T>) MonadicValue1.super.combineEager(monoid, v2);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.ConvertableFunctor#map(java.util.function.Function)
+     */
     @Override
     public <R> FutureW<R> map(Function<? super T, ? extends R> fn) {
         return new FutureW<R>(
                               future.thenApply(fn));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
     @Override
     public <R> FutureW<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
 
         return (FutureW<R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
     }
 
+    /* (non-Javadoc)
+     * @see java.util.function.Supplier#get()
+     */
     @Override
     public T get() {
         try {
@@ -218,14 +237,24 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         }
     }
 
+    /**
+     * @return true if this FutureW is both complete, and completed without an Exception
+     */
     public boolean isSuccess() {
         return future.isDone() && !future.isCompletedExceptionally();
     }
 
+    /**
+     * @return true if this FutureW is complete, but completed with an Exception
+     */
     public boolean isFailed() {
         return future.isCompletedExceptionally();
     }
 
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#iterator()
+     */
     @Override
     public Iterator<T> iterator() {
         return toStream().iterator();
@@ -240,6 +269,9 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
                               CompletableFuture.completedFuture(unit));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#stream()
+     */
     @Override
     public ReactiveSeq<T> stream() {
         return ReactiveSeq.generate(() -> Try.withCatch(() -> get()))
@@ -248,23 +280,40 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
                           .map(Value::get);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.FlatMap#flatten()
+     */
     @Override
     public <R> FutureW<R> flatten() {
         return FutureW.of(AnyM.fromCompletableFuture(future)
                               .flatten()
                               .unwrap());
     }
+    
+    
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue1#flatMap(java.util.function.Function)
+     */
     public <R> FutureW<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
         return FutureW.<R> of(future.<R> thenCompose(t -> (CompletionStage<R>) mapper.apply(t)
                                                                                      .toFutureW()
                                                                                      .getFuture()));
     }
 
+    /**
+     * A flatMap operation that accepts a CompleteableFuture CompletionStage as the return type
+     * 
+     * @param mapper Mapping function
+     * @return FlatMapped FutureW
+     */
     public <R> FutureW<R> flatMapCf(Function<? super T, ? extends CompletionStage<? extends R>> mapper) {
         return FutureW.<R> of(future.<R> thenCompose(t -> (CompletionStage<R>) mapper.apply(t)));
     }
-
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toXor()
+     */
+    @Override
     public Xor<Throwable, T> toXor() {
         try {
             return Xor.primary(future.join());
@@ -273,6 +322,10 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toIor()
+     */
+    @Override
     public Ior<Throwable, T> toIor() {
         try {
             return Ior.primary(future.join());
@@ -313,7 +366,27 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return this.future;
     }
 
-    public <R> FutureW<R> visit(Function<? super T, R> success, Function<Throwable, R> failure) {
+   /**
+    * Returns a new FutureW that, when this FutureW completes
+    * exceptionally is executed with this FutureW exception as the
+    * argument to the supplied function.  Otherwise, if this FutureW
+    * completes normally, then the returned FutureW also completes
+    * normally with the same value.
+    * @param fn the function to use to compute the value of the
+    * returned FutureW if this FutureW completed exceptionally
+    * @return the new FutureW
+    */
+    public FutureW<T> recover(Function<Throwable, ? extends T> fn) {
+        return FutureW.of(toCompletableFuture().exceptionally(fn));
+    }
+    /**
+     * Map this FutureW differently depending on whether the previous stage completed successfully or failed
+     * 
+     * @param success Mapping function for successful outcomes
+     * @param failure Mapping function for failed outcomes
+     * @return New futureW mapped to a new state
+     */
+    public <R> FutureW<R> map(Function<? super T, R> success, Function<Throwable, R> failure) {
         return FutureW.of(future.thenApply(success)
                                 .exceptionally(failure));
     }
@@ -345,53 +418,89 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return (FutureW<R>) ApplicativeFunctor.super.trampoline(mapper);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return mkString();
     }
 
+    /**
+     * Construct a successfully completed FutureW from the given value
+     * 
+     * @param result To wrap inside a FutureW
+     * @return FutureW containing supplied result
+     */
     public static <T> FutureW<T> ofResult(T result) {
         return FutureW.of(CompletableFuture.completedFuture(result));
     }
 
+    /**
+     * Construct a  completed-with-error FutureW from the given Exception
+     * 
+     * @param error To wrap inside a FutureW
+     * @return FutureW containing supplied error
+     */
     public static <T> FutureW<T> ofError(Throwable error) {
         CompletableFuture<T> cf = new CompletableFuture<>();
         cf.completeExceptionally(error);
 
         return FutureW.<T> of(cf);
     }
-
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#isPresent()
+     */
+    @Override
     public boolean isPresent() {
         return !this.future.isCompletedExceptionally();
     }
-
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#mkString()
+     */
+    @Override
     public String mkString() {
         return "FutureW[" + future.toString() + "]";
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     */
     @Override
     public Maybe<T> filter(Predicate<? super T> fn) {
         return toMaybe().filter(fn);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
     @Override
     public <U> Maybe<U> ofType(Class<? extends U> type) {
 
         return (Maybe<U>) Filterable.super.ofType(type);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
     @Override
     public Maybe<T> filterNot(Predicate<? super T> fn) {
 
         return (Maybe<T>) Filterable.super.filterNot(fn);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
     @Override
     public Maybe<T> notNull() {
 
         return (Maybe<T>) Filterable.super.notNull();
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toOptional()
+     */
     @Override
     public Optional<T> toOptional() {
         if (future.isDone() && future.isCompletedExceptionally())
@@ -405,20 +514,26 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toFutureWAsync()
+     */
+    @Override
     public FutureW<T> toFutureWAsync() {
         return this;
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toFutureWAsync(java.util.concurrent.Executor)
+     */
+    @Override
     public FutureW<T> toFutureWAsync(Executor ex) {
         return this;
     }
 
-    /**
+    /* 
      * Apply a function across two values at once.
-     * 
-     * @param app
-     * @param fn
-     * @return
+     * (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
     public <T2, R> FutureW<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -428,12 +543,11 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return (FutureW<R>) ApplicativeFunctor.super.zip(app, fn);
     }
 
-    /**
-     * Equivalent to ap, but accepts an Iterable and takes the first value only from that iterable.
-     * 
-     * @param app
-     * @param fn
-     * @return
+    
+    /* 
+     * Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
+     * (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     public <T2, R> FutureW<R> zip(Iterable<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -441,12 +555,11 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return (FutureW<R>) ApplicativeFunctor.super.zip(app, fn);
     }
 
-    /**
-     * Equivalent to ap, but accepts a Publisher and takes the first value only from that publisher.
+    
+    /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
      * 
-     * @param app
-     * @param fn
-     * @return
+     * (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
     public <T2, R> FutureW<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
@@ -454,10 +567,23 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     }
 
+    /**
+     * Create a FutureW object that asyncrhonously populates using the Common ForkJoinPool from the user provided Supplier
+     * 
+     * @param s Supplier to asynchronously populate results from
+     * @return FutureW asynchronously populated from the Supplier
+     */
     public static <T> FutureW<T> ofSupplier(Supplier<T> s) {
         return FutureW.of(CompletableFuture.supplyAsync(s));
     }
 
+    /**
+     * Create a FutureW object that asyncrhonously populates using the provided Executor and Supplier
+     * 
+     * @param s Supplier to asynchronously populate results from
+     * @param ex Executro to asynchronously populate results with
+     * @return FutureW asynchronously populated from the Supplier
+     */
     public static <T> FutureW<T> ofSupplier(Supplier<T> s, Executor ex) {
         return FutureW.of(CompletableFuture.supplyAsync(s, ex));
     }

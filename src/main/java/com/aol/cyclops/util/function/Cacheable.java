@@ -22,10 +22,13 @@ import com.aol.cyclops.util.ExceptionSoftener;
  * }
  * </pre>
  *
- * @param <OUT>
+ * @param <OUT> Return type of Cacheable
  */
 public interface Cacheable<OUT> {
 
+    /**
+     * @return A version of this Cacheable that throws unchecked exceptions
+     */
     default SoftenedCacheable<OUT> soften() {
         return (key, fn) -> {
             try {

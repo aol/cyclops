@@ -40,8 +40,11 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * Monad transformer for JDK Optional
  * 
  * OptionalT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Optional
- * 
+ * <pre>
+ * {@code 
  * OptionalT<AnyMSeq<*SOME_MONAD_TYPE*<Optional<T>>>>
+ * }
+ * </pre>
  * 
  * OptionalT allows the deeply wrapped Optional to be manipulating within it's nested /contained context
  * 
@@ -485,12 +488,12 @@ public class OptionalTSeq<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public OptionalTSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public OptionalTSeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (OptionalTSeq<ListX<T>>) ValueTransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (OptionalTSeq<ListX<T>>) ValueTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

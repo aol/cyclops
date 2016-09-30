@@ -40,8 +40,10 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * Monad Transformer for Cyclops Streams
  * 
  * StreamT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Stream
- * 
+ * <pre>
+ * {@code 
  * StreamT<AnyM<*SOME_MONAD_TYPE*<Stream<T>>>>
+ * }</pre>
  * 
  * StreamT allows the deeply wrapped Stream to be manipulating within it's nested /contained context
  * @author johnmcclean
@@ -428,12 +430,12 @@ public interface StreamT<T> extends FoldableTransformerSeq<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default StreamT<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default StreamT<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (StreamT<ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (StreamT<ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

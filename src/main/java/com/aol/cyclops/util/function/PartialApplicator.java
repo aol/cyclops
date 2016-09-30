@@ -16,7 +16,7 @@ public class PartialApplicator extends Lambda {
     /**
     * Returns a function with 1 arguments applied to the supplied Function
     * @param t1 Generic argument
-    * @param triFunc Function that accepts 3 parameters
+    * @param func Function
     * @param <T1> Generic argument type
     * @param <T2> Generic argument type
     
@@ -32,7 +32,7 @@ public class PartialApplicator extends Lambda {
     * Returns a function with 2 arguments applied to the supplied BiFunction
     * @param t1 Generic argument
     * @param t2 Generic argument
-    * @param triFunc Function that accepts 3 parameters
+    * @param biFunc Function that accepts 2 parameters
     * @param <T1> Generic argument type
     * @param <T2> Generic argument type
     
@@ -47,8 +47,7 @@ public class PartialApplicator extends Lambda {
     /**
      * Returns a function with 1 arguments applied to the supplied BiFunction
      * @param t1 Generic argument
-     * @param t2 Generic argument
-     * @param triFunc Function that accepts 3 parameters
+     * @param biFunc Function that accepts 2 parameters
      * @param <T1> Generic argument type
      * @param <T2> Generic argument type
     

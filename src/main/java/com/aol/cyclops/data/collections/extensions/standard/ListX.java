@@ -29,12 +29,19 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.util.stream.StreamUtils;
 
+/**
+ * An eXtended List type, that offers additional eagerly executed functional style operators such as bimap, filter and more
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> the type of elements held in this collection
+ */
 public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T>, IterableFunctor<T>, ZippingApplicativable<T>,
         OnEmptySwitch<T, List<T>> {
 
@@ -75,7 +82,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
      * 
      * //(1,2,3,4,5)
      * 
-     * }</code>
+     * }</pre>
      * 
      * @param seed Initial value 
      * @param unfolder Iteratively applied function, terminated by an empty Optional
@@ -157,7 +164,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
     /**
      * Construct a ListX from an Publisher
      * 
-     * @param iterable
+     * @param publisher
      *            to construct ListX from
      * @return ListX
      */
@@ -251,7 +258,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
 
     /**
      * Combine two adjacent elements in a ListX using the supplied BinaryOperator
-     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
      * with it's neighbor
      * <pre>
      * {@code 
@@ -493,6 +500,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
     /* (non-Javadoc)
      * @see java.util.List#subList(int, int)
      */
+    @Override
     public ListX<T> subList(int start, int end);
 
     /* (non-Javadoc)
@@ -952,12 +960,12 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default ListX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default ListX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (ListX<ListX<T>>) MutableCollectionX.super.groupedStatefullyWhile(predicate);
+        return (ListX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)
@@ -985,6 +993,23 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
         if (this.isEmpty())
             return ListX.fromIterable(supplier.get());
         return this;
+    }
+
+    /**
+     * Narrow a covariant List
+     * 
+     * <pre>
+     * {@code 
+     * ListX<? extends Fruit> list = ListX.of(apple,bannana);
+     * ListX<Fruit> fruitList = ListX.narrow(list);
+     * }
+     * </pre>
+     * 
+     * @param listX to narrow generic type
+     * @return ListX with narrowed type
+     */
+    public  static <T> ListX<T> narrow(ListX<? extends T> listX){
+        return (ListX<T>)listX;
     }
 
 }

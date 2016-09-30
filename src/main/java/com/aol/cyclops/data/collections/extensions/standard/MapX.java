@@ -24,6 +24,7 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
 import com.aol.cyclops.types.BiFunctor;
@@ -33,54 +34,101 @@ import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.OnEmpty;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.util.stream.StreamUtils;
 
+/**
+ * An eXtended Map type, that offers additional eagerly executed functional style operators such as bimap, filter and more
+ * 
+ * @author johnmcclean
+ *
+ * @param <K> Key type
+ * @param <V> Value type
+ */
 public interface MapX<K, V> extends Map<K, V>, FluentMapX<K, V>, BiFunctor<K, V>, Functor<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
         OnEmptySwitch<Tuple2<K, V>, Map<K, V>>, Publisher<Tuple2<K, V>>, Foldable<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {
 
+    
+    
+    /**
+     * 
+     * @return A Collector that generates a mutable Map from a Collection of Tuple2
+     */
     static <K, V> Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> defaultCollector() {
         return Collectors.toMap(t -> t.v1, t -> t.v2);
     }
 
+    /**
+     * @return A Collector that generates an Immutable Map from a Collection of Tuple2
+     */
     static <K, V> Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> immutableCollector() {
         return Collectors.collectingAndThen(defaultCollector(), Collections::unmodifiableMap);
 
     }
 
+    /**
+     * @return A Collector that generates a mutable MapX from a Collection of Tuple2
+     */
     static <K, V> Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> toMapX() {
         return Collectors.collectingAndThen(defaultCollector(), (Map<K, V> d) -> new MapXImpl<K, V>(
                                                                                                     d, defaultCollector()));
 
     }
 
+    /**
+     * @return The currently configured Map Collector for this MapX
+     */
     public <K, V> Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> getCollector();
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#stream()
+     */
     default ReactiveSeq<Tuple2<K, V>> stream() {
         return ReactiveSeq.fromIterable(this.entrySet())
                           .map(e -> Tuple.tuple(e.getKey(), e.getValue()));
     }
 
+    /**
+     * @return An empty MapX
+     */
     static <K, V> MapX<K, V> empty() {
         return fromMap(new HashMap<K, V>());
     }
 
-    public static <K, V> MapX<K, V> fromMap(Map<? extends K, ? extends V> it) {
-        return fromMap(defaultCollector(), it);
+    /**
+     * Wrap a Map in a MapX
+     * 
+     * @param map to wrap
+     * @return MapX wrapping the supplied Map
+     */
+    public static <K, V> MapX<K, V> fromMap(Map<? extends K, ? extends V> map) {
+        return fromMap(defaultCollector(), map);
     }
 
-    public static <K, V> MapX<K, V> fromMap(Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> collector, Map<? extends K, ? extends V> it) {
-        if (it instanceof MapX)
-            return (MapX) it;
-        if (it instanceof Map)
+    /**
+     * Wrap a map in a MapX, also supplying a Collector for use in operations
+     * 
+     * @param collector To generate new MapX's from
+     * @param map to wrap
+     * @return MapX wrapping the supplied Map
+     */
+    public static <K, V> MapX<K, V> fromMap(Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> collector, Map<? extends K, ? extends V> map) {
+        if (map instanceof MapX)
+            return (MapX) map;
+        if (map instanceof Map)
             return new MapXImpl<K, V>(
-                                      (Map) it, collector);
+                                      (Map) map, collector);
         return new MapXImpl<K, V>(
-                                  StreamUtils.stream(it)
+                                  StreamUtils.stream(map)
                                              .map(e -> Tuple.tuple(e.getKey(), e.getValue()))
                                              .collect(collector),
                                   collector);
     }
 
+    /**
+     * Construct a new MapX with the same collector from the supplied Stream
+     * 
+     * @param stream ot Tuples to convert into a MapX
+     * @return MapX
+     */
     default MapX<K, V> fromStream(ReactiveSeq<Tuple2<K, V>> stream) {
         return new MapXImpl<>(
                               stream.toMap(t -> t.v1, t -> t.v2), getCollector());
@@ -138,45 +186,72 @@ public interface MapX<K, V> extends Map<K, V>, FluentMapX<K, V>, BiFunctor<K, V>
     @Override
     int size();
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#allMatch(java.util.function.Predicate)
+     */
     @Override
     default boolean allMatch(Predicate<? super Tuple2<K, V>> c) {
         return CyclopsCollectable.super.allMatch(c);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#anyMatch(java.util.function.Predicate)
+     */
     @Override
     default boolean anyMatch(Predicate<? super Tuple2<K, V>> c) {
         return CyclopsCollectable.super.anyMatch(c);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#noneMatch(java.util.function.Predicate)
+     */
     @Override
     default boolean noneMatch(Predicate<? super Tuple2<K, V>> c) {
         return CyclopsCollectable.super.noneMatch(c);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#max(java.util.Comparator)
+     */
     @Override
     default Optional<Tuple2<K, V>> max(Comparator<? super Tuple2<K, V>> comparator) {
         return CyclopsCollectable.super.max(comparator);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#min(java.util.Comparator)
+     */
     @Override
     default Optional<Tuple2<K, V>> min(Comparator<? super Tuple2<K, V>> comparator) {
         return CyclopsCollectable.super.min(comparator);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.FluentMapX#plus(java.lang.Object, java.lang.Object)
+     */
     @Override
     default MapX<K, V> plus(K key, V value) {
         return (MapX<K, V>) FluentMapX.super.plus(key, value);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.FluentMapX#plusAll(java.util.Map)
+     */
     @Override
     default MapX<K, V> plusAll(Map<? extends K, ? extends V> map) {
         return (MapX<K, V>) FluentMapX.super.plusAll(map);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.FluentMapX#minus(java.lang.Object)
+     */
     default MapX<K, V> minus(Object key) {
         return (MapX<K, V>) FluentMapX.super.minus(key);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.FluentMapX#minusAll(java.util.Collection)
+     */
     default MapX<K, V> minusAll(Collection<?> keys) {
         return (MapX<K, V>) FluentMapX.super.minusAll(keys);
     }
@@ -370,6 +445,54 @@ public interface MapX<K, V> extends Map<K, V>, FluentMapX<K, V>, BiFunctor<K, V>
         if (this.isEmpty())
             return MapX.fromMap(supplier.get());
         return this;
+    }
+    
+    /**
+     * Convert this MapX to a ListX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return ListX of transformed values
+     */
+    default <T> ListX<T> toListX(Function<? super Tuple2<? super K,? super V>,? extends T> fn){
+        return ListX.narrow(stream().map(fn).toListX());
+    }
+    /**
+     * Convert this MapX to a SetX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return SetX of transformed values
+     */
+    default <T> SetX<T> toSetX(Function<? super Tuple2<? super K,? super V>,? extends T> fn){
+        return SetX.narrow(stream().map(fn).toSetX());
+    }
+    /**
+     * Convert this MapX to a SortedSetX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return SortedSetX of transformed values
+     */
+    default <T> SortedSetX<T> toSortedSetX(Function<? super Tuple2<? super K,? super V>,? extends T> fn){
+        return SortedSetX.narrow(stream().map(fn).toSortedSetX());
+    }
+    
+    /**
+     * Convert this MapX to a QueueX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return QueueX of transformed values
+     */
+    default <T> QueueX<T> toQueueX(Function<? super Tuple2<? super K,? super V>,? extends T> fn){
+        return QueueX.narrow(stream().map(fn).toQueueX());
+    }
+    
+    /**
+     * Convert this MapX to a DequeX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return DequeX of transformed values
+     */
+    default <T> DequeX<T> toDequeX(Function<? super Tuple2<? super K,? super V>,? extends T> fn){
+        return DequeX.narrow(stream().map(fn).toDequeX());
     }
 
 }

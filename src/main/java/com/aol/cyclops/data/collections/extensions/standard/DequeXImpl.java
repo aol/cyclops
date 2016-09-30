@@ -32,44 +32,27 @@ public class DequeXImpl<T> implements DequeX<T> {
                                            .get();
     }
 
-    /**
-     * @param action
-     * @see java.lang.Iterable#forEach(java.util.function.Consumer)
-     */
+    @Override
     public void forEach(Consumer<? super T> action) {
         deque.forEach(action);
     }
 
-    /**
-     * @return
-     * @see org.pcollections.MapPSet#iterator()
-     */
+    @Override
     public Iterator<T> iterator() {
         return deque.iterator();
     }
 
-    /**
-     * @return
-     * @see org.pcollections.MapPSet#size()
-     */
+    @Override
     public int size() {
         return deque.size();
     }
 
-    /**
-     * @param e
-     * @return
-     * @see org.pcollections.MapPSet#contains(java.lang.Object)
-     */
+    @Override
     public boolean contains(Object e) {
         return deque.contains(e);
     }
 
-    /**
-     * @param o
-     * @return
-     * @see java.util.AbstractSet#equals(java.lang.Object)
-     */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof DequeXImpl)
             return deque.equals(((DequeXImpl) o).deque);
@@ -77,327 +60,199 @@ public class DequeXImpl<T> implements DequeX<T> {
         return deque.equals(o);
     }
 
-    /**
-     * @return
-     * @see java.util.AbstractCollection#isEmpty()
-     */
+    @Override
     public boolean isEmpty() {
         return deque.isEmpty();
     }
-
-    /**
-     * @return
-     * @see java.util.AbstractSet#hashCode()
-     */
+    
+    @Override
     public int hashCode() {
         return deque.hashCode();
     }
 
-    /**
-     * @return
-     * @see java.util.AbstractCollection#toArray()
-     */
+    @Override
     public Object[] toArray() {
         return deque.toArray();
     }
 
-    /**
-     * @param c
-     * @return
-     * @see java.util.AbstractSet#removeAll(java.util.Collection)
-     */
+    @Override
     public boolean removeAll(Collection<?> c) {
         return deque.removeAll(c);
     }
 
-    /**
-     * @param a
-     * @return
-     * @see java.util.AbstractCollection#toArray(java.lang.Object[])
-     */
+    @Override
     public <T> T[] toArray(T[] a) {
         return deque.toArray(a);
     }
 
-    /**
-     * @param e
-     * @return
-     * @see java.util.AbstractCollection#add(java.lang.Object)
-     */
+    @Override
     public boolean add(T e) {
         return deque.add(e);
     }
 
-    /**
-     * @param o
-     * @return
-     * @see java.util.AbstractCollection#remove(java.lang.Object)
-     */
+    @Override
     public boolean remove(Object o) {
         return deque.remove(o);
     }
 
-    /**
-     * @param c
-     * @return
-     * @see java.util.AbstractCollection#containsAll(java.util.Collection)
-     */
+    @Override
     public boolean containsAll(Collection<?> c) {
         return deque.containsAll(c);
     }
 
-    /**
-     * @param c
-     * @return
-     * @see java.util.AbstractCollection#addAll(java.util.Collection)
-     */
+    @Override
     public boolean addAll(Collection<? extends T> c) {
         return deque.addAll(c);
     }
 
-    /**
-     * @param c
-     * @return
-     * @see java.util.AbstractCollection#retainAll(java.util.Collection)
-     */
+    @Override
     public boolean retainAll(Collection<?> c) {
         return deque.retainAll(c);
     }
 
-    /**
-     * 
-     * @see java.util.AbstractCollection#clear()
-     */
+    @Override
     public void clear() {
         deque.clear();
     }
 
-    /**
-     * @return
-     * @see java.util.AbstractCollection#toString()
-     */
+    @Override
     public String toString() {
         return deque.toString();
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
-     */
+
     @Override
     public <R, A> R collect(Collector<? super T, A, R> collector) {
         return stream().collect(collector);
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#count()
-     */
+  
     @Override
     public long count() {
         return this.size();
     }
 
-    /**
-     * @param filter
-     * @return
-     * @see java.util.Collection#removeIf(java.util.function.Predicate)
-     */
+    @Override
     public boolean removeIf(Predicate<? super T> filter) {
         return deque.removeIf(filter);
     }
 
-    /**
-     * @return
-     * @see java.util.Collection#parallelStream()
-     */
+    @Override
     public Stream<T> parallelStream() {
         return deque.parallelStream();
     }
 
-    /**
-     * @return
-     * @see java.util.List#spliterator()
-     */
+    @Override
     public Spliterator<T> spliterator() {
         return deque.spliterator();
     }
 
-    /**
-     * @param e
-     * @see java.util.Deque#addFirst(java.lang.Object)
-     */
+    @Override
     public void addFirst(T e) {
         deque.addFirst(e);
     }
 
-    /**
-     * @param e
-     * @see java.util.Deque#addLast(java.lang.Object)
-     */
+    @Override
     public void addLast(T e) {
         deque.addLast(e);
     }
 
-    /**
-     * @param e
-     * @return
-     * @see java.util.Deque#offerFirst(java.lang.Object)
-     */
+    @Override
     public boolean offerFirst(T e) {
         return deque.offerFirst(e);
     }
 
-    /**
-     * @param e
-     * @return
-     * @see java.util.Deque#offerLast(java.lang.Object)
-     */
+    @Override
     public boolean offerLast(T e) {
         return deque.offerLast(e);
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#removeFirst()
-     */
+    @Override
     public T removeFirst() {
         return deque.removeFirst();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#removeLast()
-     */
+    @Override
     public T removeLast() {
         return deque.removeLast();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#pollFirst()
-     */
+    @Override
     public T pollFirst() {
         return deque.pollFirst();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#pollLast()
-     */
+    @Override
     public T pollLast() {
         return deque.pollLast();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#getFirst()
-     */
+    @Override
     public T getFirst() {
         return deque.getFirst();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#getLast()
-     */
+    @Override
     public T getLast() {
         return deque.getLast();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#peekFirst()
-     */
+    @Override
     public T peekFirst() {
         return deque.peekFirst();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#peekLast()
-     */
+    @Override
     public T peekLast() {
         return deque.peekLast();
     }
 
-    /**
-     * @param o
-     * @return
-     * @see java.util.Deque#removeFirstOccurrence(java.lang.Object)
-     */
+    @Override
     public boolean removeFirstOccurrence(Object o) {
         return deque.removeFirstOccurrence(o);
     }
 
-    /**
-     * @param o
-     * @return
-     * @see java.util.Deque#removeLastOccurrence(java.lang.Object)
-     */
+    @Override
     public boolean removeLastOccurrence(Object o) {
         return deque.removeLastOccurrence(o);
     }
 
-    /**
-     * @param e
-     * @return
-     * @see java.util.Deque#offer(java.lang.Object)
-     */
+    @Override
     public boolean offer(T e) {
         return deque.offer(e);
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#remove()
-     */
+    @Override
     public T remove() {
         return deque.remove();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#poll()
-     */
+    @Override
     public T poll() {
         return deque.poll();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#element()
-     */
+    @Override
     public T element() {
         return deque.element();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#peek()
-     */
+    @Override
     public T peek() {
         return deque.peek();
     }
 
-    /**
-     * @param e
-     * @see java.util.Deque#push(java.lang.Object)
-     */
+    @Override
     public void push(T e) {
         deque.push(e);
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#pop()
-     */
+    @Override
     public T pop() {
         return deque.pop();
     }
 
-    /**
-     * @return
-     * @see java.util.Deque#descendingIterator()
-     */
+    @Override
     public Iterator<T> descendingIterator() {
         return deque.descendingIterator();
     }

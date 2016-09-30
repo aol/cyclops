@@ -102,8 +102,8 @@ public interface Functor<T> {
       * }
       * </pre>
       * 
-     * @param mapper
-     * @return
+     * @param mapper TCO Transformation function
+     * @return Functor transformed by the supplied transformation function
      */
     default <R> Functor<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return map(in -> mapper.apply(in)

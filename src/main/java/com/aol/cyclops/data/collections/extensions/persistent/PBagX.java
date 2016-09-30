@@ -807,9 +807,9 @@ public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>, OnEmptySwit
     }
 
     @Override
-    default PBagX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default PBagX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (PBagX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyWhile(predicate);
+        return (PBagX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override

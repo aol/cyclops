@@ -47,7 +47,10 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * 
  * SetT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Set
  * 
+ * <pre>
+ * {@code 
  * SetT<AnyM<*SOME_MONAD_TYPE*<Set<T>>>>
+ * }</pre>
  * 
  * SetT allows the deeply wrapped Set to be manipulating within it's nested /contained context
  * @author johnmcclean
@@ -488,12 +491,12 @@ public interface SetT<T> extends FoldableTransformerSeq<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default SetT<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default SetT<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (SetT<ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (SetT<ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

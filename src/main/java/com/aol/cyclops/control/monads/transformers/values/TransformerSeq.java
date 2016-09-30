@@ -23,6 +23,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
@@ -30,7 +31,6 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyOperations;
-import com.aol.cyclops.util.stream.Streamable;
 
 public interface TransformerSeq<T> extends ConvertableSequence<T>, Traversable<T>, Sequential<T>, Iterable<T>,
 
@@ -214,11 +214,11 @@ ToStream<T>, Publisher<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default Traversable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return unitAnyM(transformerStream().map(s -> s.groupedStatefullyWhile(predicate)));
+    default Traversable<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return unitAnyM(transformerStream().map(s -> s.groupedStatefullyUntil(predicate)));
 
     }
 

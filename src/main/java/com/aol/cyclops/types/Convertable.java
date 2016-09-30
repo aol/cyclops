@@ -24,7 +24,7 @@ import lombok.Value;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Type of this convertable
  */
 public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
 
@@ -56,6 +56,9 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
         return absent.get();
     }
 
+    /**
+     * @return True if value exists and is non-null
+     */
     default boolean isPresent() {
         try {
             T value = get();
@@ -133,7 +136,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
     /**Get the contained value or else the provided alternative
      * 
      * @param value
-     * @return
+     * @return the value of this convertable (if not empty) or else the specified value
      */
     default T orElse(T value) {
         return toOptional().orElse(value);
@@ -142,9 +145,9 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
     /**
      * Get the contained value or throw an exception if null
      * 
-     * @param ex
-     * @return
-     * @throws X
+     * @param ex Supplier that returns an exception if this value is empty
+     * @return Value of this value if present
+     * @throws X Exception type returned by provided Supplier
      */
     default <X extends Throwable> T orElseThrow(Supplier<? extends X> ex) throws X {
         return toOptional().orElseThrow(ex);

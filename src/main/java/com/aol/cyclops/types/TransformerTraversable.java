@@ -117,27 +117,20 @@ public interface TransformerTraversable<T> {
     }
 
     /**
-     * Create Travesable of Lists where
+     * List Transformer view into batched Lists where
      * each List is populated while the supplied bipredicate holds. The
      * bipredicate recieves the List from the last window as well as the
      * current value and can choose to aggregate the current value or create a
      * new window
      * 
-     * <pre>
-     * {@code 
-     *  ListTSeq<Integer> grouped  = ReactiveSeq.of(1,2,3,4,5,6)
-     *                                          .groupedStatefullyWhile((s,i)->s.contains(4) ? true : false);
-     *                                          
-     *  //ReactiveSeq[List[1],List[2],List[3],List[4,5],List[6]]                                     
-     * }
-     * </pre>
+   
      * 
      * 
      * @param predicate Predicate to determine batch
      * @return List Transformer view into batched Traversable
      */
-    default ListTSeq<T> groupedStatefullyWhileT(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return ListT.fromStream(stream().groupedStatefullyWhile(predicate));
+    default ListTSeq<T> groupedStatefullyUntilT(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return ListT.fromStream(stream().groupedStatefullyUntil(predicate));
     }
 
     /**

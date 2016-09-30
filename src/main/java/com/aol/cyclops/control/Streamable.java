@@ -1,4 +1,4 @@
-package com.aol.cyclops.util.stream;
+package com.aol.cyclops.control;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,11 +38,11 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.internal.stream.SeqUtils;
+import com.aol.cyclops.internal.stream.StreamableImpl;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFoldable;
@@ -56,6 +56,8 @@ import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 
+import lombok.AllArgsConstructor;
+
 /**
  * Represents something that can generate a Stream, repeatedly
  * 
@@ -66,6 +68,98 @@ import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, CyclopsCollectable<T>, ConvertableSequence<T>, Functor<T>, Filterable<T>,
         Traversable<T>, Unit<T>, ZippingApplicativable<T> {
 
+    public static <T> Streamable<T> fromObject(final Object toCoerce) {
+        return new StreamableImpl(
+                                  Impl.collectStream(toCoerce));
+    }
+
+    /**
+     * (Lazily) Construct a Streamable from a Stream.
+     * 
+     * @param stream to construct Streamable from
+     * @return Streamable
+     */
+    public static <T> Streamable<T> fromStream(final Stream<T> stream) {
+        return new StreamableImpl(
+                                  Impl.collectStream(stream));
+    }
+
+    /**
+     * (Lazily) Construct a Streamable from an Iterable.
+     * 
+     * @param iterable to construct Streamable from
+     * @return Streamable
+     */
+    public static <T> Streamable<T> fromIterable(final Iterable<T> iterable) {
+        return new StreamableImpl(
+                                  Impl.collectStream(iterable));
+    }
+
+    /**
+     * @param toCoerce Efficiently / lazily Makes Stream repeatable, guards iteration with locks on initial iteration
+     * @return
+     */
+    public static <T> Streamable<T> synchronizedFromStream(final Stream<T> toCoerce) {
+        return new StreamableImpl(
+                                  Impl.collectStreamConcurrent(toCoerce));
+    }
+
+    public static <T> Streamable<T> synchronizedFromIterable(final Iterable<T> toCoerce) {
+        return new StreamableImpl(
+                                  Impl.collectStreamConcurrent(toCoerce));
+    }
+
+    static class Impl {
+
+        private static <T> Iterable<T> collectStreamConcurrent(final T object) {
+            if (object instanceof Stream) {
+
+                final Collection c = SeqUtils.toConcurrentLazyCollection((Stream) object);
+                return new PrintableIterable<T>(
+                                                c);
+            }
+            if (object instanceof Object[]) {
+                return (Iterable<T>) Arrays.asList((Object[]) object);
+            }
+            if (object instanceof Iterable)
+                return (Iterable<T>) object;
+
+            return Arrays.asList(object);
+        }
+
+        private static <T> Iterable<T> collectStream(final T object) {
+            if (object instanceof Stream) {
+
+                final Collection c = SeqUtils.toLazyCollection((Stream) object);
+                return new PrintableIterable<T>(
+                                                c);
+            }
+            if (object instanceof Object[]) {
+                return (Iterable<T>) Arrays.asList((Object[]) object);
+            }
+            if (object instanceof Iterable)
+                return (Iterable<T>) object;
+
+            return Arrays.asList(object);
+        }
+    }
+
+    @AllArgsConstructor
+    static class PrintableIterable<T> implements Iterable<T> {
+        private final Collection c;
+
+        @Override
+        public Iterator<T> iterator() {
+            return c.iterator();
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s", c);
+        }
+    }
+
+    @Override
     default Collectable<T> collectable() {
 
         return Seq.seq(stream());
@@ -75,7 +169,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
-    default Streamable<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+    default Streamable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.combine(predicate, op));
     }
@@ -84,19 +178,19 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Streamable<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Streamable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
     }
 
     @Override
-    default <U, R> Streamable<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Streamable<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
     }
 
     @Override
-    default <U, R> Streamable<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Streamable<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
     }
@@ -105,7 +199,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Streamable<Tuple2<T, U>> zip(Stream<? extends U> other) {
+    default <U> Streamable<Tuple2<T, U>> zip(final Stream<? extends U> other) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.zip(other));
     }
@@ -114,7 +208,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> Streamable<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
+    default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.zip3(second, third));
     }
@@ -123,26 +217,27 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
-            Stream<? extends T4> fourth) {
+    default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
+            final Stream<? extends T4> fourth) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.zip4(second, third, fourth));
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default Streamable<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default Streamable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.groupedStatefullyWhile(predicate));
+        return Streamable.fromIterable(ZippingApplicativable.super.groupedStatefullyUntil(predicate));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
-    default <K, A, D> Streamable<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+    default <K, A, D> Streamable<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
+            final Collector<? super T, A, D> downstream) {
         return Streamable.fromIterable(ZippingApplicativable.super.grouped(classifier, downstream));
     }
 
@@ -150,7 +245,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function)
      */
     @Override
-    default <K> Streamable<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+    default <K> Streamable<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.grouped(classifier));
     }
@@ -159,7 +254,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
-    default Streamable<T> takeWhile(Predicate<? super T> p) {
+    default Streamable<T> takeWhile(final Predicate<? super T> p) {
 
         return (Streamable<T>) ZippingApplicativable.super.takeWhile(p);
     }
@@ -168,7 +263,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
-    default Streamable<T> dropWhile(Predicate<? super T> p) {
+    default Streamable<T> dropWhile(final Predicate<? super T> p) {
 
         return (Streamable<T>) ZippingApplicativable.super.dropWhile(p);
     }
@@ -177,7 +272,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
-    default Streamable<T> takeUntil(Predicate<? super T> p) {
+    default Streamable<T> takeUntil(final Predicate<? super T> p) {
 
         return (Streamable<T>) ZippingApplicativable.super.takeUntil(p);
     }
@@ -186,7 +281,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
-    default Streamable<T> dropUntil(Predicate<? super T> p) {
+    default Streamable<T> dropUntil(final Predicate<? super T> p) {
 
         return (Streamable<T>) ZippingApplicativable.super.dropUntil(p);
     }
@@ -195,7 +290,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#dropRight(int)
      */
     @Override
-    default Streamable<T> dropRight(int num) {
+    default Streamable<T> dropRight(final int num) {
 
         return (Streamable<T>) ZippingApplicativable.super.dropRight(num);
     }
@@ -204,7 +299,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Traversable#takeRight(int)
      */
     @Override
-    default Streamable<T> takeRight(int num) {
+    default Streamable<T> takeRight(final int num) {
 
         return (Streamable<T>) ZippingApplicativable.super.takeRight(num);
     }
@@ -216,39 +311,20 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            to construct ReactiveSeq from
      * @return LazyFutureStream
      */
-    public static <T> Streamable<T> fromPublisher(Publisher<? extends T> publisher) {
+    public static <T> Streamable<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
-        SeqSubscriber<T> sub = SeqSubscriber.subscriber();
+        final SeqSubscriber<T> sub = SeqSubscriber.subscriber();
         publisher.subscribe(sub);
         return fromStream(sub.stream());
     }
 
-    /**
-     * (Lazily) Construct a Streamable from a Stream.
-     * 
-     * @param stream to construct Streamable from
-     * @return Streamable
-     */
-    public static <T> Streamable<T> fromStream(Stream<T> stream) {
-        return AsStreamable.fromStream(stream);
+    public static <T> Streamable<T> fromIterator(final Iterator<T> it) {
+
+        return Streamable.fromIterable(() -> it);
     }
 
-    /**
-     * (Lazily) Construct a Streamable from an Iterable.
-     * 
-     * @param iterable to construct Streamable from
-     * @return Streamable
-     */
-    public static <T> Streamable<T> fromIterable(Iterable<T> iterable) {
-        return AsStreamable.fromIterable(iterable);
-    }
-
-    public static <T> Streamable<T> fromIterator(Iterator<T> it) {
-
-        return AsStreamable.fromIterable(() -> it);
-    }
-
-    default <T> Streamable<T> unit(T t) {
+    @Override
+    default <T> Streamable<T> unit(final T t) {
         return of(t);
     }
 
@@ -256,7 +332,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    default <T> Streamable<T> unitIterator(Iterator<T> it) {
+    default <T> Streamable<T> unitIterator(final Iterator<T> it) {
         return Streamable.fromIterator(it);
     }
 
@@ -266,18 +342,20 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param values to construct Streamable from
      * @return Streamable
      */
-    public static <T> Streamable<T> of(T... values) {
-        Exception e;
-        Iterable<T> it = Arrays.asList(values);
+    public static <T> Streamable<T> of(final T... values) {
+        final Iterable<T> it = Arrays.asList(values);
         return new Streamable<T>() {
+            @Override
             public ReactiveSeq<T> stream() {
                 return ReactiveSeq.of(values);
             }
 
+            @Override
             public Iterable<T> getStreamable() {
                 return it;
             }
 
+            @Override
             public ReactiveSeq<T> reactiveSeq() {
                 return ReactiveSeq.of(values);
             }
@@ -332,9 +410,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param t Streamable to append
      * @return New Streamable with provided Streamable appended
      */
-    default Streamable<T> appendAll(Streamable<T> t) {
-        return Streamable.fromStream(this.reactiveSeq()
-                                         .appendStream(t.reactiveSeq()));
+    default Streamable<T> appendAll(final Streamable<T> t) {
+        return Streamable.fromStream(reactiveSeq().appendStream(t.reactiveSeq()));
     }
 
     /**
@@ -350,7 +427,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param t element to remove
      * @return Filtered Stream / SequenceM
      */
-    default Streamable<T> remove(T t) {
+    default Streamable<T> remove(final T t) {
         return Streamable.fromStream(reactiveSeq().remove(t));
     }
 
@@ -365,10 +442,11 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
-     * @param values to prepend
+     * </pre>
+     * @param t value to prepend
      * @return Streamable with values prepended
      */
-    default Streamable<T> prepend(T t) {
+    default Streamable<T> prepend(final T t) {
         return Streamable.fromStream(reactiveSeq().prepend(t));
     }
 
@@ -382,6 +460,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * }
      *</pre>
      */
+    @Override
     default Streamable<T> distinct() {
         return Streamable.fromStream(reactiveSeq().distinct());
     }
@@ -401,7 +480,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param function folding function
      * @return Value from reduction
      */
-    default <U> U foldLeft(U identity, BiFunction<U, ? super T, U> function) {
+    default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> function) {
         return reactiveSeq().foldLeft(identity, function);
     }
 
@@ -414,11 +493,14 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     *   
     *   //"world:hello"
     * }
+    * </pre>
+    * 
     * @param seed - identity value 
     * @param function folding function
     * @return Single reduced value
     */
-    default <U> U foldRight(U seed, BiFunction<? super T, ? super U, ? extends U> function) {
+    @Override
+    default <U> U foldRight(final U seed, final BiFunction<? super T, ? super U, ? extends U> function) {
         return reactiveSeq().foldRight(seed, function);
     }
 
@@ -439,7 +521,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param fn mapper function
      * @return Mapped Streamable
      */
-    default <R> Streamable<R> map(Function<? super T, ? extends R> fn) {
+    @Override
+    default <R> Streamable<R> map(final Function<? super T, ? extends R> fn) {
         return Streamable.fromStream(reactiveSeq().map(fn));
     }
 
@@ -457,21 +540,23 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param fn Consumer to peek with
      * @return Streamable that will peek at values as they pass through
      */
-    default Streamable<T> peek(Consumer<? super T> fn) {
+    @Override
+    default Streamable<T> peek(final Consumer<? super T> fn) {
         return Streamable.fromStream(reactiveSeq().peek(fn));
     }
 
     /* (non-Javadoc)
      * @see java.util.stream.Stream#filtered(java.util.function.Predicate)
      */
-    default Streamable<T> filter(Predicate<? super T> fn) {
+    @Override
+    default Streamable<T> filter(final Predicate<? super T> fn) {
         return Streamable.fromStream(reactiveSeq().filter(fn));
     }
 
     /* (non-Javadoc)
      * @see java.util.stream.Stream#flatMap(java.util.function.Function)
      */
-    default <R> Streamable<R> flatMap(Function<? super T, Streamable<? extends R>> fn) {
+    default <R> Streamable<R> flatMap(final Function<? super T, Streamable<? extends R>> fn) {
         return Streamable.fromStream(reactiveSeq().flatMap(i -> fn.apply(i)
                                                                   .reactiveSeq()));
     }
@@ -479,6 +564,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     /**
      * @return number of elements in this Streamable
      */
+    @Override
     default long count() {
         return reactiveSeq().count();
     }
@@ -486,7 +572,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     /* (non-Javadoc)
      * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
      */
-    default void forEachOrdered(Consumer<? super T> action) {
+    default void forEachOrdered(final Consumer<? super T> action) {
         reactiveSeq().forEachOrdered(action);
     }
 
@@ -500,7 +586,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     /* (non-Javadoc)
      * @see java.util.stream.Stream#toArray(java.util.function.IntFunction)
      */
-    default <A> A[] toArray(IntFunction<A[]> generator) {
+    default <A> A[] toArray(final IntFunction<A[]> generator) {
         return reactiveSeq().toArray(generator);
     }
 
@@ -516,6 +602,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 
      * @return Streamable converted to a List
      */
+    @Override
     default List<T> toList() {
 
         if (getStreamable() instanceof List)
@@ -523,11 +610,15 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
         return reactiveSeq().toList();
     }
 
-    default <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+    default <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
         return reactiveSeq().collect(supplier, accumulator, combiner);
     }
 
-    default <R, A> R collect(Collector<? super T, A, R> collector) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collect(java.util.stream.Collector)
+     */
+    @Override
+    default <R, A> R collect(final Collector<? super T, A, R> collector) {
 
         return reactiveSeq().collect(collector);
     }
@@ -547,13 +638,15 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param collectionFactory
      * @return contents of this Stream in a mutable collection
      */
-    default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory) {
+    @Override
+    default <C extends Collection<T>> C toCollection(final Supplier<C> collectionFactory) {
 
         return reactiveSeq().toCollection(collectionFactory);
     }
 
     /**
      * Generate the permutations based on values in the Streamable
+     * @return  Streamable containing the permutations in this Streamable
     
      * 
      */
@@ -592,7 +685,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param end index exclusive
      * @return Sequence between supplied indexes of original Sequence
      */
-    default Streamable<T> subStream(int start, int end) {
+    default Streamable<T> subStream(final int start, final int end) {
         return Streamable.fromStream(reactiveSeq().subStream(start, end));
     }
 
@@ -609,9 +702,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param index to extract element from
      * @return Element and Sequence
      */
-    default T elementAt(int index) {
-        return this.reactiveSeq()
-                   .elementAt(index).v1;
+    default T elementAt(final int index) {
+        return reactiveSeq().elementAt(index).v1;
     }
 
     /**
@@ -636,7 +728,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param size of combinations
      * @return All combinations of the elements in this stream of the specified size
      */
-    default Streamable<Streamable<T>> combinations(int size) {
+    default Streamable<Streamable<T>> combinations(final int size) {
         if (size == 0) {
             return Streamable.of(Streamable.empty());
         } else {
@@ -697,8 +789,9 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * }
      * 
      * </pre>
-     * @return
+     * @return this Streamable converted to an Optional List
      */
+    @Override
     default Optional<ListX<T>> toOptional() {
         return reactiveSeq().toOptional();
     }
@@ -711,8 +804,9 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     	assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
      * }
      * </pre>
-     * @return
+     * @return The Streamable converted to a CompletableFuture List
      */
+    @Override
     default CompletableFuture<ListX<T>> toCompletableFuture() {
         return reactiveSeq().toCompletableFuture();
     }
@@ -734,7 +828,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            Times values should be repeated within a Stream
      * @return Streamable with values repeated
      */
-    default Streamable<T> cycle(int times) {
+    @Override
+    default Streamable<T> cycle(final int times) {
         return Streamable.fromStream(reactiveSeq().cycle(times));
     }
 
@@ -790,7 +885,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 
      * </pre>
      */
-    default Tuple2<Streamable<T>, Streamable<T>> splitAt(int where) {
+    default Tuple2<Streamable<T>, Streamable<T>> splitAt(final int where) {
 
         return reactiveSeq().splitAt(where)
                             .map1(s -> fromStream(s))
@@ -826,7 +921,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * }
      * </pre>
      */
-    default Tuple2<Streamable<T>, Streamable<T>> splitBy(Predicate<T> splitter) {
+    default Tuple2<Streamable<T>, Streamable<T>> splitBy(final Predicate<T> splitter) {
         return reactiveSeq().splitBy(splitter)
                             .map1(s -> fromStream(s))
                             .map2(s -> fromStream(s));
@@ -843,7 +938,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *
      * </pre>
      */
-    default Tuple2<Streamable<T>, Streamable<T>> partition(Predicate<T> splitter) {
+    default Tuple2<Streamable<T>, Streamable<T>> partition(final Predicate<T> splitter) {
         return reactiveSeq().partitionSequence(splitter)
                             .map1(s -> fromStream(s))
                             .map2(s -> fromStream(s));
@@ -868,7 +963,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            Number of times value should be repeated
      * @return Stream with reduced values repeated
      */
-    default Streamable<T> cycle(Monoid<T> m, int times) {
+    @Override
+    default Streamable<T> cycle(final Monoid<T> m, final int times) {
         return fromStream(reactiveSeq().cycle(m, times));
     }
 
@@ -877,7 +973,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 
      * <pre>
      * {@code
-     * count =0;
+     * 
+     *   count =0;
     	assertThat(Streamable.of(1,2,2)
     						.cycleWhile(next -> count++<6)
     						.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
@@ -888,7 +985,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            repeat while true
      * @return Repeating Stream
      */
-    default Streamable<T> cycleWhile(Predicate<? super T> predicate) {
+    @Override
+    default Streamable<T> cycleWhile(final Predicate<? super T> predicate) {
         return Streamable.fromStream(reactiveSeq().cycleWhile(predicate));
     }
 
@@ -903,13 +1001,14 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     
      * 
      * }
-     * 
+     * </pre>
      * 
      * @param predicate
      *            repeat while true
      * @return Repeating Stream
      */
-    default Streamable<T> cycleUntil(Predicate<? super T> predicate) {
+    @Override
+    default Streamable<T> cycleUntil(final Predicate<? super T> predicate) {
         return Streamable.fromStream(reactiveSeq().cycleUntil(predicate));
     }
 
@@ -925,12 +1024,12 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 
      */
     @Override
-    default <U> Streamable<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+    default <U> Streamable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return fromStream(reactiveSeq().zip(other));
     }
 
     @Override
-    default <U> Streamable<Tuple2<T, U>> zip(Seq<? extends U> other) {
+    default <U> Streamable<Tuple2<T, U>> zip(final Seq<? extends U> other) {
         return fromStream(reactiveSeq().zip(other));
     }
 
@@ -947,7 +1046,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 
      *</pre>
      */
-    default <S, U> Streamable<Tuple3<T, S, U>> zip3(Streamable<? extends S> second, Streamable<? extends U> third) {
+    default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Streamable<? extends S> second, final Streamable<? extends U> third) {
         return fromStream(reactiveSeq().zip3(second.reactiveSeq(), third.reactiveSeq()));
     }
 
@@ -964,8 +1063,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *  //[[1,100,'a',"hello"],[2,200,'b',"world"]]
      * </pre>
      */
-    default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(Streamable<? extends T2> second, Streamable<? extends T3> third,
-            Streamable<? extends T4> fourth) {
+    default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Streamable<? extends T2> second, final Streamable<? extends T3> third,
+            final Streamable<? extends T4> fourth) {
         return fromStream(reactiveSeq().zip4(second.reactiveSeq(), third.reactiveSeq(), fourth.reactiveSeq()));
     }
 
@@ -978,6 +1077,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * }
      * </pre>
      */
+    @Override
     default Streamable<Tuple2<T, Long>> zipWithIndex() {
         return fromStream(reactiveSeq().zipWithIndex());
     }
@@ -1001,8 +1101,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            Zip funciton
      * @return This monad zipped with a Stream
      */
-    default <S, R> Streamable<R> zipStream(BaseStream<? extends S, ? extends BaseStream<? extends S, ?>> second,
-            BiFunction<? super T, ? super S, ? extends R> zipper) {
+    default <S, R> Streamable<R> zipStream(final BaseStream<? extends S, ? extends BaseStream<? extends S, ?>> second,
+            final BiFunction<? super T, ? super S, ? extends R> zipper) {
         return fromStream(reactiveSeq().zipStream(second, zipper));
     }
 
@@ -1027,7 +1127,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            Size of sliding window
      * @return Streamable with sliding view
      */
-    default Streamable<ListX<T>> sliding(int windowSize) {
+    @Override
+    default Streamable<ListX<T>> sliding(final int windowSize) {
         return fromStream(reactiveSeq().sliding(windowSize));
     }
 
@@ -1052,7 +1153,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param increment for each window
      * @return Streamable with sliding view
      */
-    default Streamable<ListX<T>> sliding(int windowSize, int increment) {
+    @Override
+    default Streamable<ListX<T>> sliding(final int windowSize, final int increment) {
         return fromStream(reactiveSeq().sliding(windowSize, increment));
     }
 
@@ -1075,7 +1177,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            Size of each Group
      * @return Stream with elements grouped by size
      */
-    default Streamable<ListX<T>> grouped(int groupSize) {
+    @Override
+    default Streamable<ListX<T>> grouped(final int groupSize) {
         return fromStream(reactiveSeq().grouped(groupSize));
     }
 
@@ -1092,7 +1195,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 
      * </pre>
      */
-    default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
+    @Override
+    default <K> MapX<K, List<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return reactiveSeq().groupBy(classifier);
     }
 
@@ -1108,10 +1212,11 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *         }
      * </pre>
      * 
-     * @param monoid
-     * @return
+     * @param monoid To combine values
+     * @return Streamable 
      */
-    default Streamable<T> scanLeft(Monoid<T> monoid) {
+    @Override
+    default Streamable<T> scanLeft(final Monoid<T> monoid) {
         return fromStream(reactiveSeq().scanLeft(monoid));
     }
 
@@ -1124,7 +1229,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * }
      * </pre>
      */
-    default <U> Streamable<U> scanLeft(U identity, BiFunction<? super U, ? super T, ? extends U> function) {
+    @Override
+    default <U> Streamable<U> scanLeft(final U identity, final BiFunction<? super U, ? super T, ? extends U> function) {
         return fromStream(reactiveSeq().scanLeft(identity, function));
     }
 
@@ -1137,7 +1243,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * }
      * </pre>
      */
-    default Streamable<T> scanRight(Monoid<T> monoid) {
+    @Override
+    default Streamable<T> scanRight(final Monoid<T> monoid) {
         return fromStream(reactiveSeq().scanRight(monoid));
     }
 
@@ -1152,7 +1259,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * }
      * </pre>
      */
-    default <U> Streamable<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+    @Override
+    default <U> Streamable<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
         return fromStream(reactiveSeq().scanRight(identity, combiner));
     }
 
@@ -1162,6 +1270,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * 
      */
+    @Override
     default Streamable<T> sorted() {
         return fromStream(reactiveSeq().sorted());
     }
@@ -1176,7 +1285,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            Compartor to sort with
      * @return Sorted Monad
      */
-    default Streamable<T> sorted(Comparator<? super T> c) {
+    @Override
+    default Streamable<T> sorted(final Comparator<? super T> c) {
         return fromStream(reactiveSeq().sorted(c));
     }
 
@@ -1192,7 +1302,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @return Monad converted to Stream with specified number of elements
      *         skipped
      */
-    default Streamable<T> skip(long num) {
+    @Override
+    default Streamable<T> skip(final long num) {
         return fromStream(reactiveSeq().skip(num));
     }
 
@@ -1210,7 +1321,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @return Monad converted to Stream with elements skipped while predicate
      *         holds
      */
-    default Streamable<T> skipWhile(Predicate<? super T> p) {
+    @Override
+    default Streamable<T> skipWhile(final Predicate<? super T> p) {
         return fromStream(reactiveSeq().skipWhile(p));
     }
 
@@ -1227,7 +1339,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @return Monad converted to Stream with elements skipped until predicate
      *         holds
      */
-    default Streamable<T> skipUntil(Predicate<? super T> p) {
+    @Override
+    default Streamable<T> skipUntil(final Predicate<? super T> p) {
         return fromStream(reactiveSeq().skipUntil(p));
     }
 
@@ -1242,7 +1355,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            Limit element size to num
      * @return Monad converted to Stream with elements up to num
      */
-    default Streamable<T> limit(long num) {
+    @Override
+    default Streamable<T> limit(final long num) {
         return fromStream(reactiveSeq().limit(num));
     }
 
@@ -1257,7 +1371,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            Limit while predicate is true
      * @return Monad converted to Stream with limited elements
      */
-    default Streamable<T> limitWhile(Predicate<? super T> p) {
+    @Override
+    default Streamable<T> limitWhile(final Predicate<? super T> p) {
         return fromStream(reactiveSeq().limitWhile(p));
     }
 
@@ -1272,7 +1387,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *            Limit until predicate is true
      * @return Monad converted to Stream with limited elements
      */
-    default Streamable<T> limitUntil(Predicate<? super T> p) {
+    @Override
+    default Streamable<T> limitUntil(final Predicate<? super T> p) {
         return fromStream(reactiveSeq().limitUntil(p));
 
     }
@@ -1286,7 +1402,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * @param c Predicate to check if all match
      */
-    default boolean allMatch(Predicate<? super T> c) {
+    @Override
+    default boolean allMatch(final Predicate<? super T> c) {
         return reactiveSeq().allMatch(c);
     }
 
@@ -1299,7 +1416,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * @param c Predicate to check if any match
      */
-    default boolean anyMatch(Predicate<? super T> c) {
+    @Override
+    default boolean anyMatch(final Predicate<? super T> c) {
         return reactiveSeq().anyMatch(c);
     }
 
@@ -1313,7 +1431,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * 
      */
-    default boolean xMatch(int num, Predicate<? super T> c) {
+    @Override
+    default boolean xMatch(final int num, final Predicate<? super T> c) {
         return reactiveSeq().xMatch(num, c);
     }
 
@@ -1325,7 +1444,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * }
      * </pre>
      */
-    default boolean noneMatch(Predicate<? super T> c) {
+    @Override
+    default boolean noneMatch(final Predicate<? super T> c) {
         return reactiveSeq().noneMatch(c);
     }
 
@@ -1338,6 +1458,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 
      * @return Stream as concatenated String
      */
+    @Override
     default String join() {
         return reactiveSeq().join();
     }
@@ -1350,7 +1471,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * @return Stream as concatenated String
      */
-    default String join(String sep) {
+    @Override
+    default String join(final String sep) {
         return reactiveSeq().join(sep);
     }
 
@@ -1362,7 +1484,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre> 
      *  @return Stream as concatenated String
      */
-    default String join(String sep, String start, String end) {
+    @Override
+    default String join(final String sep, final String start, final String end) {
         return reactiveSeq().join(sep, start, end);
     }
 
@@ -1370,14 +1493,16 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * Extract the minimum as determined by supplied function
      * 
      */
-    default <C extends Comparable<? super C>> Optional<T> minBy(Function<? super T, ? extends C> f) {
+    @Override
+    default <C extends Comparable<? super C>> Optional<T> minBy(final Function<? super T, ? extends C> f) {
         return reactiveSeq().minBy(f);
     }
 
     /* (non-Javadoc)
      * @see java.util.stream.Stream#min(java.util.Comparator)
      */
-    default Optional<T> min(Comparator<? super T> comparator) {
+    @Override
+    default Optional<T> min(final Comparator<? super T> comparator) {
         return reactiveSeq().min(comparator);
     }
 
@@ -1385,14 +1510,16 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * Extract the maximum as determined by the supplied function
      * 
      */
-    default <C extends Comparable<? super C>> Optional<T> maxBy(Function<? super T, ? extends C> f) {
+    @Override
+    default <C extends Comparable<? super C>> Optional<T> maxBy(final Function<? super T, ? extends C> f) {
         return reactiveSeq().maxBy(f);
     }
 
     /* (non-Javadoc)
      * @see java.util.stream.Stream#max(java.util.Comparator)
      */
-    default Optional<T> max(Comparator<? super T> comparator) {
+    @Override
+    default Optional<T> max(final Comparator<? super T> comparator) {
         return reactiveSeq().max(comparator);
     }
 
@@ -1408,6 +1535,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * (deterministic)
      * 
      */
+    @Override
     default Optional<T> findFirst() {
         return reactiveSeq().findFirst();
     }
@@ -1425,6 +1553,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 
      * (non-deterministic) 
      */
+    @Override
     default Optional<T> findAny() {
         return reactiveSeq().findAny();
     }
@@ -1443,7 +1572,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    default <R> R mapReduce(Reducer<R> reducer) {
+    @Override
+    default <R> R mapReduce(final Reducer<R> reducer) {
         return reactiveSeq().mapReduce(reducer);
     }
 
@@ -1476,7 +1606,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    default <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
+    @Override
+    default <R> R mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
         return reactiveSeq().mapReduce(mapper, reducer);
     }
 
@@ -1491,7 +1622,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param reducer Use supplied Monoid to reduce values
      * @return reduced values
      */
-    default T reduce(Monoid<T> reducer) {
+    @Override
+    default T reduce(final Monoid<T> reducer) {
         return reactiveSeq().reduce(reducer);
     }
 
@@ -1503,21 +1635,24 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * 
      */
-    default Optional<T> reduce(BinaryOperator<T> accumulator) {
+    @Override
+    default Optional<T> reduce(final BinaryOperator<T> accumulator) {
         return reactiveSeq().reduce(accumulator);
     }
 
     /* (non-Javadoc)
     * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
     */
-    default T reduce(T identity, BinaryOperator<T> accumulator) {
+    @Override
+    default T reduce(final T identity, final BinaryOperator<T> accumulator) {
         return reactiveSeq().reduce(identity, accumulator);
     }
 
     /* (non-Javadoc)
     * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
     */
-    default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+    @Override
+    default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
         return reactiveSeq().reduce(identity, accumulator, combiner);
     }
 
@@ -1543,7 +1678,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param reducers
      * @return
      */
-    default ListX<T> reduce(Stream<? extends Monoid<T>> reducers) {
+    @Override
+    default ListX<T> reduce(final Stream<? extends Monoid<T>> reducers) {
         return reactiveSeq().reduce(reducers);
     }
 
@@ -1563,11 +1699,12 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     	assertThat(result,equalTo(Arrays.asList(10,24)));
      * 
      * }
-     * 
+     * </pre>
      * @param reducers
      * @return
      */
-    default ListX<T> reduce(Iterable<? extends Monoid<T>> reducers) {
+    @Override
+    default ListX<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
         return reactiveSeq().reduce(reducers);
     }
 
@@ -1583,7 +1720,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param reducer Use supplied Monoid to reduce values starting via foldRight
      * @return Reduced result
      */
-    default T foldRight(Monoid<T> reducer) {
+    @Override
+    default T foldRight(final Monoid<T> reducer) {
         return reactiveSeq().foldRight(reducer);
     }
 
@@ -1599,7 +1737,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param accumulator
      * @return
      */
-    default T foldRight(T identity, BinaryOperator<T> accumulator) {
+    @Override
+    default T foldRight(final T identity, final BinaryOperator<T> accumulator) {
         return reactiveSeq().foldRight(identity, accumulator);
     }
 
@@ -1618,7 +1757,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    default <T> T foldRightMapToType(Reducer<T> reducer) {
+    @Override
+    default <T> T foldRightMapToType(final Reducer<T> reducer) {
         return reactiveSeq().foldRightMapToType(reducer);
     }
 
@@ -1632,7 +1772,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
-    default boolean startsWithIterable(Iterable<T> iterable) {
+    @Override
+    default boolean startsWithIterable(final Iterable<T> iterable) {
         return reactiveSeq().startsWithIterable(iterable);
     }
 
@@ -1642,7 +1783,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param iterator
      * @return True if Monad starts with Iterators sequence of data
      */
-    default boolean startsWith(Stream<T> iterator) {
+    @Override
+    default boolean startsWith(final Stream<T> iterator) {
         return reactiveSeq().startsWith(iterator);
     }
 
@@ -1665,7 +1807,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param fn to be applied
      * @return new stage in Sequence with flatMap operation to be lazily applied
      */
-    default <R> Streamable<R> flatMapAnyM(Function<? super T, AnyM<? extends R>> fn) {
+    default <R> Streamable<R> flatMapAnyM(final Function<? super T, AnyM<? extends R>> fn) {
 
         return fromStream(reactiveSeq().flatMapAnyM(fn));
     }
@@ -1686,7 +1828,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param fn
      * @return
      */
-    default <R> Streamable<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> fn) {
+    default <R> Streamable<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> fn) {
         return fromStream(reactiveSeq().flatMapIterable(fn));
     }
 
@@ -1705,7 +1847,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param fn to be applied
      * @return new stage in Sequence with flatMap operation to be lazily applied
     */
-    default <R> Streamable<R> flatMapStream(Function<? super T, BaseStream<? extends R, ?>> fn) {
+    default <R> Streamable<R> flatMapStream(final Function<? super T, BaseStream<? extends R, ?>> fn) {
         return fromStream(reactiveSeq().flatMapStream(fn));
     }
 
@@ -1717,7 +1859,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * // (1, 0, 2, 0, 3, 0, 4) Streamable.of(1, 2, 3, 4).intersperse(0)
      * 
      */
-    default Streamable<T> intersperse(T value) {
+    @Override
+    default Streamable<T> intersperse(final T value) {
         return fromStream(reactiveSeq().intersperse(value));
     }
 
@@ -1728,8 +1871,9 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * // (1, 2, 3) Streamable.of(1, "a", 2, "b",3).ofType(Integer.class)
      * 
      */
+    @Override
     @SuppressWarnings("unchecked")
-    default <U> Streamable<U> ofType(Class<? extends U> type) {
+    default <U> Streamable<U> ofType(final Class<? extends U> type) {
         return fromStream(reactiveSeq().ofType(type));
     }
 
@@ -1741,7 +1885,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * // ClassCastException Streamable.of(1, "a", 2, "b", 3).cast(Integer.class)
      * 
      */
-    default <U> Streamable<U> cast(Class<? extends U> type) {
+    @Override
+    default <U> Streamable<U> cast(final Class<? extends U> type) {
         return fromStream(reactiveSeq().cast(type));
     }
 
@@ -1761,6 +1906,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * @return
      */
+    @Override
     default CollectionX<T> toLazyCollection() {
         return reactiveSeq().toLazyCollection();
     }
@@ -1781,6 +1927,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * @return
      */
+    @Override
     default CollectionX<T> toConcurrentLazyCollection() {
         return reactiveSeq().toConcurrentLazyCollection();
     }
@@ -1800,6 +1947,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      *  }
      * </pre>
      */
+    @Override
     default Streamable<T> reverse() {
         return fromStream(reactiveSeq().reverse());
     }
@@ -1807,6 +1955,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#shuffle()
      */
+    @Override
     default Streamable<T> shuffle() {
         return fromStream(reactiveSeq().shuffle());
     }
@@ -1828,7 +1977,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param stream to append
      * @return Streamable with Stream appended
      */
-    default Streamable<T> appendStreamable(Streamable<T> stream) {
+    default Streamable<T> appendStreamable(final Streamable<T> stream) {
         return fromStream(reactiveSeq().appendStream(stream.reactiveSeq()));
     }
 
@@ -1850,7 +1999,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param stream to Prepend
      * @return Streamable with Stream prepended
      */
-    default Streamable<T> prependStreamable(Streamable<T> stream) {
+    default Streamable<T> prependStreamable(final Streamable<T> stream) {
         return fromStream(reactiveSeq().prependStream(stream.reactiveSeq()));
     }
 
@@ -1869,7 +2018,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param values to append
      * @return Streamable with appended values
      */
-    default Streamable<T> append(T... values) {
+    default Streamable<T> append(final T... values) {
         return fromStream(reactiveSeq().append(values));
     }
 
@@ -1884,10 +2033,11 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
+     * </pre>
      * @param values to prepend
      * @return Streamable with values prepended
      */
-    default Streamable<T> prepend(T... values) {
+    default Streamable<T> prepend(final T... values) {
         return fromStream(reactiveSeq().prepend(values));
     }
 
@@ -1908,7 +2058,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param values to insert
      * @return Stream with new data inserted
      */
-    default Streamable<T> insertAt(int pos, T... values) {
+    default Streamable<T> insertAt(final int pos, final T... values) {
         return fromStream(reactiveSeq().insertAt(pos, values));
     }
 
@@ -1928,7 +2078,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param end index
      * @return Stream with elements removed
      */
-    default Streamable<T> deleteBetween(int start, int end) {
+    default Streamable<T> deleteBetween(final int start, final int end) {
         return fromStream(reactiveSeq().deleteBetween(start, end));
     }
 
@@ -1948,7 +2098,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param stream to insert
      * @return newly conjoined Streamable
      */
-    default Streamable<T> insertStreamableAt(int pos, Streamable<T> stream) {
+    default Streamable<T> insertStreamableAt(final int pos, final Streamable<T> stream) {
         return fromStream(reactiveSeq().insertStreamAt(pos, stream.reactiveSeq()));
     }
 
@@ -1958,7 +2108,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param exec Executor to use for Stream execution
      * @return Async Future Terminal Operations
      */
-    default FutureOperations<T> futureOperations(Executor exec) {
+    @Override
+    default FutureOperations<T> futureOperations(final Executor exec) {
         return reactiveSeq().futureOperations(exec);
     }
 
@@ -1969,11 +2120,13 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     			.endsWith(Arrays.asList(5,6)));
      * 
      * }
+     * </pre>
      * 
      * @param iterable Values to check 
      * @return true if Streamable ends with values in the supplied iterable
      */
-    default boolean endsWithIterable(Iterable<T> iterable) {
+    @Override
+    default boolean endsWithIterable(final Iterable<T> iterable) {
         return reactiveSeq().endsWithIterable(iterable);
     }
 
@@ -1988,7 +2141,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param stream Values to check 
      * @return true if Streamable endswith values in the supplied Stream
      */
-    default boolean endsWith(Streamable<T> stream) {
+    default boolean endsWith(final Streamable<T> stream) {
         return reactiveSeq().endsWithIterable(stream);
     }
 
@@ -2011,7 +2164,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param unit Time unit
      * @return Streamable that skips all elements until time period has elapsed
      */
-    default Streamable<T> skip(long time, final TimeUnit unit) {
+    default Streamable<T> skip(final long time, final TimeUnit unit) {
         return fromStream(reactiveSeq().skip(time, unit));
     }
 
@@ -2032,7 +2185,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param unit Time unit
      * @return Streamable that returns all elements until time period has elapsed
      */
-    default Streamable<T> limit(long time, final TimeUnit unit) {
+    default Streamable<T> limit(final long time, final TimeUnit unit) {
         return fromStream(reactiveSeq().limit(time, unit));
     }
 
@@ -2044,7 +2197,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param num
      * @return
      */
-    default Streamable<T> skipLast(int num) {
+    @Override
+    default Streamable<T> skipLast(final int num) {
         return fromStream(reactiveSeq().skipLast(num));
     }
 
@@ -2057,11 +2211,13 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     						.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
      * 
      * }
+     * </pre>
      * 
      * @param num of elements to return (last elements)
      * @return Streamable limited to last num elements
      */
-    default Streamable<T> limitLast(int num) {
+    @Override
+    default Streamable<T> limitLast(final int num) {
         return fromStream(reactiveSeq().limitLast(num));
     }
 
@@ -2083,7 +2239,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param e Executor to execute this Streamable on
      * @return a Connectable HotStream
      */
-    default HotStream<T> hotStream(Executor e) {
+    default HotStream<T> hotStream(final Executor e) {
         return reactiveSeq().hotStream(e);
     }
 
@@ -2098,6 +2254,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * @return first value in this Stream
      */
+    @Override
     default T firstValue() {
         return reactiveSeq().firstValue();
     }
@@ -2111,6 +2268,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 
      * @return a single value or an exception if 0/1 values in this Stream
      */
+    @Override
     default T single() {
         return reactiveSeq().single();
 
@@ -2126,7 +2284,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param index to extract element from
      * @return elementAt index
      */
-    default Optional<T> get(long index) {
+    @Override
+    default Optional<T> get(final long index) {
         return reactiveSeq().get(index);
     }
 
@@ -2144,7 +2303,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param index to extract element from
      * @return Element and Sequence
      */
-    default Tuple2<T, Streamable<T>> elementAt(long index) {
+    default Tuple2<T, Streamable<T>> elementAt(final long index) {
         return reactiveSeq().elementAt(index)
                             .map2(s -> fromStream(s));
     }
@@ -2187,7 +2346,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param elements To Construct sequence from
      * @return
      */
-    public static <T> Streamable<T> reversedOf(T... elements) {
+    public static <T> Streamable<T> reversedOf(final T... elements) {
         return fromStream(ReactiveSeq.reversedOf(elements));
 
     }
@@ -2198,7 +2357,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param elements To Construct sequence from
      * @return
      */
-    public static <T> Streamable<T> reversedListOf(List<T> elements) {
+    public static <T> Streamable<T> reversedListOf(final List<T> elements) {
         Objects.requireNonNull(elements);
         return fromStream(ReactiveSeq.reversedListOf(elements));
 
@@ -2211,7 +2370,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param end Number for range to end at
      * @return Range Streamable
      */
-    public static Streamable<Integer> range(int start, int end) {
+    public static Streamable<Integer> range(final int start, final int end) {
         return fromStream(ReactiveSeq.range(start, end));
 
     }
@@ -2223,7 +2382,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param end Number for range to end at
      * @return Range Streamable
      */
-    public static Streamable<Long> rangeLong(long start, long end) {
+    public static Streamable<Long> rangeLong(final long start, final long end) {
         return fromStream(ReactiveSeq.rangeLong(start, end));
 
     }
@@ -2233,17 +2392,18 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param stream Stream to construct Sequence from
      * @return
      */
-    public static Streamable<Integer> fromIntStream(IntStream stream) {
+    public static Streamable<Integer> fromIntStream(final IntStream stream) {
         Objects.requireNonNull(stream);
         return fromStream(ReactiveSeq.fromIntStream(stream));
     }
 
     /**
      * Construct a Sequence from a Stream
+     * 
      * @param stream Stream to construct Sequence from
      * @return
      */
-    public static Streamable<Long> fromLongStream(LongStream stream) {
+    public static Streamable<Long> fromLongStream(final LongStream stream) {
         Objects.requireNonNull(stream);
         return fromStream(ReactiveSeq.fromLongStream(stream));
     }
@@ -2253,14 +2413,14 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param stream Stream to construct Sequence from
      * @return
      */
-    public static Streamable<Double> fromDoubleStream(DoubleStream stream) {
+    public static Streamable<Double> fromDoubleStream(final DoubleStream stream) {
         Objects.requireNonNull(stream);
         return fromStream(ReactiveSeq.fromDoubleStream(stream));
     }
 
-    public static <T> Streamable<T> fromList(List<T> list) {
+    public static <T> Streamable<T> fromList(final List<T> list) {
         Objects.requireNonNull(list);
-        return AsStreamable.fromIterable(list);
+        return Streamable.fromIterable(list);
     }
 
     /**
@@ -2274,7 +2434,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     /**
      * @see Stream#generate(Supplier)
      */
-    static <T> Streamable<T> generate(Supplier<T> s) {
+    static <T> Streamable<T> generate(final Supplier<T> s) {
         Objects.requireNonNull(s);
         return fromStream(ReactiveSeq.generate(s));
     }
@@ -2292,7 +2452,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * 
      */
-    public static <T, U> Tuple2<Streamable<T>, Streamable<U>> unzip(Streamable<Tuple2<T, U>> sequence) {
+    public static <T, U> Tuple2<Streamable<T>, Streamable<U>> unzip(final Streamable<Tuple2<T, U>> sequence) {
         return ReactiveSeq.unzip(sequence.reactiveSeq())
                           .map1(s -> fromStream(s))
                           .map2(s -> fromStream(s));
@@ -2307,7 +2467,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * // Streamable[1,2,3], Streamable[a,b,c], Streamable[2l,3l,4l]
      * </pre>
      */
-    public static <T1, T2, T3> Tuple3<Streamable<T1>, Streamable<T2>, Streamable<T3>> unzip3(Streamable<Tuple3<T1, T2, T3>> sequence) {
+    public static <T1, T2, T3> Tuple3<Streamable<T1>, Streamable<T2>, Streamable<T3>> unzip3(final Streamable<Tuple3<T1, T2, T3>> sequence) {
         return ReactiveSeq.unzip3(sequence.reactiveSeq())
                           .map1(s -> fromStream(s))
                           .map2(s -> fromStream(s))
@@ -2326,7 +2486,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      */
     public static <T1, T2, T3, T4> Tuple4<Streamable<T1>, Streamable<T2>, Streamable<T3>, Streamable<T4>> unzip4(
-            Streamable<Tuple4<T1, T2, T3, T4>> sequence) {
+            final Streamable<Tuple4<T1, T2, T3, T4>> sequence) {
         return ReactiveSeq.unzip4(sequence.reactiveSeq())
                           .map1(s -> fromStream(s))
                           .map2(s -> fromStream(s))
@@ -2337,21 +2497,21 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
      */
-    default <U> Streamable<Tuple2<T, U>> crossJoin(Streamable<U> other) {
+    default <U> Streamable<Tuple2<T, U>> crossJoin(final Streamable<U> other) {
         return fromStream(reactiveSeq().crossJoin(other.reactiveSeq()));
     }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#innerJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
-    default <U> Streamable<Tuple2<T, U>> innerJoin(Streamable<U> other, BiPredicate<T, U> predicate) {
+    default <U> Streamable<Tuple2<T, U>> innerJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
         return fromStream(reactiveSeq().innerJoin(other.reactiveSeq(), predicate));
     }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
-    default <U> Streamable<Tuple2<T, U>> leftOuterJoin(Streamable<U> other, BiPredicate<T, U> predicate) {
+    default <U> Streamable<Tuple2<T, U>> leftOuterJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
         return fromStream(reactiveSeq().leftOuterJoin(other.reactiveSeq(), predicate));
 
     }
@@ -2359,7 +2519,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
-    default <U> Streamable<Tuple2<T, U>> rightOuterJoin(Streamable<U> other, BiPredicate<T, U> predicate) {
+    default <U> Streamable<Tuple2<T, U>> rightOuterJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
         return fromStream(reactiveSeq().rightOuterJoin(other.reactiveSeq(), predicate));
     }
 
@@ -2376,50 +2536,56 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param switchTo Supplier that will generate the alternative Stream
      * @return Streamable that will switch to an alternative Stream if empty
      */
-    default Streamable<T> onEmptySwitch(Supplier<Streamable<T>> switchTo) {
+    default Streamable<T> onEmptySwitch(final Supplier<Streamable<T>> switchTo) {
         return fromStream(reactiveSeq().onEmptySwitch(() -> switchTo.get()
                                                                     .reactiveSeq()));
     }
 
-    default Streamable<T> onEmpty(T value) {
+    @Override
+    default Streamable<T> onEmpty(final T value) {
         return fromStream(reactiveSeq().onEmpty(value));
     }
 
-    default Streamable<T> onEmptyGet(Supplier<? extends T> supplier) {
+    @Override
+    default Streamable<T> onEmptyGet(final Supplier<? extends T> supplier) {
         return fromStream(reactiveSeq().onEmptyGet(supplier));
     }
 
-    default <X extends Throwable> Streamable<T> onEmptyThrow(Supplier<? extends X> supplier) {
+    @Override
+    default <X extends Throwable> Streamable<T> onEmptyThrow(final Supplier<? extends X> supplier) {
         return fromStream(reactiveSeq().onEmptyThrow(supplier));
     }
 
-    default Streamable<T> concat(Streamable<T> other) {
+    default Streamable<T> concat(final Streamable<T> other) {
         return fromStream(reactiveSeq().concat(other.reactiveSeq()));
     }
 
-    default Streamable<T> concat(T other) {
+    default Streamable<T> concat(final T other) {
         return fromStream(reactiveSeq().concat(other));
     }
 
-    default Streamable<T> concat(T... other) {
+    default Streamable<T> concat(final T... other) {
         return fromStream(reactiveSeq().concat(other));
     }
 
-    default <U> Streamable<T> distinct(Function<? super T, ? extends U> keyExtractor) {
+    default <U> Streamable<T> distinct(final Function<? super T, ? extends U> keyExtractor) {
         return fromStream(reactiveSeq().distinct(keyExtractor));
     }
 
-    default Streamable<T> shuffle(Random random) {
+    @Override
+    default Streamable<T> shuffle(final Random random) {
         return fromStream(reactiveSeq().shuffle(random));
 
     }
 
-    default Streamable<T> slice(long from, long to) {
+    @Override
+    default Streamable<T> slice(final long from, final long to) {
         return fromStream(reactiveSeq().slice(from, to));
 
     }
 
-    default <U extends Comparable<? super U>> Streamable<T> sorted(Function<? super T, ? extends U> function) {
+    @Override
+    default <U extends Comparable<? super U>> Streamable<T> sorted(final Function<? super T, ? extends U> function) {
         return fromStream(reactiveSeq().sorted(function));
 
     }
@@ -2441,7 +2607,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param t Time unit
      * @return Streamable that emits x elements per time period
      */
-    default Streamable<T> xPer(int x, long time, TimeUnit t) {
+    default Streamable<T> xPer(final int x, final long time, final TimeUnit t) {
         return fromStream(reactiveSeq().xPer(x, time, t));
 
     }
@@ -2460,11 +2626,12 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     					+ individual))
     			.forEach(a->{});
      * }
+     * </pre>
      * @param time period
      * @param t Time unit
      * @return Streamable that emits 1 element per time period
      */
-    default Streamable<T> onePer(long time, TimeUnit t) {
+    default Streamable<T> onePer(final long time, final TimeUnit t) {
         return fromStream(reactiveSeq().onePer(time, t));
 
     }
@@ -2485,7 +2652,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param t
      * @return
      */
-    default Streamable<T> debounce(long time, TimeUnit t) {
+    default Streamable<T> debounce(final long time, final TimeUnit t) {
         return fromStream(reactiveSeq().debounce(time, t));
     }
 
@@ -2500,13 +2667,14 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     		
      * //[[1,2,3],[4,5,6]] 
      * }
+     * </pre>
      * 
      * @param size Max size of a batch
      * @param time (Max) time period to build a single batch in
      * @param t time unit for batch
      * @return Streamable batched by size and time
      */
-    default Streamable<ListX<T>> groupedBySizeAndTime(int size, long time, TimeUnit t) {
+    default Streamable<ListX<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
         return fromStream(reactiveSeq().groupedBySizeAndTime(size, time, t));
     }
 
@@ -2525,7 +2693,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param factory Collection factory
      * @return Streamable batched by size and time
      */
-    default <C extends Collection<? super T>> Streamable<C> groupedBySizeAndTime(int size, long time, TimeUnit unit, Supplier<C> factory) {
+    default <C extends Collection<? super T>> Streamable<C> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit,
+            final Supplier<C> factory) {
         return fromStream(reactiveSeq().groupedBySizeAndTime(size, time, unit, factory));
     }
 
@@ -2543,7 +2712,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param t  time unit for batch
      * @return Streamable batched into lists by time period
      */
-    default Streamable<ListX<T>> groupedByTime(long time, TimeUnit t) {
+    default Streamable<ListX<T>> groupedByTime(final long time, final TimeUnit t) {
         return fromStream(reactiveSeq().groupedByTime(time, t));
     }
 
@@ -2565,7 +2734,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param factory Collection factory
      * @return Streamable batched into collection types by time period
      */
-    default <C extends Collection<? super T>> Streamable<C> groupedByTime(long time, TimeUnit unit, Supplier<C> factory) {
+    default <C extends Collection<? super T>> Streamable<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
         return fromStream(reactiveSeq().groupedByTime(time, unit, factory));
     }
 
@@ -2579,12 +2748,14 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * 						.get(0)
      * 						.size(),is(1));
      * }
+     * </pre>
      * 
      * @param size batch size
      * @param supplier Collection factory
      * @return Streamable batched into collection types by size
      */
-    default <C extends Collection<? super T>> Streamable<C> grouped(int size, Supplier<C> supplier) {
+    @Override
+    default <C extends Collection<? super T>> Streamable<C> grouped(final int size, final Supplier<C> supplier) {
         return fromStream(reactiveSeq().grouped(size, supplier));
     }
 
@@ -2604,7 +2775,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param unit for the delay
      * @return Streamable that emits each element after a fixed delay
      */
-    default Streamable<T> fixedDelay(long l, TimeUnit unit) {
+    default Streamable<T> fixedDelay(final long l, final TimeUnit unit) {
         return fromStream(reactiveSeq().fixedDelay(l, unit));
     }
 
@@ -2623,7 +2794,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param maxJitterPeriodInNanos - random number less than this is used for each jitter
      * @return Sequence with a random jitter between element emission
      */
-    default Streamable<T> jitter(long maxJitterPeriodInNanos) {
+    default Streamable<T> jitter(final long maxJitterPeriodInNanos) {
         return fromStream(reactiveSeq().jitter(maxJitterPeriodInNanos));
     }
 
@@ -2641,7 +2812,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @return Streamable batched into lists determined by the predicate supplied
      */
 
-    default Streamable<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+    @Override
+    default Streamable<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
         return fromStream(reactiveSeq().groupedUntil(predicate));
     }
 
@@ -2658,7 +2830,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param predicate Batch while predicate holds, then open next batch
      * @return Streamable batched into lists determined by the predicate supplied
      */
-    default Streamable<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+    @Override
+    default Streamable<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
         return fromStream(reactiveSeq().groupedWhile(predicate));
     }
 
@@ -2677,7 +2850,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param factory Collection factory
      * @return Streamable batched into collections determined by the predicate supplied
      */
-    default <C extends Collection<? super T>> Streamable<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    @Override
+    default <C extends Collection<? super T>> Streamable<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return fromStream(reactiveSeq().groupedWhile(predicate, factory));
     }
 
@@ -2698,7 +2872,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param factory Collection factory
      * @return Streamable batched into collections determined by the predicate supplied
      */
-    default <C extends Collection<? super T>> Streamable<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    @Override
+    default <C extends Collection<? super T>> Streamable<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return fromStream(reactiveSeq().groupedUntil(predicate, factory));
 
     }
@@ -2739,7 +2914,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param fn That accepts an error and returns an alternative value
      * @return Streamable that can recover from a particular exception
      */
-    default <EX extends Throwable> Streamable<T> recover(Class<EX> exceptionClass, final Function<EX, T> fn) {
+    default <EX extends Throwable> Streamable<T> recover(final Class<EX> exceptionClass, final Function<EX, T> fn) {
         return fromStream(reactiveSeq().recover(exceptionClass, fn));
 
     }
@@ -2766,7 +2941,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @param fn Function to retry if fails
      * 
      */
-    default <R> Streamable<R> retry(Function<T, R> fn) {
+    default <R> Streamable<R> retry(final Function<T, R> fn) {
         return fromStream(reactiveSeq().retry(fn));
     }
 
@@ -2779,8 +2954,8 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * @param t element to check for
      */
-    default boolean contains(T t) {
-        return stream().anyMatch(c -> t.equals((c)));
+    default boolean contains(final T t) {
+        return stream().anyMatch(c -> t.equals(c));
     }
 
     @Override

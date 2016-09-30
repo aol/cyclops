@@ -9,9 +9,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.internal.stream.spliterators.ClosingSpliterator;
 import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T>implements HotStream<T> {
 

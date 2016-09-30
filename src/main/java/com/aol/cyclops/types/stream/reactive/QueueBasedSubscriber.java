@@ -33,7 +33,7 @@ import lombok.Setter;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Subscriber type
  */
 public class QueueBasedSubscriber<T> implements Subscriber<T> {
 

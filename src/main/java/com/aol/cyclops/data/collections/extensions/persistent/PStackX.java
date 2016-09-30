@@ -928,9 +928,9 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
     }
 
     @Override
-    default PStackX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default PStackX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (PStackX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyWhile(predicate);
+        return (PStackX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override

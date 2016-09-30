@@ -833,9 +833,9 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
     }
 
     @Override
-    default POrderedSetX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default POrderedSetX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (POrderedSetX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyWhile(predicate);
+        return (POrderedSetX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override

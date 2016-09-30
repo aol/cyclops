@@ -11,7 +11,7 @@ import java.util.function.Supplier;
  */
 public class Lambda {
     /**
-     * E.g. to use a supplier to embed additional code inisde a terenury operator
+     * E.g. to use a supplier to embed additional code inisde a ternary operator
      * 
      * <pre>
      * {@code 

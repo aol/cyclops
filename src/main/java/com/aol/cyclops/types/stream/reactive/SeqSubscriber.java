@@ -30,7 +30,7 @@ import com.aol.cyclops.util.ExceptionSoftener;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Subscriber type
  */
 public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, ConvertableSequence<T> {
 

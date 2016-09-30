@@ -1033,9 +1033,9 @@ public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>, OnEmpty
     }
 
     @Override
-    default PQueueX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default PQueueX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (PQueueX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyWhile(predicate);
+        return (PQueueX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override

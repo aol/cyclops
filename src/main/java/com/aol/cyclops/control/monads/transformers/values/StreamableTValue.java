@@ -10,20 +10,22 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.util.stream.Streamable;
 
 /**
  * Monad Transformer for Cyclops Streamables
  * 
  * StreamableT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Streamable
- * 
+ * <pre>
+ * {@code 
  * StreamableT<AnyM<*SOME_MONAD_TYPE*<Streamable<T>>>>
+ * }</pre>
  * 
  * StreamableT allows the deeply wrapped Streamable to be manipulating within it's nested /contained context
  * @author johnmcclean

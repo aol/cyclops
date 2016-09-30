@@ -138,8 +138,8 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
     }
 
     @Override
-    public <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn) {
-        return super.toSequence(fn);
+    public <NT> ReactiveSeq<NT> toReactiveSeq(Function<? super T, ? extends Stream<? extends NT>> fn) {
+        return super.toReactiveSeq(fn);
     }
 
     @Override

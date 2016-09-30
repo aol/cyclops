@@ -23,9 +23,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.jooq.lambda.function.Function3;
-import org.jooq.lambda.function.Function4;
-import org.jooq.lambda.function.Function5;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
@@ -36,8 +33,12 @@ import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.SetTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.StreamTSeq;
+import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
 import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValue;
@@ -68,7 +69,6 @@ import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
-import com.aol.cyclops.util.stream.Streamable;
 
 /**
  * 
@@ -98,14 +98,42 @@ import com.aol.cyclops.util.stream.Streamable;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-
 public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, FlatMap<T>, ToStream<T> {
-
+    /**
+     * Tests for equivalency between two AnyM types
+     * 
+     * <pre>
+     * {@code
+     *    boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(Stream.of(1)));
+     *    //true
+     *     boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(Stream.of(1,2)));
+     *    //false
+     * }
+     * </pre>
+     * 
+     * @param t AnyM to check for equivalence with this AnyM
+     * @return true if monads are equivalent
+     */
     default boolean eqv(AnyM<T> t) {
         return Predicates.eqvIterable(t)
                          .test(this);
     }
-
+    /**
+     * Allows structural matching on the value / seq nature of this AnyM.
+     * If this AnyM can only store a single value an Xor.secondary with type AnyMValue is returned
+     * If this AnyM can  store one or many values an Xor.primary with type AnyMSeq is returned
+     * 
+     * <pre>
+     * {@code
+     *    AnyM<String> monad;
+     *    
+     *    monad.matchable().visit(v->handleValue(v.get()),s->handleSequence(s.toList()));
+     * }
+     * </pre>
+     * 
+     * 
+     * @return An Xor for pattern matching either an AnyMValue or AnyMSeq
+     */
     Xor<AnyMValue<T>, AnyMSeq<T>> matchable();
 
     /**
@@ -125,14 +153,41 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @return AnyM with flattening transformation
      */
     <R> AnyM<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
+     
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
+     * A mutable reduction operation equivalent to Stream#collect
+     * 
+     * <pre>
+     * {@code 
+     *      AnyM<Integer> monad1 = AnyM.fromStream(Stream.of(1,2,3));
+     *      AnyM<Integer> monad2 = AnyM.fromOptional(Optional.of(1));
+     *      
+     *      List<Integer> list1 = monad1.collect(Collectors.toList());
+     *      List<Integer> list2 = monad2.collect(Collectors.toList());
+     *      
+     * }
+     * </pre>
+     * 
+     * 
+     * @param collector JDK collector to perform mutable reduction
+     * @return Reduced value
      */
-
     <R, A> R collect(Collector<? super T, A, R> collector);
 
-    /* Convert this AnyM to a Stream
+    /* 
+     * Convert this AnyM to an extended Stream (ReactiveSeq)
+     * 
+     * <pre>
+     * {@code 
+     *    AnyM<Integer> monad =  AnyM.fromOptional(Optional.of(10));
+     *    
+     *    Stream<Integer> stream = monad.stream();
+     *    //ReactiveSeq[10]
+     * }
+     * </pre>
+     * 
      */
     public ReactiveSeq<T> stream();
 
@@ -151,17 +206,27 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
         
      * 
      * }</pre>
+     * @param fn Function used to convert contents to Stream
      * 
      * @return A Sequence that wraps a Stream
      */
-    <NT> ReactiveSeq<NT> toSequence(Function<? super T, ? extends Stream<? extends NT>> fn);
+    <NT> ReactiveSeq<NT> toReactiveSeq(Function<? super T, ? extends Stream<? extends NT>> fn);
 
     /* 
-     * Unwraps the wrapped monad, in it's current state.
-     * i.e. Lists or Sets may be Streams
+     * Unwraps the wrapped monad
+     * 
+     * <pre>
+     * {@code 
+     *    AnyM<Integer> monad = AnyM.fromStream(Stream.of(1,2,3));
+     *    
+     *    Stream<Integer> stream = monad.unwrap();
+     * }
+     * </pre>
+     * 
      * (non-Javadoc)
     * @see com.aol.cyclops.sequence.Unwrapable#unwrap()
     */
+    @Override
     <R> R unwrap();
 
     /**
@@ -197,11 +262,11 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      *   AnyM.fromStream(Stream.of(1,2,3))
      *       .map(i->i+2);
      *   
-     *   AnyM[Stream[3,4,5]]
+     *   //AnyM[Stream[3,4,5]]
      * }
      * </pre>
-     * @param fn
-     * @return
+     * @param fn Mapping function
+     * @return AnyM transformed by the mapping function
      */
     <R> AnyM<R> map(Function<? super T, ? extends R> fn);
 
@@ -239,18 +304,6 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     */
     <R> AnyM<R> bind(Function<? super T, ?> fn);
 
-    /**
-     * Perform a bind operation (@see #bind) but also lift the return value into a Monad using configured
-     * MonadicConverters
-     
-     * Note the modified javaslang monad laws are not applied during the looser typed bind operation
-     * The modification being used to work around the limits of the Java type system.
-     * 
-     * @param fn flatMap function
-     * @return flatMapped monad
-     *
-     <R> AnyM<R> liftAndBind(Function<? super T,?> fn);
-      */
 
     /**
      * join / flatten one level of a nested hierarchy
@@ -299,7 +352,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     public <T> AnyM<T> unit(T value);
 
     /**
-     * Construct an AnyM wrapping an empty instance of the wrapped type 
+     * Construct an AnyM wrapping a new empty instance of the wrapped type 
      * 
      * e.g.
      * <pre>
@@ -313,10 +366,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     public <T> AnyM<T> empty();
 
     /**
-     * Perform a reduction using a Monoid that combines AnyM types.
-     * 
-     *
-     * 
+     * Perform a monadic reduction using a Monoid that combines AnyM types.
      * 
      * 
      * e.g. 
@@ -327,9 +377,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     	
     	//AnyM[Optional(14)];
     	  
-    	 
-    	
-    	 
+    	 	 
     	}</pre>
     * 
     * 
@@ -338,7 +386,26 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     * @return Reduced AnyM
     */
     AnyMValue<T> reduceMValue(Monoid<AnyMValue<T>> reducer);
-
+    /**
+     * Perform a monadic reduction using a Monoid that combines AnyM types.
+     * 
+     * 
+     * e.g. 
+     * <pre>{@code 
+     *   Monoid<AnyMSeq<Integer>> listAddFirst = Monoid.of(AnyM.fromList(Arrays.asList(0)), (a,b)-> AnyM.fromList(Arrays.asList(a.get(0)+b.get(0))));
+        
+        AnyM.fromStream(Stream.of(2,8,3,1)).reduceM(listAddFirst);
+        
+        //AnyM[Optional(14)];
+          
+             
+        }</pre>
+    * 
+    * 
+    * 
+    * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
+    * @return Reduced AnyM
+    */
     AnyMSeq<T> reduceMSeq(Monoid<AnyMSeq<T>> reducer);
 
     /**
@@ -379,7 +446,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * Wrap a Streamable inside an AnyM
      * 
      * @param streamable wrap
-     * @return
+     * @return AnyMSeq generated from a ToStream type
      */
     public static <T> AnyMSeq<T> fromStreamable(ToStream<T> streamable) {
         Objects.requireNonNull(streamable);
@@ -408,7 +475,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * if wrap() is called
      * 
      * 
-     * @param list to wrap inside an AnyM
+     * @param set to wrap inside an AnyM
      * @return AnyM wrapping a Set
      */
     public static <T> AnyMSeq<T> fromSet(Set<T> set) {
@@ -420,7 +487,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * Create an AnyM wrapping a Stream of the supplied data
      * 
      * @param streamData values to populate a Stream
-     * @return
+     * @return AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
     public static <T> AnyMSeq<T> fromArray(T... streamData) {
         return AnyMFactory.instance.seq(Stream.of(streamData));
@@ -432,12 +499,33 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * Identical to fromArray, exists as it may appear functionally more obvious to users than fromArray (which fits the convention)
      * 
      * @param streamData values to populate a Stream
-     * @return
+     * @return  AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
     public static <T> AnyMSeq<T> streamOf(T... streamData) {
         return AnyMFactory.instance.seq(Stream.of(streamData));
     }
 
+    /**
+     * Construct an AnyM that wraps a reactive-streams Publisher. If there is no registered Comprehender for the supplied Publisher, this method
+     *  will attempt to convert the Publisher to a type that cyclops-react can understand.
+     *  
+     *  <pre>
+     *  {@code 
+     *       AnyMSeq<Integer> flux = AnyM.fromPublisher(Flux.just(10,20,30));
+     *       
+     *       //with cyclops-reactor
+     *       //AnyM[Flux[Integer]]]
+     *       
+     *       //without cyclops-reactor
+     *       //AnyM[ReactiveSeq[Integer]]]
+     *  }
+     *  </pre>
+     *  It is generally safer to define a Comprehender and use a non-converting call to generate the wrapped AnyM
+     *       (e.g. Reactor.Flux in cyclops-reactor for Pivotal Reactor Publishers)
+     * 
+     * @param publisher Publisher to wrap inside an AnyM
+     * @return AnyMSeq that wraps a Publisher
+     */
     public static <T> AnyMSeq<T> fromPublisher(Publisher<T> publisher) {
         return AnyMFactory.instance.convertSeq(publisher);
     }
@@ -489,7 +577,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps an Optional
      * 
-     * @param stream Optional to wrap
+     * @param optional Optional to wrap
      * @return AnyM that wraps the provided Optonal
      */
     public static <T> AnyMValue<T> fromOptional(Optional<T> optional) {
@@ -500,7 +588,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps an OptionalDouble
      * 
-     * @param stream Optional to wrap
+     * @param optional Optional to wrap
      * @return AnyM that wraps the provided OptonalDouble
      */
     public static AnyMValue<Double> fromOptionalDouble(OptionalDouble optional) {
@@ -511,7 +599,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps an OptionalLong
      * 
-     * @param stream OptionalLong to wrap
+     * @param optional OptionalLong to wrap
      * @return AnyM that wraps the provided OptonalLong
      */
     public static AnyMValue<Long> fromOptionalLong(OptionalLong optional) {
@@ -522,7 +610,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps an OptionalInt
      * 
-     * @param stream OptionalInt to wrap
+     * @param optional OptionalInt to wrap
      * @return AnyM that wraps the provided OptonalInt
      */
     public static AnyMValue<Integer> fromOptionalInt(OptionalInt optional) {
@@ -533,7 +621,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps a CompletableFuture
      * 
-     * @param stream CompletableFuture to wrap
+     * @param future CompletableFuture to wrap
      * @return AnyM that wraps the provided CompletableFuture
      */
     public static <T> AnyMValue<T> fromCompletableFuture(CompletableFuture<T> future) {
@@ -541,126 +629,276 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
         return AnyMFactory.instance.value(future);
     }
 
-    public static <T> AnyMValue<T> fromXor(Xor<?, T> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     * Create an AnyMValue instance that wraps an Xor
+     * 
+     * @param xor Xor to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Xor
+     */
+    public static <T> AnyMValue<T> fromXor(Xor<?, T> xor) {
+        Objects.requireNonNull(xor);
+        return AnyMFactory.instance.value(xor);
     }
 
-    public static <T> AnyMValue<T> fromFeatureToggle(FeatureToggle<T> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     * Create an AnyMValue instance that wraps an FeatureToggle
+     * 
+     * @param featureToggle to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided FeatureToggle
+     */
+    public static <T> AnyMValue<T> fromFeatureToggle(FeatureToggle<T> featureToggle) {
+        Objects.requireNonNull(featureToggle);
+        return AnyMFactory.instance.value(featureToggle);
     }
 
-    public static <T> AnyMValue<T> fromTry(Try<T, ?> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     * Create an AnyMValue instance that wraps a Try
+     * 
+     * @param trySomething to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Try
+     */
+    public static <T> AnyMValue<T> fromTry(Try<T, ?> trySomething) {
+        Objects.requireNonNull(trySomething);
+        return AnyMFactory.instance.value(trySomething);
     }
 
-    public static <T> AnyMValue<T> fromIor(Ior<?, T> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     *  Create an AnyMValue instance that wraps an Ior
+     * 
+     * @param ior to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Ior
+     */
+    public static <T> AnyMValue<T> fromIor(Ior<?, T> ior) {
+        Objects.requireNonNull(ior);
+        return AnyMFactory.instance.value(ior);
     }
 
-    public static <T> AnyMValue<T> fromEval(Eval<T> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     * Create an AnyMValue instance that wraps an Eval
+     * 
+     * @param eval to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Eval
+     */
+    public static <T> AnyMValue<T> fromEval(Eval<T> eval) {
+        Objects.requireNonNull(eval);
+        return AnyMFactory.instance.value(eval);
     }
 
+    /**
+     * Create an AnyMValue instance that wraps a FutureW
+     * 
+     * @param future to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided future
+     */
     public static <T> AnyMValue<T> fromFutureW(FutureW<T> future) {
         Objects.requireNonNull(future);
         return AnyMFactory.instance.value(future);
     }
 
-    public static <T> AnyMValue<T> fromMaybe(Maybe<T> future) {
-        Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future);
+    /**
+     * Create an AnyMValue instance that wraps a {@link Maybe}
+     * 
+     * @param maybe to wrap inside an AnyM
+     * @return instance that wraps the provided Maybe
+     */
+    public static <T> AnyMValue<T> fromMaybe(Maybe<T> maybe) {
+        Objects.requireNonNull(maybe);
+        return AnyMFactory.instance.value(maybe);
     }
 
+    /**
+     * Create an AnyMValue instance that wraps an EvalTransformer {@link EvalTValue}
+     * 
+     * @param evalT  to wrap inside an AnyM
+     * @return instance that wraps the provided EvalTransformer
+     */
     public static <T> AnyMValue<T> fromEvalTValue(EvalTValue<T> evalT) {
         Objects.requireNonNull(evalT);
         return AnyMFactory.instance.value(evalT);
     }
 
+    /**
+     *  Create an AnyMValue instance that wraps an MaybeTransformer {@link MaybeTValue}
+     * 
+     * @param maybeT  to wrap inside an AnyM
+     * @return instance that wraps the provided MaybeTransformer
+     */
     public static <T> AnyMValue<T> fromMaybeTValue(MaybeTValue<T> maybeT) {
         Objects.requireNonNull(maybeT);
         return AnyMFactory.instance.value(maybeT);
     }
 
+    /**
+     * Create an AnyMValue instance that wraps an OptionalTransformer {@link OptionalTValue}
+     * 
+     * @param optionalT to wrap inside an AnyM
+     * @return instance that wraps the provided OptionalTransformer
+     */
     public static <T> AnyMValue<T> fromOptionalTValue(OptionalTValue<T> optionalT) {
         Objects.requireNonNull(optionalT);
         return AnyMFactory.instance.value(optionalT);
     }
 
+    /**
+     * Create an AnyMValue instance that wraps an CompletableFutureTransformer {@link CompletableFutureTValue}
+     * 
+     * @param futureT  to wrap inside an AnyM
+     * @return instance that wraps the provided CompletableFutureTransformer
+     */
     public static <T> AnyMValue<T> fromCompletableFutureTValue(CompletableFutureTValue<T> futureT) {
         Objects.requireNonNull(futureT);
         return AnyMFactory.instance.value(futureT);
     }
 
+    /**
+     *  Create an AnyMValue instance that wraps an XorTransformer {@link CompletableFutureTValue}
+     * 
+     * @param xorT to wrap inside an AnyM
+     * @return instance that wraps the provided XorTransformer
+     */
     public static <ST, PT> AnyMValue<PT> fromXorTValue(XorTValue<ST, PT> xorT) {
         Objects.requireNonNull(xorT);
         return AnyMFactory.instance.value(xorT);
     }
 
+    /**
+     * Create an AnyMValue instance that wraps an TryTransformer {@link TryTValue}
+     * 
+     * @param tryT to wrap inside an AnyM
+     * @return instance that wraps the provided TryTransformer
+     */
     public static <T, X extends Throwable> AnyMValue<T> fromTryTValue(TryTValue<T, X> tryT) {
         Objects.requireNonNull(tryT);
         return AnyMFactory.instance.value(tryT);
     }
 
+    /**
+     * Create an AnyMSeq instance that wraps an XorTransformer {@link XorTSeq}
+     * 
+     * @param xorT to wrap inside an AnyM
+     * @return instance that wraps the provided XorTransformer
+     */
     public static <ST, PT> AnyMSeq<PT> fromXorTSeq(XorTSeq<ST, PT> xorT) {
         Objects.requireNonNull(xorT);
         return AnyMFactory.instance.seq(xorT);
     }
 
+    /**
+     * Create an AnyMSeq instance that wraps an TryTransformer {@link TryTSeq}
+     * 
+     * @param tryT to wrap inside an AnyM
+     * @return instance that wraps the provided TryTransformer
+     */
     public static <T, X extends Throwable> AnyMSeq<T> fromTryTSeq(TryTSeq<T, X> tryT) {
         Objects.requireNonNull(tryT);
         return AnyMFactory.instance.seq(tryT);
     }
 
+    /**
+     * Create an AnyMSeq instance that wraps an EvalTransformer {@link EvalTSeq}
+     * 
+     * @param evalT to wrap inside an AnyM
+     * @return instance that wraps the provided EvalTransformer
+     */
     public static <T> AnyMSeq<T> fromEvalTSeq(EvalTSeq<T> evalT) {
         Objects.requireNonNull(evalT);
         return AnyMFactory.instance.seq(evalT);
     }
 
+    /**
+     * Create an AnyMSeq instance that wraps an MaybeTransformer {@link MaybeTSeq}
+     * 
+     * @param maybeT to wrap inside an AnyM
+     * @return instance that wraps the provided MaybeTransformer
+     */
     public static <T> AnyMSeq<T> fromMaybeTSeq(MaybeTSeq<T> maybeT) {
         Objects.requireNonNull(maybeT);
         return AnyMFactory.instance.seq(maybeT);
     }
 
+    /**
+     * Create an AnyMSeq instance that wraps an OptionalTransformer {@link OptionalTSeq}
+     * 
+     * @param optionalT to wrap inside an AnyM
+     * @return instance that wraps the provided OptionalTransformer
+     */
     public static <T> AnyMSeq<T> fromOptionalTSeq(OptionalTSeq<T> optionalT) {
         Objects.requireNonNull(optionalT);
         return AnyMFactory.instance.seq(optionalT);
     }
 
+    /**
+     *  Create an AnyMSeq instance that wraps an CompletableFutureTransformer {@link CompletableFutureTSeq}
+     * 
+     * @param futureT to wrap inside an AnyM
+     * @return instance that wraps the provided CompletableFutureTransformer
+     */
     public static <T> AnyMSeq<T> fromCompletableFutureTSeq(CompletableFutureTSeq<T> futureT) {
         Objects.requireNonNull(futureT);
         return AnyMFactory.instance.seq(futureT);
     }
 
+    /**
+     * Create an AnyMValue instance that wraps an FutureWTransformer {@link FutureWTSeq}
+     * 
+     * @param futureT to wrap inside an AnyM
+     * @return  instance that wraps the provided FutureWTransformer
+     */
     public static <T> AnyMValue<T> fromFutureWTValue(FutureWTValue<T> futureT) {
         Objects.requireNonNull(futureT);
         return AnyMFactory.instance.value(futureT);
     }
 
+    /**
+     * Create an AnyMSeq instance that wraps an FutureWTransformer {@link FutureWTSeq}
+     * 
+     * @param futureT to wrap inside an AnyM
+     * @return instance that wraps the provided FutureWTransformer
+     */
     public static <T> AnyMSeq<T> fromFutureWTSeq(FutureWTSeq<T> futureT) {
         Objects.requireNonNull(futureT);
         return AnyMFactory.instance.seq(futureT);
     }
 
+    /**
+     * Create an AnyMSeq instance that wraps an ListTransformer {@link ListTSeq}
+     * 
+     * @param listT to wrap inside an AnyM
+     * @return instance that wraps the provided ListTransformer
+     */
     public static <T> AnyMSeq<T> fromListT(ListT<T> listT) {
         Objects.requireNonNull(listT);
         return AnyMFactory.instance.seq(listT);
     }
 
+    /**
+     * Create an AnyMSeq instance that wraps an StreamTransformer {@link StreamTSeq}
+     * 
+     * @param streamT to wrap inside an AnyM
+     * @return instance that wraps the provided StreamTransformer
+     */
     public static <T> AnyMSeq<T> fromStreamT(StreamT<T> streamT) {
         Objects.requireNonNull(streamT);
         return AnyMFactory.instance.seq(streamT);
     }
 
+    /**
+     * Create an AnyMSeq instance that wraps an StreamableTransformer {@link StreamableTSeq}
+     * 
+     * @param streamT  to wrap inside an AnyM
+     * @return instance that wraps the provided StreamableTransformer
+     */
     public static <T> AnyMSeq<T> fromStreamableT(StreamableT<T> streamT) {
         Objects.requireNonNull(streamT);
         return AnyMFactory.instance.seq(streamT);
     }
 
+    /**
+     * Create an AnyMSeq instance that wraps an SetTransformer {@link SetTSeq}
+     * 
+     * @param setT to wrap inside an AnyM
+     * @return instance that wraps the provided SetTransformer
+     */
     public static <T> AnyMSeq<T> fromSetT(SetT<T> setT) {
         Objects.requireNonNull(setT);
         return AnyMFactory.instance.seq(setT);
@@ -669,7 +907,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     /**
      * Create an AnyM instance that wraps an Iterable
      * 
-     * @param stream Iterable to wrap
+     * @param iterable Iterable to wrap
      * @return AnyM that wraps the provided Iterable
      */
     public static <T> AnyMSeq<T> fromIterable(Iterable<T> iterable) {
@@ -688,8 +926,8 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * This exists as many monadic value types in Java libraries implement iterable (such 
      * as Optional in Javaslang or FunctionalJava).
      * 
-     * @param iterable
-     * @return
+     * @param iterable To generate AnyMValue from
+     * @return AnyMValue wrapping the supplied Iterable
      */
     public static <T> AnyMValue<T> fromIterableValue(Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
@@ -697,26 +935,44 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     }
 
     /**
-     * Take the supplied object and always attempt to convert it to a Monad type
+     * Take the supplied object and attempt to convert it to a supported Monad type
      * 
-     * @param monad
-     * @return
+     * @param monad Monad to convert to a supported type and wrap inside an AnyMValue
+     * @return AnyMValue that wraps the supplied converted monad
      */
     public static <T> AnyMValue<T> ofConvertableValue(Object monad) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.convertValue(monad);
     }
 
+    /**
+     * Take the supplied object and attempt to convert it to a supported Monad type
+     * 
+     * @param monad Monad to convert to a supported type and wrap inside an AnyMValue
+     * @return AnyMSeq that wraps the supplied converted
+     */ 
     public static <T> AnyMSeq<T> ofConvertableSeq(Object monad) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.convertSeq(monad);
     }
 
+    /**
+     * Create an AnyMValue that wraps the untyped monad
+     * 
+     * @param monad to wrap inside an AnyM
+     * @return AnyMValue that wraps the supplied monad
+     */
     public static <T> AnyMValue<T> ofValue(Object monad) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.value(monad);
     }
 
+    /**
+     * Create an AnyMSeq that wraps the untyped monad
+     * 
+     * @param monad to wrap inside an AnyM
+     * @return AnyMSeq that wraps the supplied monad
+     */
     public static <T> AnyMSeq<T> ofSeq(Object monad) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.seq(monad);
@@ -744,10 +1000,10 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @param anyM Iterable containing Streamables
      * @return List of AnyMs
      */
-    public static <T> List<AnyMSeq<T>> listFromStreamable(Iterable<Streamable<T>> anyM) {
+    public static <T> ListX<AnyMSeq<T>> listFromStreamable(Iterable<Streamable<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromStreamable(i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
 
     /**
@@ -762,10 +1018,10 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @param anyM Iterable containing Streams
      * @return List of AnyMs
      */
-    public static <T> List<AnyMSeq<T>> listFromStream(Iterable<Stream<T>> anyM) {
+    public static <T> ListX<AnyMSeq<T>> listFromStream(Iterable<Stream<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromStream(i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
 
     /**
@@ -780,10 +1036,10 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @param anyM Iterable containing Optional
      * @return List of AnyMs
      */
-    public static <T> List<AnyMValue<T>> listFromOptional(Iterable<Optional<T>> anyM) {
+    public static <T> ListX<AnyMValue<T>> listFromOptional(Iterable<Optional<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromOptional(i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
 
     /**
@@ -798,10 +1054,10 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @param anyM Iterable containing CompletableFuture
      * @return List of AnyMs
      */
-    public static <T> List<AnyMValue<T>> listFromCompletableFuture(Iterable<CompletableFuture<T>> anyM) {
+    public static <T> ListX<AnyMValue<T>> listFromCompletableFuture(Iterable<CompletableFuture<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromCompletableFuture(i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
 
     /**
@@ -816,40 +1072,97 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @param anyM Iterable containing Streamables
      * @return List of AnyMs
      */
-    public static <T> List<AnyMSeq<T>> listFromIterable(Iterable<Iterable<T>> anyM) {
+    public static <T> ListX<AnyMSeq<T>> listFromIterable(Iterable<Iterable<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromIterable(i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
 
-    public static <ST, T> List<AnyMValue<T>> listFromXor(Iterable<Xor<ST, T>> anyM) {
+    /**
+     * Take an iterable containing Xors and convert them into a List of AnyMs
+     * e.g.
+     * {@code 
+     *     List<AnyM<Integer>> anyMs = AnyM.listFromXor(Arrays.asList(Xor.primary(1),Xor.secondary(10));
+     *     
+     *     //List[AnyM[Xor:primary[1],Xor:secondaary[10]]]
+     * }
+     * 
+     * @param anyM Iterable containing Xors
+     * @return List of AnyMs
+     */
+    public static <ST, T> ListX<AnyMValue<T>> listFromXor(Iterable<Xor<ST, T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromXor(i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
-
-    public static <ST, T> List<AnyMValue<T>> listFromIor(Iterable<Ior<ST, T>> anyM) {
+    /**
+     * Take an iterable containing Iors and convert them into a List of AnyMs
+     * e.g.
+     * {@code 
+     *     List<AnyM<Integer>> anyMs = AnyM.listFromXor(Arrays.asList(Ior.primary(1),Ior.secondary(10));
+     *     
+     *     //List[AnyM[Ior:primary[1],Ior:secondaary[10]]]
+     * }
+     * 
+     * @param anyM Iterable containing Iors
+     * @return List of AnyMs
+     */
+    public static <ST, T> ListX<AnyMValue<T>> listFromIor(Iterable<Ior<ST, T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromIor(i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
-
-    public static <T> List<AnyMValue<T>> listFromMaybe(Iterable<Maybe<T>> anyM) {
+    /**
+     * Take an iterable containing Maybes and convert them into a List of AnyMs
+     * e.g.
+     * {@code 
+     *     List<AnyM<Integer>> anyMs = AnyM.listFromXor(Arrays.asList(Maybe.just(1),Maybe.just(10));
+     *     
+     *     //List[AnyM[Maybe[1],Maybe[10]]]
+     * }
+     * 
+     * @param anyM Iterable containing Maybes
+     * @return List of AnyMs
+     */
+    public static <T> ListX<AnyMValue<T>> listFromMaybe(Iterable<Maybe<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromMaybe(i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
-
-    public static <T> List<AnyMValue<T>> listFromEval(Iterable<Eval<T>> anyM) {
+    /**
+     * Take an iterable containing Evals and convert them into a List of AnyMs
+     * e.g.
+     * {@code 
+     *     List<AnyM<Integer>> anyMs = AnyM.listFromXor(Arrays.asList(Eval.now(1),Eval.now(10));
+     *     
+     *     //List[AnyM[Eval[1],Eval[10]]]
+     * }
+     * 
+     * @param anyM Iterable containing Maybes
+     * @return List of AnyMs
+     */
+    public static <T> ListX<AnyMValue<T>> listFromEval(Iterable<Eval<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromEval(i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
 
-    public static <T> List<AnyMValue<T>> listFromFutureW(Iterable<FutureW<T>> anyM) {
+    /**
+     * Take an iterable containing FutureW and convert them into a List of AnyMs
+     * e.g.
+     * {@code 
+     *     List<AnyM<Integer>> anyMs = AnyM.listFromXor(Arrays.asList(FutureW.ofResult(1),FutureW.ofResult(10));
+     *     
+     *     //List[AnyM[FutureW[1],FutureW[10]]]
+     * }
+     * 
+     * @param anyM Iterable containing Maybes
+     * @return List of AnyMs
+     */
+    public static <T> ListX<AnyMValue<T>> listFromFutureW(Iterable<FutureW<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromFutureW(i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
 
     /**
@@ -864,10 +1177,10 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @param anyM Iterable containing Iterators
      * @return List of AnyMs
      */
-    public static <T> List<AnyMSeq<T>> listFromIterator(Iterable<Iterator<T>> anyM) {
+    public static <T> ListX<AnyMSeq<T>> listFromIterator(Iterable<Iterator<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromIterable(() -> i))
-                            .collect(Collectors.toList());
+                            .collect(ListX.listXCollector());
     }
 
     /**
@@ -881,7 +1194,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
        //where AnyM wraps  CompletableFuture<List<Integer>>
       }</pre>
      * 
-     * @see com.aol.cyclops.monad.AsAnyMList for helper methods to convert a List of Monads / Collections to List of AnyM
+     * 
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */
@@ -909,6 +1222,11 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
 
     /**
      * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
+     * 
+     * @param source  Stream to traverse
+     * @param unitEmpty  Supplier to generate an AnyM with an Empty Stream
+     * @param fn Mapping function
+     * @return AnyM wrapping a Monad with a Stream transformed by the supplied mapping function
      *
      */
     public static <T, R> AnyM<Stream<R>> traverse(Stream<AnyM<T>> source, Supplier<AnyM<Stream<T>>> unitEmpty, Function<? super T, ? extends R> fn) {
@@ -917,7 +1235,24 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
 
     /**
      * Convert a Stream of Monads to a Monad with a Stream
-     *
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  
+        Supplier<AnyM<Stream<Integer>>> unitEmpty = ()->AnyM.fromOptional(Optional.of(Stream.<Integer>empty()));
+        
+        AnyMValue<Integer> just = AnyM.fromOptional(Optional.of(10));
+        Stream<AnyM<Integer>> streamOfOptionals = ReactiveSeq.of(just,AnyM.fromOptional(Optional.of(1)));
+        
+        AnyM<Stream<Integer>> optionalWithAStream  =AnyM.sequence(streamOfOptionals, unitEmpty);
+        Optional<Stream<Integer>> optional = optionalWithAStream.unwrap();
+       
+     * }
+     * </pre>
+     * @param source Stream of monads to sequence
+     * @param unitEmpty Supplier to generate an AnyM with an Empty Stream
+     * @return  AnyM wrapping a Monad with a Stream
      */
     public static <T> AnyM<Stream<T>> sequence(Stream<? extends AnyM<T>> source, Supplier<? extends AnyM<Stream<T>>> unitEmpty) {
         Stream<AnyM<T>> narrowed = (Stream<AnyM<T>>) source;
@@ -929,22 +1264,22 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
 
     /**
      * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
-     * AnyM view simplifies type related challenges.
      * 
-     * @param fn
-     * @return
+     * 
+     * @param fn Function to Lift into monadic form
+     * @return A monadic function
      */
     public static <U, R> Function<AnyM<U>, AnyM<R>> liftM(Function<? super U, ? extends R> fn) {
         return u -> u.map(input -> fn.apply(input));
     }
 
     /**
-     * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)
-     * AnyM view simplifies type related challenges. The actual native type is not specified here.
+     * Lift a function so it accepts an AnyM wrapped Monad and returns an AnyMwrapped Monad.
      * 
      * e.g.
      * 
-     * <pre>{@code
+     * <pre>
+     * {@code
      * 	BiFunction<AnyM<Integer>,AnyM<Integer>,AnyM<Integer>> add = Monads.liftM2(this::add);
      *   
      *  Optional<Integer> result = add.apply(getBase(),getIncrease());
@@ -966,28 +1301,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     }
 
     /**
-     * Lift a jOOλ Function3  into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
-     * 
-     * <pre>
-     * {@code
-     * Function3 <AnyM<Double>,AnyM<Entity>,AnyM<String>,AnyM<Integer>> fn = liftM3(this::myMethod);
-     *    
-     * }
-     * </pre>
-     * 
-     * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
-     * 
-     * @param fn Function to lift
-     * @return Lifted function
-     */
-    public static <U1, U2, U3, R> Function3<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<R>> liftM3(
-            Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
-        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
-                                                   .unwrap());
-    }
-
-    /**
-     * Lift a TriFunction into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
+     * Lift a TriFunction  into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
      * 
      * <pre>
      * {@code
@@ -1001,25 +1315,14 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <U1, U2, U3, R> TriFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<R>> liftM3Cyclops(
+    public static <U1, U2, U3, R> TriFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<R>> liftM3(
             TriFunction<? super U1, ? super U2, ? super U3, ? extends R> fn) {
-        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))
-                                                                     .unwrap())
+        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
                                                    .unwrap());
     }
 
-    /**
-     * Lift a  jOOλ Function4 into Monadic form.
-     * 
-     * @param fn Quad funciton to lift
-     * @return Lifted Quad function
-     */
-    public static <U1, U2, U3, U4, R> Function4<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<R>> liftM4(
-            Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
-
-        return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))))
-                                                       .unwrap());
-    }
+   
+    
 
     /**
      * Lift a QuadFunction into Monadic form.
@@ -1027,7 +1330,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <U1, U2, U3, U4, R> QuadFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<R>> liftM4Cyclops(
+    public static <U1, U2, U3, U4, R> QuadFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<R>> liftM4(
             QuadFunction<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))
@@ -1036,28 +1339,14 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                                        .unwrap());
     }
 
-    /**
-     * Lift a  jOOλ Function5 (5 parameters) into Monadic form
-     * 
-     * @param fn Function to lift
-     * @return Lifted Function
-     */
-    public static <U1, U2, U3, U4, U5, R> Function5<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<U5>, AnyM<R>> liftM5(
-            Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
-
-        return (u1, u2, u3, u4,
-                u5) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,
-                                                                                                                         input4, input5)))))
-                                           .unwrap());
-    }
-
+    
     /**
      * Lift a QuintFunction (5 parameters) into Monadic form
      * 
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <U1, U2, U3, U4, U5, R> QuintFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<U5>, AnyM<R>> liftM5Cyclops(
+    public static <U1, U2, U3, U4, U5, R> QuintFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<U5>, AnyM<R>> liftM5(
             QuintFunction<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
@@ -1132,10 +1421,30 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     static class AnyMFactory {
         static AnyMFactory instance = new AnyMFactory();
 
-        /* 
-         * This will convert the supplied Object if possible into a supported Monad type (or more efficient type)
-         * (non-Javadoc)
-         * @see com.aol.cyclops.monad.AnyMFactory#of(java.lang.Object)
+     
+        /**
+         * Convert an object to an AnyMValue type if possible. If a registered monad comprehender exists the supplied object will
+         * be wrapped as is, otherwise it will be converted into a support type (if possible). 
+         * 
+         * <pre>
+         * {@code
+         *     //Wrapped as is 
+         *      
+         *     AnyMValue<Integer> maybe = factory.convertValue(Maybe.just(10));
+         *     //AnyMValue[Maybe[Integer]]]
+         *     
+         *     //Converted 
+         *     
+         *     AnyMValue<Integer> maybe = factory.convertValue(null);
+         *     
+         *     //AnyMValue[Optional[Integer]]
+         *     
+         * }
+         * </pre>
+         * 
+         * 
+         * @param o Object to convert
+         * @return AnyMValue wrapping supplied Object
          */
         public <T> AnyMValue<T> convertValue(Object o) {
 
@@ -1146,6 +1455,30 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                       o).anyMValue();
         }
 
+        /**
+         * Convert an object to an AnyMSeq type if possible. If a registered monad comprehender exists the supplied object will
+         * be wrapped as is, otherwise it will be converted into a support type (if possible). 
+         * 
+         * <pre>
+         * {@code
+         *     //Wrapped as is 
+         *      
+         *     AnyMSeq<Integer> maybe = factory.convertSeq(Stream.of(10));
+         *     //AnyMValue[Stream[Integer]]]
+         *     
+         *     //Converted 
+         *     BufferedReader reader;
+         *     AnyMSeq<Integer> maybe = factory.convertSeq(reader);
+         *     
+         *     //AnyMSeq[ReactiveSeq[String]]
+         *     
+         * }
+         * </pre>
+         * 
+         * 
+         * @param o Object to convert
+         * @return AnyMSeq wrapping supplied Object
+         */
         public <T> AnyMSeq<T> convertSeq(Object o) {
 
             if (new ComprehenderSelector().selectComprehender(o) instanceof InvokeDynamicComprehender)
@@ -1155,10 +1488,12 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                       o).anyMSeq();
         }
 
-        /* This will accept the supplied monad as is
+        
+        /**
+         * Non-type safe way to wrap a supported monad type in an AnyMValue
          * 
-         * (non-Javadoc)
-         * @see com.aol.cyclops.monad.AnyMFactory#monad(java.lang.Object)
+         * @param o Monad to wrap
+         * @return AnyMValue wrapping supplied monad
          */
         public <T> AnyMValue<T> value(Object o) {
             if (o instanceof AnyMValue)
@@ -1167,6 +1502,12 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                       o).anyMValue();
         }
 
+        /**
+         * Non-type safe way to wrap a supported monad type in an AnyMSeq
+         * 
+         * @param o Monad to wrap
+         * @return AnyMValue wrapping supplied monad
+         */
         public <T> AnyMSeq<T> seq(Object o) {
             if (o instanceof AnyMSeq)
                 return (AnyMSeq<T>) o;

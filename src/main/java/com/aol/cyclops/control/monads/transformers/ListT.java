@@ -43,9 +43,11 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * Monad Transformer for Java Lists
  * 
  * ListT consists of an AnyM instance that in turns wraps anoter Monad type that contains an List
- * 
+ * <pre>
+ * {@code
  * ListT<AnyM<*SOME_MONAD_TYPE*<List<T>>>>
- * 
+ * }
+ * </pre>
  * ListT allows the deeply wrapped List to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
@@ -489,12 +491,12 @@ public interface ListT<T> extends FoldableTransformerSeq<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default ListT<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default ListT<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (ListT<ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (ListT<ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

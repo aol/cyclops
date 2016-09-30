@@ -187,9 +187,6 @@ public class FastFuture<T> {
     }
 
     /** Internal conversion method to convert CompletableFutures to FastFuture.
-     * 
-     * @param cf
-     * @return
      */
     public static <T> FastFuture<T> fromCompletableFuture(CompletableFuture<T> cf) {
         FastFuture<T> f = new FastFuture<>();
@@ -339,7 +336,6 @@ public class FastFuture<T> {
     /**
      * Called at least once on complete
      * 
-     * @param fn
      */
     public void essential(Consumer<OnComplete> fn) {
         this.essential = fn; //set - could also be called on a separate thread
@@ -351,7 +347,6 @@ public class FastFuture<T> {
     /**
      * Called at least once on complete
      * 
-     * @param fn
      */
     public void onComplete(Consumer<OnComplete> fn) {
 

@@ -2,6 +2,13 @@ package com.aol.cyclops.data.collections.extensions;
 
 import java.util.Collection;
 
+/**
+ * A Fluent API for adding and removing collection elements
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> the type of elements held in this collection
+ */
 public interface FluentCollectionX<T> extends CollectionX<T> {
 
     /**

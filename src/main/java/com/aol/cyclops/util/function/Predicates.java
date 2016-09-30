@@ -21,39 +21,65 @@ import com.aol.cyclops.types.Value;
 
 import lombok.NoArgsConstructor;
 
+
 /**
  * 
- * Some useful Predicates
+ * Placeholder class for Predicates useful for pattern matching, filtering etc.
  * 
- * @author johnmcclean
- *
- */
-/**
  * @author johnmcclean
  *
  */
 public class Predicates {
 
+    /**
+     * Method for point-free Predicate definition (helps with lambda type inferencing) 
+     * 
+     * e.g. 
+     * <pre>
+     * {@code 
+     *    Predicate<Integer> pred = i->i>10;
+     *    
+     *    Predicates.<Integer>p(i->i>10).and(not(p(i<100));
+     * }
+     * </pre>
+     * 
+     * @param p Supplied predicate (normally as a lambda expression)
+     * @return Predicate
+     */
     public static <T> Predicate<T> p(Predicate<T> p) {
         return p;
     }
 
+    /**
+     * @return A Predicate that checks if it's input is an Optional with a value
+     */
     public static <T> Predicate<T> optionalPresent() {
         return t -> (t instanceof Optional) ? ((Optional) t).isPresent() : false;
     }
 
+    /**
+     * @return A Predicate that checks if it's input is a cyclops-react Value (which also contains a present value)
+     */
     public static <T> Predicate<T> valuePresent() {
         return t -> (t instanceof Value) ? ((Value) t).toMaybe()
                                                       .isPresent()
                 : false;
     }
 
+    /**
+     * @return A Predicate that checks if it's input is an Iterable with at least one value
+     */
     public static <T> Predicate<T> iterablePresent() {
         return t -> (t instanceof Iterable) ? ((Iterable) t).iterator()
                                                             .hasNext()
                 : false;
     }
 
+    /**
+     * @return A predicate that checks for a values presence (i.e. for standard values that they are non-null, 
+     *  for Optionals that they are present, for cyclops-react values that they are present and for Iterables that they are
+     *  non-null).
+     */
     public static <T> Predicate<T> some() {
         return Predicates.<T> p(t -> t != null)
                          .and(not(optionalPresent()))
@@ -61,13 +87,18 @@ public class Predicates {
                          .and(not(iterablePresent()));
     }
 
+    /**
+     * Alias for eq (results in nicer pattern matching dsl).
+     * Returns a Predicate that checks for equality between the supplied value and the predicates input parameter
+     * 
+     * @param value Value to check for equality
+     * @return Predicate that checks for equality with the supplied value
+     */
     public static <T> Predicate<T> some(T value) {
-        return t -> eq(value).test(t);
+        return eq(value);
     }
 
-    public static <T> Predicate<T> some(Predicate<? super T> value) {
-        return t -> value.test(t);
-    }
+  
 
     /**
      * wildcard predicate
@@ -77,7 +108,7 @@ public class Predicates {
 
     /**
      * @see Predicates#__
-     * @return Wildcard predicate, capitlised to disambiguate from Hamcrest.any()
+     * @return A Wildcard predicate, always returns true
      * 
      */
     public static final <Y> Predicate<Y> any() {
@@ -100,13 +131,16 @@ public class Predicates {
      * 
      * <pre>
      * {@code
-     *  return Matching.<Expression>whenValues().isType( (Add<Const,Mult> a)-> new Const(1))
-    								.with(__,type(Mult.class).with(__,new Const(0)))
-    			.whenValues().isType( (Add<Mult,Const> a)-> new Const(0)).with(type(Mult.class).with(__,new Const(0)),__)
-    			.whenValues().isType( (Add<Add,Const> a)-> new Const(-100)).with(with(__,new Const(2)),__)
-    			
-    			
-    			.apply(e).orElse(new Const(-1));
+     *      List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
+                                                      .patternMatch(
+                                                              c->c.is(when(new MyCase2(1,2)),then("one"))
+                                                                   .is(when(new MyCase2(3,4)),then("two"))
+                                                                   .is(when(new MyCase2(3,5)),then("three"))
+                                                                   .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
+                                                                   ,Matchable.otherwise("n/a")
+                                                              )
+                                                      .toListX();
+            //Arrays.asList("one","two");
      * 
      * }
      * </pre>
@@ -137,6 +171,14 @@ public class Predicates {
         }
     }
 
+    /**
+     * A return a predicate builder for deconstructing a tuple. Any Object can be mapped to a nested hierarchy of Tuples,
+     * decons can be used to perform structural pattern matching over Java objects (once the Object to tuple mapping has been 
+     * created).
+     * 
+     * @param when
+     * @return
+     */
     public static <T1, T2, T3> PredicateBuilder1<T1> decons(MTuple1<Predicate<? super T1>> when) {
 
         return new PredicateBuilder1<T1>(

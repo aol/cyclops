@@ -39,8 +39,10 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * Monad Transformer for Java Sets
  * 
  * SetT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Set
- * 
+ * <pre>
+ * {@code 
  * SetT<AnyM<*SOME_MONAD_TYPE*<Set<T>>>>
+ * }</pre>
  * 
  * SetT allows the deeply wrapped Set to be manipulating within it's nested /contained context
  * @author johnmcclean
@@ -484,12 +486,12 @@ public class SetTSeq<T> implements SetT<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.SetT#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.SetT#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public SetTSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public SetTSeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (SetTSeq<ListX<T>>) SetT.super.groupedStatefullyWhile(predicate);
+        return (SetTSeq<ListX<T>>) SetT.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

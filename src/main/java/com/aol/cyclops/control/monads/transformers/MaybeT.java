@@ -157,8 +157,8 @@ public interface MaybeT<T> extends Publisher<T>, Functor<T>, Filterable<T> {
      * existing function
      * 
      * <pre>
-     * {
-     *     &#64;code
+     * {@code
+     *     
      *     Function<Integer, Integer> add2 = i -> i + 2;
      *     Function<MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift(add2);
      * 
@@ -192,8 +192,8 @@ public interface MaybeT<T> extends Publisher<T>, Functor<T>, Filterable<T> {
      * asynchronous execution (CompletableFuture) to an existing function
      * 
      * <pre>
-     * {
-     *     &#64;code
+     * {@code 
+     *     
      *     BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
      *     BiFunction<MaybeT<Integer>, MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift2(add);
      * 

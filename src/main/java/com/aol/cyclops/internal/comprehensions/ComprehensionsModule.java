@@ -96,8 +96,6 @@ public interface ComprehensionsModule {
      *            Variable type
      * @param <R>
      *            Return type
-     * @param <V>
-     *            Aggregate Variable type holder
      */
     public static class ComprehensionData<T, R> {
         private final BaseComprehensionData data;

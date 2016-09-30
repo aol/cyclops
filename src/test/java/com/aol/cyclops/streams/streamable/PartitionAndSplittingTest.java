@@ -1,7 +1,7 @@
 package com.aol.cyclops.streams.streamable;
 
 
-import static com.aol.cyclops.util.stream.Streamable.of;
+import static com.aol.cyclops.control.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops.util.stream.Streamable;
+import com.aol.cyclops.control.Streamable;
 
 public class PartitionAndSplittingTest {
 	@Test

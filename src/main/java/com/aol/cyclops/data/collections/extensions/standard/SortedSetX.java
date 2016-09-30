@@ -31,9 +31,9 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEmptySwitch<T, SortedSet<T>> {
     static <T> Collector<T, ?, SortedSet<T>> defaultCollector() {
@@ -83,7 +83,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
      * 
      * //(1,2,3,4,5)
      * 
-     * }</code>
+     * }</pre>
      * 
      * @param seed Initial value 
      * @param unfolder Iteratively applied function, terminated by an empty Optional
@@ -143,7 +143,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
     /**
      * Construct a SortedSetX from an Publisher
      * 
-     * @param iterable
+     * @param publisher
      *            to construct SortedSetX from
      * @return SortedSetX
      */
@@ -178,7 +178,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
 
     /**
      * Combine two adjacent elements in a SortedSetX using the supplied BinaryOperator
-     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
      * with it's neighbor
      * <pre>
      * {@code 
@@ -796,9 +796,9 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
     }
 
     @Override
-    default SortedSetX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default SortedSetX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (SortedSetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyWhile(predicate);
+        return (SortedSetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override
@@ -841,6 +841,22 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
                                   .map(Comparables::comparable));
     }
 
+    /**
+     * Narrow a covariant SortedSet
+     * 
+     * <pre>
+     * {@code 
+     * SortedSetX<? extends Fruit> set = SortedSetX.of(apple,bannana);
+     * SortedSetX<Fruit> fruitSet = SortedSetX.narrow(set);
+     * }
+     * </pre>
+     * 
+     * @param sortedSetX to narrow generic type
+     * @return SortedSetX with narrowed type
+     */
+    public  static <T> SortedSetX<T> narrow(SortedSetX<? extends T> setX){
+        return (SortedSetX<T>)setX;
+    }
     static class Comparables {
 
         static <T, R extends ReactiveSeq<T> & Comparable<T>> R comparable(Seq<T> seq) {

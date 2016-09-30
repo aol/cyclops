@@ -38,9 +38,9 @@ public class LazyFutureStreamUtils {
      * }
      * </pre>
      * 
-     * @param Stream - the Stream to consume data from
-     * @param numberOfElements To consume from the Stream at this time
-     * @param consumer To accept incoming events from the Stream
+     * @param stream - the Stream to consume data from
+     * @param x To consume from the Stream at this time
+     * @param consumerElement To accept incoming events from the Stream
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachX(
@@ -104,11 +104,10 @@ public class LazyFutureStreamUtils {
      * }
      * </pre>	 
      * 
-     * @param Stream - the Stream to consume data from
-     * @param numberOfElements To consume from the Stream at this time
-     * @param consumer To accept incoming elements from the Stream
+     * @param stream - the Stream to consume data from
+     * @param x To consume from the Stream at this time
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
-     * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachXWithError(
@@ -174,9 +173,9 @@ public class LazyFutureStreamUtils {
      *     The end!
      * }
      * </pre>
-     * @param Stream - the Stream to consume data from	 
-     * @param numberOfElements To consume from the Stream at this time
-     * @param consumer To accept incoming elements from the Stream
+     * @param stream - the Stream to consume data from	 
+     * @param x To consume from the Stream at this time
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
@@ -236,8 +235,8 @@ public class LazyFutureStreamUtils {
      *     
      * }
      * </pre>
-     * @param Stream - the Stream to consume data from	 
-     * @param consumer To accept incoming elements from the Stream
+     * @param stream - the Stream to consume data from	 
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachWithError(
@@ -300,8 +299,8 @@ public class LazyFutureStreamUtils {
      *     
      * }
      * </pre>
-     * @param Stream - the Stream to consume data from	
-     * @param consumer To accept incoming elements from the Stream
+     * @param stream - the Stream to consume data from	
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.

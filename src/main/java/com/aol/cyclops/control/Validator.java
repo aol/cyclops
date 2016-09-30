@@ -52,7 +52,7 @@ public class Validator<T, R, E> {
      * @param result Result to return if validation predicate succeeds
      * @return
      */
-    public Validator<T, R, E> isValid(Predicate<? super T> valid, E error, R result) {
+    public Validator<T, R, E> isValid(final Predicate<? super T> valid, final E error, final R result) {
         return add(Tuple.tuple(valid, result, error));
     }
 
@@ -90,8 +90,8 @@ public class Validator<T, R, E> {
      * @param input Value to perform validation checks with
      * @return Validation Results
      */
-    public ValidationResults<R, E> accumulate(T input) {
-        ListX<ValidationResult<R, E>> results = ListX.empty();
+    public ValidationResults<R, E> accumulate(final T input) {
+        final ListX<ValidationResult<R, E>> results = ListX.empty();
         final ValidationResult<R, E> result;
         if (isValid(input))
             result = SuccessfulResult.success(this.validation.v2);
@@ -111,7 +111,7 @@ public class Validator<T, R, E> {
      * @param input to test validation against
      * @return true if valid
      */
-    private boolean isValid(T input) {
+    private boolean isValid(final T input) {
         return validation.v1.test(input);
     }
 
@@ -130,8 +130,8 @@ public class Validator<T, R, E> {
      * @param input Value to perform validation checks with
      * @return Validation Results
      */
-    public ValidationResults<R, E> accumulateUntilFail(T input) {
-        ListX<ValidationResult<R, E>> results = ListX.empty();
+    public ValidationResults<R, E> accumulateUntilFail(final T input) {
+        final ListX<ValidationResult<R, E>> results = ListX.empty();
         final ValidationResult<R, E> result;
         if (isValid(input))
             result = SuccessfulResult.success(validation.v2);
@@ -166,7 +166,7 @@ public class Validator<T, R, E> {
      * @param validation FunctionalJava Validation to add
      * @return CumulativeValidator that includes the new validation (or set of validations)
      */
-    public Validator<T, R, E> add(Xor<E, R> validation) {
+    public Validator<T, R, E> add(final Xor<E, R> validation) {
         if (next == null)
             return this.withNext(new Validator<T, R, E>(
                                                         convert(validation), null));
@@ -191,14 +191,14 @@ public class Validator<T, R, E> {
      * @param validation Validator instance
      * @return CumulativeValidator that includes the new validation (or set of validations)
      */
-    public Validator<T, R, E> add(Validator<T, R, E> validator) {
+    public Validator<T, R, E> add(final Validator<T, R, E> validator) {
         if (next == null)
             return this.withNext(validator);
         else
             return next.add(validation);
     }
 
-    private Validator<T, R, E> add(Tuple3<Predicate<? super T>, R, E> validation) {
+    private Validator<T, R, E> add(final Tuple3<Predicate<? super T>, R, E> validation) {
         if (next == null)
             return this.withNext(new Validator<T, R, E>(
                                                         validation, null));
@@ -227,7 +227,7 @@ public class Validator<T, R, E> {
      * @param result Result to return if validation predicate succeeds
      * @return
      */
-    public static <T, R, E> Validator<T, R, E> of(Predicate<? super T> valid, E error, R result) {
+    public static <T, R, E> Validator<T, R, E> of(final Predicate<? super T> valid, final E error, final R result) {
         return new Validator<>(
                                Tuple.tuple(valid, result, error), null);
     }
@@ -262,7 +262,7 @@ public class Validator<T, R, E> {
      * @param validation FuncitonalJava validation
      * @return
      */
-    public static <T, R, E> Validator<T, R, E> of(Xor<E, R> validation) {
+    public static <T, R, E> Validator<T, R, E> of(final Xor<E, R> validation) {
         return new Validator<>(
                                convert(validation), null);
     }
@@ -273,7 +273,7 @@ public class Validator<T, R, E> {
      * @param validation FunctionalJava Validation result to convert
      * @return Cyclops Validator
      */
-    private static <T, R, E> Tuple3<Predicate<? super T>, R, E> convert(Xor<E, R> validation) {
+    private static <T, R, E> Tuple3<Predicate<? super T>, R, E> convert(final Xor<E, R> validation) {
         if (validation.isPrimary())
             return Tuple.tuple(t -> true, validation.<R> get(), null);
 

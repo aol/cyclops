@@ -49,7 +49,6 @@ import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.util.CompletableFutures;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 import lombok.val;
 import reactor.core.publisher.Flux;
@@ -143,17 +142,6 @@ public class FutureWTest {
 
 		FutureW<Integer> maybe = FutureW.fromIterable(stream, ex);
 		assertThat(maybe.get(), equalTo(1));
-
-	}
-
-	@Test
-	public void scheduleDelay() {
-
-		long start = System.currentTimeMillis();
-		String res = FutureW.schedule(100, Executors.newScheduledThreadPool(1), () -> "hello").get();
-
-		assertThat(100l, lessThan(System.currentTimeMillis() - start));
-		assertThat(res, equalTo("hello"));
 
 	}
 
@@ -850,4 +838,9 @@ public class FutureWTest {
 		assertThat(none.unit(10).get(), equalTo(just.get()));
 	}
 
+	@Test
+	public void testRecover() {
+	    assertThat(FutureW.ofError(new RuntimeException()).recover(__ -> true).get(), equalTo(true));
+	}
+	
 }

@@ -36,12 +36,14 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad transformer for JDK Maybe
+ * Monad transformer for  Maybe
  * 
  * MaybeT consists of an AnyM instance that in turns wraps anoter Monad type
  * that contains an Maybe
- * 
+ * <pre>
+ * {@code 
  * MaybeT<AnyMSeq<*SOME_MONAD_TYPE*<Maybe<T>>>>
+ * }</pre>
  * 
  * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested
  * /contained context
@@ -504,12 +506,12 @@ public class MaybeTSeq<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyWhile(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public MaybeTSeq<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public MaybeTSeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (MaybeTSeq<ListX<T>>) ValueTransformerSeq.super.groupedStatefullyWhile(predicate);
+        return (MaybeTSeq<ListX<T>>) ValueTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)

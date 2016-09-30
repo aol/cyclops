@@ -38,26 +38,35 @@ public class Pipes<K, V> {
 
     private final ConcurrentMap<K, Adapter<V>> registered = new ConcurrentHashMap<>();
 
+    /**
+     * @return Size of registered pipes
+     */
     public int size() {
         return registered.size();
     }
 
+    /**
+     * @return Persistent map of all registered pipes
+     */
     public PMapX<K, Adapter<V>> registered() {
         return PMapX.fromMap(registered);
     }
 
+    /**
+     * @return Construct an empty Pipes instance
+     */
     public static <K, V> Pipes<K, V> of() {
         return new Pipes<>();
     }
 
-    public static <K, V> Pipes<K, V> of(Map<K, Adapter<V>> registered) {
+    public static <K, V> Pipes<K, V> of(final Map<K, Adapter<V>> registered) {
         Objects.requireNonNull(registered);
-        Pipes<K, V> pipes = new Pipes<>();
+        final Pipes<K, V> pipes = new Pipes<>();
         pipes.registered.putAll(registered);
         return pipes;
     }
 
-    public void push(K key, V value) {
+    public void push(final K key, final V value) {
         Optional.ofNullable(registered.get(key))
                 .ifPresent(a -> a.offer(value));
     }
@@ -67,7 +76,7 @@ public class Pipes<K, V> {
      * @return selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<Adapter<V>> get(K key) {
+    public Maybe<Adapter<V>> get(final K key) {
         return Maybe.ofNullable((Adapter) registered.get(key));
     }
 
@@ -76,7 +85,7 @@ public class Pipes<K, V> {
      * @return LazyFutureStream from selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<LazyFutureStream<V>> futureStream(K key) {
+    public Maybe<LazyFutureStream<V>> futureStream(final K key) {
         return get(key).map(a -> a.futureStream());
     }
 
@@ -85,7 +94,7 @@ public class Pipes<K, V> {
      * @return LazyFutureStream from selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<LazyFutureStream<V>> futureStream(K key, LazyReact reactor) {
+    public Maybe<LazyFutureStream<V>> futureStream(final K key, final LazyReact reactor) {
 
         return get(key).map(a -> a.futureStream(reactor));
     }
@@ -95,12 +104,12 @@ public class Pipes<K, V> {
      * @return LazyFutureStream from selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<ReactiveSeq<V>> reactiveSeq(K key) {
+    public Maybe<ReactiveSeq<V>> reactiveSeq(final K key) {
         return get(key).map(a -> a.stream());
     }
 
-    public ListX<V> xValues(K key, long x) {
-        SeqSubscriber<V> sub = SeqSubscriber.subscriber();
+    public ListX<V> xValues(final K key, final long x) {
+        final SeqSubscriber<V> sub = SeqSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
                        .map(a -> sub.stream()
@@ -115,15 +124,15 @@ public class Pipes<K, V> {
      * @return LazyFutureStream from selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<V> oneValue(K key) {
-        ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+    public Maybe<V> oneValue(final K key) {
+        final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
                        .flatMap(a -> sub.toMaybe());
     }
 
-    public Xor<Throwable, V> oneOrError(K key) {
-        ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+    public Xor<Throwable, V> oneOrError(final K key) {
+        final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
                        .map(a -> sub.toXor())
@@ -131,24 +140,24 @@ public class Pipes<K, V> {
                                                                         "no adapter for key " + key)));
     }
 
-    public <X extends Throwable> Maybe<Try<V, X>> oneValueOrError(K key, Class<X>... classes) {
-        ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+    public <X extends Throwable> Maybe<Try<V, X>> oneValueOrError(final K key, final Class<X>... classes) {
+        final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
                        .map(a -> sub.toTry(classes));
     }
 
-    public Maybe<Try<V, Throwable>> oneValueOrError(K key) {
-        ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+    public Maybe<Try<V, Throwable>> oneValueOrError(final K key) {
+        final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
                        .map(a -> sub.toTry(Throwable.class));
     }
 
-    public FutureW<V> oneOrErrorAsync(K key, Executor ex) {
-        CompletableFuture<V> cf = CompletableFuture.supplyAsync(() -> {
+    public FutureW<V> oneOrErrorAsync(final K key, final Executor ex) {
+        final CompletableFuture<V> cf = CompletableFuture.supplyAsync(() -> {
 
-            ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+            final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
             return get(key).peek(a -> a.stream()
                                        .subscribe(sub))
                            .map(a -> sub.toMaybe()
@@ -167,20 +176,20 @@ public class Pipes<K, V> {
      * @param key
      * @return
      */
-    public Eval<Maybe<V>> nextValue(K key) {
-        ValueSubscriber<V> sub = ValueSubscriber.subscriber();
-        LazyImmutable<Boolean> requested = LazyImmutable.def();
-        Maybe<Eval<Maybe<V>>> nested = get(key).peek(a -> a.stream()
-                                                           .subscribe(sub))
-                                               .map(a -> Eval.always(() -> {
-                                                   if (requested.isSet()) {
-                                                       sub.requestOne();
-                                                   } else {
-                                                       requested.setOnce(true);
-                                                   }
-                                                   Maybe<V> res = sub.toMaybe();
-                                                   return res;
-                                               }));
+    public Eval<Maybe<V>> nextValue(final K key) {
+        final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+        final LazyImmutable<Boolean> requested = LazyImmutable.def();
+        final Maybe<Eval<Maybe<V>>> nested = get(key).peek(a -> a.stream()
+                                                                 .subscribe(sub))
+                                                     .map(a -> Eval.always(() -> {
+                                                         if (requested.isSet()) {
+                                                             sub.requestOne();
+                                                         } else {
+                                                             requested.setOnce(true);
+                                                         }
+                                                         final Maybe<V> res = sub.toMaybe();
+                                                         return res;
+                                                     }));
         return nested.orElse(Eval.now(Maybe.<V> none()));
     }
 
@@ -192,9 +201,9 @@ public class Pipes<K, V> {
      * @param key
      * @return
      */
-    public Eval<V> nextOrNull(K key) {
-        ValueSubscriber<V> sub = ValueSubscriber.subscriber();
-        LazyImmutable<Boolean> requested = LazyImmutable.def();
+    public Eval<V> nextOrNull(final K key) {
+        final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
+        final LazyImmutable<Boolean> requested = LazyImmutable.def();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
                        .map(a -> Eval.always(() -> {
@@ -203,7 +212,7 @@ public class Pipes<K, V> {
                            } else {
                                requested.setOnce(true);
                            }
-                           Maybe<V> res = sub.toMaybe();
+                           final Maybe<V> res = sub.toMaybe();
 
                            return res.orElse(null);
                        }))
@@ -229,7 +238,7 @@ public class Pipes<K, V> {
      * @param adapter
      * 
      */
-    public void register(K key, Adapter<V> adapter) {
+    public void register(final K key, final Adapter<V> adapter) {
         registered.put(key, adapter);
 
     }
@@ -245,7 +254,7 @@ public class Pipes<K, V> {
      * @param key for registered simple-react async.Adapter
      * @param subscriber Reactive Streams subscriber for data on this pipe
      */
-    public void subscribeTo(K key, Subscriber<V> subscriber) {
+    public void subscribeTo(final K key, final Subscriber<V> subscriber) {
         registered.get(key)
                   .stream()
                   .subscribe(subscriber);
@@ -258,7 +267,7 @@ public class Pipes<K, V> {
      * @param key for registered simple-react async.Adapter
      * @param subscriber Reactive Streams subscriber for data on this pipe
      */
-    public void subscribeTo(K key, Subscriber<V> subscriber, Executor subscribeOn) {
+    public void subscribeTo(final K key, final Subscriber<V> subscriber, final Executor subscribeOn) {
         CompletableFuture.runAsync(() -> subscribeTo(key, subscriber), subscribeOn);
 
     }
@@ -267,8 +276,8 @@ public class Pipes<K, V> {
      * @param key for registered simple-react async.Adapter
      * @param publisher Reactive Streams publisher  to push data onto this pipe
      */
-    public void publishTo(K key, Publisher<V> publisher) {
-        SeqSubscriber<V> sub = SeqSubscriber.subscriber();
+    public void publishTo(final K key, final Publisher<V> publisher) {
+        final SeqSubscriber<V> sub = SeqSubscriber.subscriber();
         publisher.subscribe(sub);
         registered.get(key)
                   .fromStream(sub.stream());
@@ -278,12 +287,12 @@ public class Pipes<K, V> {
      * @param key for registered simple-react async.Adapter
      * @param publisher Reactive Streams publisher  to push data onto this pipe
      */
-    public void publishToAsync(K key, Publisher<V> publisher) {
+    public void publishToAsync(final K key, final Publisher<V> publisher) {
         SequentialElasticPools.simpleReact.react(er -> er.of(publisher)
                                                          .peek(p -> publishTo(key, p)));
     }
 
-    public void close(String key) {
+    public void close(final String key) {
         Optional.ofNullable(registered.get(key))
                 .ifPresent(a -> a.close());
 

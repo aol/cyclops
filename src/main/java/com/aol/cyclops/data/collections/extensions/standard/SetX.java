@@ -28,9 +28,9 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.util.stream.StreamUtils;
 
 public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T, Set<T>> {
 
@@ -71,7 +71,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,
      * 
      * //(1,2,3,4,5)
      * 
-     * }</code>
+     * }</pre>
      * 
      * @param seed Initial value 
      * @param unfolder Iteratively applied function, terminated by an empty Optional
@@ -145,7 +145,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,
     /**
      * Construct a SetX from an Publisher
      * 
-     * @param iterable
+     * @param publisher
      *            to construct SetX from
      * @return SetX
      */
@@ -172,7 +172,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,
 
     /**
      * Combine two adjacent elements in a SetX using the supplied BinaryOperator
-     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
      * with it's neighbor
      * <pre>
      * {@code 
@@ -767,52 +767,93 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,
         return (SetX<R>) MutableCollectionX.super.patternMatch(case1, otherwise);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(int, java.util.function.Supplier)
+     */
     @Override
     default <C extends Collection<? super T>> SetX<C> grouped(int size, Supplier<C> supplier) {
 
         return (SetX<C>) MutableCollectionX.super.grouped(size, supplier);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate)
+     */
     @Override
     default SetX<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
 
         return (SetX<ListX<T>>) MutableCollectionX.super.groupedUntil(predicate);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate)
+     */
     @Override
     default SetX<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
 
         return (SetX<ListX<T>>) MutableCollectionX.super.groupedWhile(predicate);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     */
     @Override
     default <C extends Collection<? super T>> SetX<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
 
         return (SetX<C>) MutableCollectionX.super.groupedWhile(predicate, factory);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     */
     @Override
     default <C extends Collection<? super T>> SetX<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
 
         return (SetX<C>) MutableCollectionX.super.groupedUntil(predicate, factory);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
+     */
     @Override
-    default SetX<ListX<T>> groupedStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default SetX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (SetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyWhile(predicate);
+        return (SetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#removeAll(org.jooq.lambda.Seq)
+     */
     @Override
     default SetX<T> removeAll(Seq<? extends T> stream) {
 
         return (SetX<T>) MutableCollectionX.super.removeAll(stream);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#retainAll(org.jooq.lambda.Seq)
+     */
     @Override
     default SetX<T> retainAll(Seq<? extends T> stream) {
 
         return (SetX<T>) MutableCollectionX.super.retainAll(stream);
+    }
+    
+    /**
+     * Narrow a covariant Set
+     * 
+     * <pre>
+     * {@code 
+     * SetX<? extends Fruit> set = SetX.of(apple,bannana);
+     * SetX<Fruit> fruitSet = SetX.narrow(set);
+     * }
+     * </pre>
+     * 
+     * @param setX to narrow generic type
+     * @return SetX with narrowed type
+     */
+    public  static <T> SetX<T> narrow(SetX<? extends T> setX){
+        return (SetX<T>)setX;
     }
 
 }
