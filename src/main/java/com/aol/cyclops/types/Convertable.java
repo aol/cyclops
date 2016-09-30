@@ -56,6 +56,9 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
         return absent.get();
     }
 
+    /**
+     * @return True if value exists and is non-null
+     */
     default boolean isPresent() {
         try {
             T value = get();

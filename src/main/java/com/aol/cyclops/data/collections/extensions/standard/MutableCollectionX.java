@@ -160,6 +160,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#slice(long, long)
      */
+    @Override
     default MutableCollectionX<T> slice(long from, long to) {
         return fromStream(stream().slice(from, to));
     }
@@ -167,6 +168,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#grouped(int)
      */
+    @Override
     default MutableCollectionX<ListX<T>> grouped(int groupSize) {
         return fromStream(stream().grouped(groupSize)
                                   .map(ListX::fromIterable));
@@ -175,6 +177,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#grouped(java.util.function.Function, java.util.stream.Collector)
      */
+    @Override
     default <K, A, D> MutableCollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
         return fromStream(stream().grouped(classifier, downstream));
     }
@@ -182,6 +185,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#grouped(java.util.function.Function)
      */
+    @Override
     default <K> MutableCollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
         return fromStream(stream().grouped(classifier));
     }
@@ -189,6 +193,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(java.lang.Iterable)
      */
+    @Override
     default <U> MutableCollectionX<Tuple2<T, U>> zip(Iterable<? extends U> other) {
         return fromStream(stream().zip(other));
     }
@@ -201,11 +206,17 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().zip(other, zipper));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+     */
     @Override
     default <U, R> MutableCollectionX<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         return fromStream(stream().zip(other, zipper));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     */
     @Override
     default <U, R> MutableCollectionX<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         return fromStream(stream().zip(other, zipper));
@@ -214,6 +225,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#sliding(int)
      */
+    @Override
     default MutableCollectionX<ListX<T>> sliding(int windowSize) {
         return fromStream(stream().sliding(windowSize)
                                   .map(ListX::fromIterable));
@@ -222,6 +234,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#sliding(int, int)
      */
+    @Override
     default MutableCollectionX<ListX<T>> sliding(int windowSize, int increment) {
         return fromStream(stream().sliding(windowSize, increment)
                                   .map(ListX::fromIterable));
@@ -230,6 +243,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanLeft(com.aol.cyclops.Monoid)
      */
+    @Override
     default MutableCollectionX<T> scanLeft(Monoid<T> monoid) {
         return fromStream(stream().scanLeft(monoid));
     }
@@ -237,6 +251,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
+    @Override
     default <U> MutableCollectionX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
         return fromStream(stream().scanLeft(seed, function));
     }
@@ -244,6 +259,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanRight(com.aol.cyclops.Monoid)
      */
+    @Override
     default MutableCollectionX<T> scanRight(Monoid<T> monoid) {
         return fromStream(stream().scanRight(monoid));
     }
@@ -251,6 +267,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
+    @Override
     default <U> MutableCollectionX<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
         return fromStream(stream().scanRight(identity, combiner));
     }
@@ -263,6 +280,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#sorted(java.util.function.Function)
      */
+    @Override
     default <U extends Comparable<? super U>> MutableCollectionX<T> sorted(Function<? super T, ? extends U> function) {
         return fromStream(stream().sorted(function));
     }
@@ -270,6 +288,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#plus(java.lang.Object)
      */
+    @Override
     default MutableCollectionX<T> plus(T e) {
         add(e);
         return this;
@@ -278,6 +297,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#plusAll(java.util.Collection)
      */
+    @Override
     default MutableCollectionX<T> plusAll(Collection<? extends T> list) {
         addAll(list);
         return this;
@@ -286,6 +306,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#minus(java.lang.Object)
      */
+    @Override
     default MutableCollectionX<T> minus(Object e) {
         remove(e);
         return this;
@@ -294,6 +315,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#minusAll(java.util.Collection)
      */
+    @Override
     default MutableCollectionX<T> minusAll(Collection<?> list) {
         removeAll(list);
         return this;

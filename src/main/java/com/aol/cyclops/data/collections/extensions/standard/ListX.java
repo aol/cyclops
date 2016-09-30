@@ -35,6 +35,13 @@ import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 
+/**
+ * An eXtended List type, that offers additional eagerly executed functional style operators such as bimap, filter and more
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> the type of elements held in this collection
+ */
 public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T>, IterableFunctor<T>, ZippingApplicativable<T>,
         OnEmptySwitch<T, List<T>> {
 
@@ -493,6 +500,7 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
     /* (non-Javadoc)
      * @see java.util.List#subList(int, int)
      */
+    @Override
     public ListX<T> subList(int start, int end);
 
     /* (non-Javadoc)
@@ -985,6 +993,23 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
         if (this.isEmpty())
             return ListX.fromIterable(supplier.get());
         return this;
+    }
+
+    /**
+     * Narrow a covariant List
+     * 
+     * <pre>
+     * {@code 
+     * ListX<? extends Fruit> list = ListX.of(apple,bannana);
+     * ListX<Fruit> fruitList = ListX.narrow(list);
+     * }
+     * </pre>
+     * 
+     * @param listX to narrow generic type
+     * @return ListX with narrowed type
+     */
+    public  static <T> ListX<T> narrow(ListX<? extends T> listX){
+        return (ListX<T>)listX;
     }
 
 }

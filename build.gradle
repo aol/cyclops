@@ -66,6 +66,7 @@ dependencies {
 	compile 'org.reactivestreams:reactive-streams:'+reactiveStreamsVersion
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.7.13'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.13'
     testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
     testCompile 'io.projectreactor:reactor-core:2.5.0.M2'
 	testCompile  'com.google.guava:guava:19.0'

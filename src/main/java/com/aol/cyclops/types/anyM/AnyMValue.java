@@ -40,13 +40,27 @@ import com.aol.cyclops.util.function.TriFunction;
 public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, ApplicativeFunctor<T>, MonadicValue<T>, Matchable.ValueAndOptionalMatcher<T> {
 
     /**
-     * Equivalence test
+     * Equivalence test, returns true if this Monad is equivalent to the supplied monad
+     * e.g.
+     * <pre>
+     * {code
+     *     Optional.of(1) and CompletableFuture.completedFuture(1) are equivalent
+     * }
+     * </pre>
+     * 
+     * 
+     * @param t Monad to compare to
+     * @return true if equivalent
      */
     default boolean eqv(AnyMValue<T> t) {
         return Predicates.eqv(t)
                          .test(this);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.AnyM#collect(java.util.stream.Collector)
+     */
+    @Override
     default <R, A> R collect(Collector<? super T, A, R> collector) {
 
         return this.<T> toSequence()
@@ -86,6 +100,9 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
     @Override
     <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.AnyM#flatMapFirstPublisher(java.util.function.Function)
+     */
     @Override
     <R> AnyMValue<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
 
@@ -116,45 +133,70 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
                         .orElseGet(() -> this.orElseGet(() -> monoid.zero())));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#mkString()
+     */
+    @Override
     default String mkString() {
         Optional<T> opt = toOptional();
         return opt.isPresent() ? "AnyMValue[" + get() + "]" : "AnyMValue[]";
     }
 
+    /**
+     * @return First value in this Monad
+     */
     default Value<T> toFirstValue() {
         return () -> firstOrNull(toListX());
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
     @Override
     default <U> AnyMValue<U> ofType(Class<? extends U> type) {
 
         return (AnyMValue<U>) Filterable.super.ofType(type);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
     @Override
     default AnyMValue<T> filterNot(Predicate<? super T> fn) {
 
         return (AnyMValue<T>) Filterable.super.filterNot(fn);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
     @Override
     default AnyMValue<T> notNull() {
 
         return (AnyMValue<T>) Filterable.super.notNull();
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
     @Override
     default <U> AnyMValue<U> cast(Class<? extends U> type) {
 
         return (AnyMValue<U>) AnyM.super.cast(type);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
     @Override
     default <R> AnyMValue<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
         return (AnyMValue<R>) AnyM.super.trampoline(mapper);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
     @Override
     default <R> AnyMValue<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
 
@@ -367,7 +409,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
     							a->b->c->c+":"a+":"+b);
     							
      * 
-     *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+     *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
      * }
     * </pre> 
      * 
