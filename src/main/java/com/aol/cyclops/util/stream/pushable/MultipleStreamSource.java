@@ -49,7 +49,7 @@ public class MultipleStreamSource<T> {
     }
 
     /**
-     * Create a pushable org.jooq.lambda.Seq
+     * Create a pushable {@link ReactiveSeq}
      * 
      * @return a Tuple2 with a Topic&lt;T&gt; and Seq&lt;T&gt; - add data to the Queue
      * to push it to the Stream

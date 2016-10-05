@@ -140,7 +140,7 @@ public class StreamSource {
     }
 
     /**
-     * Create a pushable org.jooq.lambda.Seq
+     * Create a pushable {@link PushableReactiveSeq}
      * 
      * @return a Tuple2 with a Queue&lt;T&gt; and Seq&lt;T&gt; - add data to the Queue
      * to push it to the Stream
@@ -163,7 +163,7 @@ public class StreamSource {
     }
 
     /**
-     * Create a pushable org.jooq.lambda.Seq
+     * Create a pushable {@link ReactiveSeq}
      * 
      * @param adapter Adapter to create a Seq from
      * @return A Seq that will accept input from a supplied adapter
