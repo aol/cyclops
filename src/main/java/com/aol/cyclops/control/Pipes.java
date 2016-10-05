@@ -101,7 +101,7 @@ public class Pipes<K, V> {
 
     /**
      * @param key : Adapter identifier
-     * @return LazyFutureStream from selected Queue
+     * @return {@link ReactiveSeq} from selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Maybe<ReactiveSeq<V>> reactiveSeq(final K key) {
