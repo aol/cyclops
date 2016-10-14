@@ -3441,9 +3441,6 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     static <T> LazyFutureStream<T> lazyFutureStream(Stream<T> stream) {
         if (stream instanceof LazyFutureStream)
             return (LazyFutureStream<T>) stream;
-        if (stream instanceof LazyFutureStream)
-            stream = ((LazyFutureStream) stream).toQueue()
-                                                .stream(((LazyFutureStream) stream).getSubscription());
         LazyReact react = new LazyReact(
                                         ThreadPools.getCurrentThreadExecutor(), RetryBuilder.getDefaultInstance()
                                                                                             .withScheduler(ThreadPools.getSequentialRetry()),
