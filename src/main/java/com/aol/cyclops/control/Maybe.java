@@ -81,11 +81,23 @@ public interface Maybe<T>
 		return EMPTY;
 	}
 
+	/**
+	 * Flat map the wrapped Streamable and return the first element
+	 *
+	 * @param mapper FlatMap function with Iterable type returned value
+	 * @return Maybe typed the first element returned after the flatMap function is applied
+	 */
 	@Override
 	default <R> Maybe<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		return (Maybe<R>) MonadicValue1.super.flatMapIterable(mapper);
 	}
 
+	/**
+	 * Flat map the wrapped Streamable and return the element published
+	 *
+	 * @param mapper FlatMap function with Publisher type returned value
+	 * @return Maybe typed value subscribed from publisher after the flatMap function is applied
+	 */
 	@Override
 	default <R> Maybe<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
 		MonadicValue<R> m = MonadicValue1.super.flatMapPublisher(mapper);

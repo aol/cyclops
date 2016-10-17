@@ -709,11 +709,23 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 		return (FutureW) ApplicativeFunctor.super.zip(other);
 	}
 
+	/**
+	 * Flat map the wrapped Streamable and return the first element
+	 *
+	 * @param mapper FlatMap function with Iterable type returned value
+	 * @return Future typed the first element returned after the flatMap function is applied
+	 */
 	@Override
 	public <R> FutureW<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 		return (FutureW<R>) MonadicValue1.super.flatMapIterable(mapper);
 	}
 
+	/**
+	 * Flat map the wrapped Streamable and return the element published
+	 *
+	 * @param mapper FlatMap function with Publisher type returned value
+	 * @return FutureW typed value subscribed from publisher after the flatMap function is applied
+	 */
 	@Override
 	public <R> FutureW<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
 		return (FutureW<R>) MonadicValue1.super.flatMapPublisher(mapper);
