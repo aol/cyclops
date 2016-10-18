@@ -40,13 +40,13 @@ public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>, OnEmptySwit
      * 
      * <pre>
      * {@code 
-     * SetX<? extends Fruit> set = SetX.of(apple,bannana);
-     * SetX<Fruit> fruitSet = SetX.narrow(set);
+     *  PSetX<? extends Fruit> set = PSetX.of(apple,bannana);
+     *  PSetX<Fruit> fruitSet = PSetX.narrow(set);
      * }
      * </pre>
      * 
      * @param setX to narrow generic type
-     * @return SetX with narrowed type
+     * @return PSetX with narrowed type
      */
     public static <T> PSetX<T> narrow(final PSetX<? extends T> setX) {
         return (PSetX<T>) setX;

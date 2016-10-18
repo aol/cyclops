@@ -35,6 +35,23 @@ import com.aol.cyclops.types.OnEmptySwitch;
 public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PQueue<T>> {
 
     /**
+     * Narrow a covariant PQueueX
+     * 
+     * <pre>
+     * {@code 
+     *  PQueueX<? extends Fruit> set = PQueueX.of(apple,bannana);
+     *  PQueueX<Fruit> fruitSet = PQueueX.narrow(set);
+     * }
+     * </pre>
+     * 
+     * @param queueX to narrow generic type
+     * @return POrderedSetX with narrowed type
+     */
+    public static <T> PQueueX<T> narrow(final PQueueX<? extends T> queueX) {
+        return (PQueueX<T>) queueX;
+    }
+    
+    /**
      * Create a PQueueX that contains the Integers between start and end
      * 
      * @param start

@@ -9,11 +9,54 @@ import java.util.Map;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
+import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.data.collections.extensions.persistent.PMapXs;
+import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
+import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapXs;
 public class PMapXsTest {
-
+    @Test
+    public void toPStackX(){
+        PMapX<String,Integer> maps = PMapXs.of("a",1,"b",2);
+        PStackX<String> strs = maps.toPStackX(t->""+t.v1+t.v2);
+        assertThat(strs.reverse(),equalTo(ListX.of("a1","b2")));
+    }
+    @Test
+    public void toPSetX(){
+        PMapX<String,Integer> maps = PMapXs.of("a",1,"b",2);
+        PSetX<String> strs = maps.toPSetX(t->""+t.v1+t.v2);
+        assertThat(strs,equalTo(PSetX.of("a1","b2")));
+    }
+    @Test
+    public void toPOrderedSetX(){
+        PMapX<String,Integer> maps = PMapXs.of("a",1,"b",2);
+        POrderedSetX<String> strs = maps.toPOrderedSetX(t->""+t.v1+t.v2);
+        assertThat(strs,equalTo(POrderedSetX.of("a1","b2")));
+    }
+    @Test
+    public void toPBagX(){
+        PMapX<String,Integer> maps = PMapXs.of("a",1,"b",2);
+        PBagX<String> strs = maps.toPBagX(t->""+t.v1+t.v2);
+        assertThat(strs,equalTo(PBagX.of("a1","b2")));
+    }
+    @Test
+    public void toPQueueX(){
+        PMapX<String,Integer> maps = PMapXs.of("a",1,"b",2);
+        PQueueX<String> strs = maps.toPQueueX(t->""+t.v1+t.v2);
+        assertThat(strs.toList(),equalTo(PQueueX.of("a1","b2").toList()));
+    }
+    @Test
+    public void toPVectorX(){
+        PMapX<String,Integer> maps = PMapXs.of("a",1,"b",2);
+        PVectorX<String> strs = maps.toPVectorX(t->""+t.v1+t.v2);
+        assertThat(strs,equalTo(ListX.of("a1","b2")));
+    }
+    
     @Test
     public void onEmpty(){
         assertThat(PMapX.empty().onEmpty(Tuple.tuple("hello",10)).get("hello"),equalTo(10));

@@ -34,7 +34,22 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.OnEmptySwitch;
 
 public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, POrderedSet<T>> {
-
+    /**
+     * Narrow a covariant POrderedSetX
+     * 
+     * <pre>
+     * {@code 
+     *  POrderedSetX<? extends Fruit> set = POrderedSetX.of(apple,bannana);
+     *  POrderedSetX<Fruit> fruitSet = POrderedSetX.narrow(set);
+     * }
+     * </pre>
+     * 
+     * @param setX to narrow generic type
+     * @return POrderedSetX with narrowed type
+     */
+    public static <T> POrderedSetX<T> narrow(final POrderedSetX<? extends T> setX) {
+        return (POrderedSetX<T>) setX;
+    }
     /**
      * Create a POrderedSetX that contains the Integers between start and end
      * 

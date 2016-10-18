@@ -35,6 +35,24 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.OnEmptySwitch;
 
 public interface PBagX<T> extends PBag<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PBag<T>> {
+    
+    /**
+     * Narrow a covariant PBagX
+     * 
+     * <pre>
+     * {@code 
+     *  PBaagX<? extends Fruit> set = PBagX.of(apple,bannana);
+     *  PBagX<Fruit> fruitSet = PBagX.narrow(set);
+     * }
+     * </pre>
+     * 
+     * @param bagX to narrow generic type
+     * @return PBagX with narrowed type
+     */
+    public static <T> PBagX<T> narrow(final PBagX<? extends T> bagX) {
+        return (PBagX<T>) bagX;
+    }
+    
     /**
      * Create a PBagX that contains the Integers between start and end
      * 
