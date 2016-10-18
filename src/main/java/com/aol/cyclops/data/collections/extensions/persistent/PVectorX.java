@@ -36,6 +36,24 @@ import com.aol.cyclops.types.OnEmptySwitch;
 public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PVector<T>> {
 
     /**
+     * Narrow a covariant PVectorX
+     * 
+     * <pre>
+     * {@code 
+     *  PVectorX<? extends Fruit> set = PVectorX.of(apple,bannana);
+     *  PVectorX<Fruit> fruitSet = PVectorX.narrow(set);
+     * }
+     * </pre>
+     * 
+     * @param vectorX to narrow generic type
+     * @return POrderedSetX with narrowed type
+     */
+    public static <T> PVectorX<T> narrow(final PVectorX<? extends T> vectorX) {
+        return (PVectorX<T>) vectorX;
+    }
+    
+    
+    /**
      * Create a PVectorX that contains the Integers between start and end
      * 
      * @param start

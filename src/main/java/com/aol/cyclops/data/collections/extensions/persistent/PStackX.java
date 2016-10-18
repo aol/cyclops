@@ -37,6 +37,23 @@ import com.aol.cyclops.types.OnEmptySwitch;
 public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>, OnEmptySwitch<T, PStack<T>> {
 
     /**
+     * Narrow a covariant PStackX
+     * 
+     * <pre>
+     * {@code 
+     *  PStackX<? extends Fruit> set = PStackX.of(apple,bannana);
+     *  PStackX<Fruit> fruitSet = PStackX.narrow(set);
+     * }
+     * </pre>
+     * 
+     * @param stackX to narrow generic type
+     * @return POrderedSetX with narrowed type
+     */
+    public static <T> PStackX<T> narrow(final PStackX<? extends T> stackX) {
+        return (PStackX<T>) stackX;
+    }
+    
+    /**
      * Create a PStackX that contains the Integers between start and end
      * 
      * @param start
