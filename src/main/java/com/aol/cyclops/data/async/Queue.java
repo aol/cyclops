@@ -200,7 +200,7 @@ public class Queue<T> implements Adapter<T> {
 
     private Stream<Collection<T>> closingStreamBatch(final Supplier<Collection<T>> s, final Continueable sub) {
 
-        final Stream<Collection<T>> st = StreamSupport.stream(new ClosingSpliterator(
+        final Stream<Collection<T>> st = StreamSupport.stream(new ClosingSpliterator<>(
                                                                                      Long.MAX_VALUE, s, sub, this),
                                                               false);
 
@@ -209,16 +209,16 @@ public class Queue<T> implements Adapter<T> {
 
     private Stream<T> closingStream(final Supplier<T> s, final Continueable sub) {
 
-        final Stream<T> st = StreamSupport.stream(new ClosingSpliterator(
+        final Stream<T> st = StreamSupport.stream(new ClosingSpliterator<T>(
                                                                          Long.MAX_VALUE, s, sub, this),
-                                                  false);
+                                                 false);
 
         return st;
     }
 
     private Stream<CompletableFuture<T>> closingStreamFutures(final Supplier<CompletableFuture<T>> s, final Continueable sub) {
 
-        final Stream<CompletableFuture<T>> st = StreamSupport.stream(new ClosingSpliterator(
+        final Stream<CompletableFuture<T>> st = StreamSupport.stream(new ClosingSpliterator<>(
                                                                                             Long.MAX_VALUE, s, sub, this),
                                                                      false);
 
