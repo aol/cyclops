@@ -41,7 +41,7 @@ public class StreamSource {
     /**
      * @return a builder that will use Topics to allow multiple Streams from the same data
      */
-    public static <T> MultipleStreamSource<T> ofMultiple(int backPressureAfter) {
+    public static <T> MultipleStreamSource<T> ofMultiple(final int backPressureAfter) {
         return new MultipleStreamSource<T>(
                                            StreamSource.of(backPressureAfter)
                                                        .createQueue());
@@ -50,14 +50,14 @@ public class StreamSource {
     /**
      * @return a builder that will use Topics to allow multiple Streams from the same data
      */
-    public static <T> MultipleStreamSource<T> ofMultiple(QueueFactory<?> q) {
+    public static <T> MultipleStreamSource<T> ofMultiple(final QueueFactory<?> q) {
         Objects.requireNonNull(q);
         return new MultipleStreamSource<T>(
                                            StreamSource.of(q)
                                                        .createQueue());
     }
 
-    public static StreamSource of(QueueFactory<?> q) {
+    public static StreamSource of(final QueueFactory<?> q) {
         Objects.requireNonNull(q);
         return new StreamSource() {
             @SuppressWarnings("unchecked")
@@ -73,7 +73,7 @@ public class StreamSource {
         return new StreamSource();
     }
 
-    public static StreamSource of(int backPressureAfter) {
+    public static StreamSource of(final int backPressureAfter) {
         if (backPressureAfter < 1)
             throw new IllegalArgumentException(
                                                "Can't apply back pressure after less than 1 event");
@@ -95,9 +95,9 @@ public class StreamSource {
 
     private StreamSource() {
 
-        this.backPressureAfter = Runtime.getRuntime()
-                                        .availableProcessors();
-        this.backPressureOn = false;
+        backPressureAfter = Runtime.getRuntime()
+                                   .availableProcessors();
+        backPressureOn = false;
     }
 
     /**
@@ -107,9 +107,9 @@ public class StreamSource {
      * @return a Tuple2 with a Queue&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
      * to push it to the Stream
      */
-    public <T> PushableLazyFutureStream<T> futureStream(LazyReact s) {
+    public <T> PushableLazyFutureStream<T> futureStream(final LazyReact s) {
 
-        Queue<T> q = createQueue();
+        final Queue<T> q = createQueue();
         return new PushableLazyFutureStream<T>(
                                                q, s.fromStream(q.stream()));
 
@@ -122,7 +122,7 @@ public class StreamSource {
      * @param adapter Adapter to create a LazyFutureStream from
      * @return A LazyFutureStream that will accept values from the supplied adapter
      */
-    public static <T> LazyFutureStream<T> futureStream(Adapter<T> adapter, LazyReact react) {
+    public static <T> LazyFutureStream<T> futureStream(final Adapter<T> adapter, final LazyReact react) {
 
         return react.fromStream(adapter.stream());
     }
@@ -133,9 +133,9 @@ public class StreamSource {
      * to push it to the Stream
      */
     public <T> PushableStream<T> stream() {
-        Queue<T> q = createQueue();
+        final Queue<T> q = createQueue();
         return new PushableStream<T>(
-                                     q, (Stream) q.stream());
+                                     q, q.stream());
 
     }
 
@@ -146,7 +146,7 @@ public class StreamSource {
      * to push it to the Stream
      */
     public <T> PushableReactiveSeq<T> reactiveSeq() {
-        Queue<T> q = createQueue();
+        final Queue<T> q = createQueue();
         return new PushableReactiveSeq<T>(
                                           q, q.stream());
     }
@@ -157,7 +157,7 @@ public class StreamSource {
      * @param adapter Adapter to create a Steam from
      * @return Stream that will accept input from supplied adapter
      */
-    public static <T> Stream<T> stream(Adapter<T> adapter) {
+    public static <T> Stream<T> stream(final Adapter<T> adapter) {
 
         return adapter.stream();
     }
@@ -168,7 +168,7 @@ public class StreamSource {
      * @param adapter Adapter to create a Seq from
      * @return A Seq that will accept input from a supplied adapter
      */
-    public static <T> ReactiveSeq<T> reactiveSeq(Adapter<T> adapter) {
+    public static <T> ReactiveSeq<T> reactiveSeq(final Adapter<T> adapter) {
 
         return adapter.stream();
     }

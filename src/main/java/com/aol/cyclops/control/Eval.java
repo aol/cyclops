@@ -78,8 +78,8 @@ public interface Eval<T>
      * @param pub Publisher to create the Eval from
      * @return Eval created from Publisher
      */
-    public static <T> Eval<T> fromPublisher(Publisher<T> pub) {
-        ValueSubscriber<T> sub = ValueSubscriber.subscriber();
+    public static <T> Eval<T> fromPublisher(final Publisher<T> pub) {
+        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toEvalLater();
     }
@@ -96,8 +96,8 @@ public interface Eval<T>
      * @param iterable to create the Eval from
      * @return Eval created from Publisher
      */
-    public static <T> Eval<T> fromIterable(Iterable<T> iterable) {
-        Iterator<T> it = iterable.iterator();
+    public static <T> Eval<T> fromIterable(final Iterable<T> iterable) {
+        final Iterator<T> it = iterable.iterator();
         return Eval.later(() -> it.hasNext() ? it.next() : null);
     }
 
@@ -113,7 +113,7 @@ public interface Eval<T>
      * @param value of Eval
      * @return Eval with specified value
      */
-    public static <T> Eval<T> now(T value) {
+    public static <T> Eval<T> now(final T value) {
         return always(() -> value);
 
     }
@@ -133,7 +133,7 @@ public interface Eval<T>
      * @param value Supplier to (lazily) populate this Eval
      * @return Eval with specified value
      */
-    public static <T> Eval<T> later(Supplier<T> value) {
+    public static <T> Eval<T> later(final Supplier<T> value) {
 
         return new Module.Later<T>(
                                    in -> value.get());
@@ -153,7 +153,7 @@ public interface Eval<T>
      * @param value  Supplier to (lazily) populate this Eval
      * @return Eval with specified value
      */
-    public static <T> Eval<T> always(Supplier<T> value) {
+    public static <T> Eval<T> always(final Supplier<T> value) {
         return new Module.Always<T>(
                                     in -> value.get());
     }
@@ -172,7 +172,7 @@ public interface Eval<T>
      * @param evals Collection of evals to convert into a single eval with a List of values
      * @return  Eval with a  list of values
      */
-    public static <T> Eval<ListX<T>> sequence(CollectionX<Eval<T>> evals) {
+    public static <T> Eval<ListX<T>> sequence(final CollectionX<Eval<T>> evals) {
         return sequence(evals.stream()).map(s -> s.toListX());
 
     }
@@ -191,7 +191,7 @@ public interface Eval<T>
      * @param evals Collection of evals to convert into a single eval with a List of values
      * @return  Eval with a  list of values
      */
-    public static <T> Eval<ReactiveSeq<T>> sequence(Stream<Eval<T>> evals) {
+    public static <T> Eval<ReactiveSeq<T>> sequence(final Stream<Eval<T>> evals) {
         return AnyM.sequence(evals.map(f -> AnyM.fromEval(f)), () -> AnyM.fromEval(Eval.now(ReactiveSeq.<T> empty())))
                    .map(s -> ReactiveSeq.fromStream(s))
 
@@ -199,17 +199,17 @@ public interface Eval<T>
 
     }
 
-    public static <T, R> Eval<R> accumulate(CollectionX<Eval<T>> evals, Reducer<R> reducer) {
+    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Reducer<R> reducer) {
         return sequence(evals).map(s -> s.mapReduce(reducer));
     }
 
-    public static <T, R> Eval<R> accumulate(CollectionX<Eval<T>> maybes, Function<? super T, R> mapper, Semigroup<R> reducer) {
+    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> maybes, final Function<? super T, R> mapper, final Semigroup<R> reducer) {
         return sequence(maybes).map(s -> s.map(mapper)
                                           .reduce(reducer.reducer())
                                           .get());
     }
 
-    public static <T> Eval<T> accumulate(CollectionX<Eval<T>> maybes, Semigroup<T> reducer) {
+    public static <T> Eval<T> accumulate(final CollectionX<Eval<T>> maybes, final Semigroup<T> reducer) {
         return sequence(maybes).map(s -> s.reduce(reducer.reducer())
                                           .get());
     }
@@ -240,7 +240,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
-    default <R> Eval<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+    default <R> Eval<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
         return (Eval<R>) MonadicValue1.super.coflatMap(mapper);
     }
 
@@ -248,9 +248,9 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.MonadicValue1#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
      */
     @Override
-    default Eval<T> combineEager(Monoid<T> monoid, MonadicValue<? extends T> v2) {
+    default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
         return unit(each2(this, t1 -> v2, (t1, t2) -> monoid.combiner()
-                                                            .apply(t1, t2)).orElseGet(() -> this.orElseGet(() -> monoid.zero())));
+                                                            .apply(t1, t2)).orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 
     /* (non-Javadoc)
@@ -271,7 +271,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> Maybe<U> ofType(Class<? extends U> type) {
+    default <U> Maybe<U> ofType(final Class<? extends U> type) {
 
         return (Maybe<U>) Filterable.super.ofType(type);
     }
@@ -280,7 +280,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default Maybe<T> filterNot(Predicate<? super T> fn) {
+    default Maybe<T> filterNot(final Predicate<? super T> fn) {
 
         return (Maybe<T>) Filterable.super.filterNot(fn);
     }
@@ -298,7 +298,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
      */
     @Override
-    default Maybe<T> filter(Predicate<? super T> pred) {
+    default Maybe<T> filter(final Predicate<? super T> pred) {
         return toMaybe().filter(pred);
     }
 
@@ -306,7 +306,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> Eval<U> cast(Class<? extends U> type) {
+    default <U> Eval<U> cast(final Class<? extends U> type) {
         return (Eval<U>) ApplicativeFunctor.super.cast(type);
     }
 
@@ -314,7 +314,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
      */
     @Override
-    default Eval<T> peek(Consumer<? super T> c) {
+    default Eval<T> peek(final Consumer<? super T> c) {
         return (Eval<T>) ApplicativeFunctor.super.peek(c);
     }
 
@@ -322,7 +322,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> Eval<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+    default <R> Eval<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
         return (Eval<R>) ApplicativeFunctor.super.trampoline(mapper);
     }
@@ -331,8 +331,8 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
-        T value = get();
+    default <R> R visit(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
+        final T value = get();
         if (value != null)
             return present.apply(value);
         return absent.get();
@@ -344,7 +344,7 @@ public interface Eval<T>
      * @param broad Eval with covariant type parameter
      * @return Narrowed Eval
      */
-    static <R> Eval<R> narrow(Eval<? extends R> broad) {
+    static <R> Eval<R> narrow(final Eval<? extends R> broad) {
         return (Eval<R>) broad;
     }
 
@@ -352,7 +352,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> Eval<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> Eval<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
         return (Eval<R>) ApplicativeFunctor.super.combine(app, fn);
     }
@@ -362,7 +362,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> Eval<R> zip(Iterable<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> Eval<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
         return (Eval<R>) ApplicativeFunctor.super.zip(app, fn);
     }
@@ -373,7 +373,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> Eval<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
+    default <T2, R> Eval<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         return (Eval<R>) ApplicativeFunctor.super.zip(fn, app);
 
     }
@@ -382,7 +382,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Eval<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Eval<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return (Eval<R>) MonadicValue1.super.zip(other, zipper);
     }
 
@@ -390,7 +390,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Eval<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Eval<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (Eval<R>) MonadicValue1.super.zip(other, zipper);
     }
@@ -399,7 +399,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Eval<Tuple2<T, U>> zip(Stream<? extends U> other) {
+    default <U> Eval<Tuple2<T, U>> zip(final Stream<? extends U> other) {
         return (Eval) MonadicValue1.super.zip(other);
     }
 
@@ -407,7 +407,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    default <U> Eval<Tuple2<T, U>> zip(Seq<? extends U> other) {
+    default <U> Eval<Tuple2<T, U>> zip(final Seq<? extends U> other) {
         return (Eval) MonadicValue1.super.zip(other);
     }
 
@@ -415,13 +415,14 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
-    default <U> Eval<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+    default <U> Eval<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return (Eval) MonadicValue1.super.zip(other);
     }
 
     static class Module {
 
-        static <T> Eval<T> asEval(MonadicValue<T> value) {
+        static <T> Eval<T> asEval(final MonadicValue<T> value) {
+
             if (value instanceof Eval)
                 return (Eval<T>) value;
             return value.toEvalAlways();
@@ -429,23 +430,27 @@ public interface Eval<T>
 
         public static class Later<T> extends Rec<T>implements Eval<T> {
 
-            Later(Function<Object, ? extends T> s) {
+            Later(final Function<Object, ? extends T> s) {
                 super(PVectorX.of(Rec.raw(Memoize.memoizeFunction(s))));
             }
 
-            Later(PVectorX<Function<Object, Object>> s) {
+            Later(final PVectorX<Function<Object, Object>> s) {
                 super(s);
 
             }
 
-            public <R> Eval<R> map(Function<? super T, ? extends R> mapper) {
+            @Override
+            public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
 
                 return new Later<R>(
                                     super.fns.plus(Rec.raw(Memoize.memoizeFunction(mapper))));
             }
 
-            public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-                RecFunction s = __ -> asEval(mapper.apply(super.apply())).steps();
+
+            @Override
+            public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
+                final RecFunction s = __ -> asEval(mapper.apply(super.apply())).steps();
+
                 return new Later<R>(
                                     PVectorX.of(s));
 
@@ -460,7 +465,7 @@ public interface Eval<T>
              * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
              */
             @Override
-            public <T> Eval<T> unit(T unit) {
+            public <T> Eval<T> unit(final T unit) {
                 return Eval.later(() -> unit);
             }
 
@@ -484,7 +489,7 @@ public interface Eval<T>
              * @see java.lang.Object#equals(java.lang.Object)
              */
             @Override
-            public boolean equals(Object obj) {
+            public boolean equals(final Object obj) {
                 if (!(obj instanceof Eval))
                     return false;
                 return Objects.equals(get(), ((Eval) obj).get());
@@ -499,24 +504,28 @@ public interface Eval<T>
 
         public static class Always<T> extends Rec<T>implements Eval<T> {
 
-            Always(Function<Object, ? extends T> s) {
+            Always(final Function<Object, ? extends T> s) {
                 super(PVectorX.of(Rec.raw(s)));
             }
 
-            Always(PVectorX<Function<Object, Object>> s) {
+            Always(final PVectorX<Function<Object, Object>> s) {
                 super(s);
 
             }
 
-            public <R> Eval<R> map(Function<? super T, ? extends R> mapper) {
+            @Override
+            public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
 
                 return new Always<R>(
                                      fns.plus(Rec.raw(mapper)));
 
             }
 
-            public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-                RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
+
+            @Override
+            public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
+                final RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
+
                 return new Always<R>(
                                      PVectorX.of(s));
             }
@@ -527,7 +536,7 @@ public interface Eval<T>
             }
 
             @Override
-            public <T> Eval<T> unit(T unit) {
+            public <T> Eval<T> unit(final T unit) {
                 return Eval.always(() -> unit);
             }
 
@@ -551,7 +560,7 @@ public interface Eval<T>
              * @see java.lang.Object#equals(java.lang.Object)
              */
             @Override
-            public boolean equals(Object obj) {
+            public boolean equals(final Object obj) {
                 if (!(obj instanceof Eval))
                     return false;
                 return Objects.equals(get(), ((Eval) obj).get());
@@ -568,11 +577,11 @@ public interface Eval<T>
             final PVectorX<Function<Object, Object>> fns;
             private final static Object VOID = new Object();
 
-            Rec(PVectorX<Function<Object, Object>> s) {
+            Rec(final PVectorX<Function<Object, Object>> s) {
                 fns = s;
             }
 
-            private static Function<Object, Object> raw(Function<?, ?> fn) {
+            private static Function<Object, Object> raw(final Function<?, ?> fn) {
                 return (Function<Object, Object>) fn;
             }
 
@@ -586,10 +595,10 @@ public interface Eval<T>
 
             T apply() {
                 Object input = VOID;
-                for (Function<Object, Object> n : fns) {
-                    DequeX<Function<Object, Object>> newFns = DequeX.of(n);
+                for (final Function<Object, Object> n : fns) {
+                    final DequeX<Function<Object, Object>> newFns = DequeX.of(n);
                     while (newFns.size() > 0) {
-                        Function<Object, Object> next = newFns.pop();
+                        final Function<Object, Object> next = newFns.pop();
                         if (next instanceof RecFunction) {
                             newFns.plusAll((List) ((RecFunction) next).apply(VOID));
                         } else

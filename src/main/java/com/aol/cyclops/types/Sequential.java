@@ -4,8 +4,18 @@ import java.util.concurrent.TimeUnit;
 
 import com.aol.cyclops.control.ReactiveSeq;
 
+/**
+ * A sequential non-scalar data type
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data types of the elments stored in this Sequential data type
+ */
 public interface Sequential<T> {
 
+    /**
+     * @return This Sequential converted to a Stream (@link {@link com.aol.cyclops.control.ReactiveSeq}
+     */
     ReactiveSeq<T> stream();
 
     /**
@@ -28,7 +38,7 @@ public interface Sequential<T> {
      *            Time unit
      * @return SequenceM that emits x elements per time period
      */
-    default ReactiveSeq<T> xPer(int x, long time, TimeUnit t) {
+    default ReactiveSeq<T> xPer(final int x, final long time, final TimeUnit t) {
         return stream().xPer(x, time, t);
     }
 
@@ -52,7 +62,7 @@ public interface Sequential<T> {
      * @param t Time unit
      * @return SequenceM that emits 1 element per time period
      */
-    default ReactiveSeq<T> onePer(long time, TimeUnit t) {
+    default ReactiveSeq<T> onePer(final long time, final TimeUnit t) {
         return stream().onePer(time, t);
     }
 
@@ -74,7 +84,7 @@ public interface Sequential<T> {
      *            for the delay
      * @return SequenceM that emits each element after a fixed delay
      */
-    default ReactiveSeq<T> fixedDelay(long l, TimeUnit unit) {
+    default ReactiveSeq<T> fixedDelay(final long l, final TimeUnit unit) {
         return stream().fixedDelay(l, unit);
     }
 }

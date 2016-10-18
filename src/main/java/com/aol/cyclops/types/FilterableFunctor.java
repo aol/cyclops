@@ -3,6 +3,13 @@ package com.aol.cyclops.types;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Represents a Functor that is also Filterable (e.g. a Stream or Optional type)
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of the element(s) in this FilterableFunctor
+ */
 public interface FilterableFunctor<T> extends Filterable<T>, Functor<T> {
 
     /* (non-Javadoc)

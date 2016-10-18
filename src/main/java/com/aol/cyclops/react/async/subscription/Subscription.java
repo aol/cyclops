@@ -31,22 +31,38 @@ public class Subscription implements Continueable {
     private final AtomicLong timeLimitNanos = new AtomicLong(
                                                              -1);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#timeLimit()
+     */
+    @Override
     public long timeLimit() {
         return timeLimitNanos.get();
     }
 
-    public void registerSkip(long skip) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#registerSkip(long)
+     */
+    @Override
+    public void registerSkip(final long skip) {
         if (queues.size() > 0)
             limits.get(currentQueue())
                   .addAndGet(skip);
     }
 
-    public void registerTimeLimit(long nanos) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#registerTimeLimit(long)
+     */
+    @Override
+    public void registerTimeLimit(final long nanos) {
         if (timeLimitNanos.get() == -1 || timeLimitNanos.get() > nanos)
             timeLimitNanos.set(nanos);
     }
 
-    public void registerLimit(long limit) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#registerLimit(long)
+     */
+    @Override
+    public void registerLimit(final long limit) {
 
         if (queues.size() > 0) {
             if (unlimited.get(currentQueue())
@@ -69,7 +85,8 @@ public class Subscription implements Continueable {
         return queues.get(queues.size() - 1);
     }
 
-    public void addQueue(Queue q) {
+    @Override
+    public void addQueue(final Queue q) {
 
         queues.add(q);
         limits.put(q, new AtomicLong(
@@ -81,21 +98,25 @@ public class Subscription implements Continueable {
 
     }
 
-    public void closeQueueIfFinished(Queue queue) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#closeQueueIfFinished(com.aol.cyclops.data.async.Queue)
+     */
+    @Override
+    public void closeQueueIfFinished(final Queue queue) {
 
         closeQueueIfFinished(queue, AtomicLong::incrementAndGet);
 
     }
 
-    private void closeQueueIfFinished(Queue queue, Function<AtomicLong, Long> fn) {
+    private void closeQueueIfFinished(final Queue queue, final Function<AtomicLong, Long> fn) {
 
         if (queues.size() == 0)
             return;
 
-        long queueCount = fn.apply(count.get(queue));
-        long limit = valuesToRight(queue).stream()
-                                         .reduce((acc, next) -> Math.min(acc, next))
-                                         .get();
+        final long queueCount = fn.apply(count.get(queue));
+        final long limit = valuesToRight(queue).stream()
+                                               .reduce((acc, next) -> Math.min(acc, next))
+                                               .get();
 
         if (queueCount >= limit) { //last entry - close THIS queue only!
 
@@ -105,13 +126,17 @@ public class Subscription implements Continueable {
 
     }
 
-    public void closeQueueIfFinishedStateless(Queue queue) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#closeQueueIfFinishedStateless(com.aol.cyclops.data.async.Queue)
+     */
+    @Override
+    public void closeQueueIfFinishedStateless(final Queue queue) {
 
         closeQueueIfFinished(queue, AtomicLong::get);
 
     }
 
-    private List<Long> valuesToRight(Queue queue) {
+    private List<Long> valuesToRight(final Queue queue) {
         return Seq.seq(queues.stream())
                   .splitAt(findQueue(queue)).v2.map(limits::get)
                                                .map(AtomicLong::get)
@@ -119,13 +144,13 @@ public class Subscription implements Continueable {
 
     }
 
-    private Seq<Queue> queuesToLeft(Queue queue) {
+    private Seq<Queue> queuesToLeft(final Queue queue) {
         return Seq.seq(queues.stream())
                   .splitAt(findQueue(queue)).v1;
 
     }
 
-    private int findQueue(Queue queue) {
+    private int findQueue(final Queue queue) {
         for (int i = 0; i < queues.size(); i++) {
             if (queues.get(i) == queue)
                 return i;
@@ -133,8 +158,11 @@ public class Subscription implements Continueable {
         return -1;
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#closeAll(com.aol.cyclops.data.async.Queue)
+     */
     @Override
-    public void closeAll(Queue queue) {
+    public void closeAll(final Queue queue) {
 
         closed.set(true);
         if (queue != null) {
@@ -144,6 +172,10 @@ public class Subscription implements Continueable {
 
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#closeAll()
+     */
+    @Override
     public void closeAll() {
 
         closed.set(true);
@@ -153,6 +185,9 @@ public class Subscription implements Continueable {
 
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#closed()
+     */
     @Override
     public boolean closed() {
         return closed.get();

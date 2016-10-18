@@ -6,7 +6,14 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.control.StreamUtils;
 
-public interface IterableFilterable<T> extends Filterable<T> {
+/**
+ * An interface that represents a non-scalar Filterable
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of elements stored in this IterableFilterable
+ */
+public interface IterableFilterable<T> extends Filterable<T>, Iterable<T> {
 
     /**
      * Remove all elements in the supplied Stream from this filterable

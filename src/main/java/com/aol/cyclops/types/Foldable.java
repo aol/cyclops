@@ -25,10 +25,23 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.stream.HotStream;
 
+/**
+ * Represents a type that may be reducable (foldable) to a single value or collection
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of element(s) in this Foldable
+ */
 public interface Foldable<T> {
 
+    /**
+     * @return this Foldable converted to a Stream ({@link com.aol.cyclops.control.ReativeSeq}) of it's elements
+     */
     ReactiveSeq<T> stream();
 
+    /**
+     * @return This Foldable as a ReactiveSeq with it's type narrowed to a Foldable
+     */
     default Foldable<T> foldable() {
         return stream();
     }
@@ -89,6 +102,7 @@ public interface Foldable<T> {
     }
 
     /**
+     * Reduce this Foldable to a single value, using the supplied Monoid. For example
      * <pre>
      * {@code 
      * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
@@ -105,34 +119,51 @@ public interface Foldable<T> {
         return foldable().reduce(reducer);
     }
 
-    /*
-     * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
-     * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
+   
+    /**
+     * An equivalent function to {@link java.util.stream.Stream#reduce(BinaryOperator)}
+     *  
+     *  <pre> {@code
+     *  
+     *       ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
+     * (acc,next) -> acc+next)
+     *        //Optional[1500]
+     *  }
+     *  </pre>
+     * @param accumulator Combiner function
+     * @return
      */
     default Optional<T> reduce(BinaryOperator<T> accumulator) {
         return foldable().reduce(accumulator);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.stream.Stream#reduce(java.lang.Object,
-     * java.util.function.BinaryOperator)
+   
+    /**
+     *  An equivalent function to {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
+     * @param accumulator Combiner function
+     * @return Value produced by applying the current accumulated value and the 
+     *          next value to the combiner function as this Foldable is traversed from left to right
      */
     default T reduce(T identity, BinaryOperator<T> accumulator) {
         return foldable().reduce(identity, accumulator);
     }
 
+    /**
+     * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BiFunction)}
+     * 
+     * @param identity Identity value for the combiner function (leaves the input unchanged)
+     * @param accumulator Combiner function
+     * @return Value produced by applying the current accumulated value and the 
+     *          next value to the combiner function as this Foldable is traversed from left to right
+     */
     default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator) {
         Foldable<T> foldable = foldable();
         return foldable.reduce(identity, accumulator);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BiFunction, BinaryOperator)}
      * 
-     * @see java.util.stream.Stream#reduce(java.lang.Object,
-     * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
     default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
         return foldable().reduce(identity, accumulator, combiner);
@@ -217,14 +248,22 @@ public interface Foldable<T> {
      * }
      * </pre>
      * 
-     * @param identity
-     * @param accumulator
+     * @param identity  Identity value for the combiner function (leaves the input unchanged)
+     * @param accumulator Combining function
      * @return Reduced value
      */
     default T foldRight(T identity, BinaryOperator<T> accumulator) {
         return foldable().foldRight(identity, accumulator);
     }
 
+    /**
+     * 
+     * Immutable reduction from right to left
+     * 
+     * @param identity  Identity value for the combiner function (leaves the input unchanged)
+     * @param accumulator Combining function
+     * @return Reduced value
+     */
     default <U> U foldRight(U identity, BiFunction<? super T, ? super U, ? extends U> accumulator) {
         return (foldable()).foldRight(identity, accumulator);
     }
@@ -290,18 +329,34 @@ public interface Foldable<T> {
         return foldable().join(sep, start, end);
     }
 
+    /**
+     * Write each element within this Foldable in turn to the supplied PrintStream
+     * 
+     * @param str PrintStream to write to
+     */
     default void print(PrintStream str) {
         foldable().print(str);
     }
 
+    /**
+     * Write each element within this Foldable in turn to the supplied PrintWriter
+     * 
+     * @param writer PrintWriter to write to
+     */
     default void print(PrintWriter writer) {
         foldable().print(writer);
     }
 
+    /**
+     *  Print each value in this Foldable to the console in turn (left-to-right)
+     */
     default void printOut() {
         foldable().printOut();
     }
 
+    /**
+     *  Print each value in this Foldable to the error console in turn (left-to-right)
+     */
     default void printErr() {
         foldable().printErr();
     }
@@ -668,6 +723,13 @@ public interface Foldable<T> {
         return foldable().scheduleFixedRate(rate, ex);
     }
 
+    /**
+     * Apply the specified validator to all elements in this foldable, resulting in a failure Stream and success Stream.
+     * Each Stream is accessible via the returned Ior (Inclusive Or) {@link com.aol.cyclops.control.Ior}
+     * 
+     * @param validator {@link com.aol.cyclops.control.Validator} to validate each element with
+     * @return Ior with a Failure Stream and / or Success Stream
+     */
     default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(Validator<T, S, F> validator) {
 
         Tuple2<ReactiveSeq<Xor<F, S>>, ReactiveSeq<Xor<F, S>>> xors = stream().<Xor<F, S>> flatMap(s -> validator.accumulate(s)

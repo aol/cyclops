@@ -148,6 +148,7 @@ public interface IterableFunctor<T> extends Iterable<T>, Functor<T>, Foldable<T>
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Foldable#stream()
      */
+    @Override
     default ReactiveSeq<T> stream() {
         return ReactiveSeq.fromIterable(this);
     }
