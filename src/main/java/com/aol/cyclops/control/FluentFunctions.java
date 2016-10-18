@@ -46,6 +46,9 @@ import lombok.experimental.Wither;
  *      retry
  *      recovery
  *      Reader monad
+ *      Partial application
+ *      Currying
+ *      Pattern Matching
  *   
  * 
  * @author johnmcclean
@@ -584,6 +587,12 @@ public class FluentFunctions {
                                             .apply(a));
         }
 
+        /**
+         * Apply before advice to this function, capture the input with the provided Consumer
+         * 
+         * @param action Before advice
+         * @return Function with Before advice attached
+         */
         public FluentFunction<T, R> before(final Consumer<T> action) {
             return withFn(t -> {
                 action.accept(t);
@@ -591,6 +600,12 @@ public class FluentFunctions {
             });
         }
 
+        /**
+         * Apply After advice to this function capturing both the input and the output with the provided BiConsumer
+         * 
+         * @param action After advice
+         * @return  Function with After advice attached
+         */
         public FluentFunction<T, R> after(final BiConsumer<T, R> action) {
             return withFn(t -> {
 
@@ -600,6 +615,10 @@ public class FluentFunctions {
             });
         }
 
+        /**
+         * @param around
+         * @return
+         */
         public FluentFunction<T, R> around(final Function<Advice1<T, R>, R> around) {
             return withFn(t -> around.apply(new Advice1<T, R>(
                                                               t, fn)));
