@@ -17,7 +17,6 @@ import com.aol.cyclops.control.monads.transformers.seq.ReaderTSeq;
 import com.aol.cyclops.control.monads.transformers.values.ReaderTValue;
 import com.aol.cyclops.types.MonadicValue;
 
-
 public interface ReaderT<T, R> extends Publisher<T> {
 
     /**
@@ -25,16 +24,12 @@ public interface ReaderT<T, R> extends Publisher<T> {
      */
     public AnyM<Reader<T, R>> unwrap();
 
-   
     public ReaderTValue<T, R> peek(Consumer<? super R> peek);
 
-    
     public ReaderT<T, R> filter(Predicate<? super R> test);
 
-    
     public <B> ReaderT<T, B> map(Function<? super R, ? extends B> f);
 
-    
     default <B> ReaderT<T, B> bind(Function<? super R, ReaderT<? extends T, B>> f) {
 
         return of(unwrap().bind(reader -> reader.flatMap(r -> f.apply(r)
@@ -45,17 +40,14 @@ public interface ReaderT<T, R> extends Publisher<T> {
 
     public <B> ReaderT<B, R> flatMap(Function<? super T, ? extends Reader<? extends B, R>> f);
 
-    
     public static <T, U, R> Function<ReaderT<T, U>, ReaderT<T, R>> lift(Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
-    
     public static <T, U1, U2, R> BiFunction<ReaderT<T, U1>, ReaderT<T, U2>, ReaderT<T, R>> lift2(BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
-    
     public static <A, R> ReaderT<A, R> of(AnyM<Reader<A, R>> monads) {
         return (ReaderT<A, R>) Matchables.anyM(monads)
                                          .visit(v -> ReaderTValue.<A, R> of(v), s -> ReaderTSeq.<A, R> of(s));

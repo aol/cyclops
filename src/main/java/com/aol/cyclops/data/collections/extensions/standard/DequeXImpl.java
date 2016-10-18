@@ -64,7 +64,7 @@ public class DequeXImpl<T> implements DequeX<T> {
     public boolean isEmpty() {
         return deque.isEmpty();
     }
-    
+
     @Override
     public int hashCode() {
         return deque.hashCode();
@@ -120,13 +120,11 @@ public class DequeXImpl<T> implements DequeX<T> {
         return deque.toString();
     }
 
-
     @Override
     public <R, A> R collect(Collector<? super T, A, R> collector) {
         return stream().collect(collector);
     }
 
-  
     @Override
     public long count() {
         return this.size();

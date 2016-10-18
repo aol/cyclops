@@ -26,9 +26,10 @@ public interface QuintConsumer<T1, T2, T3, T4, T5> {
      * @param c4 jOOλ Consumer5
      * @return cyclops-react QuintConsumer
      */
-    static <S1, S2, S3,S4,S5> QuintConsumer<S1, S2, S3,S4,S5> fromConsumer3(Consumer5<S1,S2,S3,S4,S5> c5){
-        return (a,b,c,d,e) ->c5.accept(a,b,c,d,e);
+    static <S1, S2, S3, S4, S5> QuintConsumer<S1, S2, S3, S4, S5> fromConsumer3(Consumer5<S1, S2, S3, S4, S5> c5) {
+        return (a, b, c, d, e) -> c5.accept(a, b, c, d, e);
     }
+
     /**
      * Performs operation with input parameters
      * 
@@ -43,10 +44,10 @@ public interface QuintConsumer<T1, T2, T3, T4, T5> {
     /**
      * @return A jOOλ Consumer5
      */
-    default Consumer5<T1,T2,T3,T4,T5> consumer5(){
-       return (a,b,c,d,e)->accept(a,b,c,d,e);
+    default Consumer5<T1, T2, T3, T4, T5> consumer5() {
+        return (a, b, c, d, e) -> accept(a, b, c, d, e);
     }
-    
+
     /**
      * Partially apply the first input parameter to this QuintConsumer
      * 

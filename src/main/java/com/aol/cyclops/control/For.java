@@ -351,7 +351,7 @@ public class For {
          *            values to the yielding function
          * @return AnyM with elements generated via nested iteration
          */
-       
+
         static <T, R1, R> AnyMValue<R> each2(MonadicValue<? extends T> monadicValue, Function<? super T, MonadicValue<R1>> value2,
                 BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 

@@ -60,8 +60,6 @@ import lombok.val;
 public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSequence<T>, ExtendedTraversable<T>, Sequential<T>,
         CyclopsCollectable<T>, FilterableFunctor<T>, ZippingApplicativable<T>, ReactiveStreamsTerminalOperations<T>, Publisher<T> {
 
-    
-
     /**
      * Equivalence test, returns true if this Monad is equivalent to the supplied monad
      * e.g.

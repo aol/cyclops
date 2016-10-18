@@ -40,7 +40,7 @@ import com.aol.cyclops.types.stream.ToStream;
  *
  * @param <A>
  */
-public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterable<A>,ToStream<A> {
+public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterable<A>, ToStream<A> {
 
     public <R> CompletableFutureT<R> empty();
 

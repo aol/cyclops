@@ -147,6 +147,7 @@ public class Queue<T> implements Adapter<T> {
         listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
         return ReactiveSeq.fromStream(closingStream(this::get, new AlwaysContinue()));
     }
+
     /**
      * Return a standard (unextended) JDK Stream connected to this Queue
      * To disconnect cleanly close the queue
@@ -160,9 +161,10 @@ public class Queue<T> implements Adapter<T> {
      * @return Java 8 Stream connnected to this Queue
      */
     public Stream<T> jdkStream() {
-        listeningStreams.incrementAndGet(); 
+        listeningStreams.incrementAndGet();
         return closingStream(this::get, new AlwaysContinue());
     }
+
     public ReactiveSeq<T> stream(Continueable s) {
         this.sub = s;
         listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected

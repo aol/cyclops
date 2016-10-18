@@ -177,7 +177,6 @@ public interface Eval<T>
 
     }
 
-
     /**
      * Turn a Stream of Evals into a single Eval with a Stream of values.
      * 
@@ -215,9 +214,6 @@ public interface Eval<T>
                                           .get());
     }
 
-   
-    
-    
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
@@ -247,6 +243,7 @@ public interface Eval<T>
     default <R> Eval<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
         return (Eval<R>) MonadicValue1.super.coflatMap(mapper);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue1#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
      */
@@ -255,6 +252,7 @@ public interface Eval<T>
         return unit(each2(this, t1 -> v2, (t1, t2) -> monoid.combiner()
                                                             .apply(t1, t2)).orElseGet(() -> this.orElseGet(() -> monoid.zero())));
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#nest()
      */
@@ -262,6 +260,7 @@ public interface Eval<T>
     default Eval<MonadicValue<T>> nest() {
         return (Eval<MonadicValue<T>>) MonadicValue1.super.nest();
     }
+
     /* (non-Javadoc)
      * @see java.util.function.Supplier#get()
      */
@@ -294,6 +293,7 @@ public interface Eval<T>
 
         return (Maybe<T>) Filterable.super.notNull();
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
      */
@@ -327,8 +327,6 @@ public interface Eval<T>
         return (Eval<R>) ApplicativeFunctor.super.trampoline(mapper);
     }
 
-    
-
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
@@ -350,7 +348,6 @@ public interface Eval<T>
         return (Eval<R>) broad;
     }
 
-    
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
@@ -360,7 +357,6 @@ public interface Eval<T>
         return (Eval<R>) ApplicativeFunctor.super.combine(app, fn);
     }
 
-    
     /* Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
      * (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -371,7 +367,6 @@ public interface Eval<T>
         return (Eval<R>) ApplicativeFunctor.super.zip(app, fn);
     }
 
-   
     /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
      * 
      * (non-Javadoc)
@@ -426,11 +421,12 @@ public interface Eval<T>
 
     static class Module {
 
-        static <T> Eval<T> asEval(MonadicValue<T> value){
-            if(value instanceof Eval)
-                return (Eval<T>)value;
+        static <T> Eval<T> asEval(MonadicValue<T> value) {
+            if (value instanceof Eval)
+                return (Eval<T>) value;
             return value.toEvalAlways();
         }
+
         public static class Later<T> extends Rec<T>implements Eval<T> {
 
             Later(Function<Object, ? extends T> s) {
@@ -448,10 +444,8 @@ public interface Eval<T>
                                     super.fns.plus(Rec.raw(Memoize.memoizeFunction(mapper))));
             }
 
-           
             public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-                RecFunction s = __ -> asEval(mapper.apply(super.apply()))
-                                            .steps();
+                RecFunction s = __ -> asEval(mapper.apply(super.apply())).steps();
                 return new Later<R>(
                                     PVectorX.of(s));
 
@@ -522,8 +516,7 @@ public interface Eval<T>
             }
 
             public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-                RecFunction s = __ -> asEval(mapper.apply(apply()))
-                                            .steps();
+                RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
                 return new Always<R>(
                                      PVectorX.of(s));
             }

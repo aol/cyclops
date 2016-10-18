@@ -33,7 +33,6 @@ public class ListXImpl<T> implements ListX<T> {
                                          .get();
     }
 
-    
     @Override
     public void forEach(Consumer<? super T> action) {
         list.forEach(action);
@@ -119,18 +118,16 @@ public class ListXImpl<T> implements ListX<T> {
         return list.toString();
     }
 
-    
     @Override
     public <R, A> R collect(Collector<? super T, A, R> collector) {
         return stream().collect(collector);
     }
 
-    
     @Override
     public long count() {
         return this.size();
     }
-    
+
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
         return list.addAll(index, c);
@@ -207,7 +204,6 @@ public class ListXImpl<T> implements ListX<T> {
         return list.spliterator();
     }
 
-   
     @Override
     public int compareTo(T o) {
         if (o instanceof List) {

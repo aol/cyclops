@@ -59,24 +59,25 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
     }
 
     <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
-    
-	default <R> MonadicValue<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-		return this.flatMap(a -> {
-			Iterator<? extends R> it = mapper.apply(a).iterator();
-			if (it.hasNext()) {
-				return unit(it.next());
-			}
-			return Maybe.none();
-		});
-	}
 
-	default <R> MonadicValue<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-		return this.flatMap(a -> {
-			Publisher<? extends R> publisher = mapper.apply(a);
-			ValueSubscriber<R> sub = ValueSubscriber.subscriber();
-			publisher.subscribe(sub);
-			Maybe<R> maybe = sub.toMaybe();
-			return unit(maybe.get());
-		});
-	}
+    default <R> MonadicValue<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return this.flatMap(a -> {
+            Iterator<? extends R> it = mapper.apply(a)
+                                             .iterator();
+            if (it.hasNext()) {
+                return unit(it.next());
+            }
+            return Maybe.none();
+        });
+    }
+
+    default <R> MonadicValue<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return this.flatMap(a -> {
+            Publisher<? extends R> publisher = mapper.apply(a);
+            ValueSubscriber<R> sub = ValueSubscriber.subscriber();
+            publisher.subscribe(sub);
+            Maybe<R> maybe = sub.toMaybe();
+            return unit(maybe.get());
+        });
+    }
 }
