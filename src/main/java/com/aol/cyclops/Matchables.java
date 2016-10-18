@@ -98,6 +98,12 @@ import com.aol.cyclops.util.ExceptionSoftener;
  */
 public class Matchables {
 
+    /**
+     * Match on a single value 
+     * @param v Value to match on
+     * 
+     * @return Structural Pattern matching API for that value (encompasing presence and absence / null)
+     */
     public static <T1> MTuple1<T1> match(final T1 v) {
         return () -> Tuple.tuple(v);
     }
@@ -383,6 +389,12 @@ public class Matchables {
                          () -> date.getDayOfMonth(), () -> date.getYear());
     }
 
+    /**
+     * Structural pattern matching on a Date's hour minutes and seconds component
+     * 
+     * @param date Date to match on
+     * @return Structural pattern matcher for hours / minutes / seconds
+     */
     public static MTuple3<Integer, Integer, Integer> dateHMS(final Date date) {
         final Date input = new Date();
         final LocalTime local = input.toInstant()
