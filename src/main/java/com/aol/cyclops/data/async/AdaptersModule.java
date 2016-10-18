@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -265,13 +266,14 @@ public interface AdaptersModule {
 
     }
 
-    static class ClosingSpliterator<T> implements Spliterator<T> {
+    static class ClosingSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements Spliterator<T> {
         private long estimate;
         final Supplier<T> s;
         private final Continueable subscription;
         private final Queue queue;
 
         public ClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription, final Queue queue) {
+            super(estimate,IMMUTABLE);
             this.estimate = estimate;
             this.s = s;
             this.subscription = subscription;
@@ -280,6 +282,7 @@ public interface AdaptersModule {
         }
 
         public ClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription) {
+            super(estimate,IMMUTABLE);
             this.estimate = estimate;
             this.s = s;
             this.subscription = subscription;
@@ -301,12 +304,11 @@ public interface AdaptersModule {
             Objects.requireNonNull(action);
 
             try {
-
                 action.accept(s.get());
                 subscription.closeQueueIfFinished(queue);
                 return true;
             } catch (final ClosedQueueException e) {
-
+                
                 if (e.isDataPresent()) {
                     e.getCurrentData()
                      .forEach(action);
@@ -320,13 +322,14 @@ public interface AdaptersModule {
             }
 
         }
-
+/**
         @Override
         public Spliterator<T> trySplit() {
 
             return new ClosingSpliterator(
                                           estimate >>>= 1, s, subscription, queue);
         }
+        **/
 
     }
 }
