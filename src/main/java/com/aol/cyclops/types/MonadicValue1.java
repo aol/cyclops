@@ -2,24 +2,50 @@ package com.aol.cyclops.types;
 
 import java.util.function.Function;
 
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.types.anyM.AnyMValue;
-import java.util.Iterator;
-import org.reactivestreams.Publisher;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 
+/**
+ * Represents a MonadicValue that can have a single data type 
+ *   (for example a Maybe, Eval as opposed to an Xor or Either type which may have a value that
+ *   is of one of two data types).
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of element stored inside this MonadicValue1
+ */
 public interface MonadicValue1<T> extends MonadicValue<T> {
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
+     */
+    @Override
     public <T> MonadicValue1<T> unit(T unit);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#map(java.util.function.Function)
+     */
+    @Override
     <R> MonadicValue<R> map(Function<? super T, ? extends R> fn);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#anyM()
+     */
+    @Override
     default AnyMValue<T> anyM() {
         return AnyM.ofValue(this);
     }
 
-    default <R> MonadicValue<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    @Override
+    default <R> MonadicValue<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
         return mapper.andThen(r -> unit(r))
                      .apply(this);
     }
@@ -52,31 +78,66 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
      * @param v2
      * @return
      */
-    default MonadicValue1<T> combineEager(Monoid<T> monoid, MonadicValue<? extends T> v2) {
+    default MonadicValue1<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
         return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.combiner()
                                                               .apply(t1, t2)))
-                        .orElseGet(() -> this.orElseGet(() -> monoid.zero())));
+                        .orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 
+    /**
+     * A flattening transformation operation (@see {@link java.util.Optional#flatMap(Function)}
+     * 
+     * <pre>
+     * {@code 
+     *   Eval.now(1).map(i->i+2).flatMap(i->Eval.later(()->i*3);
+     *   //Eval[9]
+     * 
+     * }</pre>
+     * 
+     * 
+     * @param mapper transformation function
+     * @return MonadicValue
+     */
     <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
-    
-	default <R> MonadicValue<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-		return this.flatMap(a -> {
-			Iterator<? extends R> it = mapper.apply(a).iterator();
-			if (it.hasNext()) {
-				return unit(it.next());
-			}
-			return Maybe.none();
-		});
-	}
 
-	default <R> MonadicValue<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-		return this.flatMap(a -> {
-			Publisher<? extends R> publisher = mapper.apply(a);
-			ValueSubscriber<R> sub = ValueSubscriber.subscriber();
-			publisher.subscribe(sub);
-			Maybe<R> maybe = sub.toMaybe();
-			return unit(maybe.get());
-		});
-	}
+    /**
+     * A flatten transformation operation that takes the first value from the returned Iterable.
+     * 
+     * <pre>
+     * {@code 
+     *   Maybe.just(1).map(i->i+2).flatMapIterable(i->Arrays.asList(()->i*3,20);
+     *   //Maybe[9]
+     * 
+     * }</pre>
+     * 
+     * 
+     * @param mapper  transformation function
+     * @return  MonadicValue
+     */
+    default <R> MonadicValue<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return this.flatMap(a -> {
+            return Maybe.fromIterable(mapper.apply(a));
+        });
+    }
+
+    /**
+     * A flatten transformation operation that takes the first value from the returned Publisher.
+     * <pre>
+     * {@code 
+     *   FutureW.ofResult(1).map(i->i+2).flatMapPublisher(i->Arrays.asList(()->i*3,20);
+     *   //FutureW[9]
+     * 
+     * }</pre>
+     * 
+     * @param mapper transformation function
+     * @return  MonadicValue
+     */
+    default <R> MonadicValue<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return this.flatMap(a -> {
+            Publisher<? extends R> publisher = mapper.apply(a);
+            ValueSubscriber<R> sub = ValueSubscriber.subscriber();
+            publisher.subscribe(sub);
+            return unit(sub.get());
+        });
+    }
 }

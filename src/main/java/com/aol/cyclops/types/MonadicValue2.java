@@ -1,11 +1,11 @@
 package com.aol.cyclops.types;
 
-import java.util.Iterator;
 import java.util.function.Function;
 
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 
 public interface MonadicValue2<T1, T2> extends MonadicValue<T2> {
@@ -75,13 +75,7 @@ public interface MonadicValue2<T1, T2> extends MonadicValue<T2> {
      */
 	default <R> MonadicValue2<T1, R> flatMapIterable(Function<? super T2, ? extends Iterable<? extends R>> mapper) {
 		return this.flatMap(a -> {
-			Iterator<? extends R> it = mapper.apply(a).iterator();
-			if (it.hasNext()) {
-				R r = it.next();
-				return unit(r);
-			} else {
-				return null;
-			}
+		    return Xor.fromIterable(mapper.apply(a));
 		});
 	}
 

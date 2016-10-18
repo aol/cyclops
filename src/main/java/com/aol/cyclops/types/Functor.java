@@ -8,10 +8,12 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Trampoline;
 
-/* 
+/** 
+ * An interface that represents a type that can transform a value from one type to another
+ * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Data type of element(s) stored in this Functor
  */
 @FunctionalInterface
 public interface Functor<T> {
