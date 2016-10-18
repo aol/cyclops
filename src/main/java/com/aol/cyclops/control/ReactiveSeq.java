@@ -2899,9 +2899,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * }
      * </pre>
      * 
-     * @param time
-     * @param t
-     * @return
+     * @param time Time to apply debouncing over
+     * @param t Time unit for debounce period
+     * @return ReactiveSeq with debouncing applied
      */
     ReactiveSeq<T> debounce(long time, TimeUnit t);
 
@@ -2939,7 +2939,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @param maxJitterPeriodInNanos
      *            - random number less than this is used for each jitter
-     * @return Sequence with a random jitter between element emission
+     * @return ReactiveSeq with a random jitter between element emission
      */
     ReactiveSeq<T> jitter(long maxJitterPeriodInNanos);
 

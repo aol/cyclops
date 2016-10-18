@@ -1,6 +1,8 @@
 package com.aol.cyclops.control;
 
 import static com.aol.cyclops.control.For.Values.each2;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 import java.util.List;
@@ -18,8 +20,11 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -59,7 +64,7 @@ import com.aol.cyclops.util.function.Memoize;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Type of value storable in this Eval
  */
 public interface Eval<T>
         extends Supplier<T>, MonadicValue1<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
@@ -199,18 +204,64 @@ public interface Eval<T>
 
     }
 
+    /**
+     * Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
+     * 
+     * <pre>
+     * {@code 
+     *   Eval<PSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
+         //Eval.now(PSetX.of(10,1)))
+     * }
+     * </pre>
+     * 
+     * @param evals Collection of Evals to accumulate
+     * @param reducer Reducer to fold nested values into
+     * @return Eval with a value
+     */
     public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Reducer<R> reducer) {
         return sequence(evals).map(s -> s.mapReduce(reducer));
     }
 
-    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> maybes, final Function<? super T, R> mapper, final Semigroup<R> reducer) {
-        return sequence(maybes).map(s -> s.map(mapper)
+    /**
+     * Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
+     * 
+     * <pre>
+     * {@code
+     *   Eval<String> evals =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Semigroups.stringConcat);
+         //Eval.now("101")
+     * }
+     * </pre>
+     * 
+     * 
+     * @param evals Collection of Evals to accumulate
+     * @param mapper Funtion to map Eval contents to type required by Semigroup accumulator
+     * @param reducer Combiner function to apply to converted values
+     * @return  Eval with a value
+     */
+    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Function<? super T, R> mapper, final Semigroup<R> reducer) {
+        return sequence(evals).map(s -> s.map(mapper)
                                           .reduce(reducer.reducer())
                                           .get());
     }
 
-    public static <T> Eval<T> accumulate(final CollectionX<Eval<T>> maybes, final Semigroup<T> reducer) {
-        return sequence(maybes).map(s -> s.reduce(reducer.reducer())
+    /**
+     *  Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
+     * 
+     * <pre>
+     * {@code 
+     *   Eval<Integer> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Semigroups.intSum);
+         //Eval.now(11)
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param evals Collection of Evals to accumulate
+     * @param reducer Combiner function to apply to converted values
+     * @return Eval with a value
+     */
+    public static <T> Eval<T> accumulate(final CollectionX<Eval<T>> evals, final Semigroup<T> reducer) {
+        return sequence(evals).map(s -> s.reduce(reducer.reducer())
                                           .get());
     }
 
