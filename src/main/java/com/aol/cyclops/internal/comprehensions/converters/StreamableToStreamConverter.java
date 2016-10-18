@@ -11,18 +11,19 @@ public class StreamableToStreamConverter implements MonadicConverter<Stream> {
 
     public static int priority = 5;
 
+    @Override
     public int priority() {
         return priority;
     }
 
     @Override
-    public boolean accept(Object o) {
-        return (o instanceof Streamable);
+    public boolean accept(final Object o) {
+        return o instanceof Streamable;
 
     }
 
     @Override
-    public Stream convertToMonadicForm(Object f) {
+    public Stream convertToMonadicForm(final Object f) {
         val s = (Streamable) f;
         return s.stream();
     }

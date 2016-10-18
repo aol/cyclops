@@ -232,7 +232,6 @@ public interface FeatureToggle<F>
     @Override
     default FeatureToggle<F> combineEager(final Monoid<F> monoid, final MonadicValue<? extends F> v2) {
 
-
         return (FeatureToggle<F>) MonadicValue1.super.combineEager(monoid, v2);
     }
 

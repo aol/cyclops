@@ -28,7 +28,7 @@ public interface NestedCollectable<T> {
     default StreamT<T> streamT() {
         if (this instanceof StreamT)
             return (StreamT) this;
-        AnyM<ReactiveSeq<T>> anyM = nestedCollectables().map(s -> ReactiveSeq.fromIterable(s));
+        final AnyM<ReactiveSeq<T>> anyM = nestedCollectables().map(s -> ReactiveSeq.fromIterable(s));
         return Matchables.anyM(anyM)
                          .visit(v -> StreamT.fromValue(v.toEvalLater()), s -> StreamTSeq.of(s));
     }
@@ -36,7 +36,7 @@ public interface NestedCollectable<T> {
     default ListT<T> listT() {
         if (this instanceof ListT)
             return (ListT) this;
-        AnyM<ListX<T>> anyM = nestedCollectables().map(s -> ListX.fromIterable(s));
+        final AnyM<ListX<T>> anyM = nestedCollectables().map(s -> ListX.fromIterable(s));
         return Matchables.anyM(anyM)
                          .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListTSeq.of(s));
     }
@@ -44,7 +44,7 @@ public interface NestedCollectable<T> {
     default SetT<T> setT() {
         if (this instanceof SetT)
             return (SetT) this;
-        AnyM<SetX<T>> anyM = nestedCollectables().map(s -> SetX.fromIterable(s));
+        final AnyM<SetX<T>> anyM = nestedCollectables().map(s -> SetX.fromIterable(s));
         return Matchables.anyM(anyM)
                          .visit(v -> SetT.fromValue(v.toEvalLater()), s -> SetTSeq.of(s));
     }
@@ -52,7 +52,7 @@ public interface NestedCollectable<T> {
     default StreamableT<T> streamableT() {
         if (this instanceof StreamableT)
             return (StreamableT) this;
-        AnyM<Streamable<T>> anyM = nestedCollectables().map(s -> Streamable.fromIterable(s));
+        final AnyM<Streamable<T>> anyM = nestedCollectables().map(s -> Streamable.fromIterable(s));
         return Matchables.anyM(anyM)
                          .visit(v -> StreamableT.fromValue(v.toEvalLater()), s -> StreamableTSeq.of(s));
     }
@@ -60,14 +60,14 @@ public interface NestedCollectable<T> {
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
-    default <R, A> AnyM<R> collect(Collector<? super T, A, R> collector) {
+    default <R, A> AnyM<R> collect(final Collector<? super T, A, R> collector) {
         return nestedCollectables().map(s -> s.collect(collector));
     }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
-    default <R, A, C extends Collection<R>> C collect(Supplier<C> supplier, Collector<? super T, A, R> collector) {
+    default <R, A, C extends Collection<R>> C collect(final Supplier<C> supplier, final Collector<? super T, A, R> collector) {
         return nestedCollectables().map(s -> s.collect(collector))
                                    .collect(Collectors.toCollection(supplier));
     }
@@ -84,7 +84,7 @@ public interface NestedCollectable<T> {
      * @param c
      *            Predicate to check if all match
      */
-    default AnyM<Boolean> allMatch(Predicate<? super T> c) {
+    default AnyM<Boolean> allMatch(final Predicate<? super T> c) {
         return nestedCollectables().map(s -> s.allMatch(c));
     }
 
@@ -100,11 +100,11 @@ public interface NestedCollectable<T> {
      * @param c
      *            Predicate to check if any match
      */
-    default AnyM<Boolean> anyMatch(Predicate<? super T> c) {
+    default AnyM<Boolean> anyMatch(final Predicate<? super T> c) {
         return nestedCollectables().map(s -> s.anyMatch(c));
     }
 
-    default AnyM<Boolean> noneMatch(Predicate<? super T> c) {
+    default AnyM<Boolean> noneMatch(final Predicate<? super T> c) {
         return nestedCollectables().map(s -> s.noneMatch(c));
     }
 

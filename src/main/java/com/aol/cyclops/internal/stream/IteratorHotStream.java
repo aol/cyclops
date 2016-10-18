@@ -31,7 +31,7 @@ public class IteratorHotStream<T> {
     }
 
     protected void unpause() {
-        CompletableFuture<Void> current = pause.get();
+        final CompletableFuture<Void> current = pause.get();
         if (!current.isDone())
             current.complete(null);
     }
@@ -40,22 +40,22 @@ public class IteratorHotStream<T> {
         pause.set(new CompletableFuture<Void>());
     }
 
-    protected void scheduleInternal(Iterator<T> it, String cron, ScheduledExecutorService ex) {
-        Date now = new Date();
-        Date d = ExceptionSoftener.softenSupplier(() -> new CronExpression(
-                                                                           cron))
-                                  .get()
-                                  .getNextValidTimeAfter(now);
+    protected void scheduleInternal(final Iterator<T> it, final String cron, final ScheduledExecutorService ex) {
+        final Date now = new Date();
+        final Date d = ExceptionSoftener.softenSupplier(() -> new CronExpression(
+                                                                                 cron))
+                                        .get()
+                                        .getNextValidTimeAfter(now);
 
-        long delay = d.getTime() - now.getTime();
+        final long delay = d.getTime() - now.getTime();
 
         ex.schedule(() -> {
             synchronized (it) {
                 if (it.hasNext()) {
                     try {
-                        T next = it.next();
+                        final T next = it.next();
 
-                        int local = connected;
+                        final int local = connected;
 
                         for (int i = 0; i < local; i++) {
 
@@ -79,14 +79,14 @@ public class IteratorHotStream<T> {
 
     }
 
-    protected IteratorHotStream<T> scheduleFixedDelayInternal(Iterator<T> it, long delay, ScheduledExecutorService ex) {
+    protected IteratorHotStream<T> scheduleFixedDelayInternal(final Iterator<T> it, final long delay, final ScheduledExecutorService ex) {
         ex.scheduleWithFixedDelay(() -> {
             synchronized (it) {
                 if (it.hasNext()) {
 
-                    T next = it.next();
+                    final T next = it.next();
 
-                    int local = connected;
+                    final int local = connected;
 
                     for (int i = 0; i < local; i++) {
 
@@ -107,14 +107,14 @@ public class IteratorHotStream<T> {
 
     }
 
-    protected IteratorHotStream<T> scheduleFixedRate(Iterator<T> it, long rate, ScheduledExecutorService ex) {
+    protected IteratorHotStream<T> scheduleFixedRate(final Iterator<T> it, final long rate, final ScheduledExecutorService ex) {
         ex.scheduleAtFixedRate(() -> {
             synchronized (it) {
                 if (it.hasNext()) {
 
-                    T next = it.next();
+                    final T next = it.next();
 
-                    int local = connected;
+                    final int local = connected;
 
                     for (int i = 0; i < local; i++) {
 

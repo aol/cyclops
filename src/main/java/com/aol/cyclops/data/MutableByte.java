@@ -58,7 +58,7 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>, Matchable.Va
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableByte of(byte var) {
+    public static <T> MutableByte of(final byte var) {
         return new MutableByte(
                                var);
     }
@@ -78,17 +78,20 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>, Matchable.Va
      * @param c Consumer that sets an external value
      * @return MutableByte that gets / sets an external (mutable) value
      */
-    public static MutableByte fromExternal(Supplier<Byte> s, Consumer<Byte> c) {
+    public static MutableByte fromExternal(final Supplier<Byte> s, final Consumer<Byte> c) {
         return new MutableByte() {
+            @Override
             public byte getAsByte() {
                 return s.get();
             }
 
+            @Override
             public Byte get() {
                 return getAsByte();
             }
 
-            public MutableByte set(byte value) {
+            @Override
+            public MutableByte set(final byte value) {
                 c.accept(value);
                 return this;
             }
@@ -113,9 +116,10 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>, Matchable.Va
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(Function<Byte, R> fn) {
-        MutableByte host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Byte, R> fn) {
+        final MutableByte host = this;
         return new Mutable<R>() {
+            @Override
             public R get() {
                 return fn.apply(host.get());
             }
@@ -141,10 +145,11 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>, Matchable.Va
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(Function<T1, Byte> fn) {
-        MutableByte host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Byte> fn) {
+        final MutableByte host = this;
         return new Mutable<T1>() {
-            public Mutable<T1> set(T1 value) {
+            @Override
+            public Mutable<T1> set(final T1 value) {
                 host.set(fn.apply(value));
                 return this;
             }
@@ -163,7 +168,7 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>, Matchable.Va
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableByte set(byte var) {
+    public MutableByte set(final byte var) {
         this.var = var;
         return this;
     }
@@ -172,8 +177,8 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>, Matchable.Va
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableByte mutate(ByteFunction varFn) {
-        return set(varFn.apply(this.getAsByte()));
+    public MutableByte mutate(final ByteFunction varFn) {
+        return set(varFn.apply(getAsByte()));
 
     }
 
@@ -182,7 +187,7 @@ public class MutableByte implements Supplier<Byte>, Consumer<Byte>, Matchable.Va
     }
 
     @Override
-    public void accept(Byte t) {
+    public void accept(final Byte t) {
         set(t);
 
     }

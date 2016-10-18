@@ -41,7 +41,7 @@ public class Topic<T> implements Adapter<T> {
      * Construct a new Topic
      */
     public Topic() {
-        Queue<T> q = new Queue<T>();
+        final Queue<T> q = new Queue<T>();
 
         distributor.addQueue(q);
     }
@@ -50,7 +50,7 @@ public class Topic<T> implements Adapter<T> {
      * Construct a Topic using the Queue provided
      * @param q Queue to back this Topic with
      */
-    public Topic(Queue<T> q) {
+    public Topic(final Queue<T> q) {
 
         distributor.addQueue(q);
     }
@@ -63,7 +63,7 @@ public class Topic<T> implements Adapter<T> {
      * @param stream
      */
     @Synchronized("lock")
-    public void disconnect(Stream<T> stream) {
+    public void disconnect(final Stream<T> stream) {
 
         distributor.removeQueue(streamToQueue.get(stream));
 
@@ -72,9 +72,9 @@ public class Topic<T> implements Adapter<T> {
     }
 
     @Synchronized("lock")
-    private <R> ReactiveSeq<R> connect(Function<Queue<T>, ReactiveSeq<R>> streamCreator) {
-        Queue<T> queue = this.getNextQueue();
-        ReactiveSeq<R> stream = streamCreator.apply(queue);
+    private <R> ReactiveSeq<R> connect(final Function<Queue<T>, ReactiveSeq<R>> streamCreator) {
+        final Queue<T> queue = this.getNextQueue();
+        final ReactiveSeq<R> stream = streamCreator.apply(queue);
 
         this.streamToQueue = streamToQueue.plus(stream, queue);
         return stream;
@@ -83,7 +83,8 @@ public class Topic<T> implements Adapter<T> {
     /**
      * @param stream Input data from provided Stream
      */
-    public boolean fromStream(Stream<T> stream) {
+    @Override
+    public boolean fromStream(final Stream<T> stream) {
         stream.collect(Collectors.toCollection(() -> distributor));
         return true;
 
@@ -95,6 +96,7 @@ public class Topic<T> implements Adapter<T> {
      * 
      * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
      */
+    @Override
     public ReactiveSeq<CompletableFuture<T>> streamCompletableFutures() {
         return connect(q -> q.streamCompletableFutures());
     }
@@ -104,13 +106,15 @@ public class Topic<T> implements Adapter<T> {
      * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
      * @return Stream of data
      */
+    @Override
     public ReactiveSeq<T> stream() {
 
         return connect(q -> q.stream());
 
     }
 
-    public ReactiveSeq<T> stream(Continueable s) {
+    @Override
+    public ReactiveSeq<T> stream(final Continueable s) {
 
         return connect(q -> q.stream(s));
 
@@ -133,6 +137,7 @@ public class Topic<T> implements Adapter<T> {
      * 
      * @return true if closed
      */
+    @Override
     public boolean close() {
         this.distributor.getSubscribers()
                         .forEach(it -> it.close());
@@ -143,13 +148,13 @@ public class Topic<T> implements Adapter<T> {
     /**
      * @return Track changes in size in the Topic's data
      */
-    public Signal<Integer> getSizeSignal(int index) {
+    public Signal<Integer> getSizeSignal(final int index) {
         return this.distributor.getSubscribers()
                                .get(index)
                                .getSizeSignal();
     }
 
-    public void setSizeSignal(int index, Signal<Integer> s) {
+    public void setSizeSignal(final int index, final Signal<Integer> s) {
         this.distributor.getSubscribers()
                         .get(index)
                         .setSizeSignal(s);
@@ -162,7 +167,7 @@ public class Topic<T> implements Adapter<T> {
      * @return self
      */
     @Override
-    public boolean offer(T data) {
+    public boolean offer(final T data) {
         fromStream(Stream.of(data));
         return true;
 
@@ -177,24 +182,24 @@ public class Topic<T> implements Adapter<T> {
         private final Object lock = new Object();
 
         @Synchronized("lock")
-        public void addQueue(Queue<T> q) {
+        public void addQueue(final Queue<T> q) {
             subscribers = subscribers.plus(q);
         }
 
         @Synchronized("lock")
-        public void removeQueue(Queue<T> q) {
+        public void removeQueue(final Queue<T> q) {
             subscribers = subscribers.minus(q);
 
         }
 
         @Override
-        public boolean add(T e) {
+        public boolean add(final T e) {
             subscribers.forEach(it -> it.offer(e));
             return true;
         }
 
         @Override
-        public boolean addAll(Collection<? extends T> c) {
+        public boolean addAll(final Collection<? extends T> c) {
             subscribers.forEach(it -> c.forEach(next -> it.offer(next)));
             return true;
         }
@@ -202,7 +207,7 @@ public class Topic<T> implements Adapter<T> {
     }
 
     @Override
-    public <R> R visit(Function<? super Queue<T>, ? extends R> caseQueue, Function<? super Topic<T>, ? extends R> caseTopic) {
+    public <R> R visit(final Function<? super Queue<T>, ? extends R> caseQueue, final Function<? super Topic<T>, ? extends R> caseTopic) {
         return caseTopic.apply(this);
     }
 

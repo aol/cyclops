@@ -17,7 +17,8 @@ public interface LongOperatorsMixin<T> extends LongOperators<T>, HasStream<T>, H
      * @see java.util.stream.Stream#mapToLong(ToLongFunction)
      * 	 @see java.util.stream.LongStream#sum()
      * */
-    default CompletableFuture<Long> sumLong(ToLongFunction<? super T> fn) {
+    @Override
+    default CompletableFuture<Long> sumLong(final ToLongFunction<? super T> fn) {
 
         return CompletableFuture.supplyAsync(() -> getStream().flatMapToLong(t -> LongStream.of(fn.applyAsLong(t)))
                                                               .sum(),
@@ -30,7 +31,8 @@ public interface LongOperatorsMixin<T> extends LongOperators<T>, HasStream<T>, H
      * @see java.util.stream.Stream#mapToLong(ToLongFunction)
      * 	 @see java.util.stream.LongStream#max()
      * */
-    default CompletableFuture<OptionalLong> maxLong(ToLongFunction<? super T> fn) {
+    @Override
+    default CompletableFuture<OptionalLong> maxLong(final ToLongFunction<? super T> fn) {
 
         return CompletableFuture.supplyAsync(() -> getStream().flatMapToLong(t -> LongStream.of(fn.applyAsLong(t)))
                                                               .max(),
@@ -43,7 +45,8 @@ public interface LongOperatorsMixin<T> extends LongOperators<T>, HasStream<T>, H
      * @see java.util.stream.Stream#mapToLong(ToLongFunction)
      * 	 @see java.util.stream.LongStream#min()
      * */
-    default CompletableFuture<OptionalLong> minLong(ToLongFunction<? super T> fn) {
+    @Override
+    default CompletableFuture<OptionalLong> minLong(final ToLongFunction<? super T> fn) {
 
         return CompletableFuture.supplyAsync(() -> getStream().flatMapToLong(t -> LongStream.of(fn.applyAsLong(t)))
                                                               .min(),
@@ -56,7 +59,8 @@ public interface LongOperatorsMixin<T> extends LongOperators<T>, HasStream<T>, H
      * @see java.util.stream.Stream#mapToLong(ToLongFunction)
      * 	 @see java.util.stream.LongStream#average()
      * */
-    default CompletableFuture<OptionalDouble> averageLong(ToLongFunction<? super T> fn) {
+    @Override
+    default CompletableFuture<OptionalDouble> averageLong(final ToLongFunction<? super T> fn) {
 
         return CompletableFuture.supplyAsync(() -> getStream().flatMapToLong(t -> LongStream.of(fn.applyAsLong(t)))
                                                               .average(),
@@ -69,7 +73,8 @@ public interface LongOperatorsMixin<T> extends LongOperators<T>, HasStream<T>, H
      * @see java.util.stream.Stream#mapToLong(ToLongFunction)
      * 	 @see java.util.stream.LongStream#summaryStatistics()
      * */
-    default CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn) {
+    @Override
+    default CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(final ToLongFunction<? super T> fn) {
 
         return CompletableFuture.supplyAsync(() -> getStream().flatMapToLong(t -> LongStream.of(fn.applyAsLong(t)))
                                                               .summaryStatistics(),

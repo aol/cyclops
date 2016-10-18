@@ -14,19 +14,19 @@ public class BatchWhileOperator<T, C extends Collection<? super T>> {
     private final Stream<T> stream;
     private final Supplier<C> factory;
 
-    public BatchWhileOperator(Stream<T> stream) {
+    public BatchWhileOperator(final Stream<T> stream) {
         this.stream = stream;
         factory = () -> (C) new ListXImpl();
     }
 
-    public BatchWhileOperator(Stream<T> stream, Supplier<C> factory) {
+    public BatchWhileOperator(final Stream<T> stream, final Supplier<C> factory) {
         super();
         this.stream = stream;
         this.factory = factory;
     }
 
-    public Stream<C> batchWhile(Predicate<? super T> predicate) {
-        Iterator<T> it = stream.iterator();
+    public Stream<C> batchWhile(final Predicate<? super T> predicate) {
+        final Iterator<T> it = stream.iterator();
         return StreamUtils.stream(new Iterator<C>() {
             T value = (T) UNSET;
 
@@ -38,7 +38,7 @@ public class BatchWhileOperator<T, C extends Collection<? super T>> {
             @Override
             public C next() {
 
-                C list = factory.get();
+                final C list = factory.get();
                 if (value != UNSET)
                     list.add(value);
                 T value;

@@ -28,21 +28,21 @@ public class EagerStreamWrapper implements StreamWrapper {
     private final AsyncList async;
     private final Optional<Consumer<Throwable>> errorHandler;
 
-    public EagerStreamWrapper(List<CompletableFuture> list, Optional<Consumer<Throwable>> errorHandler) {
+    public EagerStreamWrapper(final List<CompletableFuture> list, final Optional<Consumer<Throwable>> errorHandler) {
         this.list = list;
-        this.stream = null;
+        stream = null;
         this.errorHandler = errorHandler;
         async = null;
     }
 
-    public EagerStreamWrapper(AsyncList async, Optional<Consumer<Throwable>> errorHandler) {
-        this.list = null;
-        this.stream = null;
+    public EagerStreamWrapper(final AsyncList async, final Optional<Consumer<Throwable>> errorHandler) {
+        list = null;
+        stream = null;
         this.async = async;
         this.errorHandler = errorHandler;
     }
 
-    public EagerStreamWrapper(Stream<CompletableFuture> stream, Optional<Consumer<Throwable>> errorHandler) {
+    public EagerStreamWrapper(final Stream<CompletableFuture> stream, final Optional<Consumer<Throwable>> errorHandler) {
         this.stream = stream;
 
         list = stream.collect(Collectors.toList());
@@ -51,7 +51,7 @@ public class EagerStreamWrapper implements StreamWrapper {
 
     }
 
-    public EagerStreamWrapper(Stream<CompletableFuture> stream, Collector c, Optional<Consumer<Throwable>> errorHandler) {
+    public EagerStreamWrapper(final Stream<CompletableFuture> stream, final Collector c, final Optional<Consumer<Throwable>> errorHandler) {
         this.stream = stream;
         async = null;
         this.errorHandler = errorHandler;
@@ -61,14 +61,15 @@ public class EagerStreamWrapper implements StreamWrapper {
 
     public void collect() {
         if (list != null)
-            collect(list.stream(), Collectors.toList(), this.errorHandler);
+            collect(list.stream(), Collectors.toList(), errorHandler);
         else
-            collect(stream, Collectors.toList(), this.errorHandler);
+            collect(stream, Collectors.toList(), errorHandler);
     }
 
-    static List<CompletableFuture> collect(Stream<CompletableFuture> stream, Collector c, Optional<Consumer<Throwable>> errorHandler) {
+    static List<CompletableFuture> collect(final Stream<CompletableFuture> stream, final Collector c,
+            final Optional<Consumer<Throwable>> errorHandler) {
 
-        Function<Throwable, Object> captureFn = t -> {
+        final Function<Throwable, Object> captureFn = t -> {
             BlockingStreamHelper.captureUnwrap(t, errorHandler);
             throw ExceptionSoftener.throwSoftenedException(t);
         };
@@ -82,7 +83,7 @@ public class EagerStreamWrapper implements StreamWrapper {
 
     }
 
-    public EagerStreamWrapper(CompletableFuture cf, Optional<Consumer<Throwable>> errorHandler) {
+    public EagerStreamWrapper(final CompletableFuture cf, final Optional<Consumer<Throwable>> errorHandler) {
         async = null;
         list = Arrays.asList(cf);
         this.errorHandler = errorHandler;
@@ -90,24 +91,25 @@ public class EagerStreamWrapper implements StreamWrapper {
 
     }
 
-    public EagerStreamWrapper withNewStream(Stream<CompletableFuture> stream, SimpleReact simple) {
+    public EagerStreamWrapper withNewStream(final Stream<CompletableFuture> stream, final SimpleReact simple) {
 
         return new EagerStreamWrapper(
                                       new AsyncList(
                                                     stream, simple.getQueueService()),
-                                      this.errorHandler);
+                                      errorHandler);
     }
 
-    public EagerStreamWrapper stream(Function<Stream<CompletableFuture>, Stream<CompletableFuture>> action) {
+    public EagerStreamWrapper stream(final Function<Stream<CompletableFuture>, Stream<CompletableFuture>> action) {
         if (async != null)
             return new EagerStreamWrapper(
-                                          async.stream(action), this.errorHandler);
+                                          async.stream(action), errorHandler);
         else
             return new EagerStreamWrapper(
-                                          action.apply(list.stream()), this.errorHandler);
+                                          action.apply(list.stream()), errorHandler);
 
     }
 
+    @Override
     public Stream<CompletableFuture> stream() {
         if (async != null)
             return async.async.join()
@@ -130,7 +132,7 @@ public class EagerStreamWrapper implements StreamWrapper {
         // = Executors.newSingleThreadExecutor();
         private final CompletableFuture<List<CompletableFuture>> async;
 
-        public AsyncList(Stream<CompletableFuture> stream, Executor service) {
+        public AsyncList(final Stream<CompletableFuture> stream, final Executor service) {
 
             if (stream instanceof SimpleReactStream)
                 async = CompletableFuture.completedFuture(stream.collect(Collectors.toList()));
@@ -140,7 +142,7 @@ public class EagerStreamWrapper implements StreamWrapper {
             this.service = service;
         }
 
-        public AsyncList(CompletableFuture<Stream<CompletableFuture>> cf, Executor service) {
+        public AsyncList(final CompletableFuture<Stream<CompletableFuture>> cf, final Executor service) {
             // use elastic pool to execute asyn
 
             async = cf.thenApplyAsync(st -> st.collect(Collectors.toList()), service);
@@ -148,7 +150,7 @@ public class EagerStreamWrapper implements StreamWrapper {
 
         }
 
-        public AsyncList stream(Function<Stream<CompletableFuture>, Stream<CompletableFuture>> action) {
+        public AsyncList stream(final Function<Stream<CompletableFuture>, Stream<CompletableFuture>> action) {
             return new AsyncList(
                                  async.thenApply(list -> action.apply(list.stream())), service);
 

@@ -33,12 +33,12 @@ public class RetryBuilder {
         @Getter
         private final AsyncRetryExecutor retryExecutor;
 
-        private factory(AsyncRetryExecutor retryExecutor) {
+        private factory(final AsyncRetryExecutor retryExecutor) {
             this.retryExecutor = retryExecutor;
         }
     }
 
-    public AsyncRetryExecutor parallelism(int parallelism) {
+    public AsyncRetryExecutor parallelism(final int parallelism) {
         return defaultInstance.withScheduler(Executors.newScheduledThreadPool(parallelism));
     }
 }

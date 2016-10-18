@@ -62,7 +62,7 @@ public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndO
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static MutableInt of(int var) {
+    public static MutableInt of(final int var) {
         return new MutableInt(
                               var);
     }
@@ -82,17 +82,20 @@ public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndO
      * @param c Consumer that sets an external value
      * @return MutableInt that gets / sets an external (mutable) value
      */
-    public static MutableInt fromExternal(IntSupplier s, IntConsumer c) {
+    public static MutableInt fromExternal(final IntSupplier s, final IntConsumer c) {
         return new MutableInt() {
+            @Override
             public int getAsInt() {
                 return s.getAsInt();
             }
 
+            @Override
             public Integer get() {
                 return getAsInt();
             }
 
-            public MutableInt set(int value) {
+            @Override
+            public MutableInt set(final int value) {
                 c.accept(value);
                 return this;
             }
@@ -117,9 +120,10 @@ public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndO
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(Function<Integer, R> fn) {
-        MutableInt host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Integer, R> fn) {
+        final MutableInt host = this;
         return new Mutable<R>() {
+            @Override
             public R get() {
                 return fn.apply(host.get());
             }
@@ -145,10 +149,11 @@ public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndO
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(Function<T1, Integer> fn) {
-        MutableInt host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Integer> fn) {
+        final MutableInt host = this;
         return new Mutable<T1>() {
-            public Mutable<T1> set(T1 value) {
+            @Override
+            public Mutable<T1> set(final T1 value) {
                 host.set(fn.apply(value));
                 return this;
             }
@@ -174,9 +179,10 @@ public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndO
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public MutableInt mapOutput(IntUnaryOperator fn) {
-        MutableInt host = this;
+    public MutableInt mapOutput(final IntUnaryOperator fn) {
+        final MutableInt host = this;
         return new MutableInt() {
+            @Override
             public int getAsInt() {
                 return fn.applyAsInt(host.getAsInt());
             }
@@ -202,10 +208,11 @@ public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndO
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public MutableInt mapInput(IntUnaryOperator fn) {
-        MutableInt host = this;
+    public MutableInt mapInput(final IntUnaryOperator fn) {
+        final MutableInt host = this;
         return new MutableInt() {
-            public MutableInt set(int value) {
+            @Override
+            public MutableInt set(final int value) {
                 host.set(fn.applyAsInt(value));
                 return this;
             }
@@ -216,6 +223,7 @@ public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndO
     /**
      * @return Current value
      */
+    @Override
     public int getAsInt() {
         return var;
     }
@@ -224,7 +232,7 @@ public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndO
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableInt set(int var) {
+    public MutableInt set(final int var) {
         this.var = var;
         return this;
     }
@@ -233,8 +241,8 @@ public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndO
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableInt mutate(IntFunction<Integer> varFn) {
-        this.var = varFn.apply(this.var);
+    public MutableInt mutate(final IntFunction<Integer> varFn) {
+        var = varFn.apply(var);
         return this;
     }
 
@@ -252,7 +260,7 @@ public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndO
     }
 
     @Override
-    public void accept(int value) {
+    public void accept(final int value) {
         set(value);
 
     }

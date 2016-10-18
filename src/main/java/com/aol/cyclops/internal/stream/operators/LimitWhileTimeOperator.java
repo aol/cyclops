@@ -14,10 +14,10 @@ public class LimitWhileTimeOperator<U> {
 
     private final Stream<U> stream;
 
-    public Stream<U> limitWhile(long time, TimeUnit unit) {
-        Iterator<U> it = stream.iterator();
-        long start = System.nanoTime();
-        long allowed = unit.toNanos(time);
+    public Stream<U> limitWhile(final long time, final TimeUnit unit) {
+        final Iterator<U> it = stream.iterator();
+        final long start = System.nanoTime();
+        final long allowed = unit.toNanos(time);
         return StreamUtils.stream(new Iterator<U>() {
             U next;
             boolean stillGoing = true;
@@ -36,7 +36,7 @@ public class LimitWhileTimeOperator<U> {
                 if (!stillGoing)
                     throw new NoSuchElementException();
 
-                U val = it.next();
+                final U val = it.next();
                 stillGoing = System.nanoTime() - start < allowed;
                 return val;
 

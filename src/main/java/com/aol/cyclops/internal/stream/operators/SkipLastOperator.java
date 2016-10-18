@@ -13,7 +13,7 @@ public class SkipLastOperator<T> {
     private final ArrayDeque<T> buffer;
     private final int skip;
 
-    public SkipLastOperator(Stream<T> stream, int skip) {
+    public SkipLastOperator(final Stream<T> stream, final int skip) {
         buffer = new ArrayDeque<>(
                                   skip);
         this.stream = stream;
@@ -21,7 +21,7 @@ public class SkipLastOperator<T> {
     }
 
     public Stream<T> skipLast() {
-        Iterator<T> it = stream.iterator();
+        final Iterator<T> it = stream.iterator();
         return StreamUtils.stream(new Iterator<T>() {
             boolean finished = false;
 

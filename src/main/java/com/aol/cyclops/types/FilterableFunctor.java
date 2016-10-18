@@ -15,11 +15,13 @@ public interface FilterableFunctor<T> extends Filterable<T>, Functor<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
      */
+    @Override
     FilterableFunctor<T> filter(Predicate<? super T> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#map(java.util.function.Function)
      */
+    @Override
     <R> FilterableFunctor<R> map(Function<? super T, ? extends R> fn);
 
 }

@@ -45,7 +45,7 @@ public class Predicates {
      * @param p Supplied predicate (normally as a lambda expression)
      * @return Predicate
      */
-    public static <T> Predicate<T> p(Predicate<T> p) {
+    public static <T> Predicate<T> p(final Predicate<T> p) {
         return p;
     }
 
@@ -53,15 +53,15 @@ public class Predicates {
      * @return A Predicate that checks if it's input is an Optional with a value
      */
     public static <T> Predicate<T> optionalPresent() {
-        return t -> (t instanceof Optional) ? ((Optional) t).isPresent() : false;
+        return t -> t instanceof Optional ? ((Optional) t).isPresent() : false;
     }
 
     /**
      * @return A Predicate that checks if it's input is a cyclops-react Value (which also contains a present value)
      */
     public static <T> Predicate<T> valuePresent() {
-        return t -> (t instanceof Value) ? ((Value) t).toMaybe()
-                                                      .isPresent()
+        return t -> t instanceof Value ? ((Value) t).toMaybe()
+                                                    .isPresent()
                 : false;
     }
 
@@ -69,8 +69,8 @@ public class Predicates {
      * @return A Predicate that checks if it's input is an Iterable with at least one value
      */
     public static <T> Predicate<T> iterablePresent() {
-        return t -> (t instanceof Iterable) ? ((Iterable) t).iterator()
-                                                            .hasNext()
+        return t -> t instanceof Iterable ? ((Iterable) t).iterator()
+                                                          .hasNext()
                 : false;
     }
 
@@ -93,7 +93,7 @@ public class Predicates {
      * @param value Value to check for equality
      * @return Predicate that checks for equality with the supplied value
      */
-    public static <T> Predicate<T> some(T value) {
+    public static <T> Predicate<T> some(final T value) {
         return eq(value);
     }
 
@@ -118,7 +118,7 @@ public class Predicates {
      * @param c Class type to match against
      * @return Predicate that mathes against type
      */
-    public static final <Y> Predicate<Y> any(Class<Y> c) {
+    public static final <Y> Predicate<Y> any(final Class<Y> c) {
         return a -> a.getClass()
                      .isAssignableFrom(c);
     };
@@ -146,7 +146,7 @@ public class Predicates {
      * @param type Classs type to decompose
      * @return Predicate builder that can decompose classes of specified type
      */
-    public static <T> ADTPredicateBuilder<T> type(Class<T> type) {
+    public static <T> ADTPredicateBuilder<T> type(final Class<T> type) {
         return new ADTPredicateBuilder<>(
                                          type);
     }
@@ -155,7 +155,7 @@ public class Predicates {
     public static class PredicateBuilder1<T1> implements Predicate<Matchable.MTuple1<T1>> {
         Predicate predicate;
 
-        public PredicateBuilder1(MTuple1<Predicate<? super T1>> when) {
+        public PredicateBuilder1(final MTuple1<Predicate<? super T1>> when) {
             predicate = new ADTPredicateBuilder<>(
                                                   Matchable.MTuple2.class).isGuard(when.getMatchable()
                                                                                        .v1());
@@ -163,7 +163,7 @@ public class Predicates {
         }
 
         @Override
-        public boolean test(MTuple1<T1> t) {
+        public boolean test(final MTuple1<T1> t) {
             return predicate.test(t);
         }
     }
@@ -176,7 +176,7 @@ public class Predicates {
      * @param when
      * @return
      */
-    public static <T1, T2, T3> PredicateBuilder1<T1> decons(MTuple1<Predicate<? super T1>> when) {
+    public static <T1, T2, T3> PredicateBuilder1<T1> decons(final MTuple1<Predicate<? super T1>> when) {
 
         return new PredicateBuilder1<T1>(
                                          when);
@@ -186,7 +186,7 @@ public class Predicates {
     public static class PredicateBuilder2<T1, T2> implements Predicate<Matchable.MTuple2<T1, T2>> {
         Predicate predicate;
 
-        public PredicateBuilder2(MTuple2<Predicate<? super T1>, Predicate<? super T2>> when) {
+        public PredicateBuilder2(final MTuple2<Predicate<? super T1>, Predicate<? super T2>> when) {
             predicate = new ADTPredicateBuilder<>(
                                                   Matchable.MTuple2.class).isGuard(when.getMatchable()
                                                                                        .v1(),
@@ -196,12 +196,12 @@ public class Predicates {
         }
 
         @Override
-        public boolean test(MTuple2<T1, T2> t) {
+        public boolean test(final MTuple2<T1, T2> t) {
             return predicate.test(t);
         }
     }
 
-    public static <T1, T2, T3> PredicateBuilder2<T1, T2> decons(MTuple2<Predicate<? super T1>, Predicate<? super T2>> when) {
+    public static <T1, T2, T3> PredicateBuilder2<T1, T2> decons(final MTuple2<Predicate<? super T1>, Predicate<? super T2>> when) {
 
         return new PredicateBuilder2<T1, T2>(
                                              when);
@@ -211,7 +211,7 @@ public class Predicates {
     public static class PredicateBuilder3<T1, T2, T3> implements Predicate<Matchable.MTuple3<T1, T2, T3>> {
         Predicate predicate;
 
-        public PredicateBuilder3(MTuple3<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>> when) {
+        public PredicateBuilder3(final MTuple3<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>> when) {
             predicate = new ADTPredicateBuilder<>(
                                                   Matchable.MTuple3.class).isGuard(when.getMatchable()
                                                                                        .v1(),
@@ -223,13 +223,13 @@ public class Predicates {
         }
 
         @Override
-        public boolean test(MTuple3<T1, T2, T3> t) {
+        public boolean test(final MTuple3<T1, T2, T3> t) {
             return predicate.test(t);
         }
     }
 
     public static <T1, T2, T3> PredicateBuilder3<T1, T2, T3> decons(
-            MTuple3<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>> when) {
+            final MTuple3<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>> when) {
 
         return new PredicateBuilder3<T1, T2, T3>(
                                                  when);
@@ -239,7 +239,7 @@ public class Predicates {
     public static class PredicateBuilder4<T1, T2, T3, T4> implements Predicate<Matchable.MTuple4<T1, T2, T3, T4>> {
         Predicate predicate;
 
-        public PredicateBuilder4(MTuple4<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>> when) {
+        public PredicateBuilder4(final MTuple4<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>> when) {
             predicate = new ADTPredicateBuilder<>(
                                                   Matchable.MTuple4.class).isGuard(when.getMatchable()
                                                                                        .v1(),
@@ -253,13 +253,13 @@ public class Predicates {
         }
 
         @Override
-        public boolean test(MTuple4<T1, T2, T3, T4> t) {
+        public boolean test(final MTuple4<T1, T2, T3, T4> t) {
             return predicate.test(t);
         }
     }
 
     public static <T1, T2, T3, T4> PredicateBuilder4<T1, T2, T3, T4> decons(
-            MTuple4<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>> when) {
+            final MTuple4<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>> when) {
 
         return new PredicateBuilder4<T1, T2, T3, T4>(
                                                      when);
@@ -270,7 +270,7 @@ public class Predicates {
         Predicate predicate;
 
         public PredicateBuilder5(
-                MTuple5<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>, Predicate<? super T5>> when) {
+                final MTuple5<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>, Predicate<? super T5>> when) {
             predicate = new ADTPredicateBuilder<>(
                                                   Matchable.MTuple5.class).isGuard(when.getMatchable()
                                                                                        .v1(),
@@ -284,13 +284,13 @@ public class Predicates {
         }
 
         @Override
-        public boolean test(MTuple5<T1, T2, T3, T4, T5> t) {
+        public boolean test(final MTuple5<T1, T2, T3, T4, T5> t) {
             return predicate.test(t);
         }
     }
 
     public static <T1, T2, T3, T4, T5> PredicateBuilder5<T1, T2, T3, T4, T5> decons(
-            MTuple5<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>, Predicate<? super T5>> when) {
+            final MTuple5<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>, Predicate<? super T5>> when) {
 
         return new PredicateBuilder5<T1, T2, T3, T4, T5>(
                                                          when);
@@ -316,27 +316,27 @@ public class Predicates {
      * @return Predicate builder that can decompose Case class and match against specified values
      */
     @SafeVarargs
-    public static <V> Predicate<V> has(V... values) {
+    public static <V> Predicate<V> has(final V... values) {
         return new ADTPredicateBuilder<Object>(
                                                Object.class).hasGuard(values);
     }
 
     @SafeVarargs
-    public static <V> Predicate<V> hasWhere(Predicate<V>... values) {
-        return (Predicate<V>) new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(
-                                                                                          Object.class).hasWhere(values);
+    public static <V> Predicate<V> hasWhere(final Predicate<V>... values) {
+        return new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(
+                                                                           Object.class).hasWhere(values);
     }
 
     @SafeVarargs
-    public static <V> Predicate<V> is(V... values) {
+    public static <V> Predicate<V> is(final V... values) {
         return new ADTPredicateBuilder<Object>(
                                                Object.class).<V> isGuard(values);
     }
 
     @SafeVarargs
-    public static <V> Predicate<V> isWhere(Predicate<V>... values) {
-        return (Predicate<V>) new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(
-                                                                                          Object.class).isWhere(values);
+    public static <V> Predicate<V> isWhere(final Predicate<V>... values) {
+        return new ADTPredicateBuilder.InternalADTPredicateBuilder<Object>(
+                                                                           Object.class).isWhere(values);
     }
 
     /**
@@ -344,7 +344,7 @@ public class Predicates {
      * @param value
      * @return
      */
-    public static <V> Predicate<V> eq(V value) {
+    public static <V> Predicate<V> eq(final V value) {
 
         return test -> Objects.equals(test, value);
     }
@@ -363,60 +363,60 @@ public class Predicates {
      * @param value
      * @return
      */
-    public static <V> Predicate<Value<? super V>> eqv(Value<? super V> value) {
+    public static <V> Predicate<Value<? super V>> eqv(final Value<? super V> value) {
 
-        return test -> test == null ? (value == null ? true : !value.toMaybe()
-                                                                    .isPresent())
+        return test -> test == null ? value == null ? true : !value.toMaybe()
+                                                                   .isPresent()
                 : test.toMaybe()
                       .equals(value.toMaybe());
 
     }
 
-    public static <V> Predicate<Iterable<? super V>> eqvIterable(Iterable<? super V> iterable) {
+    public static <V> Predicate<Iterable<? super V>> eqvIterable(final Iterable<? super V> iterable) {
 
-        return test -> test == null ? (iterable == null ? true : ListX.fromIterable(iterable)
-                                                                      .isEmpty())
+        return test -> test == null ? iterable == null ? true : ListX.fromIterable(iterable)
+                                                                     .isEmpty()
                 : ListX.fromIterable(test)
                        .equals(ListX.fromIterable(iterable));
 
     }
 
-    public static <V> Predicate<V> eqv2(Value<? super V> value) {
+    public static <V> Predicate<V> eqv2(final Value<? super V> value) {
 
-        return test -> test == null ? (value == null ? true : !value.toMaybe()
-                                                                    .isPresent())
+        return test -> test == null ? value == null ? true : !value.toMaybe()
+                                                                   .isPresent()
                 : Maybe.ofNullable(test)
                        .equals(value.toMaybe());
 
     }
 
-    public static <T1> Predicate<T1> not(Predicate<T1> p) {
+    public static <T1> Predicate<T1> not(final Predicate<T1> p) {
         return p.negate();
     }
 
     @SafeVarargs
-    public static <T1> Predicate<T1> in(T1... values){
+    public static <T1> Predicate<T1> in(final T1... values){
     return test -> Arrays.asList(values)
                          .contains(test);
 }
 
-public static <T1 extends Comparable<T1>> Predicate<? super T1> greaterThan(T1 v) {
+public static <T1 extends Comparable<T1>> Predicate<? super T1> greaterThan(final T1 v) {
         return test -> test.compareTo(v) > 0;
     }
 
-    public static <T1 extends Comparable<T1>> Predicate<? super T1> greaterThanOrEquals(T1 v) {
+    public static <T1 extends Comparable<T1>> Predicate<? super T1> greaterThanOrEquals(final T1 v) {
         return test -> test.compareTo(v) >= 0;
     }
 
-    public static <T1 extends Comparable<T1>> Predicate<? super T1> lessThan(T1 v) {
+    public static <T1 extends Comparable<T1>> Predicate<? super T1> lessThan(final T1 v) {
         return test -> test.compareTo(v) < 0;
     }
 
-    public static <T1 extends Comparable<T1>> Predicate<? super T1> lessThanOrEquals(T1 v) {
+    public static <T1 extends Comparable<T1>> Predicate<? super T1> lessThanOrEquals(final T1 v) {
         return test -> test.compareTo(v) <= 0;
     }
 
-    public static <T1 extends Comparable<T1>> Predicate<? super T1> equals(T1 v) {
+    public static <T1 extends Comparable<T1>> Predicate<? super T1> equals(final T1 v) {
         return test -> test.compareTo(v) == 0;
     }
 
@@ -424,67 +424,67 @@ public static <T1 extends Comparable<T1>> Predicate<? super T1> greaterThan(T1 v
         return test -> test == null;
     }
 
-    public static <T1> Predicate<Collection<? super T1>> hasItems(Collection<T1> items) {
+    public static <T1> Predicate<Collection<? super T1>> hasItems(final Collection<T1> items) {
         return test -> ReactiveSeq.fromIterable(items)
                                   .map(i -> test.contains(i))
                                   .allMatch(v -> v);
     }
 
-    public static <T1> Predicate<Collection<? super T1>> hasItems(Stream<T1> items) {
+    public static <T1> Predicate<Collection<? super T1>> hasItems(final Stream<T1> items) {
         return test -> items.map(i -> test.contains(i))
                             .allMatch(v -> v);
     }
 
     @SafeVarargs
-    public static <T1> Predicate<Collection<? super T1>> hasItems(T1... items){
+    public static <T1> Predicate<Collection<? super T1>> hasItems(final T1... items){
     return test -> ReactiveSeq.of(items)
                               .map(i -> test.contains(i))
                               .allMatch(v -> v);
 }
 
 @SafeVarargs
-public static <T1> Predicate<Iterable<? super T1>> startsWith(T1... items) {
+public static <T1> Predicate<Iterable<? super T1>> startsWith(final T1... items) {
     return test -> ReactiveSeq.fromIterable(test)
                               .startsWithIterable(ReactiveSeq.of(items));
 
 }
 
 @SafeVarargs
-public static <T1> Predicate<Iterable<? super T1>> endsWith(T1... items) {
+public static <T1> Predicate<Iterable<? super T1>> endsWith(final T1... items) {
 
     return test -> ReactiveSeq.fromIterable(test)
                               .endsWithIterable(ReactiveSeq.of(items));
 
 }
 
-public static <T1> Predicate<? super T1> instanceOf(Class<?> clazz) {
+public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
 
         return test -> clazz.isAssignableFrom(test.getClass());
     }
 
     @SafeVarargs
-    public static <T1> Predicate<? super T1> allOf(Predicate<? super T1>... preds) {
+    public static <T1> Predicate<? super T1> allOf(final Predicate<? super T1>... preds) {
         return test -> ReactiveSeq.of(preds)
                                   .map(t -> t.test(test))
                                   .allMatch(r -> r);
     }
 
     @SafeVarargs
-    public static <T1> Predicate<? super T1> anyOf(Predicate<? super T1>... preds) {
+    public static <T1> Predicate<? super T1> anyOf(final Predicate<? super T1>... preds) {
         return test -> ReactiveSeq.of(preds)
                                   .map(t -> t.test(test))
                                   .anyMatch(r -> r);
     }
 
     @SafeVarargs
-    public static <T1> Predicate<? super T1> noneOf(Predicate<? super T1>... preds) {
+    public static <T1> Predicate<? super T1> noneOf(final Predicate<? super T1>... preds) {
         return test -> ReactiveSeq.of(preds)
                                   .map(t -> t.test(test))
                                   .noneMatch(r -> r);
     }
 
     @SafeVarargs
-    public static <T1> Predicate<? super T1> xOf(int x, Predicate<? super T1>... preds) {
+    public static <T1> Predicate<? super T1> xOf(final int x, final Predicate<? super T1>... preds) {
         return test -> ReactiveSeq.of(preds)
                                   .map(t -> t.test(test))
                                   .xMatch(x, r -> r);

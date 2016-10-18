@@ -17,32 +17,32 @@ public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T>implement
 
     protected final Stream<T> stream;
 
-    public BaseHotStreamImpl(Stream<T> stream) {
+    public BaseHotStreamImpl(final Stream<T> stream) {
         this.stream = stream;
     }
 
-    public HotStream<T> paused(Executor exec) {
+    public HotStream<T> paused(final Executor exec) {
         pause();
         return init(exec);
     }
 
     public abstract HotStream<T> init(Executor exec);
 
-    public HotStream<T> schedule(String cron, ScheduledExecutorService ex) {
+    public HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
         final Iterator<T> it = stream.iterator();
         scheduleInternal(it, cron, ex);
         return this;
 
     }
 
-    public HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex) {
+    public HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         final Iterator<T> it = stream.iterator();
         scheduleFixedDelayInternal(it, delay, ex);
         return this;
 
     }
 
-    public HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
+    public HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         final Iterator<T> it = stream.iterator();
         scheduleFixedRate(it, rate, ex);
         return this;
@@ -50,7 +50,7 @@ public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T>implement
     }
 
     @Override
-    public ReactiveSeq<T> connect(Queue<T> queue) {
+    public ReactiveSeq<T> connect(final Queue<T> queue) {
         connections.getAndSet(connected, queue);
         connected++;
         unpause();

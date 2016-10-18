@@ -13,12 +13,12 @@ public interface TriFunction<S1, S2, S3, R> {
         return (a, b, c) -> apply(a, b, c);
     }
 
-    default Function<S2, Function<S3, R>> apply(S1 s) {
+    default Function<S2, Function<S3, R>> apply(final S1 s) {
         return Curry.curry3(this)
                     .apply(s);
     }
 
-    default Function<S3, R> apply(S1 s, S2 s2) {
+    default Function<S3, R> apply(final S1 s, final S2 s2) {
         return Curry.curry3(this)
                     .apply(s)
                     .apply(s2);

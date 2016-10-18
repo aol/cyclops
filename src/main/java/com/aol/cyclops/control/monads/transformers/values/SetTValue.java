@@ -47,6 +47,7 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
         this.run = run.map(s -> SetX.fromIterable(s));
     }
 
+    @Override
     public boolean isSeqPresent() {
         return !run.isEmpty();
     }
@@ -54,6 +55,7 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
     /**
      * @return The wrapped AnyM
      */
+    @Override
     public AnyMValue<SetX<T>> unwrap() {
         return run;
     }
@@ -72,7 +74,8 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @param peek  Consumer to accept current value of Set
      * @return SetT with peek call
      */
-    public SetTValue<T> peek(Consumer<? super T> peek) {
+    @Override
+    public SetTValue<T> peek(final Consumer<? super T> peek) {
         return map(a -> {
             peek.accept(a);
             return a;
@@ -93,7 +96,8 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @param test Predicate to filter the wrapped Set
      * @return SetT that applies the provided filter
      */
-    public SetTValue<T> filter(Predicate<? super T> test) {
+    @Override
+    public SetTValue<T> filter(final Predicate<? super T> test) {
         return of(run.map(stream -> ReactiveSeq.fromIterable(stream)
                                                .filter(test)
                                                .toSet()));
@@ -115,7 +119,8 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @param f Mapping function for the wrapped Set
      * @return SetT that applies the map function to the wrapped Set
      */
-    public <B> SetTValue<B> map(Function<? super T, ? extends B> f) {
+    @Override
+    public <B> SetTValue<B> map(final Function<? super T, ? extends B> f) {
         return of(run.map(o -> (Set<B>) ReactiveSeq.fromIterable(o)
                                                    .map(f)
                                                    .toSet()));
@@ -135,7 +140,7 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @param f FlatMap function
      * @return SetT that applies the flatMap function to the wrapped Set
      */
-    public <B> SetTValue<B> flatMapT(Function<? super T, SetTValue<B>> f) {
+    public <B> SetTValue<B> flatMapT(final Function<? super T, SetTValue<B>> f) {
 
         return of(run.map(stream -> ReactiveSeq.fromIterable(stream)
                                                .flatMap(a -> f.apply(a).run.stream())
@@ -143,7 +148,8 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
                                                .toSet()));
     }
 
-    public <B> SetTValue<B> flatMap(Function<? super T, ? extends Iterable<? extends B>> f) {
+    @Override
+    public <B> SetTValue<B> flatMap(final Function<? super T, ? extends Iterable<? extends B>> f) {
         return new SetTValue<B>(
                                 run.map(o -> SetX.fromIterable(o)
                                                  .flatMap(f)));
@@ -177,7 +183,7 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @param fn Function to enhance with functionality from Set and another monad type
      * @return Function that accepts and returns an SetT
      */
-    public static <U, R> Function<SetTValue<U>, SetTValue<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<SetTValue<U>, SetTValue<R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -210,7 +216,7 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @param fn BiFunction to enhance with functionality from Set and another monad type
      * @return Function that accepts and returns an SetT
      */
-    public static <U1, U2, R> BiFunction<SetTValue<U1>, SetTValue<U2>, SetTValue<R>> lift2(BiFunction<? super U1, ? super U2, ? extends R> fn) {
+    public static <U1, U2, R> BiFunction<SetTValue<U1>, SetTValue<U2>, SetTValue<R>> lift2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -221,11 +227,11 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @param anyM AnyM that doesn't contain a monad wrapping an Set
      * @return SetT
      */
-    public static <A> SetTValue<A> fromAnyM(AnyMValue<A> anyM) {
+    public static <A> SetTValue<A> fromAnyM(final AnyMValue<A> anyM) {
         return of(anyM.map(SetTValue::asSet));
     }
 
-    private static <T> Set<T> asSet(T... elements) {
+    private static <T> Set<T> asSet(final T... elements) {
         return new HashSet<T>(
                               Arrays.asList(elements));
     }
@@ -236,12 +242,12 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @param monads AnyM that contains a monad wrapping an Set
      * @return SetT
      */
-    public static <A> SetTValue<A> of(AnyMValue<? extends Set<A>> monads) {
+    public static <A> SetTValue<A> of(final AnyMValue<? extends Set<A>> monads) {
         return new SetTValue<>(
                                monads);
     }
 
-    public static <A> SetTValue<A> of(Set<A> monads) {
+    public static <A> SetTValue<A> of(final Set<A> monads) {
         return SetT.fromOptional(Optional.of(monads));
     }
 
@@ -259,11 +265,11 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @param monads
      * @return
      */
-    public static <A> SetTValue<A> fromStream(AnyMValue<Stream<A>> monads) {
+    public static <A> SetTValue<A> fromStream(final AnyMValue<Stream<A>> monads) {
         return of(monads.map(s -> s.collect(Collectors.toSet())));
     }
 
-    public static <A, V extends MonadicValue<? extends Set<A>>> SetTValue<A> fromValue(V monadicValue) {
+    public static <A, V extends MonadicValue<? extends Set<A>>> SetTValue<A> fromValue(final V monadicValue) {
         return of(AnyM.ofValue(monadicValue));
     }
 
@@ -272,6 +278,7 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return run.toString();
     }
@@ -289,7 +296,7 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    public <U> SetTValue<U> unitIterator(Iterator<U> u) {
+    public <U> SetTValue<U> unitIterator(final Iterator<U> u) {
         return of(run.unit(SetX.fromIterable(() -> u)));
     }
 
@@ -297,7 +304,7 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
      * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
      */
     @Override
-    public <T> SetTValue<T> unit(T unit) {
+    public <T> SetTValue<T> unit(final T unit) {
         return of(run.unit(SetX.of(unit)));
     }
 
@@ -329,7 +336,7 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
     }
 
     @Override
-    public <T> SetTValue<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+    public <T> SetTValue<T> unitAnyM(final AnyM<Traversable<T>> traversable) {
 
         return of((AnyMValue) traversable.map(t -> SetX.fromIterable(t)));
     }
@@ -346,7 +353,7 @@ public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, Transforme
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof SetTValue) {
             return run.equals(((SetTValue) o).run);
         }

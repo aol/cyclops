@@ -25,7 +25,7 @@ public class HeadAndTail<T> {
     private final Supplier<ReactiveSeq<T>> tail;
     private final Supplier<Boolean> isHead;
 
-    public HeadAndTail(Iterator<T> it) {
+    public HeadAndTail(final Iterator<T> it) {
         isHead = Memoize.memoizeSupplier(() -> it.hasNext());
         head = Memoize.memoizeSupplier(() -> {
             if (isHead.get())

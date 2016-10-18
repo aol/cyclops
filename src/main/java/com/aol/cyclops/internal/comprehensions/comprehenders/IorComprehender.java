@@ -9,22 +9,23 @@ import com.aol.cyclops.types.extensability.ValueComprehender;
 
 public class IorComprehender implements ValueComprehender<Ior> {
 
-    public Object filter(Ior t, Predicate p) {
+    @Override
+    public Object filter(final Ior t, final Predicate p) {
         return t.filter(x -> p.test(x));
     }
 
     @Override
-    public Object map(Ior t, Function fn) {
+    public Object map(final Ior t, final Function fn) {
         return t.map(e -> fn.apply(e));
     }
 
     @Override
-    public Object flatMap(Ior t, Function fn) {
+    public Object flatMap(final Ior t, final Function fn) {
         return t.flatMap(e -> fn.apply(e));
     }
 
     @Override
-    public Ior of(Object o) {
+    public Ior of(final Object o) {
         return Ior.primary(o);
     }
 
@@ -38,7 +39,8 @@ public class IorComprehender implements ValueComprehender<Ior> {
         return Ior.class;
     }
 
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, Ior apply) {
+    @Override
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final Ior apply) {
         if (apply.isPrimary())
             return comp.of(apply.get());
         return comp.empty();

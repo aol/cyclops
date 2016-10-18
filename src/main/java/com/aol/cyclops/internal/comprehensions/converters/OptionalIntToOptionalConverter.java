@@ -10,17 +10,18 @@ import lombok.val;
 public class OptionalIntToOptionalConverter implements MonadicConverter<Optional> {
     public static int priority = 5;
 
+    @Override
     public int priority() {
         return priority;
     }
 
     @Override
-    public boolean accept(Object o) {
-        return (o instanceof OptionalInt);
+    public boolean accept(final Object o) {
+        return o instanceof OptionalInt;
     }
 
     @Override
-    public Optional convertToMonadicForm(Object f) {
+    public Optional convertToMonadicForm(final Object f) {
         val optional = (OptionalInt) f;
         if (optional.isPresent())
             return Optional.of(optional.getAsInt());

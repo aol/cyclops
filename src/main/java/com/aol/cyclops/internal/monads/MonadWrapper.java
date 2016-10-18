@@ -14,7 +14,7 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
     private final Object monad;
     private final Class orgType;
 
-    public MonadWrapper(Object monad) {
+    public MonadWrapper(final Object monad) {
         this.monad = monad;
         orgType = monad.getClass();
     }
@@ -24,12 +24,13 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
         return new MonadWrapper(monad,orgType);
     }**/
 
-    public static <T> Monad<T> of(Object of) {
+    public static <T> Monad<T> of(final Object of) {
         return new MonadWrapper(
                                 of);
 
     }
 
+    @Override
     public Object unwrap() {
         return monad;
     }
@@ -53,15 +54,16 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
     @Override
     public ReactiveSeq<T> sequence() {
         if (monad instanceof ReactiveSeq)
-            return ((ReactiveSeq) monad);
-        return ReactiveSeq.fromStream(this.stream());
+            return (ReactiveSeq) monad;
+        return ReactiveSeq.fromStream(stream());
     }
 
+    @Override
     public String toString() {
         return monad.toString();
     }
 
-    public MonadWrapper(Object monad, Class orgType) {
+    public MonadWrapper(final Object monad, final Class orgType) {
         super();
         this.monad = monad;
         this.orgType = orgType;

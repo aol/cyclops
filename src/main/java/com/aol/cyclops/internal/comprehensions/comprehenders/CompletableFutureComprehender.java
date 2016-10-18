@@ -10,33 +10,34 @@ import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
 public class CompletableFutureComprehender implements ValueComprehender<CompletableFuture> {
+    @Override
     public Class getTargetClass() {
         return CompletableFuture.class;
     }
 
     @Override
-    public Object filter(CompletableFuture t, Predicate p) {
+    public Object filter(final CompletableFuture t, final Predicate p) {
         return FutureW.of(t)
                       .filter(p);
     }
 
     @Override
-    public Object map(CompletableFuture t, Function fn) {
+    public Object map(final CompletableFuture t, final Function fn) {
         return t.thenApply(fn);
     }
 
     @Override
-    public CompletableFuture flatMap(CompletableFuture t, Function fn) {
+    public CompletableFuture flatMap(final CompletableFuture t, final Function fn) {
         return t.thenCompose(fn);
     }
 
     @Override
-    public boolean instanceOfT(Object apply) {
+    public boolean instanceOfT(final Object apply) {
         return apply instanceof CompletableFuture;
     }
 
     @Override
-    public CompletableFuture of(Object o) {
+    public CompletableFuture of(final Object o) {
         return CompletableFuture.completedFuture(o);
     }
 
@@ -46,9 +47,9 @@ public class CompletableFutureComprehender implements ValueComprehender<Completa
     }
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, CompletableFuture apply) {
-        Xor<Throwable, ?> res = FutureW.of(apply)
-                                       .toXor();
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final CompletableFuture apply) {
+        final Xor<Throwable, ?> res = FutureW.of(apply)
+                                             .toXor();
         return res.isPrimary() ? comp.of(res.get()) : comp.empty();
     }
 

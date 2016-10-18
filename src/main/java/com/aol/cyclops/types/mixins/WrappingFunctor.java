@@ -31,13 +31,12 @@ public interface WrappingFunctor<T> extends Functor<T> {
      * @param functor
      * @return
      */
-    default <T> WrappingFunctor<T> withFunctor(T functor) {
+    default <T> WrappingFunctor<T> withFunctor(final T functor) {
         if (getFunctor() == this)
             return (WrappingFunctor<T>) functor;
 
         try {
-            Constructor cons = this.getClass()
-                                   .getConstructor(Object.class);
+            final Constructor cons = getClass().getConstructor(Object.class);
             cons.setAccessible(true);
             return (WrappingFunctor) cons.newInstance(functor);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
@@ -58,22 +57,24 @@ public interface WrappingFunctor<T> extends Functor<T> {
         return this;
     }
 
-    default <R> WrappingFunctor<R> map(Function<? super T, ? extends R> fn) {
-        Object functor = getFunctor();
+    @Override
+    default <R> WrappingFunctor<R> map(final Function<? super T, ? extends R> fn) {
+        final Object functor = getFunctor();
         if (functor instanceof Functor) {
-            Functor f = (Functor) functor;
+            final Functor f = (Functor) functor;
 
             return withFunctor((R) f.map(fn));
         }
-        Object value = new ComprehenderSelector().selectComprehender(getFunctor())
-                                                 .map(getFunctor(), fn);
+        final Object value = new ComprehenderSelector().selectComprehender(getFunctor())
+                                                       .map(getFunctor(), fn);
 
         return withFunctor((R) value);
 
     }
 
-    default WrappingFunctor<T> peek(Consumer<? super T> c) {
-        return (WrappingFunctor) map(input -> {
+    @Override
+    default WrappingFunctor<T> peek(final Consumer<? super T> c) {
+        return map(input -> {
             c.accept(input);
             return input;
         });

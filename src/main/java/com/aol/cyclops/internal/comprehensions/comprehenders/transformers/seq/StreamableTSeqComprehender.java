@@ -15,29 +15,29 @@ import com.aol.cyclops.types.mixins.Printable;
 public class StreamableTSeqComprehender implements Comprehender<StreamableTSeq>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, StreamableTSeq apply) {
-        List list = (List) apply.stream()
-                                .collect(Collectors.toCollection(MaterializedList::new));
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final StreamableTSeq apply) {
+        final List list = (List) apply.stream()
+                                      .collect(Collectors.toCollection(MaterializedList::new));
         return list.size() > 0 ? comp.of(list) : comp.empty();
     }
 
     @Override
-    public Object filter(StreamableTSeq t, Predicate p) {
+    public Object filter(final StreamableTSeq t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(StreamableTSeq t, Function fn) {
+    public Object map(final StreamableTSeq t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(StreamableTSeq t, Function fn) {
+    public Object flatMap(final StreamableTSeq t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public StreamableTSeq of(Object o) {
+    public StreamableTSeq of(final Object o) {
         return StreamableTSeq.of(Streamable.of(o));
     }
 
@@ -52,7 +52,7 @@ public class StreamableTSeqComprehender implements Comprehender<StreamableTSeq>,
     }
 
     @Override
-    public StreamableTSeq fromIterator(Iterator o) {
+    public StreamableTSeq fromIterator(final Iterator o) {
         return StreamableTSeq.of(Streamable.fromIterable(() -> o));
     }
 

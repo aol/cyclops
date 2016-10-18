@@ -16,16 +16,16 @@ public interface ZippingApplicative5<T, T2, T3, T4, T5, R, D extends IterableFun
      */
     @Override
     default <U> Functor<U> map(
-            Function<? super Function<? super T, Function<? super T2, Function<? super T3, Function<? super T4, Function<? super T5, ? extends R>>>>>, ? extends U> fn) {
+            final Function<? super Function<? super T, Function<? super T2, Function<? super T3, Function<? super T4, Function<? super T5, ? extends R>>>>>, ? extends U> fn) {
         return delegate().map(fn);
     }
 
     IterableFunctor<Function<? super T, Function<? super T2, Function<? super T3, Function<? super T4, Function<? super T5, ? extends R>>>>>> delegate();
 
-    default ZippingApplicative4<T2, T3, T4, T5, R, D> ap(IterableFunctor<T> f) {
+    default ZippingApplicative4<T2, T3, T4, T5, R, D> ap(final IterableFunctor<T> f) {
 
-        Iterator<Function<? super T, Function<? super T2, Function<? super T3, Function<? super T4, Function<? super T5, ? extends R>>>>>> fn = delegate().iterator();
-        Iterator<T> it = f.iterator();
+        final Iterator<Function<? super T, Function<? super T2, Function<? super T3, Function<? super T4, Function<? super T5, ? extends R>>>>>> fn = delegate().iterator();
+        final Iterator<T> it = f.iterator();
         return () -> (IterableFunctor) delegate().unitIterator(ReactiveSeq.fromIterator(fn)
                                                                           .zip(ReactiveSeq.fromIterator(it))
                                                                           .map(t -> t.v1.apply(t.v2))

@@ -35,7 +35,7 @@ public class Signal<T> {
      * @param continuous Adapter to handle the continuous flow (not only different values)
      * @param discrete  Adapter to handle the discrete (changed) flow
      */
-    public Signal(Adapter<T> continuous, Adapter<T> discrete) {
+    public Signal(final Adapter<T> continuous, final Adapter<T> discrete) {
 
         this.continuous = continuous;
         this.discrete = discrete;
@@ -63,7 +63,7 @@ public class Signal<T> {
     /**
      * @param stream Populate this Signal from a Stream
      */
-    public void fromStream(Stream<T> stream) {
+    public void fromStream(final Stream<T> stream) {
         stream.forEach(next -> set(next));
     }
 
@@ -73,14 +73,14 @@ public class Signal<T> {
      * @param newValue Replacement value
      * @return newValue
      */
-    public T set(T newValue) {
+    public T set(final T newValue) {
         continuous.offer(newValue);
 
         setDiscreteIfDiff(newValue);
         return newValue;
     }
 
-    private void setDiscreteIfDiff(T newValue) {
+    private void setDiscreteIfDiff(final T newValue) {
         T oldVal = discreteState.get();
         while (!discreteState.compareAndSet(oldVal, newValue)) {
             oldVal = discreteState.get();

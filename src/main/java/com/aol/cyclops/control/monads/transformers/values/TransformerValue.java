@@ -20,6 +20,7 @@ public interface TransformerValue<T>
 
     public MonadicValue<T> value();
 
+    @Override
     default boolean isPresent() {
         return isValuePresent();
     }
@@ -46,7 +47,7 @@ public interface TransformerValue<T>
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> TransformerValue<U> cast(Class<? extends U> type) {
+    default <U> TransformerValue<U> cast(final Class<? extends U> type) {
 
         return (TransformerValue<U>) MonadicValue.super.cast(type);
     }
@@ -55,7 +56,7 @@ public interface TransformerValue<T>
      * @see com.aol.cyclops.types.Functor#peek(java.util.function.Consumer)
      */
     @Override
-    default TransformerValue<T> peek(Consumer<? super T> c) {
+    default TransformerValue<T> peek(final Consumer<? super T> c) {
 
         return (TransformerValue<T>) MonadicValue.super.peek(c);
     }
@@ -64,7 +65,7 @@ public interface TransformerValue<T>
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> TransformerValue<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+    default <R> TransformerValue<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
         return (TransformerValue<R>) MonadicValue.super.trampoline(mapper);
     }
@@ -73,7 +74,7 @@ public interface TransformerValue<T>
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> TransformerValue<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
+    default <R> TransformerValue<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
         return (TransformerValue<R>) MonadicValue.super.patternMatch(case1, otherwise);
     }

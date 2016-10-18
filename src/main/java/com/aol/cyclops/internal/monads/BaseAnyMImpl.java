@@ -40,37 +40,37 @@ public abstract class BaseAnyMImpl<T> {
 
     }
 
-    protected <R> AnyM<R> fromIterable(Iterable<R> it) {
+    protected <R> AnyM<R> fromIterable(final Iterable<R> it) {
         if (it instanceof AnyM)
             return (AnyM<R>) it;
         return AnyM.fromIterable(it);
     }
 
-    protected <R> AnyM<R> fromPublisher(Publisher<R> it) {
+    protected <R> AnyM<R> fromPublisher(final Publisher<R> it) {
         if (it instanceof AnyM)
             return (AnyM<R>) it;
         return AnyM.fromPublisher(it);
     }
 
     public Monad monad() {
-        return (Monad) monad;
+        return monad;
     }
 
-    protected Monad<T> filterInternal(Predicate<? super T> fn) {
+    protected Monad<T> filterInternal(final Predicate<? super T> fn) {
         return monad.filter(fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
      */
-    protected <R> Monad<R> mapInternal(Function<? super T, ? extends R> fn) {
+    protected <R> Monad<R> mapInternal(final Function<? super T, ? extends R> fn) {
         return monad.map(fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
      */
-    protected Monad<T> peekInternal(Consumer<? super T> c) {
+    protected Monad<T> peekInternal(final Consumer<? super T> c) {
         return monad.peek(c);
     }
 
@@ -81,22 +81,27 @@ public abstract class BaseAnyMImpl<T> {
      * @param fn flatMap function
      * @return flatMapped monad
     */
-    protected <R> Monad<R> bindInternal(Function<? super T, ?> fn) {
+    protected <R> Monad<R> bindInternal(final Function<? super T, ?> fn) {
         return monad.<R> bind(fn);
 
     }
 
-    protected <R> Monad<R> flatMapInternal(Function<? super T, ? extends AnyM<? extends R>> fn) {
+    protected <R> Monad<R> flatMapInternal(final Function<? super T, ? extends AnyM<? extends R>> fn) {
         try {
             return monad.bind(in -> fn.apply(in)
                                       .unwrap())
                         .map(this::takeFirst);
-        } catch (GotoAsEmpty e) {
+        } catch (final GotoAsEmpty e) {
             return (Monad) monad.empty();
         }
     }
 
     private static class GotoAsEmpty extends RuntimeException {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
 
         @Override
         public synchronized Throwable fillInStackTrace() {
@@ -105,7 +110,7 @@ public abstract class BaseAnyMImpl<T> {
 
     }
 
-    private <T> T takeFirst(Object o) {
+    private <T> T takeFirst(final Object o) {
         if (o instanceof MaterializedList) {
             if (((List) o).size() == 0)
                 throw new GotoAsEmpty();
@@ -142,7 +147,7 @@ public abstract class BaseAnyMImpl<T> {
      * @param next Monad to aggregate content with
      * @return Aggregated Monad
      */
-    protected AnyM<List<T>> aggregate(AnyM<T> next) {
+    protected AnyM<List<T>> aggregate(final AnyM<T> next) {
 
         return unit(Stream.concat(matchable().visit(value -> value.toSequence(), seq -> seq.stream()), next.matchable()
                                                                                                            .visit(value -> value.toSequence(),
@@ -151,7 +156,7 @@ public abstract class BaseAnyMImpl<T> {
 
     }
 
-    public void forEach(Consumer<? super T> action) {
+    public void forEach(final Consumer<? super T> action) {
         asSequence().forEach(action);
     }
 
@@ -173,7 +178,7 @@ public abstract class BaseAnyMImpl<T> {
      * 
      * @return A Sequence that wraps a Stream
      */
-    public <NT> ReactiveSeq<NT> toReactiveSeq(Function<? super T, ? extends Stream<? extends NT>> fn) {
+    public <NT> ReactiveSeq<NT> toReactiveSeq(final Function<? super T, ? extends Stream<? extends NT>> fn) {
         return monad.flatMapToStream((Function) fn)
                     .sequence();
     }
@@ -222,7 +227,7 @@ public abstract class BaseAnyMImpl<T> {
 
     public abstract <T> AnyM<T> empty();
 
-    public AnyMValue<T> reduceMValue(Monoid<AnyMValue<T>> reducer) {
+    public AnyMValue<T> reduceMValue(final Monoid<AnyMValue<T>> reducer) {
         //  List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
         //  convert to list Optionals
         return monad.reduceM(Monoid.of(reducer.zero()
@@ -232,7 +237,7 @@ public abstract class BaseAnyMImpl<T> {
                     .anyMValue();
     }
 
-    public AnyMSeq<T> reduceMSeq(Monoid<AnyMSeq<T>> reducer) {
+    public AnyMSeq<T> reduceMSeq(final Monoid<AnyMSeq<T>> reducer) {
         //	List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
         //	convert to list Optionals
         return monad.reduceM(Monoid.of(reducer.zero()

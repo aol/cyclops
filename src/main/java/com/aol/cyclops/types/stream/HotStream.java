@@ -16,7 +16,7 @@ public interface HotStream<T> {
 
     public ReactiveSeq<T> connect(Queue<T> queue);
 
-    public default <R extends Stream<T>> R connectTo(Queue<T> queue, Function<ReactiveSeq<T>, R> to) {
+    public default <R extends Stream<T>> R connectTo(final Queue<T> queue, final Function<ReactiveSeq<T>, R> to) {
         return to.apply(connect(queue));
     }
 }

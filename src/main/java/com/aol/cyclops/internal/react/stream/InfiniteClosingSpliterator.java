@@ -15,7 +15,7 @@ public class InfiniteClosingSpliterator<T> implements Spliterator<T> {
     private final Continueable subscription;
     private final Queue queue;
 
-    protected InfiniteClosingSpliterator(long estimate, Supplier<T> s, Continueable subscription, Queue queue) {
+    protected InfiniteClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription, final Queue queue) {
         this.estimate = estimate;
         this.s = s;
         this.subscription = subscription;
@@ -23,7 +23,7 @@ public class InfiniteClosingSpliterator<T> implements Spliterator<T> {
         this.subscription.addQueue(queue);
     }
 
-    public InfiniteClosingSpliterator(long estimate, Supplier<T> s, Continueable subscription) {
+    public InfiniteClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription) {
         this.estimate = estimate;
         this.s = s;
         this.subscription = subscription;
@@ -41,7 +41,7 @@ public class InfiniteClosingSpliterator<T> implements Spliterator<T> {
     }
 
     @Override
-    public boolean tryAdvance(Consumer<? super T> action) {
+    public boolean tryAdvance(final Consumer<? super T> action) {
         Objects.requireNonNull(action);
 
         try {
@@ -50,9 +50,9 @@ public class InfiniteClosingSpliterator<T> implements Spliterator<T> {
             if (subscription.closed())
                 return false;
             return true;
-        } catch (ClosedQueueException e) {
+        } catch (final ClosedQueueException e) {
             return false;
-        } catch (Exception e) {
+        } catch (final Exception e) {
 
             return false;
         }

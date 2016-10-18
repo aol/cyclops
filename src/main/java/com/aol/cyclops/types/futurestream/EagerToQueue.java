@@ -9,6 +9,7 @@ import com.aol.cyclops.data.async.QueueFactory;
 
 public interface EagerToQueue<U> extends ToQueue<U> {
 
+    @Override
     abstract QueueFactory<U> getQueueFactory();
 
     abstract <R1, R2> SimpleReactStream<R2> allOf(final Collector<? super U, ?, R1> collector, final Function<? super R1, ? extends R2> fn);
@@ -20,9 +21,10 @@ public interface EagerToQueue<U> extends ToQueue<U> {
      * 
      * @return Queue populated asynchrnously by this Stream
      */
+    @Override
     default Queue<U> toQueue() {
-        Queue<U> queue = this.getQueueFactory()
-                             .build();
+        final Queue<U> queue = this.getQueueFactory()
+                                   .build();
 
         thenSync(it -> queue.offer(it)).allOf(it -> queue.close());
 
@@ -37,15 +39,17 @@ public interface EagerToQueue<U> extends ToQueue<U> {
      *	@return This stream converted to a Queue
      * @see com.aol.cyclops.react.stream.traits.ToQueue#toQueue(java.util.function.Function)
      */
-    default Queue<U> toQueue(Function<Queue, Queue> modifier) {
-        Queue<U> queue = modifier.apply(this.getQueueFactory()
-                                            .build());
+    @Override
+    default Queue<U> toQueue(final Function<Queue, Queue> modifier) {
+        final Queue<U> queue = modifier.apply(this.getQueueFactory()
+                                                  .build());
         thenSync(it -> queue.offer(it)).allOf(it -> queue.close());
 
         return queue;
     }
 
-    default void addToQueue(Queue queue) {
+    @Override
+    default void addToQueue(final Queue queue) {
         thenSync(it -> queue.offer(it)).allOf(it -> queue.close());
     }
 
@@ -56,7 +60,8 @@ public interface EagerToQueue<U> extends ToQueue<U> {
      *	@param sharder Sharding function, element to key converter
      * @see com.aol.cyclops.react.stream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
      */
-    default <K> void toQueue(Map<K, Queue<U>> shards, Function<? super U, ? extends K> sharder) {
+    @Override
+    default <K> void toQueue(final Map<K, Queue<U>> shards, final Function<? super U, ? extends K> sharder) {
 
         thenSync(it -> shards.get(sharder.apply(it))
                              .offer(it)).allOf(data -> {

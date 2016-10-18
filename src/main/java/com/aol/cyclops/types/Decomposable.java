@@ -41,13 +41,13 @@ public interface Decomposable {
                                           try {
 
                                               return f.get(unwrap());
-                                          } catch (Exception e) {
+                                          } catch (final Exception e) {
                                               throw ExceptionSoftener.throwSoftenedException(e);
 
                                           }
                                       })
                                       .collect(Collectors.toList());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw ExceptionSoftener.throwSoftenedException(e);
 
         }

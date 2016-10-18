@@ -100,7 +100,7 @@ public interface MonadicValue2<T1, T2> extends MonadicValue<T2> {
     }
 
     /**
-
+    
      * A flattening transformation operation that takes the first value from the returned Publisher.
      * <pre>
      * {@code 

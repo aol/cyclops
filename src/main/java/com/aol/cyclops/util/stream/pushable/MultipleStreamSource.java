@@ -19,7 +19,7 @@ public class MultipleStreamSource<T> {
 
     private final Topic<T> topic;
 
-    public MultipleStreamSource(Queue<T> q) {
+    public MultipleStreamSource(final Queue<T> q) {
         topic = new Topic(
                           q);
     }
@@ -31,7 +31,7 @@ public class MultipleStreamSource<T> {
      * @return a Tuple2 with a Topic&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
      * to push it to the Stream
      */
-    public LazyFutureStream<T> futureStream(LazyReact s) {
+    public LazyFutureStream<T> futureStream(final LazyReact s) {
 
         return s.fromStream(topic.stream());
 
@@ -44,7 +44,7 @@ public class MultipleStreamSource<T> {
      */
     public Stream<T> stream() {
 
-        return (Stream) topic.stream();
+        return topic.stream();
 
     }
 

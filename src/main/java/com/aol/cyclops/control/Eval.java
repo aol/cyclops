@@ -446,7 +446,6 @@ public interface Eval<T>
                                     super.fns.plus(Rec.raw(Memoize.memoizeFunction(mapper))));
             }
 
-
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
                 final RecFunction s = __ -> asEval(mapper.apply(super.apply())).steps();
@@ -520,7 +519,6 @@ public interface Eval<T>
                                      fns.plus(Rec.raw(mapper)));
 
             }
-
 
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {

@@ -16,13 +16,13 @@ public class ExponentialBackofWaitStrategy<T> implements WaitStrategy<T> {
     }
 
     @Override
-    public T take(WaitStrategy.Takeable<T> t) throws InterruptedException {
+    public T take(final WaitStrategy.Takeable<T> t) throws InterruptedException {
         double currentBackoff = backoffNanos;
         T result;
 
         while ((result = t.take()) == null) {
             LockSupport.parkNanos((long) currentBackoff);
-            currentBackoff = (currentBackoff * coefficient);
+            currentBackoff = currentBackoff * coefficient;
 
         }
 
@@ -30,11 +30,11 @@ public class ExponentialBackofWaitStrategy<T> implements WaitStrategy<T> {
     }
 
     @Override
-    public boolean offer(WaitStrategy.Offerable o) throws InterruptedException {
+    public boolean offer(final WaitStrategy.Offerable o) throws InterruptedException {
         double currentBackoff = backoffNanos;
         while (!o.offer()) {
             LockSupport.parkNanos((long) currentBackoff);
-            currentBackoff = (currentBackoff * coefficient);
+            currentBackoff = currentBackoff * coefficient;
 
         }
         return true;

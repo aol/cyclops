@@ -30,14 +30,14 @@ public class IncrementalReducer<T> {
     private final LazyResultConsumer<T> consumer;
     private final BlockingStream<T> blocking;
 
-    public void forEach(Consumer<? super T> c, Function<FastFuture, T> safeJoin) {
+    public void forEach(final Consumer<? super T> c, final Function<FastFuture, T> safeJoin) {
 
         forEachResults(consumer.getResults(), c, safeJoin);
 
     }
 
-    public void forEachResults(Collection<FastFuture<T>> results, Consumer<? super T> c, Function<FastFuture, T> safeJoin) {
-        Stream<FastFuture<T>> streamToUse = results.stream();
+    public void forEachResults(final Collection<FastFuture<T>> results, final Consumer<? super T> c, final Function<FastFuture, T> safeJoin) {
+        final Stream<FastFuture<T>> streamToUse = results.stream();
         streamToUse.map(safeJoin)
                    .filter(v -> v != MissingValue.MISSING_VALUE)
                    .forEach(c);
@@ -45,72 +45,75 @@ public class IncrementalReducer<T> {
                 .clear();
     }
 
-    public T reduce(Function<FastFuture, T> safeJoin, T identity, BinaryOperator<T> accumulator) {
+    public T reduce(final Function<FastFuture, T> safeJoin, final T identity, final BinaryOperator<T> accumulator) {
         return reduceResults(consumer.getResults(), safeJoin, identity, accumulator);
 
     }
 
-    public T reduceResults(Collection<FastFuture<T>> results, Function<FastFuture, T> safeJoin, T identity, BinaryOperator<T> accumulator) {
-        Stream<FastFuture<T>> streamToUse = results.stream();
+    public T reduceResults(final Collection<FastFuture<T>> results, final Function<FastFuture, T> safeJoin, final T identity,
+            final BinaryOperator<T> accumulator) {
+        final Stream<FastFuture<T>> streamToUse = results.stream();
 
-        T result = streamToUse.map(safeJoin)
-                              .filter(v -> v != MissingValue.MISSING_VALUE)
-                              .reduce(identity, accumulator);
+        final T result = streamToUse.map(safeJoin)
+                                    .filter(v -> v != MissingValue.MISSING_VALUE)
+                                    .reduce(identity, accumulator);
         consumer.getResults()
                 .clear();
         return result;
     }
 
-    public Optional<T> reduce(Function<FastFuture, T> safeJoin, BinaryOperator<T> accumulator) {
+    public Optional<T> reduce(final Function<FastFuture, T> safeJoin, final BinaryOperator<T> accumulator) {
 
         return reduceResults(consumer.getResults(), safeJoin, accumulator);
 
     }
 
-    public Optional<T> reduceResults(Collection<FastFuture<T>> results, Function<FastFuture, T> safeJoin, BinaryOperator<T> accumulator) {
-        Stream<FastFuture<T>> streamToUse = results.stream();
+    public Optional<T> reduceResults(final Collection<FastFuture<T>> results, final Function<FastFuture, T> safeJoin,
+            final BinaryOperator<T> accumulator) {
+        final Stream<FastFuture<T>> streamToUse = results.stream();
 
-        Optional<T> result = streamToUse.map(safeJoin)
-                                        .filter(v -> v != MissingValue.MISSING_VALUE)
-                                        .reduce(accumulator);
+        final Optional<T> result = streamToUse.map(safeJoin)
+                                              .filter(v -> v != MissingValue.MISSING_VALUE)
+                                              .reduce(accumulator);
         consumer.getResults()
                 .clear();
 
         return result;
     }
 
-    public <U> U reduce(Function<FastFuture, T> safeJoin, U identity, BiFunction<U, ? super T, U> accumulator) {
+    public <U> U reduce(final Function<FastFuture, T> safeJoin, final U identity, final BiFunction<U, ? super T, U> accumulator) {
 
         return reduceResults(consumer.getResults(), safeJoin, identity, accumulator);
 
     }
 
-    public <U> U reduce(Function<FastFuture, T> safeJoin, U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+    public <U> U reduce(final Function<FastFuture, T> safeJoin, final U identity, final BiFunction<U, ? super T, U> accumulator,
+            final BinaryOperator<U> combiner) {
 
         return reduceResults(consumer.getResults(), safeJoin, identity, accumulator, combiner);
 
     }
 
-    public <U> U reduceResults(Collection<FastFuture<T>> results, Function<FastFuture, T> safeJoin, U identity,
-            BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
-        Stream<FastFuture<T>> streamToUse = results.stream();
+    public <U> U reduceResults(final Collection<FastFuture<T>> results, final Function<FastFuture, T> safeJoin, final U identity,
+            final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
+        final Stream<FastFuture<T>> streamToUse = results.stream();
 
-        U result = streamToUse.map(safeJoin)
-                              .filter(v -> v != MissingValue.MISSING_VALUE)
-                              .reduce(identity, accumulator, combiner);
+        final U result = streamToUse.map(safeJoin)
+                                    .filter(v -> v != MissingValue.MISSING_VALUE)
+                                    .reduce(identity, accumulator, combiner);
         consumer.getResults()
                 .clear();
         return result;
     }
 
-    public <U> U reduceResults(Collection<FastFuture<T>> results, Function<FastFuture, T> safeJoin, U identity,
-            BiFunction<U, ? super T, U> accumulator) {
-        Stream<FastFuture<T>> streamToUse = results.stream();
+    public <U> U reduceResults(final Collection<FastFuture<T>> results, final Function<FastFuture, T> safeJoin, final U identity,
+            final BiFunction<U, ? super T, U> accumulator) {
+        final Stream<FastFuture<T>> streamToUse = results.stream();
 
-        U result = Seq.seq(streamToUse)
-                      .map(safeJoin)
-                      .filter(v -> v != MissingValue.MISSING_VALUE)
-                      .foldLeft(identity, accumulator);
+        final U result = Seq.seq(streamToUse)
+                            .map(safeJoin)
+                            .filter(v -> v != MissingValue.MISSING_VALUE)
+                            .foldLeft(identity, accumulator);
         consumer.getResults()
                 .clear();
         return result;

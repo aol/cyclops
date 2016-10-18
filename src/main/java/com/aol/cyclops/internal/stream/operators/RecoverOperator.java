@@ -17,8 +17,8 @@ public class RecoverOperator<T> {
 
     private static final Object UNSET = new Object();
 
-    public Stream<T> recover(Function<Throwable, ? extends T> fn) {
-        Iterator<T> it = stream.iterator();
+    public Stream<T> recover(final Function<Throwable, ? extends T> fn) {
+        final Iterator<T> it = stream.iterator();
 
         return StreamUtils.stream(new Iterator<T>() {
             T result = (T) UNSET;
@@ -27,7 +27,7 @@ public class RecoverOperator<T> {
             public boolean hasNext() {
                 try {
                     return it.hasNext();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     if (type.isAssignableFrom(t.getClass())) {
                         result = fn.apply(t);
                         return true;
@@ -41,7 +41,7 @@ public class RecoverOperator<T> {
             @Override
             public T next() {
                 if (result != UNSET) {
-                    T toReturn = result;
+                    final T toReturn = result;
                     result = (T) UNSET;
                     return toReturn;
                 }

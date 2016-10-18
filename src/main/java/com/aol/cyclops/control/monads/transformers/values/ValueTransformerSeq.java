@@ -29,7 +29,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
-    default Traversable<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+    default Traversable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return unitStream(stream().combine(predicate, op));
     }
 
@@ -37,7 +37,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#subscribe(org.reactivestreams.Subscriber)
      */
     @Override
-    default void subscribe(Subscriber<? super T> s) {
+    default void subscribe(final Subscriber<? super T> s) {
 
         stream().subscribe(s);
 
@@ -47,7 +47,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#cycle(int)
      */
     @Override
-    default Traversable<T> cycle(int times) {
+    default Traversable<T> cycle(final int times) {
         return unitStream(stream().cycle(times));
     }
 
@@ -55,7 +55,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#cycle(com.aol.cyclops.Monoid, int)
      */
     @Override
-    default Traversable<T> cycle(Monoid<T> m, int times) {
+    default Traversable<T> cycle(final Monoid<T> m, final int times) {
         return unitStream(stream().cycle(m, times));
     }
 
@@ -63,7 +63,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#cycleWhile(java.util.function.Predicate)
      */
     @Override
-    default Traversable<T> cycleWhile(Predicate<? super T> predicate) {
+    default Traversable<T> cycleWhile(final Predicate<? super T> predicate) {
         return unitStream(stream().cycleWhile(predicate));
     }
 
@@ -71,7 +71,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#cycleUntil(java.util.function.Predicate)
      */
     @Override
-    default Traversable<T> cycleUntil(Predicate<? super T> predicate) {
+    default Traversable<T> cycleUntil(final Predicate<? super T> predicate) {
         return unitStream(stream().cycleUntil(predicate));
     }
 
@@ -79,20 +79,20 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Traversable<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        ReactiveSeq<R> zipped = stream().zip(other, zipper);
+    default <U, R> Traversable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+        final ReactiveSeq<R> zipped = stream().zip(other, zipper);
         return unitStream(zipped);
 
     }
 
     @Override
-    default <U, R> Traversable<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Traversable<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return zip((Iterable<? extends U>) other, zipper);
 
     }
 
     @Override
-    default <U, R> Traversable<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Traversable<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
 
     }
@@ -101,8 +101,8 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
      */
     @Override
-    default <U> Traversable<Tuple2<T, U>> zip(Stream<? extends U> other) {
-        Streamable<? extends U> streamable = Streamable.fromStream(other);
+    default <U> Traversable<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+        final Streamable<? extends U> streamable = Streamable.fromStream(other);
         return unitStream(stream().zip(streamable.stream()));
     }
 
@@ -110,12 +110,12 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    default <U> Traversable<Tuple2<T, U>> zip(Seq<? extends U> other) {
+    default <U> Traversable<Tuple2<T, U>> zip(final Seq<? extends U> other) {
         return zip((Stream<? extends U>) other);
     }
 
     @Override
-    default <U> Traversable<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+    default <U> Traversable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return zip((Stream<? extends U>) ReactiveSeq.fromIterable(other));
     }
 
@@ -123,10 +123,10 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> Traversable<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
-        Streamable<? extends S> streamable2 = Streamable.fromStream(second);
-        Streamable<? extends U> streamable3 = Streamable.fromStream(third);
-        ReactiveSeq<Tuple3<T, S, U>> zipped = stream().zip3(streamable2.stream(), streamable3.stream());
+    default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+        final Streamable<? extends S> streamable2 = Streamable.fromStream(second);
+        final Streamable<? extends U> streamable3 = Streamable.fromStream(third);
+        final ReactiveSeq<Tuple3<T, S, U>> zipped = stream().zip3(streamable2.stream(), streamable3.stream());
         return unitStream(zipped);
     }
 
@@ -134,12 +134,12 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
-            Stream<? extends T4> fourth) {
-        Streamable<? extends T2> streamable2 = Streamable.fromStream(second);
-        Streamable<? extends T3> streamable3 = Streamable.fromStream(third);
-        Streamable<? extends T4> streamable4 = Streamable.fromStream(fourth);
-        ReactiveSeq<Tuple4<T, T2, T3, T4>> zipped = stream().zip4(streamable2.stream(), streamable3.stream(), streamable4.stream());
+    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
+            final Stream<? extends T4> fourth) {
+        final Streamable<? extends T2> streamable2 = Streamable.fromStream(second);
+        final Streamable<? extends T3> streamable3 = Streamable.fromStream(third);
+        final Streamable<? extends T4> streamable4 = Streamable.fromStream(fourth);
+        final ReactiveSeq<Tuple4<T, T2, T3, T4>> zipped = stream().zip4(streamable2.stream(), streamable3.stream(), streamable4.stream());
         return unitStream(zipped);
     }
 
@@ -155,7 +155,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#sliding(int)
      */
     @Override
-    default Traversable<ListX<T>> sliding(int windowSize) {
+    default Traversable<ListX<T>> sliding(final int windowSize) {
         return unitStream(stream().sliding(windowSize));
 
     }
@@ -164,7 +164,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#sliding(int, int)
      */
     @Override
-    default Traversable<ListX<T>> sliding(int windowSize, int increment) {
+    default Traversable<ListX<T>> sliding(final int windowSize, final int increment) {
         return unitStream(stream().sliding(windowSize, increment));
     }
 
@@ -172,7 +172,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#grouped(int, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> Traversable<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends Collection<? super T>> Traversable<C> grouped(final int size, final Supplier<C> supplier) {
         return unitStream(stream().grouped(size, supplier));
 
     }
@@ -181,7 +181,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    default Traversable<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+    default Traversable<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
 
     }
@@ -190,7 +190,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default Traversable<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default Traversable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
         return unitStream(stream().groupedStatefullyUntil(predicate));
 
     }
@@ -199,7 +199,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    default Traversable<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+    default Traversable<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
         return unitStream(stream().groupedWhile(predicate));
     }
 
@@ -207,7 +207,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> Traversable<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends Collection<? super T>> Traversable<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return unitStream(stream().groupedWhile(predicate, factory));
 
     }
@@ -216,7 +216,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> Traversable<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends Collection<? super T>> Traversable<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return unitStream(stream().groupedUntil(predicate, factory));
     }
 
@@ -224,7 +224,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#grouped(int)
      */
     @Override
-    default Traversable<ListX<T>> grouped(int groupSize) {
+    default Traversable<ListX<T>> grouped(final int groupSize) {
         return unitStream(stream().grouped(groupSize));
     }
 
@@ -232,7 +232,8 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
-    default <K, A, D> Traversable<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+    default <K, A, D> Traversable<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
+            final Collector<? super T, A, D> downstream) {
         return unitStream(stream().grouped(classifier, downstream));
 
     }
@@ -241,7 +242,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function)
      */
     @Override
-    default <K> Traversable<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+    default <K> Traversable<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return unitStream(stream().grouped(classifier));
 
     }
@@ -258,7 +259,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#scanLeft(com.aol.cyclops.Monoid)
      */
     @Override
-    default Traversable<T> scanLeft(Monoid<T> monoid) {
+    default Traversable<T> scanLeft(final Monoid<T> monoid) {
         return unitStream(stream().scanLeft(monoid));
     }
 
@@ -266,7 +267,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> Traversable<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
+    default <U> Traversable<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
         return unitStream(stream().scanLeft(seed, function));
     }
 
@@ -274,7 +275,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#scanRight(com.aol.cyclops.Monoid)
      */
     @Override
-    default Traversable<T> scanRight(Monoid<T> monoid) {
+    default Traversable<T> scanRight(final Monoid<T> monoid) {
         return unitStream(stream().scanRight(monoid));
     }
 
@@ -282,7 +283,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol).cyclops.types.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+    default <U> Traversable<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
         return unitStream(stream().scanRight(identity, combiner));
     }
 
@@ -298,7 +299,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#sorted(java.util.Comparator)
      */
     @Override
-    default Traversable<T> sorted(Comparator<? super T> c) {
+    default Traversable<T> sorted(final Comparator<? super T> c) {
         return unitStream(stream().sorted(c));
     }
 
@@ -306,7 +307,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
-    default Traversable<T> takeWhile(Predicate<? super T> p) {
+    default Traversable<T> takeWhile(final Predicate<? super T> p) {
         return unitStream(stream().takeWhile(p));
     }
 
@@ -314,7 +315,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
-    default Traversable<T> dropWhile(Predicate<? super T> p) {
+    default Traversable<T> dropWhile(final Predicate<? super T> p) {
         return unitStream(stream().dropWhile(p));
     }
 
@@ -322,7 +323,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
-    default Traversable<T> takeUntil(Predicate<? super T> p) {
+    default Traversable<T> takeUntil(final Predicate<? super T> p) {
         return unitStream(stream().takeUntil(p));
     }
 
@@ -330,7 +331,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
-    default Traversable<T> dropUntil(Predicate<? super T> p) {
+    default Traversable<T> dropUntil(final Predicate<? super T> p) {
         return unitStream(stream().dropUntil(p));
     }
 
@@ -338,7 +339,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#dropRight(int)
      */
     @Override
-    default Traversable<T> dropRight(int num) {
+    default Traversable<T> dropRight(final int num) {
         return unitStream(stream().dropRight(num));
     }
 
@@ -346,7 +347,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#takeRight(int)
      */
     @Override
-    default Traversable<T> takeRight(int num) {
+    default Traversable<T> takeRight(final int num) {
         return unitStream(stream().takeRight(num));
     }
 
@@ -354,7 +355,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#skip(long)
      */
     @Override
-    default Traversable<T> skip(long num) {
+    default Traversable<T> skip(final long num) {
         return unitStream(stream().skip(num));
     }
 
@@ -362,7 +363,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#skipWhile(java.util.function.Predicate)
      */
     @Override
-    default Traversable<T> skipWhile(Predicate<? super T> p) {
+    default Traversable<T> skipWhile(final Predicate<? super T> p) {
         return unitStream(stream().skipWhile(p));
     }
 
@@ -370,7 +371,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#skipUntil(java.util.function.Predicate)
      */
     @Override
-    default Traversable<T> skipUntil(Predicate<? super T> p) {
+    default Traversable<T> skipUntil(final Predicate<? super T> p) {
         return unitStream(stream().skipUntil(p));
     }
 
@@ -378,7 +379,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#limit(long)
      */
     @Override
-    default Traversable<T> limit(long num) {
+    default Traversable<T> limit(final long num) {
         return unitStream(stream().limit(num));
     }
 
@@ -386,7 +387,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#limitWhile(java.util.function.Predicate)
      */
     @Override
-    default Traversable<T> limitWhile(Predicate<? super T> p) {
+    default Traversable<T> limitWhile(final Predicate<? super T> p) {
         return unitStream(stream().limitWhile(p));
     }
 
@@ -394,7 +395,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#limitUntil(java.util.function.Predicate)
      */
     @Override
-    default Traversable<T> limitUntil(Predicate<? super T> p) {
+    default Traversable<T> limitUntil(final Predicate<? super T> p) {
         return unitStream(stream().limitUntil(p));
     }
 
@@ -402,7 +403,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#intersperse(java.lang.Object)
      */
     @Override
-    default Traversable<T> intersperse(T value) {
+    default Traversable<T> intersperse(final T value) {
         return unitStream(stream().intersperse(value));
     }
 
@@ -426,7 +427,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#skipLast(int)
      */
     @Override
-    default Traversable<T> skipLast(int num) {
+    default Traversable<T> skipLast(final int num) {
         return unitStream(stream().skipLast(num));
     }
 
@@ -434,7 +435,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#limitLast(int)
      */
     @Override
-    default Traversable<T> limitLast(int num) {
+    default Traversable<T> limitLast(final int num) {
         return unitStream(stream().limitLast(num));
     }
 
@@ -442,7 +443,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#onEmpty(java.lang.Object)
      */
     @Override
-    default Traversable<T> onEmpty(T value) {
+    default Traversable<T> onEmpty(final T value) {
         return unitStream(stream().onEmpty(value));
     }
 
@@ -450,7 +451,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    default Traversable<T> onEmptyGet(Supplier<? extends T> supplier) {
+    default Traversable<T> onEmptyGet(final Supplier<? extends T> supplier) {
         return unitStream(stream().onEmptyGet(supplier));
     }
 
@@ -458,7 +459,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> Traversable<T> onEmptyThrow(Supplier<? extends X> supplier) {
+    default <X extends Throwable> Traversable<T> onEmptyThrow(final Supplier<? extends X> supplier) {
         return unitStream(stream().onEmptyThrow(supplier));
 
     }
@@ -467,7 +468,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#shuffle(java.util.Random)
      */
     @Override
-    default Traversable<T> shuffle(Random random) {
+    default Traversable<T> shuffle(final Random random) {
         return unitStream(stream().shuffle(random));
     }
 
@@ -475,7 +476,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#slice(long, long)
      */
     @Override
-    default Traversable<T> slice(long from, long to) {
+    default Traversable<T> slice(final long from, final long to) {
         return unitStream(stream().slice(from, to));
     }
 
@@ -483,7 +484,7 @@ public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
      * @see com.aol.cyclops.types.Traversable#sorted(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> Traversable<T> sorted(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Traversable<T> sorted(final Function<? super T, ? extends U> function) {
         return unitStream(stream().sorted(function));
     }
 

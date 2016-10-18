@@ -10,7 +10,7 @@ import com.aol.cyclops.data.async.Adapter;
 
 public abstract class AbstractPushableStream<T, X extends Adapter<T>, R extends Stream<T>> extends Tuple2<X, R> {
 
-    public AbstractPushableStream(X v1, R v2) {
+    public AbstractPushableStream(final X v1, final R v2) {
         super(v1, v2);
     }
 
@@ -22,15 +22,15 @@ public abstract class AbstractPushableStream<T, X extends Adapter<T>, R extends 
         return v2;
     }
 
-    public <U> U visit(BiFunction<? super X, ? super R, ? extends U> visitor) {
+    public <U> U visit(final BiFunction<? super X, ? super R, ? extends U> visitor) {
         return visitor.apply(v1, v2);
     }
 
-    public void peekStream(Consumer<? super R> consumer) {
+    public void peekStream(final Consumer<? super R> consumer) {
         consumer.accept(v2);
     }
 
-    public void peekInput(Consumer<? super X> consumer) {
+    public void peekInput(final Consumer<? super X> consumer) {
         consumer.accept(v1);
     }
 

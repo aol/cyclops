@@ -5,8 +5,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface Reducer<T> extends Monoid<T> {
-    default Stream<T> mapToType(Stream stream) {
-        return (Stream) stream;
+    default Stream<T> mapToType(final Stream stream) {
+        return stream;
     }
 
     /**
@@ -26,15 +26,15 @@ public interface Reducer<T> extends Monoid<T> {
      * @param toReduce Stream to reduce
      * @return reduced value
      */
-    default T mapReduce(Stream toReduce) {
+    default T mapReduce(final Stream toReduce) {
         return reduce(mapToType(toReduce));
     }
 
-    public static <T> Reducer<T> fromMonoid(Monoid<T> monoid, Function<?, ? extends T> mapper) {
+    public static <T> Reducer<T> fromMonoid(final Monoid<T> monoid, final Function<?, ? extends T> mapper) {
         return of(monoid.zero(), monoid.combiner(), mapper);
     }
 
-    public static <T> Reducer<T> of(T zero, BiFunction<T, T, T> combiner, Function<?, ? extends T> mapToType) {
+    public static <T> Reducer<T> of(final T zero, final BiFunction<T, T, T> combiner, final Function<?, ? extends T> mapToType) {
         return new Reducer<T>() {
             @Override
             public T zero() {
@@ -42,18 +42,18 @@ public interface Reducer<T> extends Monoid<T> {
             }
 
             @Override
-            public Stream<T> mapToType(Stream stream) {
-                return (Stream) stream.map(mapToType);
+            public Stream<T> mapToType(final Stream stream) {
+                return stream.map(mapToType);
             }
 
             @Override
-            public T apply(T t, T u) {
+            public T apply(final T t, final T u) {
                 return combiner.apply(t, u);
             }
         };
     }
 
-    public static <T> Reducer<T> of(T zero, Function<T, Function<T, T>> combiner, Function<?, T> mapToType) {
+    public static <T> Reducer<T> of(final T zero, final Function<T, Function<T, T>> combiner, final Function<?, T> mapToType) {
         return new Reducer<T>() {
             @Override
             public T zero() {
@@ -61,14 +61,14 @@ public interface Reducer<T> extends Monoid<T> {
             }
 
             @Override
-            public T apply(T t, T u) {
+            public T apply(final T t, final T u) {
                 return combiner.apply(t)
                                .apply(u);
             }
 
             @Override
-            public Stream<T> mapToType(Stream stream) {
-                return (Stream) stream.map(mapToType);
+            public Stream<T> mapToType(final Stream stream) {
+                return stream.map(mapToType);
             }
         };
     }

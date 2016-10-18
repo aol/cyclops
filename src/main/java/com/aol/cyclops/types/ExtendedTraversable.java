@@ -42,7 +42,7 @@ public interface ExtendedTraversable<T> extends Traversable<T>, TransformerTrave
      * @return All combinations of the elements in this ExtendedTraversable of the specified
      *         size
      */
-    default ExtendedTraversable<ReactiveSeq<T>> combinations(int size) {
+    default ExtendedTraversable<ReactiveSeq<T>> combinations(final int size) {
         return stream().combinations(size);
     }
 

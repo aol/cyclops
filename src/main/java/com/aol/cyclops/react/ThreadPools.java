@@ -12,7 +12,7 @@ public class ThreadPools {
     private static final Executor commonFreeThread = Executors.newFixedThreadPool(1);
 
     @Getter
-    private static final Executor currentThreadExecutor = (Runnable r) -> r.run();
+    private static final Executor currentThreadExecutor = (final Runnable r) -> r.run();
 
     @Getter
     private static final Executor queueCopyExecutor = Executors.newFixedThreadPool(1);
@@ -79,7 +79,7 @@ public class ThreadPools {
         return useCommon;
     }
 
-    public static void setUseCommon(boolean useCommon) {
+    public static void setUseCommon(final boolean useCommon) {
         ThreadPools.useCommon = useCommon;
     }
 }

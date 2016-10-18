@@ -20,28 +20,29 @@ public class SimpleReactStreamComprehender implements Comprehender {
     }
 
     @Override
-    public Object filter(Object t, Predicate p) {
+    public Object filter(final Object t, final Predicate p) {
         return ((SimpleReactStream) t).filter(p);
     }
 
     @Override
-    public Object map(Object t, Function fn) {
+    public Object map(final Object t, final Function fn) {
         return ((SimpleReactStream) t).then(fn);
     }
 
     @Override
-    public SimpleReactStream flatMap(Object in, Function fn) {
-        SimpleReactStream t = ((SimpleReactStream) in);
+    public SimpleReactStream flatMap(final Object in, final Function fn) {
+        final SimpleReactStream t = (SimpleReactStream) in;
 
         return SimpleReactStream.bind(t, input -> (SimpleReactStream) unwrapOtherMonadTypes(t, this, fn.apply(input)));
     }
 
     @Override
-    public SimpleReactStream of(Object o) {
+    public SimpleReactStream of(final Object o) {
         return new SimpleReact().of(o);
     }
 
-    public SimpleReactStream fromIterator(Iterator it) {
+    @Override
+    public SimpleReactStream fromIterator(final Iterator it) {
         return new SimpleReact().fromIterable(() -> it);
     }
 
@@ -55,11 +56,11 @@ public class SimpleReactStreamComprehender implements Comprehender {
         return SimpleReactStream.class;
     }
 
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, SimpleReactStream apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final SimpleReactStream apply) {
         return comp.of(apply.block());
     }
 
-    static SimpleReactStream unwrapOtherMonadTypes(SimpleReactStream t, Comprehender<SimpleReactStream> comp, Object apply) {
+    static SimpleReactStream unwrapOtherMonadTypes(final SimpleReactStream t, final Comprehender<SimpleReactStream> comp, final Object apply) {
 
         if (apply instanceof Collection) {
             return t.fromStream(((Collection) apply).stream());

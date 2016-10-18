@@ -14,7 +14,7 @@ import com.aol.cyclops.data.async.Queue;
  */
 public class PushableReactiveSeq<T> extends AbstractPushableStream<T, Queue<T>, ReactiveSeq<T>> {
 
-    public PushableReactiveSeq(Queue<T> v1, ReactiveSeq<T> v2) {
+    public PushableReactiveSeq(final Queue<T> v1, final ReactiveSeq<T> v2) {
         super(v1, v2);
 
     }

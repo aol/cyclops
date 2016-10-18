@@ -19,66 +19,66 @@ import com.aol.cyclops.util.function.CurryVariance;
 import com.aol.cyclops.util.function.TriFunction;
 
 public class DoComp3<T1, T2, T3> extends DoComp {
-    public DoComp3(PStack<Entry> assigned, Class orgType) {
+    public DoComp3(final PStack<Entry> assigned, final Class orgType) {
         super(assigned, orgType);
 
     }
 
-    public <T4> DoComp4<T1, T2, T3, T4> reader(Function<? super T1, Function<? super T2, Function<? super T3, Reader<?, ? extends T4>>>> f) {
+    public <T4> DoComp4<T1, T2, T3, T4> reader(final Function<? super T1, Function<? super T2, Function<? super T3, Reader<?, ? extends T4>>>> f) {
         return new DoComp4<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T4> DoComp4<T1, T2, T3, T4> iterable(Function<? super T1, Function<? super T2, Function<? super T3, Iterable<T4>>>> f) {
+    public <T4> DoComp4<T1, T2, T3, T4> iterable(final Function<? super T1, Function<? super T2, Function<? super T3, Iterable<T4>>>> f) {
         return new DoComp4<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T4> DoComp4<T1, T2, T3, T4> publisher(Function<? super T1, Function<? super T2, Function<? super T3, Publisher<T4>>>> f) {
+    public <T4> DoComp4<T1, T2, T3, T4> publisher(final Function<? super T1, Function<? super T2, Function<? super T3, Publisher<T4>>>> f) {
         return new DoComp4<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T4> DoComp4<T1, T2, T3, T4> stream(Function<? super T1, Function<? super T2, Function<? super T3, BaseStream<T4, ?>>>> f) {
+    public <T4> DoComp4<T1, T2, T3, T4> stream(final Function<? super T1, Function<? super T2, Function<? super T3, BaseStream<T4, ?>>>> f) {
         return new DoComp4<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T4> DoComp4<T1, T2, T3, T4> optional(Function<? super T1, Function<? super T2, Function<? super T3, Optional<T4>>>> f) {
+    public <T4> DoComp4<T1, T2, T3, T4> optional(final Function<? super T1, Function<? super T2, Function<? super T3, Optional<T4>>>> f) {
         return new DoComp4<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T4> DoComp4<T1, T2, T3, T4> future(Function<? super T1, Function<? super T2, Function<? super T3, CompletableFuture<T4>>>> f) {
+    public <T4> DoComp4<T1, T2, T3, T4> future(final Function<? super T1, Function<? super T2, Function<? super T3, CompletableFuture<T4>>>> f) {
         return new DoComp4<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T4> DoComp4<T1, T2, T3, T4> anyM(Function<? super T1, Function<? super T2, Function<? super T3, AnyM<T4>>>> f) {
+    public <T4> DoComp4<T1, T2, T3, T4> anyM(final Function<? super T1, Function<? super T2, Function<? super T3, AnyM<T4>>>> f) {
         return new DoComp4<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <R> AnyMSeq<R> yield(Function<? super T1, Function<? super T2, Function<? super T3, ? extends R>>> f) {
+    public <R> AnyMSeq<R> yield(final Function<? super T1, Function<? super T2, Function<? super T3, ? extends R>>> f) {
         if (getOrgType() != null)
             return new MonadWrapper<>(
-                                      this.yieldInternal(f), this.getOrgType()).anyMSeq();
+                                      this.yieldInternal(f), getOrgType()).anyMSeq();
         else
             return AnyM.ofSeq(this.yieldInternal(f));
     }
 
-    public <R> AnyMSeq<R> yield3(TriFunction<? super T1, ? super T2, ? super T3, ? extends R> f) {
+    public <R> AnyMSeq<R> yield3(final TriFunction<? super T1, ? super T2, ? super T3, ? extends R> f) {
         return this.yield(CurryVariance.curry3(f));
     }
 
-    public DoComp3<T1, T2, T3> filter(Function<? super T1, Function<? super T2, Function<? super T3, Boolean>>> f) {
+    public DoComp3<T1, T2, T3> filter(final Function<? super T1, Function<? super T2, Function<? super T3, Boolean>>> f) {
         return new DoComp3<>(
                              getAssigned().plus(getAssigned().size(), new Entry(
                                                                                 "$$internalGUARD" + getAssigned().size(), new Guard(

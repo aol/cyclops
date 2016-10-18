@@ -12,28 +12,28 @@ import com.aol.cyclops.types.mixins.Printable;
 public class StreamableTValueComprehender implements Comprehender<StreamableTValue>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, StreamableTValue apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final StreamableTValue apply) {
 
         return apply.isStreamablePresent() ? comp.of(apply.get()) : comp.empty();
     }
 
     @Override
-    public Object filter(StreamableTValue t, Predicate p) {
+    public Object filter(final StreamableTValue t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(StreamableTValue t, Function fn) {
+    public Object map(final StreamableTValue t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(StreamableTValue t, Function fn) {
+    public Object flatMap(final StreamableTValue t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public StreamableTValue of(Object o) {
+    public StreamableTValue of(final Object o) {
         return StreamableTValue.of(Streamable.of(o));
     }
 
@@ -48,7 +48,7 @@ public class StreamableTValueComprehender implements Comprehender<StreamableTVal
     }
 
     @Override
-    public StreamableTValue fromIterator(Iterator o) {
+    public StreamableTValue fromIterator(final Iterator o) {
         return StreamableTValue.of(Streamable.fromIterable(() -> o));
     }
 

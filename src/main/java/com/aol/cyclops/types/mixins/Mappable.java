@@ -26,12 +26,12 @@ public interface Mappable {
     default Map<String, ?> toMap() {
         try {
             final Object o = unwrap();
-            Map<String, Object> result = new HashMap<>();
-            for (Field f : ReflectionCache.getFields(o.getClass())) {
+            final Map<String, Object> result = new HashMap<>();
+            for (final Field f : ReflectionCache.getFields(o.getClass())) {
                 result.put(f.getName(), f.get(o));
             }
             return result;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw ExceptionSoftener.throwSoftenedException(e);
 
         }

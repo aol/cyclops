@@ -19,48 +19,48 @@ import com.aol.cyclops.util.function.CurryVariance;
 
 public class DoComp2<T1, T2> extends DoComp {
 
-    public DoComp2(PStack<Entry> assigned, Class orgType) {
+    public DoComp2(final PStack<Entry> assigned, final Class orgType) {
         super(assigned, orgType);
 
     }
 
-    public <T3> DoComp3<T1, T2, T3> reader(Function<? super T1, Function<? super T2, Reader<?, ? extends T3>>> f) {
+    public <T3> DoComp3<T1, T2, T3> reader(final Function<? super T1, Function<? super T2, Reader<?, ? extends T3>>> f) {
         return new DoComp3<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T3> DoComp3<T1, T2, T3> iterable(Function<? super T1, Function<? super T2, Iterable<T3>>> f) {
+    public <T3> DoComp3<T1, T2, T3> iterable(final Function<? super T1, Function<? super T2, Iterable<T3>>> f) {
         return new DoComp3<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T3> DoComp3<T1, T2, T3> publisher(Function<? super T1, Function<? super T2, Publisher<T3>>> f) {
+    public <T3> DoComp3<T1, T2, T3> publisher(final Function<? super T1, Function<? super T2, Publisher<T3>>> f) {
         return new DoComp3<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T3> DoComp3<T1, T2, T3> stream(Function<? super T1, Function<? super T2, BaseStream<T3, ?>>> f) {
+    public <T3> DoComp3<T1, T2, T3> stream(final Function<? super T1, Function<? super T2, BaseStream<T3, ?>>> f) {
         return new DoComp3<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T3> DoComp3<T1, T2, T3> optional(Function<? super T1, Function<? super T2, Optional<T3>>> f) {
+    public <T3> DoComp3<T1, T2, T3> optional(final Function<? super T1, Function<? super T2, Optional<T3>>> f) {
         return new DoComp3<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T3> DoComp3<T1, T2, T3> future(Function<? super T1, Function<? super T2, CompletableFuture<T3>>> f) {
+    public <T3> DoComp3<T1, T2, T3> future(final Function<? super T1, Function<? super T2, CompletableFuture<T3>>> f) {
         return new DoComp3<>(
                              addToAssigned(f), getOrgType());
 
     }
 
-    public <T3> DoComp3<T1, T2, T3> anyM(Function<? super T1, Function<? super T2, AnyM<T3>>> f) {
+    public <T3> DoComp3<T1, T2, T3> anyM(final Function<? super T1, Function<? super T2, AnyM<T3>>> f) {
         return new DoComp3<>(
                              addToAssigned(f), getOrgType());
 
@@ -84,15 +84,15 @@ public class DoComp2<T1, T2> extends DoComp {
      *            To be applied to every element in the for comprehension
      * @return For comprehension result
      */
-    public <R> AnyMSeq<R> yield(Function<? super T1, Function<? super T2, ? extends R>> f) {
+    public <R> AnyMSeq<R> yield(final Function<? super T1, Function<? super T2, ? extends R>> f) {
         if (getOrgType() != null)
             return new MonadWrapper<>(
-                                      this.yieldInternal(f), this.getOrgType()).anyMSeq();
+                                      this.yieldInternal(f), getOrgType()).anyMSeq();
         else
             return AnyM.ofSeq(this.yieldInternal(f));
     }
 
-    public <R> AnyMSeq<R> yield2(BiFunction<? super T1, ? super T2, ? extends R> f) {
+    public <R> AnyMSeq<R> yield2(final BiFunction<? super T1, ? super T2, ? extends R> f) {
         return this.yield(CurryVariance.curry2(f));
     }
 
@@ -114,7 +114,7 @@ public class DoComp2<T1, T2> extends DoComp {
      *            To be applied to every element in the for comprehension
      * @return Current stage  guard / filter applied
      */
-    public DoComp2<T1, T2> filter(Function<? super T1, Function<? super T2, Boolean>> f) {
+    public DoComp2<T1, T2> filter(final Function<? super T1, Function<? super T2, Boolean>> f) {
         return new DoComp2<>(
                              getAssigned().plus(getAssigned().size(), new Entry(
                                                                                 "$$internalGUARD" + getAssigned().size(), new Guard(

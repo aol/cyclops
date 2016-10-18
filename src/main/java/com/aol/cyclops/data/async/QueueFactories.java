@@ -12,7 +12,7 @@ import com.aol.cyclops.data.async.wait.WaitStrategy;
 
 public class QueueFactories {
 
-    public static <T> QueueFactory<T> boundedQueue(int queueSize) {
+    public static <T> QueueFactory<T> boundedQueue(final int queueSize) {
         return () -> new Queue<T>(
                                   new LinkedBlockingQueue<>(
                                                             queueSize));
@@ -43,7 +43,7 @@ public class QueueFactories {
 
     }
 
-    public static <T> QueueFactory<T> unboundedNonBlockingQueue(WaitStrategy<T> strategy) {
+    public static <T> QueueFactory<T> unboundedNonBlockingQueue(final WaitStrategy<T> strategy) {
         return () -> new Queue<T>(
                                   new ConcurrentLinkedQueue<>(), strategy, strategy);
 
@@ -64,14 +64,14 @@ public class QueueFactories {
      * @param queueSize upper bound for Queue
      * @return bounded wait free Queue
      */
-    public static <T> QueueFactory<T> boundedNonBlockingQueue(int queueSize) {
+    public static <T> QueueFactory<T> boundedNonBlockingQueue(final int queueSize) {
         return () -> new Queue<T>(
                                   new ManyToOneConcurrentArrayQueue<>(
                                                                       queueSize),
                                   new NoWaitRetry<>(), new NoWaitRetry<>());
     }
 
-    public static <T> QueueFactory<T> boundedNonBlockingQueue(int queueSize, WaitStrategy<T> strategy) {
+    public static <T> QueueFactory<T> boundedNonBlockingQueue(final int queueSize, final WaitStrategy<T> strategy) {
         return () -> new Queue<T>(
                                   new ManyToOneConcurrentArrayQueue<>(
                                                                       queueSize),
@@ -93,7 +93,7 @@ public class QueueFactories {
      * @param queueSize
      * @return
      */
-    public static <T> QueueFactory<T> singleWriterboundedNonBlockingQueue(int queueSize) {
+    public static <T> QueueFactory<T> singleWriterboundedNonBlockingQueue(final int queueSize) {
         return () -> new Queue<T>(
                                   new OneToOneConcurrentArrayQueue<>(
                                                                      queueSize),
@@ -101,7 +101,7 @@ public class QueueFactories {
 
     }
 
-    public static <T> QueueFactory<T> singleWriterboundedNonBlockingQueue(int queueSize, WaitStrategy<T> strategy) {
+    public static <T> QueueFactory<T> singleWriterboundedNonBlockingQueue(final int queueSize, final WaitStrategy<T> strategy) {
         return () -> new Queue<T>(
                                   new OneToOneConcurrentArrayQueue<>(
                                                                      queueSize),

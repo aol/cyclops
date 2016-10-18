@@ -59,7 +59,7 @@ public class Mutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndO
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> Mutable<T> of(T var) {
+    public static <T> Mutable<T> of(final T var) {
         return new Mutable<T>(
                               var);
     }
@@ -79,22 +79,25 @@ public class Mutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndO
      * @param c Consumer that sets an external value
      * @return Mutable that gets / sets an external (mutable) value
      */
-    public static <T> Mutable<T> fromExternal(Supplier<T> s, Consumer<T> c) {
+    public static <T> Mutable<T> fromExternal(final Supplier<T> s, final Consumer<T> c) {
         return new Mutable<T>() {
+            @Override
             public T get() {
                 return s.get();
             }
 
-            public Mutable<T> set(T value) {
+            @Override
+            public Mutable<T> set(final T value) {
                 c.accept(value);
                 return this;
             }
         };
     }
 
-    public <R> Mutable<R> mapOutput(Function<T, R> fn) {
-        Mutable<T> host = this;
+    public <R> Mutable<R> mapOutput(final Function<T, R> fn) {
+        final Mutable<T> host = this;
         return new Mutable<R>() {
+            @Override
             public R get() {
                 return fn.apply(host.get());
             }
@@ -102,10 +105,11 @@ public class Mutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndO
         };
     }
 
-    public <T1> Mutable<T1> mapInput(Function<T1, T> fn) {
-        Mutable<T> host = this;
+    public <T1> Mutable<T1> mapInput(final Function<T1, T> fn) {
+        final Mutable<T> host = this;
         return new Mutable<T1>() {
-            public Mutable<T1> set(T1 value) {
+            @Override
+            public Mutable<T1> set(final T1 value) {
                 host.set(fn.apply(value));
                 return this;
             }
@@ -116,6 +120,7 @@ public class Mutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndO
     /**
      * @return Current value
      */
+    @Override
     public T get() {
         return var;
     }
@@ -124,7 +129,7 @@ public class Mutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndO
      * @param var New value
      * @return  this object with mutated value
      */
-    public Mutable<T> set(T var) {
+    public Mutable<T> set(final T var) {
         this.var = var;
         return this;
     }
@@ -133,12 +138,12 @@ public class Mutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndO
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public Mutable<T> mutate(Function<T, T> varFn) {
+    public Mutable<T> mutate(final Function<T, T> varFn) {
         return set(varFn.apply(get()));
     }
 
     @Override
-    public void accept(T t) {
+    public void accept(final T t) {
         set(t);
 
     }

@@ -12,12 +12,12 @@ package com.aol.cyclops.data.async.wait;
 public class DirectWaitStrategy<T> implements WaitStrategy<T> {
 
     @Override
-    public T take(com.aol.cyclops.data.async.wait.WaitStrategy.Takeable<T> t) throws InterruptedException {
+    public T take(final com.aol.cyclops.data.async.wait.WaitStrategy.Takeable<T> t) throws InterruptedException {
         return t.take();
     }
 
     @Override
-    public boolean offer(com.aol.cyclops.data.async.wait.WaitStrategy.Offerable o) throws InterruptedException {
+    public boolean offer(final com.aol.cyclops.data.async.wait.WaitStrategy.Offerable o) throws InterruptedException {
         return o.offer();
     }
 

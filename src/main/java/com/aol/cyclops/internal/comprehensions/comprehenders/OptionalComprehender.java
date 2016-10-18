@@ -8,32 +8,33 @@ import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
 public class OptionalComprehender implements ValueComprehender<Optional> {
+    @Override
     public Class getTargetClass() {
         return Optional.class;
     }
 
     @Override
-    public Object filter(Optional o, Predicate p) {
+    public Object filter(final Optional o, final Predicate p) {
         return o.filter(p);
     }
 
     @Override
-    public Object map(Optional o, Function fn) {
+    public Object map(final Optional o, final Function fn) {
         return o.map(fn);
     }
 
     @Override
-    public Optional flatMap(Optional o, Function fn) {
+    public Optional flatMap(final Optional o, final Function fn) {
         return o.flatMap(fn);
     }
 
     @Override
-    public boolean instanceOfT(Object apply) {
+    public boolean instanceOfT(final Object apply) {
         return apply instanceof Optional;
     }
 
     @Override
-    public Optional of(Object o) {
+    public Optional of(final Object o) {
         return Optional.of(o);
     }
 
@@ -42,7 +43,8 @@ public class OptionalComprehender implements ValueComprehender<Optional> {
         return Optional.empty();
     }
 
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, Optional apply) {
+    @Override
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final Optional apply) {
         if (apply.isPresent())
             return comp.of(apply.get());
         else

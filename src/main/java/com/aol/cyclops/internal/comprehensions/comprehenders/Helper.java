@@ -7,8 +7,8 @@ import com.aol.cyclops.types.extensability.Comprehender;
 
 public class Helper {
 
-    public static <T> T first(Comprehender<T> comp, Collection c) {
-        Iterator<T> it = c.iterator();
+    public static <T> T first(final Comprehender<T> comp, final Collection c) {
+        final Iterator<T> it = c.iterator();
         if (it.hasNext())
             return comp.of(it.next());
         return comp.empty();

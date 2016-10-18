@@ -39,11 +39,11 @@ public interface Monoid<T> extends Semigroup<T> {
      */
     T zero();
 
-    default T reduce(Stream<T> toReduce) {
+    default T reduce(final Stream<T> toReduce) {
         return toReduce.reduce(zero(), reducer());
     }
 
-    public static <T> Monoid<T> of(T zero, Semigroup<T> group) {
+    public static <T> Monoid<T> of(final T zero, final Semigroup<T> group) {
         return new Monoid<T>() {
             @Override
             public T zero() {
@@ -51,13 +51,13 @@ public interface Monoid<T> extends Semigroup<T> {
             }
 
             @Override
-            public T apply(T t, T u) {
+            public T apply(final T t, final T u) {
                 return group.apply(t, u);
             }
         };
     }
 
-    public static <T> Monoid<T> of(T zero, Function<T, Function<T, T>> combiner) {
+    public static <T> Monoid<T> of(final T zero, final Function<T, Function<T, T>> combiner) {
         return new Monoid<T>() {
             @Override
             public T zero() {
@@ -65,7 +65,7 @@ public interface Monoid<T> extends Semigroup<T> {
             }
 
             @Override
-            public T apply(T t, T u) {
+            public T apply(final T t, final T u) {
                 return combiner.apply(t)
                                .apply(u);
             }
@@ -73,7 +73,7 @@ public interface Monoid<T> extends Semigroup<T> {
         };
     }
 
-    public static <T> Monoid<T> fromBiFunction(T zero, BiFunction<T, T, T> combiner) {
+    public static <T> Monoid<T> fromBiFunction(final T zero, final BiFunction<T, T, T> combiner) {
         return new Monoid<T>() {
             @Override
             public T zero() {
@@ -81,7 +81,7 @@ public interface Monoid<T> extends Semigroup<T> {
             }
 
             @Override
-            public T apply(T t, T u) {
+            public T apply(final T t, final T u) {
                 return combiner.apply(t, u);
             }
         };

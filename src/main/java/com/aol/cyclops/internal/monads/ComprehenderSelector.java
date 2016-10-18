@@ -15,7 +15,7 @@ public class ComprehenderSelector {
     private final ConcurrentMap<Class, Comprehender> cache = new ConcurrentHashMap<>();
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Comprehender selectComprehender(Class structure) {
+    public Comprehender selectComprehender(final Class structure) {
 
         return cache.computeIfAbsent(structure, st -> comprehenders.getRegisteredComprehenders()
                                                                    .stream()
@@ -28,7 +28,7 @@ public class ComprehenderSelector {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Comprehender selectComprehender(Object structure) {
+    public Comprehender selectComprehender(final Object structure) {
 
         return cache.computeIfAbsent(structure.getClass(), st -> comprehenders.getRegisteredComprehenders()
                                                                               .stream()

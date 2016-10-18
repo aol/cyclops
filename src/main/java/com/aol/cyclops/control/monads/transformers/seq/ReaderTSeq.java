@@ -50,7 +50,7 @@ public class ReaderTSeq<T, R> {
      *            Consumer to accept current value of Maybe
      * @return MaybeT with peek call
      */
-    public ReaderTSeq<T, R> peek(Consumer<? super R> peek) {
+    public ReaderTSeq<T, R> peek(final Consumer<? super R> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
             return a;
@@ -94,7 +94,7 @@ public class ReaderTSeq<T, R> {
      *            Mapping function for the wrapped Maybe
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
-    public <B> ReaderTSeq<T, B> map(Function<? super R, ? extends B> f) {
+    public <B> ReaderTSeq<T, B> map(final Function<? super R, ? extends B> f) {
         return new ReaderTSeq<T, B>(
                                     run.map(o -> o.map(f)));
     }
@@ -108,13 +108,13 @@ public class ReaderTSeq<T, R> {
      *            FlatMap function
      * @return ReaderT that applies the flatMap function to the wrapped Maybe
      */
-    public <B> ReaderTSeq<T, B> flatMapT(Function<? super R, ReaderTSeq<T, B>> mapper) {
+    public <B> ReaderTSeq<T, B> flatMapT(final Function<? super R, ReaderTSeq<T, B>> mapper) {
 
         return of(run.bind(reader -> reader.flatMap(r -> mapper.apply(r).run.unwrap())));
 
     }
 
-    public <B> ReaderTSeq<T, B> flatMap(Function<? super R, ? extends Reader<T, B>> f) {
+    public <B> ReaderTSeq<T, B> flatMap(final Function<? super R, ? extends Reader<T, B>> f) {
 
         return new ReaderTSeq<T, B>(
                                     run.map(o -> o.flatMap(f)));
@@ -152,7 +152,7 @@ public class ReaderTSeq<T, R> {
      *            monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <T, U, R> Function<ReaderTSeq<T, U>, ReaderTSeq<T, R>> lift(Function<? super U, ? extends R> fn) {
+    public static <T, U, R> Function<ReaderTSeq<T, U>, ReaderTSeq<T, R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -189,7 +189,7 @@ public class ReaderTSeq<T, R> {
      * @return Function that accepts and returns an MaybeT
      */
     public static <T, U1, U2, R> BiFunction<ReaderTSeq<T, U1>, ReaderTSeq<T, U2>, ReaderTSeq<T, R>> lift2(
-            BiFunction<? super U1, ? super U2, ? extends R> fn) {
+            final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -202,7 +202,7 @@ public class ReaderTSeq<T, R> {
      *            AnyM that doesn't contain a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <T, A> ReaderTSeq<T, A> fromAnyM(AnyMSeq<Function<T, A>> anyM) {
+    public static <T, A> ReaderTSeq<T, A> fromAnyM(final AnyMSeq<Function<T, A>> anyM) {
         return of(anyM.map(FluentFunctions::of));
     }
 
@@ -213,7 +213,7 @@ public class ReaderTSeq<T, R> {
      *            AnyM that contains a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <T, A> ReaderTSeq<T, A> of(AnyMSeq<Reader<T, A>> monads) {
+    public static <T, A> ReaderTSeq<T, A> of(final AnyMSeq<Reader<T, A>> monads) {
 
         return new ReaderTSeq<>(
                                 monads);
@@ -224,17 +224,18 @@ public class ReaderTSeq<T, R> {
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return run.toString();
     }
 
-    public R apply(T t, Monoid<R> combiner) {
+    public R apply(final T t, final Monoid<R> combiner) {
         return run.map(r -> r.apply(t))
                   .reduce(combiner);
 
     }
 
-    public ReactiveSeq<R> streamApply(T t) {
+    public ReactiveSeq<R> streamApply(final T t) {
         return run.map(fn -> fn.apply(t))
                   .stream();
     }
@@ -245,7 +246,7 @@ public class ReaderTSeq<T, R> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof ReaderTSeq) {
             return run.equals(((ReaderTSeq) o).run);
         }

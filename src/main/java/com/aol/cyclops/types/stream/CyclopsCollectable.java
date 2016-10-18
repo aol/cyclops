@@ -24,7 +24,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#modeBy(java.util.function.Function)
      */
     @Override
-    default <U> Optional<T> modeBy(Function<? super T, ? extends U> function) {
+    default <U> Optional<T> modeBy(final Function<? super T, ? extends U> function) {
 
         return collectable().modeBy(function);
     }
@@ -42,7 +42,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#modeAllBy(java.util.function.Function)
      */
     @Override
-    default <U> ReactiveSeq<T> modeAllBy(Function<? super T, ? extends U> function) {
+    default <U> ReactiveSeq<T> modeAllBy(final Function<? super T, ? extends U> function) {
 
         return ReactiveSeq.fromStream(collectable().modeAllBy(function));
     }
@@ -60,7 +60,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#minAll(java.util.Comparator)
      */
     @Override
-    default ReactiveSeq<T> minAll(Comparator<? super T> comparator) {
+    default ReactiveSeq<T> minAll(final Comparator<? super T> comparator) {
 
         return ReactiveSeq.fromStream(collectable().minAll(comparator));
     }
@@ -69,7 +69,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#minAll(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> ReactiveSeq<U> minAll(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> ReactiveSeq<U> minAll(final Function<? super T, ? extends U> function) {
 
         return ReactiveSeq.fromStream(collectable().minAll(function));
     }
@@ -78,7 +78,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#minAll(java.util.function.Function, java.util.Comparator)
      */
     @Override
-    default <U> ReactiveSeq<U> minAll(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> ReactiveSeq<U> minAll(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return ReactiveSeq.fromStream(collectable().minAll(function, comparator));
     }
@@ -87,7 +87,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#minAllBy(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> ReactiveSeq<T> minAllBy(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> ReactiveSeq<T> minAllBy(final Function<? super T, ? extends U> function) {
 
         return ReactiveSeq.fromStream(collectable().minAllBy(function));
     }
@@ -96,7 +96,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#minAllBy(java.util.function.Function, java.util.Comparator)
      */
     @Override
-    default <U> ReactiveSeq<T> minAllBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> ReactiveSeq<T> minAllBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return ReactiveSeq.fromStream(collectable().minAllBy(function, comparator));
     }
@@ -114,7 +114,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#maxAll(java.util.Comparator)
      */
     @Override
-    default ReactiveSeq<T> maxAll(Comparator<? super T> comparator) {
+    default ReactiveSeq<T> maxAll(final Comparator<? super T> comparator) {
 
         return ReactiveSeq.fromStream(collectable().maxAll(comparator));
     }
@@ -123,7 +123,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#maxAll(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> ReactiveSeq<U> maxAll(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> ReactiveSeq<U> maxAll(final Function<? super T, ? extends U> function) {
 
         return ReactiveSeq.fromStream(collectable().maxAll(function));
     }
@@ -132,7 +132,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#maxAll(java.util.function.Function, java.util.Comparator)
      */
     @Override
-    default <U> ReactiveSeq<U> maxAll(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> ReactiveSeq<U> maxAll(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return ReactiveSeq.fromStream(collectable().maxAll(function, comparator));
     }
@@ -141,7 +141,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#maxAllBy(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> ReactiveSeq<T> maxAllBy(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> ReactiveSeq<T> maxAllBy(final Function<? super T, ? extends U> function) {
 
         return ReactiveSeq.fromStream(collectable().maxAllBy(function));
     }
@@ -150,7 +150,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#maxAllBy(java.util.function.Function, java.util.Comparator)
      */
     @Override
-    default <U> ReactiveSeq<T> maxAllBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> ReactiveSeq<T> maxAllBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return ReactiveSeq.fromStream(collectable().maxAllBy(function, comparator));
     }
@@ -168,7 +168,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#bitAnd(java.util.function.Function)
      */
     @Override
-    default <U> Optional<U> bitAnd(Function<? super T, ? extends U> function) {
+    default <U> Optional<U> bitAnd(final Function<? super T, ? extends U> function) {
 
         return collectable().bitAnd(function);
     }
@@ -177,7 +177,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#bitAndInt(java.util.function.ToIntFunction)
      */
     @Override
-    default int bitAndInt(ToIntFunction<? super T> function) {
+    default int bitAndInt(final ToIntFunction<? super T> function) {
 
         return collectable().bitAndInt(function);
     }
@@ -186,7 +186,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#bitAndLong(java.util.function.ToLongFunction)
      */
     @Override
-    default long bitAndLong(ToLongFunction<? super T> function) {
+    default long bitAndLong(final ToLongFunction<? super T> function) {
 
         return collectable().bitAndLong(function);
     }
@@ -204,7 +204,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#bitOr(java.util.function.Function)
      */
     @Override
-    default <U> Optional<U> bitOr(Function<? super T, ? extends U> function) {
+    default <U> Optional<U> bitOr(final Function<? super T, ? extends U> function) {
 
         return collectable().bitOr(function);
     }
@@ -213,7 +213,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#bitOrInt(java.util.function.ToIntFunction)
      */
     @Override
-    default int bitOrInt(ToIntFunction<? super T> function) {
+    default int bitOrInt(final ToIntFunction<? super T> function) {
 
         return collectable().bitOrInt(function);
     }
@@ -222,7 +222,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#bitOrLong(java.util.function.ToLongFunction)
      */
     @Override
-    default long bitOrLong(ToLongFunction<? super T> function) {
+    default long bitOrLong(final ToLongFunction<? super T> function) {
 
         return collectable().bitOrLong(function);
     }
@@ -231,7 +231,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#toMap(java.util.function.Function)
      */
     @Override
-    default <K> Map<K, T> toMap(Function<? super T, ? extends K> keyMapper) {
+    default <K> Map<K, T> toMap(final Function<? super T, ? extends K> keyMapper) {
 
         return collectable().toMap(keyMapper);
     }
@@ -258,7 +258,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
     @Override
-    default <R, A> R collect(Collector<? super T, A, R> collector) {
+    default <R, A> R collect(final Collector<? super T, A, R> collector) {
         return collectable().collect(collector);
     }
 
@@ -274,7 +274,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#count(java.util.function.Predicate)
      */
     @Override
-    default long count(Predicate<? super T> predicate) {
+    default long count(final Predicate<? super T> predicate) {
         return collectable().count(predicate);
     }
 
@@ -282,7 +282,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#countDistinct(java.util.function.Predicate)
      */
     @Override
-    default long countDistinct(Predicate<? super T> predicate) {
+    default long countDistinct(final Predicate<? super T> predicate) {
         return collectable().countDistinct(predicate);
     }
 
@@ -290,7 +290,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @see org.jooq.lambda.Collectable#countDistinctBy(java.util.function.Function, java.util.function.Predicate)
      */
     @Override
-    default <U> long countDistinctBy(Function<? super T, ? extends U> function, Predicate<? super U> predicate) {
+    default <U> long countDistinctBy(final Function<? super T, ? extends U> function, final Predicate<? super U> predicate) {
         return collectable().countDistinctBy(function, predicate);
     }
 
@@ -307,7 +307,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
     }
 
     @Override
-    default <U> long countDistinctBy(Function<? super T, ? extends U> function) {
+    default <U> long countDistinctBy(final Function<? super T, ? extends U> function) {
         return collectable().countDistinctBy(function);
     }
 
@@ -322,22 +322,22 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
     }
 
     @Override
-    default <U> Optional<U> sum(Function<? super T, ? extends U> function) {
+    default <U> Optional<U> sum(final Function<? super T, ? extends U> function) {
         return collectable().sum(function);
     }
 
     @Override
-    default int sumInt(ToIntFunction<? super T> function) {
+    default int sumInt(final ToIntFunction<? super T> function) {
         return collectable().sumInt(function);
     }
 
     @Override
-    default long sumLong(ToLongFunction<? super T> function) {
+    default long sumLong(final ToLongFunction<? super T> function) {
         return collectable().sumLong(function);
     }
 
     @Override
-    default double sumDouble(ToDoubleFunction<? super T> function) {
+    default double sumDouble(final ToDoubleFunction<? super T> function) {
         return collectable().sumDouble(function);
     }
 
@@ -347,22 +347,22 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
     }
 
     @Override
-    default <U> Optional<U> avg(Function<? super T, ? extends U> function) {
+    default <U> Optional<U> avg(final Function<? super T, ? extends U> function) {
         return collectable().avg(function);
     }
 
     @Override
-    default double avgInt(ToIntFunction<? super T> function) {
+    default double avgInt(final ToIntFunction<? super T> function) {
         return collectable().avgInt(function);
     }
 
     @Override
-    default double avgLong(ToLongFunction<? super T> function) {
+    default double avgLong(final ToLongFunction<? super T> function) {
         return collectable().avgLong(function);
     }
 
     @Override
-    default double avgDouble(ToDoubleFunction<? super T> function) {
+    default double avgDouble(final ToDoubleFunction<? super T> function) {
         return collectable().avgDouble(function);
     }
 
@@ -372,27 +372,27 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
     }
 
     @Override
-    default Optional<T> min(Comparator<? super T> comparator) {
+    default Optional<T> min(final Comparator<? super T> comparator) {
         return collectable().min(comparator);
     }
 
     @Override
-    default <U extends Comparable<? super U>> Optional<U> min(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<U> min(final Function<? super T, ? extends U> function) {
         return collectable().min(function);
     }
 
     @Override
-    default <U> Optional<U> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<U> min(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return collectable().min(function, comparator);
     }
 
     @Override
-    default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<T> minBy(final Function<? super T, ? extends U> function) {
         return collectable().minBy(function);
     }
 
     @Override
-    default <U> Optional<T> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<T> minBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return collectable().minBy(function, comparator);
     }
 
@@ -402,27 +402,27 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
     }
 
     @Override
-    default Optional<T> max(Comparator<? super T> comparator) {
+    default Optional<T> max(final Comparator<? super T> comparator) {
         return collectable().max(comparator);
     }
 
     @Override
-    default <U extends Comparable<? super U>> Optional<U> max(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<U> max(final Function<? super T, ? extends U> function) {
         return collectable().max(function);
     }
 
     @Override
-    default <U> Optional<U> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<U> max(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return collectable().max(function, comparator);
     }
 
     @Override
-    default <U extends Comparable<? super U>> Optional<T> maxBy(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<T> maxBy(final Function<? super T, ? extends U> function) {
         return collectable().maxBy(function);
     }
 
     @Override
-    default <U> Optional<T> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<T> maxBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return collectable().maxBy(function, comparator);
     }
 
@@ -432,37 +432,38 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
     }
 
     @Override
-    default Optional<T> median(Comparator<? super T> comparator) {
+    default Optional<T> median(final Comparator<? super T> comparator) {
         return collectable().median(comparator);
     }
 
     @Override
-    default <U extends Comparable<? super U>> Optional<T> medianBy(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<T> medianBy(final Function<? super T, ? extends U> function) {
         return collectable().medianBy(function);
     }
 
     @Override
-    default <U> Optional<T> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<T> medianBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return collectable().medianBy(function, comparator);
     }
 
     @Override
-    default Optional<T> percentile(double percentile) {
+    default Optional<T> percentile(final double percentile) {
         return collectable().percentile(percentile);
     }
 
     @Override
-    default Optional<T> percentile(double percentile, Comparator<? super T> comparator) {
+    default Optional<T> percentile(final double percentile, final Comparator<? super T> comparator) {
         return collectable().percentile(percentile, comparator);
     }
 
     @Override
-    default <U extends Comparable<? super U>> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<T> percentileBy(final double percentile, final Function<? super T, ? extends U> function) {
         return collectable().percentileBy(percentile, function);
     }
 
     @Override
-    default <U> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<T> percentileBy(final double percentile, final Function<? super T, ? extends U> function,
+            final Comparator<? super U> comparator) {
         return collectable().percentileBy(percentile, function, comparator);
     }
 
@@ -478,7 +479,8 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @param c
      *            Predicate to check if all match
      */
-    default boolean allMatch(Predicate<? super T> c) {
+    @Override
+    default boolean allMatch(final Predicate<? super T> c) {
         return collectable().allMatch(c);
     }
 
@@ -494,11 +496,13 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
      * @param c
      *            Predicate to check if any match
      */
-    default boolean anyMatch(Predicate<? super T> c) {
+    @Override
+    default boolean anyMatch(final Predicate<? super T> c) {
         return collectable().anyMatch(c);
     }
 
-    default boolean noneMatch(Predicate<? super T> c) {
+    @Override
+    default boolean noneMatch(final Predicate<? super T> c) {
         return collectable().noneMatch(c);
     }
 
@@ -510,7 +514,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
     }
 
     @Override
-    default <L extends List<T>> L toList(Supplier<L> factory) {
+    default <L extends List<T>> L toList(final Supplier<L> factory) {
         return collectable().toList(factory);
     }
 
@@ -522,27 +526,27 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T> {
     }
 
     @Override
-    default <S extends Set<T>> S toSet(Supplier<S> factory) {
+    default <S extends Set<T>> S toSet(final Supplier<S> factory) {
         return collectable().toSet(factory);
     }
 
     @Override
-    default <C extends Collection<T>> C toCollection(Supplier<C> factory) {
+    default <C extends Collection<T>> C toCollection(final Supplier<C> factory) {
         return collectable().toCollection(factory);
     }
 
     @Override
-    default <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+    default <K, V> Map<K, V> toMap(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
         return collectable().toMap(keyMapper, valueMapper);
     }
 
     @Override
-    default String toString(CharSequence delimiter) {
+    default String toString(final CharSequence delimiter) {
         return collectable().toString(delimiter);
     }
 
     @Override
-    default String toString(CharSequence delimiter, CharSequence prefix, CharSequence suffix) {
+    default String toString(final CharSequence delimiter, final CharSequence prefix, final CharSequence suffix) {
         return collectable().toString(delimiter, prefix, suffix);
     }
 

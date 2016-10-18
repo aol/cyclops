@@ -13,8 +13,8 @@ public class LimitWhileOperator<U> {
 
     private final Stream<U> stream;
 
-    public Stream<U> limitWhile(Predicate<? super U> predicate) {
-        Iterator<U> it = stream.iterator();
+    public Stream<U> limitWhile(final Predicate<? super U> predicate) {
+        final Iterator<U> it = stream.iterator();
         return StreamUtils.stream(new Iterator<U>() {
             U next;
             boolean nextSet = false;
@@ -49,7 +49,7 @@ public class LimitWhileOperator<U> {
                     return next;
                 }
 
-                U local = it.next();
+                final U local = it.next();
                 if (stillGoing) {
                     stillGoing = !predicate.test(local);
                 }

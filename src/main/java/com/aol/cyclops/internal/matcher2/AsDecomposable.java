@@ -17,7 +17,7 @@ public class AsDecomposable {
      * @param toCoerce Object to convert into a Decomposable
      * @return Decomposable that delegates to the supplied object
      */
-    public static Decomposable asDecomposable(Object toCoerce) {
+    public static Decomposable asDecomposable(final Object toCoerce) {
         return new CoercedDecomposable(
                                        toCoerce);
     }
@@ -26,6 +26,7 @@ public class AsDecomposable {
     public static class CoercedDecomposable implements Decomposable {
         private final Object dValue;
 
+        @Override
         public Object unwrap() {
             return dValue;
         }

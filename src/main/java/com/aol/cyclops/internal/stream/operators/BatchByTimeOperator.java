@@ -13,19 +13,19 @@ public class BatchByTimeOperator<T, C extends Collection<? super T>> {
     private final Stream<T> stream;
     private final Supplier<C> factory;
 
-    public BatchByTimeOperator(Stream<T> stream) {
+    public BatchByTimeOperator(final Stream<T> stream) {
         this.stream = stream;
         factory = () -> (C) new ListXImpl<>();
     }
 
-    public BatchByTimeOperator(Stream<T> stream2, Supplier<C> factory2) {
+    public BatchByTimeOperator(final Stream<T> stream2, final Supplier<C> factory2) {
         this.stream = stream2;
         this.factory = factory2;
     }
 
-    public Stream<C> batchByTime(long time, TimeUnit t) {
-        Iterator<T> it = stream.iterator();
-        long toRun = t.toNanos(time);
+    public Stream<C> batchByTime(final long time, final TimeUnit t) {
+        final Iterator<T> it = stream.iterator();
+        final long toRun = t.toNanos(time);
         return StreamUtils.stream(new Iterator<C>() {
             long start = System.nanoTime();
 
@@ -37,7 +37,7 @@ public class BatchByTimeOperator<T, C extends Collection<? super T>> {
             @Override
             public C next() {
 
-                C list = factory.get();
+                final C list = factory.get();
                 while (System.nanoTime() - start < toRun && it.hasNext()) {
                     list.add(it.next());
                 }

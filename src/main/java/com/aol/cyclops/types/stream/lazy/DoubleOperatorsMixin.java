@@ -14,7 +14,8 @@ public interface DoubleOperatorsMixin<T> extends DoubleOperators<T>, HasStream<T
      * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
      * 	 @see java.util.stream.DoubleStream#sum()
      * */
-    default Eval<Double> sumDouble(ToDoubleFunction<? super T> fn) {
+    @Override
+    default Eval<Double> sumDouble(final ToDoubleFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToDouble(t -> DoubleStream.of(fn.applyAsDouble(t)))
                                            .sum());
@@ -26,7 +27,8 @@ public interface DoubleOperatorsMixin<T> extends DoubleOperators<T>, HasStream<T
      * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
      * 	 @see java.util.stream.DoubleStream#max()
      * */
-    default Eval<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn) {
+    @Override
+    default Eval<OptionalDouble> maxDouble(final ToDoubleFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToDouble(t -> DoubleStream.of(fn.applyAsDouble(t)))
                                            .max());
@@ -38,7 +40,8 @@ public interface DoubleOperatorsMixin<T> extends DoubleOperators<T>, HasStream<T
      * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
      * 	 @see java.util.stream.DoubleStream#min()
      * */
-    default Eval<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn) {
+    @Override
+    default Eval<OptionalDouble> minDouble(final ToDoubleFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToDouble(t -> DoubleStream.of(fn.applyAsDouble(t)))
                                            .min());
@@ -50,7 +53,8 @@ public interface DoubleOperatorsMixin<T> extends DoubleOperators<T>, HasStream<T
      * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
      * 	 @see java.util.stream.DoubleStream#average()
      * */
-    default Eval<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn) {
+    @Override
+    default Eval<OptionalDouble> averageDouble(final ToDoubleFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToDouble(t -> DoubleStream.of(fn.applyAsDouble(t)))
                                            .average());
@@ -62,7 +66,8 @@ public interface DoubleOperatorsMixin<T> extends DoubleOperators<T>, HasStream<T
      * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
      * 	 @see java.util.stream.DoubleStream#summaryStatistics()
      * */
-    default Eval<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn) {
+    @Override
+    default Eval<DoubleSummaryStatistics> summaryStatisticsDouble(final ToDoubleFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToDouble(t -> DoubleStream.of(fn.applyAsDouble(t)))
                                            .summaryStatistics());

@@ -23,7 +23,7 @@ public class StageWithResults<RS, U> {
     @Getter
     private final RS results;
 
-    public StageWithResults(ConfigurableStream<U, Object> stage, RS results) {
+    public StageWithResults(final ConfigurableStream<U, Object> stage, final RS results) {
 
         this.taskExecutor = stage.getTaskExecutor();
         this.stage = stage;
@@ -36,7 +36,7 @@ public class StageWithResults<RS, U> {
      * 
      * @param fn Function that contains parallelStream code to be executed by the SimpleReact ForkJoinPool (if configured)
      */
-    public <R> R submit(Function<RS, R> fn) {
+    public <R> R submit(final Function<RS, R> fn) {
         return submit(() -> fn.apply(this.results));
     }
 
@@ -45,17 +45,17 @@ public class StageWithResults<RS, U> {
      * 
      * @param callable that contains code
      */
-    public <T> T submit(Callable<T> callable) {
+    public <T> T submit(final Callable<T> callable) {
         if (taskExecutor instanceof ForkJoinPool) {
             log.debug("Submited callable to SimpleReact ForkJoinPool. JDK ParallelStreams will reuse SimpleReact ForkJoinPool.");
             try {
 
                 return ((ForkJoinPool) taskExecutor).submit(callable)
                                                     .get();
-            } catch (ExecutionException e) {
+            } catch (final ExecutionException e) {
                 throw ExceptionSoftener.throwSoftenedException(e);
 
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.currentThread()
                       .interrupt();
                 throw ExceptionSoftener.throwSoftenedException(e);
@@ -65,7 +65,7 @@ public class StageWithResults<RS, U> {
         try {
             log.debug("Submited callable but do not have a ForkJoinPool. JDK ParallelStreams will use Common ForkJoinPool not SimpleReact Executor.");
             return callable.call();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(
                                        e);
         }

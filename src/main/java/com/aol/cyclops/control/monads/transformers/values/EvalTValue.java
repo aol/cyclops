@@ -40,6 +40,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
         this.run = run;
     }
 
+    @Override
     public Eval<T> value() {
         return run.get();
     }
@@ -47,6 +48,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
     /**
      * @return The wrapped AnyM
      */
+    @Override
     public AnyMValue<Eval<T>> unwrap() {
         return run;
     }
@@ -67,7 +69,8 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      *            Consumer to accept current value of Maybe
      * @return MaybeT with peek call
      */
-    public EvalTValue<T> peek(Consumer<? super T> peek) {
+    @Override
+    public EvalTValue<T> peek(final Consumer<? super T> peek) {
         return map(a -> {
             peek.accept(a);
             return a;
@@ -90,7 +93,8 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      *            Predicate to filter the wrapped Maybe
      * @return MaybeT that applies the provided filter
      */
-    public MaybeTValue<T> filter(Predicate<? super T> test) {
+    @Override
+    public MaybeTValue<T> filter(final Predicate<? super T> test) {
         return MaybeTValue.of(run.map(opt -> opt.filter(test)));
     }
 
@@ -111,7 +115,8 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      *            Mapping function for the wrapped Maybe
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
-    public <B> EvalTValue<B> map(Function<? super T, ? extends B> f) {
+    @Override
+    public <B> EvalTValue<B> map(final Function<? super T, ? extends B> f) {
         return new EvalTValue<B>(
                                  run.map(o -> o.map(f)));
     }
@@ -120,7 +125,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> EvalTValue<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    public <T2, R> EvalTValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return new EvalTValue<R>(
                                  run.map(o -> o.combine(app, fn)));
 
@@ -130,7 +135,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> EvalTValue<R> zip(Iterable<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    public <T2, R> EvalTValue<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return new EvalTValue<R>(
                                  run.map(o -> o.zip(app, fn)));
     }
@@ -139,7 +144,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> EvalTValue<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
+    public <T2, R> EvalTValue<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         return new EvalTValue<R>(
                                  run.map(o -> o.zip(fn, app)));
     }
@@ -148,7 +153,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> EvalTValue<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> EvalTValue<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (EvalTValue<R>) TransformerValue.super.zip(other, zipper);
     }
@@ -157,7 +162,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> EvalTValue<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> EvalTValue<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (EvalTValue<R>) TransformerValue.super.zip(other, zipper);
     }
@@ -166,7 +171,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    public <U> EvalTValue<Tuple2<T, U>> zip(Stream<? extends U> other) {
+    public <U> EvalTValue<Tuple2<T, U>> zip(final Stream<? extends U> other) {
 
         return (EvalTValue) TransformerValue.super.zip(other);
     }
@@ -175,7 +180,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> EvalTValue<Tuple2<T, U>> zip(Seq<? extends U> other) {
+    public <U> EvalTValue<Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
         return (EvalTValue) TransformerValue.super.zip(other);
     }
@@ -184,7 +189,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
-    public <U> EvalTValue<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+    public <U> EvalTValue<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
         return (EvalTValue) TransformerValue.super.zip(other);
     }
@@ -206,7 +211,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      *            FlatMap function
      * @return MaybeT that applies the flatMap function to the wrapped Maybe
      */
-    public <B> EvalTValue<B> flatMapT(Function<? super T, EvalTValue<? extends B>> f) {
+    public <B> EvalTValue<B> flatMapT(final Function<? super T, EvalTValue<? extends B>> f) {
 
         return of(run.bind(opt -> {
 
@@ -216,7 +221,8 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
 
     }
 
-    public <B> EvalTValue<B> flatMap(Function<? super T, ? extends Eval<? extends B>> f) {
+    @Override
+    public <B> EvalTValue<B> flatMap(final Function<? super T, ? extends Eval<? extends B>> f) {
 
         return new EvalTValue<B>(
                                  run.map(o -> o.flatMap(f)));
@@ -254,7 +260,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      *            monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U, R> Function<EvalTValue<U>, EvalTValue<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<EvalTValue<U>, EvalTValue<R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -290,7 +296,8 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      *            another monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <U1, U2, R> BiFunction<EvalTValue<U1>, EvalTValue<U2>, EvalTValue<R>> lift2(BiFunction<? super U1, ? super U2, ? extends R> fn) {
+    public static <U1, U2, R> BiFunction<EvalTValue<U1>, EvalTValue<U2>, EvalTValue<R>> lift2(
+            final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -303,7 +310,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      *            AnyM that doesn't contain a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <A> EvalTValue<A> fromAnyM(AnyMValue<A> anyM) {
+    public static <A> EvalTValue<A> fromAnyM(final AnyMValue<A> anyM) {
         return of(anyM.map(a -> Eval.later(() -> a)));
     }
 
@@ -314,12 +321,12 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      *            AnyM that contains a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <A> EvalTValue<A> of(AnyMValue<Eval<A>> monads) {
+    public static <A> EvalTValue<A> of(final AnyMValue<Eval<A>> monads) {
         return new EvalTValue<>(
                                 monads);
     }
 
-    public static <A, V extends MonadicValue<Eval<A>>> EvalTValue<A> fromValue(V monadicValue) {
+    public static <A, V extends MonadicValue<Eval<A>>> EvalTValue<A> fromValue(final V monadicValue) {
         return of(AnyM.ofValue(monadicValue));
     }
 
@@ -328,6 +335,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return String.format("EvalTValue[%s]", run);
     }
@@ -338,6 +346,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
                   .get();
     }
 
+    @Override
     public boolean isValuePresent() {
         return !run.isEmpty();
     }
@@ -360,14 +369,14 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
     }
 
     @Override
-    public void subscribe(Subscriber<? super T> s) {
+    public void subscribe(final Subscriber<? super T> s) {
         run.toMaybe()
            .forEach(e -> e.subscribe(s));
 
     }
 
     @Override
-    public boolean test(T t) {
+    public boolean test(final T t) {
         val maybeEval = run.toMaybe();
         return maybeEval.isPresent() ? maybeEval.get()
                                                 .test(t)
@@ -375,15 +384,17 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
 
     }
 
-    public <R> EvalTValue<R> unit(R value) {
+    @Override
+    public <R> EvalTValue<R> unit(final R value) {
         return of(run.unit(Eval.now(value)));
     }
 
+    @Override
     public <R> EvalTValue<R> empty() {
         return of(run.unit(Eval.later(() -> null)));
     }
 
-    public static <T> EvalTValue<T> of(Eval<T> eval) {
+    public static <T> EvalTValue<T> of(final Eval<T> eval) {
         return fromValue(Maybe.just(eval));
     }
 
@@ -395,7 +406,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> EvalTValue<U> cast(Class<? extends U> type) {
+    public <U> EvalTValue<U> cast(final Class<? extends U> type) {
 
         return (EvalTValue<U>) TransformerValue.super.cast(type);
     }
@@ -404,7 +415,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    public <R> EvalTValue<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+    public <R> EvalTValue<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
         return (EvalTValue<R>) TransformerValue.super.trampoline(mapper);
     }
@@ -413,7 +424,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    public <R> EvalTValue<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
+    public <R> EvalTValue<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
         return (EvalTValue<R>) TransformerValue.super.patternMatch(case1, otherwise);
     }
@@ -422,7 +433,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> MaybeTValue<U> ofType(Class<? extends U> type) {
+    public <U> MaybeTValue<U> ofType(final Class<? extends U> type) {
 
         return (MaybeTValue<U>) EvalT.super.ofType(type);
     }
@@ -431,7 +442,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    public MaybeTValue<T> filterNot(Predicate<? super T> fn) {
+    public MaybeTValue<T> filterNot(final Predicate<? super T> fn) {
 
         return (MaybeTValue<T>) EvalT.super.filterNot(fn);
     }
@@ -451,7 +462,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof EvalTValue) {
             return run.equals(((EvalTValue) o).run);
         }

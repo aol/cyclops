@@ -13,7 +13,7 @@ import com.aol.cyclops.types.mixins.Printable;
 public class OptionalTSeqComprehender implements Comprehender<OptionalTSeq>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, OptionalTSeq apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final OptionalTSeq apply) {
 
         return apply.isSeqPresent() ? comp.of(apply.stream()
                                                    .toListX())
@@ -21,22 +21,22 @@ public class OptionalTSeqComprehender implements Comprehender<OptionalTSeq>, Pri
     }
 
     @Override
-    public Object filter(OptionalTSeq t, Predicate p) {
+    public Object filter(final OptionalTSeq t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(OptionalTSeq t, Function fn) {
+    public Object map(final OptionalTSeq t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(OptionalTSeq t, Function fn) {
+    public Object flatMap(final OptionalTSeq t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public OptionalTSeq of(Object o) {
+    public OptionalTSeq of(final Object o) {
         return OptionalTSeq.of(Optional.of(o));
     }
 
@@ -51,7 +51,7 @@ public class OptionalTSeqComprehender implements Comprehender<OptionalTSeq>, Pri
     }
 
     @Override
-    public OptionalTSeq fromIterator(Iterator o) {
+    public OptionalTSeq fromIterator(final Iterator o) {
         return OptionalTSeq.of(Maybe.fromIterable(() -> o)
                                     .toOptional());
     }

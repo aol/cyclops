@@ -14,9 +14,9 @@ public class OnePerOperator<T> {
 
     private final Stream<T> stream;
 
-    public Stream<T> onePer(long time, TimeUnit t) {
-        Iterator<T> it = stream.iterator();
-        long next = t.toNanos(time);
+    public Stream<T> onePer(final long time, final TimeUnit t) {
+        final Iterator<T> it = stream.iterator();
+        final long next = t.toNanos(time);
         return StreamUtils.stream(new Iterator<T>() {
             volatile long last = -1;
 
@@ -28,9 +28,9 @@ public class OnePerOperator<T> {
             @Override
             public T next() {
 
-                T nextValue = it.next();
+                final T nextValue = it.next();
 
-                long sleepFor = next - (System.nanoTime() - last);
+                final long sleepFor = next - (System.nanoTime() - last);
 
                 LockSupport.parkNanos(sleepFor);
 

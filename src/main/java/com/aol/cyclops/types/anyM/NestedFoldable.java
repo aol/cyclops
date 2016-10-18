@@ -58,7 +58,7 @@ public interface NestedFoldable<T> {
      * @param match
      * @return
      */
-    default <R> AnyM<R> visit(BiFunction<? super T, ? super ReactiveSeq<T>, ? extends R> match, Supplier<? extends R> ifEmpty) {
+    default <R> AnyM<R> visit(final BiFunction<? super T, ? super ReactiveSeq<T>, ? extends R> match, final Supplier<? extends R> ifEmpty) {
         return nestedFoldables().map(s -> s.visit(match, ifEmpty));
     }
 
@@ -78,7 +78,7 @@ public interface NestedFoldable<T> {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> AnyM<R> mapReduce(Reducer<R> reducer) {
+    default <R> AnyM<R> mapReduce(final Reducer<R> reducer) {
         return nestedFoldables().map(s -> s.mapReduce(reducer));
     }
 
@@ -113,7 +113,7 @@ public interface NestedFoldable<T> {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> AnyM<R> mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
+    default <R> AnyM<R> mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
         return nestedFoldables().map(s -> s.mapReduce(mapper, reducer));
     }
 
@@ -130,7 +130,7 @@ public interface NestedFoldable<T> {
      *            Use supplied Monoid to reduce values
      * @return reduced values
      */
-    default AnyM<T> reduce(Monoid<T> reducer) {
+    default AnyM<T> reduce(final Monoid<T> reducer) {
         return nestedFoldables().map(s -> s.reduce(reducer));
     }
 
@@ -138,8 +138,8 @@ public interface NestedFoldable<T> {
      * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
      * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
      */
-    default OptionalT<T> reduce(BinaryOperator<T> accumulator) {
-        AnyM<Optional<T>> anyM = nestedFoldables().map(s -> s.reduce(accumulator));
+    default OptionalT<T> reduce(final BinaryOperator<T> accumulator) {
+        final AnyM<Optional<T>> anyM = nestedFoldables().map(s -> s.reduce(accumulator));
         return Matchables.anyM(anyM)
                          .visit(v -> OptionalT.fromValue(v.toEvalLater()), s -> OptionalTSeq.of(s));
 
@@ -151,7 +151,7 @@ public interface NestedFoldable<T> {
      * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
-    default AnyM<T> reduce(T identity, BinaryOperator<T> accumulator) {
+    default AnyM<T> reduce(final T identity, final BinaryOperator<T> accumulator) {
         return nestedFoldables().map(s -> s.reduce(identity, accumulator));
     }
 
@@ -161,7 +161,7 @@ public interface NestedFoldable<T> {
      * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
-    default <U> AnyM<U> reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+    default <U> AnyM<U> reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
         return nestedFoldables().map(s -> s.reduce(identity, accumulator, combiner));
     }
 
@@ -187,8 +187,8 @@ public interface NestedFoldable<T> {
      * @param reducers
      * @return
      */
-    default ListT<T> reduce(Stream<? extends Monoid<T>> reducers) {
-        AnyM<ListX<T>> anyM = nestedFoldables().map(s -> s.reduce(reducers));
+    default ListT<T> reduce(final Stream<? extends Monoid<T>> reducers) {
+        final AnyM<ListX<T>> anyM = nestedFoldables().map(s -> s.reduce(reducers));
         return Matchables.anyM(anyM)
                          .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListTSeq.of(s));
 
@@ -216,8 +216,8 @@ public interface NestedFoldable<T> {
      * @param reducers
      * @return
      */
-    default ListT<T> reduce(Iterable<? extends Monoid<T>> reducers) {
-        AnyM<ListX<T>> anyM = nestedFoldables().map(s -> s.reduce(reducers));
+    default ListT<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
+        final AnyM<ListX<T>> anyM = nestedFoldables().map(s -> s.reduce(reducers));
         return Matchables.anyM(anyM)
                          .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListTSeq.of(s));
     }
@@ -236,7 +236,7 @@ public interface NestedFoldable<T> {
      *            Use supplied Monoid to reduce values starting via foldRight
      * @return Reduced result
      */
-    default AnyM<T> foldRight(Monoid<T> reducer) {
+    default AnyM<T> foldRight(final Monoid<T> reducer) {
         return nestedFoldables().map(s -> s.foldRight(reducer));
     }
 
@@ -254,7 +254,7 @@ public interface NestedFoldable<T> {
      * @param accumulator function that combines the accumulated value and the next one
      * @return AnyM containing the results of the nested fold right
      */
-    default AnyM<T> foldRight(T identity, BinaryOperator<T> accumulator) {
+    default AnyM<T> foldRight(final T identity, final BinaryOperator<T> accumulator) {
         return nestedFoldables().map(s -> s.foldRight(identity, accumulator));
     }
 
@@ -270,7 +270,7 @@ public interface NestedFoldable<T> {
      * @param accumulator function that combines the accumulated value and the next one
      * @return AnyM containing the results of the nested fold right
      */
-    default <U> AnyM<U> foldRight(U identity, BiFunction<? super T, U, U> accumulator) {
+    default <U> AnyM<U> foldRight(final U identity, final BiFunction<? super T, U, U> accumulator) {
         return nestedFoldables().map(s -> s.foldRight(identity, accumulator));
     }
 
@@ -291,7 +291,7 @@ public interface NestedFoldable<T> {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <T> AnyM<T> foldRightMapToType(Reducer<T> reducer) {
+    default <T> AnyM<T> foldRightMapToType(final Reducer<T> reducer) {
         return nestedFoldables().map(s -> s.foldRightMapToType(reducer));
     }
 
@@ -318,7 +318,7 @@ public interface NestedFoldable<T> {
      * 
      * @return Stream as concatenated String
      */
-    default AnyM<String> join(String sep) {
+    default AnyM<String> join(final String sep) {
         return nestedFoldables().map(s -> s.join(sep));
     }
 
@@ -331,19 +331,19 @@ public interface NestedFoldable<T> {
      * 
      * @return Stream as concatenated String
      */
-    default AnyM<String> join(String sep, String start, String end) {
+    default AnyM<String> join(final String sep, final String start, final String end) {
         return nestedFoldables().map(s -> s.join(sep, start, end));
     }
 
     ReactiveSeq<T> stream();
 
-    default void print(PrintStream str) {
+    default void print(final PrintStream str) {
         nestedFoldables().peek(s -> s.print(str))
                          .forEach(c -> {
                          });
     }
 
-    default void print(PrintWriter writer) {
+    default void print(final PrintWriter writer) {
         nestedFoldables().peek(s -> s.print(writer))
                          .forEach(c -> {
                          });
@@ -376,7 +376,7 @@ public interface NestedFoldable<T> {
      * 
      * </pre>
      */
-    default <K> AnyM<MapX<K, List<T>>> groupBy(Function<? super T, ? extends K> classifier) {
+    default <K> AnyM<MapX<K, List<T>>> groupBy(final Function<? super T, ? extends K> classifier) {
         return nestedFoldables().map(s -> s.groupBy(classifier));
     }
 
@@ -417,7 +417,7 @@ public interface NestedFoldable<T> {
      * 
      */
     default OptionalT<T> findFirst() {
-        AnyM<Optional<T>> anyM = nestedFoldables().map(s -> s.findFirst());
+        final AnyM<Optional<T>> anyM = nestedFoldables().map(s -> s.findFirst());
         return Matchables.anyM(anyM)
                          .visit(v -> OptionalT.fromValue(v.toEvalLater()), s -> OptionalTSeq.of(s));
 
@@ -434,7 +434,7 @@ public interface NestedFoldable<T> {
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
-    default AnyM<Boolean> startsWithIterable(Iterable<T> iterable) {
+    default AnyM<Boolean> startsWithIterable(final Iterable<T> iterable) {
         return nestedFoldables().map(s -> s.startsWithIterable(iterable));
     }
 
@@ -446,8 +446,8 @@ public interface NestedFoldable<T> {
      * @param iterator
      * @return True if Monad starts with Iterators sequence of data
      */
-    default AnyM<Boolean> startsWith(Stream<T> stream) {
-        Streamable<T> streamable = Streamable.fromStream(stream);
+    default AnyM<Boolean> startsWith(final Stream<T> stream) {
+        final Streamable<T> streamable = Streamable.fromStream(stream);
         return nestedFoldables().map(s -> s.startsWith(streamable.stream()));
     }
 
@@ -462,7 +462,7 @@ public interface NestedFoldable<T> {
      * @param iterable Values to check
      * @return true if SequenceM ends with values in the supplied iterable
      */
-    default AnyM<Boolean> endsWithIterable(Iterable<T> iterable) {
+    default AnyM<Boolean> endsWithIterable(final Iterable<T> iterable) {
         return nestedFoldables().map(s -> s.endsWithIterable(iterable));
     }
 
@@ -478,7 +478,7 @@ public interface NestedFoldable<T> {
      *            Values to check
      * @return true if SequenceM endswith values in the supplied Stream
      */
-    default AnyM<Boolean> endsWith(Stream<T> stream) {
+    default AnyM<Boolean> endsWith(final Stream<T> stream) {
         return nestedFoldables().map(s -> s.endsWith(stream));
     }
 
@@ -539,7 +539,7 @@ public interface NestedFoldable<T> {
      *         be populated across threads
      */
     default StreamableT<T> toConcurrentLazyStreamable() {
-        AnyM<Streamable<T>> anyM = nestedFoldables().map(s -> s.toConcurrentLazyStreamable());
+        final AnyM<Streamable<T>> anyM = nestedFoldables().map(s -> s.toConcurrentLazyStreamable());
         return Matchables.anyM(anyM)
                          .visit(v -> StreamableT.fromValue(v.toEvalLater()), s -> StreamableTSeq.of(s));
 
@@ -584,7 +584,7 @@ public interface NestedFoldable<T> {
 
     }
 
-    default AnyM<T> single(Predicate<? super T> predicate) {
+    default AnyM<T> single(final Predicate<? super T> predicate) {
         return nestedFoldables().map(s -> s.single(predicate));
     }
 
@@ -607,7 +607,7 @@ public interface NestedFoldable<T> {
      *         element, otherwise Optional Empty
      */
     default OptionalT<T> singleOptional() {
-        AnyM<Optional<T>> anyM = nestedFoldables().map(s -> s.singleOptional());
+        final AnyM<Optional<T>> anyM = nestedFoldables().map(s -> s.singleOptional());
         return Matchables.anyM(anyM)
                          .visit(v -> OptionalT.fromValue(v.toEvalLater()), s -> OptionalTSeq.of(s));
 
@@ -626,8 +626,8 @@ public interface NestedFoldable<T> {
      *            to extract element from
      * @return elementAt index
      */
-    default OptionalT<T> get(long index) {
-        AnyM<Optional<T>> anyM = nestedFoldables().map(s -> s.get(index));
+    default OptionalT<T> get(final long index) {
+        final AnyM<Optional<T>> anyM = nestedFoldables().map(s -> s.get(index));
         return Matchables.anyM(anyM)
                          .visit(v -> OptionalT.fromValue(v.toEvalLater()), s -> OptionalTSeq.of(s));
 
@@ -665,7 +665,7 @@ public interface NestedFoldable<T> {
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
-    default HotStream<T> schedule(String cron, ScheduledExecutorService ex) {
+    default HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
         return stream().schedule(cron, ex);
     }
 
@@ -701,7 +701,7 @@ public interface NestedFoldable<T> {
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
-    default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex) {
+    default HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         return stream().scheduleFixedDelay(delay, ex);
     }
 
@@ -735,11 +735,11 @@ public interface NestedFoldable<T> {
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
-    default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
+    default HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         return stream().scheduleFixedRate(rate, ex);
     }
 
-    default <S, F> AnyM<Ior<ReactiveSeq<F>, ReactiveSeq<S>>> validate(Validator<T, S, F> validator) {
+    default <S, F> AnyM<Ior<ReactiveSeq<F>, ReactiveSeq<S>>> validate(final Validator<T, S, F> validator) {
         return nestedFoldables().map(s -> s.validate(validator));
     }
 }

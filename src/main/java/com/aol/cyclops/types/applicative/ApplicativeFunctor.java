@@ -35,7 +35,7 @@ import lombok.experimental.Wither;
 public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
 
     public static class Applicatives {
-        public static <T, R> ApplyingApplicativeBuilder<T, R, ApplicativeFunctor<R>> applicatives(Unit unit, Functor functor) {
+        public static <T, R> ApplyingApplicativeBuilder<T, R, ApplicativeFunctor<R>> applicatives(final Unit unit, final Functor functor) {
             return new ApplyingApplicativeBuilder<T, R, ApplicativeFunctor<R>>(
                                                                                unit, functor);
         }
@@ -48,20 +48,22 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
      * @param fn BiFunction to combine them
      * @return New Applicativefunctor that represents the combined values
      */
-    default <T2, R> ApplicativeFunctor<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> ApplicativeFunctor<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
         return (ApplicativeFunctor<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                                                     .apply(v))).map(tuple -> app.visit(i -> tuple.v2.apply(i), () -> tuple.v1));
     }
 
-    default <T2, R> ApplicativeFunctor<R> zip(Iterable<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    @Override
+    default <T2, R> ApplicativeFunctor<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
         return (ApplicativeFunctor<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                                                     .apply(v))).map(tuple -> Maybe.fromIterable(app)
                                                                                                   .visit(i -> tuple.v2.apply(i), () -> tuple.v1));
     }
 
-    default <T2, R> ApplicativeFunctor<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
+    @Override
+    default <T2, R> ApplicativeFunctor<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
 
         return (ApplicativeFunctor<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                                                     .apply(v))).map(tuple -> Maybe.fromPublisher(app)
@@ -88,7 +90,7 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
             @Wither(AccessLevel.PROTECTED)
             protected ConvertableFunctor<T> functor;
 
-            public SemigroupApplyer<T> ap(ConvertableFunctor<T> fn) {
+            public SemigroupApplyer<T> ap(final ConvertableFunctor<T> fn) {
 
                 return functor.visit(p -> fn.visit(p2 -> withFunctor(functor.map(v1 -> combiner.apply(v1, fn.get()))), () -> this),
                                      () -> withFunctor(fn));
@@ -122,17 +124,17 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
           * @param fn
           * @return
           */
-        public SemigroupApplyer<T> ap(BiFunction<T, T, T> fn) {
+        public SemigroupApplyer<T> ap(final BiFunction<T, T, T> fn) {
             return new SemigroupApplyer<T>(
                                            fn, app);
         }
 
-        public SemigroupApplyer<T> ap(Semigroup<T> fn) {
+        public SemigroupApplyer<T> ap(final Semigroup<T> fn) {
             return new SemigroupApplyer<>(
                                           fn.combiner(), app);
         }
 
-        public <R> ApplicativeFunctor<R> ap1(Function<? super T, ? extends R> fn) {
+        public <R> ApplicativeFunctor<R> ap1(final Function<? super T, ? extends R> fn) {
             return Applicatives.<T, R> applicatives(app, app)
                                .applicative(fn)
                                .ap(app);
@@ -163,23 +165,23 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
          * @param fn
          * @return
          */
-        public <T2, R> EagerApplicative<T2, R, ?> ap2(BiFunction<? super T, ? super T2, ? extends R> fn) {
+        public <T2, R> EagerApplicative<T2, R, ?> ap2(final BiFunction<? super T, ? super T2, ? extends R> fn) {
             return Applicatives.<T, R> applicatives(app, app)
                                .applicative2(fn);
         }
 
-        public <T2, T3, R> Applicative2<T2, T3, R, ?> ap3(TriFunction<? super T, ? super T2, ? super T3, ? extends R> fn) {
+        public <T2, T3, R> Applicative2<T2, T3, R, ?> ap3(final TriFunction<? super T, ? super T2, ? super T3, ? extends R> fn) {
             return Applicatives.<T, R> applicatives(app, app)
                                .applicative3(fn);
         }
 
-        public <T2, T3, T4, R> Applicative3<T2, T3, T4, R, ?> ap4(QuadFunction<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        public <T2, T3, T4, R> Applicative3<T2, T3, T4, R, ?> ap4(final QuadFunction<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
             return Applicatives.<T, R> applicatives(app, app)
                                .applicative4(fn);
         }
 
         public <T2, T3, T4, T5, R> Applicative4<T2, T3, T4, T5, R, ?> ap5(
-                QuintFunction<? super T, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> fn) {
+                final QuintFunction<? super T, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> fn) {
             return Applicatives.<T, R> applicatives(app, app)
                                .applicative5(fn);
         }

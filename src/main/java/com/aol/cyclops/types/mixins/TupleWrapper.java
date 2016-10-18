@@ -14,19 +14,19 @@ public interface TupleWrapper {
     default List<Object> values() {
 
         try {
-            return (List) ReflectionCache.getFields(getInstance().getClass())
-                                         .stream()
-                                         .map(f -> {
-                                             try {
+            return ReflectionCache.getFields(getInstance().getClass())
+                                  .stream()
+                                  .map(f -> {
+                                      try {
 
-                                                 return f.get(getInstance());
-                                             } catch (Exception e) {
-                                                 ExceptionSoftener.throwSoftenedException(e);
-                                                 return null;
-                                             }
-                                         })
-                                         .collect(Collectors.toList());
-        } catch (Exception e) {
+                                          return f.get(getInstance());
+                                      } catch (final Exception e) {
+                                          ExceptionSoftener.throwSoftenedException(e);
+                                          return null;
+                                      }
+                                  })
+                                  .collect(Collectors.toList());
+        } catch (final Exception e) {
             throw ExceptionSoftener.throwSoftenedException(e);
 
         }

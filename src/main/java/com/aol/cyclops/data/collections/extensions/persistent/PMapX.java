@@ -38,17 +38,17 @@ public interface PMapX<K, V>
                                    HashTreePMap.empty());
     }
 
-    public static <K, V> PMapX<K, V> singleton(K key, V value) {
+    public static <K, V> PMapX<K, V> singleton(final K key, final V value) {
         return new PMapXImpl<K, V>(
                                    HashTreePMap.singleton(key, value));
     }
 
-    public static <K, V> PMapX<K, V> fromMap(Map<? extends K, ? extends V> map) {
+    public static <K, V> PMapX<K, V> fromMap(final Map<? extends K, ? extends V> map) {
         return new PMapXImpl<K, V>(
                                    HashTreePMap.from(map));
     }
 
-    default PMapX<K, V> fromStream(ReactiveSeq<Tuple2<K, V>> stream) {
+    default PMapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
         return stream.toPMapX(k -> k.v1, v -> v.v2);
     }
 
@@ -96,7 +96,7 @@ public interface PMapX<K, V>
     @Override
     default ReactiveSeq<Tuple2<K, V>> stream() {
 
-        return ReactiveSeq.fromIterable(this.entrySet())
+        return ReactiveSeq.fromIterable(entrySet())
                           .map(e -> Tuple.tuple(e.getKey(), e.getValue()));
     }
 
@@ -104,7 +104,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
      */
     @Override
-    default <R> PMapX<K, R> map(Function<? super V, ? extends R> fn) {
+    default <R> PMapX<K, R> map(final Function<? super V, ? extends R> fn) {
         return stream().map(t -> t.map2(v -> fn.apply(v)))
                        .toPMapX(t -> t.v1, t -> t.v2);
     }
@@ -113,7 +113,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
-    default <R1, R2> PMapX<R1, R2> bimap(Function<? super K, ? extends R1> fn1, Function<? super V, ? extends R2> fn2) {
+    default <R1, R2> PMapX<R1, R2> bimap(final Function<? super K, ? extends R1> fn1, final Function<? super V, ? extends R2> fn2) {
 
         return stream().map(t -> t.map2(v -> fn2.apply(v))
                                   .map1(k -> fn1.apply(k)))
@@ -124,7 +124,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
-    default PMapX<K, V> bipeek(Consumer<? super K> c1, Consumer<? super V> c2) {
+    default PMapX<K, V> bipeek(final Consumer<? super K> c1, final Consumer<? super V> c2) {
 
         return (PMapX<K, V>) BiFunctor.super.bipeek(c1, c2);
     }
@@ -133,7 +133,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.BiFunctor#bicast(java.lang.Class, java.lang.Class)
      */
     @Override
-    default <U1, U2> PMapX<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
+    default <U1, U2> PMapX<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
 
         return (PMapX<U1, U2>) BiFunctor.super.bicast(type1, type2);
     }
@@ -142,8 +142,8 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
-    default <R1, R2> PMapX<R1, R2> bitrampoline(Function<? super K, ? extends Trampoline<? extends R1>> mapper1,
-            Function<? super V, ? extends Trampoline<? extends R2>> mapper2) {
+    default <R1, R2> PMapX<R1, R2> bitrampoline(final Function<? super K, ? extends Trampoline<? extends R1>> mapper1,
+            final Function<? super V, ? extends Trampoline<? extends R2>> mapper2) {
 
         return (PMapX) BiFunctor.super.bitrampoline(mapper1, mapper2);
     }
@@ -152,7 +152,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> PMapX<K, U> cast(Class<? extends U> type) {
+    default <U> PMapX<K, U> cast(final Class<? extends U> type) {
 
         return (PMapX<K, U>) Functor.super.cast(type);
     }
@@ -161,7 +161,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
      */
     @Override
-    default PMapX<K, V> peek(Consumer<? super V> c) {
+    default PMapX<K, V> peek(final Consumer<? super V> c) {
 
         return (PMapX<K, V>) Functor.super.peek(c);
     }
@@ -170,7 +170,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> PMapX<K, R> trampoline(Function<? super V, ? extends Trampoline<? extends R>> mapper) {
+    default <R> PMapX<K, R> trampoline(final Function<? super V, ? extends Trampoline<? extends R>> mapper) {
 
         return (PMapX<K, R>) Functor.super.trampoline(mapper);
     }
@@ -179,7 +179,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
      */
     @Override
-    default PMapX<K, V> filter(Predicate<? super Tuple2<K, V>> fn) {
+    default PMapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
         return stream().filter(fn)
                        .toPMapX(t -> t.v1, t -> t.v2);
     }
@@ -188,7 +188,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default PMapX<K, V> filterNot(Predicate<? super Tuple2<K, V>> fn) {
+    default PMapX<K, V> filterNot(final Predicate<? super Tuple2<K, V>> fn) {
 
         return (PMapX<K, V>) IterableFilterable.super.filterNot(fn);
     }
@@ -206,7 +206,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.util.stream.Stream)
      */
     @Override
-    default PMapX<K, V> removeAll(Stream<? extends Tuple2<K, V>> stream) {
+    default PMapX<K, V> removeAll(final Stream<? extends Tuple2<K, V>> stream) {
 
         return (PMapX<K, V>) IterableFilterable.super.removeAll(stream);
     }
@@ -215,7 +215,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
      */
     @Override
-    default PMapX<K, V> removeAll(Iterable<? extends Tuple2<K, V>> it) {
+    default PMapX<K, V> removeAll(final Iterable<? extends Tuple2<K, V>> it) {
 
         return (PMapX<K, V>) IterableFilterable.super.removeAll(it);
     }
@@ -224,7 +224,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Object[])
      */
     @Override
-    default PMapX<K, V> removeAll(Tuple2<K, V>... values) {
+    default PMapX<K, V> removeAll(final Tuple2<K, V>... values) {
 
         return (PMapX<K, V>) IterableFilterable.super.removeAll(values);
     }
@@ -233,7 +233,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Iterable)
      */
     @Override
-    default PMapX<K, V> retainAll(Iterable<? extends Tuple2<K, V>> it) {
+    default PMapX<K, V> retainAll(final Iterable<? extends Tuple2<K, V>> it) {
 
         return (PMapX<K, V>) IterableFilterable.super.retainAll(it);
     }
@@ -242,7 +242,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.util.stream.Stream)
      */
     @Override
-    default PMapX<K, V> retainAll(Stream<? extends Tuple2<K, V>> stream) {
+    default PMapX<K, V> retainAll(final Stream<? extends Tuple2<K, V>> stream) {
 
         return (PMapX<K, V>) IterableFilterable.super.retainAll(stream);
     }
@@ -251,7 +251,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
      */
     @Override
-    default PMapX<K, V> retainAll(Tuple2<K, V>... values) {
+    default PMapX<K, V> retainAll(final Tuple2<K, V>... values) {
 
         return (PMapX<K, V>) IterableFilterable.super.retainAll(values);
     }
@@ -260,7 +260,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> PMapX<K, R> patternMatch(Function<CheckValue1<V, R>, CheckValue1<V, R>> case1, Supplier<? extends R> otherwise) {
+    default <R> PMapX<K, R> patternMatch(final Function<CheckValue1<V, R>, CheckValue1<V, R>> case1, final Supplier<? extends R> otherwise) {
 
         return (PMapX<K, R>) Functor.super.patternMatch(case1, otherwise);
     }
@@ -269,7 +269,7 @@ public interface PMapX<K, V>
      * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
      */
     @Override
-    default void subscribe(Subscriber<? super Tuple2<K, V>> s) {
+    default void subscribe(final Subscriber<? super Tuple2<K, V>> s) {
         stream().subscribe(s);
 
     }
@@ -278,7 +278,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.types.OnEmpty#onEmpty(java.lang.Object)
      */
     @Override
-    default PMapX<K, V> onEmpty(Tuple2<K, V> value) {
+    default PMapX<K, V> onEmpty(final Tuple2<K, V> value) {
         return fromStream(stream().onEmpty(value));
     }
 
@@ -286,7 +286,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.types.OnEmpty#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    default PMapX<K, V> onEmptyGet(Supplier<? extends Tuple2<K, V>> supplier) {
+    default PMapX<K, V> onEmptyGet(final Supplier<? extends Tuple2<K, V>> supplier) {
 
         return fromStream(stream().onEmptyGet(supplier));
     }
@@ -295,7 +295,7 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.types.OnEmpty#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> PMapX<K, V> onEmptyThrow(Supplier<? extends X> supplier) {
+    default <X extends Throwable> PMapX<K, V> onEmptyThrow(final Supplier<? extends X> supplier) {
 
         return fromStream(stream().onEmptyThrow(supplier));
     }
@@ -304,8 +304,8 @@ public interface PMapX<K, V>
      * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
-    default PMapX<K, V> onEmptySwitch(Supplier<? extends PMap<K, V>> supplier) {
-        if (this.isEmpty())
+    default PMapX<K, V> onEmptySwitch(final Supplier<? extends PMap<K, V>> supplier) {
+        if (isEmpty())
             return PMapX.fromMap(supplier.get());
         return this;
     }

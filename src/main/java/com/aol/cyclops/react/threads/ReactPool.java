@@ -26,7 +26,7 @@ public class ReactPool<REACTOR extends ReactBuilder> {
 
     private final Supplier<REACTOR> supplier;
 
-    private ReactPool(int size) {
+    private ReactPool(final int size) {
         queue = new LinkedBlockingQueue<REACTOR>(
                                                  size);
         supplier = null;
@@ -37,12 +37,12 @@ public class ReactPool<REACTOR extends ReactBuilder> {
         supplier = null;
     }
 
-    private ReactPool(BlockingQueue<REACTOR> queue) {
+    private ReactPool(final BlockingQueue<REACTOR> queue) {
         this.queue = queue;
         supplier = null;
     }
 
-    private ReactPool(Supplier<REACTOR> supplier) {
+    private ReactPool(final Supplier<REACTOR> supplier) {
         this.queue = new LinkedBlockingQueue<REACTOR>();
         this.supplier = supplier;
     }
@@ -53,9 +53,9 @@ public class ReactPool<REACTOR extends ReactBuilder> {
      * @param reactors Create a bounded pool of the specified REACTORs
      * @return ReactPool
      */
-    public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> boundedPool(Collection<REACTOR> reactors) {
-        ReactPool<REACTOR> r = new ReactPool<>(
-                                               reactors.size());
+    public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> boundedPool(final Collection<REACTOR> reactors) {
+        final ReactPool<REACTOR> r = new ReactPool<>(
+                                                     reactors.size());
         reactors.forEach(r::populate);
         return r;
     }
@@ -66,8 +66,8 @@ public class ReactPool<REACTOR extends ReactBuilder> {
      * @param reactors Create a unbounded pool of the specified REACTORs, additional REACTORs can be added via populate
      * @return ReactPool
      */
-    public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> unboundedPool(Collection<REACTOR> reactors) {
-        ReactPool<REACTOR> r = new ReactPool<>();
+    public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> unboundedPool(final Collection<REACTOR> reactors) {
+        final ReactPool<REACTOR> r = new ReactPool<>();
         reactors.forEach(r::populate);
         return r;
     }
@@ -80,7 +80,7 @@ public class ReactPool<REACTOR extends ReactBuilder> {
      * @param supplier To create new REACTORs
      * @return ReactPool
      */
-    public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> elasticPool(Supplier<REACTOR> supplier) {
+    public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> elasticPool(final Supplier<REACTOR> supplier) {
         return new ReactPool<>(
                                supplier);
 
@@ -91,8 +91,8 @@ public class ReactPool<REACTOR extends ReactBuilder> {
      */
     public static <REACTOR extends ReactBuilder> ReactPool<REACTOR> syncrhonousPool() {
 
-        ReactPool<REACTOR> r = new ReactPool<>(
-                                               new SynchronousQueue<>());
+        final ReactPool<REACTOR> r = new ReactPool<>(
+                                                     new SynchronousQueue<>());
 
         return r;
     }
@@ -100,11 +100,11 @@ public class ReactPool<REACTOR extends ReactBuilder> {
     /**
      * @param next REACTOR to add to the Pool
      */
-    public void populate(REACTOR next) {
+    public void populate(final REACTOR next) {
 
         try {
             queue.put(next);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.currentThread()
                   .interrupt();
             throw ExceptionSoftener.throwSoftenedException(e);
@@ -117,7 +117,7 @@ public class ReactPool<REACTOR extends ReactBuilder> {
      * 				This method will extract and return the REACTOR to the pool.
      * @return typically will return the result of Stream execution (result of fn.apply(reactor))
      */
-    public <T> T react(Function<? super REACTOR, ? extends T> fn) {
+    public <T> T react(final Function<? super REACTOR, ? extends T> fn) {
         REACTOR reactor = null;
 
         try {
@@ -145,7 +145,7 @@ public class ReactPool<REACTOR extends ReactBuilder> {
                 } else
                     reactor = queue.take();
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.currentThread()
                   .interrupt();
             throw ExceptionSoftener.throwSoftenedException(e);

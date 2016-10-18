@@ -14,7 +14,7 @@ import com.aol.cyclops.types.futurestream.LazyFutureStream;
  */
 public class PushableLazyFutureStream<T> extends AbstractPushableStream<T, Queue<T>, LazyFutureStream<T>> {
 
-    public PushableLazyFutureStream(Queue<T> v1, LazyFutureStream<T> v2) {
+    public PushableLazyFutureStream(final Queue<T> v1, final LazyFutureStream<T> v2) {
         super(v1, v2);
 
     }

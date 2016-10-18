@@ -10,32 +10,33 @@ import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
 public class FutureFunctorComprehender implements ValueComprehender<FutureW> {
+    @Override
     public Class getTargetClass() {
         return FutureW.class;
     }
 
     @Override
-    public Object map(FutureW t, Function fn) {
+    public Object map(final FutureW t, final Function fn) {
         return t.map(fn);
     }
 
     @Override
-    public Object filter(FutureW t, Predicate p) {
+    public Object filter(final FutureW t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public FutureW flatMap(FutureW t, Function fn) {
+    public FutureW flatMap(final FutureW t, final Function fn) {
         return t.flatMap(fn);
     }
 
     @Override
-    public boolean instanceOfT(Object apply) {
+    public boolean instanceOfT(final Object apply) {
         return apply instanceof FutureW;
     }
 
     @Override
-    public FutureW of(Object o) {
+    public FutureW of(final Object o) {
         return FutureW.of(CompletableFuture.completedFuture(o));
     }
 
@@ -45,8 +46,8 @@ public class FutureFunctorComprehender implements ValueComprehender<FutureW> {
     }
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, FutureW apply) {
-        Xor<Throwable, ?> res = apply.toXor();
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final FutureW apply) {
+        final Xor<Throwable, ?> res = apply.toXor();
         return res.isPrimary() ? comp.of(res.get()) : comp.empty();
     }
 

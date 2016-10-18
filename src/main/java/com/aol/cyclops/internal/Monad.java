@@ -39,10 +39,12 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
 
     public <T> Monad<T> withMonad(Object invoke);
 
-    default <T> Monad<T> withFunctor(T functor) {
+    @Override
+    default <T> Monad<T> withFunctor(final T functor) {
         return withMonad(functor);
     }
 
+    @Override
     default Object getFunctor() {
         return unwrap();
     }
@@ -67,9 +69,9 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
      * @return A Monad that wraps a Stream
      */
     default <NT> Monad<NT> streamedMonad() {
-        Stream stream = Stream.of(1);
-        Monad r = this.<T> withMonad((Stream) new ComprehenderSelector().selectComprehender(stream)
-                                                                        .executeflatMap(stream, i -> unwrap()));
+        final Stream stream = Stream.of(1);
+        final Monad r = this.<T> withMonad((Stream) new ComprehenderSelector().selectComprehender(stream)
+                                                                              .executeflatMap(stream, i -> unwrap()));
         return r.bind(e -> e);
     }
 
@@ -83,7 +85,7 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
             return (Stream) unwrap();
         if (unwrap() instanceof Iterable)
             return StreamSupport.stream(((Iterable) unwrap()).spliterator(), false);
-        Stream stream = Stream.of(1);
+        final Stream stream = Stream.of(1);
         return (Stream) withMonad((Stream) new ComprehenderSelector().selectComprehender(stream)
                                                                      .executeflatMap(stream, i -> unwrap())).unwrap();
 
@@ -95,17 +97,18 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
      * @param times Times values should be repeated within a Stream
      * @return Stream with values repeated
      */
-    default Monad<T> cycle(int times) {
+    default Monad<T> cycle(final int times) {
 
         return fromStream(SeqUtils.cycle(times, Streamable.fromStream(stream())));
 
     }
 
     @Override
-    default WrappingFilterable<T> withFilterable(T filter) {
+    default WrappingFilterable<T> withFilterable(final T filter) {
         return withMonad(filter);
     }
 
+    @Override
     default Object getFilterable() {
         return unwrap();
     }
@@ -113,21 +116,24 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
      */
-    default Monad<T> filter(Predicate<? super T> fn) {
+    @Override
+    default Monad<T> filter(final Predicate<? super T> fn) {
         return (Monad) WrappingFilterable.super.filter(fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
      */
-    default <R> Monad<R> map(Function<? super T, ? extends R> fn) {
+    @Override
+    default <R> Monad<R> map(final Function<? super T, ? extends R> fn) {
         return (Monad) WrappingFunctor.super.map(fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
      */
-    default Monad<T> peek(Consumer<? super T> c) {
+    @Override
+    default Monad<T> peek(final Consumer<? super T> c) {
         return (Monad) WrappingFunctor.super.peek(c);
     }
 
@@ -138,7 +144,7 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
      * @param fn flatMap function
      * @return flatMapped monad
      */
-    default <R> Monad<R> bind(Function<? super T, ?> fn) {
+    default <R> Monad<R> bind(final Function<? super T, ?> fn) {
         return withMonad(new ComprehenderSelector().selectComprehender(unwrap())
                                                    .executeflatMap(unwrap(), fn));
 
@@ -151,7 +157,7 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
      * @param fn flatMap function
      * @return flatMapped monad
      */
-    default <R> Monad<R> liftAndBind(Function<? super T, ?> fn) {
+    default <R> Monad<R> liftAndBind(final Function<? super T, ?> fn) {
         return withMonad(new ComprehenderSelector().selectComprehender(unwrap())
                                                    .liftAndFlatMap(unwrap(), fn));
 
@@ -166,11 +172,11 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
         return this.<T1> bind(t -> t instanceof AnyM ? (T1) ((AnyM) t).unwrap() : (T1) t);
     }
 
-    default <R> Monad<R> flatMapToStream(Function<Object, ? extends Stream<? extends R>> fn) {
+    default <R> Monad<R> flatMapToStream(final Function<Object, ? extends Stream<? extends R>> fn) {
 
-        Stream stream = Stream.of(1);
-        Monad r = this.<T> withMonad((Stream) new ComprehenderSelector().selectComprehender(stream)
-                                                                        .executeflatMap(stream, i -> unwrap()));
+        final Stream stream = Stream.of(1);
+        final Monad r = this.<T> withMonad((Stream) new ComprehenderSelector().selectComprehender(stream)
+                                                                              .executeflatMap(stream, i -> unwrap()));
         return r.bind(e -> e);
 
     }
@@ -181,22 +187,22 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
      * @param value  to construct new instance with
      * @return new instance of underlying Monad
      */
-    default <T> Object unit(T value) {
+    default <T> Object unit(final T value) {
         return new ComprehenderSelector().selectComprehender(unwrap())
                                          .of(value);
     }
 
     default T get() {
-        Mutable<T> captured = Mutable.of(null);
+        final Mutable<T> captured = Mutable.of(null);
 
-        Comprehender c = new ComprehenderSelector().selectComprehender((Object) unwrap());
+        final Comprehender c = new ComprehenderSelector().selectComprehender(unwrap());
         c.resolveForCrossTypeFlatMap(new ValueComprehender() {
 
             /* (non-Javadoc)
              * @see com.aol.cyclops.lambda.api.Comprehender#of(java.lang.Object)
              */
             @Override
-            public Object of(Object o) {
+            public Object of(final Object o) {
                 return captured.set((T) o);
             }
 
@@ -209,13 +215,13 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
             }
 
             @Override
-            public Object map(Object t, Function fn) {
+            public Object map(final Object t, final Function fn) {
                 // TODO Auto-generated method stub
                 return null;
             }
 
             @Override
-            public Object flatMap(Object t, Function fn) {
+            public Object flatMap(final Object t, final Function fn) {
                 // TODO Auto-generated method stub
                 return null;
             }
@@ -233,6 +239,7 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Functor#unwrap()
      */
+    @Override
     Object unwrap();
 
     public <T> AnyMValue<T> anyMValue();
@@ -241,7 +248,7 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
 
     public <T> ReactiveSeq<T> sequence();
 
-    public static <T> Monad<T> of(Object o) {
+    public static <T> Monad<T> of(final Object o) {
         return new MonadWrapper(
                                 o);
     }
@@ -251,7 +258,7 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
                                                  .empty();
     }
 
-    static <T> Monad<T> fromStream(Stream<T> monad) {
+    static <T> Monad<T> fromStream(final Stream<T> monad) {
         return new MonadWrapper<>(
                                   monad);
     }
@@ -280,7 +287,7 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
         }
      * </pre>
      */
-    default <R> Monad<R> applyM(Monad<Function<? super T, ? extends R>> fn) {
+    default <R> Monad<R> applyM(final Monad<Function<? super T, ? extends R>> fn) {
 
         return (Monad) this.bind(v -> fn.map(innerFn -> innerFn.apply(v))
                                         .unwrap());
@@ -304,7 +311,7 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
      * @param times number of times to replicate
      * @return Replicated Monad
      */
-    default <R> Monad<R> replicateM(int times) {
+    default <R> Monad<R> replicateM(final int times) {
 
         return (Monad) new MonadWrapper<>(
                                           unit(1)).flatten()
@@ -322,7 +329,7 @@ public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
      * 
      * 
      */
-    default <R> Monad<R> reduceM(Monoid<R> reducer) {
+    default <R> Monad<R> reduceM(final Monoid<R> reducer) {
         //  List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
         //  convert to list Optionals
 

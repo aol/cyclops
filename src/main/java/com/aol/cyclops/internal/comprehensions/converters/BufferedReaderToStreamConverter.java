@@ -11,17 +11,18 @@ public class BufferedReaderToStreamConverter implements MonadicConverter<Stream>
 
     public static int priority = 5;
 
+    @Override
     public int priority() {
         return priority;
     }
 
     @Override
-    public boolean accept(Object o) {
+    public boolean accept(final Object o) {
         return o instanceof BufferedReader;
     }
 
     @Override
-    public Stream convertToMonadicForm(Object f) {
+    public Stream convertToMonadicForm(final Object f) {
         val reader = (BufferedReader) f;
         return reader.lines();
     }
