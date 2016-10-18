@@ -46,6 +46,13 @@ import com.aol.cyclops.util.function.Predicates;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * A data type that stores at most 1 Values
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of element in this value
+ */
 @FunctionalInterface
 public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publisher<T>, Predicate<T>, Zippable<T> {
 
@@ -54,11 +61,16 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
      *  (non-Javadoc)
      * @see java.lang.Iterable#iterator()
      */
+    @Override
     default Iterator<T> iterator() {
         return Convertable.super.iterator();
     }
 
-    default boolean test(T t) {
+    /* (non-Javadoc)
+     * @see java.util.function.Predicate#test(java.lang.Object)
+     */
+    @Override
+    default boolean test(final T t) {
         if (!(t instanceof Value))
             return Predicates.eqv(Maybe.ofNullable(t))
                              .test(this);
@@ -68,19 +80,25 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
 
     }
 
+    /**
+     * @return A factory class generating Values from reactive-streams Subscribers
+     */
     default ValueSubscriber<T> newSubscriber() {
         return ValueSubscriber.subscriber();
     }
 
+    /* (non-Javadoc)
+     * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
+     */
     @Override
-    default void subscribe(Subscriber<? super T> sub) {
+    default void subscribe(final Subscriber<? super T> sub) {
         sub.onSubscribe(new Subscription() {
 
             AtomicBoolean running = new AtomicBoolean(
                                                       true);
 
             @Override
-            public void request(long n) {
+            public void request(final long n) {
 
                 if (n < 1) {
                     sub.onError(new IllegalArgumentException(
@@ -95,7 +113,7 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
 
                     sub.onNext(get());
 
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     sub.onError(t);
 
                 }
@@ -119,7 +137,13 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
 
     }
 
-    public static <T> Value<T> of(Supplier<T> supplier) {
+    /**
+     * Construct a generic Value from the provided Supplier 
+     * 
+     * @param supplier Value supplier
+     * @return Value wrapping a value that can be generated from the provided Supplier
+     */
+    public static <T> Value<T> of(final Supplier<T> supplier) {
         return new ValueImpl<T>(
                                 supplier);
     }
@@ -128,6 +152,7 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
     public static class ValueImpl<T> implements Value<T> {
         private final Supplier<T> delegate;
 
+        @Override
         public T get() {
             return delegate.get();
         }
@@ -138,51 +163,95 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#stream()
+     */
+    @Override
     default ReactiveSeq<T> stream() {
         return ReactiveSeq.of(Try.withCatch(() -> get(), NoSuchElementException.class))
                           .filter(Try::isSuccess)
                           .map(Try::get);
     }
 
+    /**
+     * @return This value converted to a List (for pattern matching purposes)
+     */
     default ListX<?> unapply() {
         return toListX();
     }
 
-    default ReactiveSeq<T> iterate(UnaryOperator<T> fn) {
+    /**
+     * Use the value stored in this Value to seed a Stream generated from the provided function
+     * 
+     * @param fn Function to generate a Stream
+     * @return Stream generated from a seed value (the Value stored in this Value) and the provided function
+     */
+    default ReactiveSeq<T> iterate(final UnaryOperator<T> fn) {
         return ReactiveSeq.iterate(get(), fn);
     }
 
+    /**
+     * @return A Stream that repeats the value stored in this Value over and over
+     */
     default ReactiveSeq<T> generate() {
         return ReactiveSeq.generate(this);
     }
 
-    default <E> E mapReduce(Reducer<E> monoid) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#mapReduce(com.aol.cyclops.Reducer)
+     */
+    @Override
+    default <E> E mapReduce(final Reducer<E> monoid) {
         return monoid.mapReduce(toStream());
     }
 
-    default T fold(Monoid<T> monoid) {
+    /**
+     * Use the supplied Monoid to reduce this Value to a single result (unwraps the value stored in this Value 
+     * if the provided Monoid instance obeys the Monoid laws)
+     * 
+     * @param monoid Monoid to apply to this value
+     * @return The value stored inside this Value
+     */
+    default T fold(final Monoid<T> monoid) {
         return monoid.reduce(toStream());
     }
 
-    default T fold(T identity, BinaryOperator<T> accumulator) {
-        Optional<T> opt = toOptional();
+    /**
+     * Use the supplied identity value and function to reduce this Value to a single result (unwraps the value stored in this Value 
+     * if the provided monoid combination instance obeys the Monoid laws)
+     * 
+     * @param identity Identity value
+     * @param accumulator Accumulation function
+     * @return Result of applying Value stored in this value and the identity value to the provided accumulator
+     */
+    default T fold(final T identity, final BinaryOperator<T> accumulator) {
+        final Optional<T> opt = toOptional();
         if (opt.isPresent())
             return accumulator.apply(identity, get());
         return identity;
     }
 
+    /**
+     * @return LazyImmutable that has the same value as this Value
+     */
     default LazyImmutable<T> toLazyImmutable() {
         return LazyImmutable.of(get());
     }
 
+    /**
+     * @return Mutable that has the same value as this Value
+     */
     default Mutable<T> toMutable() {
         return Mutable.of(get());
     }
 
+    /**
+     * @return Primary Xor that has the same value as this Value
+     */
     default Xor<?, T> toXor() {
         if (this instanceof Xor)
             return (Xor) this;
-        Optional<T> o = toOptional();
+        final Optional<T> o = toOptional();
         return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(new NoSuchElementException());
 
     }
@@ -191,36 +260,49 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
      * Convert to an Xor where the secondary value will be used if no primary value is present
      * 
     * @param secondary Value to use in case no primary value is present
-    * @return
+    * @return Primary Xor with same value as this Value, or a Secondary Xor with the provided Value if this Value is empty
     */
-    default <ST> Xor<ST, T> toXor(ST secondary) {
-        Optional<T> o = toOptional();
+    default <ST> Xor<ST, T> toXor(final ST secondary) {
+        final Optional<T> o = toOptional();
         return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(secondary);
     }
 
-    default <X extends Throwable> Try<T, X> toTry(X throwable) {
+    /**
+     * @param throwable Exception to use if this Value is empty
+     * @return Try that has the same value as this Value or the provided Exception
+     */
+    default <X extends Throwable> Try<T, X> toTry(final X throwable) {
         return toXor().visit(secondary -> Try.failure(throwable), primary -> Try.success(primary));
 
     }
 
+    /**
+     * @return This Value converted to a Try. If this Value is empty the Try will contain a NoSuchElementException
+     */
     default Try<T, Throwable> toTry() {
         return toXor().visit(secondary -> Try.failure(new NoSuchElementException()), primary -> Try.success(primary));
 
     }
 
-    default <X extends Throwable> Try<T, X> toTry(Class<X>... classes) {
+    /**
+     * Convert this Value to a Try that will catch the provided exception types on subsequent operations
+     * 
+     * @param classes Exception classes to catch on subsequent operations
+     * @return This Value to converted to a Try.
+     */
+    default <X extends Throwable> Try<T, X> toTry(final Class<X>... classes) {
         return Try.withCatch(() -> get(), classes);
     }
 
     default Ior<?, T> toIor() {
         if (this instanceof Ior)
             return (Ior) this;
-        Optional<T> o = toOptional();
+        final Optional<T> o = toOptional();
         return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(new NoSuchElementException());
     }
 
     default FeatureToggle<T> toFeatureToggle() {
-        Optional<T> opt = toOptional();
+        final Optional<T> opt = toOptional();
         return opt.isPresent() ? FeatureToggle.enable(opt.get()) : FeatureToggle.disable(null);
     }
 
@@ -287,15 +369,11 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
     default String mkString() {
 
         if (isPresent())
-            return this.getClass()
-                       .getSimpleName()
-                    + "[" + get() + "]";
-        return this.getClass()
-                   .getSimpleName()
-                + "[]";
+            return getClass().getSimpleName() + "[" + get() + "]";
+        return getClass().getSimpleName() + "[]";
     }
 
-    default LazyFutureStream<T> toFutureStream(LazyReact reactor) {
+    default LazyFutureStream<T> toFutureStream(final LazyReact reactor) {
         return reactor.ofAsync(this);
     }
 
@@ -303,7 +381,7 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
         return new LazyReact().ofAsync(this);
     }
 
-    default SimpleReactStream<T> toSimpleReact(SimpleReact reactor) {
+    default SimpleReactStream<T> toSimpleReact(final SimpleReact reactor) {
         return reactor.ofAsync(this);
     }
 
@@ -311,7 +389,11 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
         return new SimpleReact().ofAsync(this);
     }
 
-    default <R, A> R collect(Collector<? super T, A, R> collector) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#collect(java.util.stream.Collector)
+     */
+    @Override
+    default <R, A> R collect(final Collector<? super T, A, R> collector) {
         final A state = collector.supplier()
                                  .get();
         collector.accumulator()
@@ -320,6 +402,10 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
                         .apply(state);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toList()
+     */
+    @Override
     default List<T> toList() {
         return Convertable.super.toList();
     }

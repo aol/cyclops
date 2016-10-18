@@ -10,6 +10,13 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.control.ReactiveSeq;
 
+/**
+ * A Data Type that can be comined with another data type 
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of element(s) of this Zippable
+ */
 public interface Zippable<T> extends Iterable<T> {
     /**
      * Zip (combine) this Zippable with the supplied Iterable using the supplied combining function
