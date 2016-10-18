@@ -130,7 +130,7 @@ public interface TransformerTraversable<T> {
      * current value and can choose to aggregate the current value or create a
      * new window
      * 
-   
+    
      * 
      * 
      * @param predicate Predicate to determine batch

@@ -854,9 +854,10 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
      * @param sortedSetX to narrow generic type
      * @return SortedSetX with narrowed type
      */
-    public  static <T> SortedSetX<T> narrow(SortedSetX<? extends T> setX){
-        return (SortedSetX<T>)setX;
+    public static <T> SortedSetX<T> narrow(SortedSetX<? extends T> setX) {
+        return (SortedSetX<T>) setX;
     }
+
     static class Comparables {
 
         static <T, R extends ReactiveSeq<T> & Comparable<T>> R comparable(Seq<T> seq) {

@@ -838,7 +838,7 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,
 
         return (SetX<T>) MutableCollectionX.super.retainAll(stream);
     }
-    
+
     /**
      * Narrow a covariant Set
      * 
@@ -852,8 +852,8 @@ public interface SetX<T> extends Set<T>, MutableCollectionX<T>, OnEmptySwitch<T,
      * @param setX to narrow generic type
      * @return SetX with narrowed type
      */
-    public  static <T> SetX<T> narrow(SetX<? extends T> setX){
-        return (SetX<T>)setX;
+    public static <T> SetX<T> narrow(SetX<? extends T> setX) {
+        return (SetX<T>) setX;
     }
 
 }

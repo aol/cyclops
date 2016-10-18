@@ -100,6 +100,7 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
      */
     <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
+
     /**
      * A flattening transformation operation that takes the first value from the returned Iterable.
      * 
@@ -133,11 +134,15 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
      * @return  MonadicValue
      */
     default <R> MonadicValue<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+
         return this.flatMap(a -> {
             Publisher<? extends R> publisher = mapper.apply(a);
             ValueSubscriber<R> sub = ValueSubscriber.subscriber();
             publisher.subscribe(sub);
-            return unit(sub.get());
+
+            Maybe<R> maybe = sub.toMaybe();
+            return unit(maybe.get());
+
         });
     }
 }

@@ -23,9 +23,10 @@ public interface TriConsumer<S1, S2, S3> {
      * @param c3 jOOλ Consumer3
      * @return cyclops-react TriConsumer
      */
-    static <S1, S2, S3> TriConsumer<S1, S2, S3> fromConsumer3(Consumer3<S1,S2,S3> c3){
-        return (a,b,c) ->c3.accept(a,b,c);
+    static <S1, S2, S3> TriConsumer<S1, S2, S3> fromConsumer3(Consumer3<S1, S2, S3> c3) {
+        return (a, b, c) -> c3.accept(a, b, c);
     }
+
     /**
      * Performs operation with input parameters
      *
@@ -38,9 +39,10 @@ public interface TriConsumer<S1, S2, S3> {
     /**
      * @return A jOOλ Consumer3
      */
-    default Consumer3<S1,S2,S3> consumer3(){
-       return (a,b,c)->accept(a,b,c);
+    default Consumer3<S1, S2, S3> consumer3() {
+        return (a, b, c) -> accept(a, b, c);
     }
+
     /**
      * Partially apply the first input parameter to this TriConsumer
      * 

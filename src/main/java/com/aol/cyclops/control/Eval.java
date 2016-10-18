@@ -422,6 +422,7 @@ public interface Eval<T>
     static class Module {
 
         static <T> Eval<T> asEval(final MonadicValue<T> value) {
+
             if (value instanceof Eval)
                 return (Eval<T>) value;
             return value.toEvalAlways();
@@ -445,9 +446,11 @@ public interface Eval<T>
                                     super.fns.plus(Rec.raw(Memoize.memoizeFunction(mapper))));
             }
 
+
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
                 final RecFunction s = __ -> asEval(mapper.apply(super.apply())).steps();
+
                 return new Later<R>(
                                     PVectorX.of(s));
 
@@ -518,9 +521,14 @@ public interface Eval<T>
 
             }
 
+<<<<<<< HEAD
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
                 final RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
+=======
+            public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
+                RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
+>>>>>>> master
                 return new Always<R>(
                                      PVectorX.of(s));
             }

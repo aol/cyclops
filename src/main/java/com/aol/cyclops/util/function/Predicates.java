@@ -21,7 +21,6 @@ import com.aol.cyclops.types.Value;
 
 import lombok.NoArgsConstructor;
 
-
 /**
  * 
  * Placeholder class for Predicates useful for pattern matching, filtering etc.
@@ -97,8 +96,6 @@ public class Predicates {
     public static <T> Predicate<T> some(T value) {
         return eq(value);
     }
-
-  
 
     /**
      * wildcard predicate

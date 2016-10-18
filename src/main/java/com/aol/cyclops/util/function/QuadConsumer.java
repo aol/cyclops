@@ -25,9 +25,10 @@ public interface QuadConsumer<T1, T2, T3, T4> {
      * @param c4 jOOλ Consumer4
      * @return cyclops-react QuadConsumer
      */
-    static <S1, S2, S3,S4> QuadConsumer<S1, S2, S3,S4> fromConsumer3(Consumer4<S1,S2,S3,S4> c4){
-        return (a,b,c,d) ->c4.accept(a,b,c,d);
+    static <S1, S2, S3, S4> QuadConsumer<S1, S2, S3, S4> fromConsumer3(Consumer4<S1, S2, S3, S4> c4) {
+        return (a, b, c, d) -> c4.accept(a, b, c, d);
     }
+
     /**
      * Performs operation with input parameters
      * 
@@ -41,9 +42,10 @@ public interface QuadConsumer<T1, T2, T3, T4> {
     /**
      * @return A jOOλ Consumer4
      */
-    default Consumer4<T1,T2,T3,T4> consumer4(){
-       return (a,b,c,d)->accept(a,b,c,d);
+    default Consumer4<T1, T2, T3, T4> consumer4() {
+        return (a, b, c, d) -> accept(a, b, c, d);
     }
+
     /**
      * Partially apply the first input parameter to this QuadConsumer
      * 

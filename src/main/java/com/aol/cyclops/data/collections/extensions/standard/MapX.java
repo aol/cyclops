@@ -46,8 +46,6 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
 public interface MapX<K, V> extends Map<K, V>, FluentMapX<K, V>, BiFunctor<K, V>, Functor<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
         OnEmptySwitch<Tuple2<K, V>, Map<K, V>>, Publisher<Tuple2<K, V>>, Foldable<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {
 
-    
-    
     /**
      * 
      * @return A Collector that generates a mutable Map from a Collection of Tuple2
@@ -446,53 +444,60 @@ public interface MapX<K, V> extends Map<K, V>, FluentMapX<K, V>, BiFunctor<K, V>
             return MapX.fromMap(supplier.get());
         return this;
     }
-    
+
     /**
      * Convert this MapX to a ListX via the provided transformation function
      * 
      * @param fn Mapping function to transform each Map entry into a single value
      * @return ListX of transformed values
      */
-    default <T> ListX<T> toListX(Function<? super Tuple2<? super K,? super V>,? extends T> fn){
-        return ListX.narrow(stream().map(fn).toListX());
+    default <T> ListX<T> toListX(Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return ListX.narrow(stream().map(fn)
+                                    .toListX());
     }
+
     /**
      * Convert this MapX to a SetX via the provided transformation function
      * 
      * @param fn Mapping function to transform each Map entry into a single value
      * @return SetX of transformed values
      */
-    default <T> SetX<T> toSetX(Function<? super Tuple2<? super K,? super V>,? extends T> fn){
-        return SetX.narrow(stream().map(fn).toSetX());
+    default <T> SetX<T> toSetX(Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return SetX.narrow(stream().map(fn)
+                                   .toSetX());
     }
+
     /**
      * Convert this MapX to a SortedSetX via the provided transformation function
      * 
      * @param fn Mapping function to transform each Map entry into a single value
      * @return SortedSetX of transformed values
      */
-    default <T> SortedSetX<T> toSortedSetX(Function<? super Tuple2<? super K,? super V>,? extends T> fn){
-        return SortedSetX.narrow(stream().map(fn).toSortedSetX());
+    default <T> SortedSetX<T> toSortedSetX(Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return SortedSetX.narrow(stream().map(fn)
+                                         .toSortedSetX());
     }
-    
+
     /**
      * Convert this MapX to a QueueX via the provided transformation function
      * 
      * @param fn Mapping function to transform each Map entry into a single value
      * @return QueueX of transformed values
      */
-    default <T> QueueX<T> toQueueX(Function<? super Tuple2<? super K,? super V>,? extends T> fn){
-        return QueueX.narrow(stream().map(fn).toQueueX());
+    default <T> QueueX<T> toQueueX(Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return QueueX.narrow(stream().map(fn)
+                                     .toQueueX());
     }
-    
+
     /**
      * Convert this MapX to a DequeX via the provided transformation function
      * 
      * @param fn Mapping function to transform each Map entry into a single value
      * @return DequeX of transformed values
      */
-    default <T> DequeX<T> toDequeX(Function<? super Tuple2<? super K,? super V>,? extends T> fn){
-        return DequeX.narrow(stream().map(fn).toDequeX());
+    default <T> DequeX<T> toDequeX(Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return DequeX.narrow(stream().map(fn)
+                                     .toDequeX());
     }
 
 }

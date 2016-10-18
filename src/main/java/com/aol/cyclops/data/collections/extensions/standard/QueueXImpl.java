@@ -31,67 +31,54 @@ public class QueueXImpl<T> implements QueueX<T> {
                                           .get();
     }
 
-    
     public void forEach(Consumer<? super T> action) {
         list.forEach(action);
     }
 
-   
     public Iterator<T> iterator() {
         return list.iterator();
     }
 
-    
     public int size() {
         return list.size();
     }
 
-    
     public boolean contains(Object e) {
         return list.contains(e);
     }
 
-    
     public boolean equals(Object o) {
         return list.equals(o);
     }
 
-   
     public boolean isEmpty() {
         return list.isEmpty();
     }
 
-    
     public int hashCode() {
         return list.hashCode();
     }
 
-   
     public Object[] toArray() {
         return list.toArray();
     }
 
-    
     public boolean removeAll(Collection<?> c) {
         return list.removeAll(c);
     }
 
-    
     public <T> T[] toArray(T[] a) {
         return list.toArray(a);
     }
 
-    
     public boolean add(T e) {
         return list.add(e);
     }
 
-    
     public boolean remove(Object o) {
         return list.remove(o);
     }
 
-   
     public boolean containsAll(Collection<?> c) {
         return list.containsAll(c);
     }

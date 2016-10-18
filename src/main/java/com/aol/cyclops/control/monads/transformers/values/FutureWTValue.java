@@ -31,7 +31,6 @@ import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.val;
 
-
 public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, MonadicValue<A>, Supplier<A>, ConvertableFunctor<A>, Filterable<A>,
         ApplicativeFunctor<A>, Matchable.ValueAndOptionalMatcher<A> {
 

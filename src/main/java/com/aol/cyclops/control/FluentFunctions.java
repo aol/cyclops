@@ -378,6 +378,7 @@ public class FluentFunctions {
             });
         }
 
+
         public <X extends Throwable> FluentSupplier<R> recover(final Class<X> type, final Supplier<R> onError) {
             return FluentFunctions.of(() -> {
                 try {
@@ -540,6 +541,7 @@ public class FluentFunctions {
         }
 
         public FluentFunction<T, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
+
             return FluentFunctions.of(t1 -> {
 
                 try {
@@ -767,6 +769,7 @@ public class FluentFunctions {
         }
 
         public FluentBiFunction<T1, T2, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
+
             return FluentFunctions.of((t1, t2) -> {
 
                 try {
@@ -964,6 +967,7 @@ public class FluentFunctions {
         }
 
         public FluentTriFunction<T1, T2, T3, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
+
             return FluentFunctions.of((t1, t2, t3) -> {
 
                 try {

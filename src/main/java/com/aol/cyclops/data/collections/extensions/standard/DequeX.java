@@ -551,6 +551,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T>, OnEmptySwitc
         addAll(list);
         return this;
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#minus(java.lang.Object)
      */
@@ -999,7 +1000,7 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T>, OnEmptySwitc
             return DequeX.fromIterable(supplier.get());
         return this;
     }
-    
+
     /**
      * Narrow a covariant Deque
      * 
@@ -1013,8 +1014,8 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T>, OnEmptySwitc
      * @param setX to narrow generic type
      * @return SetX with narrowed type
      */
-    public  static <T> DequeX<T> narrow(DequeX<? extends T> dequeX){
-        return (DequeX<T>)dequeX;
+    public static <T> DequeX<T> narrow(DequeX<? extends T> dequeX) {
+        return (DequeX<T>) dequeX;
     }
 
 }

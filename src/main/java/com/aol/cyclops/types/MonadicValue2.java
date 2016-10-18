@@ -91,13 +91,16 @@ public interface MonadicValue2<T1, T2> extends MonadicValue<T2> {
      * @param mapper  transformation function
      * @return MonadicValue2 the first element returned after the flatMap function is applied
      */
+
     default <R> MonadicValue2<T1, R> flatMapIterable(final Function<? super T2, ? extends Iterable<? extends R>> mapper) {
         return this.flatMap(a -> {
             return Xor.fromIterable(mapper.apply(a));
+
         });
     }
 
     /**
+
      * A flattening transformation operation that takes the first value from the returned Publisher.
      * <pre>
      * {@code 
@@ -112,6 +115,7 @@ public interface MonadicValue2<T1, T2> extends MonadicValue<T2> {
         return this.flatMap(a -> {
             final Publisher<? extends R> publisher = mapper.apply(a);
             final ValueSubscriber<R> sub = ValueSubscriber.subscriber();
+
             publisher.subscribe(sub);
             return unit(sub.get());
         });
