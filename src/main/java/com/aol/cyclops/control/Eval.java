@@ -521,14 +521,11 @@ public interface Eval<T>
 
             }
 
-<<<<<<< HEAD
+
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
                 final RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
-=======
-            public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-                RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
->>>>>>> master
+
                 return new Always<R>(
                                      PVectorX.of(s));
             }
