@@ -8,6 +8,13 @@ import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
+/**
+ * Represents a Traversable Monad Transformer, the monad transformer instance manipulates a nested non-scalar data type
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of the elements stored inside the traversable manipulated by this monad transformer
+ */
 public interface TransformerTraversable<T> {
 
     /**

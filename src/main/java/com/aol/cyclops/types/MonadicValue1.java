@@ -101,7 +101,7 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
     <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
     /**
-     * A flatten transformation operation that takes the first value from the returned Iterable.
+     * A flattening transformation operation that takes the first value from the returned Iterable.
      * 
      * <pre>
      * {@code 
@@ -121,10 +121,10 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
     }
 
     /**
-     * A flatten transformation operation that takes the first value from the returned Publisher.
+     * A flattening transformation operation that takes the first value from the returned Publisher.
      * <pre>
      * {@code 
-     *   FutureW.ofResult(1).map(i->i+2).flatMapPublisher(i->Arrays.asList(()->i*3,20);
+     *   FutureW.ofResult(1).map(i->i+2).flatMapPublisher(i->Flux.just(()->i*3,20);
      *   //FutureW[9]
      * 
      * }</pre>
