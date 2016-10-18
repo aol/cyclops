@@ -31,10 +31,26 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.OnEmptySwitch;
 
 public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
-
+    /**
+     * Narrow a covariant PSetX
+     * 
+     * <pre>
+     * {@code 
+     * SetX<? extends Fruit> set = SetX.of(apple,bannana);
+     * SetX<Fruit> fruitSet = SetX.narrow(set);
+     * }
+     * </pre>
+     * 
+     * @param setX to narrow generic type
+     * @return SetX with narrowed type
+     */
+    public static <T> PSetX<T> narrow(final PSetX<? extends T> setX) {
+        return (PSetX<T>) setX;
+    }
     /**
      * Create a PSetX that contains the Integers between start and end
      * 

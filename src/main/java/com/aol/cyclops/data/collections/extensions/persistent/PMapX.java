@@ -21,6 +21,11 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
+import com.aol.cyclops.data.collections.extensions.standard.DequeX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.QueueX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
@@ -308,6 +313,80 @@ public interface PMapX<K, V>
         if (isEmpty())
             return PMapX.fromMap(supplier.get());
         return this;
+    }
+    /**
+     * Convert this MapX to a ListX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return ListX of transformed values
+     */
+    default <T> ListX<T> toListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return ListX.narrow(stream().map(fn)
+                                    .toListX());
+    }
+
+    /**
+     * Convert this MapX to a PSetX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return PSetX of transformed values
+     */
+    default <T> PSetX<T> toPSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return PSetX.narrow(stream().map(fn)
+                                   .toPSetX());
+    }
+
+    /**
+     * Convert this MapX to a POrderdSetX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return POrderedSetX of transformed values
+     */
+    default <T> POrderedSetX<T> toPOrderedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return POrderedSetX.narrow(stream().map(fn)
+                                         .toPOrderedSetX());
+    }
+
+    /**
+     * Convert this MapX to a QueueX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return QueueX of transformed values
+     */
+    default <T> PQueueX<T> toPQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return PQueueX.narrow(stream().map(fn)
+                                     .toPQueueX());
+    }
+
+    /**
+     * Convert this MapX to a PStackX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return PStackX of transformed values
+     */
+    default <T> PStackX<T> toPStackX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return PStackX.narrow(stream().map(fn)
+                                     .toPStackX());
+    }
+    /**
+     * Convert this MapX to a PVectorX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return PVectorX of transformed values
+     */
+    default <T> PVectorX<T> toPVectorX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return PVectorX.narrow(stream().map(fn)
+                                     .toPVectorX());
+    }
+    /**
+     * Convert this MapX to a PBagX via the provided transformation function
+     * 
+     * @param fn Mapping function to transform each Map entry into a single value
+     * @return PBagX of transformed values
+     */
+    default <T> PBagX<T> toPBagX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return PBagX.narrow(stream().map(fn)
+                                     .toPBagX());
     }
 
 }
