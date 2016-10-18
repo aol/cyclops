@@ -12,13 +12,14 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
 /**
- * Monad transformer for Reader
+ * Monad transformer for Reader nested within Scalar data types (e.g. Optional, CompletableFuture, Eval, Maybe)
  * 
  * 
  * @author johnmcclean
  *
- * @param <T>
- *            The type contained on the Maybe within
+ * @param <T> Type of input into the nested Reader Monad(s)
+ * @param <R> Return type in the nested Reader Monad(s)
+ * 
  */
 public class ReaderTValue<T, R> implements Function<T, R> {
 

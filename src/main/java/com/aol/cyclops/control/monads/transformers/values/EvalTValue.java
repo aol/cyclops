@@ -31,6 +31,13 @@ import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.val;
 
+/**
+ * Monad Transformer for Evals nested within Scalar data types (e.g. Optional, CompletableFuture, Eval, Maybe)
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> The type contained on the Eval within
+ */
 public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValue<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,
         ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 

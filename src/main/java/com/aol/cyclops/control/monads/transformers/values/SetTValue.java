@@ -27,17 +27,12 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad Transformer for Java Sets
+ * Monad Transformer for Java Sets (will break laws as map will lose duplicates) nested within Scalar data types (e.g. Optional, CompletableFuture, Eval, Maybe)
  * 
- * SetT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Set
- * <pre>
- * {@code 
- * SetT<AnyM<*SOME_MONAD_TYPE*<Set<T>>>>
- * }</pre>
  * SetT allows the deeply wrapped Set to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> The type contained on the Set within
  */
 public class SetTValue<T> implements SetT<T>, ConvertableSequence<T>, TransformerSeq<T>, Publisher<T> {
 

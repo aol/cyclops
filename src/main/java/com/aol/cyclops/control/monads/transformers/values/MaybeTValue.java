@@ -29,14 +29,8 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 /**
- * Monad transformer for Maybe
+ * Monad transformer for Maybe nested within Scalar data types (e.g. Optional, CompletableFuture, Eval, Maybe)
  * 
- * MaybeT consists of an AnyM instance that in turns wraps anoter Monad type
- * that contains an Maybe
- * <pre>
- * {@code 
- * MaybeT<AnyMValue<*SOME_MONAD_TYPE*<Maybe<T>>>>
- * }</pre>
  * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested
  * /contained context
  * 
