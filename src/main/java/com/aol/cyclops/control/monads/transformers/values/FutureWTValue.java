@@ -31,6 +31,13 @@ import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.val;
 
+/**
+ * Monad Transformer for Futures nested within Scalar data types (e.g. Optional, CompletableFuture, Eval, Maybe)
+ * 
+ * @author johnmcclean
+ *
+ * @param <A> The type contained on the Future within
+ */
 public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, MonadicValue<A>, Supplier<A>, ConvertableFunctor<A>, Filterable<A>,
         ApplicativeFunctor<A>, Matchable.ValueAndOptionalMatcher<A> {
 

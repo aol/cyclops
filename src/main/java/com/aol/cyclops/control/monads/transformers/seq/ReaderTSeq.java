@@ -11,13 +11,13 @@ import com.aol.cyclops.control.Reader;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 
 /**
- * Monad transformer for Reader
+ * Monad transformer for Reader nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
  * 
  * 
  * @author johnmcclean
  *
- * @param <T>
- *            The type contained on the Maybe within
+ * @param <T> Type of input into the nested Reader Monad(s)
+ * @param <R> Return type in the nested Reader Monad(s)
  */
 public class ReaderTSeq<T, R> {
 

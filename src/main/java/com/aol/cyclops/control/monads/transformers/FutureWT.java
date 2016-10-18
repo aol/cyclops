@@ -27,6 +27,13 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.ToStream;
 
+/**
+ * Monad transformer for working with nested Futures
+ * 
+ * @author johnmcclean
+ *
+ * @param <A> Data type of the nested FutureW
+ */
 public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterable<A>, ToStream<A> {
 
     @Override

@@ -4,6 +4,15 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+/**
+ * A class that extends Monoid to include a map operation to map to the type 
+ * of the identity element first (to make reduction to immutable collections, for example, easier to 
+ * work with in Java 8 Streams).
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Type this Reducer operates on
+ */
 public interface Reducer<T> extends Monoid<T> {
     default Stream<T> mapToType(final Stream stream) {
         return stream;

@@ -34,6 +34,15 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
+/**
+ * 
+ * Monad Transformer for Evals nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
+
+
+ * @author johnmcclean
+ *
+ * @param <T> Type of data stored inside the nested Evals
+ */
 public class EvalTSeq<T>
         implements EvalT<T>, ValueTransformerSeq<T>, IterableFoldable<T>, ConvertableSequence<T>, CyclopsCollectable<T>, Sequential<T> {
 

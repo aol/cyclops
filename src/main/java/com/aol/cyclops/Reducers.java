@@ -26,7 +26,9 @@ import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.types.mixins.TupleWrapper;
 
-//@UtilityClass
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Reducers {
     private static <T> PQueue<T> queueOf(final T... values) {
         PQueue<T> result = AmortizedPQueue.empty();

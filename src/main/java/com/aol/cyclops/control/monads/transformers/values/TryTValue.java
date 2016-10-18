@@ -29,14 +29,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 /**
- * Monad transformer for JDK Try
- * 
- * TryT consists of an AnyM instance that in turns wraps another Monad type that contains an Try
- * <pre>
- * {@code 
- * TryT<AnyMValue<*SOME_MONAD_TYPE*<Try<T>>>>
- * }</pre>
- * TryT allows the deeply wrapped Try to be manipulating within it's nested /contained context
+ * Monad transformer for Try nested within Scalar data types (e.g. Optional, CompletableFuture, Eval, Maybe)
  * 
  * 
  * @author johnmcclean

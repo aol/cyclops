@@ -33,18 +33,12 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad Transformer for Java Lists
- * 
- * ListT consists of an AnyM instance that in turns wraps anoter Monad type that contains an List
- * <pre>
- * {@code 
- * ListT<AnyM<*SOME_MONAD_TYPE*<List<T>>>>
- * }</pre>
+ * Monad Transformer for Java Lists nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
  * 
  * ListT allows the deeply wrapped List to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Type of data stored inside the nested Lists
  */
 public class ListTSeq<T> implements ListT<T> {
 

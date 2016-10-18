@@ -29,16 +29,11 @@ import com.aol.cyclops.types.stream.ToStream;
 /**
  * Monad Transformer for Java  CompletableFutures
  * 
- * CompletableFutureT consists of an AnyM instance that in turns wraps anoter Monad type that contains an CompletableFuture
- * 
- * <pre>
- * {@code
- * CompletableFutureT<AnyM<*SOME_MONAD_TYPE*<CompletableFuture<T>>>>
- * }</pre>
  * CompletableFutureT allows the deeply wrapped CompletableFuture to be manipulating within it's nested /contained context
+
  * @author johnmcclean
  *
- * @param <A>
+ * @param <A> Type of data stored inside the nested CompletableFutures
  */
 public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterable<A>, ToStream<A> {
 

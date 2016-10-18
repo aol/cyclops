@@ -36,17 +36,14 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad Transformer for Java  FutureWs
+* Monad Transformer for FutureW's nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
+
  * 
- * FutureWT consists of an AnyM instance that in turns wraps anoter Monad type that contains an FutureW
- * <pre>
- * {@code 
- * FutureWT<AnyMSeq<*SOME_MONAD_TYPE*<FutureW<T>>>>
- * }</pre>
  * FutureWT allows the deeply wrapped FutureW to be manipulating within it's nested /contained context
+ *
  * @author johnmcclean
  *
- * @param <A>
+ * @param <A> Type of data stored inside the nested FutureW(s)
  */
 public class FutureWTSeq<A>
         implements FutureWT<A>, ValueTransformerSeq<A>, IterableFoldable<A>, ConvertableSequence<A>, CyclopsCollectable<A>, Sequential<A> {

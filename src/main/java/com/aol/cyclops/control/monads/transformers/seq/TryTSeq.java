@@ -35,13 +35,8 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad transformer for JDK Try
+ * Monad transformer for Try nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
  * 
- * TryT consists of an AnyM instance that in turns wraps another Monad type that contains an Try
- * <pre>
- * {@code 
- * TryT<AnyMSeq<*SOME_MONAD_TYPE*<Try<T>>>>
- * }</pre>
  * TryT allows the deeply wrapped Try to be manipulating within it's nested /contained context
  * 
  * 

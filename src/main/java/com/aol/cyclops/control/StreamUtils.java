@@ -85,24 +85,49 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class StreamUtils {
 
+    /**
+     * Create an Optional containing a List materialized from a Stream
+     * 
+     * @param stream To convert into an Optional
+     * @return Optional with a List of values
+     */
     public final static <T> Optional<ListX<T>> streamToOptional(final Stream<T> stream) {
+        
         final List<T> collected = stream.collect(Collectors.toList());
         if (collected.size() == 0)
             return Optional.empty();
         return Optional.of(ListX.fromIterable(collected));
     }
 
+    /**
+     * Convert a Stream to an Optional
+     * 
+     * @param optional Optional to convert to a Stream
+     * @return Stream with a single value (if present) created from an Optional
+     */
     public final static <T> Stream<T> optionalToStream(final Optional<T> optional) {
         if (optional.isPresent())
             return Stream.of(optional.get());
         return Stream.of();
     }
 
+    /**
+     * Create a CompletableFuture containing a List materialized from a Stream
+     * 
+     * @param stream To convert into an Optional
+     * @return CompletableFuture with a List of values
+     */
     public final static <T> CompletableFuture<List<T>> streamToCompletableFuture(final Stream<T> stream) {
         return CompletableFuture.completedFuture(stream.collect(CyclopsCollectors.toListX()));
 
     }
 
+    /**
+     * Convert a CompletableFuture to a Stream
+     * 
+     * @param future CompletableFuture to convert
+     * @return  Stream with a single value created from a CompletableFuture
+     */
     public final static <T> Stream<T> completableFutureToStream(final CompletableFuture<T> future) {
         return Stream.of(future.join());
 
@@ -1325,11 +1350,11 @@ public class StreamUtils {
     }
 
     /**
-     * Group elements in a Monad into a Stream
+     * Group elements in a Stream by size
      * 
        <pre>
        {@code 
-     * 	List<List<Integer>> list = StreamUtils.grouped(Stream.of(1,2,3,4,5,6)
+     * 	List<List<Integer>> list = StreamUtils.batchBySize(Stream.of(1,2,3,4,5,6)
     													,3)
     												.collect(Collectors.toList());
     	
@@ -1338,17 +1363,90 @@ public class StreamUtils {
     	assertThat(list.get(1),hasItems(4,5,6));
     	}
      * </pre>
+     * @param stream Stream to group 
      * @param groupSize
      *            Size of each Group
      * @return Stream with elements grouped by size
      */
+    @Deprecated
     public final static <T> Stream<ListX<T>> batchBySize(final Stream<T> stream, final int groupSize) {
+        return grouped(stream,groupSize);
+
+    }
+    /**
+     * Group elements in a Stream by size
+     * 
+       <pre>
+       {@code 
+     *  List<List<Integer>> list = StreamUtils.grouped(Stream.of(1,2,3,4,5,6)
+                                                        ,3)
+                                                    .collect(Collectors.toList());
+        
+        
+        assertThat(list.get(0),hasItems(1,2,3));
+        assertThat(list.get(1),hasItems(4,5,6));
+        }
+     * </pre>
+     * @param stream Stream to group 
+     * @param groupSize
+     *            Size of each Group
+     * @return Stream with elements grouped by size
+     */
+    public final static <T> Stream<ListX<T>> grouped(final Stream<T> stream, final int groupSize) {
         return new BatchBySizeOperator<T, ListX<T>>(
                                                     stream).batchBySize(groupSize);
 
     }
-
+    /**
+     * 
+     * 
+       <pre>
+       {@code 
+     *  List<SetX<Integer>> list = StreamUtils.batchBySize(Stream.of(1,2,3,4,5,6)
+                                                        ,3,()->SetX.empty())
+                                                    .collect(Collectors.toList());
+        
+        
+        assertThat(list.get(0),hasItems(1,2,3));
+        assertThat(list.get(1),hasItems(4,5,6));
+        }
+     * </pre>
+     * 
+     * @param stream Stream to group 
+     * @param groupSize Size of each Group
+     * @param factory Supplier for creating Collections for holding grouping
+     * @return  Stream with elements grouped by size
+     */
+    @Deprecated
     public final static <T, C extends Collection<? super T>> Stream<C> batchBySize(final Stream<T> stream, final int groupSize,
+            final Supplier<C> factory) {
+        return new BatchBySizeOperator<T, C>(
+                                             stream, factory).batchBySize(groupSize);
+
+    }  
+    
+    /**
+     * 
+     * 
+       <pre>
+       {@code 
+     *  List<SetX<Integer>> list = StreamUtils.grouped(Stream.of(1,2,3,4,5,6)
+                                                        ,3,()->SetX.empty())
+                                                    .collect(Collectors.toList());
+        
+        
+        assertThat(list.get(0),hasItems(1,2,3));
+        assertThat(list.get(1),hasItems(4,5,6));
+        }
+     * </pre>
+     * 
+     * @param stream Stream to group 
+     * @param groupSize Size of each Group
+     * @param factory Supplier for creating Collections for holding grouping
+     * @return  Stream with elements grouped by size
+     */
+    @Deprecated
+    public final static <T, C extends Collection<? super T>> Stream<C> grouped(final Stream<T> stream, final int groupSize,
             final Supplier<C> factory) {
         return new BatchBySizeOperator<T, C>(
                                              stream, factory).batchBySize(groupSize);
@@ -2068,62 +2166,179 @@ public class StreamUtils {
 
         });
     }
-
-    public final static <T> Stream<ListX<T>> batchByTime(final Stream<T> stream, final long time, final TimeUnit t) {
+    
+    public final static <T> Stream<ListX<T>> groupedByTime(final Stream<T> stream, final long time, final TimeUnit t) {
         return new BatchByTimeOperator<T, ListX<T>>(
                                                     stream).batchByTime(time, t);
     }
-
-    public final static <T, C extends Collection<? super T>> Stream<C> batchByTime(final Stream<T> stream, final long time, final TimeUnit t,
+    @Deprecated
+    public final static <T> Stream<ListX<T>> batchByTime(final Stream<T> stream, final long time, final TimeUnit t) {
+        return groupedByTime(stream,time,t);
+    }
+    public final static <T, C extends Collection<? super T>> Stream<C> groupedByTime(final Stream<T> stream, final long time, final TimeUnit t,
             final Supplier<C> factory) {
         return new BatchByTimeOperator<T, C>(
                                              stream, factory).batchByTime(time, t);
     }
+    @Deprecated
+    public final static <T, C extends Collection<? super T>> Stream<C> batchByTime(final Stream<T> stream, final long time, final TimeUnit t,
+            final Supplier<C> factory) {
+        return groupedByTime(stream,time,t,factory);
+    }
 
     private static final Object UNSET = new Object();
 
+    /**
+     * Group data in a Stream using knowledge of the current batch and the next entry to determing grouping limits
+     * 
+     * @see com.aol.cyclops.control.ReactiveSeq#groupedStatefullyUntil(BiPredicate)
+     * 
+     * @param stream Stream to group
+     * @param predicate Predicate to determine grouping
+     * @return Stream grouped into Lists determined by predicate
+     */
     public final static <T> Stream<ListX<T>> groupedStatefullyUntil(final Stream<T> stream,
             final BiPredicate<ListX<? super T>, ? super T> predicate) {
         return new WindowStatefullyWhileOperator<>(
                                                    stream).windowStatefullyWhile(predicate);
     }
-
-    public final static <T> Stream<ListX<T>> batchWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
+    
+    /**
+     * Group a Stream while the supplied predicate holds
+     * 
+     * @see com.aol.cyclops.control.ReactiveSeq#groupedWhile(Predicate)
+     * 
+     * @param stream Stream to group
+     * @param predicate Predicate to determine grouping
+     * @return Stream grouped into Lists determined by predicate
+     */
+    public final static <T> Stream<ListX<T>> groupedWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
         return new BatchWhileOperator<T, ListX<T>>(
                                                    stream).batchWhile(predicate);
     }
-
-    public final static <T, C extends Collection<? super T>> Stream<C> batchWhile(final Stream<T> stream, final Predicate<? super T> predicate,
+    @Deprecated
+    public final static <T> Stream<ListX<T>> batchWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
+        return groupedWhile(stream,predicate);
+    }
+    /**
+     * Group a Stream while the supplied predicate holds
+     * 
+     * @see com.aol.cyclops.control.ReactiveSeq#groupedWhile(Predicate, Supplier)
+     * 
+     * @param stream Stream to group
+     * @param predicate Predicate to determine grouping
+     * @param factory Supplier to create collection for groupings
+     * @return Stream grouped into Collections determined by predicate
+     */
+    public final static <T, C extends Collection<? super T>> Stream<C> groupedWhile(final Stream<T> stream, final Predicate<? super T> predicate,
             final Supplier<C> factory) {
         return new BatchWhileOperator<T, C>(
                                             stream, factory).batchWhile(predicate);
     }
-
-    public final static <T> Stream<ListX<T>> batchUntil(final Stream<T> stream, final Predicate<? super T> predicate) {
-        return batchWhile(stream, predicate.negate());
+    @Deprecated
+    public final static <T, C extends Collection<? super T>> Stream<C> batchWhile(final Stream<T> stream, final Predicate<? super T> predicate,
+            final Supplier<C> factory) {
+        return groupedWhile(stream,predicate,factory);
     }
-
-    public final static <T> Stream<ListX<T>> batchBySizeAndTime(final Stream<T> stream, final int size, final long time, final TimeUnit t) {
+    /**
+     * Group a Stream until the supplied predicate holds
+     * 
+     * @see com.aol.cyclops.control.ReactiveSeq#groupedUntil(Predicate)
+     * 
+     * @param stream Stream to group
+     * @param predicate Predicate to determine grouping
+     * @return Stream grouped into Lists determined by predicate
+     */
+    public final static <T> Stream<ListX<T>> groupedUntil(final Stream<T> stream, final Predicate<? super T> predicate) {
+        return groupedWhile(stream, predicate.negate());
+    }
+    @Deprecated
+    public final static <T> Stream<ListX<T>> batchUntil(final Stream<T> stream, final Predicate<? super T> predicate) {
+        return groupedUntil(stream, predicate);
+    }
+    /**
+     * Group a Stream by size and time constraints
+     * 
+     * @see com.aol.cyclops.control.ReactiveSeq#groupedBySizeAndTime(int, long, TimeUnit)
+     * 
+     * @param stream Stream to group
+     * @param size Max group size 
+     * @param time Max group time
+     * @param t Time unit for max group time
+     * @return Stream grouped by time and size
+     */
+    public final static <T> Stream<ListX<T>> groupedBySizeAndTime(final Stream<T> stream, final int size, final long time, final TimeUnit t) {
         return new BatchByTimeAndSizeOperator<T, ListX<T>>(
                                                            stream).batchBySizeAndTime(size, time, t);
     }
-
-    public final static <T, C extends Collection<? super T>> Stream<C> batchBySizeAndTime(final Stream<T> stream, final int size, final long time,
+    @Deprecated
+    public final static <T> Stream<ListX<T>> batchBySizeAndTime(final Stream<T> stream, final int size, final long time, final TimeUnit t) {
+        return groupedBySizeAndTime(stream,size,time,t);
+    }
+    
+    /**
+     * Group a Stream by size and time constraints
+     * 
+     * @see com.aol.cyclops.control.ReactiveSeq#groupedBySizeAndTime(int, long, TimeUnit, Supplier)
+     * 
+     * @param stream Stream to group
+     * @param size Max group size 
+     * @param time Max group time
+     * @param t Time unit for max group time
+     * @param factory Supplier to create collection for groupings
+     * @return Stream grouped by time and size
+     */
+    public final static <T, C extends Collection<? super T>> Stream<C> groupedBySizeAndTime(final Stream<T> stream, final int size, final long time,
             final TimeUnit t, final Supplier<C> factory) {
         return new BatchByTimeAndSizeOperator<T, C>(
                                                     stream, factory).batchBySizeAndTime(size, time, t);
     }
+    @Deprecated
+    public final static <T, C extends Collection<? super T>> Stream<C> batchBySizeAndTime(final Stream<T> stream, final int size, final long time,
+            final TimeUnit t, final Supplier<C> factory) {
+        return groupedBySizeAndTime(stream,size,time,t,factory);
+    }
 
+    /**
+     * Allow one element through per time period, drop all other elements in
+     * that time period
+     * 
+     * @see com.aol.cyclops.control.ReactiveSeq#debounce(long, TimeUnit)
+     * 
+     * @param stream Stream to debounce
+     * @param time Time to apply debouncing over
+     * @param t Time unit for debounce period
+     * @return Stream with debouncing applied
+     */
     public final static <T> Stream<T> debounce(final Stream<T> stream, final long time, final TimeUnit t) {
         return new DebounceOperator<>(
                                       stream).debounce(time, t);
     }
 
+    /**
+     *  emit one element per time period
+     * 
+     * @see com.aol.cyclops.control.ReactiveSeq#onePer(long, TimeUnit)
+     * 
+     * @param stream Stream to emit one element per time period from
+     * @param time  Time period
+     * @param t Time Unit
+     * @return Stream with slowed emission
+     */
     public final static <T> Stream<T> onePer(final Stream<T> stream, final long time, final TimeUnit t) {
         return new OnePerOperator<>(
                                     stream).onePer(time, t);
     }
 
+    /**
+     *  Introduce a random jitter / time delay between the emission of elements
+     *  
+     *  @see com.aol.cyclops.control.ReactiveSeq#jitter(long) 
+     *  
+     * @param stream  Stream to introduce jitter to 
+     * @param jitterInNanos Max jitter period - random number less than this is used for each jitter
+     * @return Jittered Stream
+     */
     public final static <T> Stream<T> jitter(final Stream<T> stream, final long jitterInNanos) {
         final Iterator<T> it = stream.iterator();
         final Random r = new Random();

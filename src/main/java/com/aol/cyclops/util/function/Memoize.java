@@ -114,7 +114,7 @@ public class Memoize {
      * @return Memoised Function
      */
     public static <T, R> Function<T, R> memoizeFunction(final Function<T, R> fn, final Cacheable<R> cache) {
-        return t -> cache.soften()
+        return t -> (R)cache.soften()
                          .computeIfAbsent(t, (Function) fn);
     }
 

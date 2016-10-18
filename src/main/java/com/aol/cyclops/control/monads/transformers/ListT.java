@@ -43,15 +43,11 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * Monad Transformer for Java Lists
  * 
  * ListT consists of an AnyM instance that in turns wraps anoter Monad type that contains an List
- * <pre>
- * {@code
- * ListT<AnyM<*SOME_MONAD_TYPE*<List<T>>>>
- * }
- * </pre>
+
  * ListT allows the deeply wrapped List to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Data type of the elements in the nested Lists
  */
 public interface ListT<T> extends FoldableTransformerSeq<T> {
 

@@ -19,18 +19,14 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad Transformer for Cyclops Streamables
+ * Monad Transformer for Streamables nested within Scalar data types (e.g. Optional, CompletableFuture, Eval, Maybe)
+
  * 
- * StreamableT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Streamable
- * <pre>
- * {@code 
- * StreamableT<AnyM<*SOME_MONAD_TYPE*<Streamable<T>>>>
- * }</pre>
  * 
  * StreamableT allows the deeply wrapped Streamable to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> The type contained on the Streamable within
  */
 public class StreamableTValue<T> implements StreamableT<T> {
 
