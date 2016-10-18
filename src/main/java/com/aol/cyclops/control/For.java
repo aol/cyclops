@@ -58,10 +58,11 @@ public class For {
          * @param yieldingFunction  Generates a result per combination
          * @return A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
-        static <T1, T2, T3, R1, R2, R3, R> AnyMSeq<R> each4(Publisher<? extends T1> publisher,
-                Function<? super T1, ? extends Publisher<R1>> publisher2, BiFunction<? super T1, ? super R1, ? extends Publisher<R2>> publisher3,
-                TriFunction<? super T1, ? super R1, ? super R2, ? extends Publisher<R3>> publisher4,
-                QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        static <T1, T2, T3, R1, R2, R3, R> AnyMSeq<R> each4(final Publisher<? extends T1> publisher,
+                final Function<? super T1, ? extends Publisher<R1>> publisher2,
+                final BiFunction<? super T1, ? super R1, ? extends Publisher<R2>> publisher3,
+                final TriFunction<? super T1, ? super R1, ? super R2, ? extends Publisher<R3>> publisher4,
+                final QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
             return For.publisher(publisher)
                       .publisher(a -> publisher2.apply(a))
@@ -96,11 +97,12 @@ public class For {
          * @param yieldingFunction Generates a result per combination
          * @return A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
-        static <T1, T2, T3, R1, R2, R3, R> AnyMSeq<R> each4(Publisher<? extends T1> publisher,
-                Function<? super T1, ? extends Publisher<R1>> publisher2, BiFunction<? super T1, ? super R1, ? extends Publisher<R2>> publisher3,
-                TriFunction<? super T1, ? super R1, ? super R2, ? extends Publisher<R3>> publisher4,
-                QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        static <T1, T2, T3, R1, R2, R3, R> AnyMSeq<R> each4(final Publisher<? extends T1> publisher,
+                final Function<? super T1, ? extends Publisher<R1>> publisher2,
+                final BiFunction<? super T1, ? super R1, ? extends Publisher<R2>> publisher3,
+                final TriFunction<? super T1, ? super R1, ? super R2, ? extends Publisher<R3>> publisher4,
+                final QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                final QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
             return For.publisher(publisher)
                       .publisher(a -> publisher2.apply(a))
@@ -131,9 +133,10 @@ public class For {
          * @param yieldingFunction  Generates a result per combination
          * @return A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
-        static <T1, T2, R1, R2, R> AnyMSeq<R> each3(Publisher<? extends T1> publisher, Function<? super T1, ? extends Publisher<R1>> publisher1,
-                BiFunction<? super T1, ? super R1, ? extends Publisher<R2>> publisher2,
-                TriFunction<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        static <T1, T2, R1, R2, R> AnyMSeq<R> each3(final Publisher<? extends T1> publisher,
+                final Function<? super T1, ? extends Publisher<R1>> publisher1,
+                final BiFunction<? super T1, ? super R1, ? extends Publisher<R2>> publisher2,
+                final TriFunction<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
             return For.publisher(publisher)
                       .publisher(a -> publisher1.apply(a))
@@ -164,10 +167,11 @@ public class For {
          * @param yieldingFunction  Generates a result per combination
          * @return A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
-        static <T1, T2, R1, R2, R> AnyMSeq<R> each3(Publisher<? extends T1> publisher, Function<? super T1, ? extends Publisher<R1>> publisher2,
-                BiFunction<? super T1, ? super R1, ? extends Publisher<R2>> publisher3,
-                TriFunction<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
-                TriFunction<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        static <T1, T2, R1, R2, R> AnyMSeq<R> each3(final Publisher<? extends T1> publisher,
+                final Function<? super T1, ? extends Publisher<R1>> publisher2,
+                final BiFunction<? super T1, ? super R1, ? extends Publisher<R2>> publisher3,
+                final TriFunction<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
+                final TriFunction<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
             return For.publisher(publisher)
                       .publisher(t -> publisher2.apply(t))
@@ -196,8 +200,8 @@ public class For {
          * @param yieldingFunction Generates a result per combination
          * @return  A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
-        static <T, R1, R> AnyMSeq<R> each2(Publisher<? extends T> publisher, Function<? super T, ? extends Publisher<R1>> publisher2,
-                BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        static <T, R1, R> AnyMSeq<R> each2(final Publisher<? extends T> publisher, final Function<? super T, ? extends Publisher<R1>> publisher2,
+                final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
             return For.publisher(publisher)
                       .publisher(t -> publisher2.apply(t))
@@ -224,8 +228,9 @@ public class For {
          * @param yieldingFunction Generates a result per combination
          * @return A sequential monad of the same type as the top level publisher, AnyMSeq also implements Publisher
          */
-        static <T, R1, R> AnyMSeq<R> each2(Publisher<? extends T> publisher, Function<? super T, ? extends Publisher<R1>> publisher2,
-                BiFunction<? super T, ? super R1, Boolean> filterFunction, BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        static <T, R1, R> AnyMSeq<R> each2(final Publisher<? extends T> publisher, final Function<? super T, ? extends Publisher<R1>> publisher2,
+                final BiFunction<? super T, ? super R1, Boolean> filterFunction,
+                final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
             return For.publisher(publisher)
                       .publisher(t -> publisher2.apply(t))
@@ -248,10 +253,11 @@ public class For {
          *            Streams that generates the new elements
          * @returnAnyM with elements generated via nested iteration
          */
-        static <T1, T2, T3, R1, R2, R3, R> AnyMValue<R> each4(MonadicValue<? extends T1> monadicValue,
-                Function<? super T1, ? extends MonadicValue<R1>> value2, BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
-                TriFunction<? super T1, ? super R1, ? super R2, ? extends MonadicValue<R3>> value4,
-                QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        static <T1, T2, T3, R1, R2, R3, R> AnyMValue<R> each4(final MonadicValue<? extends T1> monadicValue,
+                final Function<? super T1, ? extends MonadicValue<R1>> value2,
+                final BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
+                final TriFunction<? super T1, ? super R1, ? super R2, ? extends MonadicValue<R3>> value4,
+                final QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
             return AnyM.ofValue(For.iterable(monadicValue)
                                    .iterable(a -> value2.apply(a))
@@ -275,11 +281,12 @@ public class For {
          *            Streams that generates the new elements
          * @returnAnyM with elements generated via nested iteration
          */
-        static <T1, T2, T3, R1, R2, R3, R> AnyMValue<R> each4(MonadicValue<? extends T1> monadicValue,
-                Function<? super T1, ? extends MonadicValue<R1>> value2, BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
-                TriFunction<? super T1, ? super R1, ? super R2, ? extends MonadicValue<R3>> value4,
-                QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        static <T1, T2, T3, R1, R2, R3, R> AnyMValue<R> each4(final MonadicValue<? extends T1> monadicValue,
+                final Function<? super T1, ? extends MonadicValue<R1>> value2,
+                final BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
+                final TriFunction<? super T1, ? super R1, ? super R2, ? extends MonadicValue<R3>> value4,
+                final QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                final QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
             return AnyM.ofValue(For.iterable(monadicValue)
                                    .iterable(a -> value2.apply(a))
@@ -302,9 +309,10 @@ public class For {
          *            Streams that generates the new elements
          * @returnAnyM with elements generated via nested iteration
          */
-        static <T1, T2, R1, R2, R> AnyMValue<R> each3(MonadicValue<? extends T1> monadicValue,
-                Function<? super T1, ? extends MonadicValue<R1>> value2, BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
-                TriFunction<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        static <T1, T2, R1, R2, R> AnyMValue<R> each3(final MonadicValue<? extends T1> monadicValue,
+                final Function<? super T1, ? extends MonadicValue<R1>> value2,
+                final BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
+                final TriFunction<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
             return AnyM.ofValue(For.iterable(monadicValue)
                                    .iterable(a -> value2.apply(a))
@@ -327,10 +335,11 @@ public class For {
          *            Streams that generates the new elements
          * @return AnyM with elements generated via nested iteration
          */
-        static <T1, T2, R1, R2, R> AnyMValue<R> each3(MonadicValue<? extends T1> monadicValue,
-                Function<? super T1, ? extends MonadicValue<R1>> value2, BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
-                TriFunction<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
-                TriFunction<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        static <T1, T2, R1, R2, R> AnyMValue<R> each3(final MonadicValue<? extends T1> monadicValue,
+                final Function<? super T1, ? extends MonadicValue<R1>> value2,
+                final BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
+                final TriFunction<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
+                final TriFunction<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
             return AnyM.ofValue(For.iterable(monadicValue)
                                    .iterable(a -> value2.apply(a))
@@ -351,9 +360,9 @@ public class For {
          *            values to the yielding function
          * @return AnyM with elements generated via nested iteration
          */
-       
-        static <T, R1, R> AnyMValue<R> each2(MonadicValue<? extends T> monadicValue, Function<? super T, MonadicValue<R1>> value2,
-                BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+
+        static <T, R1, R> AnyMValue<R> each2(final MonadicValue<? extends T> monadicValue, final Function<? super T, MonadicValue<R1>> value2,
+                final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
             return AnyM.ofValue(For.iterable(monadicValue)
                                    .iterable(a -> value2.apply(a))
@@ -375,8 +384,9 @@ public class For {
          *            Streams that generates the new elements
          * @return AnyM with elements generated via nested iteration
          */
-        static <T, R1, R> AnyMValue<R> each2(MonadicValue<? extends T> monadicValue, Function<? super T, ? extends MonadicValue<R1>> value2,
-                BiFunction<? super T, ? super R1, Boolean> filterFunction, BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        static <T, R1, R> AnyMValue<R> each2(final MonadicValue<? extends T> monadicValue,
+                final Function<? super T, ? extends MonadicValue<R1>> value2, final BiFunction<? super T, ? super R1, Boolean> filterFunction,
+                final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
             return AnyM.ofValue(For.iterable(monadicValue)
                                    .iterable(a -> value2.apply(a))
@@ -388,7 +398,7 @@ public class For {
 
     }
 
-    public static <T1> DoComp1<T1> reader(Reader<?, T1> reader) {
+    public static <T1> DoComp1<T1> reader(final Reader<?, T1> reader) {
         return new DoComp0(
                            ConsPStack.empty()).reader(reader);
     }
@@ -408,12 +418,12 @@ public class For {
      * @param o Defines next level in comprehension
      * @return Next stage in for comprehension builder
      */
-    public static <T1> DoComp1<T1> iterable(Iterable<T1> o) {
+    public static <T1> DoComp1<T1> iterable(final Iterable<T1> o) {
         return new DoComp0(
                            ConsPStack.empty()).iterable(o);
     }
 
-    public static <T1> DoComp1<T1> publisher(Publisher<T1> o) {
+    public static <T1> DoComp1<T1> publisher(final Publisher<T1> o) {
         return new DoComp0(
                            ConsPStack.empty()).publisher(o);
     }
@@ -433,7 +443,7 @@ public class For {
      * @param o Defines next level in comprehension
      * @return Next stage in for comprehension builder
      */
-    public static <T1> DoComp1<T1> stream(BaseStream<T1, ?> o) {
+    public static <T1> DoComp1<T1> stream(final BaseStream<T1, ?> o) {
         return new DoComp0(
                            ConsPStack.empty()).stream(o);
     }
@@ -453,7 +463,7 @@ public class For {
      * @param o Defines next level in comprehension
      * @return Next stage in for comprehension builder
      */
-    public static <T1> DoComp1<T1> optional(Optional<T1> o) {
+    public static <T1> DoComp1<T1> optional(final Optional<T1> o) {
         return new DoComp0(
                            ConsPStack.empty()).optional(o);
     }
@@ -473,7 +483,7 @@ public class For {
      * @param o Defines next level in comprehension
      * @return Next stage in for comprehension builder
      */
-    public static <T1> DoComp1<T1> future(CompletableFuture<T1> o) {
+    public static <T1> DoComp1<T1> future(final CompletableFuture<T1> o) {
         return new DoComp0(
                            ConsPStack.empty()).future(o);
     }
@@ -493,7 +503,7 @@ public class For {
      * @param o Defines next level in comprehension
      * @return Next stage in for comprehension builder
      */
-    public static <T1> DoComp1<T1> anyM(AnyM<T1> o) {
+    public static <T1> DoComp1<T1> anyM(final AnyM<T1> o) {
         return new DoComp0(
                            ConsPStack.empty()).anyM(o);
     }

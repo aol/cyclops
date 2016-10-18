@@ -39,7 +39,7 @@ public class BatchingCollector<T> implements LazyResultConsumer<T> {
     /**
      * @param maxActive Controls batch size
      */
-    public BatchingCollector(MaxActive maxActive, BlockingStream<T> blocking) {
+    public BatchingCollector(final MaxActive maxActive, final BlockingStream<T> blocking) {
         this.maxActive = maxActive;
         this.results = null;
         this.blocking = blocking;
@@ -49,7 +49,7 @@ public class BatchingCollector<T> implements LazyResultConsumer<T> {
      * @see java.util.function.Consumer#accept(java.lang.Object)
      */
     @Override
-    public void accept(FastFuture<T> t) {
+    public void accept(final FastFuture<T> t) {
 
         active.add(t);
 
@@ -57,13 +57,13 @@ public class BatchingCollector<T> implements LazyResultConsumer<T> {
 
             while (active.size() > maxActive.getReduceTo()) {
 
-                List<FastFuture<T>> toRemove = active.stream()
-                                                     .filter(cf -> cf.isDone())
-                                                     .collect(Collectors.toList());
+                final List<FastFuture<T>> toRemove = active.stream()
+                                                           .filter(cf -> cf.isDone())
+                                                           .collect(Collectors.toList());
                 active.removeAll(toRemove);
                 results.addAll(toRemove);
                 if (active.size() > maxActive.getReduceTo()) {
-                    CompletableFuture promise = new CompletableFuture();
+                    final CompletableFuture promise = new CompletableFuture();
                     FastFuture.xOf(active.size() - maxActive.getReduceTo(), () -> {
                         promise.complete(true);
                     } , active.toArray(new FastFuture[0]));
@@ -76,7 +76,11 @@ public class BatchingCollector<T> implements LazyResultConsumer<T> {
 
     }
 
-    public void block(Function<FastFuture<T>, T> safeJoin) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.react.collectors.lazy.LazyResultConsumer#block(java.util.function.Function)
+     */
+    @Override
+    public void block(final Function<FastFuture<T>, T> safeJoin) {
         if (active.size() == 0)
             return;
         active.stream()
@@ -89,6 +93,7 @@ public class BatchingCollector<T> implements LazyResultConsumer<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.react.collectors.lazy.LazyResultConsumer#getResults()
      */
+    @Override
     public Collection<FastFuture<T>> getResults() {
 
         return results;
@@ -98,6 +103,7 @@ public class BatchingCollector<T> implements LazyResultConsumer<T> {
      *	@return all results (including active)
      * @see com.aol.cyclops.react.collectors.lazy.LazyResultConsumer#getAllResults()
      */
+    @Override
     public Collection<FastFuture<T>> getAllResults() {
         results.addAll(active);
         active.clear();

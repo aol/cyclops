@@ -227,9 +227,6 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
                          .visit((a, b) -> both.apply(a, b));
     }
 
-    
-   
-
     <R> Eval<R> matches(Function<CheckValue1<ST, R>, CheckValue1<ST, R>> secondary, Function<CheckValue1<PT, R>, CheckValue1<PT, R>> primary,
             Function<CheckValue2<ST, PT, R>, CheckValue2<ST, PT, R>> both, Supplier<? extends R> otherwise);
 

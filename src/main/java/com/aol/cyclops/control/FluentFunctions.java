@@ -19,7 +19,6 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 
-import com.aol.cyclops.control.FluentFunctions.FluentFunction;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.MutableInt;
 import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
@@ -38,7 +37,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
 public class FluentFunctions {
-	
+
     /**
      * Construct a FluentSupplier from a checked Supplier
      * <pre>
@@ -53,7 +52,7 @@ public class FluentFunctions {
      * @param supplier that throws CheckedExcpetion
      * @return FluentSupplier
      */
-    public static <R> FluentFunctions.FluentSupplier<R> ofChecked(CheckedSupplier<R> supplier) {
+    public static <R> FluentFunctions.FluentSupplier<R> ofChecked(final CheckedSupplier<R> supplier) {
         return FluentFunctions.of(ExceptionSoftener.softenSupplier(supplier));
     }
 
@@ -82,7 +81,7 @@ public class FluentFunctions {
      * @param supplier to make Fluent
      * @return FluentSupplier
      */
-    public static <R> FluentFunctions.FluentSupplier<R> of(Supplier<R> supplier) {
+    public static <R> FluentFunctions.FluentSupplier<R> of(final Supplier<R> supplier) {
         return new FluentSupplier<>(
                                     supplier);
     }
@@ -103,7 +102,7 @@ public class FluentFunctions {
      * @param fn CheckedFunction
      * @return FluentFunction
      */
-    public static <T, R> FluentFunctions.FluentFunction<T, R> ofChecked(CheckedFunction<T, R> fn) {
+    public static <T, R> FluentFunctions.FluentFunction<T, R> ofChecked(final CheckedFunction<T, R> fn) {
         return FluentFunctions.of(ExceptionSoftener.softenFunction(fn));
     }
 
@@ -121,7 +120,7 @@ public class FluentFunctions {
      * @param fn Function
      * @return FluentFunction
      */
-    public static <T, R> FluentFunctions.FluentFunction<T, R> of(Function<T, R> fn) {
+    public static <T, R> FluentFunctions.FluentFunction<T, R> of(final Function<T, R> fn) {
         return new FluentFunction<>(
                                     fn);
     }
@@ -140,7 +139,7 @@ public class FluentFunctions {
      * @param fn CheckedBiFunction
      * @return FluentBiFunction
      */
-    public static <T1, T2, R> FluentFunctions.FluentBiFunction<T1, T2, R> ofChecked(CheckedBiFunction<T1, T2, R> fn) {
+    public static <T1, T2, R> FluentFunctions.FluentBiFunction<T1, T2, R> ofChecked(final CheckedBiFunction<T1, T2, R> fn) {
         return FluentFunctions.of(ExceptionSoftener.softenBiFunction(fn));
     }
 
@@ -157,7 +156,7 @@ public class FluentFunctions {
      * @param fn BiFunction to convert
      * @return FluentBiFuntion
      */
-    public static <T1, T2, R> FluentFunctions.FluentBiFunction<T1, T2, R> of(BiFunction<T1, T2, R> fn) {
+    public static <T1, T2, R> FluentFunctions.FluentBiFunction<T1, T2, R> of(final BiFunction<T1, T2, R> fn) {
         return new FluentBiFunction<>(
                                       fn);
     }
@@ -176,7 +175,7 @@ public class FluentFunctions {
      * @param fn CheckedTriFunction to convert
      * @return FluentTriFunction
      */
-    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> ofChecked(CheckedTriFunction<T1, T2, T3, R> fn) {
+    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> ofChecked(final CheckedTriFunction<T1, T2, T3, R> fn) {
 
         return new FluentTriFunction<>(
                                        softenTriFunction(fn));
@@ -194,7 +193,7 @@ public class FluentFunctions {
      * @param fn TriFunction to convert
      * @return FluentTriFunction
      */
-    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(TriFunction<T1, T2, T3, R> fn) {
+    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(final TriFunction<T1, T2, T3, R> fn) {
         return new FluentTriFunction<>(
                                        fn);
     }
@@ -212,7 +211,7 @@ public class FluentFunctions {
      * @param action Consumer
      * @return FluentFunction
      */
-    public static <T> FluentFunctions.FluentFunction<T, T> expression(Consumer<? super T> action) {
+    public static <T> FluentFunctions.FluentFunction<T, T> expression(final Consumer<? super T> action) {
         return FluentFunctions.of(t -> {
             action.accept(t);
             return t;
@@ -234,7 +233,7 @@ public class FluentFunctions {
      * @param action
      * @return FluentFunction
      */
-    public static <T> FluentFunctions.FluentFunction<T, T> checkedExpression(CheckedConsumer<T> action) {
+    public static <T> FluentFunctions.FluentFunction<T, T> checkedExpression(final CheckedConsumer<T> action) {
         final Consumer<T> toUse = ExceptionSoftener.softenConsumer(action);
         return FluentFunctions.of(t -> {
             toUse.accept(t);
@@ -259,7 +258,7 @@ public class FluentFunctions {
      * @param action BiConsumer
      * @return FluentBiFunction
      */
-    public static <T1, T2> FluentFunctions.FluentBiFunction<T1, T2, Tuple2<T1, T2>> expression(BiConsumer<? super T1, ? super T2> action) {
+    public static <T1, T2> FluentFunctions.FluentBiFunction<T1, T2, Tuple2<T1, T2>> expression(final BiConsumer<? super T1, ? super T2> action) {
         return FluentFunctions.of((t1, t2) -> {
             action.accept(t1, t2);
             return Tuple.tuple(t1, t2);
@@ -285,7 +284,7 @@ public class FluentFunctions {
      * @param action
      * @return
      */
-    public static <T1, T2> FluentFunctions.FluentBiFunction<T1, T2, Tuple2<T1, T2>> checkedExpression(CheckedBiConsumer<T1, T2> action) {
+    public static <T1, T2> FluentFunctions.FluentBiFunction<T1, T2, Tuple2<T1, T2>> checkedExpression(final CheckedBiConsumer<T1, T2> action) {
         final BiConsumer<T1, T2> toUse = ExceptionSoftener.softenBiConsumer(action);
         return FluentFunctions.of((t1, t2) -> {
             toUse.accept(t1, t2);
@@ -293,11 +292,11 @@ public class FluentFunctions {
         });
     }
 
-    private static <T1, T2, T3, R> TriFunction<T1, T2, T3, R> softenTriFunction(CheckedTriFunction<T1, T2, T3, R> fn) {
+    private static <T1, T2, T3, R> TriFunction<T1, T2, T3, R> softenTriFunction(final CheckedTriFunction<T1, T2, T3, R> fn) {
         return (t1, t2, t3) -> {
             try {
                 return fn.apply(t1, t2, t3);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw ExceptionSoftener.throwSoftenedException(e);
             }
         };
@@ -309,7 +308,7 @@ public class FluentFunctions {
         private final Supplier<R> fn;
         private final String name;
 
-        public FluentSupplier(Supplier<R> fn) {
+        public FluentSupplier(final Supplier<R> fn) {
             this.name = null;
             this.fn = fn;
         }
@@ -319,14 +318,14 @@ public class FluentFunctions {
             return fn.get();
         }
 
-        public FluentSupplier<R> before(Runnable r) {
+        public FluentSupplier<R> before(final Runnable r) {
             return withFn(() -> {
                 r.run();
                 return fn.get();
             });
         }
 
-        public FluentSupplier<R> after(Consumer<R> action) {
+        public FluentSupplier<R> after(final Consumer<R> action) {
             return withFn(() -> {
                 final R result = fn.get();
                 action.accept(result);
@@ -334,7 +333,7 @@ public class FluentFunctions {
             });
         }
 
-        public FluentSupplier<R> around(Function<Advice0<R>, R> around) {
+        public FluentSupplier<R> around(final Function<Advice0<R>, R> around) {
             return withFn(() -> around.apply(new Advice0<R>(
                                                             fn)));
         }
@@ -343,11 +342,11 @@ public class FluentFunctions {
             return withFn(Memoize.memoizeSupplier(fn));
         }
 
-        public FluentSupplier<R> memoize(Cacheable<R> cache) {
+        public FluentSupplier<R> memoize(final Cacheable<R> cache) {
             return withFn(Memoize.memoizeSupplier(fn, cache));
         }
 
-        public FluentSupplier<R> name(String name) {
+        public FluentSupplier<R> name(final String name) {
             return this.withName(name);
         }
 
@@ -366,24 +365,24 @@ public class FluentFunctions {
 
         }
 
-        public FluentSupplier<R> log(Consumer<String> logger, Consumer<Throwable> error) {
+        public FluentSupplier<R> log(final Consumer<String> logger, final Consumer<Throwable> error) {
             return FluentFunctions.of(() -> {
                 try {
-                    R result = fn.get();
+                    final R result = fn.get();
                     logger.accept(handleNameStart() + "Result[" + result + "]" + handleNameEnd());
                     return result;
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     error.accept(t);
                     throw ExceptionSoftener.throwSoftenedException(t);
                 }
             });
         }
-        
-        public <X extends Throwable> FluentSupplier<R> recover(Class<X> type, Supplier<R> onError) {
+
+        public <X extends Throwable> FluentSupplier<R> recover(final Class<X> type, final Supplier<R> onError) {
             return FluentFunctions.of(() -> {
                 try {
                     return fn.get();
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     if (type.isAssignableFrom(t.getClass())) {
                         return onError.get();
                     }
@@ -394,15 +393,15 @@ public class FluentFunctions {
 
         }
 
-        public FluentSupplier<R> retry(int times, int backoffStartTime) {
+        public FluentSupplier<R> retry(final int times, final int backoffStartTime) {
             return FluentFunctions.of(() -> {
                 int count = times;
-                MutableInt sleep = MutableInt.of(backoffStartTime);
+                final MutableInt sleep = MutableInt.of(backoffStartTime);
                 Throwable exception = null;
                 while (count-- > 0) {
                     try {
                         return fn.get();
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         exception = e;
                     }
                     ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep.get()));
@@ -415,7 +414,7 @@ public class FluentFunctions {
 
         }
 
-        public <R1> FluentSupplier<R1> matches(Function<CheckValue1<R, R1>, CheckValue1<R, R1>> case1, Supplier<? extends R1> otherwise) {
+        public <R1> FluentSupplier<R1> matches(final Function<CheckValue1<R, R1>, CheckValue1<R, R1>> case1, final Supplier<? extends R1> otherwise) {
             return FluentFunctions.of(() -> Matchable.of(fn.get())
                                                      .matches(case1, otherwise)
                                                      .get());
@@ -430,7 +429,7 @@ public class FluentFunctions {
                                         () -> Optional.ofNullable(fn.get()));
         }
 
-        public <X extends Throwable> FluentSupplier<Try<R, X>> liftTry(Class<X>... classes) {
+        public <X extends Throwable> FluentSupplier<Try<R, X>> liftTry(final Class<X>... classes) {
             return FluentFunctions.of(() -> Try.withCatch(() -> fn.get(), classes));
         }
 
@@ -439,11 +438,11 @@ public class FluentFunctions {
                                         () -> AnyM.ofNullable(fn.get()));
         }
 
-        public FluentSupplier<CompletableFuture<R>> liftAsync(Executor ex) {
+        public FluentSupplier<CompletableFuture<R>> liftAsync(final Executor ex) {
             return FluentFunctions.of(() -> CompletableFuture.supplyAsync(fn, ex));
         }
 
-        public CompletableFuture<FluentSupplier<R>> async(Executor ex) {
+        public CompletableFuture<FluentSupplier<R>> async(final Executor ex) {
             return CompletableFuture.supplyAsync(() -> FluentFunctions.of(fn), ex);
         }
 
@@ -455,33 +454,35 @@ public class FluentFunctions {
         private final Function<T, R> fn;
         private final String name;
 
-        public FluentFunction(Function<T, R> fn) {
+        public FluentFunction(final Function<T, R> fn) {
             this.name = null;
             this.fn = fn;
         }
 
         @Override
-        public R apply(T t) {
+        public R apply(final T t) {
             return fn.apply(t);
         }
 
-        public <R1> FluentFunction<T, R1> map(Function<? super R, ? extends R1> f2) {
+        @Override
+        public <R1> FluentFunction<T, R1> map(final Function<? super R, ? extends R1> f2) {
             return FluentFunctions.of(fn.andThen(f2));
         }
 
-        public <R1> FluentFunction<T, R1> flatMap(Function<? super R, ? extends Reader<T, R1>> f) {
+        @Override
+        public <R1> FluentFunction<T, R1> flatMap(final Function<? super R, ? extends Reader<T, R1>> f) {
             return FluentFunctions.of(a -> f.apply(fn.apply(a))
                                             .apply(a));
         }
 
-        public FluentFunction<T, R> before(Consumer<T> action) {
+        public FluentFunction<T, R> before(final Consumer<T> action) {
             return withFn(t -> {
                 action.accept(t);
                 return fn.apply(t);
             });
         }
 
-        public FluentFunction<T, R> after(BiConsumer<T, R> action) {
+        public FluentFunction<T, R> after(final BiConsumer<T, R> action) {
             return withFn(t -> {
 
                 final R result = fn.apply(t);
@@ -490,12 +491,12 @@ public class FluentFunctions {
             });
         }
 
-        public FluentFunction<T, R> around(Function<Advice1<T, R>, R> around) {
+        public FluentFunction<T, R> around(final Function<Advice1<T, R>, R> around) {
             return withFn(t -> around.apply(new Advice1<T, R>(
                                                               t, fn)));
         }
 
-        public FluentSupplier<R> partiallyApply(T param) {
+        public FluentSupplier<R> partiallyApply(final T param) {
             return new FluentSupplier<>(
                                         PartialApplicator.partial(param, fn));
         }
@@ -504,11 +505,11 @@ public class FluentFunctions {
             return withFn(Memoize.memoizeFunction(fn));
         }
 
-        public FluentFunction<T, R> memoize(Cacheable<R> cache) {
+        public FluentFunction<T, R> memoize(final Cacheable<R> cache) {
             return withFn(Memoize.memoizeFunction(fn, cache));
         }
 
-        public FluentFunction<T, R> name(String name) {
+        public FluentFunction<T, R> name(final String name) {
             return this.withName(name);
         }
 
@@ -522,30 +523,30 @@ public class FluentFunctions {
 
         }
 
-        public FluentFunction<T, R> log(Consumer<String> logger, Consumer<Throwable> error) {
+        public FluentFunction<T, R> log(final Consumer<String> logger, final Consumer<Throwable> error) {
             return FluentFunctions.of(t1 -> {
 
                 try {
                     logger.accept(handleNameStart() + "Parameter[" + t1 + "]" + handleNameEnd());
-                    R result = fn.apply(t1);
+                    final R result = fn.apply(t1);
                     logger.accept(handleNameStart() + "Result[" + result + "]" + handleNameEnd());
                     return result;
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     error.accept(t);
                     throw ExceptionSoftener.throwSoftenedException(t);
                 }
 
             });
         }
-        
-        public FluentFunction<T, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
-        	return FluentFunctions.of(t1 -> {
+
+        public FluentFunction<T, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
+            return FluentFunctions.of(t1 -> {
 
                 try {
-                    R result = fn.apply(t1);
+                    final R result = fn.apply(t1);
                     eventConsumer.accept(result);
                     return result;
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     errorConsumer.accept(t);
                     throw ExceptionSoftener.throwSoftenedException(t);
                 }
@@ -557,11 +558,11 @@ public class FluentFunctions {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
         }
 
-        public <X extends Throwable> FluentFunction<T, R> recover(Class<X> type, Function<T, R> onError) {
+        public <X extends Throwable> FluentFunction<T, R> recover(final Class<X> type, final Function<T, R> onError) {
             return FluentFunctions.of(t1 -> {
                 try {
                     return fn.apply(t1);
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     if (type.isAssignableFrom(t.getClass())) {
                         return onError.apply(t1);
 
@@ -572,15 +573,15 @@ public class FluentFunctions {
             });
         }
 
-        public FluentFunction<T, R> retry(int times, int backoffStartTime) {
+        public FluentFunction<T, R> retry(final int times, final int backoffStartTime) {
             return FluentFunctions.of(t -> {
                 int count = times;
-                MutableInt sleep = MutableInt.of(backoffStartTime);
+                final MutableInt sleep = MutableInt.of(backoffStartTime);
                 Throwable exception = null;
                 while (count-- > 0) {
                     try {
                         return fn.apply(t);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         exception = e;
                     }
                     ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep.get()));
@@ -593,7 +594,8 @@ public class FluentFunctions {
 
         }
 
-        public <R1> FluentFunction<T, R1> matches(Function<CheckValue1<R, R1>, CheckValue1<R, R1>> case1, Supplier<? extends R1> otherwise) {
+        public <R1> FluentFunction<T, R1> matches(final Function<CheckValue1<R, R1>, CheckValue1<R, R1>> case1,
+                final Supplier<? extends R1> otherwise) {
 
             return FluentFunctions.of(t -> Matchable.of(fn.apply(t))
                                                     .matches(case1, otherwise)
@@ -626,12 +628,12 @@ public class FluentFunctions {
          * @param mapToType Convert from supplied functions return type to Stream input type
          * @return Infinite Stream
          */
-        public ReactiveSeq<R> iterate(T seed, Function<R, T> mapToType) {
+        public ReactiveSeq<R> iterate(final T seed, final Function<R, T> mapToType) {
             return ReactiveSeq.iterate(fn.apply(seed), t -> fn.compose(mapToType)
                                                               .apply(t));
         }
 
-        public ReactiveSeq<R> generate(T input) {
+        public ReactiveSeq<R> generate(final T input) {
             return ReactiveSeq.generate(() -> fn.apply(input));
         }
 
@@ -640,7 +642,7 @@ public class FluentFunctions {
                                         opt -> opt.map(t -> fn.apply(t)));
         }
 
-        public <X extends Throwable> FluentFunction<T, Try<R, X>> liftTry(Class<X>... classes) {
+        public <X extends Throwable> FluentFunction<T, Try<R, X>> liftTry(final Class<X>... classes) {
             return FluentFunctions.of((t1) -> Try.withCatch(() -> fn.apply(t1), classes));
         }
 
@@ -648,11 +650,11 @@ public class FluentFunctions {
             return FluentFunctions.of(AnyM.liftM(fn));
         }
 
-        public FluentFunction<T, CompletableFuture<R>> liftAsync(Executor ex) {
+        public FluentFunction<T, CompletableFuture<R>> liftAsync(final Executor ex) {
             return FluentFunctions.of(t -> CompletableFuture.supplyAsync(() -> fn.apply(t), ex));
         }
 
-        public CompletableFuture<FluentFunction<T, R>> async(Executor ex) {
+        public CompletableFuture<FluentFunction<T, R>> async(final Executor ex) {
             return CompletableFuture.supplyAsync(() -> FluentFunctions.of(fn), ex);
         }
 
@@ -660,7 +662,7 @@ public class FluentFunctions {
          * @see java.util.function.Function#compose(java.util.function.Function)
          */
         @Override
-        public <V> Function<V, R> compose(Function<? super V, ? extends T> before) {
+        public <V> Function<V, R> compose(final Function<? super V, ? extends T> before) {
 
             return FluentFunctions.of(Reader.super.compose(before));
         }
@@ -669,7 +671,7 @@ public class FluentFunctions {
          * @see java.util.function.Function#andThen(java.util.function.Function)
          */
         @Override
-        public <V> Function<T, V> andThen(Function<? super R, ? extends V> after) {
+        public <V> Function<T, V> andThen(final Function<? super R, ? extends V> after) {
 
             return FluentFunctions.of(Reader.super.andThen(after));
         }
@@ -682,24 +684,24 @@ public class FluentFunctions {
         BiFunction<T1, T2, R> fn;
         private final String name;
 
-        public FluentBiFunction(BiFunction<T1, T2, R> fn) {
+        public FluentBiFunction(final BiFunction<T1, T2, R> fn) {
             this.name = null;
             this.fn = fn;
         }
 
         @Override
-        public R apply(T1 t1, T2 t2) {
+        public R apply(final T1 t1, final T2 t2) {
             return fn.apply(t1, t2);
         }
 
-        public FluentBiFunction<T1, T2, R> before(BiConsumer<T1, T2> action) {
+        public FluentBiFunction<T1, T2, R> before(final BiConsumer<T1, T2> action) {
             return withFn((t1, t2) -> {
                 action.accept(t1, t2);
                 return fn.apply(t1, t2);
             });
         }
 
-        public FluentBiFunction<T1, T2, R> after(TriConsumer<T1, T2, R> action) {
+        public FluentBiFunction<T1, T2, R> after(final TriConsumer<T1, T2, R> action) {
             return withFn((t1, t2) -> {
 
                 final R result = fn.apply(t1, t2);
@@ -708,17 +710,17 @@ public class FluentFunctions {
             });
         }
 
-        public FluentBiFunction<T1, T2, R> around(Function<Advice2<T1, T2, R>, R> around) {
+        public FluentBiFunction<T1, T2, R> around(final Function<Advice2<T1, T2, R>, R> around) {
             return withFn((t1, t2) -> around.apply(new Advice2<>(
                                                                  t1, t2, fn)));
         }
 
-        public FluentFunction<T2, R> partiallyApply(T1 param) {
+        public FluentFunction<T2, R> partiallyApply(final T1 param) {
             return new FluentFunction<>(
                                         PartialApplicator.partial2(param, fn));
         }
 
-        public FluentSupplier<R> partiallyApply(T1 param1, T2 param2) {
+        public FluentSupplier<R> partiallyApply(final T1 param1, final T2 param2) {
             return new FluentSupplier<>(
                                         PartialApplicator.partial2(param1, param2, fn));
         }
@@ -732,11 +734,11 @@ public class FluentFunctions {
             return withFn(Memoize.memoizeBiFunction(fn));
         }
 
-        public FluentBiFunction<T1, T2, R> memoize(Cacheable<R> cache) {
+        public FluentBiFunction<T1, T2, R> memoize(final Cacheable<R> cache) {
             return withFn(Memoize.memoizeBiFunction(fn));
         }
 
-        public FluentBiFunction<T1, T2, R> name(String name) {
+        public FluentBiFunction<T1, T2, R> name(final String name) {
             return this.withName(name);
         }
 
@@ -750,44 +752,44 @@ public class FluentFunctions {
 
         }
 
-        public FluentBiFunction<T1, T2, R> log(Consumer<String> logger, Consumer<Throwable> error) {
+        public FluentBiFunction<T1, T2, R> log(final Consumer<String> logger, final Consumer<Throwable> error) {
             return FluentFunctions.of((t1, t2) -> {
                 try {
                     logger.accept(handleNameStart() + "Parameters[" + t1 + "," + t2 + "]" + handleNameEnd());
-                    R result = fn.apply(t1, t2);
+                    final R result = fn.apply(t1, t2);
                     logger.accept(handleNameStart() + "Result[" + result + "]" + handleNameEnd());
                     return result;
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     error.accept(t);
                     throw ExceptionSoftener.throwSoftenedException(t);
                 }
             });
         }
 
-        public FluentBiFunction<T1, T2, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
-        	return FluentFunctions.of((t1, t2) -> {
+        public FluentBiFunction<T1, T2, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
+            return FluentFunctions.of((t1, t2) -> {
 
                 try {
-                    R result = fn.apply(t1, t2);
+                    final R result = fn.apply(t1, t2);
                     eventConsumer.accept(result);
                     return result;
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     errorConsumer.accept(t);
                     throw ExceptionSoftener.throwSoftenedException(t);
                 }
 
             });
         }
-        
+
         public FluentBiFunction<T1, T2, R> println() {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
         }
 
-        public <X extends Throwable> FluentBiFunction<T1, T2, R> recover(Class<X> type, BiFunction<T1, T2, R> onError) {
+        public <X extends Throwable> FluentBiFunction<T1, T2, R> recover(final Class<X> type, final BiFunction<T1, T2, R> onError) {
             return FluentFunctions.of((t1, t2) -> {
                 try {
                     return fn.apply(t1, t2);
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     if (type.isAssignableFrom(t.getClass())) {
                         return onError.apply(t1, t2);
 
@@ -799,15 +801,15 @@ public class FluentFunctions {
 
         }
 
-        public FluentBiFunction<T1, T2, R> retry(int times, int backoffStartTime) {
+        public FluentBiFunction<T1, T2, R> retry(final int times, final int backoffStartTime) {
             return FluentFunctions.of((t1, t2) -> {
                 int count = times;
-                MutableInt sleep = MutableInt.of(backoffStartTime);
+                final MutableInt sleep = MutableInt.of(backoffStartTime);
                 Throwable exception = null;
                 while (count-- > 0) {
                     try {
                         return fn.apply(t1, t2);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         exception = e;
                     }
                     ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep.get()));
@@ -820,20 +822,21 @@ public class FluentFunctions {
 
         }
 
-        public <R1> FluentBiFunction<T1, T2, R1> matches(Function<CheckValue1<R, R1>, CheckValue1<R, R1>> case1, Supplier<? extends R1> otherwise) {
+        public <R1> FluentBiFunction<T1, T2, R1> matches(final Function<CheckValue1<R, R1>, CheckValue1<R, R1>> case1,
+                final Supplier<? extends R1> otherwise) {
             return FluentFunctions.of((t1, t2) -> Matchable.of(fn.apply(t1, t2))
                                                            .matches(case1, otherwise)
                                                            .get());
         }
 
-        public ReactiveSeq<R> iterate(T1 seed1, T2 seed2, Function<R, Tuple2<T1, T2>> mapToTypeAndSplit) {
+        public ReactiveSeq<R> iterate(final T1 seed1, final T2 seed2, final Function<R, Tuple2<T1, T2>> mapToTypeAndSplit) {
             return ReactiveSeq.iterate(fn.apply(seed1, seed2), t -> {
-                Tuple2<T1, T2> tuple = mapToTypeAndSplit.apply(t);
+                final Tuple2<T1, T2> tuple = mapToTypeAndSplit.apply(t);
                 return fn.apply(tuple.v1, tuple.v2);
             });
         }
 
-        public ReactiveSeq<R> generate(T1 input1, T2 input2) {
+        public ReactiveSeq<R> generate(final T1 input1, final T2 input2) {
             return ReactiveSeq.generate(() -> fn.apply(input1, input2));
         }
 
@@ -842,7 +845,7 @@ public class FluentFunctions {
                                           (opt1, opt2) -> opt1.flatMap(t1 -> opt2.map(t2 -> fn.apply(t1, t2))));
         }
 
-        public <X extends Throwable> FluentBiFunction<T1, T2, Try<R, X>> liftTry(Class<X>... classes) {
+        public <X extends Throwable> FluentBiFunction<T1, T2, Try<R, X>> liftTry(final Class<X>... classes) {
             return FluentFunctions.of((t1, t2) -> Try.withCatch(() -> fn.apply(t1, t2), classes));
         }
 
@@ -850,11 +853,11 @@ public class FluentFunctions {
             return FluentFunctions.of(AnyM.liftM2(fn));
         }
 
-        public FluentBiFunction<T1, T2, CompletableFuture<R>> liftAsync(Executor ex) {
+        public FluentBiFunction<T1, T2, CompletableFuture<R>> liftAsync(final Executor ex) {
             return FluentFunctions.of((t1, t2) -> CompletableFuture.supplyAsync(() -> fn.apply(t1, t2), ex));
         }
 
-        public CompletableFuture<FluentBiFunction<T1, T2, R>> async(Executor ex) {
+        public CompletableFuture<FluentBiFunction<T1, T2, R>> async(final Executor ex) {
             return CompletableFuture.supplyAsync(() -> FluentFunctions.of(fn), ex);
         }
 
@@ -862,7 +865,7 @@ public class FluentFunctions {
          * @see java.util.function.BiFunction#andThen(java.util.function.Function)
          */
         @Override
-        public <V> FluentBiFunction<T1, T2, V> andThen(Function<? super R, ? extends V> after) {
+        public <V> FluentBiFunction<T1, T2, V> andThen(final Function<? super R, ? extends V> after) {
             return FluentFunctions.of(BiFunction.super.andThen(after));
         }
 
@@ -874,23 +877,23 @@ public class FluentFunctions {
         private final TriFunction<T1, T2, T3, R> fn;
         private final String name;
 
-        public FluentTriFunction(TriFunction<T1, T2, T3, R> fn) {
+        public FluentTriFunction(final TriFunction<T1, T2, T3, R> fn) {
             this.name = null;
             this.fn = fn;
         }
 
-        public R apply(T1 t1, T2 t2, T3 t3) {
+        public R apply(final T1 t1, final T2 t2, final T3 t3) {
             return fn.apply(t1, t2, t3);
         }
 
-        public FluentTriFunction<T1, T2, T3, R> before(TriConsumer<T1, T2, T3> action) {
+        public FluentTriFunction<T1, T2, T3, R> before(final TriConsumer<T1, T2, T3> action) {
             return withFn((t1, t2, t3) -> {
                 action.accept(t1, t2, t3);
                 return fn.apply(t1, t2, t3);
             });
         }
 
-        public FluentTriFunction<T1, T2, T3, R> after(QuadConsumer<T1, T2, T3, R> action) {
+        public FluentTriFunction<T1, T2, T3, R> after(final QuadConsumer<T1, T2, T3, R> action) {
             return withFn((t1, t2, t3) -> {
 
                 final R result = fn.apply(t1, t2, t3);
@@ -899,22 +902,22 @@ public class FluentFunctions {
             });
         }
 
-        public FluentTriFunction<T1, T2, T3, R> around(Function<Advice3<T1, T2, T3, R>, R> around) {
+        public FluentTriFunction<T1, T2, T3, R> around(final Function<Advice3<T1, T2, T3, R>, R> around) {
             return withFn((t1, t2, t3) -> around.apply(new Advice3<>(
                                                                      t1, t2, t3, fn)));
         }
 
-        public FluentBiFunction<T2, T3, R> partiallyApply(T1 param) {
+        public FluentBiFunction<T2, T3, R> partiallyApply(final T1 param) {
             return new FluentBiFunction<>(
                                           PartialApplicator.partial3(param, fn));
         }
 
-        public FluentFunction<T3, R> partiallyApply(T1 param1, T2 param2) {
+        public FluentFunction<T3, R> partiallyApply(final T1 param1, final T2 param2) {
             return new FluentFunction<>(
                                         PartialApplicator.partial3(param1, param2, fn));
         }
 
-        public FluentSupplier<R> partiallyApply(T1 param1, T2 param2, T3 param3) {
+        public FluentSupplier<R> partiallyApply(final T1 param1, final T2 param2, final T3 param3) {
             return new FluentSupplier<>(
                                         PartialApplicator.partial3(param1, param2, param3, fn));
         }
@@ -928,11 +931,11 @@ public class FluentFunctions {
             return withFn(Memoize.memoizeTriFunction(fn));
         }
 
-        public FluentTriFunction<T1, T2, T3, R> memoize(Cacheable<R> cache) {
+        public FluentTriFunction<T1, T2, T3, R> memoize(final Cacheable<R> cache) {
             return withFn(Memoize.memoizeTriFunction(fn));
         }
 
-        public FluentTriFunction<T1, T2, T3, R> name(String name) {
+        public FluentTriFunction<T1, T2, T3, R> name(final String name) {
             return this.withName(name);
         }
 
@@ -946,28 +949,28 @@ public class FluentFunctions {
 
         }
 
-        public FluentTriFunction<T1, T2, T3, R> log(Consumer<String> logger, Consumer<Throwable> error) {
+        public FluentTriFunction<T1, T2, T3, R> log(final Consumer<String> logger, final Consumer<Throwable> error) {
             return FluentFunctions.of((t1, t2, t3) -> {
                 try {
                     logger.accept(handleNameStart() + "Parameters[" + t1 + "," + t2 + "," + t3 + "]" + handleNameEnd());
-                    R result = fn.apply(t1, t2, t3);
+                    final R result = fn.apply(t1, t2, t3);
                     logger.accept(handleNameStart() + "Result[" + result + "]" + handleNameEnd());
                     return result;
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     error.accept(t);
                     throw ExceptionSoftener.throwSoftenedException(t);
                 }
             });
         }
-        
-        public FluentTriFunction<T1, T2, T3, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
-        	return FluentFunctions.of((t1, t2, t3) -> {
+
+        public FluentTriFunction<T1, T2, T3, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
+            return FluentFunctions.of((t1, t2, t3) -> {
 
                 try {
-                    R result = fn.apply(t1, t2, t3);
+                    final R result = fn.apply(t1, t2, t3);
                     eventConsumer.accept(result);
                     return result;
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     errorConsumer.accept(t);
                     throw ExceptionSoftener.throwSoftenedException(t);
                 }
@@ -979,11 +982,11 @@ public class FluentFunctions {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
         }
 
-        public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(Class<X> type, TriFunction<T1, T2, T3, R> onError) {
+        public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(final Class<X> type, final TriFunction<T1, T2, T3, R> onError) {
             return FluentFunctions.of((t1, t2, t3) -> {
                 try {
                     return fn.apply(t1, t2, t3);
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     if (type.isAssignableFrom(t.getClass())) {
                         return onError.apply(t1, t2, t3);
 
@@ -995,15 +998,15 @@ public class FluentFunctions {
 
         }
 
-        public FluentTriFunction<T1, T2, T3, R> retry(int times, int backoffStartTime) {
+        public FluentTriFunction<T1, T2, T3, R> retry(final int times, final int backoffStartTime) {
             return FluentFunctions.of((t1, t2, t3) -> {
                 int count = times;
-                MutableInt sleep = MutableInt.of(backoffStartTime);
+                final MutableInt sleep = MutableInt.of(backoffStartTime);
                 Throwable exception = null;
                 while (count-- > 0) {
                     try {
                         return fn.apply(t1, t2, t3);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         exception = e;
                     }
                     ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep.get()));
@@ -1016,21 +1019,21 @@ public class FluentFunctions {
 
         }
 
-        public <R1> FluentTriFunction<T1, T2, T3, R1> matches(Function<CheckValue1<R, R1>, CheckValue1<R, R1>> case1,
-                Supplier<? extends R1> otherwise) {
+        public <R1> FluentTriFunction<T1, T2, T3, R1> matches(final Function<CheckValue1<R, R1>, CheckValue1<R, R1>> case1,
+                final Supplier<? extends R1> otherwise) {
             return FluentFunctions.of((t1, t2, t3) -> Matchable.of(fn.apply(t1, t2, t3))
                                                                .matches(case1, otherwise)
                                                                .get());
         }
 
-        public ReactiveSeq<R> iterate(T1 seed1, T2 seed2, T3 seed3, Function<R, Tuple3<T1, T2, T3>> mapToType) {
+        public ReactiveSeq<R> iterate(final T1 seed1, final T2 seed2, final T3 seed3, final Function<R, Tuple3<T1, T2, T3>> mapToType) {
             return ReactiveSeq.iterate(fn.apply(seed1, seed2, seed3), t -> {
-                Tuple3<T1, T2, T3> tuple = mapToType.apply(t);
+                final Tuple3<T1, T2, T3> tuple = mapToType.apply(t);
                 return fn.apply(tuple.v1, tuple.v2, tuple.v3);
             });
         }
 
-        public ReactiveSeq<R> generate(T1 input1, T2 input2, T3 input3) {
+        public ReactiveSeq<R> generate(final T1 input1, final T2 input2, final T3 input3) {
             return ReactiveSeq.generate(() -> fn.apply(input1, input2, input3));
         }
 
@@ -1039,7 +1042,7 @@ public class FluentFunctions {
                                            (opt1, opt2, opt3) -> opt1.flatMap(t1 -> opt2.flatMap(t2 -> opt3.map(t3 -> fn.apply(t1, t2, t3)))));
         }
 
-        public <X extends Throwable> FluentTriFunction<T1, T2, T3, Try<R, X>> liftTry(Class<X>... classes) {
+        public <X extends Throwable> FluentTriFunction<T1, T2, T3, Try<R, X>> liftTry(final Class<X>... classes) {
             return FluentFunctions.of((t1, t2, t3) -> Try.withCatch(() -> fn.apply(t1, t2, t3), classes));
         }
 
@@ -1047,17 +1050,17 @@ public class FluentFunctions {
             return FluentFunctions.of(AnyM.liftM3(fn));
         }
 
-        public FluentTriFunction<T1, T2, T3, CompletableFuture<R>> liftAsync(Executor ex) {
+        public FluentTriFunction<T1, T2, T3, CompletableFuture<R>> liftAsync(final Executor ex) {
             return FluentFunctions.of((t1, t2, t3) -> CompletableFuture.supplyAsync(() -> fn.apply(t1, t2, t3), ex));
         }
 
-        public CompletableFuture<FluentTriFunction<T1, T2, T3, R>> async(Executor ex) {
+        public CompletableFuture<FluentTriFunction<T1, T2, T3, R>> async(final Executor ex) {
             return CompletableFuture.supplyAsync(() -> FluentFunctions.of(fn), ex);
         }
 
-        public <R2> FluentTriFunction<T1, T2, T3, R2> andThen(Function<? super R, ? extends R2> after) {
+        public <R2> FluentTriFunction<T1, T2, T3, R2> andThen(final Function<? super R, ? extends R2> after) {
             Objects.requireNonNull(after);
-            return FluentFunctions.of((T1 t1, T2 t2, T3 t3) -> after.apply(apply(t1, t2, t3)));
+            return FluentFunctions.of((final T1 t1, final T2 t2, final T3 t3) -> after.apply(apply(t1, t2, t3)));
         }
     }
 
@@ -1081,7 +1084,7 @@ public class FluentFunctions {
             return fn.apply(param);
         }
 
-        public R proceed(T param) {
+        public R proceed(final T param) {
             return fn.apply(param);
         }
     }
@@ -1096,15 +1099,15 @@ public class FluentFunctions {
             return fn.apply(param1, param2);
         }
 
-        public R proceed(T1 param1, T2 param2) {
+        public R proceed(final T1 param1, final T2 param2) {
             return fn.apply(param1, param2);
         }
 
-        public R proceed1(T1 param) {
+        public R proceed1(final T1 param) {
             return fn.apply(param, param2);
         }
 
-        public R proceed2(T2 param) {
+        public R proceed2(final T2 param) {
             return fn.apply(param1, param);
         }
     }
@@ -1120,19 +1123,19 @@ public class FluentFunctions {
             return fn.apply(param1, param2, param3);
         }
 
-        public R proceed(T1 param1, T2 param2, T3 param3) {
+        public R proceed(final T1 param1, final T2 param2, final T3 param3) {
             return fn.apply(param1, param2, param3);
         }
 
-        public R proceed1(T1 param) {
+        public R proceed1(final T1 param) {
             return fn.apply(param, param2, param3);
         }
 
-        public R proceed2(T2 param) {
+        public R proceed2(final T2 param) {
             return fn.apply(param1, param, param3);
         }
 
-        public R proceed3(T3 param) {
+        public R proceed3(final T3 param) {
             return fn.apply(param1, param2, param);
         }
     }
