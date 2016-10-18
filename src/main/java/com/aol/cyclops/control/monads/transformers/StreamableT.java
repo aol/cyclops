@@ -39,17 +39,10 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 /**
  * Monad Transformer for Cyclops Streamables
  * 
- * StreamableT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Streamable
- * 
- * <pre>
- * {@code 
- * StreamableT<AnyM<*SOME_MONAD_TYPE*<Streamable<T>>>>
- * }</pre>
- * 
  * StreamableT allows the deeply wrapped Streamable to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Data type of the elements within the Streamable
  */
 public interface StreamableT<T> extends FoldableTransformerSeq<T> {
 

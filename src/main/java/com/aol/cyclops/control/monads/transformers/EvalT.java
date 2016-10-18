@@ -35,7 +35,7 @@ import com.aol.cyclops.types.stream.ToStream;
  * @author johnmcclean
  *
  * @param <T>
- *            The type contained on the Maybe within
+ *            The type contained on the nested Eval(s) within
  */
 public interface EvalT<T> extends Publisher<T>, Functor<T>, Filterable<T>, ToStream<T> {
 

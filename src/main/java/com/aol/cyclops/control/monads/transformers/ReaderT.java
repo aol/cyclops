@@ -17,6 +17,14 @@ import com.aol.cyclops.control.monads.transformers.seq.ReaderTSeq;
 import com.aol.cyclops.control.monads.transformers.values.ReaderTValue;
 import com.aol.cyclops.types.MonadicValue;
 
+/**
+ * A monad transformer for working with nested Reader monad types
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Type of input into the nested Reader Monad(s)
+ * @param <R> Return type in the nested Reader Monad(s)
+ */
 public interface ReaderT<T, R> extends Publisher<T> {
 
     /**
