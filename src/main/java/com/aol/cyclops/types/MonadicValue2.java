@@ -1,8 +1,12 @@
 package com.aol.cyclops.types;
 
+import java.util.Iterator;
 import java.util.function.Function;
 
+import org.reactivestreams.Publisher;
+
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 
 public interface MonadicValue2<T1, T2> extends MonadicValue<T2> {
     /**
@@ -62,4 +66,37 @@ public interface MonadicValue2<T1, T2> extends MonadicValue<T2> {
      * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
     <T2> MonadicValue2<T1, T2> unit(T2 unit);
+    
+    /**
+     * Flat map the wrapped Streamable and return the first element
+     *
+     * @param mapper FlatMap function with Iterable type returned value
+     * @return MonadicValue2 the first element returned after the flatMap function is applied
+     */
+	default <R> MonadicValue2<T1, R> flatMapIterable(Function<? super T2, ? extends Iterable<? extends R>> mapper) {
+		return this.flatMap(a -> {
+			Iterator<? extends R> it = mapper.apply(a).iterator();
+			if (it.hasNext()) {
+				R r = it.next();
+				return unit(r);
+			} else {
+				return null;
+			}
+		});
+	}
+
+	/**
+     * Flat map the wrapped Streamable and return the element published
+     *
+     * @param mapper FlatMap function with Publisher type returned value
+     * @return MonadicValue2 subscribed from publisher after the flatMap function is applied
+     */
+	default <R> MonadicValue2<T1, R> flatMapPublisher(Function<? super T2, ? extends Publisher<? extends R>> mapper) {
+		return this.flatMap(a -> {
+			Publisher<? extends R> publisher = mapper.apply(a);
+			ValueSubscriber<R> sub = ValueSubscriber.subscriber();
+			publisher.subscribe(sub);
+			return unit(sub.get());
+		});
+	}
 }
