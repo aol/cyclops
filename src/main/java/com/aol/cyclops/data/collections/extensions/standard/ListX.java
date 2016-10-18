@@ -1008,8 +1008,8 @@ public interface ListX<T> extends List<T>, MutableCollectionX<T>, MutableSequenc
      * @param listX to narrow generic type
      * @return ListX with narrowed type
      */
-    public  static <T> ListX<T> narrow(ListX<? extends T> listX){
-        return (ListX<T>)listX;
+    public static <T> ListX<T> narrow(ListX<? extends T> listX) {
+        return (ListX<T>) listX;
     }
 
 }

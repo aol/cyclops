@@ -51,6 +51,7 @@ public interface FeatureToggle<F>
      * 
      */
     boolean isDisabled();
+
     /**
      * Narrow covariant type parameter
      * 
@@ -208,8 +209,8 @@ public interface FeatureToggle<F>
      */
     @Override
     default FeatureToggle<MonadicValue<F>> nest() {
-       
-        return (FeatureToggle<MonadicValue<F>>)MonadicValue1.super.nest();
+
+        return (FeatureToggle<MonadicValue<F>>) MonadicValue1.super.nest();
     }
 
     /* (non-Javadoc)
@@ -217,8 +218,8 @@ public interface FeatureToggle<F>
      */
     @Override
     default <R> FeatureToggle<R> coflatMap(Function<? super MonadicValue<F>, R> mapper) {
-       
-        return (FeatureToggle<R>)MonadicValue1.super.coflatMap(mapper);
+
+        return (FeatureToggle<R>) MonadicValue1.super.coflatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -226,8 +227,8 @@ public interface FeatureToggle<F>
      */
     @Override
     default FeatureToggle<F> combineEager(Monoid<F> monoid, MonadicValue<? extends F> v2) {
-        
-        return (FeatureToggle<F>)MonadicValue1.super.combineEager(monoid, v2);
+
+        return (FeatureToggle<F>) MonadicValue1.super.combineEager(monoid, v2);
     }
 
     /**
@@ -239,7 +240,7 @@ public interface FeatureToggle<F>
         if (isDisabled())
             return (FeatureToggle<X>) this;
         return narrow(flatMapper.apply(get())
-                         .toFeatureToggle());
+                                .toFeatureToggle());
     }
 
     /**

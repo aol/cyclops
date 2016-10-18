@@ -38,7 +38,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 
 public class FluentFunctions {
-	
+
     /**
      * Construct a FluentSupplier from a checked Supplier
      * <pre>
@@ -378,7 +378,7 @@ public class FluentFunctions {
                 }
             });
         }
-        
+
         public <X extends Throwable> FluentSupplier<R> recover(Class<X> type, Supplier<R> onError) {
             return FluentFunctions.of(() -> {
                 try {
@@ -537,9 +537,9 @@ public class FluentFunctions {
 
             });
         }
-        
+
         public FluentFunction<T, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
-        	return FluentFunctions.of(t1 -> {
+            return FluentFunctions.of(t1 -> {
 
                 try {
                     R result = fn.apply(t1);
@@ -765,7 +765,7 @@ public class FluentFunctions {
         }
 
         public FluentBiFunction<T1, T2, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
-        	return FluentFunctions.of((t1, t2) -> {
+            return FluentFunctions.of((t1, t2) -> {
 
                 try {
                     R result = fn.apply(t1, t2);
@@ -778,7 +778,7 @@ public class FluentFunctions {
 
             });
         }
-        
+
         public FluentBiFunction<T1, T2, R> println() {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
         }
@@ -959,9 +959,9 @@ public class FluentFunctions {
                 }
             });
         }
-        
+
         public FluentTriFunction<T1, T2, T3, R> visitEvent(Consumer<R> eventConsumer, Consumer<Throwable> errorConsumer) {
-        	return FluentFunctions.of((t1, t2, t3) -> {
+            return FluentFunctions.of((t1, t2, t3) -> {
 
                 try {
                     R result = fn.apply(t1, t2, t3);

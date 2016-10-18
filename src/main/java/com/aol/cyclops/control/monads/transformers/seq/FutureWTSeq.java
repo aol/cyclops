@@ -82,7 +82,6 @@ public class FutureWTSeq<A>
         return run.map(f -> f.toListX());
     }
 
-    
     public MaybeTSeq<A> filter(Predicate<? super A> test) {
         return MaybeTSeq.of(run.map(opt -> opt.filter(test)));
     }

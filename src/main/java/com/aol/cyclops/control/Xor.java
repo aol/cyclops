@@ -96,7 +96,7 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
      * @return Xor constructed from the supplied Iterable
      */
     public static <ST, T> Xor<ST, T> fromIterable(final Iterable<T> iterable) {
-     
+
         final Iterator<T> it = iterable.iterator();
         return Xor.primary(it.hasNext() ? it.next() : null);
     }

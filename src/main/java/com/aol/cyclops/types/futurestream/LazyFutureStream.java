@@ -1497,7 +1497,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      */
     @Override
     default <R> LazyFutureStream<R> flatMap(Function<? super U, ? extends Stream<? extends R>> flatFn) {
-	return map(flatFn).flatten();
+        return map(flatFn).flatten();
     }
 
     @Override
@@ -3220,8 +3220,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      */
-    default <X extends Throwable> void forEachWithError(Consumer<? super U> consumerElement, 
-                                                Consumer<? super Throwable> consumerError) {
+    default <X extends Throwable> void forEachWithError(Consumer<? super U> consumerElement, Consumer<? super Throwable> consumerError) {
         val t2 = LazyFutureStreamUtils.forEachWithError(this, consumerElement, consumerError);
         t2.v2.run();
     }

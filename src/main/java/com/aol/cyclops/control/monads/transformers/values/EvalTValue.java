@@ -31,7 +31,6 @@ import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.val;
 
-
 public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValue<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,
         ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 

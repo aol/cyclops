@@ -118,6 +118,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
         return Predicates.eqvIterable(t)
                          .test(this);
     }
+
     /**
      * Allows structural matching on the value / seq nature of this AnyM.
      * If this AnyM can only store a single value an Xor.secondary with type AnyMValue is returned
@@ -153,7 +154,6 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * @return AnyM with flattening transformation
      */
     <R> AnyM<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
-     
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
@@ -304,7 +304,6 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     */
     <R> AnyM<R> bind(Function<? super T, ?> fn);
 
-
     /**
      * join / flatten one level of a nested hierarchy
      * 
@@ -386,6 +385,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     * @return Reduced AnyM
     */
     AnyMValue<T> reduceMValue(Monoid<AnyMValue<T>> reducer);
+
     /**
      * Perform a monadic reduction using a Monoid that combines AnyM types.
      * 
@@ -950,7 +950,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
      * 
      * @param monad Monad to convert to a supported type and wrap inside an AnyMValue
      * @return AnyMSeq that wraps the supplied converted
-     */ 
+     */
     public static <T> AnyMSeq<T> ofConvertableSeq(Object monad) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.convertSeq(monad);
@@ -1095,6 +1095,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                             .map(i -> AnyM.fromXor(i))
                             .collect(ListX.listXCollector());
     }
+
     /**
      * Take an iterable containing Iors and convert them into a List of AnyMs
      * e.g.
@@ -1112,6 +1113,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                             .map(i -> AnyM.fromIor(i))
                             .collect(ListX.listXCollector());
     }
+
     /**
      * Take an iterable containing Maybes and convert them into a List of AnyMs
      * e.g.
@@ -1129,6 +1131,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                             .map(i -> AnyM.fromMaybe(i))
                             .collect(ListX.listXCollector());
     }
+
     /**
      * Take an iterable containing Evals and convert them into a List of AnyMs
      * e.g.
@@ -1321,9 +1324,6 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                                    .unwrap());
     }
 
-   
-    
-
     /**
      * Lift a QuadFunction into Monadic form.
      * 
@@ -1339,7 +1339,6 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                                        .unwrap());
     }
 
-    
     /**
      * Lift a QuintFunction (5 parameters) into Monadic form
      * 
@@ -1421,7 +1420,6 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     static class AnyMFactory {
         static AnyMFactory instance = new AnyMFactory();
 
-     
         /**
          * Convert an object to an AnyMValue type if possible. If a registered monad comprehender exists the supplied object will
          * be wrapped as is, otherwise it will be converted into a support type (if possible). 
@@ -1488,7 +1486,6 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
                                       o).anyMSeq();
         }
 
-        
         /**
          * Non-type safe way to wrap a supported monad type in an AnyMValue
          * 

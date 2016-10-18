@@ -57,7 +57,6 @@ public interface BiFunctor<T1, T2> {
         });
     }
 
-   
     /**
      * Cast two data types simulatanously.
      * <pre>

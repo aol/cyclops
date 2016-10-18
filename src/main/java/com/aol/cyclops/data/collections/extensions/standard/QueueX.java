@@ -847,7 +847,7 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T>, OnEmptySwitc
      * @param queueX to narrow generic type
      * @return QueueX with narrowed type
      */
-    public  static <T> QueueX<T> narrow(QueueX<? extends T> queueX){
-        return (QueueX<T>)queueX;
+    public static <T> QueueX<T> narrow(QueueX<? extends T> queueX) {
+        return (QueueX<T>) queueX;
     }
 }
