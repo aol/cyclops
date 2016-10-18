@@ -92,6 +92,7 @@ public class StreamUtils {
      * @return Optional with a List of values
      */
     public final static <T> Optional<ListX<T>> streamToOptional(final Stream<T> stream) {
+        
         final List<T> collected = stream.collect(Collectors.toList());
         if (collected.size() == 0)
             return Optional.empty();

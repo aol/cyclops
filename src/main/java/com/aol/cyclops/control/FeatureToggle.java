@@ -26,17 +26,13 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.util.function.Curry;
 
+
 /**
- * Switch interface for handling features that can be enabled or disabled.
+ * An 'Optional' like data type that can either be enabled or disabled
  * 
  * @author johnmcclean
  *
- * @param <F>
- */
-/**
- * @author johnmcclean
- *
- * @param <F>
+ * @param <F> Type of value storable in this FeatureToggle
  */
 public interface FeatureToggle<F>
         extends Supplier<F>, MonadicValue1<F>, Filterable<F>, Functor<F>, ApplicativeFunctor<F>, Matchable.ValueAndOptionalMatcher<F> {
@@ -157,8 +153,31 @@ public interface FeatureToggle<F>
      */
     public AnyM<F> anyMEnabled();
 
+    /* (non-Javadoc)
+     * @see java.util.function.Supplier#get()
+     */
     @Override
     F get();
+    
+    
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue1#flatMapIterable(java.util.function.Function)
+     */
+    @Override
+    default <R> FeatureToggle<R> flatMapIterable(Function<? super F, ? extends Iterable<? extends R>> mapper) {
+        
+        return (FeatureToggle<R> )MonadicValue1.super.flatMapIterable(mapper);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue1#flatMapPublisher(java.util.function.Function)
+     */
+    @Override
+    default <R> FeatureToggle<R>  flatMapPublisher(Function<? super F, ? extends Publisher<? extends R>> mapper) {
+       
+        return (FeatureToggle<R> )MonadicValue1.super.flatMapPublisher(mapper);
+    }
 
     /**
      * Create a new enabled switch

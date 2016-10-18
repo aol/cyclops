@@ -84,6 +84,24 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
         return new Both<ST, PT>(
                                 Ior.secondary(secondary), Ior.primary(primary));
     }
+    
+    
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#flatMapIterable(java.util.function.Function)
+     */
+    @Override
+    default <R> Ior<ST, R> flatMapIterable(Function<? super PT, ? extends Iterable<? extends R>> mapper) {
+        return (Ior<ST, R>)MonadicValue2.super.flatMapIterable(mapper);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#flatMapPublisher(java.util.function.Function)
+     */
+    @Override
+    default <R> Ior<ST, R> flatMapPublisher(Function<? super PT, ? extends Publisher<? extends R>> mapper) {
+        return (Ior<ST, R>)MonadicValue2.super.flatMapPublisher(mapper);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#anyM()

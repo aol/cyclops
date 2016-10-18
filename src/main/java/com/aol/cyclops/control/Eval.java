@@ -1,8 +1,6 @@
 package com.aol.cyclops.control;
 
 import static com.aol.cyclops.control.For.Values.each2;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 import java.util.List;
@@ -20,11 +18,8 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -302,6 +297,23 @@ public interface Eval<T>
     default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
         return unit(each2(this, t1 -> v2, (t1, t2) -> monoid.combiner()
                                                             .apply(t1, t2)).orElseGet(() -> orElseGet(() -> monoid.zero())));
+    }
+
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue1#flatMapIterable(java.util.function.Function)
+     */
+    @Override
+    default <R> Eval<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (Eval<R>)MonadicValue1.super.flatMapIterable(mapper);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue1#flatMapPublisher(java.util.function.Function)
+     */
+    @Override
+    default <R> Eval<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return (Eval<R>)MonadicValue1.super.flatMapPublisher(mapper);
     }
 
     /* (non-Javadoc)
