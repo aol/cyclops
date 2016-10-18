@@ -30,17 +30,12 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad Transformer for Cyclops Streams
+ * Monad Transformer for Streams nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
  * 
- * StreamT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Stream
- * <pre>
- * {@code 
- * StreamT<AnyM<*SOME_MONAD_TYPE*<Stream<T>>>>
- * }</pre>
  * StreamT allows the deeply wrapped Stream to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> The type contained in the Stream(s) within
  */
 public class StreamTSeq<T> implements StreamT<T> {
 

@@ -36,18 +36,13 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad Transformer for Java Sets
- * 
- * SetT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Set
- * <pre>
- * {@code 
- * SetT<AnyM<*SOME_MONAD_TYPE*<Set<T>>>>
- * }</pre>
+ * 'Monad' Transformer for Java Sets (will break laws as map will lose duplicates)
+ * nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
  * 
  * SetT allows the deeply wrapped Set to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> The type contained in the Set(s) within
  */
 public class SetTSeq<T> implements SetT<T> {
 

@@ -28,19 +28,12 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 /**
  * Monad transformer for cyclops-react Try
  * 
- * TryT consists of an AnyM instance that in turns wraps another Monad type that contains an Try
- * 
- * <pre>
- * {@code
- * TryT<AnyM<*SOME_MONAD_TYPE*<Try<T>>>>
- * }</pre>
- * 
  * TryT allows the deeply wrapped Try to be manipulating within it's nested /contained context
  * 
  * 
  * @author johnmcclean
  *
- * @param <T> The type contained on the Try within
+ * @param <T> The type contained on the nested Try within
  */
 public interface TryT<T, X extends Throwable> extends Publisher<T>, Functor<T>, Filterable<T> {
 
