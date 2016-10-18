@@ -18,10 +18,10 @@ public class FuturePool {
     private final ManyToOneConcurrentArrayQueue<FastFuture> pool;
     private final int max;
 
-    public <T> FastFuture<T> next(Supplier<FastFuture<T>> factory) {
+    public <T> FastFuture<T> next(final Supplier<FastFuture<T>> factory) {
         if (pool.size() > 0) {
 
-            FastFuture next = pool.poll();
+            final FastFuture next = pool.poll();
             next.clearFast();
             return next;
         }
@@ -29,7 +29,7 @@ public class FuturePool {
         return factory.get();
     }
 
-    public <T> void done(FastFuture<T> f) {
+    public <T> void done(final FastFuture<T> f) {
         if (pool.size() < max) {
 
             pool.offer(f);

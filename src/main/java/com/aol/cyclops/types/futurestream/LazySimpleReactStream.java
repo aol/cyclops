@@ -29,24 +29,33 @@ import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 
 public interface LazySimpleReactStream<U> extends BlockingStream<U>, ConfigurableStream<U, FastFuture<U>>, ToQueue<U>, BaseSimpleReactStream<U> {
 
+    @Override
     LazyReact getSimpleReact();
 
+    @Override
     LazySimpleReactStream<U> withTaskExecutor(Executor e);
 
+    @Override
     LazySimpleReactStream<U> withRetrier(RetryExecutor retry);
 
+    @Override
     LazySimpleReactStream<U> withQueueFactory(QueueFactory<U> queue);
 
+    @Override
     LazySimpleReactStream<U> withErrorHandler(Optional<Consumer<Throwable>> errorHandler);
 
+    @Override
     LazySimpleReactStream<U> withSubscription(Continueable sub);
 
+    @Override
     LazySimpleReactStream<U> withAsync(boolean b);
 
+    @Override
     Continueable getSubscription();
 
     <R> LazySimpleReactStream<R> withLastActive(LazyStreamWrapper<R> streamWrapper);
 
+    @Override
     abstract LazyStreamWrapper<U> getLastActive();
 
     /* 
@@ -56,7 +65,8 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      *	@param service Service to execute function on 
      *	@return next stage in the Stream
      */
-    default <R> LazySimpleReactStream<R> then(final Function<? super U, ? extends R> fn, Executor service) {
+    @Override
+    default <R> LazySimpleReactStream<R> then(final Function<? super U, ? extends R> fn, final Executor service) {
 
         return this.withLastActive(getLastActive().operation((ft) -> ft.thenApplyAsync(LazySimpleReactStream.<U, R> handleExceptions(fn), service)));
     }
@@ -68,6 +78,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      *	@param service Service to execute function on 
      *	@return next stage in the Stream
      */
+    @Override
     @SuppressWarnings("unchecked")
     default <R> LazySimpleReactStream<R> thenSync(final Function<? super U, ? extends R> fn) {
 
@@ -87,9 +98,10 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      *            Function that will be executed and retried on failure
      * @return Next Stage in the Strea,
      */
+    @Override
     @SuppressWarnings("unchecked")
     default <R> LazySimpleReactStream<R> retry(final Function<? super U, ? extends R> fn) {
-        Function<PipelineBuilder, PipelineBuilder> mapper = (
+        final Function<PipelineBuilder, PipelineBuilder> mapper = (
                 ft) -> ft.thenApplyAsync(res -> getRetrier().getWithRetry((Callable) () -> LazySimpleReactStream.<U, R> handleExceptions(fn)
                                                                                                                 .apply((U) res))
                                                             .join(),
@@ -137,12 +149,13 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
+    @Override
     @SuppressWarnings("unchecked")
     default <R> LazySimpleReactStream<R> then(final Function<? super U, ? extends R> fn) {
-        if (!this.isAsync())
+        if (!isAsync())
             return thenSync(fn);
-        Function<PipelineBuilder, PipelineBuilder> streamMapper = ft -> ft.thenApplyAsync(LazySimpleReactStream.<U, R> handleExceptions(fn),
-                                                                                          getTaskExecutor());
+        final Function<PipelineBuilder, PipelineBuilder> streamMapper = ft -> ft.thenApplyAsync(LazySimpleReactStream.<U, R> handleExceptions(fn),
+                                                                                                getTaskExecutor());
         return (LazySimpleReactStream<R>) this.withLastActive(getLastActive().operation(streamMapper));
     }
 
@@ -155,13 +168,14 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
+    @Override
     default LazySimpleReactStream<U> peek(final Consumer<? super U> consumer) {
         if (!isAsync())
             return peekSync(consumer);
-        return (LazySimpleReactStream<U>) then((t) -> {
+        return then((t) -> {
 
             consumer.accept(t);
-            return (U) t;
+            return t;
         });
     }
 
@@ -171,18 +185,19 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @param consumer Peek consumer
      * @return Next stage
      */
+    @Override
     default LazySimpleReactStream<U> peekSync(final Consumer<? super U> consumer) {
-        return (LazySimpleReactStream<U>) thenSync((t) -> {
+        return thenSync((t) -> {
             consumer.accept(t);
-            return (U) t;
+            return t;
         });
     }
 
-    static <U, R> Function<U, R> handleExceptions(Function<? super U, ? extends R> fn) {
+    static <U, R> Function<U, R> handleExceptions(final Function<? super U, ? extends R> fn) {
         return (input) -> {
             try {
                 return fn.apply(input);
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
 
                 if (t instanceof AbortRetryException) //special case for retry
                     throw t;
@@ -213,11 +228,12 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @param flatFn flatMap function
      * @return Flatten Stream with flatFn applied
      */
-    default <R> LazySimpleReactStream<R> flatMapToCompletableFuture(Function<? super U, CompletableFuture<? extends R>> flatFn) {
-        if (!this.isAsync())
+    @Override
+    default <R> LazySimpleReactStream<R> flatMapToCompletableFuture(final Function<? super U, CompletableFuture<? extends R>> flatFn) {
+        if (!isAsync())
             return flatMapToCompletableFutureSync(flatFn);
-        Function<PipelineBuilder, PipelineBuilder> streamMapper = ft -> ft.thenComposeAsync(LazySimpleReactStream.handleExceptions(flatFn),
-                                                                                            getTaskExecutor());
+        final Function<PipelineBuilder, PipelineBuilder> streamMapper = ft -> ft.thenComposeAsync(LazySimpleReactStream.handleExceptions(flatFn),
+                                                                                                  getTaskExecutor());
         return this.withLastActive(getLastActive().operation(streamMapper));
     }
 
@@ -239,9 +255,10 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @param flatFn flatMap function
      * @return Flatten Stream with flatFn applied
      */
-    default <R> LazySimpleReactStream<R> flatMapToCompletableFutureSync(Function<? super U, CompletableFuture<? extends R>> flatFn) {
+    @Override
+    default <R> LazySimpleReactStream<R> flatMapToCompletableFutureSync(final Function<? super U, CompletableFuture<? extends R>> flatFn) {
 
-        Function<PipelineBuilder, PipelineBuilder> streamMapper = ft -> ft.thenCompose(LazySimpleReactStream.handleExceptions(flatFn));
+        final Function<PipelineBuilder, PipelineBuilder> streamMapper = ft -> ft.thenCompose(LazySimpleReactStream.handleExceptions(flatFn));
         return this.withLastActive(getLastActive().operation(streamMapper));
     }
 
@@ -253,7 +270,8 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
      * @return SimpleReactStream
      */
-    default <R> LazySimpleReactStream<R> flatMap(Function<? super U, ? extends Stream<? extends R>> flatFn) {
+    @Override
+    default <R> LazySimpleReactStream<R> flatMap(final Function<? super U, ? extends Stream<? extends R>> flatFn) {
 
         //need to pass in a builder in the constructor and build using it
         return (LazySimpleReactStream) getSimpleReact().construct(Stream.of())
@@ -265,12 +283,12 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
 
     default ListX<BaseSimpleReactStream<U>> copySimpleReactStream(final int times) {
 
-        return (ListX) StreamUtils.toBufferingCopier(iterator(), times)
-                                  .stream()
-                                  .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator) it, Spliterator.ORDERED), false))
-                                  .<BaseSimpleReactStream<U>> map(fs -> (BaseSimpleReactStream) this.getSimpleReact()
-                                                                                                    .construct((Stream) fs))
-                                  .toListX();
+        return StreamUtils.toBufferingCopier(iterator(), times)
+                          .stream()
+                          .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator) it, Spliterator.ORDERED), false))
+                          .<BaseSimpleReactStream<U>> map(fs -> (BaseSimpleReactStream) this.getSimpleReact()
+                                                                                            .construct((Stream) fs))
+                          .toListX();
     }
 
     /**
@@ -283,12 +301,13 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
+    @Override
     @SuppressWarnings("unchecked")
     default LazySimpleReactStream<U> filter(final Predicate<? super U> p) {
 
         if (!isAsync())
             return filterSync(p);
-        Function<PipelineBuilder, PipelineBuilder> fn = ft -> ft.thenApplyAsync((in) -> {
+        final Function<PipelineBuilder, PipelineBuilder> fn = ft -> ft.thenApplyAsync((in) -> {
             if (!p.test((U) in)) {
                 throw new FilteredExecutionPathException();
             }
@@ -310,8 +329,9 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
+    @Override
     default LazySimpleReactStream<U> filterSync(final Predicate<? super U> p) {
-        Function<PipelineBuilder, PipelineBuilder> fn = ft -> ft.thenApply((in) -> {
+        final Function<PipelineBuilder, PipelineBuilder> fn = ft -> ft.thenApply((in) -> {
             if (!p.test((U) in)) {
                 throw new FilteredExecutionPathException();
             }
@@ -325,10 +345,11 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @return A Stream of CompletableFutures that represent this stage in the
      *         dataflow
      */
+    @Override
     @SuppressWarnings({ "unchecked" })
     default <T> Stream<CompletableFuture<T>> streamCompletableFutures() {
-        Stream s = this.getLastActive()
-                       .stream();
+        final Stream s = this.getLastActive()
+                             .stream();
         return s;
 
     }
@@ -378,6 +399,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
+    @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     default LazySimpleReactStream<U> onFail(final Function<? super SimpleReactFailedStageException, ? extends U> fn) {
         return onFail(Throwable.class, fn);
@@ -410,31 +432,32 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @param fn Recovery function
      * @return recovery value
      */
-    default LazySimpleReactStream<U> onFail(Class<? extends Throwable> exceptionClass,
+    @Override
+    default LazySimpleReactStream<U> onFail(final Class<? extends Throwable> exceptionClass,
             final Function<? super SimpleReactFailedStageException, ? extends U> fn) {
 
-        Function<PipelineBuilder, PipelineBuilder> mapper = (ft) -> ft.exceptionally((t) -> {
+        final Function<PipelineBuilder, PipelineBuilder> mapper = (ft) -> ft.exceptionally((t) -> {
             if (t instanceof FilteredExecutionPathException)
                 throw (FilteredExecutionPathException) t;
-            Throwable throwable = (Throwable) t;
+            Throwable throwable = t;
             if (t instanceof CompletionException)
                 throwable = ((Exception) t).getCause();
 
-            SimpleReactFailedStageException simpleReactException = assureSimpleReactException(throwable);//exceptions from initial supplier won't be wrapper in SimpleReactFailedStageException
+            final SimpleReactFailedStageException simpleReactException = assureSimpleReactException(throwable);//exceptions from initial supplier won't be wrapper in SimpleReactFailedStageException
             if (exceptionClass.isAssignableFrom(simpleReactException.getCause()
                                                                     .getClass()))
-                return fn.apply((SimpleReactFailedStageException) simpleReactException);
+                return fn.apply(simpleReactException);
             throw simpleReactException;
 
         });
         return this.withLastActive(getLastActive().operation(mapper));
     }
 
-    static SimpleReactFailedStageException assureSimpleReactException(Throwable throwable) {
+    static SimpleReactFailedStageException assureSimpleReactException(final Throwable throwable) {
         if (throwable instanceof SimpleReactFailedStageException)
             return (SimpleReactFailedStageException) throwable;
         return new SimpleReactFailedStageException(
-                                                   null, (throwable));
+                                                   null, throwable);
     }
 
     /**
@@ -480,9 +503,10 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
+    @Override
     @SuppressWarnings("unchecked")
     default LazySimpleReactStream<U> capture(final Consumer<Throwable> errorHandler) {
-        return this.withErrorHandler(Optional.of((Consumer<Throwable>) errorHandler));
+        return this.withErrorHandler(Optional.of(errorHandler));
     }
 
 }

@@ -9,17 +9,18 @@ import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.types.stream.PausableHotStream;
 
 public class PausableHotStreamImpl<T> extends BaseHotStreamImpl<T>implements PausableHotStream<T> {
-    public PausableHotStreamImpl(Stream<T> stream) {
+    public PausableHotStreamImpl(final Stream<T> stream) {
         super(stream);
     }
 
-    public PausableHotStream<T> init(Executor exec) {
+    @Override
+    public PausableHotStream<T> init(final Executor exec) {
         CompletableFuture.runAsync(() -> {
 
             stream.forEach(a -> {
                 pause.get()
                      .join();
-                int local = connected;
+                final int local = connected;
 
                 for (int i = 0; i < local; i++) {
 
@@ -39,15 +40,18 @@ public class PausableHotStreamImpl<T> extends BaseHotStreamImpl<T>implements Pau
         return this;
     }
 
-    public PausableHotStream<T> paused(Executor exec) {
+    @Override
+    public PausableHotStream<T> paused(final Executor exec) {
         super.paused(exec);
         return this;
     }
 
+    @Override
     public void unpause() {
         super.unpause();
     }
 
+    @Override
     public void pause() {
         super.pause();
     }

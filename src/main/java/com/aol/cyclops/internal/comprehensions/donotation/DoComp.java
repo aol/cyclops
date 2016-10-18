@@ -22,23 +22,23 @@ public abstract class DoComp {
     private PStack<Entry> assigned;
     private final Class orgType;
 
-    protected PStack<Entry> addToAssigned(Function f) {
+    protected PStack<Entry> addToAssigned(final Function f) {
         return getAssigned().plus(getAssigned().size(), createEntry(f));
     }
 
-    protected Entry createEntry(Function f) {
+    protected Entry createEntry(final Function f) {
         return new Entry(
                          "$$monad" + getAssigned().size(), new Assignment(
                                                                           f));
     }
 
-    protected <T> T yieldInternal(Function f) {
+    protected <T> T yieldInternal(final Function f) {
         return Foreach.<T> foreach(c -> (T) build(c, f));
 
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Object handleNext(Entry e, ComprehensionData c, PVector<String> newList) {
+    private Object handleNext(final Entry e, final ComprehensionData c, final PVector<String> newList) {
 
         if (e.getValue() instanceof Guard) {
 
@@ -64,19 +64,19 @@ public abstract class DoComp {
         return null;
     }
 
-    private Object handleUnwrappable(Object o) {
+    private Object handleUnwrappable(final Object o) {
         if (o instanceof Unwrapable)
             return ((Unwrapable) o).unwrap();
         return o;
     }
 
-    private Object build(ComprehensionData c, Function f) {
-        Mutable<PVector<String>> vars = new Mutable<>(
-                                                      TreePVector.empty());
+    private Object build(final ComprehensionData c, final Function f) {
+        final Mutable<PVector<String>> vars = new Mutable<>(
+                                                            TreePVector.empty());
         getAssigned().stream()
                      .forEach(e -> addToVar(e, vars, handleNext(e, c, vars.get())));
-        Mutable<Object> var = new Mutable<>(
-                                            f);
+        new Mutable<>(
+                      f);
 
         return c.yield(() -> {
             return unwrapNestedFunction(c, f, vars.get());
@@ -85,14 +85,14 @@ public abstract class DoComp {
 
     }
 
-    private Object unwrapNestedFunction(ComprehensionData c, Function f, PVector<String> vars) {
+    private Object unwrapNestedFunction(final ComprehensionData c, final Function f, final PVector<String> vars) {
         Function next = f;
         Object result = null;
-        for (String e : vars) {
+        for (final String e : vars) {
 
             result = next.apply(c.$(e));
             if (result instanceof Function) {
-                next = ((Function) result);
+                next = (Function) result;
             }
 
         }
@@ -101,9 +101,9 @@ public abstract class DoComp {
         return result;
     }
 
-    private Object addToVar(Entry e, Mutable<PVector<String>> vars, Object handleNext) {
+    private Object addToVar(final Entry e, final Mutable<PVector<String>> vars, final Object handleNext) {
         if (!(e.getValue() instanceof Guard)) {
-            PVector<String> vector = vars.get();
+            final PVector<String> vector = vars.get();
             vars.set(vector.plus(vector.size(), e.getKey()));
         }
         return handleNext;
@@ -113,7 +113,7 @@ public abstract class DoComp {
         return assigned;
     }
 
-    protected void setAssigned(PStack<Entry> assigned) {
+    protected void setAssigned(final PStack<Entry> assigned) {
         this.assigned = assigned;
     }
 

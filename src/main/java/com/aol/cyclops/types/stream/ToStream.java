@@ -13,14 +13,16 @@ import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
 
-    default LazyFutureStream<T> futureStream(LazyReact react) {
+    default LazyFutureStream<T> futureStream(final LazyReact react) {
         return react.fromIterable(this);
     }
 
+    @Override
     default ReactiveSeq<T> reactiveSeq() {
         return ReactiveSeq.fromStream(StreamSupport.stream(getStreamable().spliterator(), false));
     }
 
+    @Override
     default Iterator<T> iterator() {
         return stream().iterator();
     }
@@ -41,7 +43,7 @@ public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
     }
 
     default Stream<T> reveresedJDKStream() {
-        Iterable<T> streamable = getStreamable();
+        final Iterable<T> streamable = getStreamable();
         if (streamable instanceof List) {
             return StreamSupport.stream(new ReversedIterator(
                                                              (List) streamable).spliterator(),

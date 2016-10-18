@@ -19,7 +19,7 @@ public class AsMappable {
      * @param toCoerce Object to convert to a Mappable
      * @return  Mappable instance
      */
-    public static Mappable asMappable(Object toCoerce) {
+    public static Mappable asMappable(final Object toCoerce) {
         return new CoercedMappable(
                                    toCoerce);
     }
@@ -28,6 +28,7 @@ public class AsMappable {
     public static class CoercedMappable implements Mappable {
         private final Object dValue;
 
+        @Override
         public Object unwrap() {
             return dValue;
         }

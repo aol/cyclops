@@ -16,27 +16,27 @@ import com.aol.cyclops.types.extensability.ValueComprehender;
 public class FeatureToggleComprehender implements ValueComprehender<FeatureToggle<Object>> {
 
     @Override
-    public Object filter(FeatureToggle t, Predicate p) {
+    public Object filter(final FeatureToggle t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(FeatureToggle t, Function fn) {
+    public Object map(final FeatureToggle t, final Function fn) {
         return t.map(fn);
     }
 
     @Override
-    public FeatureToggle flatMap(FeatureToggle t, Function fn) {
+    public FeatureToggle flatMap(final FeatureToggle t, final Function fn) {
         return t.flatMap(fn);
     }
 
     @Override
-    public boolean instanceOfT(Object apply) {
+    public boolean instanceOfT(final Object apply) {
         return apply instanceof FeatureToggle;
     }
 
     @Override
-    public FeatureToggle of(Object o) {
+    public FeatureToggle of(final Object o) {
         return FeatureToggle.enable(o);
     }
 
@@ -51,7 +51,7 @@ public class FeatureToggleComprehender implements ValueComprehender<FeatureToggl
     }
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, FeatureToggle<Object> apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final FeatureToggle<Object> apply) {
         return apply instanceof Enabled ? comp.of(apply.get()) : comp.empty();
 
     }

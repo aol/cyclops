@@ -666,6 +666,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
     default Traversable<T> dropRight(final int num) {
         return skipLast(num);
     }
+
     /**
      * Generate a new Traversable that takes the specified number elements from the end of this Traversable
      * <pre>

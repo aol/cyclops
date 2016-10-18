@@ -15,29 +15,29 @@ import com.aol.cyclops.types.mixins.Printable;
 public class ListTSeqComprehender implements Comprehender<ListTSeq>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, ListTSeq apply) {
-        List list = (List) apply.stream()
-                                .collect(Collectors.toCollection(MaterializedList::new));
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final ListTSeq apply) {
+        final List list = (List) apply.stream()
+                                      .collect(Collectors.toCollection(MaterializedList::new));
         return list.size() > 0 ? comp.of(list) : comp.empty();
     }
 
     @Override
-    public Object filter(ListTSeq t, Predicate p) {
+    public Object filter(final ListTSeq t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(ListTSeq t, Function fn) {
+    public Object map(final ListTSeq t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(ListTSeq t, Function fn) {
+    public Object flatMap(final ListTSeq t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public ListTSeq of(Object o) {
+    public ListTSeq of(final Object o) {
         return ListTSeq.of(ListX.of(o));
     }
 
@@ -52,7 +52,7 @@ public class ListTSeqComprehender implements Comprehender<ListTSeq>, Printable {
     }
 
     @Override
-    public ListTSeq fromIterator(Iterator o) {
+    public ListTSeq fromIterator(final Iterator o) {
         return ListTSeq.of(ListX.fromIterable(() -> o));
     }
 

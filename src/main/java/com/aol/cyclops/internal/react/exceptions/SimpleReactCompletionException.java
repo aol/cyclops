@@ -4,7 +4,12 @@ import java.util.concurrent.CompletionException;
 
 public class SimpleReactCompletionException extends CompletionException {
 
-    public SimpleReactCompletionException(Throwable cause) {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    public SimpleReactCompletionException(final Throwable cause) {
         super(cause);
 
     }

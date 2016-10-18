@@ -48,12 +48,12 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
     private volatile Subscription s;
     private final Runnable requestOne = Memoize.memoizeRunnable(() -> this.s.request(1l));
 
-    private ValueSubscriber(Runnable onComplete) {
+    private ValueSubscriber(final Runnable onComplete) {
         super();
         this.onComplete = onComplete;
     }
 
-    public static <T> ValueSubscriber<T> subscriber(Runnable onComplete) {
+    public static <T> ValueSubscriber<T> subscriber(final Runnable onComplete) {
         return new ValueSubscriber<>(
                                      onComplete);
     }
@@ -65,7 +65,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
     }
 
     @Override
-    public void onSubscribe(Subscription s) {
+    public void onSubscribe(final Subscription s) {
         Objects.requireNonNull(s);
         if (this.s == null) {
             this.s = s;
@@ -76,16 +76,16 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
     }
 
     @Override
-    public void onNext(T t) {
+    public void onNext(final T t) {
 
         Objects.requireNonNull(t);
-        firstValue.compareAndSet((T) UNSET, t);
+        firstValue.compareAndSet(UNSET, t);
     }
 
     @Override
-    public void onError(Throwable t) {
+    public void onError(final Throwable t) {
         Objects.requireNonNull(t);
-        firstError.compareAndSet((T) UNSET, t);
+        firstError.compareAndSet(UNSET, t);
     }
 
     @Override
@@ -104,6 +104,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
         this.s.request(1);
     }
 
+    @Override
     public T get() {
 
         while (firstValue.get() == UNSET && firstError.get() == UNSET)
@@ -133,7 +134,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
     }
 
     @Override
-    public <X extends Throwable> Try<T, X> toTry(Class<X>... classes) {
+    public <X extends Throwable> Try<T, X> toTry(final Class<X>... classes) {
         return Try.withCatch(() -> throwingGet(), classes);
     }
 

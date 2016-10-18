@@ -88,7 +88,7 @@ public class XorTSeq<ST, T>
      * @return XorT with peek call
      */
     @Override
-    public XorTSeq<ST, T> peek(Consumer<? super T> peek) {
+    public XorTSeq<ST, T> peek(final Consumer<? super T> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
             return a;
@@ -112,7 +112,7 @@ public class XorTSeq<ST, T>
      * @return XorT that applies the provided filter
      */
     @Override
-    public XorTSeq<ST, T> filter(Predicate<? super T> test) {
+    public XorTSeq<ST, T> filter(final Predicate<? super T> test) {
         return XorTSeq.of(run.map(opt -> opt.filter(test)));
     }
 
@@ -134,7 +134,7 @@ public class XorTSeq<ST, T>
      * @return XorT that applies the map function to the wrapped Xor
      */
     @Override
-    public <B> XorTSeq<ST, B> map(Function<? super T, ? extends B> f) {
+    public <B> XorTSeq<ST, B> map(final Function<? super T, ? extends B> f) {
         return new XorTSeq<ST, B>(
                                   run.map(o -> o.map(f)));
     }
@@ -156,7 +156,7 @@ public class XorTSeq<ST, T>
      *            FlatMap function
      * @return XorT that applies the flatMap function to the wrapped Xor
      */
-    public <ST2, B> XorTSeq<ST, B> flatMapT(Function<? super T, XorTSeq<ST2, ? extends B>> f) {
+    public <ST2, B> XorTSeq<ST, B> flatMapT(final Function<? super T, XorTSeq<ST2, ? extends B>> f) {
 
         return of(run.bind(opt -> {
             if (opt.isPrimary())
@@ -167,13 +167,13 @@ public class XorTSeq<ST, T>
     }
 
     @Override
-    public <T> XorTSeq<ST, T> unitStream(ReactiveSeq<T> traversable) {
+    public <T> XorTSeq<ST, T> unitStream(final ReactiveSeq<T> traversable) {
         return XorT.fromStream(traversable.map(Xor::primary));
 
     }
 
     @Override
-    public <T> XorTSeq<ST, T> unitAnyM(AnyM<Traversable<T>> traversable) {
+    public <T> XorTSeq<ST, T> unitAnyM(final AnyM<Traversable<T>> traversable) {
 
         return of((AnyMSeq) traversable.map(t -> Xor.fromIterable(t)));
     }
@@ -193,7 +193,7 @@ public class XorTSeq<ST, T>
     }
 
     @Override
-    public <ST2, B> XorTSeq<ST2, B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST2, ? extends B>> f) {
+    public <ST2, B> XorTSeq<ST2, B> flatMap(final Function<? super T, ? extends MonadicValue2<? extends ST2, ? extends B>> f) {
 
         return new XorTSeq<ST2, B>(
                                    run.map(o -> o.flatMap(f)));
@@ -231,7 +231,7 @@ public class XorTSeq<ST, T>
      *            monad type
      * @return Function that accepts and returns an XorT
      */
-    public static <ST, U, R> Function<XorTSeq<ST, U>, XorTSeq<ST, R>> lift(Function<? super U, ? extends R> fn) {
+    public static <ST, U, R> Function<XorTSeq<ST, U>, XorTSeq<ST, R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -268,7 +268,7 @@ public class XorTSeq<ST, T>
      * @return Function that accepts and returns an XorT
      */
     public static <ST, U1, U2, R> BiFunction<XorTSeq<ST, U1>, XorTSeq<ST, U2>, XorTSeq<ST, R>> lift2(
-            BiFunction<? super U1, ? super U2, ? extends R> fn) {
+            final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -281,7 +281,7 @@ public class XorTSeq<ST, T>
      *            AnyM that doesn't contain a monad wrapping an Xor
      * @return XorT
      */
-    public static <ST, A> XorTSeq<ST, A> fromAnyM(AnyMSeq<A> anyM) {
+    public static <ST, A> XorTSeq<ST, A> fromAnyM(final AnyMSeq<A> anyM) {
         return of(anyM.map(Xor::primary));
     }
 
@@ -292,12 +292,12 @@ public class XorTSeq<ST, T>
      *            AnyM that contains a monad wrapping an Xor
      * @return XorT
      */
-    public static <ST, A> XorTSeq<ST, A> of(AnyMSeq<Xor<ST, A>> monads) {
+    public static <ST, A> XorTSeq<ST, A> of(final AnyMSeq<Xor<ST, A>> monads) {
         return new XorTSeq<>(
                              monads);
     }
 
-    public static <ST, A> XorTSeq<ST, A> of(Xor<ST, A> monads) {
+    public static <ST, A> XorTSeq<ST, A> of(final Xor<ST, A> monads) {
         return XorT.fromIterable(ListX.of(monads));
     }
 
@@ -306,6 +306,7 @@ public class XorTSeq<ST, T>
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return String.format("XorTSeq[%s]", run);
     }
@@ -318,15 +319,17 @@ public class XorTSeq<ST, T>
         return run.allMatch(x -> x.isSecondary());
     }
 
-    public <R> R visit(Function<ST, ? extends R> secondary, Function<? super T, ? extends R> primary, Monoid<R> combiner) {
+    public <R> R visit(final Function<ST, ? extends R> secondary, final Function<? super T, ? extends R> primary, final Monoid<R> combiner) {
         return run.map(t -> t.visit(secondary, primary))
                   .reduce(combiner);
     }
 
-    public <R> XorTSeq<ST, R> unit(R value) {
+    @Override
+    public <R> XorTSeq<ST, R> unit(final R value) {
         return of(run.unit(Xor.primary(value)));
     }
 
+    @Override
     public <R> XorTSeq<ST, R> empty() {
         return of(run.unit(Xor.secondary(null)));
     }
@@ -342,7 +345,7 @@ public class XorTSeq<ST, T>
         return stream().iterator();
     }
 
-    public <R> XorTSeq<ST, R> unitIterator(Iterator<R> it) {
+    public <R> XorTSeq<ST, R> unitIterator(final Iterator<R> it) {
         return of(run.unitIterator(it)
                      .map(i -> Xor.primary(i)));
     }
@@ -355,6 +358,7 @@ public class XorTSeq<ST, T>
         return stream();
     }
 
+    @Override
     public boolean isSeqPresent() {
         return !run.isEmpty();
     }
@@ -367,7 +371,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
-    public XorTSeq<ST, T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+    public XorTSeq<ST, T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.combine(predicate, op);
     }
@@ -376,7 +380,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(int)
      */
     @Override
-    public XorTSeq<ST, T> cycle(int times) {
+    public XorTSeq<ST, T> cycle(final int times) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.cycle(times);
     }
@@ -385,7 +389,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(com.aol.cyclops.Monoid, int)
      */
     @Override
-    public XorTSeq<ST, T> cycle(Monoid<T> m, int times) {
+    public XorTSeq<ST, T> cycle(final Monoid<T> m, final int times) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.cycle(m, times);
     }
@@ -394,7 +398,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleWhile(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, T> cycleWhile(Predicate<? super T> predicate) {
+    public XorTSeq<ST, T> cycleWhile(final Predicate<? super T> predicate) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.cycleWhile(predicate);
     }
@@ -403,7 +407,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleUntil(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, T> cycleUntil(Predicate<? super T> predicate) {
+    public XorTSeq<ST, T> cycleUntil(final Predicate<? super T> predicate) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.cycleUntil(predicate);
     }
@@ -412,19 +416,19 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> XorTSeq<ST, R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> XorTSeq<ST, R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (XorTSeq<ST, R>) ValueTransformerSeq.super.zip(other, zipper);
     }
 
     @Override
-    public <U, R> XorTSeq<ST, R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> XorTSeq<ST, R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (XorTSeq<ST, R>) ValueTransformerSeq.super.zip(other, zipper);
     }
 
     @Override
-    public <U, R> XorTSeq<ST, R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> XorTSeq<ST, R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (XorTSeq<ST, R>) ValueTransformerSeq.super.zip(other, zipper);
     }
@@ -433,19 +437,19 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    public <U> XorTSeq<ST, Tuple2<T, U>> zip(Stream<? extends U> other) {
+    public <U> XorTSeq<ST, Tuple2<T, U>> zip(final Stream<? extends U> other) {
 
         return (XorTSeq) ValueTransformerSeq.super.zip(other);
     }
 
     @Override
-    public <U> XorTSeq<ST, Tuple2<T, U>> zip(Seq<? extends U> other) {
+    public <U> XorTSeq<ST, Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
         return (XorTSeq) ValueTransformerSeq.super.zip(other);
     }
 
     @Override
-    public <U> XorTSeq<ST, Tuple2<T, U>> zip(Iterable<? extends U> other) {
+    public <U> XorTSeq<ST, Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
         return (XorTSeq) ValueTransformerSeq.super.zip(other);
     }
@@ -454,7 +458,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <S, U> XorTSeq<ST, Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
+    public <S, U> XorTSeq<ST, Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
 
         return (XorTSeq) ValueTransformerSeq.super.zip3(second, third);
     }
@@ -463,8 +467,8 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> XorTSeq<ST, Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
-            Stream<? extends T4> fourth) {
+    public <T2, T3, T4> XorTSeq<ST, Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
+            final Stream<? extends T4> fourth) {
 
         return (XorTSeq) ValueTransformerSeq.super.zip4(second, third, fourth);
     }
@@ -482,7 +486,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int)
      */
     @Override
-    public XorTSeq<ST, ListX<T>> sliding(int windowSize) {
+    public XorTSeq<ST, ListX<T>> sliding(final int windowSize) {
 
         return (XorTSeq<ST, ListX<T>>) ValueTransformerSeq.super.sliding(windowSize);
     }
@@ -491,7 +495,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int, int)
      */
     @Override
-    public XorTSeq<ST, ListX<T>> sliding(int windowSize, int increment) {
+    public XorTSeq<ST, ListX<T>> sliding(final int windowSize, final int increment) {
 
         return (XorTSeq<ST, ListX<T>>) ValueTransformerSeq.super.sliding(windowSize, increment);
     }
@@ -500,7 +504,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> XorTSeq<ST, C> grouped(int size, Supplier<C> supplier) {
+    public <C extends Collection<? super T>> XorTSeq<ST, C> grouped(final int size, final Supplier<C> supplier) {
 
         return (XorTSeq<ST, C>) ValueTransformerSeq.super.grouped(size, supplier);
     }
@@ -509,7 +513,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+    public XorTSeq<ST, ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (XorTSeq<ST, ListX<T>>) ValueTransformerSeq.super.groupedUntil(predicate);
     }
@@ -518,7 +522,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public XorTSeq<ST, ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public XorTSeq<ST, ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
         return (XorTSeq<ST, ListX<T>>) ValueTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
@@ -527,7 +531,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+    public XorTSeq<ST, ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (XorTSeq<ST, ListX<T>>) ValueTransformerSeq.super.groupedWhile(predicate);
     }
@@ -536,7 +540,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> XorTSeq<ST, C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends Collection<? super T>> XorTSeq<ST, C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (XorTSeq<ST, C>) ValueTransformerSeq.super.groupedWhile(predicate, factory);
     }
@@ -545,7 +549,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> XorTSeq<ST, C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends Collection<? super T>> XorTSeq<ST, C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (XorTSeq<ST, C>) ValueTransformerSeq.super.groupedUntil(predicate, factory);
     }
@@ -554,7 +558,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int)
      */
     @Override
-    public XorTSeq<ST, ListX<T>> grouped(int groupSize) {
+    public XorTSeq<ST, ListX<T>> grouped(final int groupSize) {
 
         return (XorTSeq<ST, ListX<T>>) ValueTransformerSeq.super.grouped(groupSize);
     }
@@ -563,7 +567,8 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
-    public <K, A, D> XorTSeq<ST, Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+    public <K, A, D> XorTSeq<ST, Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
+            final Collector<? super T, A, D> downstream) {
 
         return (XorTSeq) ValueTransformerSeq.super.grouped(classifier, downstream);
     }
@@ -572,7 +577,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function)
      */
     @Override
-    public <K> XorTSeq<ST, Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+    public <K> XorTSeq<ST, Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
 
         return (XorTSeq) ValueTransformerSeq.super.grouped(classifier);
     }
@@ -590,7 +595,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(com.aol.cyclops.Monoid)
      */
     @Override
-    public XorTSeq<ST, T> scanLeft(Monoid<T> monoid) {
+    public XorTSeq<ST, T> scanLeft(final Monoid<T> monoid) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.scanLeft(monoid);
     }
@@ -599,7 +604,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> XorTSeq<ST, U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
+    public <U> XorTSeq<ST, U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
         return (XorTSeq<ST, U>) ValueTransformerSeq.super.scanLeft(seed, function);
     }
@@ -608,7 +613,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(com.aol.cyclops.Monoid)
      */
     @Override
-    public XorTSeq<ST, T> scanRight(Monoid<T> monoid) {
+    public XorTSeq<ST, T> scanRight(final Monoid<T> monoid) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.scanRight(monoid);
     }
@@ -617,7 +622,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> XorTSeq<ST, U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+    public <U> XorTSeq<ST, U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
 
         return (XorTSeq<ST, U>) ValueTransformerSeq.super.scanRight(identity, combiner);
     }
@@ -635,7 +640,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.Comparator)
      */
     @Override
-    public XorTSeq<ST, T> sorted(Comparator<? super T> c) {
+    public XorTSeq<ST, T> sorted(final Comparator<? super T> c) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.sorted(c);
     }
@@ -644,7 +649,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, T> takeWhile(Predicate<? super T> p) {
+    public XorTSeq<ST, T> takeWhile(final Predicate<? super T> p) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.takeWhile(p);
     }
@@ -653,7 +658,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, T> dropWhile(Predicate<? super T> p) {
+    public XorTSeq<ST, T> dropWhile(final Predicate<? super T> p) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.dropWhile(p);
     }
@@ -662,7 +667,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, T> takeUntil(Predicate<? super T> p) {
+    public XorTSeq<ST, T> takeUntil(final Predicate<? super T> p) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.takeUntil(p);
     }
@@ -671,7 +676,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, T> dropUntil(Predicate<? super T> p) {
+    public XorTSeq<ST, T> dropUntil(final Predicate<? super T> p) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.dropUntil(p);
     }
@@ -680,7 +685,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropRight(int)
      */
     @Override
-    public XorTSeq<ST, T> dropRight(int num) {
+    public XorTSeq<ST, T> dropRight(final int num) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.dropRight(num);
     }
@@ -689,7 +694,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeRight(int)
      */
     @Override
-    public XorTSeq<ST, T> takeRight(int num) {
+    public XorTSeq<ST, T> takeRight(final int num) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.takeRight(num);
     }
@@ -698,7 +703,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skip(long)
      */
     @Override
-    public XorTSeq<ST, T> skip(long num) {
+    public XorTSeq<ST, T> skip(final long num) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.skip(num);
     }
@@ -707,7 +712,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipWhile(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, T> skipWhile(Predicate<? super T> p) {
+    public XorTSeq<ST, T> skipWhile(final Predicate<? super T> p) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.skipWhile(p);
     }
@@ -716,7 +721,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipUntil(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, T> skipUntil(Predicate<? super T> p) {
+    public XorTSeq<ST, T> skipUntil(final Predicate<? super T> p) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.skipUntil(p);
     }
@@ -725,7 +730,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limit(long)
      */
     @Override
-    public XorTSeq<ST, T> limit(long num) {
+    public XorTSeq<ST, T> limit(final long num) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.limit(num);
     }
@@ -734,7 +739,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitWhile(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, T> limitWhile(Predicate<? super T> p) {
+    public XorTSeq<ST, T> limitWhile(final Predicate<? super T> p) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.limitWhile(p);
     }
@@ -743,7 +748,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitUntil(java.util.function.Predicate)
      */
     @Override
-    public XorTSeq<ST, T> limitUntil(Predicate<? super T> p) {
+    public XorTSeq<ST, T> limitUntil(final Predicate<? super T> p) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.limitUntil(p);
     }
@@ -752,7 +757,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#intersperse(java.lang.Object)
      */
     @Override
-    public XorTSeq<ST, T> intersperse(T value) {
+    public XorTSeq<ST, T> intersperse(final T value) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.intersperse(value);
     }
@@ -779,7 +784,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipLast(int)
      */
     @Override
-    public XorTSeq<ST, T> skipLast(int num) {
+    public XorTSeq<ST, T> skipLast(final int num) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.skipLast(num);
     }
@@ -788,7 +793,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitLast(int)
      */
     @Override
-    public XorTSeq<ST, T> limitLast(int num) {
+    public XorTSeq<ST, T> limitLast(final int num) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.limitLast(num);
     }
@@ -797,7 +802,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmpty(java.lang.Object)
      */
     @Override
-    public XorTSeq<ST, T> onEmpty(T value) {
+    public XorTSeq<ST, T> onEmpty(final T value) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.onEmpty(value);
     }
@@ -806,7 +811,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    public XorTSeq<ST, T> onEmptyGet(Supplier<? extends T> supplier) {
+    public XorTSeq<ST, T> onEmptyGet(final Supplier<? extends T> supplier) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.onEmptyGet(supplier);
     }
@@ -815,7 +820,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    public <X extends Throwable> XorTSeq<ST, T> onEmptyThrow(Supplier<? extends X> supplier) {
+    public <X extends Throwable> XorTSeq<ST, T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.onEmptyThrow(supplier);
     }
@@ -824,7 +829,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle(java.util.Random)
      */
     @Override
-    public XorTSeq<ST, T> shuffle(Random random) {
+    public XorTSeq<ST, T> shuffle(final Random random) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.shuffle(random);
     }
@@ -833,7 +838,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#slice(long, long)
      */
     @Override
-    public XorTSeq<ST, T> slice(long from, long to) {
+    public XorTSeq<ST, T> slice(final long from, final long to) {
 
         return (XorTSeq<ST, T>) ValueTransformerSeq.super.slice(from, to);
     }
@@ -842,7 +847,7 @@ public class XorTSeq<ST, T>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.function.Function)
      */
     @Override
-    public <U extends Comparable<? super U>> XorTSeq<ST, T> sorted(Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> XorTSeq<ST, T> sorted(final Function<? super T, ? extends U> function) {
         return (XorTSeq) ValueTransformerSeq.super.sorted(function);
     }
 
@@ -852,7 +857,7 @@ public class XorTSeq<ST, T>
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof XorTSeq) {
             return run.equals(((XorTSeq) o).run);
         }

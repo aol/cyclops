@@ -17,43 +17,45 @@ import com.aol.cyclops.types.extensability.Comprehender;
 
 public class ListComprehender implements Comprehender<List> {
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, List apply) {
-        List list = (List) apply.stream()
-                                .collect(Collectors.toCollection(MaterializedList::new));
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final List apply) {
+        final List list = (List) apply.stream()
+                                      .collect(Collectors.toCollection(MaterializedList::new));
         return list.size() > 0 ? comp.of(list) : comp.empty();
     }
 
+    @Override
     public Class getTargetClass() {
         return List.class;
     }
 
     @Override
-    public Object filter(List t, Predicate p) {
+    public Object filter(final List t, final Predicate p) {
         return ListX.fromIterable(t)
                     .filter(p);
 
     }
 
     @Override
-    public Object map(List t, Function fn) {
+    public Object map(final List t, final Function fn) {
         return ListX.fromIterable(t)
                     .map(fn);
 
     }
 
-    public Object executeflatMap(List t, Function fn) {
+    @Override
+    public Object executeflatMap(final List t, final Function fn) {
         return flatMap(t, input -> unwrapOtherMonadTypesLC(this, fn.apply(input)));
     }
 
     @Override
-    public Object flatMap(List t, Function fn) {
+    public Object flatMap(final List t, final Function fn) {
         return ListX.fromIterable((Iterable) t)
                     .flatMap(fn);
 
     }
 
     @Override
-    public boolean instanceOfT(Object apply) {
+    public boolean instanceOfT(final Object apply) {
         return apply instanceof List;
     }
 
@@ -63,27 +65,28 @@ public class ListComprehender implements Comprehender<List> {
     }
 
     @Override
-    public List of(Object o) {
+    public List of(final Object o) {
         return Arrays.asList(o);
     }
 
-    public List fromIterator(Iterator it) {
-        List list = new ArrayList();
-        for (Object next : (Iterable) () -> it) {
+    @Override
+    public List fromIterator(final Iterator it) {
+        final List list = new ArrayList();
+        for (final Object next : (Iterable) () -> it) {
             list.add(next);
         }
         return Collections.unmodifiableList(list);
     }
 
     @Override
-    public List unwrap(Object o) {
+    public List unwrap(final Object o) {
         if (o instanceof List)
             return (List) o;
         else
             return (List) ((Stream) o).collect(Collectors.toList());
     }
 
-    static List unwrapOtherMonadTypesLC(Comprehender comp, Object apply) {
+    static List unwrapOtherMonadTypesLC(final Comprehender comp, final Object apply) {
 
         if (apply instanceof Collection) {
             return ListX.fromIterable((Collection) apply);
@@ -98,7 +101,7 @@ public class ListComprehender implements Comprehender<List> {
             return ListX.fromIterable(() -> ((BaseStream) apply).iterator());
 
         }
-        Object o = Comprehender.unwrapOtherMonadTypes(comp, apply);
+        final Object o = Comprehender.unwrapOtherMonadTypes(comp, apply);
         if (o instanceof Collection) {
             return ListX.fromIterable((Collection) o);
         }

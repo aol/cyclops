@@ -15,7 +15,7 @@ import com.aol.cyclops.data.async.Queue;
  */
 public class PushableStream<T> extends AbstractPushableStream<T, Queue<T>, Stream<T>> {
 
-    public PushableStream(Queue<T> v1, Stream<T> v2) {
+    public PushableStream(final Queue<T> v1, final Stream<T> v2) {
         super(v1, v2);
     }
 

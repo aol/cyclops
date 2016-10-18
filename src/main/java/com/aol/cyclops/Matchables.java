@@ -98,69 +98,69 @@ import com.aol.cyclops.util.ExceptionSoftener;
  */
 public class Matchables {
 
-    public static <T1> MTuple1<T1> match(T1 v) {
+    public static <T1> MTuple1<T1> match(final T1 v) {
         return () -> Tuple.tuple(v);
     }
 
-    public static <T1, T2> MTuple2<T1, T2> match2(T1 t1, T2 t2) {
+    public static <T1, T2> MTuple2<T1, T2> match2(final T1 t1, final T2 t2) {
         return () -> Tuple.tuple(t1, t2);
     }
 
-    public static <T1, T2, T3> MTuple3<T1, T2, T3> match3(T1 t1, T2 t2, T3 t3) {
+    public static <T1, T2, T3> MTuple3<T1, T2, T3> match3(final T1 t1, final T2 t2, final T3 t3) {
         return () -> Tuple.tuple(t1, t2, t3);
     }
 
-    public static <T1, T2, T3, T4> MTuple4<T1, T2, T3, T4> match4(T1 t1, T2 t2, T3 t3, T4 t4) {
+    public static <T1, T2, T3, T4> MTuple4<T1, T2, T3, T4> match4(final T1 t1, final T2 t2, final T3 t3, final T4 t4) {
         return () -> Tuple.tuple(t1, t2, t3, t4);
     }
 
-    public static <T1> MTuple1<T1> supplier(Supplier<T1> s1) {
+    public static <T1> MTuple1<T1> supplier(final Supplier<T1> s1) {
 
         return () -> Tuple.tuple(s1.get());
     }
 
-    public static <T1> MTuple1<T1> tuple1(Tuple1<T1> t2) {
+    public static <T1> MTuple1<T1> tuple1(final Tuple1<T1> t2) {
         return () -> t2;
     }
 
-    public static <T1, T2> MTuple2<T1, T2> supplier2(Supplier<T1> s1, Supplier<T2> s2) {
+    public static <T1, T2> MTuple2<T1, T2> supplier2(final Supplier<T1> s1, final Supplier<T2> s2) {
         return () -> Tuple.tuple(s1.get(), s2.get());
     }
 
-    public static <T1, T2> MTuple2<T1, T2> tuple2(Tuple2<T1, T2> t2) {
+    public static <T1, T2> MTuple2<T1, T2> tuple2(final Tuple2<T1, T2> t2) {
         return () -> t2;
     }
 
-    public static <TYPE, T1 extends TYPE, T2 extends TYPE, T3 extends TYPE> MTuple3<T1, T2, T3> tuple3(Tuple3<T1, T2, T3> t3) {
+    public static <TYPE, T1 extends TYPE, T2 extends TYPE, T3 extends TYPE> MTuple3<T1, T2, T3> tuple3(final Tuple3<T1, T2, T3> t3) {
         return () -> t3;
     }
 
-    public static <TYPE, T1 extends TYPE, T2 extends TYPE, T3 extends TYPE> MTuple3<T1, T2, T3> supplier3(Supplier<T1> s1, Supplier<T2> s2,
-            Supplier<T3> s3) {
+    public static <TYPE, T1 extends TYPE, T2 extends TYPE, T3 extends TYPE> MTuple3<T1, T2, T3> supplier3(final Supplier<T1> s1,
+            final Supplier<T2> s2, final Supplier<T3> s3) {
         return () -> Tuple.tuple(s1.get(), s2.get(), s3.get());
     }
 
     public static <TYPE, T1 extends TYPE, T2 extends TYPE, T3 extends TYPE, T4 extends TYPE> MTuple4<T1, T2, T3, T4> tuple4(
-            Tuple4<T1, T2, T3, T4> t4) {
+            final Tuple4<T1, T2, T3, T4> t4) {
         return () -> t4;
     }
 
-    public static <TYPE, T1 extends TYPE, T2 extends TYPE, T3 extends TYPE, T4 extends TYPE> MTuple4<T1, T2, T3, T4> supplier4(Supplier<T1> s1,
-            Supplier<T2> s2, Supplier<T3> s3, Supplier<T4> s4) {
+    public static <TYPE, T1 extends TYPE, T2 extends TYPE, T3 extends TYPE, T4 extends TYPE> MTuple4<T1, T2, T3, T4> supplier4(final Supplier<T1> s1,
+            final Supplier<T2> s2, final Supplier<T3> s3, final Supplier<T4> s4) {
         return () -> Tuple.tuple(s1.get(), s2.get(), s3.get(), s4.get());
     }
 
     public static <TYPE, T1 extends TYPE, T2 extends TYPE, T3 extends TYPE, T4 extends TYPE, T5 extends TYPE> MTuple5<T1, T2, T3, T4, T5> tuple5(
-            Tuple5<T1, T2, T3, T4, T5> t5) {
+            final Tuple5<T1, T2, T3, T4, T5> t5) {
         return () -> t5;
     }
 
     public static <TYPE, T1 extends TYPE, T2 extends TYPE, T3 extends TYPE, T4 extends TYPE, T5 extends TYPE> MTuple5<T1, T2, T3, T4, T5> supplier5(
-            Supplier<T1> s1, Supplier<T2> s2, Supplier<T3> s3, Supplier<T4> s4, Supplier<T5> s5) {
+            final Supplier<T1> s1, final Supplier<T2> s2, final Supplier<T3> s3, final Supplier<T4> s4, final Supplier<T5> s5) {
         return () -> Tuple.tuple(s1.get(), s2.get(), s3.get(), s4.get(), s5.get());
     }
 
-    public static <T> MatchableIterable<T> iterable(Iterable<T> o) {
+    public static <T> MatchableIterable<T> iterable(final Iterable<T> o) {
         return () -> o;
     }
 
@@ -170,7 +170,7 @@ public class Matchables {
      * @param o Decomposable to match on it's fields
      * @return new Matchable
      */
-    public static <T extends Decomposable> MatchableObject<T> decomposable(Decomposable o) {
+    public static <T extends Decomposable> MatchableObject<T> decomposable(final Decomposable o) {
         return AsMatchable.asMatchable(o);
     }
 
@@ -180,100 +180,100 @@ public class Matchables {
      * @param o Objects to match on
      * @return new Matchable
      */
-    public static <T> MatchableObject<T> listOfValues(T... o) {
+    public static <T> MatchableObject<T> listOfValues(final T... o) {
         return AsMatchable.asMatchable(Arrays.asList(o));
     }
 
-    public static <T> MXor<Queue<T>, Topic<T>> adapter(Adapter<T> adapter) {
+    public static <T> MXor<Queue<T>, Topic<T>> adapter(final Adapter<T> adapter) {
         return adapter.matches();
     }
 
-    public static <T1> MXor<T1, Throwable> future(CompletableFuture<T1> future) {
+    public static <T1> MXor<T1, Throwable> future(final CompletableFuture<T1> future) {
         return () -> FutureW.of(future)
                             .toXor()
                             .swap();
     }
 
-    public static <T1> MXor<T1, Throwable> future(FutureW<T1> future) {
+    public static <T1> MXor<T1, Throwable> future(final FutureW<T1> future) {
         return () -> future.toXor()
                            .swap();
     }
 
-    public static <T1, X extends Throwable> MXor<T1, X> tryMatch(Try<T1, X> match) {
+    public static <T1, X extends Throwable> MXor<T1, X> tryMatch(final Try<T1, X> match) {
         return () -> match.toXor()
                           .swap();
     }
 
-    public static <T> Matchable.MatchableOptional<T> maybe(Maybe<T> opt) {
+    public static <T> Matchable.MatchableOptional<T> maybe(final Maybe<T> opt) {
         return opt;
     }
 
-    public static <T> Matchable.MatchableOptional<T> maybe(Value<T> opt) {
+    public static <T> Matchable.MatchableOptional<T> maybe(final Value<T> opt) {
         return () -> opt.toOptional();
     }
 
-    public static <T> Matchable.MatchableOptional<T> optional(Optional<T> opt) {
+    public static <T> Matchable.MatchableOptional<T> optional(final Optional<T> opt) {
         return Maybe.fromOptional(opt);
     }
 
-    public static <T> MXor<AnyMValue<T>, AnyMSeq<T>> anyM(AnyM<T> anyM) {
+    public static <T> MXor<AnyMValue<T>, AnyMSeq<T>> anyM(final AnyM<T> anyM) {
         return () -> anyM instanceof AnyMValue ? Xor.secondary((AnyMValue<T>) anyM) : Xor.primary((AnyMSeq<T>) anyM);
     }
 
-    public static <T> MXor<MaybeTValue<T>, MaybeTSeq<T>> maybeT(MaybeT<T> transformer) {
+    public static <T> MXor<MaybeTValue<T>, MaybeTSeq<T>> maybeT(final MaybeT<T> transformer) {
         return () -> transformer instanceof MaybeTValue ? Xor.secondary((MaybeTValue<T>) transformer) : Xor.primary((MaybeTSeq<T>) transformer);
     }
 
-    public static <T> MXor<OptionalTValue<T>, OptionalTSeq<T>> optionalT(OptionalT<T> transformer) {
+    public static <T> MXor<OptionalTValue<T>, OptionalTSeq<T>> optionalT(final OptionalT<T> transformer) {
         return () -> transformer instanceof OptionalTValue ? Xor.secondary((OptionalTValue<T>) transformer)
                 : Xor.primary((OptionalTSeq<T>) transformer);
     }
 
-    public static <T> MXor<EvalTValue<T>, EvalTSeq<T>> evalT(EvalT<T> transformer) {
+    public static <T> MXor<EvalTValue<T>, EvalTSeq<T>> evalT(final EvalT<T> transformer) {
         return () -> transformer instanceof EvalTValue ? Xor.secondary((EvalTValue<T>) transformer) : Xor.primary((EvalTSeq<T>) transformer);
     }
 
-    public static <ST, T> MXor<XorTValue<ST, T>, XorTSeq<ST, T>> xorT(XorT<ST, T> transformer) {
+    public static <ST, T> MXor<XorTValue<ST, T>, XorTSeq<ST, T>> xorT(final XorT<ST, T> transformer) {
         return () -> transformer instanceof XorTValue ? Xor.secondary((XorTValue<ST, T>) transformer) : Xor.primary((XorTSeq<ST, T>) transformer);
     }
 
-    public static <T, X extends Throwable> MXor<TryTValue<T, X>, TryTSeq<T, X>> tryT(TryT<T, X> transformer) {
+    public static <T, X extends Throwable> MXor<TryTValue<T, X>, TryTSeq<T, X>> tryT(final TryT<T, X> transformer) {
         return () -> transformer instanceof TryTValue ? Xor.secondary((TryTValue<T, X>) transformer) : Xor.primary((TryTSeq<T, X>) transformer);
     }
 
-    public static <T> MXor<FutureWTValue<T>, FutureWTSeq<T>> futureWT(FutureWT<T> transformer) {
+    public static <T> MXor<FutureWTValue<T>, FutureWTSeq<T>> futureWT(final FutureWT<T> transformer) {
         return () -> transformer instanceof FutureWTValue ? Xor.secondary((FutureWTValue<T>) transformer) : Xor.primary((FutureWTSeq<T>) transformer);
     }
 
-    public static <T> MXor<CompletableFutureTValue<T>, CompletableFutureTSeq<T>> completableFutureT(CompletableFutureT<T> transformer) {
+    public static <T> MXor<CompletableFutureTValue<T>, CompletableFutureTSeq<T>> completableFutureT(final CompletableFutureT<T> transformer) {
         return () -> transformer instanceof CompletableFutureTValue ? Xor.secondary((CompletableFutureTValue<T>) transformer)
                 : Xor.primary((CompletableFutureTSeq<T>) transformer);
     }
 
-    public static <T> MXor<ListTValue<T>, ListTSeq<T>> listT(ListT<T> transformer) {
+    public static <T> MXor<ListTValue<T>, ListTSeq<T>> listT(final ListT<T> transformer) {
         return () -> transformer instanceof ListTValue ? Xor.secondary((ListTValue<T>) transformer) : Xor.primary((ListTSeq<T>) transformer);
     }
 
-    public static <T> MXor<SetTValue<T>, SetTSeq<T>> setT(SetT<T> transformer) {
+    public static <T> MXor<SetTValue<T>, SetTSeq<T>> setT(final SetT<T> transformer) {
         return () -> transformer instanceof SetTValue ? Xor.secondary((SetTValue<T>) transformer) : Xor.primary((SetTSeq<T>) transformer);
     }
 
-    public static <T> MXor<StreamTValue<T>, StreamTSeq<T>> streamT(StreamT<T> transformer) {
+    public static <T> MXor<StreamTValue<T>, StreamTSeq<T>> streamT(final StreamT<T> transformer) {
         return () -> transformer instanceof StreamTValue ? Xor.secondary((StreamTValue<T>) transformer) : Xor.primary((StreamTSeq<T>) transformer);
     }
 
-    public static <T> MXor<StreamableTValue<T>, StreamableTSeq<T>> streamableT(StreamableT<T> transformer) {
+    public static <T> MXor<StreamableTValue<T>, StreamableTSeq<T>> streamableT(final StreamableT<T> transformer) {
         return () -> transformer instanceof StreamableTValue ? Xor.secondary((StreamableTValue<T>) transformer)
                 : Xor.primary((StreamableTSeq<T>) transformer);
     }
 
-    public static <T, R> MXor<ReaderTValue<T, R>, ReaderTSeq<T, R>> readerT(ReaderT<T, R> transformer) {
+    public static <T, R> MXor<ReaderTValue<T, R>, ReaderTSeq<T, R>> readerT(final ReaderT<T, R> transformer) {
         return () -> transformer instanceof ReaderTValue ? Xor.secondary((ReaderTValue<T, R>) transformer)
                 : Xor.primary((ReaderTSeq<T, R>) transformer);
     }
 
-    public static <X extends Throwable> MTuple4<Class, String, Throwable, MatchableIterable<StackTraceElement>> throwable(X t) {
-        return supplier4(() -> (Class) t.getClass(), () -> t.getMessage(), () -> t.getCause(), () -> iterable(Arrays.asList(t.getStackTrace())));
+    public static <X extends Throwable> MTuple4<Class, String, Throwable, MatchableIterable<StackTraceElement>> throwable(final X t) {
+        return supplier4(() -> t.getClass(), () -> t.getMessage(), () -> t.getCause(), () -> iterable(Arrays.asList(t.getStackTrace())));
     }
 
     /**
@@ -283,23 +283,23 @@ public class Matchables {
      * @param url
      * @return
      */
-    public static MTuple5<String, String, Integer, String, String> url(URL url) {
+    public static MTuple5<String, String, Integer, String, String> url(final URL url) {
         return supplier5(() -> url.getProtocol(), () -> url.getHost(), () -> url.getPort(), () -> url.getPath(), () -> url.getQuery());
     }
 
-    public static Matchable.AutoCloseableMatchableIterable<String> lines(BufferedReader in) {
+    public static Matchable.AutoCloseableMatchableIterable<String> lines(final BufferedReader in) {
 
         return new Matchable.AutoCloseableMatchableIterable<>(
                                                               in, () -> in.lines()
                                                                           .iterator());
     }
 
-    public static Matchable.AutoCloseableMatchableIterable<String> lines(URL url) {
+    public static Matchable.AutoCloseableMatchableIterable<String> lines(final URL url) {
 
-        BufferedReader in = ExceptionSoftener.softenSupplier(() -> new BufferedReader(
-                                                                                      new InputStreamReader(
-                                                                                                            url.openStream())))
-                                             .get();
+        final BufferedReader in = ExceptionSoftener.softenSupplier(() -> new BufferedReader(
+                                                                                            new InputStreamReader(
+                                                                                                                  url.openStream())))
+                                                   .get();
         return new Matchable.AutoCloseableMatchableIterable<>(
                                                               in, () -> in.lines()
                                                                           .iterator());
@@ -319,83 +319,83 @@ public class Matchables {
      * @param f File to match against
      * @return Matcher
      */
-    public static Matchable.AutoCloseableMatchableIterable<String> lines(File f) {
-        Stream<String> stream = ExceptionSoftener.softenSupplier(() -> Files.lines(Paths.get(((File) f).getAbsolutePath())))
-                                                 .get();
+    public static Matchable.AutoCloseableMatchableIterable<String> lines(final File f) {
+        final Stream<String> stream = ExceptionSoftener.softenSupplier(() -> Files.lines(Paths.get(f.getAbsolutePath())))
+                                                       .get();
         return new Matchable.AutoCloseableMatchableIterable<>(
                                                               stream, () -> stream.iterator());
     }
 
-    public static MatchableIterable<String> words(CharSequence seq) {
+    public static MatchableIterable<String> words(final CharSequence seq) {
         return iterable(Arrays.asList(seq.toString()
                                          .split(" ")));
     }
 
-    public static MatchableIterable<Character> chars(CharSequence chars) {
-        Iterable<Character> it = () -> chars.chars()
-                                            .boxed()
-                                            .map(i -> Character.toChars(i)[0])
-                                            .iterator();
+    public static MatchableIterable<Character> chars(final CharSequence chars) {
+        final Iterable<Character> it = () -> chars.chars()
+                                                  .boxed()
+                                                  .map(i -> Character.toChars(i)[0])
+                                                  .iterator();
         return () -> it;
     }
 
-    public static <ST, PT> MXor<ST, PT> xor(Xor<ST, PT> xor) {
+    public static <ST, PT> MXor<ST, PT> xor(final Xor<ST, PT> xor) {
         return () -> xor;
     }
 
-    public static <T> MTuple2<Maybe<T>, ListX<T>> headAndTail(Collection<T> col) {
-        HeadAndTail<T> ht = CollectionX.fromCollection(col)
-                                       .headAndTail();
+    public static <T> MTuple2<Maybe<T>, ListX<T>> headAndTail(final Collection<T> col) {
+        final HeadAndTail<T> ht = CollectionX.fromCollection(col)
+                                             .headAndTail();
         return supplier2(() -> ht.headMaybe(), () -> ht.tail()
                                                        .toListX());
     }
 
-    public static <K, V> ReactiveSeq<MTuple2<K, V>> keysAndValues(Map<K, V> map) {
+    public static <K, V> ReactiveSeq<MTuple2<K, V>> keysAndValues(final Map<K, V> map) {
         return ReactiveSeq.fromIterable(map.entrySet())
-                          .map(entry -> (MTuple2<K, V>) supplier2(() -> entry.getKey(), () -> entry.getValue()));
+                          .map(entry -> supplier2(() -> entry.getKey(), () -> entry.getValue()));
     }
 
-    public static MTuple3<Integer, Integer, Integer> dateDDMMYYYY(Date date) {
-        Date input = new Date();
-        LocalDate local = input.toInstant()
-                               .atZone(ZoneId.systemDefault())
-                               .toLocalDate();
+    public static MTuple3<Integer, Integer, Integer> dateDDMMYYYY(final Date date) {
+        final Date input = new Date();
+        final LocalDate local = input.toInstant()
+                                     .atZone(ZoneId.systemDefault())
+                                     .toLocalDate();
         return localDateDDMMYYYY(local);
     }
 
-    public static MTuple3<Integer, Integer, Integer> dateMMDDYYYY(Date date) {
-        Date input = new Date();
-        LocalDate local = input.toInstant()
-                               .atZone(ZoneId.systemDefault())
-                               .toLocalDate();
+    public static MTuple3<Integer, Integer, Integer> dateMMDDYYYY(final Date date) {
+        final Date input = new Date();
+        final LocalDate local = input.toInstant()
+                                     .atZone(ZoneId.systemDefault())
+                                     .toLocalDate();
         return localDateMMDDYYYY(local);
     }
 
-    public static MTuple3<Integer, Integer, Integer> localDateDDMMYYYY(LocalDate date) {
+    public static MTuple3<Integer, Integer, Integer> localDateDDMMYYYY(final LocalDate date) {
         return supplier3(() -> date.getDayOfMonth(), () -> date.getMonth()
                                                                .getValue(),
                          () -> date.getYear());
     }
 
-    public static MTuple3<Integer, Integer, Integer> localDateMMDDYYYY(LocalDate date) {
+    public static MTuple3<Integer, Integer, Integer> localDateMMDDYYYY(final LocalDate date) {
         return supplier3(() -> date.getMonth()
                                    .getValue(),
                          () -> date.getDayOfMonth(), () -> date.getYear());
     }
 
-    public static MTuple3<Integer, Integer, Integer> dateHMS(Date date) {
-        Date input = new Date();
-        LocalTime local = input.toInstant()
-                               .atZone(ZoneId.systemDefault())
-                               .toLocalTime();
+    public static MTuple3<Integer, Integer, Integer> dateHMS(final Date date) {
+        final Date input = new Date();
+        final LocalTime local = input.toInstant()
+                                     .atZone(ZoneId.systemDefault())
+                                     .toLocalTime();
         return localTimeHMS(local);
     }
 
-    public static MTuple3<Integer, Integer, Integer> localTimeHMS(LocalTime time) {
+    public static MTuple3<Integer, Integer, Integer> localTimeHMS(final LocalTime time) {
         return supplier3(() -> time.getHour(), () -> time.getMinute(), () -> time.getSecond());
     }
 
-    public static <T> MXor<BlockingQueue<T>, java.util.Queue<T>> blocking(java.util.Queue<T> queue) {
+    public static <T> MXor<BlockingQueue<T>, java.util.Queue<T>> blocking(final java.util.Queue<T> queue) {
 
         return () -> queue instanceof BlockingQueue ? Xor.<BlockingQueue<T>, java.util.Queue<T>> secondary((BlockingQueue) queue)
                 : Xor.<BlockingQueue<T>, java.util.Queue<T>> primary(queue);

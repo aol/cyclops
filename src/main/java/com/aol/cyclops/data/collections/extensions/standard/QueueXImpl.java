@@ -19,7 +19,7 @@ public class QueueXImpl<T> implements QueueX<T> {
     @Getter
     private final Collector<T, ?, Queue<T>> collector;
 
-    public QueueXImpl(Queue<T> list) {
+    public QueueXImpl(final Queue<T> list) {
         this.list = list;
 
         this.collector = QueueX.defaultCollector();
@@ -31,55 +31,68 @@ public class QueueXImpl<T> implements QueueX<T> {
                                           .get();
     }
 
-    public void forEach(Consumer<? super T> action) {
+    @Override
+    public void forEach(final Consumer<? super T> action) {
         list.forEach(action);
     }
 
+    @Override
     public Iterator<T> iterator() {
         return list.iterator();
     }
 
+    @Override
     public int size() {
         return list.size();
     }
 
-    public boolean contains(Object e) {
+    @Override
+    public boolean contains(final Object e) {
         return list.contains(e);
     }
 
-    public boolean equals(Object o) {
+    @Override
+    public boolean equals(final Object o) {
         return list.equals(o);
     }
 
+    @Override
     public boolean isEmpty() {
         return list.isEmpty();
     }
 
+    @Override
     public int hashCode() {
         return list.hashCode();
     }
 
+    @Override
     public Object[] toArray() {
         return list.toArray();
     }
 
-    public boolean removeAll(Collection<?> c) {
+    @Override
+    public boolean removeAll(final Collection<?> c) {
         return list.removeAll(c);
     }
 
-    public <T> T[] toArray(T[] a) {
+    @Override
+    public <T> T[] toArray(final T[] a) {
         return list.toArray(a);
     }
 
-    public boolean add(T e) {
+    @Override
+    public boolean add(final T e) {
         return list.add(e);
     }
 
-    public boolean remove(Object o) {
+    @Override
+    public boolean remove(final Object o) {
         return list.remove(o);
     }
 
-    public boolean containsAll(Collection<?> c) {
+    @Override
+    public boolean containsAll(final Collection<?> c) {
         return list.containsAll(c);
     }
 
@@ -88,7 +101,8 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.AbstractCollection#addAll(java.util.Collection)
      */
-    public boolean addAll(Collection<? extends T> c) {
+    @Override
+    public boolean addAll(final Collection<? extends T> c) {
         return list.addAll(c);
     }
 
@@ -97,7 +111,8 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.AbstractCollection#retainAll(java.util.Collection)
      */
-    public boolean retainAll(Collection<?> c) {
+    @Override
+    public boolean retainAll(final Collection<?> c) {
         return list.retainAll(c);
     }
 
@@ -105,6 +120,7 @@ public class QueueXImpl<T> implements QueueX<T> {
      * 
      * @see java.util.AbstractCollection#clear()
      */
+    @Override
     public void clear() {
         list.clear();
     }
@@ -113,6 +129,7 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.AbstractCollection#toString()
      */
+    @Override
     public String toString() {
         return list.toString();
     }
@@ -121,7 +138,7 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
     @Override
-    public <R, A> R collect(Collector<? super T, A, R> collector) {
+    public <R, A> R collect(final Collector<? super T, A, R> collector) {
         return stream().collect(collector);
     }
 
@@ -138,7 +155,8 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.Collection#removeIf(java.util.function.Predicate)
      */
-    public boolean removeIf(Predicate<? super T> filter) {
+    @Override
+    public boolean removeIf(final Predicate<? super T> filter) {
         return list.removeIf(filter);
     }
 
@@ -146,6 +164,7 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.Collection#parallelStream()
      */
+    @Override
     public Stream<T> parallelStream() {
         return list.parallelStream();
     }
@@ -154,6 +173,7 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.List#spliterator()
      */
+    @Override
     public Spliterator<T> spliterator() {
         return list.spliterator();
     }
@@ -163,7 +183,8 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.Queue#offer(java.lang.Object)
      */
-    public boolean offer(T e) {
+    @Override
+    public boolean offer(final T e) {
         return list.offer(e);
     }
 
@@ -171,6 +192,7 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.Queue#remove()
      */
+    @Override
     public T remove() {
         return list.remove();
     }
@@ -179,6 +201,7 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.Queue#poll()
      */
+    @Override
     public T poll() {
         return list.poll();
     }
@@ -187,6 +210,7 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.Queue#element()
      */
+    @Override
     public T element() {
         return list.element();
     }
@@ -195,6 +219,7 @@ public class QueueXImpl<T> implements QueueX<T> {
      * @return
      * @see java.util.Queue#peek()
      */
+    @Override
     public T peek() {
         return list.peek();
     }

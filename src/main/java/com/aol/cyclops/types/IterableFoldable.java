@@ -14,10 +14,11 @@ import com.aol.cyclops.types.stream.HeadAndTail;
  * @param <T> Data type of elements stored in this Foldable
  */
 public interface IterableFoldable<T> extends Foldable<T>, Iterable<T> {
-   
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Foldable#foldable()
      */
+    @Override
     default IterableFoldable<T> foldable() {
         return stream();
     }
@@ -44,9 +45,9 @@ public interface IterableFoldable<T> extends Foldable<T>, Iterable<T> {
      * @param match
      * @return
      */
-    default <R> R visit(BiFunction<? super T, ? super ReactiveSeq<T>, ? extends R> match, Supplier<? extends R> ifEmpty) {
+    default <R> R visit(final BiFunction<? super T, ? super ReactiveSeq<T>, ? extends R> match, final Supplier<? extends R> ifEmpty) {
 
-        HeadAndTail<T> ht = foldable().headAndTail();
+        final HeadAndTail<T> ht = foldable().headAndTail();
         if (ht.isHeadPresent())
             return match.apply(ht.head(), ht.tail());
         return ifEmpty.get();

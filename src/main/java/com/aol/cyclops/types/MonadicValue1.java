@@ -20,7 +20,7 @@ import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
  * @param <T> Data type of element stored inside this MonadicValue1
  */
 public interface MonadicValue1<T> extends MonadicValue<T> {
-    
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
@@ -100,7 +100,6 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
      */
     <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
-
     /**
      * A flattening transformation operation that takes the first value from the returned Iterable.
      * 
@@ -136,11 +135,11 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
     default <R> MonadicValue<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
         return this.flatMap(a -> {
-            Publisher<? extends R> publisher = mapper.apply(a);
-            ValueSubscriber<R> sub = ValueSubscriber.subscriber();
+            final Publisher<? extends R> publisher = mapper.apply(a);
+            final ValueSubscriber<R> sub = ValueSubscriber.subscriber();
             publisher.subscribe(sub);
 
-            Maybe<R> maybe = sub.toMaybe();
+            final Maybe<R> maybe = sub.toMaybe();
             return unit(maybe.get());
 
         });

@@ -9,17 +9,18 @@ import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.internal.stream.BaseHotStreamImpl;
 
 public class NonPausableHotStream<T> extends BaseHotStreamImpl<T> {
-    public NonPausableHotStream(Stream<T> stream) {
+    public NonPausableHotStream(final Stream<T> stream) {
         super(stream);
     }
 
-    public HotStream<T> init(Executor exec) {
+    @Override
+    public HotStream<T> init(final Executor exec) {
         CompletableFuture.runAsync(() -> {
             pause.get()
                  .join();
             stream.forEach(a -> {
 
-                int local = connected;
+                final int local = connected;
 
                 for (int i = 0; i < local; i++) {
 

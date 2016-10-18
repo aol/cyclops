@@ -23,7 +23,7 @@ public class EagerFutureStreamFunctions {
      * @param active Queue not to close
      * @param all All queues potentially including the active queue
      */
-    static void closeOthers(Queue active, List<Queue> all) {
+    static void closeOthers(final Queue active, final List<Queue> all) {
         all.stream()
            .filter(next -> next != active)
            .forEach(Queue::closeAndClear);
@@ -36,7 +36,7 @@ public class EagerFutureStreamFunctions {
      * @param active Stream not to close
      * @param all  All streams potentially including the active stream
      */
-    static void closeOthers(SimpleReactStream active, List<SimpleReactStream> all) {
+    static void closeOthers(final SimpleReactStream active, final List<SimpleReactStream> all) {
         all.stream()
            .filter(next -> next != active)
            .filter(s -> s instanceof BaseSimpleReactStream)
@@ -48,7 +48,7 @@ public class EagerFutureStreamFunctions {
      * Zip two streams into one. Uses the latest values from each rather than waiting for both
      * 
      */
-    static <T1, T2> Seq<Tuple2<T1, T2>> combineLatest(SimpleReactStream<T1> left, SimpleReactStream<T2> right) {
+    static <T1, T2> Seq<Tuple2<T1, T2>> combineLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
         return combineLatest(left, right, Tuple::tuple);
     }
 
@@ -59,13 +59,13 @@ public class EagerFutureStreamFunctions {
      * @return First Stream to start emitting values
      */
     @SafeVarargs
-    public static <U> SimpleReactStream<U> firstOf(SimpleReactStream<U>... futureStreams) {
-        List<Tuple2<SimpleReactStream<U>, QueueReader>> racers = Stream.of(futureStreams)
-                                                                       .map(s -> Tuple.tuple(s, new Queue.QueueReader(
-                                                                                                                      s.toQueue(), null)))
-                                                                       .collect(Collectors.toList());
+    public static <U> SimpleReactStream<U> firstOf(final SimpleReactStream<U>... futureStreams) {
+        final List<Tuple2<SimpleReactStream<U>, QueueReader>> racers = Stream.of(futureStreams)
+                                                                             .map(s -> Tuple.tuple(s, new Queue.QueueReader(
+                                                                                                                            s.toQueue(), null)))
+                                                                             .collect(Collectors.toList());
         while (true) {
-            for (Tuple2<SimpleReactStream<U>, Queue.QueueReader> q : racers) {
+            for (final Tuple2<SimpleReactStream<U>, Queue.QueueReader> q : racers) {
                 if (q.v2.notEmpty()) {
                     EagerFutureStreamFunctions.closeOthers(q.v2.getQueue(), racers.stream()
                                                                                   .map(t -> t.v2.getQueue())
@@ -88,13 +88,13 @@ public class EagerFutureStreamFunctions {
      * values. Uses the latest values from each rather than waiting for both.
      * 
      */
-    static <T1, T2, R> Seq<R> combineLatest(SimpleReactStream<T1> left, SimpleReactStream<T2> right, BiFunction<T1, T2, R> zipper) {
+    static <T1, T2, R> Seq<R> combineLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right, final BiFunction<T1, T2, R> zipper) {
 
-        Queue q = left.then(it -> new Val(
-                                          Val.Pos.left, it))
-                      .merge(right.then(it -> new Val(
-                                                      Val.Pos.right, it)))
-                      .toQueue();
+        final Queue q = left.then(it -> new Val(
+                                                Val.Pos.left, it))
+                            .merge(right.then(it -> new Val(
+                                                            Val.Pos.right, it)))
+                            .toQueue();
         final Iterator<Val> it = q.stream(left.getSubscription())
                                   .iterator();
 
@@ -110,7 +110,7 @@ public class EagerFutureStreamFunctions {
 
             @Override
             public R next() {
-                Val v = it.next();
+                final Val v = it.next();
                 if (v.pos == Val.Pos.left)
                     lastLeft = (T1) v.val;
                 else
@@ -128,7 +128,7 @@ public class EagerFutureStreamFunctions {
      * Zip two streams into one. Uses the latest values from each rather than waiting for both
      * 
      */
-    static <T1, T2> Seq<Tuple2<T1, T2>> withLatest(SimpleReactStream<T1> left, SimpleReactStream<T2> right) {
+    static <T1, T2> Seq<Tuple2<T1, T2>> withLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
         return withLatest(left, right, Tuple::tuple);
     }
 
@@ -137,13 +137,13 @@ public class EagerFutureStreamFunctions {
      * values. Uses the latest values from each rather than waiting for both.
      * 
      */
-    static <T1, T2, R> Seq<R> withLatest(SimpleReactStream<T1> left, SimpleReactStream<T2> right, BiFunction<T1, T2, R> zipper) {
+    static <T1, T2, R> Seq<R> withLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right, final BiFunction<T1, T2, R> zipper) {
 
-        Queue q = left.then(it -> new Val(
-                                          Val.Pos.left, it))
-                      .merge(right.then(it -> new Val(
-                                                      Val.Pos.right, it)))
-                      .toQueue();
+        final Queue q = left.then(it -> new Val(
+                                                Val.Pos.left, it))
+                            .merge(right.then(it -> new Val(
+                                                            Val.Pos.right, it)))
+                            .toQueue();
         final Iterator<Val> it = q.stream(left.getSubscription())
                                   .iterator();
 
@@ -159,7 +159,7 @@ public class EagerFutureStreamFunctions {
 
             @Override
             public R next() {
-                Val v = it.next();
+                final Val v = it.next();
                 if (v.pos == Val.Pos.left) {
                     lastLeft = (T1) v.val;
                     return zipper.apply(lastLeft, lastRight);
@@ -175,17 +175,17 @@ public class EagerFutureStreamFunctions {
                   .filter(next -> !(next instanceof Optional));
     }
 
-    static <T1, T2> ReactiveSeq<T1> skipUntil(SimpleReactStream<T1> left, SimpleReactStream<T2> right) {
+    static <T1, T2> ReactiveSeq<T1> skipUntil(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
 
-        Queue q = left.then(it -> new Val(
-                                          Val.Pos.left, it))
-                      .merge(right.then(it -> new Val(
-                                                      Val.Pos.right, it)))
-                      .toQueue();
+        final Queue q = left.then(it -> new Val(
+                                                Val.Pos.left, it))
+                            .merge(right.then(it -> new Val(
+                                                            Val.Pos.right, it)))
+                            .toQueue();
         final Iterator<Val> it = q.stream(left.getSubscription())
                                   .iterator();
 
-        final Object missingValue = new Object();
+        new Object();
         class Zip implements Iterator<T1> {
             Optional<T1> lastLeft = Optional.empty();
             Optional<T2> lastRight = Optional.empty();
@@ -198,7 +198,7 @@ public class EagerFutureStreamFunctions {
 
             @Override
             public T1 next() {
-                Val v = it.next();
+                final Val v = it.next();
                 if (v.pos == Val.Pos.left) {
                     if (lastRight.isPresent())
                         lastLeft = Optional.of((T1) v.val);
@@ -218,17 +218,17 @@ public class EagerFutureStreamFunctions {
                           .filter(next -> !(next instanceof Optional));
     }
 
-    static <T1, T2> ReactiveSeq<T1> takeUntil(SimpleReactStream<T1> left, SimpleReactStream<T2> right) {
+    static <T1, T2> ReactiveSeq<T1> takeUntil(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
 
-        Queue q = left.then(it -> new Val(
-                                          Val.Pos.left, it))
-                      .merge(right.then(it -> new Val(
-                                                      Val.Pos.right, it)))
-                      .toQueue();
+        final Queue q = left.then(it -> new Val(
+                                                Val.Pos.left, it))
+                            .merge(right.then(it -> new Val(
+                                                            Val.Pos.right, it)))
+                            .toQueue();
         final Iterator<Val> it = q.stream(left.getSubscription())
                                   .iterator();
 
-        final Object missingValue = new Object();
+        new Object();
         class Zip implements Iterator<T1> {
             Optional<T1> lastLeft = Optional.empty();
             Optional<T2> lastRight = Optional.empty();
@@ -242,7 +242,7 @@ public class EagerFutureStreamFunctions {
 
             @Override
             public T1 next() {
-                Val v = it.next();
+                final Val v = it.next();
                 if (v.pos == Val.Pos.left)
                     lastLeft = Optional.of((T1) v.val);
                 else

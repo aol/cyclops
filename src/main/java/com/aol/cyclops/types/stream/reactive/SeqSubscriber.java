@@ -49,12 +49,12 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
         };
     }
 
-    private SeqSubscriber(Runnable onComplete) {
+    private SeqSubscriber(final Runnable onComplete) {
         super();
         this.onComplete = onComplete;
     }
 
-    public static <T> SeqSubscriber<T> subscriber(Runnable onComplete) {
+    public static <T> SeqSubscriber<T> subscriber(final Runnable onComplete) {
         return new SeqSubscriber<>(
                                    onComplete);
     }
@@ -67,7 +67,7 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
     }
 
     @Override
-    public void onSubscribe(Subscription s) {
+    public void onSubscribe(final Subscription s) {
         Objects.requireNonNull(s);
         if (this.s == null) {
             this.s = s;
@@ -78,14 +78,14 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
     }
 
     @Override
-    public void onNext(T t) {
+    public void onNext(final T t) {
         unread = true;
         Objects.requireNonNull(t);
         lastValue.set(t);
     }
 
     @Override
-    public void onError(Throwable t) {
+    public void onError(final Throwable t) {
         Objects.requireNonNull(t);
         lastError.set(t);
     }
@@ -97,17 +97,18 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
 
     }
 
+    @Override
     public T get() {
         try {
             while (lastValue.get() == UNSET && lastError.get() == UNSET)
                 LockSupport.parkNanos(1000000l);
             if (lastError.get() != UNSET) {
-                Throwable toThrow = (Throwable) lastError.get();
+                final Throwable toThrow = (Throwable) lastError.get();
                 reset();
 
                 throw ExceptionSoftener.throwSoftenedException(toThrow);
             }
-            T result = (T) lastValue.get();
+            final T result = (T) lastValue.get();
 
             return result;
         } finally {
@@ -164,12 +165,12 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
             boolean requested = true;
 
             @Override
-            public boolean tryAdvance(Consumer<? super T> action) {
+            public boolean tryAdvance(final Consumer<? super T> action) {
                 if (!requested)
                     s.request(1l);
                 else
                     requested = false;
-                Object next = (complete) ? (!unread) ? UNSET : get() : get();
+                final Object next = complete ? !unread ? UNSET : get() : get();
 
                 if (next != UNSET) {
                     action.accept((T) next);

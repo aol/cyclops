@@ -42,8 +42,8 @@ public class FutureStreamUtils {
      * @param consumerElement To accept incoming events from the Stream
      * @return Subscription so that further processing can be continued or cancelled.
      */
-    public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachX(Stream<T> stream,
-            long x, Consumer<? super T> consumerElement) {
+    public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachX(
+            final Stream<T> stream, final long x, final Consumer<? super T> consumerElement) {
         return forEachXEvents(stream, x, consumerElement, e -> {
         } , () -> {
         });
@@ -83,7 +83,7 @@ public class FutureStreamUtils {
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachXWithError(
-            Stream<T> stream, long x, Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError) {
+            final Stream<T> stream, final long x, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
         return forEachXEvents(stream, x, consumerElement, consumerError, () -> {
         });
     }
@@ -124,14 +124,15 @@ public class FutureStreamUtils {
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachXEvents(
-            Stream<T> stream, long x, Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-        CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
-        Subscription s = new Subscription() {
+            final Stream<T> stream, final long x, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
+            final Runnable onComplete) {
+        final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+        final Subscription s = new Subscription() {
             Iterator<T> it = stream.iterator();
             volatile boolean running = true;
 
             @Override
-            public void request(long n) {
+            public void request(final long n) {
 
                 for (int i = 0; i < n && running; i++) {
                     try {
@@ -147,7 +148,7 @@ public class FutureStreamUtils {
                                 break;
                             }
                         }
-                    } catch (Throwable t) {
+                    } catch (final Throwable t) {
                         consumerError.accept(t);
                     }
                 }
@@ -160,7 +161,7 @@ public class FutureStreamUtils {
             }
 
         };
-        CompletableFuture<Subscription> subscription = CompletableFuture.completedFuture(s);
+        final CompletableFuture<Subscription> subscription = CompletableFuture.completedFuture(s);
 
         return tuple(subscription, () -> {
             s.request(x);
@@ -195,7 +196,7 @@ public class FutureStreamUtils {
      * @return A Tuple containing a Future with a Subscription to this publisher, a runnable to start processing on a separate thread, and future that stores true / false depending on success
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachWithError(
-            Stream<T> stream, Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError) {
+            final Stream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
         return forEachEvent(stream, consumerElement, consumerError, () -> {
         });
 
@@ -230,12 +231,13 @@ public class FutureStreamUtils {
      * @return A Tuple containing a Future with a Subscription to this publisher, a runnable to start processing on a separate thread, and future that stores true / false depending on success
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachEvent(
-            Stream<T> stream, Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-        CompletableFuture<Subscription> subscription = new CompletableFuture<>();
-        CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+            final Stream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
+            final Runnable onComplete) {
+        final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
+        final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
         return tuple(subscription, () -> {
-            Iterator<T> it = stream.iterator();
-            Object UNSET = new Object();
+            final Iterator<T> it = stream.iterator();
+            final Object UNSET = new Object();
             StreamUtils.stream(new Iterator<T>() {
                 boolean errored = false;
 
@@ -246,7 +248,7 @@ public class FutureStreamUtils {
                         result = it.hasNext();
 
                         return result;
-                    } catch (Throwable t) {
+                    } catch (final Throwable t) {
 
                         consumerError.accept(t);
 

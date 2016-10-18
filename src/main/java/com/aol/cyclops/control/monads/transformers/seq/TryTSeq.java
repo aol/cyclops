@@ -81,7 +81,7 @@ public class TryTSeq<T, X extends Throwable>
      * @return TryT with peek call
      */
     @Override
-    public TryTSeq<T, X> peek(Consumer<? super T> peek) {
+    public TryTSeq<T, X> peek(final Consumer<? super T> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
             return a;
@@ -102,7 +102,7 @@ public class TryTSeq<T, X extends Throwable>
      * @return OptionalT that applies the provided filter
      */
     @Override
-    public MaybeTSeq<T> filter(Predicate<? super T> test) {
+    public MaybeTSeq<T> filter(final Predicate<? super T> test) {
         return MaybeTSeq.of(run.map(opt -> opt.filter(test)));
     }
 
@@ -123,7 +123,7 @@ public class TryTSeq<T, X extends Throwable>
      * @return TryT that applies the map function to the wrapped Try
      */
     @Override
-    public <B> TryTSeq<B, X> map(Function<? super T, ? extends B> f) {
+    public <B> TryTSeq<B, X> map(final Function<? super T, ? extends B> f) {
         return new TryTSeq<B, X>(
                                  run.map(o -> o.map(f)));
     }
@@ -142,12 +142,12 @@ public class TryTSeq<T, X extends Throwable>
      * @param f FlatMap function
      * @return TryT that applies the flatMap function to the wrapped Try
      */
-    public <B> TryTSeq<B, X> flatMapT(Function<? super T, TryTSeq<B, X>> f) {
+    public <B> TryTSeq<B, X> flatMapT(final Function<? super T, TryTSeq<B, X>> f) {
 
         return of(run.bind(opt -> {
             if (opt.isSuccess())
                 return f.apply(opt.get()).run.unwrap();
-            Try<B, X> ret = (Try) opt;
+            final Try<B, X> ret = (Try) opt;
             return run.unit(ret)
                       .unwrap();
         }));
@@ -155,7 +155,7 @@ public class TryTSeq<T, X extends Throwable>
     }
 
     @Override
-    public <B> TryTSeq<B, X> flatMap(Function<? super T, ? extends Try<B, X>> f) {
+    public <B> TryTSeq<B, X> flatMap(final Function<? super T, ? extends Try<B, X>> f) {
 
         return new TryTSeq<B, X>(
                                  run.map(o -> o.flatMap(f)));
@@ -163,13 +163,13 @@ public class TryTSeq<T, X extends Throwable>
     }
 
     @Override
-    public <T> TryTSeq<T, X> unitStream(ReactiveSeq<T> traversable) {
+    public <T> TryTSeq<T, X> unitStream(final ReactiveSeq<T> traversable) {
         return TryT.fromStream(traversable.map(Try::success));
 
     }
 
     @Override
-    public <T> TryTSeq<T, X> unitAnyM(AnyM<Traversable<T>> traversable) {
+    public <T> TryTSeq<T, X> unitAnyM(final AnyM<Traversable<T>> traversable) {
 
         return of((AnyMSeq) traversable.map(t -> Try.fromIterable(t)));
     }
@@ -209,7 +209,7 @@ public class TryTSeq<T, X extends Throwable>
      * @param fn Function to enhance with functionality from Try and another monad type
      * @return Function that accepts and returns an TryT
      */
-    public static <U, R, X extends Throwable> Function<TryTSeq<U, X>, TryTSeq<R, X>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R, X extends Throwable> Function<TryTSeq<U, X>, TryTSeq<R, X>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -244,7 +244,7 @@ public class TryTSeq<T, X extends Throwable>
      * @return Function that accepts and returns an TryT
      */
     public static <U1, U2, R, X extends Throwable> BiFunction<TryTSeq<U1, X>, TryTSeq<U2, X>, TryTSeq<R, X>> lift2(
-            BiFunction<? super U1, ? super U2, ? extends R> fn) {
+            final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -256,7 +256,7 @@ public class TryTSeq<T, X extends Throwable>
      * @return TryT
      */
     @SuppressWarnings("unchecked")
-    public static <A, X extends Throwable> TryTSeq<A, X> fromAnyM(AnyMSeq<A> anyM) {
+    public static <A, X extends Throwable> TryTSeq<A, X> fromAnyM(final AnyMSeq<A> anyM) {
         return (TryTSeq<A, X>) of(anyM.map(Try::success));
     }
 
@@ -266,12 +266,12 @@ public class TryTSeq<T, X extends Throwable>
      * @param monads AnyM that contains a monad wrapping an Try
      * @return TryT
      */
-    public static <A, X extends Throwable> TryTSeq<A, X> of(AnyMSeq<Try<A, X>> monads) {
+    public static <A, X extends Throwable> TryTSeq<A, X> of(final AnyMSeq<Try<A, X>> monads) {
         return new TryTSeq<>(
                              monads);
     }
 
-    public static <A, X extends Throwable> TryTSeq<A, X> of(Try<A, X> monads) {
+    public static <A, X extends Throwable> TryTSeq<A, X> of(final Try<A, X> monads) {
         return TryT.fromIterable(ListX.of(monads));
     }
 
@@ -280,6 +280,7 @@ public class TryTSeq<T, X extends Throwable>
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return String.format("TryTSeq[%s]", run);
     }
@@ -292,15 +293,17 @@ public class TryTSeq<T, X extends Throwable>
         return run.allMatch(t -> t.isFailure());
     }
 
-    public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure, Monoid<R> combiner) {
+    public <R> R visit(final Function<? super T, ? extends R> success, final Function<? super X, ? extends R> failure, final Monoid<R> combiner) {
         return run.map(t -> t.visit(success, failure))
                   .reduce(combiner);
     }
 
-    public <R> TryTSeq<R, X> unit(R value) {
+    @Override
+    public <R> TryTSeq<R, X> unit(final R value) {
         return of(run.unit(Try.success(value)));
     }
 
+    @Override
     public <R> TryTSeq<R, X> empty() {
         return of(run.unit(Try.failure(null)));
     }
@@ -316,7 +319,7 @@ public class TryTSeq<T, X extends Throwable>
         return stream().iterator();
     }
 
-    public <R> TryTSeq<R, X> unitIterator(Iterator<R> it) {
+    public <R> TryTSeq<R, X> unitIterator(final Iterator<R> it) {
         return of(run.unitIterator(it)
                      .map(i -> Try.success(i)));
     }
@@ -329,6 +332,7 @@ public class TryTSeq<T, X extends Throwable>
         return stream();
     }
 
+    @Override
     public boolean isSeqPresent() {
         return !run.isEmpty();
     }
@@ -341,7 +345,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
-    public TryTSeq<T, X> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+    public TryTSeq<T, X> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.combine(predicate, op);
     }
@@ -350,7 +354,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(int)
      */
     @Override
-    public TryTSeq<T, X> cycle(int times) {
+    public TryTSeq<T, X> cycle(final int times) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.cycle(times);
     }
@@ -359,7 +363,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycle(com.aol.cyclops.Monoid, int)
      */
     @Override
-    public TryTSeq<T, X> cycle(Monoid<T> m, int times) {
+    public TryTSeq<T, X> cycle(final Monoid<T> m, final int times) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.cycle(m, times);
     }
@@ -368,7 +372,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleWhile(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<T, X> cycleWhile(Predicate<? super T> predicate) {
+    public TryTSeq<T, X> cycleWhile(final Predicate<? super T> predicate) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.cycleWhile(predicate);
     }
@@ -377,7 +381,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#cycleUntil(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<T, X> cycleUntil(Predicate<? super T> predicate) {
+    public TryTSeq<T, X> cycleUntil(final Predicate<? super T> predicate) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.cycleUntil(predicate);
     }
@@ -386,19 +390,19 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> TryTSeq<R, X> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> TryTSeq<R, X> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (TryTSeq<R, X>) ValueTransformerSeq.super.zip(other, zipper);
     }
 
     @Override
-    public <U, R> TryTSeq<R, X> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> TryTSeq<R, X> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (TryTSeq<R, X>) ValueTransformerSeq.super.zip(other, zipper);
     }
 
     @Override
-    public <U, R> TryTSeq<R, X> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> TryTSeq<R, X> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (TryTSeq<R, X>) ValueTransformerSeq.super.zip(other, zipper);
     }
@@ -407,19 +411,19 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> TryTSeq<Tuple2<T, U>, X> zip(Stream<? extends U> other) {
+    public <U> TryTSeq<Tuple2<T, U>, X> zip(final Stream<? extends U> other) {
 
         return (TryTSeq) ValueTransformerSeq.super.zip(other);
     }
 
     @Override
-    public <U> TryTSeq<Tuple2<T, U>, X> zip(Seq<? extends U> other) {
+    public <U> TryTSeq<Tuple2<T, U>, X> zip(final Seq<? extends U> other) {
 
         return (TryTSeq) ValueTransformerSeq.super.zip(other);
     }
 
     @Override
-    public <U> TryTSeq<Tuple2<T, U>, X> zip(Iterable<? extends U> other) {
+    public <U> TryTSeq<Tuple2<T, U>, X> zip(final Iterable<? extends U> other) {
 
         return (TryTSeq) ValueTransformerSeq.super.zip(other);
     }
@@ -428,7 +432,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <S, U> TryTSeq<Tuple3<T, S, U>, X> zip3(Stream<? extends S> second, Stream<? extends U> third) {
+    public <S, U> TryTSeq<Tuple3<T, S, U>, X> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
 
         return (TryTSeq) ValueTransformerSeq.super.zip3(second, third);
     }
@@ -437,7 +441,8 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> TryTSeq<Tuple4<T, T2, T3, T4>, X> zip4(Stream<? extends T2> second, Stream<? extends T3> third, Stream<? extends T4> fourth) {
+    public <T2, T3, T4> TryTSeq<Tuple4<T, T2, T3, T4>, X> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
+            final Stream<? extends T4> fourth) {
 
         return (TryTSeq) ValueTransformerSeq.super.zip4(second, third, fourth);
     }
@@ -455,7 +460,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int)
      */
     @Override
-    public TryTSeq<ListX<T>, X> sliding(int windowSize) {
+    public TryTSeq<ListX<T>, X> sliding(final int windowSize) {
 
         return (TryTSeq<ListX<T>, X>) ValueTransformerSeq.super.sliding(windowSize);
     }
@@ -464,7 +469,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sliding(int, int)
      */
     @Override
-    public TryTSeq<ListX<T>, X> sliding(int windowSize, int increment) {
+    public TryTSeq<ListX<T>, X> sliding(final int windowSize, final int increment) {
 
         return (TryTSeq<ListX<T>, X>) ValueTransformerSeq.super.sliding(windowSize, increment);
     }
@@ -473,7 +478,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> TryTSeq<C, X> grouped(int size, Supplier<C> supplier) {
+    public <C extends Collection<? super T>> TryTSeq<C, X> grouped(final int size, final Supplier<C> supplier) {
 
         return (TryTSeq<C, X>) ValueTransformerSeq.super.grouped(size, supplier);
     }
@@ -482,7 +487,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<ListX<T>, X> groupedUntil(Predicate<? super T> predicate) {
+    public TryTSeq<ListX<T>, X> groupedUntil(final Predicate<? super T> predicate) {
 
         return (TryTSeq<ListX<T>, X>) ValueTransformerSeq.super.groupedUntil(predicate);
     }
@@ -491,7 +496,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public TryTSeq<ListX<T>, X> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public TryTSeq<ListX<T>, X> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
         return (TryTSeq<ListX<T>, X>) ValueTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
@@ -500,7 +505,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<ListX<T>, X> groupedWhile(Predicate<? super T> predicate) {
+    public TryTSeq<ListX<T>, X> groupedWhile(final Predicate<? super T> predicate) {
 
         return (TryTSeq<ListX<T>, X>) ValueTransformerSeq.super.groupedWhile(predicate);
     }
@@ -509,7 +514,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> TryTSeq<C, X> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends Collection<? super T>> TryTSeq<C, X> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (TryTSeq<C, X>) ValueTransformerSeq.super.groupedWhile(predicate, factory);
     }
@@ -518,7 +523,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> TryTSeq<C, X> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends Collection<? super T>> TryTSeq<C, X> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (TryTSeq<C, X>) ValueTransformerSeq.super.groupedUntil(predicate, factory);
     }
@@ -527,7 +532,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(int)
      */
     @Override
-    public TryTSeq<ListX<T>, X> grouped(int groupSize) {
+    public TryTSeq<ListX<T>, X> grouped(final int groupSize) {
 
         return (TryTSeq<ListX<T>, X>) ValueTransformerSeq.super.grouped(groupSize);
     }
@@ -536,7 +541,8 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
-    public <K, A, D> TryTSeq<Tuple2<K, D>, X> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+    public <K, A, D> TryTSeq<Tuple2<K, D>, X> grouped(final Function<? super T, ? extends K> classifier,
+            final Collector<? super T, A, D> downstream) {
 
         return (TryTSeq) ValueTransformerSeq.super.grouped(classifier, downstream);
     }
@@ -545,7 +551,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#grouped(java.util.function.Function)
      */
     @Override
-    public <K> TryTSeq<Tuple2<K, Seq<T>>, X> grouped(Function<? super T, ? extends K> classifier) {
+    public <K> TryTSeq<Tuple2<K, Seq<T>>, X> grouped(final Function<? super T, ? extends K> classifier) {
 
         return (TryTSeq) ValueTransformerSeq.super.grouped(classifier);
     }
@@ -563,7 +569,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(com.aol.cyclops.Monoid)
      */
     @Override
-    public TryTSeq<T, X> scanLeft(Monoid<T> monoid) {
+    public TryTSeq<T, X> scanLeft(final Monoid<T> monoid) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.scanLeft(monoid);
     }
@@ -572,7 +578,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> TryTSeq<U, X> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
+    public <U> TryTSeq<U, X> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
         return (TryTSeq<U, X>) ValueTransformerSeq.super.scanLeft(seed, function);
     }
@@ -581,7 +587,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(com.aol.cyclops.Monoid)
      */
     @Override
-    public TryTSeq<T, X> scanRight(Monoid<T> monoid) {
+    public TryTSeq<T, X> scanRight(final Monoid<T> monoid) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.scanRight(monoid);
     }
@@ -590,7 +596,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> TryTSeq<U, X> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+    public <U> TryTSeq<U, X> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
 
         return (TryTSeq<U, X>) ValueTransformerSeq.super.scanRight(identity, combiner);
     }
@@ -608,7 +614,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.Comparator)
      */
     @Override
-    public TryTSeq<T, X> sorted(Comparator<? super T> c) {
+    public TryTSeq<T, X> sorted(final Comparator<? super T> c) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.sorted(c);
     }
@@ -617,7 +623,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<T, X> takeWhile(Predicate<? super T> p) {
+    public TryTSeq<T, X> takeWhile(final Predicate<? super T> p) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.takeWhile(p);
     }
@@ -626,7 +632,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<T, X> dropWhile(Predicate<? super T> p) {
+    public TryTSeq<T, X> dropWhile(final Predicate<? super T> p) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.dropWhile(p);
     }
@@ -635,7 +641,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<T, X> takeUntil(Predicate<? super T> p) {
+    public TryTSeq<T, X> takeUntil(final Predicate<? super T> p) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.takeUntil(p);
     }
@@ -644,7 +650,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<T, X> dropUntil(Predicate<? super T> p) {
+    public TryTSeq<T, X> dropUntil(final Predicate<? super T> p) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.dropUntil(p);
     }
@@ -653,7 +659,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#dropRight(int)
      */
     @Override
-    public TryTSeq<T, X> dropRight(int num) {
+    public TryTSeq<T, X> dropRight(final int num) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.dropRight(num);
     }
@@ -662,7 +668,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#takeRight(int)
      */
     @Override
-    public TryTSeq<T, X> takeRight(int num) {
+    public TryTSeq<T, X> takeRight(final int num) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.takeRight(num);
     }
@@ -671,7 +677,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skip(long)
      */
     @Override
-    public TryTSeq<T, X> skip(long num) {
+    public TryTSeq<T, X> skip(final long num) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.skip(num);
     }
@@ -680,7 +686,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipWhile(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<T, X> skipWhile(Predicate<? super T> p) {
+    public TryTSeq<T, X> skipWhile(final Predicate<? super T> p) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.skipWhile(p);
     }
@@ -689,7 +695,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipUntil(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<T, X> skipUntil(Predicate<? super T> p) {
+    public TryTSeq<T, X> skipUntil(final Predicate<? super T> p) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.skipUntil(p);
     }
@@ -698,7 +704,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limit(long)
      */
     @Override
-    public TryTSeq<T, X> limit(long num) {
+    public TryTSeq<T, X> limit(final long num) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.limit(num);
     }
@@ -707,7 +713,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitWhile(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<T, X> limitWhile(Predicate<? super T> p) {
+    public TryTSeq<T, X> limitWhile(final Predicate<? super T> p) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.limitWhile(p);
     }
@@ -716,7 +722,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitUntil(java.util.function.Predicate)
      */
     @Override
-    public TryTSeq<T, X> limitUntil(Predicate<? super T> p) {
+    public TryTSeq<T, X> limitUntil(final Predicate<? super T> p) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.limitUntil(p);
     }
@@ -725,7 +731,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#intersperse(java.lang.Object)
      */
     @Override
-    public TryTSeq<T, X> intersperse(T value) {
+    public TryTSeq<T, X> intersperse(final T value) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.intersperse(value);
     }
@@ -752,7 +758,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#skipLast(int)
      */
     @Override
-    public TryTSeq<T, X> skipLast(int num) {
+    public TryTSeq<T, X> skipLast(final int num) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.skipLast(num);
     }
@@ -761,7 +767,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#limitLast(int)
      */
     @Override
-    public TryTSeq<T, X> limitLast(int num) {
+    public TryTSeq<T, X> limitLast(final int num) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.limitLast(num);
     }
@@ -770,7 +776,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmpty(java.lang.Object)
      */
     @Override
-    public TryTSeq<T, X> onEmpty(T value) {
+    public TryTSeq<T, X> onEmpty(final T value) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.onEmpty(value);
     }
@@ -779,7 +785,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    public TryTSeq<T, X> onEmptyGet(Supplier<? extends T> supplier) {
+    public TryTSeq<T, X> onEmptyGet(final Supplier<? extends T> supplier) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.onEmptyGet(supplier);
     }
@@ -788,7 +794,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    public <X extends Throwable> TryTSeq<T, X> onEmptyThrow(Supplier<? extends X> supplier) {
+    public <X extends Throwable> TryTSeq<T, X> onEmptyThrow(final Supplier<? extends X> supplier) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.onEmptyThrow(supplier);
     }
@@ -797,7 +803,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#shuffle(java.util.Random)
      */
     @Override
-    public TryTSeq<T, X> shuffle(Random random) {
+    public TryTSeq<T, X> shuffle(final Random random) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.shuffle(random);
     }
@@ -806,7 +812,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#slice(long, long)
      */
     @Override
-    public TryTSeq<T, X> slice(long from, long to) {
+    public TryTSeq<T, X> slice(final long from, final long to) {
 
         return (TryTSeq<T, X>) ValueTransformerSeq.super.slice(from, to);
     }
@@ -815,7 +821,7 @@ public class TryTSeq<T, X extends Throwable>
      * @see com.aol.cyclops.control.monads.transformers.values.Traversable#sorted(java.util.function.Function)
      */
     @Override
-    public <U extends Comparable<? super U>> TryTSeq<T, X> sorted(Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> TryTSeq<T, X> sorted(final Function<? super T, ? extends U> function) {
         return (TryTSeq) ValueTransformerSeq.super.sorted(function);
     }
 
@@ -825,7 +831,7 @@ public class TryTSeq<T, X extends Throwable>
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof TryTSeq) {
             return run.equals(((TryTSeq) o).run);
         }

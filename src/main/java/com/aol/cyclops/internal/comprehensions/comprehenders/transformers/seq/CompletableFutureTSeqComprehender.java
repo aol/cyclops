@@ -13,7 +13,7 @@ import com.aol.cyclops.types.mixins.Printable;
 public class CompletableFutureTSeqComprehender implements Comprehender<CompletableFutureTSeq>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, CompletableFutureTSeq apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final CompletableFutureTSeq apply) {
 
         return apply.isSeqPresent() ? comp.of(apply.stream()
                                                    .toListX())
@@ -21,22 +21,22 @@ public class CompletableFutureTSeqComprehender implements Comprehender<Completab
     }
 
     @Override
-    public Object filter(CompletableFutureTSeq t, Predicate p) {
+    public Object filter(final CompletableFutureTSeq t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(CompletableFutureTSeq t, Function fn) {
+    public Object map(final CompletableFutureTSeq t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(CompletableFutureTSeq t, Function fn) {
+    public Object flatMap(final CompletableFutureTSeq t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public CompletableFutureTSeq of(Object o) {
+    public CompletableFutureTSeq of(final Object o) {
         return CompletableFutureTSeq.of(CompletableFuture.completedFuture(o));
     }
 
@@ -51,7 +51,7 @@ public class CompletableFutureTSeqComprehender implements Comprehender<Completab
     }
 
     @Override
-    public CompletableFutureTSeq fromIterator(Iterator o) {
+    public CompletableFutureTSeq fromIterator(final Iterator o) {
         return CompletableFutureTSeq.of(FutureW.fromIterable(() -> o)
                                                .toCompletableFuture());
     }

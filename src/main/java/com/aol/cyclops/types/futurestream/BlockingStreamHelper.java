@@ -20,8 +20,8 @@ import com.aol.cyclops.util.ExceptionSoftener;
 public class BlockingStreamHelper {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    static <T, A, R> R block(BlockingStream<T> blocking, final Collector collector, final EagerStreamWrapper lastActive) {
-        Stream<CompletableFuture> stream = lastActive.stream();
+    static <T, A, R> R block(final BlockingStream<T> blocking, final Collector collector, final EagerStreamWrapper lastActive) {
+        final Stream<CompletableFuture> stream = lastActive.stream();
 
         return (R) stream.map((future) -> {
             return BlockingStreamHelper.getSafe(future, blocking.getErrorHandler());
@@ -31,14 +31,15 @@ public class BlockingStreamHelper {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    static <R> R block(BlockingStream blocking, final Collector collector, final LazyStreamWrapper lastActive) {
+    static <R> R block(final BlockingStream blocking, final Collector collector, final LazyStreamWrapper lastActive) {
 
         return (R) ((LazyStream) blocking).run(collector);
 
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    static <R> R aggregateResults(final Collector collector, final List<FastFuture> completedFutures, Optional<Consumer<Throwable>> errorHandler) {
+    static <R> R aggregateResults(final Collector collector, final List<FastFuture> completedFutures,
+            final Optional<Consumer<Throwable>> errorHandler) {
         return (R) completedFutures.stream()
                                    .map(next -> getSafe(next, errorHandler))
                                    .filter(v -> v != MissingValue.MISSING_VALUE)
@@ -47,14 +48,14 @@ public class BlockingStreamHelper {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     static <R> R aggregateResultsCompletable(final Collector collector, final List<CompletableFuture> completedFutures,
-            Optional<Consumer<Throwable>> errorHandler) {
+            final Optional<Consumer<Throwable>> errorHandler) {
         return (R) completedFutures.stream()
                                    .map(next -> getSafe(next, errorHandler))
                                    .filter(v -> v != MissingValue.MISSING_VALUE)
                                    .collect(collector);
     }
 
-    public static void captureUnwrap(Throwable e, Optional<Consumer<Throwable>> errorHandler) {
+    public static void captureUnwrap(final Throwable e, final Optional<Consumer<Throwable>> errorHandler) {
         if (e instanceof SimpleReactFailedStageException)
             captureFailedStage((SimpleReactFailedStageException) e, errorHandler);
         else if (e.getCause() != null)
@@ -63,12 +64,12 @@ public class BlockingStreamHelper {
             captureGeneral(e, errorHandler);
     }
 
-    static void capture(final Throwable t, Optional<Consumer<Throwable>> errorHandler) {
+    static void capture(final Throwable t, final Optional<Consumer<Throwable>> errorHandler) {
         SimpleReactFailedStageException.matchable(t)
                                        .visit(general -> captureGeneral(general, errorHandler), sr -> captureFailedStage(sr, errorHandler));
     }
 
-    static Void captureFailedStage(final SimpleReactFailedStageException e, Optional<Consumer<Throwable>> errorHandler) {
+    static Void captureFailedStage(final SimpleReactFailedStageException e, final Optional<Consumer<Throwable>> errorHandler) {
         errorHandler.ifPresent((handler) -> {
 
             if (!(e.getCause() instanceof FilteredExecutionPathException)) {
@@ -78,7 +79,7 @@ public class BlockingStreamHelper {
         return null;
     }
 
-    static Void captureGeneral(final Throwable t, Optional<Consumer<Throwable>> errorHandler) {
+    static Void captureGeneral(final Throwable t, final Optional<Consumer<Throwable>> errorHandler) {
         if (t instanceof FilteredExecutionPathException)
             return null;
         errorHandler.ifPresent((handler) -> handler.accept(t));
@@ -86,14 +87,14 @@ public class BlockingStreamHelper {
     }
 
     @SuppressWarnings("rawtypes")
-    public static Object getSafe(final FastFuture next, Optional<Consumer<Throwable>> errorHandler) {
+    public static Object getSafe(final FastFuture next, final Optional<Consumer<Throwable>> errorHandler) {
         try {
             return next.join();
-        } catch (SimpleReactCompletionException e) {
+        } catch (final SimpleReactCompletionException e) {
             capture(e.getCause(), errorHandler);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             capture(e, errorHandler);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             capture(e, errorHandler);
         }
 
@@ -101,19 +102,19 @@ public class BlockingStreamHelper {
     }
 
     @SuppressWarnings("rawtypes")
-    static Object getSafe(final CompletableFuture next, Optional<Consumer<Throwable>> errorHandler) {
+    static Object getSafe(final CompletableFuture next, final Optional<Consumer<Throwable>> errorHandler) {
         try {
             return next.get();
-        } catch (ExecutionException e) {
+        } catch (final ExecutionException e) {
             capture(e.getCause(), errorHandler);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.currentThread()
                   .interrupt();
             capture(e, errorHandler);
             throw ExceptionSoftener.throwSoftenedException(e);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             capture(e, errorHandler);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             capture(e, errorHandler);
         }
 

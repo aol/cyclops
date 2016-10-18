@@ -107,11 +107,11 @@ public class ExceptionSoftener {
      * @return Supplier that throws the same exception, but doesn't need to declare it as a
      *  checked Exception
      */
-    public static Runnable softenRunnable(CheckedRunnable s) {
+    public static Runnable softenRunnable(final CheckedRunnable s) {
         return () -> {
             try {
                 s.run();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -138,11 +138,11 @@ public class ExceptionSoftener {
      * @return Supplier that throws the same exception, but doesn't need to declare it as a
      *  checked Exception
      */
-    public static <T> Supplier<T> softenSupplier(CheckedSupplier<T> s) {
+    public static <T> Supplier<T> softenSupplier(final CheckedSupplier<T> s) {
         return () -> {
             try {
                 return s.get();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -169,11 +169,11 @@ public class ExceptionSoftener {
      * @return Supplier that throws the same exception, but doesn't need to declare it as a
      *  checked Exception
      */
-    public static <T> Supplier<T> softenCallable(Callable<T> s) {
+    public static <T> Supplier<T> softenCallable(final Callable<T> s) {
         return () -> {
             try {
                 return s.call();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -198,11 +198,11 @@ public class ExceptionSoftener {
      * @param s CheckedBooleanSupplier to soften
      * @return Plain old BooleanSupplier
      */
-    public static BooleanSupplier softenBooleanSupplier(CheckedBooleanSupplier s) {
+    public static BooleanSupplier softenBooleanSupplier(final CheckedBooleanSupplier s) {
         return () -> {
             try {
                 return s.getAsBoolean();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -226,11 +226,11 @@ public class ExceptionSoftener {
      * @param s CheckedIntSupplier to soften
      * @return IntSupplier that can throw checked exceptions
      */
-    public static IntSupplier softenIntSupplier(CheckedIntSupplier s) {
+    public static IntSupplier softenIntSupplier(final CheckedIntSupplier s) {
         return () -> {
             try {
                 return s.getAsInt();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -254,11 +254,11 @@ public class ExceptionSoftener {
      * @param s CheckedLongSupplier to soften
      * @return LongSupplier that can throw checked exceptions
      */
-    public static LongSupplier softenLongSupplier(CheckedLongSupplier s) {
+    public static LongSupplier softenLongSupplier(final CheckedLongSupplier s) {
         return () -> {
             try {
                 return s.getAsLong();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -282,11 +282,11 @@ public class ExceptionSoftener {
      * @param s CheckedDoubleSupplier to soften
      * @return DoubleSupplier that can throw checked exceptions
      */
-    public static DoubleSupplier softenDoubleSupplier(CheckedDoubleSupplier s) {
+    public static DoubleSupplier softenDoubleSupplier(final CheckedDoubleSupplier s) {
         return () -> {
             try {
                 return s.getAsDouble();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -307,11 +307,11 @@ public class ExceptionSoftener {
      * @param fn CheckedFunction to be converted to a standard Function
      * @return Function that can throw checked Exceptions
      */
-    public static <T, R> Function<T, R> softenFunction(CheckedFunction<T, R> fn) {
+    public static <T, R> Function<T, R> softenFunction(final CheckedFunction<T, R> fn) {
         return t -> {
             try {
                 return fn.apply(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -332,11 +332,11 @@ public class ExceptionSoftener {
      * @param fn CheckedIntFunction to be converted to a standard IntFunction
      * @return IntFunction that can throw checked Exceptions
      */
-    public static <R> IntFunction<R> softenIntFunction(CheckedIntFunction<R> fn) {
+    public static <R> IntFunction<R> softenIntFunction(final CheckedIntFunction<R> fn) {
         return t -> {
             try {
                 return fn.apply(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -357,11 +357,11 @@ public class ExceptionSoftener {
      * @param fn CheckedLongFunction to be converted to a standard LongFunction
      * @return LongFunction that can throw checked Exceptions
      */
-    public static <R> LongFunction<R> softenLongFunction(CheckedLongFunction<R> fn) {
+    public static <R> LongFunction<R> softenLongFunction(final CheckedLongFunction<R> fn) {
         return t -> {
             try {
                 return fn.apply(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -382,11 +382,11 @@ public class ExceptionSoftener {
      * @param fn CheckedDoubleFunction to be converted to a standard DoubleFunction
      * @return DoubleFunction that can throw checked Exceptions
      */
-    public static <R> DoubleFunction<R> softenDoubleFunction(CheckedDoubleFunction<R> fn) {
+    public static <R> DoubleFunction<R> softenDoubleFunction(final CheckedDoubleFunction<R> fn) {
         return t -> {
             try {
                 return fn.apply(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -407,11 +407,11 @@ public class ExceptionSoftener {
      * @param fn CheckedLongToDoubleFunction to be converted to a standard LongToDoubleFunction
      * @return LongToDoubleFunction that can throw checked Exceptions
      */
-    public static LongToDoubleFunction softenLongToDoubleFunction(CheckedLongToDoubleFunction fn) {
+    public static LongToDoubleFunction softenLongToDoubleFunction(final CheckedLongToDoubleFunction fn) {
         return t -> {
             try {
                 return fn.applyAsDouble(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -432,11 +432,11 @@ public class ExceptionSoftener {
      * @param fn CheckedLongToIntFunction to be converted to a standard LongToIntFunction
      * @return LongToIntFunction that can throw checked Exceptions
      */
-    public static LongToIntFunction softenLongToIntFunction(CheckedLongToIntFunction fn) {
+    public static LongToIntFunction softenLongToIntFunction(final CheckedLongToIntFunction fn) {
         return t -> {
             try {
                 return fn.applyAsInt(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -457,11 +457,11 @@ public class ExceptionSoftener {
      * @param fn CheckedIntToDoubleFunction to be converted to a standard IntToDoubleFunction
      * @return IntToDoubleFunction that can throw checked Exceptions
      */
-    public static IntToDoubleFunction softenIntToDoubleFunction(CheckedIntToDoubleFunction fn) {
+    public static IntToDoubleFunction softenIntToDoubleFunction(final CheckedIntToDoubleFunction fn) {
         return t -> {
             try {
                 return fn.applyAsDouble(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -482,11 +482,11 @@ public class ExceptionSoftener {
      * @param fn CheckedIntToLongFunction to be converted to a standard IntToLongFunction
      * @return IntToLongFunction that can throw checked Exceptions
      */
-    public static IntToLongFunction softenIntToLongFunction(CheckedIntToLongFunction fn) {
+    public static IntToLongFunction softenIntToLongFunction(final CheckedIntToLongFunction fn) {
         return t -> {
             try {
                 return fn.applyAsLong(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -507,11 +507,11 @@ public class ExceptionSoftener {
      * @param fn CheckedDoubleToIntFunction to be converted to a standard DoubleToIntFunction
      * @return DoubleToIntFunction that can throw checked Exceptions
      */
-    public static DoubleToIntFunction softenDoubleToIntFunction(CheckedDoubleToIntFunction fn) {
+    public static DoubleToIntFunction softenDoubleToIntFunction(final CheckedDoubleToIntFunction fn) {
         return t -> {
             try {
                 return fn.applyAsInt(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -532,11 +532,11 @@ public class ExceptionSoftener {
      * @param fn CheckedDoubleToLongFunction to be converted to a standard DoubleToLongFunction
      * @return DoubleToLongFunction that can throw checked Exceptions
      */
-    public static DoubleToLongFunction softenDoubleToLongFunction(CheckedDoubleToLongFunction fn) {
+    public static DoubleToLongFunction softenDoubleToLongFunction(final CheckedDoubleToLongFunction fn) {
         return t -> {
             try {
                 return fn.applyAsLong(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -559,11 +559,11 @@ public class ExceptionSoftener {
      * @param fn CheckedBiLongFunction to be converted to a standard BiFunction
      * @return BiFunction that can throw checked Exceptions
      */
-    public static <T1, T2, R> BiFunction<T1, T2, R> softenBiFunction(CheckedBiFunction<T1, T2, R> fn) {
+    public static <T1, T2, R> BiFunction<T1, T2, R> softenBiFunction(final CheckedBiFunction<T1, T2, R> fn) {
         return (t1, t2) -> {
             try {
                 return fn.apply(t1, t2);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -584,11 +584,11 @@ public class ExceptionSoftener {
      * @param fn CheckedPredicate to be converted to a standard Predicate
      * @return Predicate that can throw checked Exceptions
      */
-    public static <T> Predicate<T> softenPredicate(CheckedPredicate<T> fn) {
+    public static <T> Predicate<T> softenPredicate(final CheckedPredicate<T> fn) {
         return t -> {
             try {
                 return fn.test(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -609,11 +609,11 @@ public class ExceptionSoftener {
      * @param fn CheckedDoublePredicate to be converted to a standard DoublePredicate
      * @return DoublePredicate that can throw checked Exceptions
      */
-    public static DoublePredicate softenDoublePredicate(CheckedDoublePredicate fn) {
+    public static DoublePredicate softenDoublePredicate(final CheckedDoublePredicate fn) {
         return t -> {
             try {
                 return fn.test(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -634,11 +634,11 @@ public class ExceptionSoftener {
      * @param fn CheckedIntPredicate to be converted to a standard IntPredicate
      * @return IntPredicate that can throw checked Exceptions
      */
-    public static IntPredicate softenIntPredicate(CheckedIntPredicate fn) {
+    public static IntPredicate softenIntPredicate(final CheckedIntPredicate fn) {
         return t -> {
             try {
                 return fn.test(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -659,11 +659,11 @@ public class ExceptionSoftener {
      * @param fn CheckedLongPredicate to be converted to a standard LongPredicate
      * @return LongPredicate that can throw checked Exceptions
      */
-    public static LongPredicate softenLongPredicate(CheckedLongPredicate fn) {
+    public static LongPredicate softenLongPredicate(final CheckedLongPredicate fn) {
         return t -> {
             try {
                 return fn.test(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -684,11 +684,11 @@ public class ExceptionSoftener {
      * @param fn CheckedBiPredicate to be converted to a standard BiPredicate
      * @return BiPredicate that can throw checked Exceptions
      */
-    public static <T1, T2> BiPredicate<T1, T2> softenBiPredicate(CheckedBiPredicate<T1, T2> fn) {
+    public static <T1, T2> BiPredicate<T1, T2> softenBiPredicate(final CheckedBiPredicate<T1, T2> fn) {
         return (t1, t2) -> {
             try {
                 return fn.test(t1, t2);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -709,11 +709,11 @@ public class ExceptionSoftener {
      * @param fn CheckedConsumer to be converted to a standard Consumer
      * @return Consumer that can throw checked Exceptions
      */
-    public static <T> Consumer<T> softenConsumer(CheckedConsumer<T> fn) {
+    public static <T> Consumer<T> softenConsumer(final CheckedConsumer<T> fn) {
         return t -> {
             try {
                 fn.accept(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -734,11 +734,11 @@ public class ExceptionSoftener {
      * @param fn CheckedDoubleConsumer to be converted to a standard DoubleConsumer
      * @return DoubleConsumer that can throw checked Exceptions
      */
-    public static DoubleConsumer softenDoubleConsumer(CheckedDoubleConsumer fn) {
+    public static DoubleConsumer softenDoubleConsumer(final CheckedDoubleConsumer fn) {
         return t -> {
             try {
                 fn.accept(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -759,11 +759,11 @@ public class ExceptionSoftener {
      * @param fn CheckedIntConsumer to be converted to a standard IntConsumer
      * @return IntConsumer that can throw checked Exceptions
      */
-    public static IntConsumer softenIntConsumer(CheckedIntConsumer fn) {
+    public static IntConsumer softenIntConsumer(final CheckedIntConsumer fn) {
         return t -> {
             try {
                 fn.accept(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -784,11 +784,11 @@ public class ExceptionSoftener {
      * @param fn CheckedLongConsumer to be converted to a standard LongConsumer
      * @return LongConsumer that can throw checked Exceptions
      */
-    public static LongConsumer softenLongConsumer(CheckedLongConsumer fn) {
+    public static LongConsumer softenLongConsumer(final CheckedLongConsumer fn) {
         return t -> {
             try {
                 fn.accept(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -809,11 +809,11 @@ public class ExceptionSoftener {
      * @param fn CheckedBiConsumer to be converted to a standard BiConsumer
      * @return BiConsumer that can throw checked Exceptions
      */
-    public static <T1, T2> BiConsumer<T1, T2> softenBiConsumer(CheckedBiConsumer<T1, T2> fn) {
+    public static <T1, T2> BiConsumer<T1, T2> softenBiConsumer(final CheckedBiConsumer<T1, T2> fn) {
         return (t1, t2) -> {
             try {
                 fn.accept(t1, t2);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 throw throwSoftenedException(e);
             }
         };
@@ -869,7 +869,7 @@ public class ExceptionSoftener {
      * @param p Predicate to check exception should be thrown or not
      * @param handler Handles exceptions that should not be thrown
      */
-    public static <X extends Throwable> void throwOrHandle(final X e, final Predicate<X> p, Consumer<X> handler) {
+    public static <X extends Throwable> void throwOrHandle(final X e, final Predicate<X> p, final Consumer<X> handler) {
         if (p.test(e))
             throw ExceptionSoftener.<RuntimeException> uncheck(e);
         else
@@ -877,7 +877,7 @@ public class ExceptionSoftener {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Throwable> T uncheck(Throwable throwable) throws T {
+    private static <T extends Throwable> T uncheck(final Throwable throwable) throws T {
         throw (T) throwable;
     }
 

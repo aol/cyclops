@@ -12,7 +12,7 @@ import com.aol.cyclops.types.mixins.Printable;
 public class FutureWTSeqComprehender implements Comprehender<FutureWTSeq>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, FutureWTSeq apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final FutureWTSeq apply) {
 
         return apply.isSeqPresent() ? comp.of(apply.stream()
                                                    .toListX())
@@ -20,22 +20,22 @@ public class FutureWTSeqComprehender implements Comprehender<FutureWTSeq>, Print
     }
 
     @Override
-    public Object filter(FutureWTSeq t, Predicate p) {
+    public Object filter(final FutureWTSeq t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(FutureWTSeq t, Function fn) {
+    public Object map(final FutureWTSeq t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(FutureWTSeq t, Function fn) {
+    public Object flatMap(final FutureWTSeq t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public FutureWTSeq of(Object o) {
+    public FutureWTSeq of(final Object o) {
         return FutureWTSeq.of(FutureW.ofResult(o));
     }
 
@@ -50,7 +50,7 @@ public class FutureWTSeqComprehender implements Comprehender<FutureWTSeq>, Print
     }
 
     @Override
-    public FutureWTSeq fromIterator(Iterator o) {
+    public FutureWTSeq fromIterator(final Iterator o) {
         return FutureWTSeq.of(FutureW.fromIterable(() -> o));
     }
 

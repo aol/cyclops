@@ -378,7 +378,6 @@ public class FluentFunctions {
             });
         }
 
-
         public <X extends Throwable> FluentSupplier<R> recover(final Class<X> type, final Supplier<R> onError) {
             return FluentFunctions.of(() -> {
                 try {

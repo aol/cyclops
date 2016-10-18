@@ -23,7 +23,7 @@ public interface TriConsumer<S1, S2, S3> {
      * @param c3 jOOλ Consumer3
      * @return cyclops-react TriConsumer
      */
-    static <S1, S2, S3> TriConsumer<S1, S2, S3> fromConsumer3(Consumer3<S1, S2, S3> c3) {
+    static <S1, S2, S3> TriConsumer<S1, S2, S3> fromConsumer3(final Consumer3<S1, S2, S3> c3) {
         return (a, b, c) -> c3.accept(a, b, c);
     }
 
@@ -49,7 +49,7 @@ public interface TriConsumer<S1, S2, S3> {
      * @param s the first input parameter
      * @return A curried function that returns a Consumer
      */
-    default Function<S2, Consumer<S3>> apply(S1 s) {
+    default Function<S2, Consumer<S3>> apply(final S1 s) {
         return CurryConsumer.curryC3(this)
                             .apply(s);
     }
@@ -61,7 +61,7 @@ public interface TriConsumer<S1, S2, S3> {
      * @param s2 the second input parameter
      * @return A Consumer that accepts the third parameter
      */
-    default Consumer<S3> apply(S1 s, S2 s2) {
+    default Consumer<S3> apply(final S1 s, final S2 s2) {
         return CurryConsumer.curryC3(this)
                             .apply(s)
                             .apply(s2);

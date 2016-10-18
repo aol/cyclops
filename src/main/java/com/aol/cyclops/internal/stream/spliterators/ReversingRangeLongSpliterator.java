@@ -18,13 +18,14 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     @Setter
     private boolean reverse;
 
-    public ReversingRangeLongSpliterator(long min, long max, boolean reverse) {
+    public ReversingRangeLongSpliterator(final long min, final long max, final boolean reverse) {
         this.min = Math.min(min, max) - 1;
         this.max = Math.max(min, max);
         this.reverse = this.max >= this.min ? reverse : !reverse;
-        this.index = Math.min(min, max);
+        index = Math.min(min, max);
     }
 
+    @Override
     public ReversableSpliterator invert() {
         setReverse(!isReverse());
         index = max - 1;
@@ -32,7 +33,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     }
 
     @Override
-    public boolean tryAdvance(LongConsumer consumer) {
+    public boolean tryAdvance(final LongConsumer consumer) {
         Objects.requireNonNull(consumer);
         if (!reverse) {
             if (index < max && index > min) {

@@ -64,7 +64,7 @@ public interface Case<T, R> {
      * @param value To match against
      * @return Optional.empty if doesn't match, result of the application of current function if it does wrapped in an Optional
      */
-    default Optional<R> match(T value) {
+    default Optional<R> match(final T value) {
         if (get().v1.test(value))
             return Optional.of(get().v2.apply(value));
         return Optional.empty();
@@ -85,7 +85,7 @@ public interface Case<T, R> {
      * @param value Value to match against
      * @return A CompletableFuture that will eventual contain an Optional.empty if doesn't match, result of the application of current function if it does
      */
-    default CompletableFuture<Optional<R>> matchAsync(Executor executor, T value) {
+    default CompletableFuture<Optional<R>> matchAsync(final Executor executor, final T value) {
         return CompletableFuture.supplyAsync(() -> match(value), executor);
     }
 
@@ -96,7 +96,7 @@ public interface Case<T, R> {
      * @param action Function that is executed on succesful match
      * @return New Case instance
      */
-    public static <T, R> Case<T, R> of(Predicate<? super T> predicate, Function<? super T, ? extends R> action) {
+    public static <T, R> Case<T, R> of(final Predicate<? super T> predicate, final Function<? super T, ? extends R> action) {
         return new ActiveCase<T, R>(
                                     Tuple.tuple(predicate, action));
     }
@@ -107,7 +107,7 @@ public interface Case<T, R> {
      * @param pattern containing the predicate that will be used to match  and the function that is executed on succesful match
      * @return New Case instance
      */
-    public static <T, R> Case<T, R> of(Tuple2<Predicate<? super T>, Function<? super T, ? extends R>> pattern) {
+    public static <T, R> Case<T, R> of(final Tuple2<Predicate<? super T>, Function<? super T, ? extends R>> pattern) {
         return new ActiveCase<>(
                                 pattern);
     }

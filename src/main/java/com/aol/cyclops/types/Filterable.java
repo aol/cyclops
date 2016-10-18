@@ -43,7 +43,7 @@ public interface Filterable<T> {
      * }
      */
     @SuppressWarnings("unchecked")
-    default <U> Filterable<U> ofType(Class<? extends U> type) {
+    default <U> Filterable<U> ofType(final Class<? extends U> type) {
         return (Filterable<U>) filter(type::isInstance);
     }
 
@@ -65,7 +65,7 @@ public interface Filterable<T> {
      * @param predicate to filter elements by, retaining matches
      * @return Filterable with elements removed where the predicate does not hold
      */
-    default Filterable<T> filterNot(Predicate<? super T> predicate) {
+    default Filterable<T> filterNot(final Predicate<? super T> predicate) {
         return filter(predicate.negate());
     }
 

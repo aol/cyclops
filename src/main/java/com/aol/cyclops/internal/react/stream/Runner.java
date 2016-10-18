@@ -17,7 +17,7 @@ public class Runner<U> {
 
     private final Runnable runnable;
 
-    public boolean run(LazyStreamWrapper<U> lastActive, EmptyCollector<U> collector) {
+    public boolean run(final LazyStreamWrapper<U> lastActive, final EmptyCollector<U> collector) {
 
         try {
             lastActive.injectFutures()
@@ -26,11 +26,11 @@ public class Runner<U> {
                           collector.accept(n);
                       });
             collector.getResults();
-        } catch (SimpleReactProcessingException e) {
+        } catch (final SimpleReactProcessingException e) {
 
-        } catch (java.util.concurrent.CompletionException e) {
+        } catch (final java.util.concurrent.CompletionException e) {
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
 
         }
 
@@ -39,28 +39,28 @@ public class Runner<U> {
 
     }
 
-    public Continuation runContinuations(LazyStreamWrapper lastActive, EmptyCollector collector) {
+    public Continuation runContinuations(final LazyStreamWrapper lastActive, final EmptyCollector collector) {
 
-        Iterator<FastFuture> it = lastActive.injectFutures()
-                                            .iterator();
+        final Iterator<FastFuture> it = lastActive.injectFutures()
+                                                  .iterator();
 
-        Continuation[] cont = new Continuation[1];
+        final Continuation[] cont = new Continuation[1];
 
-        Continuation finish = new Continuation(
-                                               () -> {
+        final Continuation finish = new Continuation(
+                                                     () -> {
 
-                                                   collector.getResults();
-                                                   runnable.run();
-                                                   throw new ClosedQueueException();
+                                                         collector.getResults();
+                                                         runnable.run();
+                                                         throw new ClosedQueueException();
 
-                                               });
-        Continuation finishNoCollect = new Continuation(
-                                                        () -> {
-                                                            runnable.run();
+                                                     });
+        final Continuation finishNoCollect = new Continuation(
+                                                              () -> {
+                                                                  runnable.run();
 
-                                                            throw new ClosedQueueException();
+                                                                  throw new ClosedQueueException();
 
-                                                        });
+                                                              });
 
         cont[0] = new Continuation(
                                    () -> {
@@ -68,7 +68,7 @@ public class Runner<U> {
 
                                            if (it.hasNext()) {
 
-                                               FastFuture f = it.next();
+                                               final FastFuture f = it.next();
 
                                                handleFilter(cont, f);//if completableFuture has been filtered out, we need to move to the next one instead
 
@@ -80,11 +80,11 @@ public class Runner<U> {
                                            else {
                                                return finish.proceed();
                                            }
-                                       } catch (SimpleReactProcessingException e) {
+                                       } catch (final SimpleReactProcessingException e) {
 
-                                       } catch (java.util.concurrent.CompletionException e) {
+                                       } catch (final java.util.concurrent.CompletionException e) {
 
-                                       } catch (Throwable e) {
+                                       } catch (final Throwable e) {
 
                                            collector.getSafeJoin()
                                                     .apply(FastFuture.failedFuture(e));
@@ -97,12 +97,12 @@ public class Runner<U> {
 
     }
 
-    private <T> void handleFilter(Continuation[] cont, FastFuture<T> f) {
-        AtomicInteger called = new AtomicInteger(
-                                                 0);
+    private <T> void handleFilter(final Continuation[] cont, final FastFuture<T> f) {
+        final AtomicInteger called = new AtomicInteger(
+                                                       0);
         f.essential(event -> {
 
-            if (event.exception != null && (event.exception.getCause() instanceof FilteredExecutionPathException)) {
+            if (event.exception != null && event.exception.getCause() instanceof FilteredExecutionPathException) {
                 if (called.compareAndSet(0, 1))
                     cont[0].proceed();
 

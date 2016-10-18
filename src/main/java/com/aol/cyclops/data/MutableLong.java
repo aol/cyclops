@@ -62,7 +62,7 @@ public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueA
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static MutableLong of(long var) {
+    public static MutableLong of(final long var) {
         return new MutableLong(
                                var);
     }
@@ -82,17 +82,20 @@ public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueA
      * @param c Consumer that sets an external value
      * @return MutableLong that gets / sets an external (mutable) value
      */
-    public static MutableLong fromExternal(LongSupplier s, LongConsumer c) {
+    public static MutableLong fromExternal(final LongSupplier s, final LongConsumer c) {
         return new MutableLong() {
+            @Override
             public long getAsLong() {
                 return s.getAsLong();
             }
 
+            @Override
             public Long get() {
                 return getAsLong();
             }
 
-            public MutableLong set(long value) {
+            @Override
+            public MutableLong set(final long value) {
                 c.accept(value);
                 return this;
             }
@@ -117,9 +120,10 @@ public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueA
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(Function<Long, R> fn) {
-        MutableLong host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Long, R> fn) {
+        final MutableLong host = this;
         return new Mutable<R>() {
+            @Override
             public R get() {
                 return fn.apply(host.get());
             }
@@ -145,10 +149,11 @@ public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueA
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(Function<T1, Long> fn) {
-        MutableLong host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Long> fn) {
+        final MutableLong host = this;
         return new Mutable<T1>() {
-            public Mutable<T1> set(T1 value) {
+            @Override
+            public Mutable<T1> set(final T1 value) {
                 host.set(fn.apply(value));
                 return this;
             }
@@ -174,9 +179,10 @@ public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueA
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public MutableLong mapOutput(LongUnaryOperator fn) {
-        MutableLong host = this;
+    public MutableLong mapOutput(final LongUnaryOperator fn) {
+        final MutableLong host = this;
         return new MutableLong() {
+            @Override
             public long getAsLong() {
                 return fn.applyAsLong(host.getAsLong());
             }
@@ -202,10 +208,11 @@ public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueA
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public MutableLong mapInput(LongUnaryOperator fn) {
-        MutableLong host = this;
+    public MutableLong mapInput(final LongUnaryOperator fn) {
+        final MutableLong host = this;
         return new MutableLong() {
-            public MutableLong set(long value) {
+            @Override
+            public MutableLong set(final long value) {
                 host.set(fn.applyAsLong(value));
                 return this;
             }
@@ -216,6 +223,7 @@ public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueA
     /**
      * @return Current value
      */
+    @Override
     public long getAsLong() {
         return var;
     }
@@ -224,7 +232,7 @@ public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueA
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableLong set(long var) {
+    public MutableLong set(final long var) {
         this.var = var;
         return this;
     }
@@ -233,8 +241,8 @@ public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueA
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableLong mutate(LongFunction<Long> varFn) {
-        this.var = varFn.apply(this.var);
+    public MutableLong mutate(final LongFunction<Long> varFn) {
+        var = varFn.apply(var);
         return this;
     }
 
@@ -252,7 +260,7 @@ public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueA
     }
 
     @Override
-    public void accept(long value) {
+    public void accept(final long value) {
         set(value);
 
     }

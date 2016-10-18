@@ -40,7 +40,7 @@ public interface Adapter<T> {
      */
     public boolean fromStream(Stream<T> stream);
 
-    default LazyFutureStream<T> futureStream(LazyReact reactor) {
+    default LazyFutureStream<T> futureStream(final LazyReact reactor) {
         return reactor.fromStream(stream());
     }
 

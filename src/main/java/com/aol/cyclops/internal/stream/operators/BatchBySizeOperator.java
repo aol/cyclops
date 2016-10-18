@@ -13,21 +13,21 @@ public class BatchBySizeOperator<T, C extends Collection<? super T>> {
     private final Stream<T> stream;
     private final Supplier<C> factory;
 
-    public BatchBySizeOperator(Stream<T> stream) {
+    public BatchBySizeOperator(final Stream<T> stream) {
         this.stream = stream;
         factory = () -> (C) new ListXImpl<>();
     }
 
-    public BatchBySizeOperator(Stream<T> stream2, Supplier<C> factory2) {
+    public BatchBySizeOperator(final Stream<T> stream2, final Supplier<C> factory2) {
         this.stream = stream2;
         this.factory = factory2;
     }
 
-    public Stream<C> batchBySize(int groupSize) {
+    public Stream<C> batchBySize(final int groupSize) {
         if (groupSize < 1)
             throw new IllegalArgumentException(
                                                "Batch size must be 1 or more");
-        Iterator<T> it = stream.iterator();
+        final Iterator<T> it = stream.iterator();
         return StreamUtils.stream(new Iterator<C>() {
 
             @Override
@@ -37,7 +37,7 @@ public class BatchBySizeOperator<T, C extends Collection<? super T>> {
 
             @Override
             public C next() {
-                C list = factory.get();
+                final C list = factory.get();
                 for (int i = 0; i < groupSize; i++) {
                     if (it.hasNext())
                         list.add(it.next());

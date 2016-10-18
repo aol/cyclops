@@ -62,7 +62,7 @@ public interface Foldable<T> {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> R mapReduce(Reducer<R> reducer) {
+    default <R> R mapReduce(final Reducer<R> reducer) {
         return foldable().mapReduce(reducer);
     }
 
@@ -97,7 +97,7 @@ public interface Foldable<T> {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
+    default <R> R mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
         return foldable().mapReduce(mapper, reducer);
     }
 
@@ -115,11 +115,10 @@ public interface Foldable<T> {
      *            Use supplied Monoid to reduce values
      * @return reduced values
      */
-    default T reduce(Monoid<T> reducer) {
+    default T reduce(final Monoid<T> reducer) {
         return foldable().reduce(reducer);
     }
 
-   
     /**
      * An equivalent function to {@link java.util.stream.Stream#reduce(BinaryOperator)}
      *  
@@ -133,18 +132,17 @@ public interface Foldable<T> {
      * @param accumulator Combiner function
      * @return
      */
-    default Optional<T> reduce(BinaryOperator<T> accumulator) {
+    default Optional<T> reduce(final BinaryOperator<T> accumulator) {
         return foldable().reduce(accumulator);
     }
 
-   
     /**
      *  An equivalent function to {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
      * @param accumulator Combiner function
      * @return Value produced by applying the current accumulated value and the 
      *          next value to the combiner function as this Foldable is traversed from left to right
      */
-    default T reduce(T identity, BinaryOperator<T> accumulator) {
+    default T reduce(final T identity, final BinaryOperator<T> accumulator) {
         return foldable().reduce(identity, accumulator);
     }
 
@@ -156,8 +154,8 @@ public interface Foldable<T> {
      * @return Value produced by applying the current accumulated value and the 
      *          next value to the combiner function as this Foldable is traversed from left to right
      */
-    default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator) {
-        Foldable<T> foldable = foldable();
+    default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
+        final Foldable<T> foldable = foldable();
         return foldable.reduce(identity, accumulator);
     }
 
@@ -165,7 +163,7 @@ public interface Foldable<T> {
      * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BiFunction, BinaryOperator)}
      * 
      */
-    default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+    default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
         return foldable().reduce(identity, accumulator, combiner);
     }
 
@@ -191,7 +189,7 @@ public interface Foldable<T> {
      * @param reducers
      * @return List of reduced values
      */
-    default ListX<T> reduce(Stream<? extends Monoid<T>> reducers) {
+    default ListX<T> reduce(final Stream<? extends Monoid<T>> reducers) {
         return foldable().reduce(reducers);
     }
 
@@ -217,7 +215,7 @@ public interface Foldable<T> {
      * @param reducers
      * @return
      */
-    default ListX<T> reduce(Iterable<? extends Monoid<T>> reducers) {
+    default ListX<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
         return foldable().reduce(reducers);
     }
 
@@ -235,7 +233,7 @@ public interface Foldable<T> {
      *            Use supplied Monoid to reduce values starting via foldRight
      * @return Reduced result
      */
-    default T foldRight(Monoid<T> reducer) {
+    default T foldRight(final Monoid<T> reducer) {
         return foldable().foldRight(reducer);
     }
 
@@ -252,7 +250,7 @@ public interface Foldable<T> {
      * @param accumulator Combining function
      * @return Reduced value
      */
-    default T foldRight(T identity, BinaryOperator<T> accumulator) {
+    default T foldRight(final T identity, final BinaryOperator<T> accumulator) {
         return foldable().foldRight(identity, accumulator);
     }
 
@@ -264,8 +262,8 @@ public interface Foldable<T> {
      * @param accumulator Combining function
      * @return Reduced value
      */
-    default <U> U foldRight(U identity, BiFunction<? super T, ? super U, ? extends U> accumulator) {
-        return (foldable()).foldRight(identity, accumulator);
+    default <U> U foldRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> accumulator) {
+        return foldable().foldRight(identity, accumulator);
     }
 
     /**
@@ -285,7 +283,7 @@ public interface Foldable<T> {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <T> T foldRightMapToType(Reducer<T> reducer) {
+    default <T> T foldRightMapToType(final Reducer<T> reducer) {
         return foldable().foldRightMapToType(reducer);
     }
 
@@ -312,7 +310,7 @@ public interface Foldable<T> {
      * 
      * @return Stream as concatenated String
      */
-    default String join(String sep) {
+    default String join(final String sep) {
         return foldable().join(sep);
     }
 
@@ -325,7 +323,7 @@ public interface Foldable<T> {
      * 
      * @return Stream as concatenated String
      */
-    default String join(String sep, String start, String end) {
+    default String join(final String sep, final String start, final String end) {
         return foldable().join(sep, start, end);
     }
 
@@ -334,7 +332,7 @@ public interface Foldable<T> {
      * 
      * @param str PrintStream to write to
      */
-    default void print(PrintStream str) {
+    default void print(final PrintStream str) {
         foldable().print(str);
     }
 
@@ -343,7 +341,7 @@ public interface Foldable<T> {
      * 
      * @param writer PrintWriter to write to
      */
-    default void print(PrintWriter writer) {
+    default void print(final PrintWriter writer) {
         foldable().print(writer);
     }
 
@@ -376,7 +374,7 @@ public interface Foldable<T> {
      * 
      * </pre>
      */
-    default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
+    default <K> MapX<K, List<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return foldable().groupBy(classifier);
     }
 
@@ -427,7 +425,7 @@ public interface Foldable<T> {
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
-    default boolean startsWithIterable(Iterable<T> iterable) {
+    default boolean startsWithIterable(final Iterable<T> iterable) {
         return foldable().startsWithIterable(iterable);
     }
 
@@ -439,7 +437,7 @@ public interface Foldable<T> {
      * @param stream Stream to check if this Foldable has the same elements in the same order, at the start
      * @return True if Monad starts with Iterators sequence of data
      */
-    default boolean startsWith(Stream<T> stream) {
+    default boolean startsWith(final Stream<T> stream) {
         return foldable().startsWith(stream);
     }
 
@@ -454,7 +452,7 @@ public interface Foldable<T> {
      * @param iterable Values to check
      * @return true if SequenceM ends with values in the supplied iterable
      */
-    default boolean endsWithIterable(Iterable<T> iterable) {
+    default boolean endsWithIterable(final Iterable<T> iterable) {
         return foldable().endsWithIterable(iterable);
     }
 
@@ -470,7 +468,7 @@ public interface Foldable<T> {
      *            Values to check
      * @return true if SequenceM endswith values in the supplied Stream
      */
-    default boolean endsWith(Stream<T> stream) {
+    default boolean endsWith(final Stream<T> stream) {
         return foldable().endsWith(stream);
     }
 
@@ -573,7 +571,7 @@ public interface Foldable<T> {
 
     }
 
-    default T single(Predicate<? super T> predicate) {
+    default T single(final Predicate<? super T> predicate) {
         return foldable().single(predicate);
     }
 
@@ -613,7 +611,7 @@ public interface Foldable<T> {
      *            to extract element from
      * @return elementAt index
      */
-    default Optional<T> get(long index) {
+    default Optional<T> get(final long index) {
         return foldable().get(index);
     }
 
@@ -649,7 +647,7 @@ public interface Foldable<T> {
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
-    default HotStream<T> schedule(String cron, ScheduledExecutorService ex) {
+    default HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
         return foldable().schedule(cron, ex);
     }
 
@@ -685,7 +683,7 @@ public interface Foldable<T> {
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
-    default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex) {
+    default HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         return foldable().scheduleFixedDelay(delay, ex);
     }
 
@@ -719,7 +717,7 @@ public interface Foldable<T> {
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
-    default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
+    default HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         return foldable().scheduleFixedRate(rate, ex);
     }
 
@@ -730,14 +728,14 @@ public interface Foldable<T> {
      * @param validator {@link com.aol.cyclops.control.Validator} to validate each element with
      * @return Ior with a Failure Stream and / or Success Stream
      */
-    default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(Validator<T, S, F> validator) {
+    default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(final Validator<T, S, F> validator) {
 
-        Tuple2<ReactiveSeq<Xor<F, S>>, ReactiveSeq<Xor<F, S>>> xors = stream().<Xor<F, S>> flatMap(s -> validator.accumulate(s)
-                                                                                                                 .toXors()
-                                                                                                                 .stream())
-                                                                              .duplicateSequence();
+        final Tuple2<ReactiveSeq<Xor<F, S>>, ReactiveSeq<Xor<F, S>>> xors = stream().<Xor<F, S>> flatMap(s -> validator.accumulate(s)
+                                                                                                                       .toXors()
+                                                                                                                       .stream())
+                                                                                    .duplicateSequence();
 
-        Predicate<Xor<F, S>> primaryPredicate = e -> e.isPrimary();
+        final Predicate<Xor<F, S>> primaryPredicate = e -> e.isPrimary();
 
         return Ior.both(xors.v1.filter(primaryPredicate.negate())
                                .map(x -> x.secondaryGet()),
@@ -756,7 +754,7 @@ public interface Foldable<T> {
      * </pre>
      * 
      */
-    default boolean xMatch(int num, Predicate<? super T> c) {
+    default boolean xMatch(final int num, final Predicate<? super T> c) {
         return foldable().xMatch(num, c);
     }
 }

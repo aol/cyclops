@@ -34,7 +34,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      * @param collector Collector to create new Collection
      * @return Collected data
      */
-    default <R, A> R collect(Collector<? super T, A, R> collector) {
+    default <R, A> R collect(final Collector<? super T, A, R> collector) {
         return toStream().collect(collector);
     }
 
@@ -46,7 +46,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      * @param combiner Combiner
      * @return Collected datastructure
      */
-    default <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+    default <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
         return toStream().collect(supplier, accumulator, combiner);
     }
 
@@ -55,15 +55,16 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      * (non-Javadoc)
      * @see com.aol.cyclops.types.Visitable#visit(java.util.function.Function, java.util.function.Supplier)
      */
-    default <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
+    @Override
+    default <R> R visit(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
 
         if (isPresent()) {
             try {
-                T value = get();
+                final T value = get();
                 if (value != null)
                     return present.apply(value);
                 return absent.get();
-            } catch (NoSuchElementException e) {
+            } catch (final NoSuchElementException e) {
                 return absent.get();
             }
         }
@@ -75,11 +76,11 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      */
     default boolean isPresent() {
         try {
-            T value = get();
+            final T value = get();
             if (value != null)
                 return true;
             return false;
-        } catch (NoSuchElementException e) {
+        } catch (final NoSuchElementException e) {
             return false;
         }
     }
@@ -90,7 +91,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      * @param supplier That returns the convertable value
      * @return Convertable
      */
-    public static <T> Convertable<T> fromSupplier(Supplier<T> supplier) {
+    public static <T> Convertable<T> fromSupplier(final Supplier<T> supplier) {
         return new SupplierToConvertable<>(
                                            supplier);
     }
@@ -99,6 +100,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
     public static class SupplierToConvertable<T> implements Convertable<T> {
         private final Supplier<T> delegate;
 
+        @Override
         public T get() {
             return delegate.get();
         }
@@ -107,6 +109,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
     /**
      * @return Contained value, maybe null
      */
+    @Override
     public T get();
 
     /**
@@ -117,7 +120,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      * @param value Supplier to generate value if this convertable is empty
      * @return Value contained in this convertable or the value returned by the supplier if this convertable is empty
      */
-    default T orElseGet(Supplier<? extends T> value) {
+    default T orElseGet(final Supplier<? extends T> value) {
         return toOptional().orElseGet(value);
 
     }
@@ -160,7 +163,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      * @param value
      * @return the value of this convertable (if not empty) or else the specified value
      */
-    default T orElse(T value) {
+    default T orElse(final T value) {
         return toOptional().orElse(value);
     }
 
@@ -171,7 +174,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      * @return Value of this value if present
      * @throws X Exception type returned by provided Supplier
      */
-    default <X extends Throwable> T orElseThrow(Supplier<? extends X> ex) throws X {
+    default <X extends Throwable> T orElseThrow(final Supplier<? extends X> ex) throws X {
         return toOptional().orElseThrow(ex);
     }
 
@@ -179,7 +182,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      * @return A List containing value returned by get(), if get() returns null an Empty List is returned
      */
     default List<T> toList() {
-        Optional<T> opt = toOptional();
+        final Optional<T> opt = toOptional();
         if (opt.isPresent())
             return Arrays.asList(get());
         return Arrays.asList();
@@ -190,6 +193,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      *  (non-Javadoc)
      * @see java.lang.Iterable#iterator()
      */
+    @Override
     default Iterator<T> iterator() {
         return toList().iterator();
     }
@@ -214,7 +218,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      * @param ex Executor to execute the conversion on
      * @return  This convertable converted to a FutureW asyncrhonously
      */
-    default FutureW<T> toFutureWAsync(Executor ex) {
+    default FutureW<T> toFutureWAsync(final Executor ex) {
         return FutureW.of(toCompletableFutureAsync(ex));
     }
 
@@ -224,8 +228,8 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
     default CompletableFuture<T> toCompletableFuture() {
         try {
             return CompletableFuture.completedFuture(get());
-        } catch (Throwable t) {
-            CompletableFuture<T> res = new CompletableFuture<>();
+        } catch (final Throwable t) {
+            final CompletableFuture<T> res = new CompletableFuture<>();
             res.completeExceptionally(t);
             return res;
         }
@@ -242,7 +246,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      * @param exec Executor to asyncrhonously populate the CompletableFuture
      * @return  A CompletableFuture populated asynchronously on the supplied Executor by calling get
      */
-    default CompletableFuture<T> toCompletableFutureAsync(Executor exec) {
+    default CompletableFuture<T> toCompletableFutureAsync(final Executor exec) {
         return CompletableFuture.supplyAsync(this, exec);
     }
 }

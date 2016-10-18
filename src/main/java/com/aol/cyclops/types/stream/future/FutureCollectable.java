@@ -30,33 +30,35 @@ public interface FutureCollectable<T> {
     /**
     * Collect this collectable into 2 {@link Collector}s.
     */
-    default <R1, R2, A1, A2> CompletableFuture<Tuple2<R1, R2>> collect(Collector<? super T, A1, R1> collector1,
-            Collector<? super T, A2, R2> collector2) {
+    default <R1, R2, A1, A2> CompletableFuture<Tuple2<R1, R2>> collect(final Collector<? super T, A1, R1> collector1,
+            final Collector<? super T, A2, R2> collector2) {
         return collect(Tuple.collectors(collector1, collector2));
     }
 
     /**
      * Collect this collectable into 3 {@link Collector}s.
      */
-    default <R1, R2, R3, A1, A2, A3> CompletableFuture<Tuple3<R1, R2, R3>> collect(Collector<? super T, A1, R1> collector1,
-            Collector<? super T, A2, R2> collector2, Collector<? super T, A3, R3> collector3) {
+    default <R1, R2, R3, A1, A2, A3> CompletableFuture<Tuple3<R1, R2, R3>> collect(final Collector<? super T, A1, R1> collector1,
+            final Collector<? super T, A2, R2> collector2, final Collector<? super T, A3, R3> collector3) {
         return collect(Tuple.collectors(collector1, collector2, collector3));
     }
 
     /**
      * Collect this collectable into 4 {@link Collector}s.
      */
-    default <R1, R2, R3, R4, A1, A2, A3, A4> CompletableFuture<Tuple4<R1, R2, R3, R4>> collect(Collector<? super T, A1, R1> collector1,
-            Collector<? super T, A2, R2> collector2, Collector<? super T, A3, R3> collector3, Collector<? super T, A4, R4> collector4) {
+    default <R1, R2, R3, R4, A1, A2, A3, A4> CompletableFuture<Tuple4<R1, R2, R3, R4>> collect(final Collector<? super T, A1, R1> collector1,
+            final Collector<? super T, A2, R2> collector2, final Collector<? super T, A3, R3> collector3,
+            final Collector<? super T, A4, R4> collector4) {
         return collect(Tuple.collectors(collector1, collector2, collector3, collector4));
     }
 
     /**
      * Collect this collectable into 5 {@link Collector}s.
      */
-    default <R1, R2, R3, R4, R5, A1, A2, A3, A4, A5> CompletableFuture<Tuple5<R1, R2, R3, R4, R5>> collect(Collector<? super T, A1, R1> collector1,
-            Collector<? super T, A2, R2> collector2, Collector<? super T, A3, R3> collector3, Collector<? super T, A4, R4> collector4,
-            Collector<? super T, A5, R5> collector5) {
+    default <R1, R2, R3, R4, R5, A1, A2, A3, A4, A5> CompletableFuture<Tuple5<R1, R2, R3, R4, R5>> collect(
+            final Collector<? super T, A1, R1> collector1, final Collector<? super T, A2, R2> collector2,
+            final Collector<? super T, A3, R3> collector3, final Collector<? super T, A4, R4> collector4,
+            final Collector<? super T, A5, R5> collector5) {
         return collect(Tuple.collectors(collector1, collector2, collector3, collector4, collector5));
     }
 
@@ -64,8 +66,9 @@ public interface FutureCollectable<T> {
      * Collect this collectable into 6 {@link Collector}s.
      */
     default <R1, R2, R3, R4, R5, R6, A1, A2, A3, A4, A5, A6> CompletableFuture<Tuple6<R1, R2, R3, R4, R5, R6>> collect(
-            Collector<? super T, A1, R1> collector1, Collector<? super T, A2, R2> collector2, Collector<? super T, A3, R3> collector3,
-            Collector<? super T, A4, R4> collector4, Collector<? super T, A5, R5> collector5, Collector<? super T, A6, R6> collector6) {
+            final Collector<? super T, A1, R1> collector1, final Collector<? super T, A2, R2> collector2,
+            final Collector<? super T, A3, R3> collector3, final Collector<? super T, A4, R4> collector4,
+            final Collector<? super T, A5, R5> collector5, final Collector<? super T, A6, R6> collector6) {
         return collect(Tuple.collectors(collector1, collector2, collector3, collector4, collector5, collector6));
     }
 
@@ -73,9 +76,10 @@ public interface FutureCollectable<T> {
      * Collect this collectable into 7 {@link Collector}s.
      */
     default <R1, R2, R3, R4, R5, R6, R7, A1, A2, A3, A4, A5, A6, A7> CompletableFuture<Tuple7<R1, R2, R3, R4, R5, R6, R7>> collect(
-            Collector<? super T, A1, R1> collector1, Collector<? super T, A2, R2> collector2, Collector<? super T, A3, R3> collector3,
-            Collector<? super T, A4, R4> collector4, Collector<? super T, A5, R5> collector5, Collector<? super T, A6, R6> collector6,
-            Collector<? super T, A7, R7> collector7) {
+            final Collector<? super T, A1, R1> collector1, final Collector<? super T, A2, R2> collector2,
+            final Collector<? super T, A3, R3> collector3, final Collector<? super T, A4, R4> collector4,
+            final Collector<? super T, A5, R5> collector5, final Collector<? super T, A6, R6> collector6,
+            final Collector<? super T, A7, R7> collector7) {
         return collect(Tuple.collectors(collector1, collector2, collector3, collector4, collector5, collector6, collector7));
     }
 
@@ -83,9 +87,10 @@ public interface FutureCollectable<T> {
      * Collect this collectable into 8 {@link Collector}s.
      */
     default <R1, R2, R3, R4, R5, R6, R7, R8, A1, A2, A3, A4, A5, A6, A7, A8> CompletableFuture<Tuple8<R1, R2, R3, R4, R5, R6, R7, R8>> collect(
-            Collector<? super T, A1, R1> collector1, Collector<? super T, A2, R2> collector2, Collector<? super T, A3, R3> collector3,
-            Collector<? super T, A4, R4> collector4, Collector<? super T, A5, R5> collector5, Collector<? super T, A6, R6> collector6,
-            Collector<? super T, A7, R7> collector7, Collector<? super T, A8, R8> collector8) {
+            final Collector<? super T, A1, R1> collector1, final Collector<? super T, A2, R2> collector2,
+            final Collector<? super T, A3, R3> collector3, final Collector<? super T, A4, R4> collector4,
+            final Collector<? super T, A5, R5> collector5, final Collector<? super T, A6, R6> collector6,
+            final Collector<? super T, A7, R7> collector7, final Collector<? super T, A8, R8> collector8) {
         return collect(Tuple.collectors(collector1, collector2, collector3, collector4, collector5, collector6, collector7, collector8));
     }
 

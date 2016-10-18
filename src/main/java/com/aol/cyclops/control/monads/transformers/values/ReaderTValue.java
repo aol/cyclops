@@ -51,7 +51,7 @@ public class ReaderTValue<T, R> implements Function<T, R> {
      *            Consumer to accept current value of Maybe
      * @return MaybeT with peek call
      */
-    public ReaderTValue<T, R> peek(Consumer<? super R> peek) {
+    public ReaderTValue<T, R> peek(final Consumer<? super R> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
             return a;
@@ -95,7 +95,7 @@ public class ReaderTValue<T, R> implements Function<T, R> {
      *            Mapping function for the wrapped Maybe
      * @return MaybeT that applies the map function to the wrapped Maybe
      */
-    public <B> ReaderTValue<T, B> map(Function<? super R, ? extends B> f) {
+    public <B> ReaderTValue<T, B> map(final Function<? super R, ? extends B> f) {
         return new ReaderTValue<T, B>(
                                       run.map(o -> o.map(f)));
     }
@@ -109,13 +109,13 @@ public class ReaderTValue<T, R> implements Function<T, R> {
      *            FlatMap function
      * @return ReaderT that applies the flatMap function to the wrapped Maybe
      */
-    public <B> ReaderTValue<T, B> flatMapT(Function<? super R, ReaderTValue<T, B>> mapper) {
+    public <B> ReaderTValue<T, B> flatMapT(final Function<? super R, ReaderTValue<T, B>> mapper) {
 
         return of(run.bind(reader -> reader.flatMap(r -> mapper.apply(r).run.unwrap())));
 
     }
 
-    public <B> ReaderTValue<T, B> flatMap(Function<? super R, ? extends Reader<T, B>> f) {
+    public <B> ReaderTValue<T, B> flatMap(final Function<? super R, ? extends Reader<T, B>> f) {
 
         return new ReaderTValue<T, B>(
                                       run.map(o -> o.flatMap(f)));
@@ -153,7 +153,7 @@ public class ReaderTValue<T, R> implements Function<T, R> {
      *            monad type
      * @return Function that accepts and returns an MaybeT
      */
-    public static <T, U, R> Function<ReaderTValue<T, U>, ReaderTValue<T, R>> lift(Function<? super U, ? extends R> fn) {
+    public static <T, U, R> Function<ReaderTValue<T, U>, ReaderTValue<T, R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -190,11 +190,11 @@ public class ReaderTValue<T, R> implements Function<T, R> {
      * @return Function that accepts and returns an MaybeT
      */
     public static <T, U1, U2, R> BiFunction<ReaderTValue<T, U1>, ReaderTValue<T, U2>, ReaderTValue<T, R>> lift2(
-            BiFunction<? super U1, ? super U2, ? extends R> fn) {
+            final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
-    public static <T, A, V extends MonadicValue<Reader<T, A>>> ReaderTValue<T, A> fromValue(V monadicValue) {
+    public static <T, A, V extends MonadicValue<Reader<T, A>>> ReaderTValue<T, A> fromValue(final V monadicValue) {
         return of(AnyM.ofValue(monadicValue));
     }
 
@@ -207,7 +207,7 @@ public class ReaderTValue<T, R> implements Function<T, R> {
      *            AnyM that doesn't contain a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <T, A> ReaderTValue<T, A> fromAnyM(AnyMValue<Function<T, A>> anyM) {
+    public static <T, A> ReaderTValue<T, A> fromAnyM(final AnyMValue<Function<T, A>> anyM) {
         return of(anyM.map(FluentFunctions::of));
     }
 
@@ -218,7 +218,7 @@ public class ReaderTValue<T, R> implements Function<T, R> {
      *            AnyM that contains a monad wrapping an Maybe
      * @return MaybeT
      */
-    public static <T, A> ReaderTValue<T, A> of(AnyMValue<Reader<T, A>> monads) {
+    public static <T, A> ReaderTValue<T, A> of(final AnyMValue<Reader<T, A>> monads) {
 
         return new ReaderTValue<>(
                                   monads);
@@ -229,17 +229,18 @@ public class ReaderTValue<T, R> implements Function<T, R> {
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return run.toString();
     }
 
     @Override
-    public R apply(T t) {
+    public R apply(final T t) {
         return run.get()
                   .apply(t);
     }
 
-    public Maybe<R> maybeApply(T t) {
+    public Maybe<R> maybeApply(final T t) {
         return run.toMaybe()
                   .map(fn -> fn.apply(t));
     }
@@ -250,7 +251,7 @@ public class ReaderTValue<T, R> implements Function<T, R> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof ReaderTValue) {
             return run.equals(((ReaderTValue) o).run);
         }

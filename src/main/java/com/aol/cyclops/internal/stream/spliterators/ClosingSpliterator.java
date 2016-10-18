@@ -8,12 +8,12 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 
 public class ClosingSpliterator<T> implements Spliterator<T> {
-    private long estimate;
+    private final long estimate;
 
     private final Queue<T> queue;
     private final AtomicBoolean open;
 
-    public ClosingSpliterator(long estimate, Queue queue, AtomicBoolean open) {
+    public ClosingSpliterator(final long estimate, final Queue queue, final AtomicBoolean open) {
         this.estimate = estimate;
         this.open = open;
         this.queue = queue;
@@ -31,7 +31,7 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
     }
 
     @Override
-    public boolean tryAdvance(Consumer<? super T> action) {
+    public boolean tryAdvance(final Consumer<? super T> action) {
         Objects.requireNonNull(action);
 
         if (!open.get() && queue.size() == 0) {
@@ -56,7 +56,7 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 
     }
 
-    private T nullSafe(T value) {
+    private T nullSafe(final T value) {
         return value;
     }
 

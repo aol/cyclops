@@ -26,7 +26,7 @@ public class Lambda {
      * @param supplier Lambda / method to assign type of Supplier to  
      * @return Supplier
      */
-    public static <T> Supplier<T> s(Supplier<T> supplier) {
+    public static <T> Supplier<T> s(final Supplier<T> supplier) {
         return supplier;
     }
 
@@ -39,7 +39,7 @@ public class Lambda {
      * @param func
      * @return supplied function
      */
-    public static <T1, R> Function<T1, R> l1(Function<T1, R> func) {
+    public static <T1, R> Function<T1, R> l1(final Function<T1, R> func) {
         return func;
     }
 
@@ -54,7 +54,7 @@ public class Lambda {
      * @param biFunc
      * @return supplied function
      */
-    public static <T1, T2, R> Function<T1, Function<T2, R>> l2(Function<T1, Function<T2, R>> biFunc) {
+    public static <T1, T2, R> Function<T1, Function<T2, R>> l2(final Function<T1, Function<T2, R>> biFunc) {
         return biFunc;
     }
 
@@ -69,7 +69,7 @@ public class Lambda {
      * @param triFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, R> Function<T1, Function<T2, Function<T3, R>>> l3(Function<T1, Function<T2, Function<T3, R>>> triFunc) {
+    public static <T1, T2, T3, R> Function<T1, Function<T2, Function<T3, R>>> l3(final Function<T1, Function<T2, Function<T3, R>>> triFunc) {
         return triFunc;
     }
 
@@ -85,7 +85,7 @@ public class Lambda {
      * @return supplied function
      */
     public static <T1, T2, T3, T4, R> Function<T1, Function<T2, Function<T3, Function<T4, R>>>> l4(
-            Function<T1, Function<T2, Function<T3, Function<T4, R>>>> quadFunc) {
+            final Function<T1, Function<T2, Function<T3, Function<T4, R>>>> quadFunc) {
         return quadFunc;
     }
 
@@ -101,7 +101,7 @@ public class Lambda {
      * @return supplied function
      */
     public static <T1, T2, T3, T4, T5, R> Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, R>>>>> l5(
-            Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, R>>>>> pentFunc) {
+            final Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, R>>>>> pentFunc) {
         return pentFunc;
     }
 
@@ -117,7 +117,7 @@ public class Lambda {
      * @return supplied function
      */
     public static <T1, T2, T3, T4, T5, T6, R> Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, R>>>>>> l6(
-            Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, R>>>>>> hexFunc) {
+            final Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, R>>>>>> hexFunc) {
         return hexFunc;
     }
 
@@ -133,7 +133,7 @@ public class Lambda {
      * @return supplied function
      */
     public static <T1, T2, T3, T4, T5, T6, T7, R> Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, Function<T7, R>>>>>>> l7(
-            Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, Function<T7, R>>>>>>> heptFunc) {
+            final Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, Function<T7, R>>>>>>> heptFunc) {
         return heptFunc;
     }
 
@@ -149,7 +149,7 @@ public class Lambda {
      * @return supplied function
      */
     public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, Function<T7, Function<T8, R>>>>>>>> l8(
-            Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, Function<T7, Function<T8, R>>>>>>>> octFunc) {
+            final Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, Function<T7, Function<T8, R>>>>>>>> octFunc) {
         return octFunc;
     }
 }

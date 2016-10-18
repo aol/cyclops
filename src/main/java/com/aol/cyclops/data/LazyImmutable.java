@@ -44,8 +44,8 @@ import lombok.ToString;
 
 public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndOptionalMatcher<T>, Functor<T>, ApplicativeFunctor<T> {
     private final static Object UNSET = new Object();
-    private AtomicReference value = new AtomicReference<>(
-                                                          UNSET);
+    private final AtomicReference value = new AtomicReference<>(
+                                                                UNSET);
     private final AtomicBoolean set = new AtomicBoolean(
                                                         false);
 
@@ -55,6 +55,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
     /**
      * @return Current value
      */
+    @Override
     public T get() {
         return (T) value.get();
     }
@@ -72,8 +73,8 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
      * @param value Create an initialised ImmutableClosedValue with specified value
      * @return Initialised ImmutableClosedValue
      */
-    public static <T> LazyImmutable<T> of(T value) {
-        LazyImmutable v = new LazyImmutable();
+    public static <T> LazyImmutable<T> of(final T value) {
+        final LazyImmutable v = new LazyImmutable();
         v.setOnce(value);
         return v;
     }
@@ -92,8 +93,9 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
      * @param fn Mapper function
      * @return new ImmutableClosedValue with new mapped value 
      */
-    public <R> LazyImmutable<R> map(Function<? super T, ? extends R> fn) {
-        T val = get();
+    @Override
+    public <R> LazyImmutable<R> map(final Function<? super T, ? extends R> fn) {
+        final T val = get();
         if (val == UNSET)
             return (LazyImmutable) this;
         else
@@ -101,7 +103,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
     }
 
     @Override
-    public <R> LazyImmutable<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
+    public <R> LazyImmutable<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
         return (com.aol.cyclops.data.LazyImmutable<R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
     }
@@ -113,9 +115,9 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
      * @param fn  Flat Mapper function
      * @return new ImmutableClosedValue with new mapped value 
      */
-    public <R> LazyImmutable<? extends R> flatMap(Function<? super T, ? extends LazyImmutable<? extends R>> fn) {
+    public <R> LazyImmutable<? extends R> flatMap(final Function<? super T, ? extends LazyImmutable<? extends R>> fn) {
 
-        T val = get();
+        final T val = get();
         if (val == UNSET)
             return (LazyImmutable) this;
         else
@@ -130,14 +132,14 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
      * @param val Value to set to
      * @return Current set Value
      */
-    public LazyImmutable<T> setOnce(T val) {
+    public LazyImmutable<T> setOnce(final T val) {
         this.value.compareAndSet(UNSET, val);
         set.set(true);
         return this;
 
     }
 
-    private T setOnceFromSupplier(Supplier<T> lazy) {
+    private T setOnceFromSupplier(final Supplier<T> lazy) {
 
         this.value.compareAndSet(UNSET, lazy.get());
         return (T) this.value.get();
@@ -150,8 +152,8 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
      * @param lazy Supplier to generate new value
      * @return Current value
      */
-    public T computeIfAbsent(Supplier<T> lazy) {
-        T val = get();
+    public T computeIfAbsent(final Supplier<T> lazy) {
+        final T val = get();
         if (val == UNSET)
             return setOnceFromSupplier(lazy);
 
@@ -164,7 +166,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
     }
 
     @Override
-    public void accept(T t) {
+    public void accept(final T t) {
         setOnce(t);
 
     }
@@ -181,7 +183,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
     }
 
     @Override
-    public <T> Unit<T> unit(T unit) {
+    public <T> Unit<T> unit(final T unit) {
         return LazyImmutable.of(unit);
     }
 
@@ -197,7 +199,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
      * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> LazyImmutable<U> cast(Class<? extends U> type) {
+    public <U> LazyImmutable<U> cast(final Class<? extends U> type) {
 
         return (LazyImmutable<U>) ApplicativeFunctor.super.cast(type);
     }
@@ -206,7 +208,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
      * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
      */
     @Override
-    public LazyImmutable<T> peek(Consumer<? super T> c) {
+    public LazyImmutable<T> peek(final Consumer<? super T> c) {
 
         return (LazyImmutable<T>) ApplicativeFunctor.super.peek(c);
     }
@@ -215,7 +217,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
      * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    public <R> LazyImmutable<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+    public <R> LazyImmutable<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
         return (LazyImmutable<R>) ApplicativeFunctor.super.trampoline(mapper);
     }
@@ -227,7 +229,7 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!(obj instanceof LazyImmutable))
             return false;
         return Objects.equals(this.value.get(), ((LazyImmutable) obj).value.get());

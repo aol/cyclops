@@ -18,7 +18,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @param action
      * @see java.lang.Iterable#forEach(java.util.function.Consumer)
      */
-    public void forEach(Consumer<? super T> action) {
+    @Override
+    public void forEach(final Consumer<? super T> action) {
         set.forEach(action);
     }
 
@@ -26,6 +27,7 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see org.pcollections.MapPSet#iterator()
      */
+    @Override
     public Iterator<T> iterator() {
         return set.iterator();
     }
@@ -34,6 +36,7 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see org.pcollections.MapPSet#size()
      */
+    @Override
     public int size() {
         return set.size();
     }
@@ -43,7 +46,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see org.pcollections.MapPSet#contains(java.lang.Object)
      */
-    public boolean contains(Object e) {
+    @Override
+    public boolean contains(final Object e) {
         return set.contains(e);
     }
 
@@ -52,7 +56,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractSet#equals(java.lang.Object)
      */
-    public boolean equals(Object o) {
+    @Override
+    public boolean equals(final Object o) {
         return set.equals(o);
     }
 
@@ -61,7 +66,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see org.pcollections.MapPSet#plus(java.lang.Object)
      */
-    public PBagX<T> plus(T e) {
+    @Override
+    public PBagX<T> plus(final T e) {
         return new PBagXImpl<>(
                                set.plus(e));
     }
@@ -71,7 +77,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see org.pcollections.MapPSet#minus(java.lang.Object)
      */
-    public PBagX<T> minus(Object e) {
+    @Override
+    public PBagX<T> minus(final Object e) {
         return new PBagXImpl<>(
                                set.minus(e));
     }
@@ -81,7 +88,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see org.pcollections.MapPSet#plusAll(java.util.Collection)
      */
-    public PBagX<T> plusAll(Collection<? extends T> list) {
+    @Override
+    public PBagX<T> plusAll(final Collection<? extends T> list) {
         return new PBagXImpl<>(
                                set.plusAll(list));
     }
@@ -91,7 +99,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see org.pcollections.MapPSet#minusAll(java.util.Collection)
      */
-    public PBagX<T> minusAll(Collection<?> list) {
+    @Override
+    public PBagX<T> minusAll(final Collection<?> list) {
         return new PBagXImpl<>(
                                set.minusAll(list));
     }
@@ -100,6 +109,7 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractCollection#isEmpty()
      */
+    @Override
     public boolean isEmpty() {
         return set.isEmpty();
     }
@@ -108,6 +118,7 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractSet#hashCode()
      */
+    @Override
     public int hashCode() {
         return set.hashCode();
     }
@@ -116,6 +127,7 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractCollection#toArray()
      */
+    @Override
     public Object[] toArray() {
         return set.toArray();
     }
@@ -125,7 +137,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractSet#removeAll(java.util.Collection)
      */
-    public boolean removeAll(Collection<?> c) {
+    @Override
+    public boolean removeAll(final Collection<?> c) {
         return set.removeAll(c);
     }
 
@@ -134,7 +147,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractCollection#toArray(java.lang.Object[])
      */
-    public <T> T[] toArray(T[] a) {
+    @Override
+    public <T> T[] toArray(final T[] a) {
         return set.toArray(a);
     }
 
@@ -143,7 +157,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractCollection#add(java.lang.Object)
      */
-    public boolean add(T e) {
+    @Override
+    public boolean add(final T e) {
         return set.add(e);
     }
 
@@ -152,7 +167,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractCollection#remove(java.lang.Object)
      */
-    public boolean remove(Object o) {
+    @Override
+    public boolean remove(final Object o) {
         return set.remove(o);
     }
 
@@ -161,7 +177,8 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractCollection#containsAll(java.util.Collection)
      */
-    public boolean containsAll(Collection<?> c) {
+    @Override
+    public boolean containsAll(final Collection<?> c) {
         return set.containsAll(c);
     }
 
@@ -170,8 +187,9 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractCollection#addAll(java.util.Collection)
      */
+    @Override
     @Deprecated
-    public boolean addAll(Collection<? extends T> c) {
+    public boolean addAll(final Collection<? extends T> c) {
         return set.addAll(c);
     }
 
@@ -180,8 +198,9 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractCollection#retainAll(java.util.Collection)
      */
+    @Override
     @Deprecated
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(final Collection<?> c) {
         return set.retainAll(c);
     }
 
@@ -189,6 +208,7 @@ public class PBagXImpl<T> implements PBagX<T> {
      * 
      * @see java.util.AbstractCollection#clear()
      */
+    @Override
     @Deprecated
     public void clear() {
         set.clear();
@@ -198,6 +218,7 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @return
      * @see java.util.AbstractCollection#toString()
      */
+    @Override
     public String toString() {
         return set.toString();
     }
@@ -206,7 +227,7 @@ public class PBagXImpl<T> implements PBagX<T> {
      * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
     @Override
-    public <R, A> R collect(Collector<? super T, A, R> collector) {
+    public <R, A> R collect(final Collector<? super T, A, R> collector) {
         return stream().collect(collector);
     }
 

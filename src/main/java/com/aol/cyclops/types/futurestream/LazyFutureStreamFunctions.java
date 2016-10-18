@@ -24,7 +24,7 @@ public class LazyFutureStreamFunctions {
      * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
      * </code>
      */
-    static <T1, T2> Seq<Tuple2<T1, T2>> zip(Stream<T1> left, Stream<? extends T2> right) {
+    static <T1, T2> Seq<Tuple2<T1, T2>> zip(final Stream<T1> left, final Stream<? extends T2> right) {
         return zip(left, right, Tuple::tuple);
     }
 
@@ -37,7 +37,7 @@ public class LazyFutureStreamFunctions {
      * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
      * </code>
      */
-    static <T1, T2, R> Seq<R> zip(Stream<T1> left, Stream<T2> right, BiFunction<? super T1, ? super T2, ? extends R> zipper) {
+    static <T1, T2, R> Seq<R> zip(final Stream<T1> left, final Stream<T2> right, final BiFunction<? super T1, ? super T2, ? extends R> zipper) {
         final Iterator<T1> it1 = left.iterator();
         final Iterator<T2> it2 = right.iterator();
 
@@ -66,7 +66,7 @@ public class LazyFutureStreamFunctions {
                   });
     }
 
-    static void close(Iterator it) {
+    static void close(final Iterator it) {
 
         if (it instanceof CloseableIterator) {
             ((CloseableIterator) it).close();
@@ -82,7 +82,7 @@ public class LazyFutureStreamFunctions {
      * Seq.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
      * </code>
      */
-    static <T> Seq<T> limitWhile(Stream<T> stream, Predicate<? super T> predicate) {
+    static <T> Seq<T> limitWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
         return limitUntil(stream, predicate.negate());
     }
 
@@ -96,7 +96,7 @@ public class LazyFutureStreamFunctions {
      * </code>
      */
     @SuppressWarnings("unchecked")
-    static <T> Seq<T> limitUntil(Stream<T> stream, Predicate<? super T> predicate) {
+    static <T> Seq<T> limitUntil(final Stream<T> stream, final Predicate<? super T> predicate) {
         final Iterator<T> it = stream.iterator();
 
         class LimitUntil implements Iterator<T> {

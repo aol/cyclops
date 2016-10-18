@@ -40,12 +40,12 @@ public interface BlockingStream<U> {
      */
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
     default ListX<U> block() {
-        Object lastActive = getLastActive();
+        final Object lastActive = getLastActive();
         if (lastActive instanceof EagerStreamWrapper) {
-            EagerStreamWrapper last = (EagerStreamWrapper) lastActive;
+            final EagerStreamWrapper last = (EagerStreamWrapper) lastActive;
             return BlockingStreamHelper.block(this, CyclopsCollectors.toListX(), last);
         } else {
-            LazyStreamWrapper<U> last = (LazyStreamWrapper) lastActive;
+            final LazyStreamWrapper<U> last = (LazyStreamWrapper) lastActive;
             return BlockingStreamHelper.block(this, CyclopsCollectors.toListX(), last);
         }
     }
@@ -63,12 +63,12 @@ public interface BlockingStream<U> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
     default <R, A> R block(final Collector<? super U, A, R> collector) {
-        Object lastActive = getLastActive();
+        final Object lastActive = getLastActive();
         if (lastActive instanceof EagerStreamWrapper) {
-            EagerStreamWrapper last = (EagerStreamWrapper) lastActive;
+            final EagerStreamWrapper last = (EagerStreamWrapper) lastActive;
             return (R) BlockingStreamHelper.block(this, collector, last);
         } else {
-            LazyStreamWrapper last = (LazyStreamWrapper) lastActive;
+            final LazyStreamWrapper last = (LazyStreamWrapper) lastActive;
             return (R) BlockingStreamHelper.block(this, collector, last);
         }
 

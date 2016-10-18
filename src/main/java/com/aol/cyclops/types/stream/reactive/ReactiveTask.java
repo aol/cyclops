@@ -25,17 +25,19 @@ public class ReactiveTask implements Subscription {
     /* (non-Javadoc)
      * @see org.reactivestreams.Subscription#cancel()
      */
+    @Override
     public void cancel() {
-        this.subscriptionAndTask.v1.join()
-                                   .cancel();
+        subscriptionAndTask.v1.join()
+                              .cancel();
     }
 
     /* (non-Javadoc)
      * @see org.reactivestreams.Subscription#request(long)
      */
-    public void request(long n) {
-        this.subscriptionAndTask.v1.join()
-                                   .request(n);
+    @Override
+    public void request(final long n) {
+        subscriptionAndTask.v1.join()
+                              .request(n);
     }
 
     /**
@@ -58,10 +60,10 @@ public class ReactiveTask implements Subscription {
      * @param n Number of elements to request
      * @return New ReactiveTask that references the execution of the new async task
      */
-    public ReactiveTask requestAsync(long n) {
-        return this.withSubscriptionAndTask(subscriptionAndTask.map2(c -> CompletableFuture.runAsync(() -> this.subscriptionAndTask.v1.join()
-                                                                                                                                      .request(n),
-                                                                                                     exec)));
+    public ReactiveTask requestAsync(final long n) {
+        return withSubscriptionAndTask(subscriptionAndTask.map2(c -> CompletableFuture.runAsync(() -> subscriptionAndTask.v1.join()
+                                                                                                                            .request(n),
+                                                                                                exec)));
     }
 
     /**

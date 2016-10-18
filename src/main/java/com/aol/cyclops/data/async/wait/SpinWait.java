@@ -13,7 +13,7 @@ import java.util.concurrent.locks.LockSupport;
 public class SpinWait<T> implements WaitStrategy<T> {
 
     @Override
-    public T take(WaitStrategy.Takeable<T> t) throws InterruptedException {
+    public T take(final WaitStrategy.Takeable<T> t) throws InterruptedException {
         T result;
 
         while ((result = t.take()) == null) {
@@ -24,7 +24,7 @@ public class SpinWait<T> implements WaitStrategy<T> {
     }
 
     @Override
-    public boolean offer(WaitStrategy.Offerable o) throws InterruptedException {
+    public boolean offer(final WaitStrategy.Offerable o) throws InterruptedException {
         while (!o.offer()) {
             LockSupport.parkNanos(1l);
         }

@@ -19,8 +19,8 @@ public class MultiReduceOperator<R> {
     private final Stream<R> stream;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public List<R> reduce(Iterable<? extends Monoid<R>> reducers) {
-        Reducer<List<R>> m = new Reducer<List<R>>() {
+    public List<R> reduce(final Iterable<? extends Monoid<R>> reducers) {
+        final Reducer<List<R>> m = new Reducer<List<R>>() {
             @Override
             public List<R> zero() {
                 return StreamUtils.stream(reducers)
@@ -31,9 +31,9 @@ public class MultiReduceOperator<R> {
             @Override
             public BiFunction<List<R>, List<R>, List<R>> combiner() {
                 return (c1, c2) -> {
-                    List l = new ArrayList<>();
+                    final List l = new ArrayList<>();
                     int i = 0;
-                    for (Monoid next : reducers) {
+                    for (final Monoid next : reducers) {
                         l.add(next.combiner()
                                   .apply(c1.get(i), c2.get(0)));
                         i++;
@@ -44,15 +44,15 @@ public class MultiReduceOperator<R> {
             }
 
             @Override
-            public Stream mapToType(Stream stream) {
-                return (Stream) stream.map(value -> Arrays.asList(value));
+            public Stream mapToType(final Stream stream) {
+                return stream.map(value -> Arrays.asList(value));
             }
 
             @Override
-            public List<R> apply(List<R> t, List<R> u) {
+            public List<R> apply(final List<R> t, final List<R> u) {
                 return combiner().apply(t, u);
             }
         };
-        return (List) m.mapReduce(stream);
+        return m.mapReduce(stream);
     }
 }

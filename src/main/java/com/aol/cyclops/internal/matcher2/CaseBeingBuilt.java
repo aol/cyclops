@@ -9,7 +9,7 @@ public abstract class CaseBeingBuilt {
 
     abstract public PatternMatcher getPatternMatcher();
 
-    public Predicate convertToPredicate(Object o) {
+    public Predicate convertToPredicate(final Object o) {
         if (o instanceof Predicate)
             return (Predicate) o;
 

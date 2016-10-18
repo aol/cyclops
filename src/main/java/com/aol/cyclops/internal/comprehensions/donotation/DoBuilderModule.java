@@ -23,11 +23,11 @@ public interface DoBuilderModule {
 
         Function f;
 
-        public Guard(Function f) {
+        public Guard(final Function f) {
             this.f = f;
         }
 
-        public Guard(Predicate p) {
+        public Guard(final Predicate p) {
             f = a -> p.test(a);
         }
     }

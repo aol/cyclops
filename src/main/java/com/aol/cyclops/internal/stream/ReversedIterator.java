@@ -18,13 +18,14 @@ public class ReversedIterator<U> implements Streamable<U> {
         return list;
     }
 
+    @Override
     public ReactiveSeq<U> stream() {
         return ReactiveSeq.fromIterator(reversedIterator());
     }
 
     public Iterator<U> reversedIterator() {
 
-        ListIterator<U> iterator = list.listIterator(list.size());
+        final ListIterator<U> iterator = list.listIterator(list.size());
 
         return new Iterator<U>() {
 

@@ -34,7 +34,7 @@ public interface IterableFunctor<T> extends Iterable<T>, Functor<T>, Foldable<T>
      * @param publishers Publishers to merge
      * @return Return Stream of merged data
      */
-    default ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers) {
+    default ReactiveSeq<T> mergePublisher(final Collection<? extends Publisher<T>> publishers) {
         return mergePublisher(publishers, QueueFactories.boundedQueue(5_000));
     }
 
@@ -45,14 +45,14 @@ public interface IterableFunctor<T> extends Iterable<T>, Functor<T>, Foldable<T>
      * 
      * 
      */
-    default ReactiveSeq<T> mergePublisher(Collection<? extends Publisher<T>> publishers, QueueFactory<T> factory) {
-        Counter c = new Counter();
+    default ReactiveSeq<T> mergePublisher(final Collection<? extends Publisher<T>> publishers, final QueueFactory<T> factory) {
+        final Counter c = new Counter();
         c.active.set(publishers.size() + 1);
-        QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory, c, publishers.size());
+        final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory, c, publishers.size());
 
-        Supplier<Continuation> sp = () -> {
+        final Supplier<Continuation> sp = () -> {
             subscribe(init);
-            for (Publisher next : publishers) {
+            for (final Publisher next : publishers) {
                 next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.size()));
             }
 
@@ -60,8 +60,8 @@ public interface IterableFunctor<T> extends Iterable<T>, Functor<T>, Foldable<T>
 
             return Continuation.empty();
         };
-        Continuation continuation = new Continuation(
-                                                     sp);
+        final Continuation continuation = new Continuation(
+                                                           sp);
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }
@@ -75,7 +75,7 @@ public interface IterableFunctor<T> extends Iterable<T>, Functor<T>, Foldable<T>
      * @param mapper
      * @return
      */
-    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    default <R> ReactiveSeq<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return flatMapPublisher(mapper, 10_000);
     }
 
@@ -88,7 +88,7 @@ public interface IterableFunctor<T> extends Iterable<T>, Functor<T>, Foldable<T>
      * @param mapper
      * @return
      */
-    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper, int maxConcurrency) {
+    default <R> ReactiveSeq<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper, final int maxConcurrency) {
         return flatMapPublisher(mapper, maxConcurrency, QueueFactories.boundedQueue(5_000));
     }
 
@@ -99,13 +99,13 @@ public interface IterableFunctor<T> extends Iterable<T>, Functor<T>, Foldable<T>
      * 
      * 
      */
-    default <R> ReactiveSeq<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper, int maxConcurrency,
-            QueueFactory<R> factory) {
-        Counter c = new Counter();
-        QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
+    default <R> ReactiveSeq<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper, final int maxConcurrency,
+            final QueueFactory<R> factory) {
+        final Counter c = new Counter();
+        final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
 
-        ReactiveSeq<T> stream = stream();
-        Supplier<Continuation> sp = () -> {
+        final ReactiveSeq<T> stream = stream();
+        final Supplier<Continuation> sp = () -> {
 
             stream.map(mapper)
                   .forEachEvent(p -> {
@@ -119,8 +119,8 @@ public interface IterableFunctor<T> extends Iterable<T>, Functor<T>, Foldable<T>
 
             return Continuation.empty();
         };
-        Continuation continuation = new Continuation(
-                                                     sp);
+        final Continuation continuation = new Continuation(
+                                                           sp);
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }

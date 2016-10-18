@@ -12,7 +12,7 @@ public class LimitLastOperator<T> {
     private final ArrayDeque<T> buffer;
     private final int limit;
 
-    public LimitLastOperator(Stream<T> stream, int limit) {
+    public LimitLastOperator(final Stream<T> stream, final int limit) {
         buffer = new ArrayDeque<>(
                                   limit);
         this.stream = stream;
@@ -20,7 +20,7 @@ public class LimitLastOperator<T> {
     }
 
     public Stream<T> limitLast() {
-        Iterator<T> it = stream.iterator();
+        final Iterator<T> it = stream.iterator();
         return StreamUtils.stream(new Iterator<T>() {
 
             @Override

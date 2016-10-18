@@ -13,26 +13,29 @@ public class CollectionToStreamConverter implements MonadicConverter<Stream> {
 
     public static int priority = 5;
 
+    @Override
     public int priority() {
         return priority;
     }
 
     private static final Map<Class, Boolean> shouldConvertCache = new ConcurrentHashMap<>();
 
-    public boolean accept(Object o) {
-        return (o instanceof Collection) || (o instanceof Map)
-                || (o instanceof Iterable && shouldConvertCache.computeIfAbsent(o.getClass(), c -> shouldConvert(c)));
+    @Override
+    public boolean accept(final Object o) {
+        return o instanceof Collection || o instanceof Map
+                || o instanceof Iterable && shouldConvertCache.computeIfAbsent(o.getClass(), c -> shouldConvert(c));
     }
 
+    @Override
     @SuppressWarnings("rawtypes")
-    public Stream convertToMonadicForm(Object f) {
+    public Stream convertToMonadicForm(final Object f) {
         if (f instanceof Stream)
             return (Stream) f;
         if (f instanceof Collection)
-            return (((Collection) f).stream());
+            return ((Collection) f).stream();
         if (f instanceof Map)
-            return (((Map) f).entrySet()
-                             .stream());
+            return ((Map) f).entrySet()
+                            .stream();
 
         if (f instanceof Iterable) {
             return StreamSupport.stream(((Iterable) f).spliterator(), false);
@@ -41,7 +44,7 @@ public class CollectionToStreamConverter implements MonadicConverter<Stream> {
         return null; //should never happen
     }
 
-    private Boolean shouldConvert(Class c) {
+    private Boolean shouldConvert(final Class c) {
         if (c.isAssignableFrom(List.class))
             return false;
         return !Stream.of(c.getMethods())

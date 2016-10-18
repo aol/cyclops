@@ -29,7 +29,7 @@ public class MatchingInstance<T, X> {
      * @param t Array to match on
      * @return Matched value wrapped in Optional
      */
-    public Maybe<X> match(Object... t) {
+    public Maybe<X> match(final Object... t) {
         return cse.getPatternMatcher()
                   .match(t);
     }
@@ -38,7 +38,7 @@ public class MatchingInstance<T, X> {
      * @param t Object to match against supplied cases
      * @return Value returned from matched case (if present) otherwise Optional.empty()
      */
-    public Maybe<X> match(Object t) {
+    public Maybe<X> match(final Object t) {
         return cse.getPatternMatcher()
                   .match(t);
     }

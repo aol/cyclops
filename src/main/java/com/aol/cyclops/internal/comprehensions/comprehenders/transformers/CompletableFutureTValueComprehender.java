@@ -12,29 +12,29 @@ import com.aol.cyclops.types.mixins.Printable;
 public class CompletableFutureTValueComprehender implements ValueComprehender<CompletableFutureTValue>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, CompletableFutureTValue apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final CompletableFutureTValue apply) {
 
         return apply.isFuturePresent() ? comp.of(apply.get()) : comp.empty();
     }
 
     @Override
-    public Object filter(CompletableFutureTValue t, Predicate p) {
+    public Object filter(final CompletableFutureTValue t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(CompletableFutureTValue t, Function fn) {
+    public Object map(final CompletableFutureTValue t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(CompletableFutureTValue t, Function fn) {
+    public Object flatMap(final CompletableFutureTValue t, final Function fn) {
 
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public CompletableFutureTValue of(Object o) {
+    public CompletableFutureTValue of(final Object o) {
 
         return CompletableFutureTValue.of(CompletableFuture.completedFuture(o));
     }

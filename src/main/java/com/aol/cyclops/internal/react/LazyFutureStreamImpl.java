@@ -70,7 +70,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
         volatile Consumer<Throwable> forward;
     }
 
-    public LazyFutureStreamImpl(LazyReact lazyReact, final Stream<U> stream) {
+    public LazyFutureStreamImpl(final LazyReact lazyReact, final Stream<U> stream) {
 
         this.simpleReact = lazyReact;
 
@@ -92,29 +92,33 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
 
     }
 
-    public void forwardErrors(Consumer<Throwable> c) {
+    @Override
+    public void forwardErrors(final Consumer<Throwable> c) {
         error.forward = c;
     }
 
+    @Override
     public LazyReact getPopulator() {
         return pool.nextReactor();
     }
 
-    public void returnPopulator(LazyReact service) {
+    @Override
+    public void returnPopulator(final LazyReact service) {
         pool.populate(service);
     }
 
     @Override
-    public <R, A> R collect(Collector<? super U, A, R> collector) {
+    public <R, A> R collect(final Collector<? super U, A, R> collector) {
         return block(collector);
     }
 
+    @Override
     public void close() {
 
     }
 
     @Override
-    public LazyFutureStream<U> withAsync(boolean b) {
+    public LazyFutureStream<U> withAsync(final boolean b) {
 
         return this.withSimpleReact(this.simpleReact.withAsync(b));
     }
@@ -135,25 +139,24 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
     }
 
     @Override
-    public LazyFutureStream<U> withTaskExecutor(Executor e) {
+    public LazyFutureStream<U> withTaskExecutor(final Executor e) {
         return this.withSimpleReact(simpleReact.withExecutor(e));
     }
 
     @Override
-    public LazyFutureStream<U> withRetrier(RetryExecutor retry) {
+    public LazyFutureStream<U> withRetrier(final RetryExecutor retry) {
         return this.withSimpleReact(simpleReact.withRetrier(retry));
     }
 
     @Override
-    public LazyFutureStream<U> withLastActive(LazyStreamWrapper w) {
+    public LazyFutureStream<U> withLastActive(final LazyStreamWrapper w) {
         return new LazyFutureStreamImpl<U>(
-                                           errorHandler, (LazyStreamWrapper) w, lazyCollector, queueFactory, simpleReact, subscription, error,
-                                           maxActive);
+                                           errorHandler, w, lazyCollector, queueFactory, simpleReact, subscription, error, maxActive);
 
     }
 
     @Override
-    public LazyFutureStream<U> maxActive(int max) {
+    public LazyFutureStream<U> maxActive(final int max) {
         return this.withMaxActive(new MaxActive(
                                                 max, max));
     }
@@ -161,67 +164,68 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
     /**
      * Cancel the CompletableFutures in this stage of the stream
      */
+    @Override
     public void cancel() {
         this.subscription.closeAll();
         //also need to mark cancelled =true and check during collection
     }
 
     @Override
-    public HotStream<U> schedule(String cron, ScheduledExecutorService ex) {
+    public HotStream<U> schedule(final String cron, final ScheduledExecutorService ex) {
         return ReactiveSeq.<U> fromStream(this.toStream())
                           .schedule(cron, ex);
     }
 
     @Override
-    public HotStream<U> scheduleFixedDelay(long delay, ScheduledExecutorService ex) {
+    public HotStream<U> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         return ReactiveSeq.<U> fromStream(this.toStream())
                           .scheduleFixedDelay(delay, ex);
     }
 
     @Override
-    public HotStream<U> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
+    public HotStream<U> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         return ReactiveSeq.<U> fromStream(this.toStream())
                           .scheduleFixedRate(rate, ex);
     }
 
     @Override
-    public <T> LazyFutureStream<T> unitIterator(Iterator<T> it) {
+    public <T> LazyFutureStream<T> unitIterator(final Iterator<T> it) {
         return simpleReact.from(it);
     }
 
     @Override
-    public LazyFutureStream<U> append(U value) {
+    public LazyFutureStream<U> append(final U value) {
         return fromStream(stream().append(value));
     }
 
     @Override
-    public LazyFutureStream<U> prepend(U value) {
+    public LazyFutureStream<U> prepend(final U value) {
 
         return fromStream(stream().prepend(value));
     }
 
     @Override
-    public <T> LazyFutureStream<T> unit(T unit) {
+    public <T> LazyFutureStream<T> unit(final T unit) {
         return fromStream(stream().unit(unit));
     }
 
     @Override
-    public HotStream<U> hotStream(Executor e) {
+    public HotStream<U> hotStream(final Executor e) {
         return StreamUtils.hotStream(this, e);
     }
 
     @Override
-    public HotStream<U> primedHotStream(Executor e) {
+    public HotStream<U> primedHotStream(final Executor e) {
         return StreamUtils.primedHotStream(this, e);
     }
 
     @Override
-    public PausableHotStream<U> pausableHotStream(Executor e) {
+    public PausableHotStream<U> pausableHotStream(final Executor e) {
         return StreamUtils.pausableHotStream(this, e);
     }
 
     @Override
-    public PausableHotStream<U> primedPausableHotStream(Executor e) {
+    public PausableHotStream<U> primedPausableHotStream(final Executor e) {
         return StreamUtils.primedPausableHotStream(this, e);
     }
 
@@ -241,54 +245,54 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
     }
 
     @Override
-    public U foldRight(Monoid<U> reducer) {
+    public U foldRight(final Monoid<U> reducer) {
         return reducer.reduce(this);
     }
 
     @Override
-    public <T> T foldRightMapToType(Reducer<T> reducer) {
-        return reducer.mapReduce(this.reverse());
+    public <T> T foldRightMapToType(final Reducer<T> reducer) {
+        return reducer.mapReduce(reverse());
 
     }
 
     @Override
-    public <R> R mapReduce(Reducer<R> reducer) {
+    public <R> R mapReduce(final Reducer<R> reducer) {
         return reducer.mapReduce(this);
     }
 
     @Override
-    public <R> R mapReduce(Function<? super U, ? extends R> mapper, Monoid<R> reducer) {
+    public <R> R mapReduce(final Function<? super U, ? extends R> mapper, final Monoid<R> reducer) {
         return Reducer.fromMonoid(reducer, mapper)
                       .mapReduce(this);
     }
 
     @Override
-    public U reduce(Monoid<U> reducer) {
+    public U reduce(final Monoid<U> reducer) {
         return reducer.reduce(this);
     }
 
     @Override
-    public ListX<U> reduce(Stream<? extends Monoid<U>> reducers) {
+    public ListX<U> reduce(final Stream<? extends Monoid<U>> reducers) {
         return StreamUtils.reduce(this, reducers);
     }
 
     @Override
-    public ListX<U> reduce(Iterable<? extends Monoid<U>> reducers) {
+    public ListX<U> reduce(final Iterable<? extends Monoid<U>> reducers) {
         return StreamUtils.reduce(this, reducers);
     }
 
     @Override
-    public U foldRight(U identity, BinaryOperator<U> accumulator) {
+    public U foldRight(final U identity, final BinaryOperator<U> accumulator) {
         return reverse().foldLeft(identity, accumulator);
     }
 
     @Override
-    public Optional<U> min(Comparator<? super U> comparator) {
+    public Optional<U> min(final Comparator<? super U> comparator) {
         return StreamUtils.min(this, comparator);
     }
 
     @Override
-    public Optional<U> max(Comparator<? super U> comparator) {
+    public Optional<U> max(final Comparator<? super U> comparator) {
         return StreamUtils.max(this, comparator);
     }
 
@@ -299,26 +303,26 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
     }
 
     @Override
-    public boolean allMatch(Predicate<? super U> c) {
+    public boolean allMatch(final Predicate<? super U> c) {
 
         return filterNot(c).count() == 0l;
     }
 
     @Override
-    public boolean anyMatch(Predicate<? super U> c) {
+    public boolean anyMatch(final Predicate<? super U> c) {
 
         return filter(c).findAny()
                         .isPresent();
     }
 
     @Override
-    public boolean xMatch(int num, Predicate<? super U> c) {
+    public boolean xMatch(final int num, final Predicate<? super U> c) {
 
         return StreamUtils.xMatch(this, num, c);
     }
 
     @Override
-    public boolean noneMatch(Predicate<? super U> c) {
+    public boolean noneMatch(final Predicate<? super U> c) {
         return !anyMatch(c);
     }
 
@@ -328,12 +332,12 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
     }
 
     @Override
-    public final String join(String sep) {
+    public final String join(final String sep) {
         return StreamUtils.join(this, sep);
     }
 
     @Override
-    public String join(String sep, String start, String end) {
+    public String join(final String sep, final String start, final String end) {
         return StreamUtils.join(this, sep, start, end);
     }
 

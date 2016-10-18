@@ -73,7 +73,8 @@ public class PatternMatcher implements Function {
      *	@return Value from matched case if present
      * @see java.util.function.Function#apply(java.lang.Object)
      */
-    public Maybe<Object> apply(Object t) {
+    @Override
+    public Maybe<Object> apply(final Object t) {
         return match(t);
     }
 
@@ -84,7 +85,7 @@ public class PatternMatcher implements Function {
      * @param t Array to match on
      * @return Matched value wrapped in Optional
      */
-    public <R> Maybe<R> match(Object... t) {
+    public <R> Maybe<R> match(final Object... t) {
         return cases.match(t);
     }
 
@@ -95,7 +96,7 @@ public class PatternMatcher implements Function {
      * @param t Object to decompose and match on
      * @return Matched result wrapped in an Optional
      */
-    public <R> Maybe<R> unapply(Decomposable t) {
+    public <R> Maybe<R> unapply(final Decomposable t) {
         return cases.unapply(t);
     }
 
@@ -103,21 +104,22 @@ public class PatternMatcher implements Function {
      * @param t Object to match against supplied cases
      * @return Value returned from matched case (if present) otherwise Optional.empty()
      */
-    public <R> Maybe<R> match(Object t) {
+    public <R> Maybe<R> match(final Object t) {
 
         return cases.match(t);
 
     }
 
-    private Function extractorAction(Extractor extractor, Function action) {
+    private Function extractorAction(final Extractor extractor, final Function action) {
         if (extractor == null)
             return action;
         return input -> action.apply(extractor.apply(input));
     }
 
-    public <T, V, X> PatternMatcher inCaseOfManyType(Predicate master, Function<? super T, ? extends X> a, Predicate<V>... predicates) {
+    public <T, V, X> PatternMatcher inCaseOfManyType(final Predicate master, final Function<? super T, ? extends X> a,
+            final Predicate<V>... predicates) {
 
-        ReactiveSeq<Predicate<V>> pred = ReactiveSeq.of(predicates);
+        final ReactiveSeq<Predicate<V>> pred = ReactiveSeq.of(predicates);
 
         return inCaseOf(it -> master.test(it) && seq(Extractors.decompose()
                                                                .apply(it)).zip(pred, (a1, b1) -> Tuple.tuple(a1, b1))
@@ -127,19 +129,20 @@ public class PatternMatcher implements Function {
 
     }
 
-    private List wrapInList(Object a) {
+    private List wrapInList(final Object a) {
         if (a instanceof List)
             return (List) a;
         else
             return Arrays.asList(a);
     }
 
-    public <V, X> PatternMatcher inCaseOf(Predicate<V> match, Function<? super V, ? extends X> a) {
+    public <V, X> PatternMatcher inCaseOf(final Predicate<V> match, final Function<? super V, ? extends X> a) {
         return inCaseOfThenExtract(match, a, null);
 
     }
 
-    public <R, T, X> PatternMatcher inCaseOfThenExtract(Predicate<T> match, Function<? super R, ? extends X> a, Extractor<T, R> extractor) {
+    public <R, T, X> PatternMatcher inCaseOfThenExtract(final Predicate<T> match, final Function<? super R, ? extends X> a,
+            final Extractor<T, R> extractor) {
 
         return withCases(cases.append(index(), Case.of(match, extractorAction(extractor, a))));
 

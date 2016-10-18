@@ -30,21 +30,22 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 
     void forwardErrors(Consumer<Throwable> c);
 
-    default void subscribeSync(Subscriber<? super T> s) {
+    default void subscribeSync(final Subscriber<? super T> s) {
         FutureStreamSynchronousPublisher.this.subscribe(s);
     }
 
-    default void subscribe(Subscriber<? super T> s) {
+    @Override
+    default void subscribe(final Subscriber<? super T> s) {
 
         try {
 
             forwardErrors(t -> s.onError(t));
 
-            Queue<T> queue = toQueue();
-            Iterator<CompletableFuture<T>> it = queue.streamCompletableFutures()
-                                                     .iterator();
+            final Queue<T> queue = toQueue();
+            final Iterator<CompletableFuture<T>> it = queue.streamCompletableFutures()
+                                                           .iterator();
 
-            Subscription sub = new Subscription() {
+            final Subscription sub = new Subscription() {
 
                 volatile boolean complete = false;
 
@@ -53,7 +54,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 
                 boolean active = false;
 
-                private void handleNext(T data) {
+                private void handleNext(final T data) {
                     if (!cancelled) {
                         s.onNext(data);
                     }
@@ -69,7 +70,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
                     }
                     requests.add(n);
 
-                    List<CompletableFuture> results = new ArrayList<>();
+                    final List<CompletableFuture> results = new ArrayList<>();
                     if (active) {
 
                         return;
@@ -79,7 +80,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
                     try {
 
                         while (!cancelled && requests.size() > 0) {
-                            long n2 = requests.peek();
+                            final long n2 = requests.peek();
 
                             for (int i = 0; i < n2; i++) {
                                 try {
@@ -91,7 +92,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
                                         handleComplete(results, s);
                                         break;
                                     }
-                                } catch (Throwable t) {
+                                } catch (final Throwable t) {
                                     s.onError(t);
                                 }
 
@@ -105,7 +106,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 
                 }
 
-                private void handleComplete(List<CompletableFuture> results, Subscriber<? super T> s) {
+                private void handleComplete(final List<CompletableFuture> results, final Subscriber<? super T> s) {
                     if (!complete && !cancelled) {
                         complete = true;
 
@@ -126,12 +127,13 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
                     }
                 }
 
-                private void callOnComplete(Subscriber<? super T> s) {
+                private void callOnComplete(final Subscriber<? super T> s) {
 
                     s.onComplete();
                 }
 
-                private void handleNext(Subscriber<? super T> s, Iterator<CompletableFuture<T>> it, List<CompletableFuture> results) {
+                private void handleNext(final Subscriber<? super T> s, final Iterator<CompletableFuture<T>> it,
+                        final List<CompletableFuture> results) {
 
                     results.add(it.next()
                                   .thenAccept(r -> {
@@ -143,9 +145,9 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
                         return null;
 
                     }));
-                    List<CompletableFuture> newResults = results.stream()
-                                                                .filter(cf -> cf.isDone())
-                                                                .collect(Collectors.toList());
+                    final List<CompletableFuture> newResults = results.stream()
+                                                                      .filter(cf -> cf.isDone())
+                                                                      .collect(Collectors.toList());
                     results.removeAll(newResults);
                 }
 
@@ -162,7 +164,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
             };
             s.onSubscribe(sub);
 
-        } catch (SimpleReactProcessingException e) {
+        } catch (final SimpleReactProcessingException e) {
 
         }
 

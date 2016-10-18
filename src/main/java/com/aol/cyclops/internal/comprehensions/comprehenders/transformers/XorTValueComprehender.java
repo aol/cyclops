@@ -12,27 +12,27 @@ import com.aol.cyclops.types.mixins.Printable;
 public class XorTValueComprehender implements ValueComprehender<XorTValue>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, XorTValue apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final XorTValue apply) {
         return apply.isPrimary() ? comp.of(apply.get()) : comp.empty();
     }
 
     @Override
-    public Object filter(XorTValue t, Predicate p) {
+    public Object filter(final XorTValue t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(XorTValue t, Function fn) {
+    public Object map(final XorTValue t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(XorTValue t, Function fn) {
+    public Object flatMap(final XorTValue t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public XorTValue of(Object o) {
+    public XorTValue of(final Object o) {
 
         return XorTValue.of(Xor.primary(o));
     }

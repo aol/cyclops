@@ -27,7 +27,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see org.pcollections.PMap#plus(java.lang.Object, java.lang.Object)
      */
-    public PMapX<K, V> plus(K key, V value) {
+    @Override
+    public PMapX<K, V> plus(final K key, final V value) {
         return withMap(map.plus(key, value));
     }
 
@@ -36,7 +37,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see org.pcollections.PMap#plusAll(java.util.Map)
      */
-    public PMapX<K, V> plusAll(Map<? extends K, ? extends V> map) {
+    @Override
+    public PMapX<K, V> plusAll(final Map<? extends K, ? extends V> map) {
         return withMap(this.map.plusAll(map));
     }
 
@@ -45,7 +47,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see org.pcollections.PMap#minus(java.lang.Object)
      */
-    public PMapX<K, V> minus(Object key) {
+    @Override
+    public PMapX<K, V> minus(final Object key) {
         return withMap(map.minus(key));
     }
 
@@ -54,7 +57,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see org.pcollections.PMap#minusAll(java.util.Collection)
      */
-    public PMapX<K, V> minusAll(Collection<?> keys) {
+    @Override
+    public PMapX<K, V> minusAll(final Collection<?> keys) {
         return withMap(map.minusAll(keys));
     }
 
@@ -65,7 +69,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @deprecated
      * @see org.pcollections.PMap#put(java.lang.Object, java.lang.Object)
      */
-    public V put(K k, V v) {
+    @Deprecated
+    @Override
+    public V put(final K k, final V v) {
         return map.put(k, v);
     }
 
@@ -75,7 +81,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @deprecated
      * @see org.pcollections.PMap#remove(java.lang.Object)
      */
-    public V remove(Object k) {
+    @Deprecated
+    @Override
+    public V remove(final Object k) {
         return map.remove(k);
     }
 
@@ -84,7 +92,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @deprecated
      * @see org.pcollections.PMap#putAll(java.util.Map)
      */
-    public void putAll(Map<? extends K, ? extends V> m) {
+    @Deprecated
+    @Override
+    public void putAll(final Map<? extends K, ? extends V> m) {
         map.putAll(m);
     }
 
@@ -92,6 +102,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @deprecated
      * @see org.pcollections.PMap#clear()
      */
+    @Deprecated
+    @Override
     public void clear() {
         map.clear();
     }
@@ -100,6 +112,7 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#size()
      */
+    @Override
     public int size() {
         return map.size();
     }
@@ -108,6 +121,7 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#isEmpty()
      */
+    @Override
     public boolean isEmpty() {
         return map.isEmpty();
     }
@@ -117,7 +131,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#containsKey(java.lang.Object)
      */
-    public boolean containsKey(Object key) {
+    @Override
+    public boolean containsKey(final Object key) {
         return map.containsKey(key);
     }
 
@@ -126,7 +141,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#containsValue(java.lang.Object)
      */
-    public boolean containsValue(Object value) {
+    @Override
+    public boolean containsValue(final Object value) {
         return map.containsValue(value);
     }
 
@@ -135,7 +151,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#get(java.lang.Object)
      */
-    public V get(Object key) {
+    @Override
+    public V get(final Object key) {
         return map.get(key);
     }
 
@@ -143,6 +160,7 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#keySet()
      */
+    @Override
     public SetX<K> keySet() {
         return SetX.fromIterable(map.keySet());
     }
@@ -151,6 +169,7 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#values()
      */
+    @Override
     public CollectionX<V> values() {
         return CollectionX.fromCollection(map.values());
     }
@@ -159,6 +178,7 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#entrySet()
      */
+    @Override
     public Set<java.util.Map.Entry<K, V>> entrySet() {
         return map.entrySet();
     }
@@ -168,7 +188,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#equals(java.lang.Object)
      */
-    public boolean equals(Object o) {
+    @Override
+    public boolean equals(final Object o) {
         return map.equals(o);
     }
 
@@ -176,6 +197,7 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#hashCode()
      */
+    @Override
     public int hashCode() {
         return map.hashCode();
     }
@@ -186,7 +208,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#getOrDefault(java.lang.Object, java.lang.Object)
      */
-    public V getOrDefault(Object key, V defaultValue) {
+    @Override
+    public V getOrDefault(final Object key, final V defaultValue) {
         return map.getOrDefault(key, defaultValue);
     }
 
@@ -194,7 +217,8 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @param action
      * @see java.util.Map#forEach(java.util.function.BiConsumer)
      */
-    public void forEach(BiConsumer<? super K, ? super V> action) {
+    @Override
+    public void forEach(final BiConsumer<? super K, ? super V> action) {
         map.forEach(action);
     }
 
@@ -202,8 +226,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @param function
      * @see java.util.Map#replaceAll(java.util.function.BiFunction)
      */
+    @Override
     @Deprecated
-    public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
+    public void replaceAll(final BiFunction<? super K, ? super V, ? extends V> function) {
         map.replaceAll(function);
     }
 
@@ -213,8 +238,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#putIfAbsent(java.lang.Object, java.lang.Object)
      */
+    @Override
     @Deprecated
-    public V putIfAbsent(K key, V value) {
+    public V putIfAbsent(final K key, final V value) {
         return map.putIfAbsent(key, value);
     }
 
@@ -224,8 +250,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#remove(java.lang.Object, java.lang.Object)
      */
+    @Override
     @Deprecated
-    public boolean remove(Object key, Object value) {
+    public boolean remove(final Object key, final Object value) {
         return map.remove(key, value);
     }
 
@@ -236,8 +263,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#replace(java.lang.Object, java.lang.Object, java.lang.Object)
      */
+    @Override
     @Deprecated
-    public boolean replace(K key, V oldValue, V newValue) {
+    public boolean replace(final K key, final V oldValue, final V newValue) {
         return map.replace(key, oldValue, newValue);
     }
 
@@ -247,8 +275,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#replace(java.lang.Object, java.lang.Object)
      */
+    @Override
     @Deprecated
-    public V replace(K key, V value) {
+    public V replace(final K key, final V value) {
         return map.replace(key, value);
     }
 
@@ -258,8 +287,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#computeIfAbsent(java.lang.Object, java.util.function.Function)
      */
+    @Override
     @Deprecated
-    public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
+    public V computeIfAbsent(final K key, final Function<? super K, ? extends V> mappingFunction) {
         return map.computeIfAbsent(key, mappingFunction);
     }
 
@@ -269,8 +299,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#computeIfPresent(java.lang.Object, java.util.function.BiFunction)
      */
+    @Override
     @Deprecated
-    public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+    public V computeIfPresent(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
         return map.computeIfPresent(key, remappingFunction);
     }
 
@@ -280,8 +311,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#compute(java.lang.Object, java.util.function.BiFunction)
      */
+    @Override
     @Deprecated
-    public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+    public V compute(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
         return map.compute(key, remappingFunction);
     }
 
@@ -292,8 +324,9 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @return
      * @see java.util.Map#merge(java.lang.Object, java.lang.Object, java.util.function.BiFunction)
      */
+    @Override
     @Deprecated
-    public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+    public V merge(final K key, final V value, final BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
         return map.merge(key, value, remappingFunction);
     }
 

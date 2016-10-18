@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class InvokeDynamicComprehender implements ValueComprehender {
+    @Override
     public Class getTargetClass() {
         return null;
     }
@@ -31,21 +32,21 @@ public class InvokeDynamicComprehender implements ValueComprehender {
     private static volatile Map<Class, ListX<Method>> filterMethod = new ConcurrentHashMap<>();
 
     @Override
-    public Object filter(Object t, Predicate p) {
-        Class clazz = t.getClass();
-        ListX<Method> m = filterMethod.computeIfAbsent(clazz, c -> ReactiveSeq.of(c.getMethods())
-                                                                              .filter(method -> "filter".equals(method.getName()))
-                                                                              .filter(method -> method.getParameterCount() == 1)
-                                                                              .toListX()
-                                                                              .map(m2 -> {
-                                                                                  m2.setAccessible(true);
-                                                                                  return m2;
-                                                                              }));
+    public Object filter(final Object t, final Predicate p) {
+        final Class clazz = t.getClass();
+        final ListX<Method> m = filterMethod.computeIfAbsent(clazz, c -> ReactiveSeq.of(c.getMethods())
+                                                                                    .filter(method -> "filter".equals(method.getName()))
+                                                                                    .filter(method -> method.getParameterCount() == 1)
+                                                                                    .toListX()
+                                                                                    .map(m2 -> {
+                                                                                        m2.setAccessible(true);
+                                                                                        return m2;
+                                                                                    }));
         if (m.size() == 0)
             return ValueComprehender.super.filter(t, p);
-        for (Method next : m) {
+        for (final Method next : m) {
 
-            Class z = next.getParameterTypes()[0];
+            final Class z = next.getParameterTypes()[0];
             if (z.isInterface()) {
 
                 Object target = p;
@@ -63,27 +64,27 @@ public class InvokeDynamicComprehender implements ValueComprehender {
     }
 
     @Override
-    public Object map(Object t, Function fn) {
+    public Object map(final Object t, final Function fn) {
 
-        Class clazz = t.getClass();
+        final Class clazz = t.getClass();
 
-        Method m = mapMethod.computeIfAbsent(clazz, c -> Stream.of(c.getMethods())
-                                                               .filter(method -> "map".equals(method.getName())
-                                                                       || "transform".equals(method.getName()))
-                                                               .filter(method -> method.getParameterCount() == 1)
-                                                               .findFirst()
-                                                               .map(m2 -> {
-                                                                   m2.setAccessible(true);
-                                                                   return m2;
-                                                               })
-                                                               .get());
+        final Method m = mapMethod.computeIfAbsent(clazz, c -> Stream.of(c.getMethods())
+                                                                     .filter(method -> "map".equals(method.getName())
+                                                                             || "transform".equals(method.getName()))
+                                                                     .filter(method -> method.getParameterCount() == 1)
+                                                                     .findFirst()
+                                                                     .map(m2 -> {
+                                                                         m2.setAccessible(true);
+                                                                         return m2;
+                                                                     })
+                                                                     .get());
 
         return execute(t, fn, m);
 
     }
 
-    private Object execute(Object t, Function fn, Method m) {
-        Class z = m.getParameterTypes()[0];
+    private Object execute(final Object t, final Function fn, final Method m) {
+        final Class z = m.getParameterTypes()[0];
         Object target = fn;
         if (!z.isAssignableFrom(Function.class)) {
             target = Proxy.newProxyInstance(InvokeDynamicComprehender.class.getClassLoader(), new Class[] { z },
@@ -96,20 +97,20 @@ public class InvokeDynamicComprehender implements ValueComprehender {
     }
 
     @Override
-    public Object flatMap(Object t, Function fn) {
-        Class clazz = t.getClass();
-        Method m = flatMapMethod.computeIfAbsent(clazz, c -> Stream.of(c.getMethods())
-                                                                   .filter(method -> "flatMap".equals(method.getName())
-                                                                           || "bind".equals(method.getName())
-                                                                           || "transformAndConcat".equals(method.getName()))
-                                                                   .filter(method -> method.getParameterCount() == 1)
-                                                                   .findFirst()
-                                                                   .get());
+    public Object flatMap(final Object t, final Function fn) {
+        final Class clazz = t.getClass();
+        final Method m = flatMapMethod.computeIfAbsent(clazz, c -> Stream.of(c.getMethods())
+                                                                         .filter(method -> "flatMap".equals(method.getName())
+                                                                                 || "bind".equals(method.getName())
+                                                                                 || "transformAndConcat".equals(method.getName()))
+                                                                         .filter(method -> method.getParameterCount() == 1)
+                                                                         .findFirst()
+                                                                         .get());
 
         return execute(t, fn, m);
     }
 
-    private boolean isAssignableFrom(Class t, Object apply) {
+    private boolean isAssignableFrom(final Class t, final Object apply) {
         if (apply.getClass()
                  .isAssignableFrom(t))
             return true;
@@ -124,16 +125,16 @@ public class InvokeDynamicComprehender implements ValueComprehender {
     }
 
     @Override
-    public boolean instanceOfT(Object apply) {
+    public boolean instanceOfT(final Object apply) {
         return type.map(t -> isAssignableFrom(t, apply))
                    .orElse(true);
     }
 
     @Override
-    public Object of(Object o) {
+    public Object of(final Object o) {
 
-        InvokeDynamic dyn = new InvokeDynamic();
-        Optional ob = dyn.execute(Arrays.asList("of", "singleton", "some", "right", "success", "primary"), type.get(), o);
+        final InvokeDynamic dyn = new InvokeDynamic();
+        final Optional ob = dyn.execute(Arrays.asList("of", "singleton", "some", "right", "success", "primary"), type.get(), o);
 
         return ob.get();
 
@@ -142,22 +143,22 @@ public class InvokeDynamicComprehender implements ValueComprehender {
     @Override
     public Object empty() {
 
-        InvokeDynamic dyn = new InvokeDynamic();
-        Optional o = dyn.execute(Arrays.asList("empty", "of", "cons", "none", "nil", "left", "failure", "secondary"), type.get());
+        final InvokeDynamic dyn = new InvokeDynamic();
+        final Optional o = dyn.execute(Arrays.asList("empty", "of", "cons", "none", "nil", "left", "failure", "secondary"), type.get());
         return o.get();
     }
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, Object apply) {
-        InvokeDynamic dyn = new InvokeDynamic();
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final Object apply) {
+        final InvokeDynamic dyn = new InvokeDynamic();
         try {
-            Optional o = dyn.execute(Arrays.asList("get", "join"), apply);
+            final Optional o = dyn.execute(Arrays.asList("get", "join"), apply);
             if (o.isPresent()) //extraction method exists?
                 return comp.of(o.get());
             else //no? let's just wrap the value in the appropriate monad type, this allows flatten() to work
 
                 return comp.of(apply);
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             //error extracting from extraciton method? return empty
         }
         return comp.empty();

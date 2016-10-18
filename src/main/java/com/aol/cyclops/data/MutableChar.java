@@ -58,7 +58,7 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>, Ma
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableChar of(char var) {
+    public static <T> MutableChar of(final char var) {
         return new MutableChar(
                                var);
     }
@@ -78,17 +78,20 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>, Ma
      * @param c Consumer that sets an external value
      * @return MutableChar that gets / sets an external (mutable) value
      */
-    public static MutableChar fromExternal(Supplier<Character> s, Consumer<Character> c) {
+    public static MutableChar fromExternal(final Supplier<Character> s, final Consumer<Character> c) {
         return new MutableChar() {
+            @Override
             public char getAsChar() {
                 return s.get();
             }
 
+            @Override
             public Character get() {
                 return getAsChar();
             }
 
-            public MutableChar set(char value) {
+            @Override
+            public MutableChar set(final char value) {
                 c.accept(value);
                 return this;
             }
@@ -113,9 +116,10 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>, Ma
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(Function<Character, R> fn) {
-        MutableChar host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Character, R> fn) {
+        final MutableChar host = this;
         return new Mutable<R>() {
+            @Override
             public R get() {
                 return fn.apply(host.get());
             }
@@ -141,10 +145,11 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>, Ma
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(Function<T1, Character> fn) {
-        MutableChar host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Character> fn) {
+        final MutableChar host = this;
         return new Mutable<T1>() {
-            public Mutable<T1> set(T1 value) {
+            @Override
+            public Mutable<T1> set(final T1 value) {
                 host.set(fn.apply(value));
                 return this;
             }
@@ -163,7 +168,7 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>, Ma
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableChar set(char var) {
+    public MutableChar set(final char var) {
         this.var = var;
         return this;
     }
@@ -172,7 +177,7 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>, Ma
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableChar mutate(CharFunction varFn) {
+    public MutableChar mutate(final CharFunction varFn) {
         return set(varFn.apply(get()));
 
     }
@@ -182,7 +187,7 @@ public class MutableChar implements Supplier<Character>, Consumer<Character>, Ma
     }
 
     @Override
-    public void accept(Character t) {
+    public void accept(final Character t) {
         set(t);
 
     }

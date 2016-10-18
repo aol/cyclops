@@ -77,7 +77,7 @@ public interface OperationsOnFutures<T> {
      *            Times values should be repeated within a Stream
      * @return Stream with values repeated
      */
-    default LazyFutureStream<T> cycle(int times) {
+    default LazyFutureStream<T> cycle(final int times) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .cycle(times));
@@ -200,7 +200,7 @@ public interface OperationsOnFutures<T> {
         return ReactiveSeq.<FastFuture<T>> fromStream((Stream<FastFuture<T>>) (Stream) this.getLastActive()
                                                                                            .injectFutures())
                           .splitSequenceAtHead()
-                          .map1(o -> o.<T> map(f -> (T) f.join()))
+                          .map1(o -> o.<T> map(f -> f.join()))
                           .map2(s -> fromStreamOfFutures(s));
     }
 
@@ -216,7 +216,7 @@ public interface OperationsOnFutures<T> {
      * 
      * </pre>
      */
-    default Tuple2<LazyFutureStream<T>, LazyFutureStream<T>> splitAt(int where) {
+    default Tuple2<LazyFutureStream<T>, LazyFutureStream<T>> splitAt(final int where) {
         return ReactiveSeq.<FastFuture<T>> fromStream((Stream<FastFuture<T>>) (Stream) this.getLastActive()
                                                                                            .injectFutures())
                           .splitAt(where)
@@ -241,7 +241,7 @@ public interface OperationsOnFutures<T> {
      * @param other
      * @return
      */
-    default <R> LazyFutureStream<Tuple2<T, R>> zipLfs(LazyFutureStream<R> other) {
+    default <R> LazyFutureStream<Tuple2<T, R>> zipLfs(final LazyFutureStream<R> other) {
 
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .injectFuturesSeq()
@@ -275,8 +275,8 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      */
-    default <R, T2> LazyFutureStream<R> zipLfs(LazyFutureStream<T2> other,
-            BiFunction<CompletableFuture<T>, CompletableFuture<T2>, CompletableFuture<R>> combiner) {
+    default <R, T2> LazyFutureStream<R> zipLfs(final LazyFutureStream<T2> other,
+            final BiFunction<CompletableFuture<T>, CompletableFuture<T2>, CompletableFuture<R>> combiner) {
 
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .injectFuturesSeq()
@@ -313,7 +313,7 @@ public interface OperationsOnFutures<T> {
      * }
      * </pre>
      */
-    default <R> LazyFutureStream<Tuple2<T, R>> zip(Stream<R> other) {
+    default <R> LazyFutureStream<Tuple2<T, R>> zip(final Stream<R> other) {
 
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .injectFuturesSeq()
@@ -348,7 +348,7 @@ public interface OperationsOnFutures<T> {
      *}
      *</pre>
      */
-    default <S, U> LazyFutureStream<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
+    default <S, U> LazyFutureStream<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
 
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .injectFuturesSeq()
@@ -374,7 +374,7 @@ public interface OperationsOnFutures<T> {
      *
      *
      */
-    default <S, U> LazyFutureStream<Tuple3<T, S, U>> zip3Lfs(LazyFutureStream<? extends S> second, LazyFutureStream<? extends U> third) {
+    default <S, U> LazyFutureStream<Tuple3<T, S, U>> zip3Lfs(final LazyFutureStream<? extends S> second, final LazyFutureStream<? extends U> third) {
 
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .injectFuturesSeq()
@@ -405,7 +405,7 @@ public interface OperationsOnFutures<T> {
      *</pre>
      *
      */
-    default <T2, T3, T4> LazyFutureStream<Tuple4<T, T2, T3, T4>> zip4(Stream<T2> second, Stream<T3> third, Stream<T4> fourth) {
+    default <T2, T3, T4> LazyFutureStream<Tuple4<T, T2, T3, T4>> zip4(final Stream<T2> second, final Stream<T3> third, final Stream<T4> fourth) {
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .injectFuturesSeq()
                                                                    .map(f -> f.toCompletableFuture())
@@ -428,8 +428,8 @@ public interface OperationsOnFutures<T> {
      *}
      *</pre>
      */
-    default <T2, T3, T4> LazyFutureStream<Tuple4<T, T2, T3, T4>> zip4Lfs(LazyFutureStream<T2> second, LazyFutureStream<T3> third,
-            LazyFutureStream<T4> fourth) {
+    default <T2, T3, T4> LazyFutureStream<Tuple4<T, T2, T3, T4>> zip4Lfs(final LazyFutureStream<T2> second, final LazyFutureStream<T3> third,
+            final LazyFutureStream<T4> fourth) {
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .injectFuturesSeq()
                                                                    .map(f -> f.toCompletableFuture())
@@ -484,7 +484,7 @@ public interface OperationsOnFutures<T> {
      *            Size of sliding window
      * @return SequenceM with sliding view
      */
-    default LazyFutureStream<List<T>> sliding(int windowSize) {
+    default LazyFutureStream<List<T>> sliding(final int windowSize) {
 
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .<T> injectFuturesSeq()
@@ -519,7 +519,7 @@ public interface OperationsOnFutures<T> {
      *            for each window
      * @return SequenceM with sliding view
      */
-    default LazyFutureStream<List<T>> sliding(int windowSize, int increment) {
+    default LazyFutureStream<List<T>> sliding(final int windowSize, final int increment) {
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .<T> injectFuturesSeq()
                                                                    .sliding(windowSize, increment)
@@ -548,7 +548,7 @@ public interface OperationsOnFutures<T> {
      *            Size of each Group
      * @return Stream with elements grouped by size
      */
-    default LazyFutureStream<List<T>> grouped(int groupSize) {
+    default LazyFutureStream<List<T>> grouped(final int groupSize) {
 
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .<T> injectFuturesSeq()
@@ -575,12 +575,12 @@ public interface OperationsOnFutures<T> {
      *            Number of elemenets to skip
      * @return Stream with elements skipped
      */
-    default LazyFutureStream<T> skip(long n) {
-        Continueable sub = this.getSubscription();
+    default LazyFutureStream<T> skip(final long n) {
+        final Continueable sub = this.getSubscription();
         sub.registerSkip(n);
-        LazyStreamWrapper lastActive = getLastActive();
-        LazyStreamWrapper limited = lastActive.withStream(lastActive.stream()
-                                                                    .skip(n));
+        final LazyStreamWrapper lastActive = getLastActive();
+        final LazyStreamWrapper limited = lastActive.withStream(lastActive.stream()
+                                                                          .skip(n));
         return this.withLastActive(limited);
     }
 
@@ -595,12 +595,12 @@ public interface OperationsOnFutures<T> {
      *            Limit element size to num
      * @return Limited Stream
      */
-    default LazyFutureStream<T> limit(long maxSize) {
-        Continueable sub = this.getSubscription();
+    default LazyFutureStream<T> limit(final long maxSize) {
+        final Continueable sub = this.getSubscription();
         sub.registerLimit(maxSize);
-        LazyStreamWrapper lastActive = getLastActive();
-        LazyStreamWrapper limited = lastActive.withStream(lastActive.stream()
-                                                                    .limit(maxSize));
+        final LazyStreamWrapper lastActive = getLastActive();
+        final LazyStreamWrapper limited = lastActive.withStream(lastActive.stream()
+                                                                          .limit(maxSize));
         return this.withLastActive(limited);
     }
 
@@ -640,7 +640,7 @@ public interface OperationsOnFutures<T> {
      * // (1, 0, 2, 0, 3, 0, 4) LazyFutureStream.of(1, 2, 3, 4).actOnFutures().intersperse(0)
      * 
      */
-    default LazyFutureStream<T> intersperse(T value) {
+    default LazyFutureStream<T> intersperse(final T value) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .intersperse(FastFuture.completedFuture(value)));
@@ -657,7 +657,7 @@ public interface OperationsOnFutures<T> {
      * // (1, 0, 2, 0, 3, 0, 4) 
      * 
      */
-    default LazyFutureStream<T> intersperse(CompletableFuture<T> value) {
+    default LazyFutureStream<T> intersperse(final CompletableFuture<T> value) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .intersperse(FastFuture.fromCompletableFuture(value)));
@@ -692,7 +692,7 @@ public interface OperationsOnFutures<T> {
      *            to append
      * @return SequenceM with Stream appended
      */
-    default LazyFutureStream<T> appendStream(Stream<T> stream) {
+    default LazyFutureStream<T> appendStream(final Stream<T> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .appendStream(stream.map(v -> FastFuture.completedFuture(v))));
@@ -717,7 +717,7 @@ public interface OperationsOnFutures<T> {
      * @param stream
      * @return
      */
-    default LazyFutureStream<T> appendStreamFutures(Stream<CompletableFuture<T>> stream) {
+    default LazyFutureStream<T> appendStreamFutures(final Stream<CompletableFuture<T>> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .appendStream(stream.map(v -> FastFuture.fromCompletableFuture(v))));
@@ -742,7 +742,7 @@ public interface OperationsOnFutures<T> {
      *            to Prepend
      * @return SequenceM with Stream prepended
      */
-    default LazyFutureStream<T> prependStream(Stream<T> stream) {
+    default LazyFutureStream<T> prependStream(final Stream<T> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .prependStream(stream.map(v -> FastFuture.completedFuture(v))));
@@ -762,7 +762,7 @@ public interface OperationsOnFutures<T> {
      * }
      * </pre>
      */
-    default LazyFutureStream<T> prependStreamFutures(Stream<CompletableFuture<T>> stream) {
+    default LazyFutureStream<T> prependStreamFutures(final Stream<CompletableFuture<T>> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .prependStream(stream.map(v -> FastFuture.fromCompletableFuture(v))));
@@ -786,7 +786,7 @@ public interface OperationsOnFutures<T> {
      *            to append
      * @return LazyFutureStream with appended values
      */
-    default LazyFutureStream<T> append(T... values) {
+    default LazyFutureStream<T> append(final T... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .appendStream(Stream.of(values)
@@ -812,7 +812,7 @@ public interface OperationsOnFutures<T> {
      * @param values Futures to append
      * @return Stream with values appended
      */
-    default LazyFutureStream<T> appendFutures(CompletableFuture<T>... values) {
+    default LazyFutureStream<T> appendFutures(final CompletableFuture<T>... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .appendStream(Stream.of(values)
@@ -835,7 +835,7 @@ public interface OperationsOnFutures<T> {
      * @param values to prepend
      * @return SequenceM with values prepended
      */
-    default LazyFutureStream<T> prepend(T... values) {
+    default LazyFutureStream<T> prepend(final T... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .prependStream(Stream.of(values)
@@ -858,7 +858,7 @@ public interface OperationsOnFutures<T> {
      *
      *
      */
-    default LazyFutureStream<T> prependFutures(CompletableFuture<T>... values) {
+    default LazyFutureStream<T> prependFutures(final CompletableFuture<T>... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .prependStream(Stream.of(values)
@@ -886,7 +886,7 @@ public interface OperationsOnFutures<T> {
      *            to insert
      * @return Stream with new data inserted
      */
-    default LazyFutureStream<T> insertAt(int pos, T... values) {
+    default LazyFutureStream<T> insertAt(final int pos, final T... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .insertStreamAt(pos, Stream.of(values)
@@ -914,7 +914,7 @@ public interface OperationsOnFutures<T> {
      *            index
      * @return Stream with elements removed
      */
-    default LazyFutureStream<T> deleteBetween(int start, int end) {
+    default LazyFutureStream<T> deleteBetween(final int start, final int end) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .deleteBetween(start, end));
@@ -940,7 +940,7 @@ public interface OperationsOnFutures<T> {
      *            to insert
      * @return newly conjoined SequenceM
      */
-    default LazyFutureStream<T> insertStreamAt(int pos, Stream<T> stream) {
+    default LazyFutureStream<T> insertStreamAt(final int pos, final Stream<T> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .insertStreamAt(pos, stream.map(v -> FastFuture.completedFuture(v))));
@@ -968,7 +968,7 @@ public interface OperationsOnFutures<T> {
      *            to insert
      * @return newly conjoined SequenceM
      */
-    default LazyFutureStream<T> insertStreamFuturesAt(int pos, Stream<CompletableFuture<T>> stream) {
+    default LazyFutureStream<T> insertStreamFuturesAt(final int pos, final Stream<CompletableFuture<T>> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .insertStreamAt(pos, stream.map(v -> FastFuture.fromCompletableFuture(v))));
@@ -989,7 +989,7 @@ public interface OperationsOnFutures<T> {
      * 
      * 
      */
-    default LazyFutureStream<T> skipLast(int num) {
+    default LazyFutureStream<T> skipLast(final int num) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .skipLast(num));
@@ -1009,7 +1009,7 @@ public interface OperationsOnFutures<T> {
      * @param num of elements to return (last elements)
      * @return SequenceM limited to last num elements
      */
-    default LazyFutureStream<T> limitLast(int num) {
+    default LazyFutureStream<T> limitLast(final int num) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .limitLast(num));
@@ -1028,7 +1028,7 @@ public interface OperationsOnFutures<T> {
      *            to extract element from
      * @return elementAt index
      */
-    default Optional<T> elementAt(long index) {
+    default Optional<T> elementAt(final long index) {
         return this.getLastActive()
                    .injectFuturesSeq()
                    .zipWithIndex()
@@ -1052,10 +1052,10 @@ public interface OperationsOnFutures<T> {
      *            to extract element from
      * @return Element and Sequence
      */
-    default Tuple2<T, LazyFutureStream<T>> get(long index) {
-        Tuple2<ReactiveSeq<FastFuture<T>>, ReactiveSeq<FastFuture<T>>> tuple = this.getLastActive()
-                                                                                   .injectFuturesSeq()
-                                                                                   .duplicateSequence();
+    default Tuple2<T, LazyFutureStream<T>> get(final long index) {
+        final Tuple2<ReactiveSeq<FastFuture<T>>, ReactiveSeq<FastFuture<T>>> tuple = this.getLastActive()
+                                                                                         .injectFuturesSeq()
+                                                                                         .duplicateSequence();
         return tuple.map1(s -> s.zipWithIndex()
                                 .filter(t -> t.v2 == index)
                                 .map(f -> safeJoin(f.v1))
@@ -1075,7 +1075,7 @@ public interface OperationsOnFutures<T> {
      * @param combiner Function to Combine pairs of values
      * @return
      */
-    default <R> LazyFutureStream<R> thenCombine(BiFunction<T, T, R> combiner) {
+    default <R> LazyFutureStream<R> thenCombine(final BiFunction<T, T, R> combiner) {
         return (LazyFutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .<T> injectFuturesSeq()
                                                                    .map(f -> f.toCompletableFuture())
@@ -1091,7 +1091,7 @@ public interface OperationsOnFutures<T> {
      * 
      * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
      */
-    default LazyFutureStream<T> concat(Stream<T> other) {
+    default LazyFutureStream<T> concat(final Stream<T> other) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .concat(other.map(t -> FastFuture.completedFuture(t))));
@@ -1102,7 +1102,7 @@ public interface OperationsOnFutures<T> {
      * 
      * @see org.jooq.lambda.Seq#concat(java.lang.Object)
      */
-    default LazyFutureStream<T> concat(T other) {
+    default LazyFutureStream<T> concat(final T other) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .concat(FastFuture.completedFuture(other)));
@@ -1113,7 +1113,7 @@ public interface OperationsOnFutures<T> {
      * 
      * @see org.jooq.lambda.Seq#concat(java.lang.Object[])
      */
-    default LazyFutureStream<T> concat(T... other) {
+    default LazyFutureStream<T> concat(final T... other) {
         return concat(Stream.of(other));
     }
 
@@ -1132,7 +1132,7 @@ public interface OperationsOnFutures<T> {
     
      * @return
      */
-    default LazyFutureStream<T> concatFutures(CompletableFuture<T>... other) {
+    default LazyFutureStream<T> concatFutures(final CompletableFuture<T>... other) {
         return concatStreamFutures(Stream.of(other));
     }
 
@@ -1152,7 +1152,7 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      */
-    default LazyFutureStream<T> concatStreamFutures(Stream<CompletableFuture<T>> other) {
+    default LazyFutureStream<T> concatStreamFutures(final Stream<CompletableFuture<T>> other) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .concat(other.map(t -> FastFuture.fromCompletableFuture(t))));
@@ -1165,7 +1165,7 @@ public interface OperationsOnFutures<T> {
      * // e.g. (2, 3, 1) LazyFutureStream.of(1, 2, 3).actOnFutures().shuffle(new Random())
      * 
      */
-    default LazyFutureStream<T> shuffle(Random random) {
+    default LazyFutureStream<T> shuffle(final Random random) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .shuffle(random));
@@ -1182,7 +1182,7 @@ public interface OperationsOnFutures<T> {
      * </pre>
      *
      */
-    default LazyFutureStream<T> slice(long from, long to) {
+    default LazyFutureStream<T> slice(final long from, final long to) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .slice(from, to));
@@ -1213,7 +1213,7 @@ public interface OperationsOnFutures<T> {
      * @param collector Collecto to use
      * @return Collection
      */
-    default <R, A> R collect(Collector<? super CompletableFuture<T>, A, R> collector) {
+    default <R, A> R collect(final Collector<? super CompletableFuture<T>, A, R> collector) {
         return toStream().collect(collector);
     }
 
@@ -1229,7 +1229,7 @@ public interface OperationsOnFutures<T> {
     /**
      * Collect a Stream into a Collection
      */
-    default <C extends Collection<CompletableFuture<T>>> C toCollection(Supplier<C> collectionFactory) {
+    default <C extends Collection<CompletableFuture<T>>> C toCollection(final Supplier<C> collectionFactory) {
 
         return toStream().collect(Collectors.toCollection(collectionFactory));
     }
@@ -1250,7 +1250,7 @@ public interface OperationsOnFutures<T> {
      * @param accumulator CompletableFuture accumulator
      * @return Reduced value
      */
-    default Optional<CompletableFuture<T>> reduce(BinaryOperator<CompletableFuture<T>> accumulator) {
+    default Optional<CompletableFuture<T>> reduce(final BinaryOperator<CompletableFuture<T>> accumulator) {
         return toStream().reduce(accumulator);
     }
 
@@ -1275,7 +1275,7 @@ public interface OperationsOnFutures<T> {
      * @param accumulator 
      * @return Reduced value
      */
-    default CompletableFuture<T> foldRight(CompletableFuture<T> identity, BinaryOperator<CompletableFuture<T>> accumulator) {
+    default CompletableFuture<T> foldRight(final CompletableFuture<T> identity, final BinaryOperator<CompletableFuture<T>> accumulator) {
 
         return toStream().foldRight(identity, accumulator);
     }
@@ -1302,7 +1302,7 @@ public interface OperationsOnFutures<T> {
      * @param accumulator
      * @return
      */
-    default CompletableFuture<T> foldLeft(CompletableFuture<T> identity, BinaryOperator<CompletableFuture<T>> accumulator) {
+    default CompletableFuture<T> foldLeft(final CompletableFuture<T> identity, final BinaryOperator<CompletableFuture<T>> accumulator) {
         return toStream().foldLeft(identity, accumulator);
     }
 
@@ -1322,16 +1322,16 @@ public interface OperationsOnFutures<T> {
      * (non-Javadoc)
     * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
     */
-    default CompletableFuture<T> reduce(CompletableFuture<T> identity, BinaryOperator<CompletableFuture<T>> accumulator) {
+    default CompletableFuture<T> reduce(final CompletableFuture<T> identity, final BinaryOperator<CompletableFuture<T>> accumulator) {
         return toStream().reduce(identity, accumulator);
     }
 
     /* (non-Javadoc)
     * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
     */
-    default <U> CompletableFuture<U> reduce(CompletableFuture<U> identity,
-            BiFunction<CompletableFuture<U>, ? super CompletableFuture<T>, CompletableFuture<U>> accumulator,
-            BinaryOperator<CompletableFuture<U>> combiner) {
+    default <U> CompletableFuture<U> reduce(final CompletableFuture<U> identity,
+            final BiFunction<CompletableFuture<U>, ? super CompletableFuture<T>, CompletableFuture<U>> accumulator,
+            final BinaryOperator<CompletableFuture<U>> combiner) {
         return toStream().reduce(identity, accumulator, combiner);
     }
 }

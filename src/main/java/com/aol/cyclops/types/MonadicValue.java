@@ -3,7 +3,6 @@ package com.aol.cyclops.types;
 import java.util.function.Function;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
 /**
@@ -18,11 +17,13 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
      */
+    @Override
     public <T> MonadicValue<T> unit(T unit);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#map(java.util.function.Function)
      */
+    @Override
     <R> MonadicValue<R> map(Function<? super T, ? extends R> fn);
 
     /**
@@ -46,7 +47,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T> {
      * @param mapper Mapping / transformation function
      * @return MonadicValue wrapping return value from transformation function applied to the value inside this MonadicValue
      */
-    default <R> MonadicValue<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+    default <R> MonadicValue<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
         return mapper.andThen(r -> unit(r))
                      .apply(this);
     }

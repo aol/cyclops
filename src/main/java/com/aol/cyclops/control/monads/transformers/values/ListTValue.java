@@ -58,7 +58,7 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
     * @param f FlatMap function
     * @return ListT that applies the flatMap function to the wrapped List
     */
-    public <B> ListTValue<B> flatMapT(Function<? super T, ListTValue<B>> f) {
+    public <B> ListTValue<B> flatMapT(final Function<? super T, ListTValue<B>> f) {
 
         return of(run.map(list -> list.flatMap(a -> f.apply(a).run.stream())
                                       .flatMap(a -> a)
@@ -66,6 +66,7 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
         ));
     }
 
+    @Override
     public boolean isSeqPresent() {
         return !run.isEmpty();
     }
@@ -73,6 +74,7 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
     /**
      * @return The wrapped AnyM
      */
+    @Override
     public AnyMValue<ListX<T>> unwrap() {
         return run;
     }
@@ -91,7 +93,8 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * @param peek  Consumer to accept current value of List
      * @return ListT with peek call
      */
-    public ListTValue<T> peek(Consumer<? super T> peek) {
+    @Override
+    public ListTValue<T> peek(final Consumer<? super T> peek) {
         return map(a -> {
             peek.accept(a);
             return a;
@@ -112,7 +115,8 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * @param test Predicate to filter the wrapped List
      * @return ListT that applies the provided filter
      */
-    public ListTValue<T> filter(Predicate<? super T> test) {
+    @Override
+    public ListTValue<T> filter(final Predicate<? super T> test) {
         return of(run.map(stream -> ReactiveSeq.fromList(stream)
                                                .filter(test)
                                                .toList()));
@@ -134,13 +138,15 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * @param f Mapping function for the wrapped List
      * @return ListT that applies the map function to the wrapped List
      */
-    public <B> ListTValue<B> map(Function<? super T, ? extends B> f) {
+    @Override
+    public <B> ListTValue<B> map(final Function<? super T, ? extends B> f) {
         return of(run.map(o -> (List<B>) ReactiveSeq.fromList(o)
                                                     .map(f)
                                                     .toList()));
     }
 
-    public <B> ListTValue<B> flatMap(Function<? super T, ? extends Iterable<? extends B>> f) {
+    @Override
+    public <B> ListTValue<B> flatMap(final Function<? super T, ? extends Iterable<? extends B>> f) {
         return new ListTValue<B>(
                                  run.map(o -> ListX.fromIterable(o)
                                                    .flatMap(f)));
@@ -174,7 +180,7 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * @param fn Function to enhance with functionality from List and another monad type
      * @return Function that accepts and returns an ListT
      */
-    public static <U, R> Function<ListTValue<U>, ListTValue<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<ListTValue<U>, ListTValue<R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -207,7 +213,8 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * @param fn BiFunction to enhance with functionality from List and another monad type
      * @return Function that accepts and returns an ListT
      */
-    public static <U1, U2, R> BiFunction<ListTValue<U1>, ListTValue<U2>, ListTValue<R>> lift2(BiFunction<? super U1, ? super U2, ? extends R> fn) {
+    public static <U1, U2, R> BiFunction<ListTValue<U1>, ListTValue<U2>, ListTValue<R>> lift2(
+            final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -218,7 +225,7 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * @param anyM AnyM that doesn't contain a monad wrapping an List
      * @return ListT
      */
-    public static <A> ListTValue<A> fromAnyM(AnyMValue<A> anyM) {
+    public static <A> ListTValue<A> fromAnyM(final AnyMValue<A> anyM) {
         return of(anyM.map(Arrays::asList));
     }
 
@@ -228,12 +235,12 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * @param monads AnyM that contains a monad wrapping an List
      * @return ListT
      */
-    public static <A> ListTValue<A> of(AnyMValue<? extends List<A>> monads) {
+    public static <A> ListTValue<A> of(final AnyMValue<? extends List<A>> monads) {
         return new ListTValue<>(
                                 monads);
     }
 
-    public static <A> ListTValue<A> of(List<A> monads) {
+    public static <A> ListTValue<A> of(final List<A> monads) {
         return ListT.fromOptional(Optional.of(monads));
     }
 
@@ -243,11 +250,11 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * @param monads
      * @return
      */
-    public static <A> ListTValue<A> fromStream(AnyMValue<? extends Stream<A>> monads) {
+    public static <A> ListTValue<A> fromStream(final AnyMValue<? extends Stream<A>> monads) {
         return of(monads.map(s -> s.collect(Collectors.toList())));
     }
 
-    public static <A, V extends MonadicValue<? extends List<A>>> ListTValue<A> fromValue(V monadicValue) {
+    public static <A, V extends MonadicValue<? extends List<A>>> ListTValue<A> fromValue(final V monadicValue) {
         return of(AnyM.ofValue(monadicValue));
     }
 
@@ -256,6 +263,7 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return String.format("ListTValue[%s]", run);
     }
@@ -273,7 +281,7 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    public <U> ListTValue<U> unitIterator(Iterator<U> u) {
+    public <U> ListTValue<U> unitIterator(final Iterator<U> u) {
         return of(run.unit(ListX.fromIterable(() -> u)));
     }
 
@@ -281,7 +289,7 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
      * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
      */
     @Override
-    public <T> ListTValue<T> unit(T unit) {
+    public <T> ListTValue<T> unit(final T unit) {
         return of(run.unit(ListX.of(unit)));
     }
 
@@ -321,7 +329,7 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
     }
 
     @Override
-    public <T> ListTValue<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+    public <T> ListTValue<T> unitAnyM(final AnyM<Traversable<T>> traversable) {
 
         return of((AnyMValue) traversable.map(t -> ListX.fromIterable(t)));
     }
@@ -338,7 +346,7 @@ public class ListTValue<T> implements ListT<T>, TransformerSeq<T>, Publisher<T> 
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof ListTValue) {
             return run.equals(((ListTValue) o).run);
         }

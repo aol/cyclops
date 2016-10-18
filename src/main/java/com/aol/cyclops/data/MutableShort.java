@@ -58,7 +58,7 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Matchable
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableShort of(short var) {
+    public static <T> MutableShort of(final short var) {
         return new MutableShort(
                                 var);
     }
@@ -78,17 +78,20 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Matchable
      * @param c Consumer that sets an external value
      * @return MutableShort that gets / sets an external (mutable) value
      */
-    public static MutableShort fromExternal(Supplier<Short> s, Consumer<Short> c) {
+    public static MutableShort fromExternal(final Supplier<Short> s, final Consumer<Short> c) {
         return new MutableShort() {
+            @Override
             public short getAsShort() {
                 return s.get();
             }
 
+            @Override
             public Short get() {
                 return getAsShort();
             }
 
-            public MutableShort set(short value) {
+            @Override
+            public MutableShort set(final short value) {
                 c.accept(value);
                 return this;
             }
@@ -113,9 +116,10 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Matchable
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(Function<Short, R> fn) {
-        MutableShort host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Short, R> fn) {
+        final MutableShort host = this;
         return new Mutable<R>() {
+            @Override
             public R get() {
                 return fn.apply(host.get());
             }
@@ -141,10 +145,11 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Matchable
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(Function<T1, Short> fn) {
-        MutableShort host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Short> fn) {
+        final MutableShort host = this;
         return new Mutable<T1>() {
-            public Mutable<T1> set(T1 value) {
+            @Override
+            public Mutable<T1> set(final T1 value) {
                 host.set(fn.apply(value));
                 return this;
             }
@@ -163,7 +168,7 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Matchable
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableShort set(short var) {
+    public MutableShort set(final short var) {
         this.var = var;
         return this;
     }
@@ -172,7 +177,7 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Matchable
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableShort mutate(ShortFunction varFn) {
+    public MutableShort mutate(final ShortFunction varFn) {
         return set(varFn.apply(get()));
 
     }
@@ -187,7 +192,7 @@ public class MutableShort implements Supplier<Short>, Consumer<Short>, Matchable
     }
 
     @Override
-    public void accept(Short t) {
+    public void accept(final Short t) {
         set(t);
 
     }

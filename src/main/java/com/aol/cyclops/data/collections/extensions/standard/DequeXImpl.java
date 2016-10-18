@@ -21,7 +21,7 @@ public class DequeXImpl<T> implements DequeX<T> {
     @Getter
     private final Collector<T, ?, Deque<T>> collector;
 
-    public DequeXImpl(Deque<T> list) {
+    public DequeXImpl(final Deque<T> list) {
         this.deque = list;
         this.collector = DequeX.defaultCollector();
     }
@@ -33,7 +33,7 @@ public class DequeXImpl<T> implements DequeX<T> {
     }
 
     @Override
-    public void forEach(Consumer<? super T> action) {
+    public void forEach(final Consumer<? super T> action) {
         deque.forEach(action);
     }
 
@@ -48,12 +48,12 @@ public class DequeXImpl<T> implements DequeX<T> {
     }
 
     @Override
-    public boolean contains(Object e) {
+    public boolean contains(final Object e) {
         return deque.contains(e);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof DequeXImpl)
             return deque.equals(((DequeXImpl) o).deque);
 
@@ -76,37 +76,37 @@ public class DequeXImpl<T> implements DequeX<T> {
     }
 
     @Override
-    public boolean removeAll(Collection<?> c) {
+    public boolean removeAll(final Collection<?> c) {
         return deque.removeAll(c);
     }
 
     @Override
-    public <T> T[] toArray(T[] a) {
+    public <T> T[] toArray(final T[] a) {
         return deque.toArray(a);
     }
 
     @Override
-    public boolean add(T e) {
+    public boolean add(final T e) {
         return deque.add(e);
     }
 
     @Override
-    public boolean remove(Object o) {
+    public boolean remove(final Object o) {
         return deque.remove(o);
     }
 
     @Override
-    public boolean containsAll(Collection<?> c) {
+    public boolean containsAll(final Collection<?> c) {
         return deque.containsAll(c);
     }
 
     @Override
-    public boolean addAll(Collection<? extends T> c) {
+    public boolean addAll(final Collection<? extends T> c) {
         return deque.addAll(c);
     }
 
     @Override
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(final Collection<?> c) {
         return deque.retainAll(c);
     }
 
@@ -121,7 +121,7 @@ public class DequeXImpl<T> implements DequeX<T> {
     }
 
     @Override
-    public <R, A> R collect(Collector<? super T, A, R> collector) {
+    public <R, A> R collect(final Collector<? super T, A, R> collector) {
         return stream().collect(collector);
     }
 
@@ -131,7 +131,7 @@ public class DequeXImpl<T> implements DequeX<T> {
     }
 
     @Override
-    public boolean removeIf(Predicate<? super T> filter) {
+    public boolean removeIf(final Predicate<? super T> filter) {
         return deque.removeIf(filter);
     }
 
@@ -146,22 +146,22 @@ public class DequeXImpl<T> implements DequeX<T> {
     }
 
     @Override
-    public void addFirst(T e) {
+    public void addFirst(final T e) {
         deque.addFirst(e);
     }
 
     @Override
-    public void addLast(T e) {
+    public void addLast(final T e) {
         deque.addLast(e);
     }
 
     @Override
-    public boolean offerFirst(T e) {
+    public boolean offerFirst(final T e) {
         return deque.offerFirst(e);
     }
 
     @Override
-    public boolean offerLast(T e) {
+    public boolean offerLast(final T e) {
         return deque.offerLast(e);
     }
 
@@ -206,17 +206,17 @@ public class DequeXImpl<T> implements DequeX<T> {
     }
 
     @Override
-    public boolean removeFirstOccurrence(Object o) {
+    public boolean removeFirstOccurrence(final Object o) {
         return deque.removeFirstOccurrence(o);
     }
 
     @Override
-    public boolean removeLastOccurrence(Object o) {
+    public boolean removeLastOccurrence(final Object o) {
         return deque.removeLastOccurrence(o);
     }
 
     @Override
-    public boolean offer(T e) {
+    public boolean offer(final T e) {
         return deque.offer(e);
     }
 
@@ -241,7 +241,7 @@ public class DequeXImpl<T> implements DequeX<T> {
     }
 
     @Override
-    public void push(T e) {
+    public void push(final T e) {
         deque.push(e);
     }
 

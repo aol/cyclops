@@ -10,7 +10,7 @@ package com.aol.cyclops.data.async.wait;
 public class NoWaitRetry<T> implements WaitStrategy<T> {
 
     @Override
-    public T take(com.aol.cyclops.data.async.wait.WaitStrategy.Takeable<T> t) throws InterruptedException {
+    public T take(final com.aol.cyclops.data.async.wait.WaitStrategy.Takeable<T> t) throws InterruptedException {
         T result;
 
         while ((result = t.take()) == null) {
@@ -21,7 +21,7 @@ public class NoWaitRetry<T> implements WaitStrategy<T> {
     }
 
     @Override
-    public boolean offer(WaitStrategy.Offerable o) throws InterruptedException {
+    public boolean offer(final WaitStrategy.Offerable o) throws InterruptedException {
         while (!o.offer()) {
 
         }

@@ -49,7 +49,7 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
     * @param cases Persistent Stack of cases to build Cases from
     * @return  New Cases instance (sequential)
     */
-    public static <T, R> Cases<T, R> ofPStack(PStack<Case<T, R>> cases) {
+    public static <T, R> Cases<T, R> ofPStack(final PStack<Case<T, R>> cases) {
         return new Cases<>(
                            cases, true);
     }
@@ -61,7 +61,7 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
     * @param cases Persistent Stack of cases to build Cases from
     * @return  New Cases instance (sequential)
     */
-    public static <T, R> Cases<T, R> ofList(List<Case<T, R>> cases) {
+    public static <T, R> Cases<T, R> ofList(final List<Case<T, R>> cases) {
         return new Cases<>(
                            cases.stream()
                                 .map(ConsPStack::singleton)
@@ -76,7 +76,7 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
      * @param cazes Array of cases to build Cases instance from 
      * @return New Cases instance (sequential)
      */
-    public static <T, R> Cases<T, R> of(Case<T, R>... cazes) {
+    public static <T, R> Cases<T, R> of(final Case<T, R>... cazes) {
         return ofPStack(Stream.of(cazes)
                               .map(ConsPStack::singleton)
                               .reduce(ConsPStack.empty(), (acc, next) -> acc.plus(acc.size(), next.get(0))));
@@ -90,7 +90,7 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
      * @param pattern Cases to append / insert
      * @return New Cases with current and supplied cases
      */
-    public Cases<T, R> append(int index, Case<T, R> pattern) {
+    public Cases<T, R> append(final int index, final Case<T, R> pattern) {
         return this.withCases(cases.plus(index, pattern));
     }
 
@@ -114,7 +114,7 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
      * of matching. I.e. Optional#get will have been called.
      */
     public <T1, X> Function<T1, X> asUnwrappedFunction() {
-        return (T1 t) -> (X) apply((T) t).get();
+        return (final T1 t) -> (X) apply((T) t).get();
     }
 
     /*
@@ -130,7 +130,8 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
      * @see java.util.function.Function#apply(java.lang.Object)
      * 
      */
-    public Maybe<R> apply(T t) {
+    @Override
+    public Maybe<R> apply(final T t) {
         return match(t);
     }
 
@@ -155,9 +156,9 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
      *            Stream of data to match against (input to matcher)
      * @return Stream of matched values, one case per input value can match
      */
-    public <R> Stream<R> matchFromStream(Stream<T> s) {
+    public <R> Stream<R> matchFromStream(final Stream<T> s) {
 
-        Stream<Maybe<R>> results = s.<Maybe<R>> map(this::match);
+        final Stream<Maybe<R>> results = s.<Maybe<R>> map(this::match);
         return results.filter(Maybe::isPresent)
                       .map(Maybe::get);
     }
@@ -182,7 +183,7 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
      * @param s Stream of data
      * @return Results
      */
-    public <R> CompletableFuture<Stream<R>> matchFromStreamAsync(Executor executor, Stream<T> s) {
+    public <R> CompletableFuture<Stream<R>> matchFromStreamAsync(final Executor executor, final Stream<T> s) {
         return CompletableFuture.supplyAsync(() -> matchFromStream(s), executor);
     }
 
@@ -199,7 +200,7 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
      * @param t Array to match on
      * @return Matched value wrapped in Optional
      */
-    public <R> Maybe<R> match(Object... t) {
+    public <R> Maybe<R> match(final Object... t) {
         return match((T) Arrays.asList(t));
     }
 
@@ -217,7 +218,7 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
      * @param t Array to match on
      * @return Matched value wrapped in CompletableFuture &amp; Optional
      */
-    public <R> CompletableFuture<Maybe<R>> matchAsync(Executor executor, Object... t) {
+    public <R> CompletableFuture<Maybe<R>> matchAsync(final Executor executor, final Object... t) {
         return CompletableFuture.supplyAsync(() -> match(t), executor);
     }
 
@@ -236,7 +237,7 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
      * @param t Object to decompose and match on
      * @return Matched result wrapped in an Optional
      */
-    public <R> Maybe<R> unapply(Decomposable t) {
+    public <R> Maybe<R> unapply(final Decomposable t) {
         return match((T) t.unapply());
     }
 
@@ -246,7 +247,7 @@ public class Cases<T, R> implements Function<T, Maybe<R>> {
      * @return Value returned from matched case (if present) otherwise
      *         Optional.empty()
      */
-    public <R> Maybe<R> match(T t) {
+    public <R> Maybe<R> match(final T t) {
 
         return Maybe.fromOptional((Optional) stream().map(pattern -> pattern.match(t))
                                                      .filter(Optional::isPresent)

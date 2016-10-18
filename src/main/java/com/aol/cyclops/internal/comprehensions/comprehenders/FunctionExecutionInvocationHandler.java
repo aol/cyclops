@@ -16,7 +16,7 @@ public class FunctionExecutionInvocationHandler implements InvocationHandler {
     private Function function;
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         if ("toString".equals(method.getName()) && method.getParameterCount() == 0)
             return function.toString();
         if ("hashCode".equals(method.getName()) && method.getParameterCount() == 0)

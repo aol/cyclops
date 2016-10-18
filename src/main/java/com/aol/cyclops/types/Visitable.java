@@ -11,7 +11,7 @@ import java.util.function.Supplier;
  * @param <T> Data type of element stored in this Visitable
  */
 public interface Visitable<T> {
-    
+
     /**
      * The provided function is executed with the value stored in this Visitable if one is present,
      * otherwise the provided Supplier is executed instead.
