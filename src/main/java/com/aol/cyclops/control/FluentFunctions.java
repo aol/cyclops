@@ -1351,6 +1351,25 @@ public class FluentFunctions {
             });
         }
 
+        /**
+         * Apply around advic to this TriFunction
+         * 
+         * <pre>
+         * {@code 
+         * 
+         * FluentFunctions.of((a,b,c)->a+b+c)
+                          .around(advice->advice.proceed1(advice.param1+1))
+                          .println()
+                          .apply(10,1,0)
+                          
+              //12            
+         * }
+         * </pre>
+         * 
+         * 
+         * @param around Function that gives controlling access to this Function via the Advice inout parameter
+         * @return TriFunction with around advice attached
+         */
         public FluentTriFunction<T1, T2, T3, R> around(final Function<Advice3<T1, T2, T3, R>, R> around) {
             return withFn((t1, t2, t3) -> around.apply(new Advice3<>(
                                                                      t1, t2, t3, fn)));
