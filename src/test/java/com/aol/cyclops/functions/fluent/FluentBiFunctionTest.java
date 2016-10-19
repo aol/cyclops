@@ -173,7 +173,10 @@ public class FluentBiFunctionTest {
 	
 	@Test
 	public void iterate(){
-		
+	    FluentFunctions.of(this::add) 
+                        .iterate(1,2,(i)->Tuple.tuple(i,i))
+                        .limit(10)
+                        .printOut();
 		assertThat(FluentFunctions.of(this::add)	
 						.iterate(1,2,(i)->Tuple.tuple(i,i))
 						.limit(2)
@@ -249,7 +252,7 @@ public class FluentBiFunctionTest {
 	public void async(){
 		assertThat(FluentFunctions.of(this::add)
 						.async(ex)
-						.thenApply(f->f.apply(4,1))
+						.thenApplyAsync(f->f.apply(4,1))
 						.join(),equalTo(5));
 	}
 	
