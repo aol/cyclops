@@ -127,7 +127,7 @@ test {
 
 javadoc {
     configure((CoreJavadocOptions) getOptions()) {
-        addStringOption('sourcepath', "http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.11/org/jooq/lambda/Seq.html")
+        addStringOption('sourcepath', "~/github/jool-0.9.11-sources.jar")
     }
 }
 modifyPom {

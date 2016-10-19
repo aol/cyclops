@@ -2645,6 +2645,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
         return innerJoin(s, predicate);
     }
 
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#innerJoin(java.lang.Iterable, java.util.function.BiPredicate)
+     */
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(final Iterable<? extends U> other,
             final java.util.function.BiPredicate<? super T, ? super U> predicate) {
@@ -2652,6 +2655,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
         return innerJoin(s, predicate);
     }
 
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#innerJoin(org.jooq.lambda.Seq, java.util.function.BiPredicate)
+     */
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(final Seq<? extends U> other,
             final java.util.function.BiPredicate<? super T, ? super U> predicate) {
@@ -2668,11 +2674,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream,
-     * java.util.function.BiPredicate)
+  
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Stream<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
@@ -2684,6 +2688,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
 
     }
 
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#leftOuterJoin(org.jooq.lambda.Seq, java.util.function.BiPredicate)
+     */
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Seq<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
 
@@ -2693,6 +2700,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
 
     }
 
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#leftOuterJoin(java.lang.Iterable, java.util.function.BiPredicate)
+     */
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Iterable<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
 
@@ -2702,6 +2712,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
 
     }
 
+   
     default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Streamable<? extends U> s,
             final java.util.function.BiPredicate<? super T, ? super U> predicate) {
         return flatMap(t -> Seq.seq(s.stream())
@@ -2847,10 +2858,14 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * emit x elements per time period
      * 
      * <pre>
-     * {
-     * 	&#064;code
+     * {@code
+     * 	code
      * 	SimpleTimer timer = new SimpleTimer();
-     * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).xPer(6, 100000000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+     * 	ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+     *             .xPer(6, 100000000, TimeUnit.NANOSECONDS)
+     *             .collect(Collectors.toList())
+     *             .size();
+     * //6            
      * 
      * }
      * </pre>
@@ -2909,10 +2924,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * emit elements after a fixed delay
      * 
      * <pre>
-     * {
-     * 	&#064;code
+     * {@code
      * 	SimpleTimer timer = new SimpleTimer();
-     * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).fixedDelay(10000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+     * 	ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+     *             .fixedDelay(10000, TimeUnit.NANOSECONDS)
+     *             .collect(Collectors.toList())
+     *             .size();
+     *  //6           
      * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(60000l));
      * }
      * </pre>
@@ -2929,10 +2947,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * Introduce a random jitter / time delay between the emission of elements
      * 
      * <pre>
-     * {
-     * 	&#064;code
+     * { @code
      * 	SimpleTimer timer = new SimpleTimer();
-     * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).jitter(10000).collect(Collectors.toList()).size(), is(6));
+     * 	ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+     *             .jitter(10000)
+     *             .collect(Collectors.toList());
+     *             
      * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(20000l));
      * }
      * </pre>
@@ -2981,7 +3001,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Type to recover from
      * @param fn
      *            That accepts an error and returns an alternative value
-     * @return Sequence that can recover from a particular exception
+     * @return ReactiveSeq that can recover from a particular exception
      */
     <EX extends Throwable> ReactiveSeq<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn);
 
