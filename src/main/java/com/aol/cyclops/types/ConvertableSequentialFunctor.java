@@ -11,7 +11,7 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
  *
  * @param <T> Data type of elements stored in this sequence
  */
-public interface ConvertableSequentialFunctor<T> extends Functor<T>, ConvertableSequence<T>, ExtendedTraversable<T> {
+public interface ConvertableSequentialFunctor<T> extends Functor<T>, ConvertableSequence<T>, FiniteTraversable<T> {
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.stream.ConvertableSequence#stream()
@@ -19,7 +19,7 @@ public interface ConvertableSequentialFunctor<T> extends Functor<T>, Convertable
     @Override
     default ReactiveSeq<T> stream() {
 
-        return ExtendedTraversable.super.stream();
+        return FiniteTraversable.super.stream();
     }
 
 }

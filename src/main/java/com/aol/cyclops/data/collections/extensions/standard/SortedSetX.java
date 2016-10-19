@@ -834,7 +834,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
+     * @see com.aol.cyclops.lambda.monads.FiniteTraversable#permutations()
      */
     @Override
     default SortedSetX<ReactiveSeq<T>> permutations() {
@@ -844,7 +844,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
+     * @see com.aol.cyclops.lambda.monads.FiniteTraversable#combinations(int)
      */
     @Override
     default SortedSetX<ReactiveSeq<T>> combinations(final int size) {
@@ -853,7 +853,7 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
+     * @see com.aol.cyclops.lambda.monads.FiniteTraversable#combinations()
      */
     @Override
     default SortedSetX<ReactiveSeq<T>> combinations() {

@@ -28,7 +28,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.types.ExtendedTraversable;
+import com.aol.cyclops.types.FiniteTraversable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.IterableFunctor;
@@ -45,7 +45,7 @@ import com.aol.cyclops.types.stream.HeadAndTail;
  *
  * @param <T>
  */
-public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Sequential<T>, IterableFunctor<T>, IterableFoldable<T>,
+public interface CollectionX<T> extends FiniteTraversable<T>, Iterable<T>, Sequential<T>, IterableFunctor<T>, IterableFoldable<T>,
         IterableFilterable<T>, ZippingApplicativable<T>, Unit<T>, Collection<T>, CyclopsCollectable<T> {
 
     /**
@@ -214,7 +214,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     <X extends Throwable> CollectionX<T> onEmptyThrow(Supplier<? extends X> supplier);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.ExtendedTraversable#stream()
+     * @see com.aol.cyclops.types.FiniteTraversable#stream()
      */
     @Override
     default ReactiveSeq<T> stream() {
@@ -767,19 +767,19 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     CollectionX<T> sorted(Comparator<? super T> c);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.ExtendedTraversable#permutations()
+     * @see com.aol.cyclops.types.FiniteTraversable#permutations()
      */
     @Override
     CollectionX<ReactiveSeq<T>> permutations();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.ExtendedTraversable#combinations(int)
+     * @see com.aol.cyclops.types.FiniteTraversable#combinations(int)
      */
     @Override
     CollectionX<ReactiveSeq<T>> combinations(int size);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.ExtendedTraversable#combinations()
+     * @see com.aol.cyclops.types.FiniteTraversable#combinations()
      */
     @Override
     CollectionX<ReactiveSeq<T>> combinations();

@@ -665,7 +665,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
+     * @see com.aol.cyclops.lambda.monads.FiniteTraversable#combinations(int)
      */
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#combinations(int)
@@ -676,7 +676,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
+     * @see com.aol.cyclops.lambda.monads.FiniteTraversable#combinations()
      */
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#combinations()

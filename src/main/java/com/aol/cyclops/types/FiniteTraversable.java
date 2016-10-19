@@ -10,26 +10,26 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
  * 
  * @author johnmcclean
  *
- * @param <T> Data type of elements in this ExtendedTraversable
+ * @param <T> Data type of elements in this FiniteTraversable
  */
-public interface ExtendedTraversable<T> extends Traversable<T>, TransformerTraversable<T>, Foldable<T>, Iterable<T>, ConvertableSequence<T> {
+public interface FiniteTraversable<T> extends Traversable<T>, TransformerTraversable<T>, Foldable<T>, Iterable<T>, ConvertableSequence<T> {
 
     /**
-     * Generate the permutations based on values in the ExtendedTraversable. 
+     * Generate the permutations based on values in the FiniteTraversable. 
      * 
      * 
-     * @return Permutations from this ExtendedTraversable
+     * @return Permutations from this FiniteTraversable
      */
-    default ExtendedTraversable<ReactiveSeq<T>> permutations() {
+    default FiniteTraversable<ReactiveSeq<T>> permutations() {
         return stream().permutations();
     }
 
     /**
-     *  Generate the combinations based on values in the ExtendedTraversable.
+     *  Generate the combinations based on values in the FiniteTraversable.
      * 
      * <pre>
      * {@code
-     *   ExtendedTraversable<Integer> stream = ReactiveSeq.of(1,2,3);
+     *   FiniteTraversable<Integer> stream = ReactiveSeq.of(1,2,3);
      *   stream.combinations(2)
      *   
      *   //ReactiveSeq[ReactiveSeq[1,2],ReactiveSeq[1,3],ReactiveSeq[2,3]]
@@ -39,15 +39,15 @@ public interface ExtendedTraversable<T> extends Traversable<T>, TransformerTrave
      * 
      * @param size
      *            of combinations
-     * @return All combinations of the elements in this ExtendedTraversable of the specified
+     * @return All combinations of the elements in this FiniteTraversable of the specified
      *         size
      */
-    default ExtendedTraversable<ReactiveSeq<T>> combinations(final int size) {
+    default FiniteTraversable<ReactiveSeq<T>> combinations(final int size) {
         return stream().combinations(size);
     }
 
     /**
-     * Generate the combinations based on values in the ExtendedTraversable.
+     * Generate the combinations based on values in the FiniteTraversable.
      * 
      * <pre>
      * {@code
@@ -59,9 +59,9 @@ public interface ExtendedTraversable<T> extends Traversable<T>, TransformerTrave
      * </pre>
      * 
      * 
-     * @return All combinations of the elements in this ExtendedTraversable
+     * @return All combinations of the elements in this FiniteTraversable
      */
-    default ExtendedTraversable<ReactiveSeq<T>> combinations() {
+    default FiniteTraversable<ReactiveSeq<T>> combinations() {
         return stream().combinations();
     }
 
