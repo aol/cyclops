@@ -1374,35 +1374,115 @@ public class FluentFunctions {
             return withFn((t1, t2, t3) -> around.apply(new Advice3<>(
                                                                      t1, t2, t3, fn)));
         }
-
+        /**
+         * Partially apply the provided parameter as the first parameter to this TriFunction to generate a Function (single input value)
+         * 
+         * @param param Input parameter to Partially Applied
+         * @return A BiFunction generated from the BiFunction with the first parameter already applied
+         */
         public FluentBiFunction<T2, T3, R> partiallyApply(final T1 param) {
             return new FluentBiFunction<>(
                                           PartialApplicator.partial3(param, fn));
         }
-
+        /**
+         * Partially apply the provided parameters to this BiFunction to generate a Function (single input)
+         * 
+         * @param param1 First Input parameter
+         * @param param2 Second Input parameter
+         * @return Function generated from the partial application of the provided input parameters to this TriFunction
+         */
         public FluentFunction<T3, R> partiallyApply(final T1 param1, final T2 param2) {
             return new FluentFunction<>(
                                         PartialApplicator.partial3(param1, param2, fn));
         }
 
+        /**
+         * Partially apply the provided parameters to this TriFunction to generate a Supplier (that takes no inputs)
+         * 
+         * @param param1 First Input parameter
+         * @param param2 Second Input parameter
+         * @param param3 Third Input parameter
+         * @return Supplier generated from the partial application of the provided input parameters to this TriFunction
+         */
         public FluentSupplier<R> partiallyApply(final T1 param1, final T2 param2, final T3 param3) {
             return new FluentSupplier<>(
                                         PartialApplicator.partial3(param1, param2, param3, fn));
         }
-
+        /**
+         * Curry this BiFunction, that is convert it from a TriFunction that accepts thre input parameters to a 'chain'
+         * of three Functions that accept a single parameter
+         * 
+         * <pre>
+         * {@code 
+         * public int add(Integer a,Integer b, Integer c ){
+               return a+b;
+           }
+         * 
+         *      FluentFunctions.of(this::add)
+                               .curry()
+                               .apply(1)
+                               .apply(2)
+                               .apply(3);
+                               
+                //6               
+         *    
+         * }
+         * </pre>
+         * 
+         * @return Curried function 
+         */
         public FluentFunction<T1, Function<T2, Function<T3, R>>> curry() {
             return new FluentFunction<>(
                                         Curry.curry3(fn));
         }
-
+        /**
+         * @return Function that logs it's result or error to the console
+         */
         public FluentTriFunction<T1, T2, T3, R> memoize() {
             return withFn(Memoize.memoizeTriFunction(fn));
         }
 
+        /**
+         * This methods creates a caching version of this BiFunction, caching is implemented via the Cacheable wrapper,
+         * that can be used to wrap any concrete cache implementation
+         * 
+         * E.g. to use a Guava cache for memoization
+         * 
+         * <pre>
+         * {@code 
+         * 
+         * Cache<Object, Integer> cache = CacheBuilder.newBuilder()
+                   .maximumSize(1000)
+                   .expireAfterWrite(10, TimeUnit.MINUTES)
+                   .build();
+        
+                   called=0;
+            TriFunction<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
+                                                                     .name("myFunction")
+                                                                     .memoize((key,f)->cache.get(key,()->f.apply(key)));
+        
+            fn.apply(10,1,4);
+            fn.apply(10,1,4);
+            fn.apply(10,1,4);
+        
+            assertThat(called,equalTo(1));
+         * 
+         * 
+         * 
+         * }</pre>
+         * 
+         * 
+         * @param cache Cache implementation wrapper
+         * 
+         * @return A caching (memoizing) version of this BiFunction, outputs for all inputs will be cached (unless ejected from the cache)
+         */
         public FluentTriFunction<T1, T2, T3, R> memoize(final Cacheable<R> cache) {
             return withFn(Memoize.memoizeTriFunction(fn));
         }
-
+        /**
+         * @param name To give this TriFunction
+         * @return A TriFunction with a name (useful for logging purposes)
+         */
         public FluentTriFunction<T1, T2, T3, R> name(final String name) {
             return this.withName(name);
         }
@@ -1416,7 +1496,13 @@ public class FluentFunctions {
             return ")";
 
         }
-
+        /**
+         *  A TriFunction that logs it's success or error states to the provided Consumers
+         * 
+         * @param logger Success logger
+         * @param error Failure logger
+         * @return TriFunction that logs it's state
+         */
         public FluentTriFunction<T1, T2, T3, R> log(final Consumer<String> logger, final Consumer<Throwable> error) {
             return FluentFunctions.of((t1, t2, t3) -> {
                 try {
@@ -1430,7 +1516,14 @@ public class FluentFunctions {
                 }
             });
         }
-
+        /**
+         * Visit the result of this TriFunction once it has been executed, if the Function executes successfully the
+         * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
+         * 
+         * @param eventConsumer Consumer to recieve result on successful execution
+         * @param errorConsumer Consumer to recieve error on failure
+         * @return TriFunction with event vistor attached.
+         */
         public FluentTriFunction<T1, T2, T3, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
             return FluentFunctions.of((t1, t2, t3) -> {
@@ -1446,11 +1539,20 @@ public class FluentFunctions {
 
             });
         }
-
+        /**
+         * @return TriFunction that logs it's result or error to the console
+         */
         public FluentTriFunction<T1, T2, T3, R> println() {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
         }
-
+        
+        /**
+         * A TriFunction that can recover from the specified exception types, using the provided recovery Function
+         * 
+         * @param type Recoverable exception types
+         * @param onError Recovery BiFunction
+         * @return TriFunction capable of error recovery
+         */
         public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(final Class<X> type, final TriFunction<T1, T2, T3, R> onError) {
             return FluentFunctions.of((t1, t2, t3) -> {
                 try {
@@ -1466,7 +1568,13 @@ public class FluentFunctions {
             });
 
         }
-
+        /**
+         *  A TriFunction capable of retrying on failure using an exponential backoff strategy
+         * 
+         * @param times Number of times to retry 
+         * @param backoffStartTime Wait time before first retry
+         * @return TriFunction with a retry strategy
+         */
         public FluentTriFunction<T1, T2, T3, R> retry(final int times, final int backoffStartTime) {
             return FluentFunctions.of((t1, t2, t3) -> {
                 int count = times;
@@ -1487,25 +1595,67 @@ public class FluentFunctions {
             });
 
         }
-
+        /**
+         * A TriFunction that triggers an event if the result matches the case provided, or generates a new value from the supplier
+         * provided if not
+         * 
+         * @param case1 Case against which the value returned by this Function will be compared
+         * @param otherwise Supplier to generate an alterantive value if this value does not match the provided case
+         * @return TriFunction that matches it's value against the supplied case
+         */
         public <R1> FluentTriFunction<T1, T2, T3, R1> matches(final Function<CheckValue1<R, R1>, CheckValue1<R, R1>> case1,
                 final Supplier<? extends R1> otherwise) {
             return FluentFunctions.of((t1, t2, t3) -> Matchable.of(fn.apply(t1, t2, t3))
                                                                .matches(case1, otherwise)
                                                                .get());
         }
-
+    
+        /**
+         * Generate an infinite Stream from the provided seed values and mapping function.
+         * The supplied mapping function is inverted taking an input of type R and returning three outputs T1, T2 (in a Tuple)
+         * 
+         * <pre>
+         * {@code 
+         *   FluentFunctions.of(this::add)  
+                           .iterate(1,2,3,(i)->Tuple.tuple(i,i,i))
+                           .limit(2) 
+                           .printOut();
+                           
+                           
+              //6
+                18             
+         * }
+         * </pre>
+         * 
+         * 
+         * @param seed1 Initial input parameter 1
+         * @param seed2 Initial input parameter 2
+         * @param seed3 Initial input parameter 3
+         * @param mapToType Reversed mapping function
+         * @return Infinite Stream
+         */
         public ReactiveSeq<R> iterate(final T1 seed1, final T2 seed2, final T3 seed3, final Function<R, Tuple3<T1, T2, T3>> mapToType) {
             return ReactiveSeq.iterate(fn.apply(seed1, seed2, seed3), t -> {
                 final Tuple3<T1, T2, T3> tuple = mapToType.apply(t);
                 return fn.apply(tuple.v1, tuple.v2, tuple.v3);
             });
         }
-
+        /**
+         * Generate an infinite Stream by applying the input parameters to this function
+         * repeatedly
+         * 
+         * @param input1 First input parameter
+         * @param input2 Second input parameter
+         * @param input3 Third input parameter
+         * @return Infinite Stream
+         */
         public ReactiveSeq<R> generate(final T1 input1, final T2 input2, final T3 input3) {
             return ReactiveSeq.generate(() -> fn.apply(input1, input2, input3));
         }
 
+        /**
+         * @return A TriFunction that accepts and returns Optionals
+         */
         public FluentTriFunction<Optional<T1>, Optional<T2>, Optional<T3>, Optional<R>> lift() {
             return new FluentTriFunction<>(
                                            (opt1, opt2, opt3) -> opt1.flatMap(t1 -> opt2.flatMap(t2 -> opt3.map(t3 -> fn.apply(t1, t2, t3)))));
@@ -1519,18 +1669,40 @@ public class FluentFunctions {
             return FluentFunctions.of((t1, t2, t3) -> Try.withCatch(() -> fn.apply(t1, t2, t3), classes));
         }
 
+        /**
+         * @return Lift this TriFunction into one that accepts and returns generic monad types (AnyM)
+         */
         public FluentTriFunction<AnyM<T1>, AnyM<T2>, AnyM<T3>, AnyM<R>> liftM() {
             return FluentFunctions.of(AnyM.liftM3(fn));
         }
 
+        /**
+         * Convert this TriFunction into one that executes asynchronously and returns a CompleteableFuture with the result
+         * 
+         * @param ex Executor to execute this TriFunction on
+         * @return TriFunction that executes Asynchronous 
+         */
         public FluentTriFunction<T1, T2, T3, CompletableFuture<R>> liftAsync(final Executor ex) {
             return FluentFunctions.of((t1, t2, t3) -> CompletableFuture.supplyAsync(() -> fn.apply(t1, t2, t3), ex));
         }
-
+      
+        /**
+         * Move this function into an asynchronous context
+         * 
+         * @param ex Executor to manage operations on this function on
+         * @return A CompletableFuture that contains this function
+         */
         public CompletableFuture<FluentTriFunction<T1, T2, T3, R>> async(final Executor ex) {
             return CompletableFuture.supplyAsync(() -> FluentFunctions.of(fn), ex);
         }
 
+        /**
+         * Compose this TriFunction with the provided function into a single TriFunction. 
+         * This TriFunction would be executed first and the result passed to the provided Function and applied there.
+         * 
+         * @param after Function to execute after this one in a chain
+         * @return TriFunction that executes this TriFunction and the provided Function in a chain
+         */
         public <R2> FluentTriFunction<T1, T2, T3, R2> andThen(final Function<? super R, ? extends R2> after) {
             Objects.requireNonNull(after);
             return FluentFunctions.of((final T1 t1, final T2 t2, final T3 t3) -> after.apply(apply(t1, t2, t3)));
@@ -1542,6 +1714,11 @@ public class FluentFunctions {
 
         private final Supplier<R> fn;
 
+        /**
+         * Proceed and execute wrapped Supplier
+         * 
+         * @return Result of executing wrapped Supplier
+         */
         public R proceed() {
             return fn.get();
         }
@@ -1553,10 +1730,21 @@ public class FluentFunctions {
         public final T param;
         private final Function<T, R> fn;
 
+        /**
+         * Proceed and execute wrapped Function with it's input param as captured
+         * 
+         * @return  Result of executing wrapped Function
+         */
         public R proceed() {
             return fn.apply(param);
         }
 
+        /**
+         * Proceed and execute wrapped Function replacing it's input param
+         * 
+         * @param param Replacement parameter
+         * @return Result of executing wrapped Function
+         */
         public R proceed(final T param) {
             return fn.apply(param);
         }
@@ -1568,18 +1756,42 @@ public class FluentFunctions {
         public final T2 param2;
         private final BiFunction<T1, T2, R> fn;
 
+        /**
+         * Proceed and execute wrapped BiFunction with it's input params as captured
+         * 
+         * @return Result of executing wrapped BiFunction
+         */
         public R proceed() {
             return fn.apply(param1, param2);
         }
 
+        /**
+         * Proceed and execute wrapped BiFunction with it's input params as captured
+         * 
+         * @param param1 First replacement parameter
+         * @param param2 Second replacement parameter
+         * @return Result of executing wrapped BiFunction 
+         */
         public R proceed(final T1 param1, final T2 param2) {
             return fn.apply(param1, param2);
         }
 
+        /**
+         * Proceed and execute wrapped BiFunction with it's second input parameter as a captured and the replacement parameter as provided
+         * 
+         * @param param First replacement parameter
+         * @return Result of executing wrapped BiFunction
+         */
         public R proceed1(final T1 param) {
             return fn.apply(param, param2);
         }
 
+        /**
+         * Proceed and execute wrapped BiFunction with it's first input parameter as a captured and the replacement parameter as provided
+         * 
+         * @param param Second replacement parameter
+         * @return Result of executing wrapped BiFunction
+         */
         public R proceed2(final T2 param) {
             return fn.apply(param1, param);
         }
@@ -1592,22 +1804,53 @@ public class FluentFunctions {
         public final T3 param3;
         private final TriFunction<T1, T2, T3, R> fn;
 
+        /**
+         * Proceed and execute wrapped TriFunction with it's input params as captured
+         * 
+         * @return Result of executing wrapped TriFunction
+         */
         public R proceed() {
             return fn.apply(param1, param2, param3);
         }
 
+        /**
+         * Proceed and execute wrapped TriFunction with it's input params as captured
+         * 
+         * @param param1 First replacement parameter
+         * @param param2 Second replacement parameter
+         * @param param3 Third replacement parameter
+         * @return Result of executing wrapped TriFunction
+         */
         public R proceed(final T1 param1, final T2 param2, final T3 param3) {
             return fn.apply(param1, param2, param3);
         }
 
+        /**
+         * Proceed and execute wrapped TriFunction with it's second and third input parameters as a captured and the replacement parameter as provided
+         * 
+         * @param param First replacement parameter
+         * @return Result of executing wrapped TriFunction
+         */
         public R proceed1(final T1 param) {
             return fn.apply(param, param2, param3);
         }
 
+        /**
+         * Proceed and execute wrapped TriFunction with it's first and third input parameters as a captured and the replacement parameter as provided
+         * 
+         * @param param Second replacement parameter
+         * @return Result of executing wrapped TriFunction
+         */
         public R proceed2(final T2 param) {
             return fn.apply(param1, param, param3);
         }
 
+        /**
+         * Proceed and execute wrapped TriFunction with it's first and second input parameters as a captured and the replacement parameter as provided
+         * 
+         * @param param Third replacement parameter
+         * @return Result of executing wrapped TriFunction
+         */
         public R proceed3(final T3 param) {
             return fn.apply(param1, param2, param);
         }
