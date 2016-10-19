@@ -1,9 +1,13 @@
 package com.aol.cyclops.control;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -31,6 +35,8 @@ import com.aol.cyclops.util.function.PartialApplicator;
 import com.aol.cyclops.util.function.QuadConsumer;
 import com.aol.cyclops.util.function.TriConsumer;
 import com.aol.cyclops.util.function.TriFunction;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -904,11 +910,20 @@ public class FluentFunctions {
             this.fn = fn;
         }
 
+        /* (non-Javadoc)
+         * @see java.util.function.BiFunction#apply(java.lang.Object, java.lang.Object)
+         */
         @Override
         public R apply(final T1 t1, final T2 t2) {
             return fn.apply(t1, t2);
         }
 
+        /**
+         * Apply before advice to this BiFunction
+         * 
+         * @param action BiConsumer to recieve input parameters to BiFunction
+         * @return BiFunction with before advice attached
+         */
         public FluentBiFunction<T1, T2, R> before(final BiConsumer<T1, T2> action) {
             return withFn((t1, t2) -> {
                 action.accept(t1, t2);
@@ -916,6 +931,12 @@ public class FluentFunctions {
             });
         }
 
+        /**
+         * Apply after advice to this BiFunction
+         * 
+         * @param action TriConsumer to recieve input parameters and return value from BiFunction after it has executed
+         * @return BiFunction with after advice attached
+         */
         public FluentBiFunction<T1, T2, R> after(final TriConsumer<T1, T2, R> action) {
             return withFn((t1, t2) -> {
 
@@ -925,34 +946,129 @@ public class FluentFunctions {
             });
         }
 
+        /**
+         * Apply around advice to this BiFunction
+         * 
+         * <pre>
+         * {@code 
+         * public int add(Integer a,Integer b ){
+               return a+b;
+           }
+         *    FluentFunctions.of(this::add)
+                       .around(advice->advice.proceed1(advice.param1+1))
+                       .println()
+                       .apply(10,1)
+         *    
+         *   //12   (input = 10+1 with advice + 1 = 12)
+         * }</pre>
+         * 
+         * 
+         * @param around Function that allows the execution of this BiFunction to be contolled via it's input parameter
+         * @return BiFunction with around advice attached
+         */
         public FluentBiFunction<T1, T2, R> around(final Function<Advice2<T1, T2, R>, R> around) {
             return withFn((t1, t2) -> around.apply(new Advice2<>(
                                                                  t1, t2, fn)));
         }
 
+        /**
+         * Partially apply the provided parameter as the first parameter to this BiFunction to generate a Function (single input value)
+         * 
+         * @param param Input parameter to Partially Applied
+         * @return A Function generated from the BiFunction with the first parameter already applied
+         */
         public FluentFunction<T2, R> partiallyApply(final T1 param) {
             return new FluentFunction<>(
                                         PartialApplicator.partial2(param, fn));
         }
 
+        /**
+         * Partially apply the provided parameters to this BiFunction to generate a Supplier (that takes no inputs)
+         * 
+         * @param param1 First Input parameter
+         * @param param2 Second Input parameter
+         * @return Supplier generated from the partial application of the provided input parameters to this BiFunction
+         */
         public FluentSupplier<R> partiallyApply(final T1 param1, final T2 param2) {
             return new FluentSupplier<>(
                                         PartialApplicator.partial2(param1, param2, fn));
         }
 
+        /**
+         * Curry this BiFunction, that is convert it from a BiFunction that accepts two input parameters to a 'chain'
+         * of two Functions that accept a single parameter
+         * 
+         * <pre>
+         * {@code 
+         * public int add(Integer a,Integer b ){
+               return a+b;
+           }
+         * 
+         *      FluentFunctions.of(this::add)
+                               .curry()
+                               .apply(1)
+                               .apply(2);
+                               
+                //3               
+         *    
+         * }
+         * </pre>
+         * 
+         * @return Curried function 
+         */
         public FluentFunction<T1, Function<T2, R>> curry() {
             return new FluentFunction(
                                       CurryVariance.curry2(fn));
         }
 
+        /**
+         * @return A caching (memoizing) version of this BiFunction, outputs for all inputs will be cached
+         */
         public FluentBiFunction<T1, T2, R> memoize() {
             return withFn(Memoize.memoizeBiFunction(fn));
         }
 
+        /**
+         * This methods creates a caching version of this BiFunction, caching is implemented via the Cacheable wrapper,
+         * that can be used to wrap any concrete cache implementation
+         * 
+         * E.g. to use a Guava cache for memoization
+         * 
+         * <pre>
+         * {@code 
+         * 
+         * Cache<Object, Integer> cache = CacheBuilder.newBuilder()
+                   .maximumSize(1000)
+                   .expireAfterWrite(10, TimeUnit.MINUTES)
+                   .build();
+
+                   called=0;
+            BiFunction<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
+                                                                    .name("myFunction")
+                                                                     .memoize((key,f)->cache.get(key,()->f.apply(key)));
+        
+            fn.apply(10,1);
+            fn.apply(10,1);
+            fn.apply(10,1);
+        
+            assertThat(called,equalTo(1));
+         * 
+         * 
+         * 
+         * }</pre>
+         * 
+         * 
+         * @param cache Cache implementation wrapper
+         * 
+         * @return A caching (memoizing) version of this BiFunction, outputs for all inputs will be cached (unless ejected from the cache)
+         */
         public FluentBiFunction<T1, T2, R> memoize(final Cacheable<R> cache) {
             return withFn(Memoize.memoizeBiFunction(fn));
         }
-
+        /**
+         * @param name To give this BiFunction
+         * @return A BiFunction with a name (useful for logging purposes)
+         */
         public FluentBiFunction<T1, T2, R> name(final String name) {
             return this.withName(name);
         }
@@ -966,7 +1082,13 @@ public class FluentFunctions {
             return ")";
 
         }
-
+        /**
+         *  A BiFunction that logs it's success or error states to the provided Consumers
+         * 
+         * @param logger Success logger
+         * @param error Failure logger
+         * @return BiFunction that logs it's state
+         */
         public FluentBiFunction<T1, T2, R> log(final Consumer<String> logger, final Consumer<Throwable> error) {
             return FluentFunctions.of((t1, t2) -> {
                 try {
