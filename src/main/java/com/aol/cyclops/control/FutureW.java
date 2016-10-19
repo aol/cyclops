@@ -63,6 +63,13 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
                            CompletableFuture.completedFuture(null));
     }
 
+    /**
+     * Construct a FutureW asyncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
+     * 
+     * @param pub Publisher to extract value from
+     * @param ex Executor to extract value on
+     * @return FutureW populated asyncrhonously from Publisher
+     */
     public static <T> FutureW<T> fromPublisher(final Publisher<T> pub, final Executor ex) {
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
@@ -75,6 +82,12 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
                       .map(e -> e.get());
     }
 
+    /**
+     * Construct a FutureW syncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
+     * 
+     * @param pub Publisher to extract value from
+     * @return FutureW populated syncrhonously from Publisher
+     */
     public static <T> FutureW<T> fromPublisher(final Publisher<T> pub) {
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
