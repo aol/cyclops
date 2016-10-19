@@ -1,10 +1,14 @@
 package com.aol.cyclops.control;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -150,6 +154,14 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
      * trigger the population of the FutureW. The provided ScheduledExecutorService provided the thread on which the 
      * Supplier will be executed.
      * 
+     * <pre>
+     * {@code 
+     *  
+     *    FutureW<String> future = FutureW.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello")
+     * 
+     * }</pre>
+     * 
+     * 
      * @param cron Cron expression in Quartz format
      * @param ex ScheduledExecutorService used to execute the provided Supplier
      * @param t The Supplier to execute to populate the FutureW
@@ -173,6 +185,15 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return wrapped;
     }
 
+    /**
+     * Schedule the population of a FutureW from the provided Supplier after the specified delay. The provided ScheduledExecutorService provided the thread on which the 
+     * Supplier will be executed.
+     * 
+     * @param delay Delay after which the FutureW should be populated
+     * @param ex ScheduledExecutorService used to execute the provided Supplier
+     * @param t he Supplier to execute to populate the FutureW
+     * @return FutureW populated after the specified delay
+     */
     public static <T> FutureW<T> schedule(final long delay, final ScheduledExecutorService ex, final Supplier<T> t) {
         final CompletableFuture<T> future = new CompletableFuture<>();
         final FutureW<T> wrapped = FutureW.of(future);
@@ -192,11 +213,41 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return wrapped;
     }
 
+    /**
+     * Sequence operation that convert a Collection of FutureWs to a FutureW with a List
+     * 
+     * <pre>
+     * {@code 
+     *   FutureW<ListX<Integer>> futures =FutureW.sequence(ListX.of(FutureW.ofResult(10),FutureW.ofResult(1)));
+         //ListX.of(10,1)
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fts Collection of Futures to Sequence into a Future with a List
+     * @return Future with a List
+     */
     public static <T> FutureW<ListX<T>> sequence(final CollectionX<FutureW<T>> fts) {
         return sequence(fts.stream()).map(s -> s.toListX());
 
     }
 
+    /**
+     * Sequence operation that convert a Stream of FutureWs to a FutureW with a Stream
+     *
+     * <pre>
+     * {@code 
+     *   FutureW<Integer> just = FutureW.ofResult(10);
+     *   FutureW<ReactiveSeq<Integer>> futures =FutureW.sequence(Stream.of(just,FutureW.ofResult(1)));
+         //ListX.of(10,1)
+     * 
+     * }
+     * </pre>
+     *
+     * @param fts Strean of Futures to Sequence into a Future with a Stream
+     * @return Future with a Stream
+     */
     public static <T> FutureW<ReactiveSeq<T>> sequence(final Stream<FutureW<T>> fts) {
         return AnyM.sequence(fts.map(f -> AnyM.fromFutureW(f)), () -> AnyM.fromFutureW(FutureW.ofResult(Stream.<T> empty())))
                    .map(s -> ReactiveSeq.fromStream(s))
