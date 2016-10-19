@@ -1102,7 +1102,14 @@ public class FluentFunctions {
                 }
             });
         }
-
+        /**
+         * Visit the result of this BiFunction once it has been executed, if the Function executes successfully the
+         * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
+         * 
+         * @param eventConsumer Consumer to recieve result on successful execution
+         * @param errorConsumer Consumer to recieve error on failure
+         * @return BiFunction with event vistor attached.
+         */
         public FluentBiFunction<T1, T2, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
             return FluentFunctions.of((t1, t2) -> {
@@ -1118,11 +1125,19 @@ public class FluentFunctions {
 
             });
         }
-
+        /**
+         * @return Function that logs it's result or error to the console
+         */
         public FluentBiFunction<T1, T2, R> println() {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
         }
-
+        /**
+         * A BiFunction that can recover from the specified exception types, using the provided recovery Function
+         * 
+         * @param type Recoverable exception types
+         * @param onError Recovery BiFunction
+         * @return BiFunction capable of error recovery
+         */
         public <X extends Throwable> FluentBiFunction<T1, T2, R> recover(final Class<X> type, final BiFunction<T1, T2, R> onError) {
             return FluentFunctions.of((t1, t2) -> {
                 try {
