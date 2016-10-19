@@ -76,6 +76,13 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return sub.toFutureWAsync(ex);
     }
 
+    /**
+     * Construct a FutureW asyncrhonously that contains a single value extracted from the supplied Iterable
+     * 
+     * @param iterable Iterable to generate a FutureW from
+     * @param ex  Executor to extract value on
+     * @return FutureW populated asyncrhonously from Iterable
+     */
     public static <T> FutureW<T> fromIterable(final Iterable<T> iterable, final Executor ex) {
 
         return FutureW.ofSupplier(() -> Eval.fromIterable(iterable))
@@ -94,21 +101,60 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return sub.toFutureW();
     }
 
+    /**
+     * Construct a FutureW syncrhonously that contains a single value extracted from the supplied Iterable
+     * 
+     * @param iterable Iterable to extract value from
+     * @return FutureW populated syncrhonously from Iterable
+     */
     public static <T> FutureW<T> fromIterable(final Iterable<T> iterable) {
         iterable.iterator();
         return FutureW.ofResult(Eval.fromIterable(iterable))
                       .map(e -> e.get());
     }
 
+    /**
+     * Create a FutureW instance from the supplied CompletableFuture
+     * 
+     * @param f CompletableFuture to wrap as a FutureW
+     * @return FutureW wrapping the supplied CompletableFuture
+     */
     public static <T> FutureW<T> of(final CompletableFuture<T> f) {
         return new FutureW<>(
                              f);
     }
 
+    /**
+     * Construct a FutureW asyncrhonously from the Supplied Try
+     * 
+     * @param value Try to populate Future from
+     * @param ex Executor to execute 
+     * @return FutureW populated with either the value or error in provided Try
+     */
+    @Deprecated
     public static <T, X extends Throwable> FutureW<T> fromTry(final Try<T, X> value, final Executor ex) {
         return FutureW.ofSupplier(value, ex);
     }
+    /**
+     * Construct a FutureW syncrhonously from the Supplied Try
+     * 
+     * @param value Try to populate Future from
+     * @return FutureW populated with either the value or error in provided Try
+     */
+    public static <T, X extends Throwable> FutureW<T> fromTry(final Try<T, X> value) {
+        return FutureW.ofSupplier(value);
+    }
 
+    /**
+     * Schedule the population of a FutureW from the provided Supplier, the provided Cron (Quartz format) expression will be used to
+     * trigger the population of the FutureW. The provided ScheduledExecutorService provided the thread on which the 
+     * Supplier will be executed.
+     * 
+     * @param cron Cron expression in Quartz format
+     * @param ex ScheduledExecutorService used to execute the provided Supplier
+     * @param t The Supplier to execute to populate the FutureW
+     * @return FutureW populated on a Cron based Schedule
+     */
     public static <T> FutureW<T> schedule(final String cron, final ScheduledExecutorService ex, final Supplier<T> t) {
         final CompletableFuture<T> future = new CompletableFuture<>();
         final FutureW<T> wrapped = FutureW.of(future);
