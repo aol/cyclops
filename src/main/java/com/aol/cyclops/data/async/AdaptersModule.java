@@ -1,5 +1,7 @@
 package com.aol.cyclops.data.async;
 
+
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -322,14 +324,16 @@ public interface AdaptersModule {
             }
 
         }
-/**
+
         @Override
         public Spliterator<T> trySplit() {
-
             return new ClosingSpliterator(
                                           estimate >>>= 1, s, subscription, queue);
+          
         }
-        **/
+        
+        
 
     }
+   
 }
