@@ -294,6 +294,11 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
         return Try.withCatch(() -> get(), classes);
     }
 
+    
+    /**
+     * Return an Ior that can be this object or a Ior.primary or Ior.secondary
+     * @return new Ior 
+     */
     default Ior<?, T> toIor() {
         if (this instanceof Ior)
             return (Ior) this;
@@ -301,71 +306,139 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
         return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(new NoSuchElementException());
     }
 
+    /**
+     * Returns a enabled FeatureToggle in case there is an Optional in this object, otherwise returns a disabled FeatureToogle
+     * @return new FeatureToogle
+     */
     default FeatureToggle<T> toFeatureToggle() {
         final Optional<T> opt = toOptional();
         return opt.isPresent() ? FeatureToggle.enable(opt.get()) : FeatureToggle.disable(null);
     }
 
+    /**
+     * Return the value, evaluated right now.
+     * @return value evaluated from this object.
+     */
     default Eval<T> toEvalNow() {
         return Eval.now(get());
     }
 
+    /**
+     * Return the value, evaluated later.
+     * @return value evaluated from this object.
+     */
     default Eval<T> toEvalLater() {
         return Eval.later(this);
     }
 
+    /**
+     * Return the value of this object, evaluated always.
+     * @return value evaluated from this object.
+     */
     default Eval<T> toEvalAlways() {
         return Eval.always(this);
     }
 
+    /**
+     * Returns a function result or a supplier result. The first one if the function isn't null and the second one if it is.
+     * @return new Maybe with the result of a function or supplier. 
+     */
     default Maybe<T> toMaybe() {
         return visit(p -> Maybe.ofNullable(p), () -> Maybe.none());
     }
 
+    /**
+     * Returns a ListX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return new ListX from current object
+     */
     default ListX<T> toListX() {
         return ListX.fromIterable(toList());
     }
 
+    /**
+     * Returns a SetX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return new SetX from current object
+     */
     default SetX<T> toSetX() {
         return SetX.fromIterable(toList());
     }
 
+    /**
+     * Returns a SortedSetX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return  new SortedSetX from current object
+     */
     default SortedSetX<T> toSortedSetX() {
         return SortedSetX.fromIterable(toList());
     }
 
+    /**
+     * REturns a QueueX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return new QueueX from current object
+     */
     default QueueX<T> toQueueX() {
         return QueueX.fromIterable(toList());
     }
 
+    /**
+     * Returns a DequeX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return new DequeX from current object
+     */
     default DequeX<T> toDequeX() {
         return DequeX.fromIterable(toList());
     }
 
+    /** 
+     * Returns a PStackX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return new PStackX from current object.
+     */
     default PStackX<T> toPStackX() {
         return PStackX.fromCollection(toList());
     }
 
+    /**
+     * Returns a PVectosX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return new PVectorX from current object
+     */
     default PVectorX<T> toPVectorX() {
         return PVectorX.fromCollection(toList());
     }
 
+    /**
+     * Returns a PQueueX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return new PQueueX from current object
+     */
     default PQueueX<T> toPQueueX() {
         return PQueueX.fromCollection(toList());
     }
 
+    /**
+     * Returns a PSetX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return new PSetX from current object
+     */
     default PSetX<T> toPSetX() {
         return PSetX.fromCollection(toList());
     }
 
+    /**
+     * Returns a POrderedSetX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return new POrderedSetX from current object
+     */
     default POrderedSetX<T> toPOrderedSetX() {
         return POrderedSetX.fromCollection(toList());
     }
 
+    /**
+     * Returns a PBagX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
+     * @return new PBagX<T> from current object
+     */
     default PBagX<T> toPBagX() {
         return PBagX.fromCollection(toList());
     }
 
+    /**
+     * Returns the class name and the name of the subclass, if there is any value, the value is showed between square brackets.
+     * @return String
+     */
     default String mkString() {
 
         if (isPresent())
@@ -373,18 +446,36 @@ public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publ
         return getClass().getSimpleName() + "[]";
     }
 
+    /**
+     * Creates a LazyFutureStream with the input LazyReact the data-flow initialized with an array of one-off-suppliers.
+     * @param reactor
+     * @return  LazyFutureStream<T> from input LazyReact
+     */
     default LazyFutureStream<T> toFutureStream(final LazyReact reactor) {
         return reactor.ofAsync(this);
     }
 
+    /**
+     * Returns a new LazyFutureStream with the data-flow open with an array of one-off-suppliers.
+     * @return new LazyFutureStream<T> from current object
+     */
     default LazyFutureStream<T> toFutureStream() {
         return new LazyReact().ofAsync(this);
     }
 
+    /**
+     * Returns the input SimpleReact with the data-flow initialized with an array of one-off-suppliers.
+     * @param reactor
+     * @return new SimpleReactStream<T> from SimpleReact
+     */
     default SimpleReactStream<T> toSimpleReact(final SimpleReact reactor) {
         return reactor.ofAsync(this);
     }
 
+    /**
+     * Returns a SimpleReactStream with the dataflow open with an array of one-off-suppliers
+     * @return new SimpleReactStream from current object
+     */
     default SimpleReactStream<T> toSimpleReact() {
         return new SimpleReact().ofAsync(this);
     }
