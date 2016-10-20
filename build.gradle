@@ -127,7 +127,7 @@ test {
 
 javadoc {
     configure((CoreJavadocOptions) getOptions()) {
-        addStringOption('sourcepath', "~/github/jool-0.9.11-sources.jar")
+        addStringOption('sourcepath', "/Sources/jool-0.9.11-sources.jar")
     }
 }
 modifyPom {
