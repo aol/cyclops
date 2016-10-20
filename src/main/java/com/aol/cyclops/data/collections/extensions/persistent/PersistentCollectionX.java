@@ -654,7 +654,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
+     * @see com.aol.cyclops.lambda.monads.FiniteTraversable#permutations()
      */
     @Override
     default PersistentCollectionX<ReactiveSeq<T>> permutations() {
@@ -664,7 +664,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
+     * @see com.aol.cyclops.lambda.monads.FiniteTraversable#combinations(int)
      */
     @Override
     default PersistentCollectionX<ReactiveSeq<T>> combinations(final int size) {
@@ -673,7 +673,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#combinations()
+     * @see com.aol.cyclops.lambda.monads.FiniteTraversable#combinations()
      */
     @Override
     default PersistentCollectionX<ReactiveSeq<T>> combinations() {

@@ -39,7 +39,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
-import com.aol.cyclops.types.ExtendedTraversable;
+import com.aol.cyclops.types.FiniteTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.Sequential;
@@ -57,7 +57,7 @@ import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.val;
 
-public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSequence<T>, ExtendedTraversable<T>, Sequential<T>,
+public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSequence<T>, FiniteTraversable<T>, Sequential<T>,
         CyclopsCollectable<T>, FilterableFunctor<T>, ZippingApplicativable<T>, ReactiveStreamsTerminalOperations<T>, Publisher<T> {
 
     /**
@@ -137,7 +137,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
     @Override
     default AnyMSeq<T> limit(final long num) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.limit(num));
+        return AnyM.ofSeq(FiniteTraversable.super.limit(num));
     }
 
     /* (non-Javadoc)
@@ -146,7 +146,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
     @Override
     default AnyMSeq<T> limitWhile(final Predicate<? super T> p) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.limitWhile(p));
+        return AnyM.ofSeq(FiniteTraversable.super.limitWhile(p));
     }
 
     /* (non-Javadoc)
@@ -155,7 +155,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
     @Override
     default AnyMSeq<T> limitUntil(final Predicate<? super T> p) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.limitUntil(p));
+        return AnyM.ofSeq(FiniteTraversable.super.limitUntil(p));
     }
 
     /* (non-Javadoc)
@@ -164,7 +164,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
     @Override
     default AnyMSeq<T> limitLast(final int num) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.limitLast(num));
+        return AnyM.ofSeq(FiniteTraversable.super.limitLast(num));
     }
 
     /* (non-Javadoc)
@@ -172,7 +172,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      */
     @Override
     default AnyMSeq<T> onEmpty(final T value) {
-        return AnyM.ofSeq(ExtendedTraversable.super.onEmpty(value));
+        return AnyM.ofSeq(FiniteTraversable.super.onEmpty(value));
     }
 
     /* (non-Javadoc)
@@ -181,7 +181,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
     @Override
     default AnyMSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.onEmptyGet(supplier));
+        return AnyM.ofSeq(FiniteTraversable.super.onEmptyGet(supplier));
     }
 
     /* (non-Javadoc)
@@ -190,7 +190,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
     @Override
     default <X extends Throwable> AnyMSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.onEmptyThrow(supplier));
+        return AnyM.ofSeq(FiniteTraversable.super.onEmptyThrow(supplier));
     }
 
     /* (non-Javadoc)
@@ -723,30 +723,30 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.ExtendedTraversable#permutations()
+     * @see com.aol.cyclops.types.FiniteTraversable#permutations()
      */
     @Override
     default AnyMSeq<ReactiveSeq<T>> permutations() {
 
-        return AnyM.fromIterable(ExtendedTraversable.super.permutations());
+        return AnyM.fromIterable(FiniteTraversable.super.permutations());
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.ExtendedTraversable#combinations(int)
+     * @see com.aol.cyclops.types.FiniteTraversable#combinations(int)
      */
     @Override
     default AnyMSeq<ReactiveSeq<T>> combinations(final int size) {
 
-        return AnyM.fromIterable(ExtendedTraversable.super.combinations(size));
+        return AnyM.fromIterable(FiniteTraversable.super.combinations(size));
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.ExtendedTraversable#combinations()
+     * @see com.aol.cyclops.types.FiniteTraversable#combinations()
      */
     @Override
     default AnyMSeq<ReactiveSeq<T>> combinations() {
 
-        return AnyM.fromIterable(ExtendedTraversable.super.combinations());
+        return AnyM.fromIterable(FiniteTraversable.super.combinations());
     }
 
     /* (non-Javadoc)

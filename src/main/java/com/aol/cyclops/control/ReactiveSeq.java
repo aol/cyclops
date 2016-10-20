@@ -53,7 +53,7 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
-import com.aol.cyclops.types.ExtendedTraversable;
+import com.aol.cyclops.types.FiniteTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFoldable;
@@ -78,7 +78,7 @@ import com.aol.cyclops.util.ExceptionSoftener;
 import lombok.val;
 
 public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
-        FilterableFunctor<T>, ExtendedTraversable<T>, IterableFoldable<T>, CyclopsCollectable<T>, JoolWindowing<T>, Seq<T>, Iterable<T>, Publisher<T>,
+        FilterableFunctor<T>, FiniteTraversable<T>, IterableFoldable<T>, CyclopsCollectable<T>, JoolWindowing<T>, Seq<T>, Iterable<T>, Publisher<T>,
         ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {
 
     /* (non-Javadoc)
@@ -921,7 +921,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
     @Override
     default ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.takeWhile(p);
+        return (ReactiveSeq<T>) FiniteTraversable.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
@@ -946,7 +946,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
     @Override
     default ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.dropWhile(p);
+        return (ReactiveSeq<T>) FiniteTraversable.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
@@ -955,7 +955,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
     @Override
     default ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.takeUntil(p);
+        return (ReactiveSeq<T>) FiniteTraversable.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -964,7 +964,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
     @Override
     default ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.dropUntil(p);
+        return (ReactiveSeq<T>) FiniteTraversable.super.dropUntil(p);
     }
 
     /* (non-Javadoc)
@@ -973,7 +973,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
     @Override
     default ReactiveSeq<T> dropRight(final int num) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.dropRight(num);
+        return (ReactiveSeq<T>) FiniteTraversable.super.dropRight(num);
     }
 
     /* (non-Javadoc)
@@ -982,7 +982,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
     @Override
     default ReactiveSeq<T> takeRight(final int num) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.takeRight(num);
+        return (ReactiveSeq<T>) FiniteTraversable.super.takeRight(num);
     }
 
     /**
