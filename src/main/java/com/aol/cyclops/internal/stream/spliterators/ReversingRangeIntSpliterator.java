@@ -17,13 +17,14 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     @Setter
     private boolean reverse;
 
-    public ReversingRangeIntSpliterator(int min, int max, boolean reverse) {
+    public ReversingRangeIntSpliterator(final int min, final int max, final boolean reverse) {
         this.min = Math.min(min, max) - 1;
         this.max = Math.max(min, max);
         this.reverse = this.max >= this.min ? reverse : !reverse;
-        this.index = Math.min(min, max);
+        index = Math.min(min, max);
     }
 
+    @Override
     public ReversableSpliterator invert() {
         setReverse(!isReverse());
         index = max - 1;
@@ -31,7 +32,7 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     }
 
     @Override
-    public boolean tryAdvance(IntConsumer consumer) {
+    public boolean tryAdvance(final IntConsumer consumer) {
         Objects.requireNonNull(consumer);
         if (!reverse) {
             if (index < max && index > min) {

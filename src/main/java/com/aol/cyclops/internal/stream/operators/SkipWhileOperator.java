@@ -13,8 +13,8 @@ public class SkipWhileOperator<U> {
 
     private final Stream<U> stream;
 
-    public Stream<U> skipWhile(Predicate<? super U> predicate) {
-        Iterator<U> it = stream.iterator();
+    public Stream<U> skipWhile(final Predicate<? super U> predicate) {
+        final Iterator<U> it = stream.iterator();
         return StreamUtils.stream(new Iterator<U>() {
             U next;
             boolean nextSet = false;

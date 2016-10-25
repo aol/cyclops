@@ -61,6 +61,7 @@ public interface FluentSequenceX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#minusAll(java.util.Collection)
      */
+    @Override
     public FluentSequenceX<T> minusAll(Collection<?> list);
 
     /**

@@ -37,7 +37,7 @@ public class ExecutionPipeline {
         return false;
     }
 
-    public <T> ExecutionPipeline peek(Consumer<? super T> c) {
+    public <T> ExecutionPipeline peek(final Consumer<? super T> c) {
         return this.<T, Object> thenApply(i -> {
             c.accept(i);
             return i;
@@ -45,14 +45,14 @@ public class ExecutionPipeline {
 
     }
 
-    public <T, R> ExecutionPipeline thenApplyAsync(Function<? super T, ? extends R> fn, Executor exec) {
+    public <T, R> ExecutionPipeline thenApplyAsync(final Function<? super T, ? extends R> fn, final Executor exec) {
 
         return new ExecutionPipeline(
                                      addFn(fn), addExec(exec), firstRecover, onFail);
 
     }
 
-    public <T, R> ExecutionPipeline thenComposeAsync(Function<Object, CompletableFuture<?>> fn, Executor exec) {
+    public <T, R> ExecutionPipeline thenComposeAsync(final Function<Object, CompletableFuture<?>> fn, final Executor exec) {
 
         return new ExecutionPipeline(
                                      addFn(t -> fn.apply(t)
@@ -60,26 +60,26 @@ public class ExecutionPipeline {
                                      addExec(exec), firstRecover, onFail);
     }
 
-    public <T, R> ExecutionPipeline thenCompose(Function<? super T, CompletableFuture<? extends R>> fn) {
-        Function<T, R> unpacked = t -> fn.apply(t)
-                                         .join();
+    public <T, R> ExecutionPipeline thenCompose(final Function<? super T, CompletableFuture<? extends R>> fn) {
+        final Function<T, R> unpacked = t -> fn.apply(t)
+                                               .join();
         return new ExecutionPipeline(
                                      swapFn(unpacked), execList.size() == 0 ? execList.plus(null) : execList, firstRecover, onFail);
 
     }
 
-    public <T, R> ExecutionPipeline thenApply(Function<T, R> fn) {
+    public <T, R> ExecutionPipeline thenApply(final Function<T, R> fn) {
         return new ExecutionPipeline(
                                      swapComposeFn(fn), execList.size() == 0 ? execList.plus(null) : execList, firstRecover, onFail);
     }
 
-    public <X extends Throwable, T> ExecutionPipeline exceptionally(Function<? super X, ? extends T> fn) {
+    public <X extends Throwable, T> ExecutionPipeline exceptionally(final Function<? super X, ? extends T> fn) {
         if (functionList.size() > 0) {
-            Function before = functionList.get(functionList.size() - 1);
-            Function except = t -> {
+            final Function before = functionList.get(functionList.size() - 1);
+            final Function except = t -> {
                 try {
                     return before.apply(t);
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     return fn.apply((X) e);
                 }
             };
@@ -93,16 +93,16 @@ public class ExecutionPipeline {
 
     }
 
-    public <X extends Throwable, T> ExecutionPipeline whenComplete(BiConsumer<? super T, ? super X> fn) {
+    public <X extends Throwable, T> ExecutionPipeline whenComplete(final BiConsumer<? super T, ? super X> fn) {
 
-        Function before = functionList.get(functionList.size() - 1);
+        final Function before = functionList.get(functionList.size() - 1);
 
-        Function except = t -> {
+        final Function except = t -> {
             T res = null;
             X ex = null;
             try {
                 res = (T) before.apply(t);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 ex = (X) e;
             }
             fn.accept(res, ex);
@@ -118,54 +118,54 @@ public class ExecutionPipeline {
     public FinalPipeline toFinalPipeline() {
 
         return new FinalPipeline(
-                                 functionList.toArray(new Function[0]), execList.toArray(new Executor[0]), this.firstRecover.toArray(new Function[0]),
+                                 functionList.toArray(new Function[0]), execList.toArray(new Executor[0]), firstRecover.toArray(new Function[0]),
                                  onFail);
     }
 
     public static ExecutionPipeline empty() {
-        ExecutionPipeline pipeline = new ExecutionPipeline();
+        final ExecutionPipeline pipeline = new ExecutionPipeline();
 
         return pipeline;
     }
 
-    private PStack<Executor> addExec(Executor exec) {
+    private PStack<Executor> addExec(final Executor exec) {
         if (execList.size() == 0)
             return execList.plus(exec);
         return execList.plus(execList.size(), exec);
     }
 
-    private PStack<Function> addFirstRecovery(Function fn) {
+    private PStack<Function> addFirstRecovery(final Function fn) {
         if (firstRecover.size() == 0)
             return firstRecover.plus(fn);
 
         return firstRecover.plus(firstRecover.size(), fn);
     }
 
-    private PStack<Function> addFn(Function fn) {
+    private PStack<Function> addFn(final Function fn) {
         if (functionList.size() == 0)
             return functionList.plus(fn);
 
         return functionList.plus(functionList.size(), fn);
     }
 
-    private PStack<Function> swapFn(Function fn) {
+    private PStack<Function> swapFn(final Function fn) {
         if (functionList.size() == 0)
             return functionList.plus(fn);
-        Function before = functionList.get(functionList.size() - 1);
-        PStack<Function> removed = functionList.minus(functionList.size() - 1);
+        functionList.get(functionList.size() - 1);
+        final PStack<Function> removed = functionList.minus(functionList.size() - 1);
         return removed.plus(removed.size(), fn);
 
     }
 
-    private PStack<Function> swapComposeFn(Function fn) {
+    private PStack<Function> swapComposeFn(final Function fn) {
         if (functionList.size() == 0) {
-            if (this.firstRecover.size() == 0) {
+            if (firstRecover.size() == 0) {
                 return functionList.plus(fn);
             } else {
-                Function except = t -> {
+                final Function except = t -> {
                     try {
                         return fn.apply(t);
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         return composeFirstRecovery().apply(e);
                     }
                 };
@@ -173,18 +173,18 @@ public class ExecutionPipeline {
             }
 
         }
-        Function before = functionList.get(functionList.size() - 1);
-        PStack<Function> removed = functionList.minus(functionList.size() - 1);
+        final Function before = functionList.get(functionList.size() - 1);
+        final PStack<Function> removed = functionList.minus(functionList.size() - 1);
         return removed.plus(removed.size(), fn.compose(before));
     }
 
     private Function composeFirstRecovery() {
         return firstRecover.stream()
                            .reduce((fn1, fn2) -> {
-                               Function except = t -> {
+                               final Function except = t -> {
                                    try {
                                        return fn1.apply(t);
-                                   } catch (Throwable e) {
+                                   } catch (final Throwable e) {
                                        return fn2.apply(e);
                                    }
                                };
@@ -196,10 +196,10 @@ public class ExecutionPipeline {
     }
 
     int functionListSize() {
-        return this.functionList.size();
+        return functionList.size();
     }
 
-    public ExecutionPipeline onFail(Consumer<Throwable> onFail) {
-        return this.withOnFail(onFail);
+    public ExecutionPipeline onFail(final Consumer<Throwable> onFail) {
+        return withOnFail(onFail);
     }
 }

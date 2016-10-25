@@ -14,8 +14,8 @@ public class WindowStatefullyWhileOperator<T> {
     private static final Object UNSET = new Object();
     private final Stream<T> stream;
 
-    public Stream<ListX<T>> windowStatefullyWhile(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        Iterator<T> it = stream.iterator();
+    public Stream<ListX<T>> windowStatefullyWhile(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+        final Iterator<T> it = stream.iterator();
         return StreamUtils.stream(new Iterator<ListX<T>>() {
             ListX<T> last = ListX.empty();
             T value = (T) UNSET;
@@ -28,7 +28,7 @@ public class WindowStatefullyWhileOperator<T> {
             @Override
             public ListX<T> next() {
 
-                ListX<T> list = ListX.of();
+                final ListX<T> list = ListX.of();
                 if (value != UNSET)
                     list.add(value);
                 T value;

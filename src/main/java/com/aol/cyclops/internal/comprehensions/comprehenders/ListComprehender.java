@@ -16,7 +16,7 @@ import com.aol.cyclops.types.extensability.Comprehender;
 public class ListComprehender implements Comprehender<List> {
     @Override
     public Object resolveForCrossTypeFlatMap(Comprehender comp, List apply) {
-        List list = (List) apply.stream().collect(Collectors.toCollection(MaterializedList::new));
+        final List list = (List) apply.stream().collect(Collectors.toCollection(MaterializedList::new));
         return list.size() > 0 ? comp.of(list) : comp.empty();
     }
 
@@ -28,7 +28,6 @@ public class ListComprehender implements Comprehender<List> {
     @Override
     public Object filter(List t, Predicate p) {
         return ListX.fromIterable(t).filter(p);
-
     }
 
     @Override
@@ -45,11 +44,10 @@ public class ListComprehender implements Comprehender<List> {
     @Override
     public Object flatMap(List t, Function fn) {
         return ListX.fromIterable((Iterable) t).flatMap(fn);
-
     }
 
     @Override
-    public boolean instanceOfT(Object apply) {
+    public boolean instanceOfT(final Object apply) {
         return apply instanceof List;
     }
 
@@ -59,7 +57,7 @@ public class ListComprehender implements Comprehender<List> {
     }
 
     @Override
-    public List of(Object o) {
+    public List of(final Object o) {
         return Arrays.asList(o);
     }
 
@@ -73,17 +71,15 @@ public class ListComprehender implements Comprehender<List> {
     }
 
     @Override
-    public List unwrap(Object o) {
+    public List unwrap(final Object o) {
         if (o instanceof List)
             return (List) o;
         else
             return (List) ((Stream) o).collect(Collectors.toList());
     }
 
-    static List unwrapOtherMonadTypesLC(Comprehender comp, Object apply) {
-
+    static List unwrapOtherMonadTypesLC(final Comprehender comp, final Object apply) {
         return Helper.<List> unwrapOtherMonadTypesLC(comp, apply, ListX::fromIterable);
-
     }
 
 }

@@ -18,8 +18,8 @@ public class SimpleReactFailedStageException extends RuntimeException {
         return (T) value;
     }
 
-    public static MXor<Throwable, SimpleReactFailedStageException> matchable(Throwable t) {
-        Xor<Throwable, SimpleReactFailedStageException> error = (t instanceof SimpleReactFailedStageException)
+    public static MXor<Throwable, SimpleReactFailedStageException> matchable(final Throwable t) {
+        final Xor<Throwable, SimpleReactFailedStageException> error = t instanceof SimpleReactFailedStageException
                 ? Xor.primary((SimpleReactFailedStageException) t) : Xor.secondary(t);
         return () -> error;
     }

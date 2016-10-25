@@ -24,15 +24,15 @@ public class ADTPredicateBuilder<T> {
     public static class InternalADTPredicateBuilder<T> {
         private final ADTPredicateBuilder<T> builder;
 
-        public InternalADTPredicateBuilder(Class<T> type) {
+        public InternalADTPredicateBuilder(final Class<T> type) {
             builder = new ADTPredicateBuilder<T>(
                                                  type);
         }
 
         @SafeVarargs
-        final public <V> Predicate<V> hasWhere(Predicate<V>... values) {
-            ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
-                                                           .map(nextValue -> convertToPredicate(nextValue));
+        final public <V> Predicate<V> hasWhere(final Predicate<V>... values) {
+            final ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
+                                                                 .map(nextValue -> convertToPredicate(nextValue));
 
             return t -> builder.toPredicate()
                                .test(t)
@@ -44,11 +44,11 @@ public class ADTPredicateBuilder<T> {
         }
 
         @SafeVarargs
-        final public <V> Predicate<V> isWhere(Predicate<V>... values) {
-            Predicate p = test -> SeqUtils.EMPTY == test;
-            ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
-                                                           .map(nextValue -> convertToPredicate(nextValue))
-                                                           .concat(p);
+        final public <V> Predicate<V> isWhere(final Predicate<V>... values) {
+            final Predicate p = test -> SeqUtils.EMPTY == test;
+            final ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
+                                                                 .map(nextValue -> convertToPredicate(nextValue))
+                                                                 .concat(p);
             ;
 
             return t -> builder.toPredicate()
@@ -98,9 +98,9 @@ public class ADTPredicateBuilder<T> {
      * @return A single Predicate encompassing supplied rules
      */
     @SafeVarargs
-    final public <V> Predicate<V> hasGuard(V... values) {
-        ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
-                                                       .map(nextValue -> convertToPredicate(nextValue));
+    final public <V> Predicate<V> hasGuard(final V... values) {
+        final ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
+                                                             .map(nextValue -> convertToPredicate(nextValue));
 
         return t -> toPredicate().test(t) && SeqUtils.seq(Extractors.decomposeCoerced()
                                                                     .apply(t))
@@ -110,11 +110,11 @@ public class ADTPredicateBuilder<T> {
     }
 
     @SafeVarargs
-    final public <V> Predicate<V> isGuard(V... values) {
-        Predicate p = test -> SeqUtils.EMPTY == test;
-        ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
-                                                       .map(nextValue -> convertToPredicate(nextValue))
-                                                       .concat(p);
+    final public <V> Predicate<V> isGuard(final V... values) {
+        final Predicate p = test -> SeqUtils.EMPTY == test;
+        final ReactiveSeq<Predicate> predicates = ReactiveSeq.of(values)
+                                                             .map(nextValue -> convertToPredicate(nextValue))
+                                                             .concat(p);
 
         return t -> {
 
@@ -129,11 +129,11 @@ public class ADTPredicateBuilder<T> {
 
     }
 
-    public static <T> Predicate<T> convertToPredicateTyped(Object o) {
+    public static <T> Predicate<T> convertToPredicateTyped(final Object o) {
         return convertToPredicate(o);
     }
 
-    static Predicate convertToPredicate(Object o) {
+    static Predicate convertToPredicate(final Object o) {
         if (o instanceof Predicate)
             return (Predicate) o;
 

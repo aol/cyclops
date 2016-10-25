@@ -10,6 +10,7 @@ import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 public class StreamableComprehender implements Comprehender {
+    @Override
     public Class getTargetClass() {
         return Streamable.class;
     }
@@ -20,29 +21,30 @@ public class StreamableComprehender implements Comprehender {
     }
 
     @Override
-    public Object filter(Object t, Predicate p) {
+    public Object filter(final Object t, final Predicate p) {
         return ((Streamable) t).stream()
                                .filter(p);
     }
 
     @Override
-    public Object map(Object t, Function fn) {
+    public Object map(final Object t, final Function fn) {
         return ((Streamable) t).stream()
                                .map(fn);
     }
 
-    public Object executeflatMap(Object t, Function fn) {
+    @Override
+    public Object executeflatMap(final Object t, final Function fn) {
         return Streamable.fromStream((Stream) flatMap(t, input -> StreamComprehender.unwrapOtherMonadTypes(this, fn.apply(input))));
     }
 
     @Override
-    public Object flatMap(Object t, Function fn) {
+    public Object flatMap(final Object t, final Function fn) {
         return ((Streamable) t).stream()
                                .flatMap(fn);
     }
 
     @Override
-    public boolean instanceOfT(Object apply) {
+    public boolean instanceOfT(final Object apply) {
         return apply instanceof Stream;
     }
 
@@ -52,11 +54,12 @@ public class StreamableComprehender implements Comprehender {
     }
 
     @Override
-    public Stream of(Object o) {
+    public Stream of(final Object o) {
         return Stream.of(o);
     }
 
-    public Stream fromIterator(Iterator it) {
+    @Override
+    public Stream fromIterator(final Iterator it) {
         return StreamUtils.stream(it);
     }
 

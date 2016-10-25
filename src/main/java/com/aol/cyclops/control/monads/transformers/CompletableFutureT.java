@@ -29,24 +29,20 @@ import com.aol.cyclops.types.stream.ToStream;
 /**
  * Monad Transformer for Java  CompletableFutures
  * 
- * CompletableFutureT consists of an AnyM instance that in turns wraps anoter Monad type that contains an CompletableFuture
- * 
- * <pre>
- * {@code
- * CompletableFutureT<AnyM<*SOME_MONAD_TYPE*<CompletableFuture<T>>>>
- * }</pre>
  * CompletableFutureT allows the deeply wrapped CompletableFuture to be manipulating within it's nested /contained context
+
  * @author johnmcclean
  *
- * @param <A>
+ * @param <A> Type of data stored inside the nested CompletableFutures
  */
-public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterable<A>,ToStream<A> {
+public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterable<A>, ToStream<A> {
 
     public <R> CompletableFutureT<R> empty();
 
+    @Override
     MaybeT<A> filter(Predicate<? super A> test);
 
-    default <B> CompletableFutureT<B> bind(Function<? super A, CompletableFutureT<? extends B>> f) {
+    default <B> CompletableFutureT<B> bind(final Function<? super A, CompletableFutureT<? extends B>> f) {
         return of(unwrap().bind(opt -> {
             return f.apply(opt.join())
                     .unwrap()
@@ -61,7 +57,7 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
     *            AnyM that contains a monad wrapping an Maybe
     * @return MaybeT
     */
-    public static <A> CompletableFutureT<A> of(AnyM<CompletableFuture<A>> monads) {
+    public static <A> CompletableFutureT<A> of(final AnyM<CompletableFuture<A>> monads) {
 
         return Matchables.anyM(monads)
                          .visit(v -> CompletableFutureTValue.of(v), s -> CompletableFutureTSeq.of(s));
@@ -87,6 +83,7 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
      * @param peek  Consumer to accept current value of CompletableFuture
      * @return CompletableFutureT with peek call
      */
+    @Override
     public CompletableFutureT<A> peek(Consumer<? super A> peek);
 
     /**
@@ -105,6 +102,7 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
      * @param f Mapping function for the wrapped CompletableFuture
      * @return CompletableFutureT that applies the map function to the wrapped CompletableFuture
      */
+    @Override
     public <B> CompletableFutureT<B> map(Function<? super A, ? extends B> f);
 
     public <B> CompletableFutureT<B> flatMap(Function<? super A, ? extends MonadicValue<? extends B>> f);
@@ -138,7 +136,7 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
      * @param fn Function to enhance with functionality from CompletableFuture and another monad type
      * @return Function that accepts and returns an CompletableFutureT
      */
-    public static <U, R> Function<CompletableFutureT<U>, CompletableFutureT<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<CompletableFutureT<U>, CompletableFutureT<R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -173,47 +171,47 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
      * @return Function that accepts and returns an CompletableFutureT
      */
     public static <U1, U2, R> BiFunction<CompletableFutureT<U1>, CompletableFutureT<U2>, CompletableFutureT<R>> lift2(
-            BiFunction<? super U1, ? super U2, ? extends R> fn) {
+            final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
-    public static <A> CompletableFutureT<A> fromAnyM(AnyM<A> anyM) {
+    public static <A> CompletableFutureT<A> fromAnyM(final AnyM<A> anyM) {
         return of(anyM.map(CompletableFuture::completedFuture));
     }
 
-    public static <A> CompletableFutureTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+    public static <A> CompletableFutureTValue<A> fromAnyMValue(final AnyMValue<A> anyM) {
         return CompletableFutureTValue.fromAnyM(anyM);
     }
 
-    public static <A> CompletableFutureTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+    public static <A> CompletableFutureTSeq<A> fromAnyMSeq(final AnyMSeq<A> anyM) {
         return CompletableFutureTSeq.fromAnyM(anyM);
     }
 
-    public static <A> CompletableFutureTSeq<A> fromIterable(Iterable<CompletableFuture<A>> iterableOfCompletableFutures) {
+    public static <A> CompletableFutureTSeq<A> fromIterable(final Iterable<CompletableFuture<A>> iterableOfCompletableFutures) {
         return CompletableFutureTSeq.of(AnyM.fromIterable(iterableOfCompletableFutures));
     }
 
-    public static <A> CompletableFutureTSeq<A> fromStream(Stream<CompletableFuture<A>> streamOfCompletableFutures) {
+    public static <A> CompletableFutureTSeq<A> fromStream(final Stream<CompletableFuture<A>> streamOfCompletableFutures) {
         return CompletableFutureTSeq.of(AnyM.fromStream(streamOfCompletableFutures));
     }
 
-    public static <A> CompletableFutureTSeq<A> fromPublisher(Publisher<CompletableFuture<A>> publisherOfCompletableFutures) {
+    public static <A> CompletableFutureTSeq<A> fromPublisher(final Publisher<CompletableFuture<A>> publisherOfCompletableFutures) {
         return CompletableFutureTSeq.of(AnyM.fromPublisher(publisherOfCompletableFutures));
     }
 
-    public static <A, V extends MonadicValue<CompletableFuture<A>>> CompletableFutureTValue<A> fromValue(V monadicValue) {
+    public static <A, V extends MonadicValue<CompletableFuture<A>>> CompletableFutureTValue<A> fromValue(final V monadicValue) {
         return CompletableFutureTValue.fromValue(monadicValue);
     }
 
-    public static <A> CompletableFutureTValue<A> fromOptional(Optional<CompletableFuture<A>> optional) {
+    public static <A> CompletableFutureTValue<A> fromOptional(final Optional<CompletableFuture<A>> optional) {
         return CompletableFutureTValue.of(AnyM.fromOptional(optional));
     }
 
-    public static <A> CompletableFutureTValue<A> fromFuture(CompletableFuture<CompletableFuture<A>> future) {
+    public static <A> CompletableFutureTValue<A> fromFuture(final CompletableFuture<CompletableFuture<A>> future) {
         return CompletableFutureTValue.of(AnyM.fromCompletableFuture(future));
     }
 
-    public static <A> CompletableFutureTValue<A> fromIterableValue(Iterable<CompletableFuture<A>> iterableOfCompletableFutures) {
+    public static <A> CompletableFutureTValue<A> fromIterableValue(final Iterable<CompletableFuture<A>> iterableOfCompletableFutures) {
         return CompletableFutureTValue.of(AnyM.fromIterableValue(iterableOfCompletableFutures));
     }
 
@@ -229,7 +227,7 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> CompletableFutureT<U> cast(Class<? extends U> type) {
+    default <U> CompletableFutureT<U> cast(final Class<? extends U> type) {
         return (CompletableFutureT<U>) Functor.super.cast(type);
     }
 
@@ -237,7 +235,7 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> CompletableFutureT<R> trampoline(Function<? super A, ? extends Trampoline<? extends R>> mapper) {
+    default <R> CompletableFutureT<R> trampoline(final Function<? super A, ? extends Trampoline<? extends R>> mapper) {
         return (CompletableFutureT<R>) Functor.super.trampoline(mapper);
     }
 
@@ -245,7 +243,8 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> CompletableFutureT<R> patternMatch(Function<CheckValue1<A, R>, CheckValue1<A, R>> case1, Supplier<? extends R> otherwise) {
+    default <R> CompletableFutureT<R> patternMatch(final Function<CheckValue1<A, R>, CheckValue1<A, R>> case1,
+            final Supplier<? extends R> otherwise) {
         return (CompletableFutureT<R>) Functor.super.patternMatch(case1, otherwise);
     }
 
@@ -253,7 +252,7 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> MaybeT<U> ofType(Class<? extends U> type) {
+    default <U> MaybeT<U> ofType(final Class<? extends U> type) {
 
         return (MaybeT<U>) Filterable.super.ofType(type);
     }
@@ -262,7 +261,7 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default MaybeT<A> filterNot(Predicate<? super A> fn) {
+    default MaybeT<A> filterNot(final Predicate<? super A> fn) {
 
         return (MaybeT<A>) Filterable.super.filterNot(fn);
     }

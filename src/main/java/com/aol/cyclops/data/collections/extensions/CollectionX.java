@@ -54,7 +54,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * @param col
      * @return
      */
-    static <T> CollectionX<T> fromCollection(Collection<T> col) {
+    static <T> CollectionX<T> fromCollection(final Collection<T> col) {
 
         return new CollectionXImpl<>(
                                      col);
@@ -236,13 +236,14 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * @param index to look up element
      * @return Optional.empty if the index does not exist, otherwise the element at the index supplied is returned
      */
-    default Optional<T> getAtIndex(int index) {
+    default Optional<T> getAtIndex(final int index) {
         return stream().get(index);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Foldable#headAndTail()
      */
+    @Override
     default HeadAndTail<T> headAndTail() {
         return new HeadAndTail<>(
                                  iterator());
@@ -275,9 +276,9 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     @Override
     default T single() {
 
-        Iterator<T> it = iterator();
+        final Iterator<T> it = iterator();
         if (it.hasNext()) {
-            T result = it.next();
+            final T result = it.next();
             if (!it.hasNext())
                 return result;
         }
@@ -290,7 +291,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * @see com.aol.cyclops.types.Foldable#single(java.util.function.Predicate)
      */
     @Override
-    default T single(Predicate<? super T> predicate) {
+    default T single(final Predicate<? super T> predicate) {
         return this.filter(predicate)
                    .single();
 
@@ -301,9 +302,9 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      */
     @Override
     default Optional<T> singleOptional() {
-        Iterator<T> it = iterator();
+        final Iterator<T> it = iterator();
         if (it.hasNext()) {
-            T result = it.next();
+            final T result = it.next();
             if (!it.hasNext())
                 return Optional.of(result);
         }
@@ -331,7 +332,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * @see com.aol.cyclops.types.Foldable#groupBy(java.util.function.Function)
      */
     @Override
-    default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
+    default <K> MapX<K, List<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return stream().groupBy(classifier);
     }
 
@@ -408,7 +409,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * @see com.aol.cyclops.types.Functor#peek(java.util.function.Consumer)
      */
     @Override
-    default CollectionX<T> peek(Consumer<? super T> c) {
+    default CollectionX<T> peek(final Consumer<? super T> c) {
         return (CollectionX<T>) ZippingApplicativable.super.peek(c);
     }
 
@@ -473,56 +474,67 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zipWithIndex()
      */
+    @Override
     CollectionX<Tuple2<T, Long>> zipWithIndex();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#sliding(int)
      */
+    @Override
     CollectionX<ListX<T>> sliding(int windowSize);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#sliding(int, int)
      */
+    @Override
     CollectionX<ListX<T>> sliding(int windowSize, int increment);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#scanLeft(com.aol.cyclops.Monoid)
      */
+    @Override
     CollectionX<T> scanLeft(Monoid<T> monoid);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
+    @Override
     <U> CollectionX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#scanRight(com.aol.cyclops.Monoid)
      */
+    @Override
     CollectionX<T> scanRight(Monoid<T> monoid);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
+    @Override
     <U> CollectionX<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#distinct()
      */
+    @Override
     CollectionX<T> distinct();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#sorted()
      */
+    @Override
     CollectionX<T> sorted();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.util.stream.Stream)
      */
+    @Override
     CollectionX<T> removeAll(Stream<? extends T> stream);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.lang.Iterable)
      */
+    @Override
     CollectionX<T> removeAll(Iterable<? extends T> it);
 
     /**
@@ -536,11 +548,13 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.lang.Object[])
      */
+    @Override
     CollectionX<T> removeAll(T... values);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.lang.Iterable)
      */
+    @Override
     CollectionX<T> retainAll(Iterable<? extends T> it);
 
     /**
@@ -554,26 +568,31 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.util.stream.Stream)
      */
+    @Override
     CollectionX<T> retainAll(Stream<? extends T> seq);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.lang.Object[])
      */
+    @Override
     CollectionX<T> retainAll(T... values);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
+    @Override
     CollectionX<T> filterNot(Predicate<? super T> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
      */
+    @Override
     CollectionX<T> notNull();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
+    @Override
     <R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper);
 
     /**
@@ -603,9 +622,9 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, Iterable<R1>> stream1,
-            Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
-            Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
+    default <R1, R2, R> ReactiveSeq<R> forEach3(final Function<? super T, Iterable<R1>> stream1,
+            final Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
+            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
         return For.iterable(stream())
                   .iterable(stream1)
                   .iterable(stream2)
@@ -645,10 +664,10 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, Iterable<R1>> stream1,
-            Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
-            Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
+    default <R1, R2, R> ReactiveSeq<R> forEach3(final Function<? super T, Iterable<R1>> stream1,
+            final Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
+            final Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
+            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
         return For.iterable(stream())
                   .iterable(stream1)
                   .iterable(stream2)
@@ -681,8 +700,8 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, Iterable<R1>> stream1,
-            Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
+    default <R1, R> ReactiveSeq<R> forEach2(final Function<? super T, Iterable<R1>> stream1,
+            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
 
         return For.iterable(stream())
                   .iterable(stream1)
@@ -718,9 +737,9 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, Iterable<R1>> stream1,
-            Function<? super T, Function<? super R1, Boolean>> filterFunction,
-            Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
+    default <R1, R> ReactiveSeq<R> forEach2(final Function<? super T, Iterable<R1>> stream1,
+            final Function<? super T, Function<? super R1, Boolean>> filterFunction,
+            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
         return For.iterable(stream())
                   .iterable(stream1)
                   .filter(filterFunction)
@@ -732,16 +751,19 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#slice(long, long)
      */
+    @Override
     CollectionX<T> slice(long from, long to);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#sorted(java.util.function.Function)
      */
+    @Override
     <U extends Comparable<? super U>> CollectionX<T> sorted(Function<? super T, ? extends U> function);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#sorted(java.util.Comparator)
      */
+    @Override
     CollectionX<T> sorted(Comparator<? super T> c);
 
     /* (non-Javadoc)
@@ -766,7 +788,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> CollectionX<U> cast(Class<? extends U> type) {
+    default <U> CollectionX<U> cast(final Class<? extends U> type) {
 
         return (CollectionX<U>) ZippingApplicativable.super.cast(type);
     }
@@ -775,7 +797,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> CollectionX<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
+    default <R> CollectionX<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
         return (CollectionX<R>) ZippingApplicativable.super.patternMatch(case1, otherwise);
     }

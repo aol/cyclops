@@ -9,17 +9,18 @@ public class SupplierToCompletableFutureConverter implements MonadicConverter<Co
 
     public static int priority = 5;
 
+    @Override
     public int priority() {
         return priority;
     }
 
     @Override
-    public boolean accept(Object o) {
+    public boolean accept(final Object o) {
         return o instanceof Supplier;
     }
 
     @Override
-    public CompletableFuture convertToMonadicForm(Object f) {
+    public CompletableFuture convertToMonadicForm(final Object f) {
 
         return CompletableFuture.supplyAsync((Supplier) f);
     }

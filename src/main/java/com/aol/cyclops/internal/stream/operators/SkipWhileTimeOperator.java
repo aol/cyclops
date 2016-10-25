@@ -9,9 +9,9 @@ import lombok.AllArgsConstructor;
 public class SkipWhileTimeOperator<U> {
     private final Stream<U> stream;
 
-    public Stream<U> skipWhile(long time, TimeUnit unit) {
-        long start = System.nanoTime();
-        long allowed = unit.toNanos(time);
+    public Stream<U> skipWhile(final long time, final TimeUnit unit) {
+        final long start = System.nanoTime();
+        final long allowed = unit.toNanos(time);
         return stream.filter(a -> System.nanoTime() - start > allowed);
 
     }

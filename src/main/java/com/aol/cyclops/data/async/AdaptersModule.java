@@ -1,5 +1,7 @@
 package com.aol.cyclops.data.async;
 
+
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -7,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -28,13 +31,13 @@ public interface AdaptersModule {
         private final Queue<?> queue;
         private List<Continuation> continuation = new ArrayList<>();
 
-        public StreamOfContinuations(Queue<?> queue) {
+        public StreamOfContinuations(final Queue<?> queue) {
             this.queue = queue;
         }
 
         @Override
-        public void addContinuation(Continuation c) {
-            this.continuation.add(c);
+        public void addContinuation(final Continuation c) {
+            continuation.add(c);
 
         }
 
@@ -45,7 +48,7 @@ public interface AdaptersModule {
                               .<Optional<Continuation>> map(c -> {
                                   try {
                                       return Optional.of(c.proceed());
-                                  } catch (ClosedQueueException e) {
+                                  } catch (final ClosedQueueException e) {
 
                                       return Optional.empty();
                                   }
@@ -68,12 +71,12 @@ public interface AdaptersModule {
         private final Queue<?> queue;
         private Continuation continuation = null;
 
-        public SingleContinuation(Queue<?> queue) {
+        public SingleContinuation(final Queue<?> queue) {
             this.queue = queue;
         }
 
         @Override
-        public void addContinuation(Continuation c) {
+        public void addContinuation(final Continuation c) {
             continuation = c;
 
         }
@@ -92,118 +95,144 @@ public interface AdaptersModule {
 
         java.util.Queue queue;
 
-        public void forEach(Consumer action) {
+        @Override
+        public void forEach(final Consumer action) {
             queue.forEach(action);
         }
 
+        @Override
         public int hashCode() {
             return queue.hashCode();
         }
 
+        @Override
         public Object remove() {
             return queue.remove();
         }
 
-        public boolean equals(Object obj) {
+        @Override
+        public boolean equals(final Object obj) {
             return queue.equals(obj);
         }
 
+        @Override
         public Object element() {
             return queue.element();
         }
 
+        @Override
         public void clear() {
             queue.clear();
         }
 
-        public boolean containsAll(Collection c) {
+        @Override
+        public boolean containsAll(final Collection c) {
             return queue.containsAll(c);
         }
 
-        public boolean add(Object e) {
+        @Override
+        public boolean add(final Object e) {
             return queue.add(e);
         }
 
-        public boolean removeAll(Collection c) {
+        @Override
+        public boolean removeAll(final Collection c) {
             return queue.removeAll(c);
         }
 
-        public boolean offer(Object e) {
+        @Override
+        public boolean offer(final Object e) {
             return queue.offer(e);
         }
 
-        public boolean retainAll(Collection c) {
+        @Override
+        public boolean retainAll(final Collection c) {
             return queue.retainAll(c);
         }
 
+        @Override
         public Object poll() {
             return queue.poll();
         }
 
+        @Override
         public Object peek() {
             return queue.peek();
         }
 
+        @Override
         public String toString() {
             return queue.toString();
         }
 
+        @Override
         public boolean isEmpty() {
             return queue.isEmpty();
         }
 
+        @Override
         public int size() {
             return queue.size();
         }
 
-        public boolean contains(Object o) {
+        @Override
+        public boolean contains(final Object o) {
             return queue.contains(o);
         }
 
-        public boolean remove(Object o) {
+        @Override
+        public boolean remove(final Object o) {
             return queue.remove(o);
         }
 
-        public boolean removeIf(Predicate filter) {
+        @Override
+        public boolean removeIf(final Predicate filter) {
             return queue.removeIf(filter);
         }
 
-        public boolean addAll(Collection c) {
+        @Override
+        public boolean addAll(final Collection c) {
             return queue.addAll(c);
         }
 
+        @Override
         public Object[] toArray() {
             return queue.toArray();
         }
 
-        public Object[] toArray(Object[] a) {
+        @Override
+        public Object[] toArray(final Object[] a) {
             return queue.toArray(a);
         }
 
+        @Override
         public Iterator iterator() {
             return queue.iterator();
         }
 
+        @Override
         public Stream stream() {
             return queue.stream();
         }
 
+        @Override
         public Stream parallelStream() {
             return queue.parallelStream();
         }
 
+        @Override
         public Spliterator spliterator() {
             return queue.spliterator();
         }
 
         @Override
-        public void put(Object e) throws InterruptedException {
+        public void put(final Object e) throws InterruptedException {
             offer(e);
 
         }
 
         @Override
-        public boolean offer(Object e, long timeout, TimeUnit unit) throws InterruptedException {
+        public boolean offer(final Object e, final long timeout, final TimeUnit unit) throws InterruptedException {
             return offer(e);
         }
 
@@ -214,7 +243,7 @@ public interface AdaptersModule {
         }
 
         @Override
-        public Object poll(long timeout, TimeUnit unit) throws InterruptedException {
+        public Object poll(final long timeout, final TimeUnit unit) throws InterruptedException {
 
             return poll();
         }
@@ -226,26 +255,27 @@ public interface AdaptersModule {
         }
 
         @Override
-        public int drainTo(Collection c) {
+        public int drainTo(final Collection c) {
 
             return 0;
         }
 
         @Override
-        public int drainTo(Collection c, int maxElements) {
+        public int drainTo(final Collection c, final int maxElements) {
 
             return 0;
         }
 
     }
 
-    static class ClosingSpliterator<T> implements Spliterator<T> {
+    static class ClosingSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements Spliterator<T> {
         private long estimate;
         final Supplier<T> s;
         private final Continueable subscription;
         private final Queue queue;
 
-        public ClosingSpliterator(long estimate, Supplier<T> s, Continueable subscription, Queue queue) {
+        public ClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription, final Queue queue) {
+            super(estimate,IMMUTABLE);
             this.estimate = estimate;
             this.s = s;
             this.subscription = subscription;
@@ -253,7 +283,8 @@ public interface AdaptersModule {
             this.subscription.addQueue(queue);
         }
 
-        public ClosingSpliterator(long estimate, Supplier<T> s, Continueable subscription) {
+        public ClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription) {
+            super(estimate,IMMUTABLE);
             this.estimate = estimate;
             this.s = s;
             this.subscription = subscription;
@@ -271,22 +302,21 @@ public interface AdaptersModule {
         }
 
         @Override
-        public boolean tryAdvance(Consumer<? super T> action) {
+        public boolean tryAdvance(final Consumer<? super T> action) {
             Objects.requireNonNull(action);
 
             try {
-
                 action.accept(s.get());
                 subscription.closeQueueIfFinished(queue);
                 return true;
-            } catch (ClosedQueueException e) {
-
+            } catch (final ClosedQueueException e) {
+                
                 if (e.isDataPresent()) {
                     e.getCurrentData()
                      .forEach(action);
                 }
                 return false;
-            } catch (Exception e) {
+            } catch (final Exception e) {
 
                 return false;
             } finally {
@@ -297,10 +327,13 @@ public interface AdaptersModule {
 
         @Override
         public Spliterator<T> trySplit() {
-
             return new ClosingSpliterator(
                                           estimate >>>= 1, s, subscription, queue);
+          
         }
+        
+        
 
     }
+   
 }

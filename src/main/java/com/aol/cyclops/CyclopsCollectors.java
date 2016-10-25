@@ -30,8 +30,8 @@ public interface CyclopsCollectors {
      * @return Collector to QueueX
      */
     static <T> Collector<T, ?, QueueX<T>> toQueueX() {
-        return Collectors.collectingAndThen(QueueX.defaultCollector(), (Queue<T> d) -> new QueueXImpl<>(
-                                                                                                        d, QueueX.defaultCollector()));
+        return Collectors.collectingAndThen(QueueX.defaultCollector(), (final Queue<T> d) -> new QueueXImpl<>(
+                                                                                                              d, QueueX.defaultCollector()));
 
     }
 
@@ -39,8 +39,8 @@ public interface CyclopsCollectors {
      * @return Collector for ListX
      */
     static <T> Collector<T, ?, ListX<T>> toListX() {
-        return Collectors.collectingAndThen(ListX.defaultCollector(), (List<T> d) -> new ListXImpl<>(
-                                                                                                     d, ListX.defaultCollector()));
+        return Collectors.collectingAndThen(ListX.defaultCollector(), (final List<T> d) -> new ListXImpl<>(
+                                                                                                           d, ListX.defaultCollector()));
 
     }
 
@@ -48,8 +48,8 @@ public interface CyclopsCollectors {
      * @return Collector for DequeX
      */
     static <T> Collector<T, ?, DequeX<T>> toDequeX() {
-        return Collectors.collectingAndThen(DequeX.defaultCollector(), (Deque<T> d) -> new DequeXImpl<>(
-                                                                                                        d, DequeX.defaultCollector()));
+        return Collectors.collectingAndThen(DequeX.defaultCollector(), (final Deque<T> d) -> new DequeXImpl<>(
+                                                                                                              d, DequeX.defaultCollector()));
 
     }
 
@@ -57,17 +57,17 @@ public interface CyclopsCollectors {
      * @return Collector for SetX
      */
     static <T> Collector<T, ?, SetX<T>> toSetX() {
-        return Collectors.collectingAndThen(SetX.defaultCollector(), (Set<T> d) -> new SetXImpl<>(
-                                                                                                  d, SetX.defaultCollector()));
+        return Collectors.collectingAndThen(SetX.defaultCollector(), (final Set<T> d) -> new SetXImpl<>(
+                                                                                                        d, SetX.defaultCollector()));
     }
 
     /**
      * @return Collector for SortedSetX
      */
     static <T> Collector<T, ?, SortedSetX<T>> toSortedSetX() {
-        return Collectors.collectingAndThen(SortedSetX.defaultCollector(), (SortedSet<T> d) -> new SortedSetXImpl<>(
-                                                                                                                    d,
-                                                                                                                    SortedSetX.defaultCollector()));
+        return Collectors.collectingAndThen(SortedSetX.defaultCollector(), (final SortedSet<T> d) -> new SortedSetXImpl<>(
+                                                                                                                          d,
+                                                                                                                          SortedSetX.defaultCollector()));
 
     }
 }

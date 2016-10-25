@@ -55,7 +55,7 @@ public class SimpleReact implements ReactBuilder {
 
     private final Boolean async;
 
-    public <U> SimpleReactStream<U> construct(Stream s) {
+    public <U> SimpleReactStream<U> construct(final Stream s) {
         return new SimpleReactStreamImpl<U>(
                                             this, s);
     }
@@ -71,7 +71,7 @@ public class SimpleReact implements ReactBuilder {
         this(ThreadPools.getStandard());
     }
 
-    public SimpleReact(Executor executor, RetryExecutor retrier, Boolean async) {
+    public SimpleReact(final Executor executor, final RetryExecutor retrier, final Boolean async) {
         queueService = ThreadPools.getQueueCopyExecutor();
         this.executor = Optional.ofNullable(executor)
                                 .orElse(new ForkJoinPool(
@@ -86,33 +86,33 @@ public class SimpleReact implements ReactBuilder {
     /**
      * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
      */
-    public SimpleReact(Executor executor) {
+    public SimpleReact(final Executor executor) {
         queueService = ThreadPools.getQueueCopyExecutor();
         this.executor = executor;
-        this.retrier = null;
+        retrier = null;
 
-        this.async = true;
+        async = true;
     }
 
-    public SimpleReact(Executor executor, RetryExecutor retrier) {
-        queueService = ThreadPools.getQueueCopyExecutor();
-        this.executor = executor;
-        this.retrier = retrier;
-
-        this.async = true;
-    }
-
-    public SimpleReact(Executor executor, RetryExecutor retrier, Executor queueCopier) {
+    public SimpleReact(final Executor executor, final RetryExecutor retrier) {
         queueService = ThreadPools.getQueueCopyExecutor();
         this.executor = executor;
         this.retrier = retrier;
 
-        this.async = true;
+        async = true;
     }
 
-    public SimpleReact withQueueCopyExecutor(Executor queueCopyExecutor) {
+    public SimpleReact(final Executor executor, final RetryExecutor retrier, final Executor queueCopier) {
+        queueService = ThreadPools.getQueueCopyExecutor();
+        this.executor = executor;
+        this.retrier = retrier;
+
+        async = true;
+    }
+
+    public SimpleReact withQueueCopyExecutor(final Executor queueCopyExecutor) {
         return new SimpleReact(
-                               this.executor, this.retrier, queueCopyExecutor);
+                               executor, retrier, queueCopyExecutor);
     }
 
     /**
@@ -138,9 +138,9 @@ public class SimpleReact implements ReactBuilder {
      *            to construct SimpleReactStream from
      * @return SimpleReactStream
      */
-    public <T> SimpleReactStream<T> fromPublisher(Publisher<? extends T> publisher) {
+    public <T> SimpleReactStream<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
-        SeqSubscriber<T> sub = SeqSubscriber.subscriber();
+        final SeqSubscriber<T> sub = SeqSubscriber.subscriber();
         publisher.subscribe(sub);
         return sub.toSimpleReact(this);
     }
@@ -216,7 +216,7 @@ public class SimpleReact implements ReactBuilder {
      */
     public <U> SimpleReactStream<U> from(final Stream<U> stream) {
 
-        Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
+        final Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
         return construct(s);
     }
 
@@ -251,7 +251,7 @@ public class SimpleReact implements ReactBuilder {
      * @param parallelism Number of threads task executor should have
      * @return eager SimpleReact instance
      */
-    public static SimpleReact parallelBuilder(int parallelism) {
+    public static SimpleReact parallelBuilder(final int parallelism) {
         return SimpleReact.builder()
                           .executor(new ForkJoinPool(
                                                      parallelism))
@@ -304,7 +304,7 @@ public class SimpleReact implements ReactBuilder {
                           .build();
     }
 
-    public SimpleReactStream<Integer> range(int startInclusive, int endExclusive) {
+    public SimpleReactStream<Integer> range(final int startInclusive, final int endExclusive) {
         return from(IntStream.range(startInclusive, endExclusive));
     }
 
@@ -340,7 +340,7 @@ public class SimpleReact implements ReactBuilder {
      */
     public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
-        Stream s = stream;
+        final Stream s = stream;
         return construct(s);
     }
 
@@ -380,19 +380,19 @@ public class SimpleReact implements ReactBuilder {
 
     }
 
-    public <U> SimpleReactStream<U> of(U... array) {
+    public <U> SimpleReactStream<U> of(final U... array) {
         return from(Stream.of(array));
     }
 
-    public <U> SimpleReactStream<U> from(CompletableFuture<U> cf) {
+    public <U> SimpleReactStream<U> from(final CompletableFuture<U> cf) {
         return this.construct(Stream.of(cf));
     }
 
-    public <U> SimpleReactStream<U> from(CompletableFuture<U>... cf) {
+    public <U> SimpleReactStream<U> from(final CompletableFuture<U>... cf) {
         return this.construct(Stream.of(cf));
     }
 
-    public SimpleReact(Executor queueService, Executor executor, RetryExecutor retrier, Boolean async) {
+    public SimpleReact(final Executor queueService, final Executor executor, final RetryExecutor retrier, final Boolean async) {
         super();
         this.queueService = Optional.ofNullable(queueService)
                                     .orElse(ThreadPools.getQueueCopyExecutor());

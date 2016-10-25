@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 
 public interface StreamUpscaler<T, X> {
 
-    default Object upscaleIfStream(Object o) {
+    default Object upscaleIfStream(final Object o) {
         if (o instanceof Stream)
             return convert((Stream) o);
         return o;

@@ -95,6 +95,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
                       .matches(secondary, primary, otherwise);
     }
 
+    
     public X failureGet();
 
     /* (non-Javadoc)

@@ -17,24 +17,24 @@ public interface Applicative3<T, T2, T3, R, D extends ConvertableFunctor<R>>
      * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
      */
     @Override
-    default <U> Functor<U> map(Function<? super Function<? super T, Function<? super T2, Function<? super T3, ? extends R>>>, ? extends U> fn) {
+    default <U> Functor<U> map(final Function<? super Function<? super T, Function<? super T2, Function<? super T3, ? extends R>>>, ? extends U> fn) {
         return delegate().map(fn);
     }
 
     //<U extends Functor<Function<? super T,? extends R>> & Convertable<Function<? super T,? extends R>>> U delegate();
     ConvertableFunctor<Function<? super T, Function<? super T2, Function<? super T3, ? extends R>>>> delegate();
 
-    default Applicative2<T2, T3, R, D> ap(Functor<T> f) {
+    default Applicative2<T2, T3, R, D> ap(final Functor<T> f) {
         return () -> (ConvertableFunctor) delegate().toOptional()
                                                     .map(myFn -> f.map(t -> myFn.apply(t)))
                                                     .orElse(Maybe.none());
     }
 
-    default Applicative2<T2, T3, R, D> ap(Optional<T> f) {
+    default Applicative2<T2, T3, R, D> ap(final Optional<T> f) {
         return ap(Maybe.fromOptional(f));
     }
 
-    default Applicative2<T2, T3, R, D> ap(CompletableFuture<T> f) {
+    default Applicative2<T2, T3, R, D> ap(final CompletableFuture<T> f) {
         return ap(FutureW.of(f));
     }
 }

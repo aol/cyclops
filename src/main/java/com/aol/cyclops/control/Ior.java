@@ -84,6 +84,24 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
         return new Both<ST, PT>(
                                 Ior.secondary(secondary), Ior.primary(primary));
     }
+    
+    
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#flatMapIterable(java.util.function.Function)
+     */
+    @Override
+    default <R> Ior<ST, R> flatMapIterable(Function<? super PT, ? extends Iterable<? extends R>> mapper) {
+        return (Ior<ST, R>)MonadicValue2.super.flatMapIterable(mapper);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#flatMapPublisher(java.util.function.Function)
+     */
+    @Override
+    default <R> Ior<ST, R> flatMapPublisher(Function<? super PT, ? extends Publisher<? extends R>> mapper) {
+        return (Ior<ST, R>)MonadicValue2.super.flatMapPublisher(mapper);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#anyM()
@@ -226,9 +244,6 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
         return Matchables.tuple2(both().get())
                          .visit((a, b) -> both.apply(a, b));
     }
-
-    
-   
 
     <R> Eval<R> matches(Function<CheckValue1<ST, R>, CheckValue1<ST, R>> secondary, Function<CheckValue1<PT, R>, CheckValue1<PT, R>> primary,
             Function<CheckValue2<ST, PT, R>, CheckValue2<ST, PT, R>> both, Supplier<? extends R> otherwise);

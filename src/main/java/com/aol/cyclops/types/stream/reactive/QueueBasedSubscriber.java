@@ -37,29 +37,29 @@ import lombok.Setter;
  */
 public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
-    public static <T> QueueBasedSubscriber<T> subscriber(Counter counter, int maxConcurrency) {
+    public static <T> QueueBasedSubscriber<T> subscriber(final Counter counter, final int maxConcurrency) {
         return new QueueBasedSubscriber<>(
                                           counter, maxConcurrency);
     }
 
-    public static <T> QueueBasedSubscriber<T> subscriber(Queue<T> q, Counter counter, int maxConcurrency) {
+    public static <T> QueueBasedSubscriber<T> subscriber(final Queue<T> q, final Counter counter, final int maxConcurrency) {
         return new QueueBasedSubscriber<>(
                                           q, counter, maxConcurrency);
     }
 
-    public static <T> QueueBasedSubscriber<T> subscriber(QueueFactory<T> factory, Counter counter, int maxConcurrency) {
+    public static <T> QueueBasedSubscriber<T> subscriber(final QueueFactory<T> factory, final Counter counter, final int maxConcurrency) {
 
         return new QueueBasedSubscriber<>(
                                           factory, counter, maxConcurrency);
     }
 
     private Stream<T> genJdkStream() {
-        Continueable subscription = new com.aol.cyclops.react.async.subscription.Subscription();
+        final Continueable subscription = new com.aol.cyclops.react.async.subscription.Subscription();
         return queue.stream(subscription);
     }
 
     private LazyFutureStream<T> genStream() {
-        Continueable subscription = new com.aol.cyclops.react.async.subscription.Subscription();
+        final Continueable subscription = new com.aol.cyclops.react.async.subscription.Subscription();
         return LazyFutureStream.of()
                                .withSubscription(subscription)
                                .fromStream(queue.stream(subscription));
@@ -81,37 +81,39 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
     private final Counter counter;
 
-    public QueueBasedSubscriber(Counter counter, int maxConcurrency) {
+    public QueueBasedSubscriber(final Counter counter, final int maxConcurrency) {
         this.maxConcurrency = maxConcurrency;
         factory = null;
 
         this.counter = counter;
         queue = new Queue<T>() {
+            @Override
             public T get() {
                 counter.subscription.forEach(s -> s.request(1));
 
-                return (T) super.get();
+                return super.get();
             }
         };
     }
 
-    private QueueBasedSubscriber(Queue<T> q, Counter counter, int maxConcurrency) {
+    private QueueBasedSubscriber(final Queue<T> q, final Counter counter, final int maxConcurrency) {
         factory = null;
         this.maxConcurrency = maxConcurrency;
         this.counter = counter;
         queue = q;
     }
 
-    private QueueBasedSubscriber(QueueFactory<T> factory, Counter counter, int maxConcurrency) {
+    private QueueBasedSubscriber(final QueueFactory<T> factory, final Counter counter, final int maxConcurrency) {
         this.counter = counter;
         this.factory = factory;
         this.maxConcurrency = maxConcurrency;
         this.queue = new Queue<T>(
                                   factory) {
+            @Override
             public T get() {
                 counter.subscription.forEach(s -> s.request(1));
 
-                return (T) super.get();
+                return super.get();
             }
         };
 
@@ -154,7 +156,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     }
 
     @Override
-    public void onNext(T t) {
+    public void onNext(final T t) {
 
         Objects.requireNonNull(t);
         queue.add(t);
@@ -163,7 +165,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     }
 
     @Override
-    public void onError(Throwable t) {
+    public void onError(final Throwable t) {
 
         Objects.requireNonNull(t);
         if (stream != null)
@@ -190,8 +192,6 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
         counter.active.decrementAndGet();
         counter.subscription.minus(subscription);
-        boolean set = false;
-
         if (queue != null && counter.active.get() == 0) {
 
             if (counter.completable) {
@@ -199,7 +199,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
                 counter.closed = true;
                 queue.addContinuation(new Continuation(
                                                        () -> {
-                                                           List current = new ArrayList();
+                                                           final List current = new ArrayList();
                                                            while (queue.size() > 0)
                                                                current.add(queue.get());
                                                            throw new ClosedQueueException(
@@ -214,8 +214,6 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
     public void close() {
         counter.completable = true;
-        boolean set = false;
-
         if (queue != null && counter.active.get() == 0) {
             counter.closed = true;
 
@@ -228,7 +226,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
     }
 
-    public void addContinuation(Continuation c) {
+    public void addContinuation(final Continuation c) {
         queue.addContinuation(c);
     }
 

@@ -27,14 +27,21 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.ToStream;
 
-
+/**
+ * Monad transformer for working with nested Futures
+ * 
+ * @author johnmcclean
+ *
+ * @param <A> Data type of the nested FutureW
+ */
 public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterable<A>, ToStream<A> {
 
+    @Override
     MaybeT<A> filter(Predicate<? super A> test);
 
     public <R> FutureWT<R> empty();
 
-    default <B> FutureWT<B> bind(Function<? super A, FutureWT<? extends B>> f) {
+    default <B> FutureWT<B> bind(final Function<? super A, FutureWT<? extends B>> f) {
         return of(unwrap().bind(opt -> {
             return f.apply(opt.get())
                     .unwrap()
@@ -49,7 +56,7 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterab
     *            AnyM that contains a monad wrapping an Maybe
     * @return MaybeT
     */
-    public static <A> FutureWT<A> of(AnyM<FutureW<A>> monads) {
+    public static <A> FutureWT<A> of(final AnyM<FutureW<A>> monads) {
 
         return Matchables.anyM(monads)
                          .visit(v -> FutureWTValue.of(v), s -> FutureWTSeq.of(s));
@@ -75,6 +82,7 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterab
      * @param peek  Consumer to accept current value of CompletableFuture
      * @return CompletableFutureT with peek call
      */
+    @Override
     public FutureWT<A> peek(Consumer<? super A> peek);
 
     /**
@@ -93,6 +101,7 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterab
      * @param f Mapping function for the wrapped CompletableFuture
      * @return CompletableFutureT that applies the map function to the wrapped CompletableFuture
      */
+    @Override
     public <B> FutureWT<B> map(Function<? super A, ? extends B> f);
 
     public <B> FutureWT<B> flatMap(Function<? super A, ? extends MonadicValue<? extends B>> f);
@@ -126,7 +135,7 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterab
      * @param fn Function to enhance with functionality from CompletableFuture and another monad type
      * @return Function that accepts and returns an CompletableFutureT
      */
-    public static <U, R> Function<FutureWT<U>, FutureWT<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<FutureWT<U>, FutureWT<R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -160,47 +169,47 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterab
      * @param fn BiFunction to enhance with functionality from CompletableFuture and another monad type
      * @return Function that accepts and returns an CompletableFutureT
      */
-    public static <U1, U2, R> BiFunction<FutureWT<U1>, FutureWT<U2>, FutureWT<R>> lift2(BiFunction<? super U1, ? super U2, ? extends R> fn) {
+    public static <U1, U2, R> BiFunction<FutureWT<U1>, FutureWT<U2>, FutureWT<R>> lift2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
-    public static <A> FutureWT<A> fromAnyM(AnyM<A> anyM) {
+    public static <A> FutureWT<A> fromAnyM(final AnyM<A> anyM) {
         return of(anyM.map(FutureW::ofResult));
     }
 
-    public static <A> FutureWTValue<A> fromAnyMValue(AnyMValue<A> anyM) {
+    public static <A> FutureWTValue<A> fromAnyMValue(final AnyMValue<A> anyM) {
         return FutureWTValue.fromAnyM(anyM);
     }
 
-    public static <A> FutureWTSeq<A> fromAnyMSeq(AnyMSeq<A> anyM) {
+    public static <A> FutureWTSeq<A> fromAnyMSeq(final AnyMSeq<A> anyM) {
         return FutureWTSeq.fromAnyM(anyM);
     }
 
-    public static <A> FutureWTSeq<A> fromIterable(Iterable<FutureW<A>> iterableOfCompletableFutures) {
+    public static <A> FutureWTSeq<A> fromIterable(final Iterable<FutureW<A>> iterableOfCompletableFutures) {
         return FutureWTSeq.of(AnyM.fromIterable(iterableOfCompletableFutures));
     }
 
-    public static <A> FutureWTSeq<A> fromStream(Stream<FutureW<A>> streamOfCompletableFutures) {
+    public static <A> FutureWTSeq<A> fromStream(final Stream<FutureW<A>> streamOfCompletableFutures) {
         return FutureWTSeq.of(AnyM.fromStream(streamOfCompletableFutures));
     }
 
-    public static <A> FutureWTSeq<A> fromPublisher(Publisher<FutureW<A>> publisherOfCompletableFutures) {
+    public static <A> FutureWTSeq<A> fromPublisher(final Publisher<FutureW<A>> publisherOfCompletableFutures) {
         return FutureWTSeq.of(AnyM.fromPublisher(publisherOfCompletableFutures));
     }
 
-    public static <A, V extends MonadicValue<FutureW<A>>> FutureWTValue<A> fromValue(V monadicValue) {
+    public static <A, V extends MonadicValue<FutureW<A>>> FutureWTValue<A> fromValue(final V monadicValue) {
         return FutureWTValue.fromValue(monadicValue);
     }
 
-    public static <A> FutureWTValue<A> fromOptional(Optional<FutureW<A>> optional) {
+    public static <A> FutureWTValue<A> fromOptional(final Optional<FutureW<A>> optional) {
         return FutureWTValue.of(AnyM.fromOptional(optional));
     }
 
-    public static <A> FutureWTValue<A> fromFuture(CompletableFuture<FutureW<A>> future) {
+    public static <A> FutureWTValue<A> fromFuture(final CompletableFuture<FutureW<A>> future) {
         return FutureWTValue.of(AnyM.fromCompletableFuture(future));
     }
 
-    public static <A> FutureWTValue<A> fromIterableValue(Iterable<FutureW<A>> iterableOfCompletableFutures) {
+    public static <A> FutureWTValue<A> fromIterableValue(final Iterable<FutureW<A>> iterableOfCompletableFutures) {
         return FutureWTValue.of(AnyM.fromIterableValue(iterableOfCompletableFutures));
     }
 
@@ -216,7 +225,7 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterab
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> FutureWT<U> cast(Class<? extends U> type) {
+    default <U> FutureWT<U> cast(final Class<? extends U> type) {
         return (FutureWT<U>) Functor.super.cast(type);
     }
 
@@ -224,7 +233,7 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterab
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> FutureWT<R> trampoline(Function<? super A, ? extends Trampoline<? extends R>> mapper) {
+    default <R> FutureWT<R> trampoline(final Function<? super A, ? extends Trampoline<? extends R>> mapper) {
         return (FutureWT<R>) Functor.super.trampoline(mapper);
     }
 
@@ -232,7 +241,7 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterab
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> FutureWT<R> patternMatch(Function<CheckValue1<A, R>, CheckValue1<A, R>> case1, Supplier<? extends R> otherwise) {
+    default <R> FutureWT<R> patternMatch(final Function<CheckValue1<A, R>, CheckValue1<A, R>> case1, final Supplier<? extends R> otherwise) {
         return (FutureWT<R>) Functor.super.patternMatch(case1, otherwise);
     }
 
@@ -240,7 +249,7 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterab
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> MaybeT<U> ofType(Class<? extends U> type) {
+    default <U> MaybeT<U> ofType(final Class<? extends U> type) {
 
         return (MaybeT<U>) Filterable.super.ofType(type);
     }
@@ -249,7 +258,7 @@ public interface FutureWT<A> extends Unit<A>, Publisher<A>, Functor<A>, Filterab
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default MaybeT<A> filterNot(Predicate<? super A> fn) {
+    default MaybeT<A> filterNot(final Predicate<? super A> fn) {
 
         return (MaybeT<A>) Filterable.super.filterNot(fn);
     }

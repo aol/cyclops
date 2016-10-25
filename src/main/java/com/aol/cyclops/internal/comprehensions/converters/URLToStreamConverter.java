@@ -15,26 +15,27 @@ public class URLToStreamConverter implements MonadicConverter<Stream> {
 
     public static int priority = 5;
 
+    @Override
     public int priority() {
         return priority;
     }
 
     @Override
-    public boolean accept(Object o) {
+    public boolean accept(final Object o) {
         return o instanceof URL;
     }
 
     @Override
-    public Stream convertToMonadicForm(Object f) {
+    public Stream convertToMonadicForm(final Object f) {
         val url = (URL) f;
         try {
-            BufferedReader in = new BufferedReader(
-                                                   new InputStreamReader(
-                                                                         url.openStream()));
+            final BufferedReader in = new BufferedReader(
+                                                         new InputStreamReader(
+                                                                               url.openStream()));
 
             return in.lines();
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             ExceptionSoftener.throwSoftenedException(e);
             return null;
         }

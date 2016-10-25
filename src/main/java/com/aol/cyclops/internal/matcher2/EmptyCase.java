@@ -28,10 +28,11 @@ public final class EmptyCase<T, R> implements Case<T, R> {
     private final boolean empty = true;
 
     @Override
-    public Optional<R> match(T value) {
+    public Optional<R> match(final T value) {
         return Optional.empty();
     }
 
+    @Override
     public Tuple2<Predicate<? super T>, Function<? super T, ? extends R>> get() {
         return pattern;
     }

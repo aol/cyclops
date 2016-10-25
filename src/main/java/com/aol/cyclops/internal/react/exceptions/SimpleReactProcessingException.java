@@ -8,22 +8,23 @@ public class SimpleReactProcessingException extends RuntimeException {
 
     }
 
-    public SimpleReactProcessingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public SimpleReactProcessingException(final String message, final Throwable cause, final boolean enableSuppression,
+            final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
 
     }
 
-    public SimpleReactProcessingException(String message, Throwable cause) {
+    public SimpleReactProcessingException(final String message, final Throwable cause) {
         super(message, cause);
 
     }
 
-    public SimpleReactProcessingException(String message) {
+    public SimpleReactProcessingException(final String message) {
         super(message);
 
     }
 
-    public SimpleReactProcessingException(Throwable cause) {
+    public SimpleReactProcessingException(final Throwable cause) {
         super(cause);
 
     }

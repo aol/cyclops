@@ -58,7 +58,7 @@ public class MutableFloat implements Supplier<Float>, Consumer<Float>, Matchable
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableFloat of(float var) {
+    public static <T> MutableFloat of(final float var) {
         return new MutableFloat(
                                 var);
     }
@@ -78,17 +78,20 @@ public class MutableFloat implements Supplier<Float>, Consumer<Float>, Matchable
      * @param c Consumer that sets an external value
      * @return MutableFloat that gets / sets an external (mutable) value
      */
-    public static MutableFloat fromExternal(Supplier<Float> s, Consumer<Float> c) {
+    public static MutableFloat fromExternal(final Supplier<Float> s, final Consumer<Float> c) {
         return new MutableFloat() {
+            @Override
             public float getAsFloat() {
                 return s.get();
             }
 
+            @Override
             public Float get() {
                 return getAsFloat();
             }
 
-            public MutableFloat set(float value) {
+            @Override
+            public MutableFloat set(final float value) {
                 c.accept(value);
                 return this;
             }
@@ -113,9 +116,10 @@ public class MutableFloat implements Supplier<Float>, Consumer<Float>, Matchable
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(Function<Float, R> fn) {
-        MutableFloat host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Float, R> fn) {
+        final MutableFloat host = this;
         return new Mutable<R>() {
+            @Override
             public R get() {
                 return fn.apply(host.get());
             }
@@ -141,10 +145,11 @@ public class MutableFloat implements Supplier<Float>, Consumer<Float>, Matchable
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(Function<T1, Float> fn) {
-        MutableFloat host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Float> fn) {
+        final MutableFloat host = this;
         return new Mutable<T1>() {
-            public Mutable<T1> set(T1 value) {
+            @Override
+            public Mutable<T1> set(final T1 value) {
                 host.set(fn.apply(value));
                 return this;
             }
@@ -163,7 +168,7 @@ public class MutableFloat implements Supplier<Float>, Consumer<Float>, Matchable
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableFloat set(float var) {
+    public MutableFloat set(final float var) {
         this.var = var;
         return this;
     }
@@ -172,8 +177,8 @@ public class MutableFloat implements Supplier<Float>, Consumer<Float>, Matchable
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableFloat mutate(FloatFunction varFn) {
-        this.var = varFn.apply(this.var);
+    public MutableFloat mutate(final FloatFunction varFn) {
+        var = varFn.apply(var);
         return this;
     }
 
@@ -187,7 +192,7 @@ public class MutableFloat implements Supplier<Float>, Consumer<Float>, Matchable
     }
 
     @Override
-    public void accept(Float t) {
+    public void accept(final Float t) {
         set(t);
 
     }

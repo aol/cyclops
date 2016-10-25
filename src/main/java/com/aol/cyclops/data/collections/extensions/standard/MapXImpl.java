@@ -19,7 +19,7 @@ public class MapXImpl<K, V> implements MapX<K, V> {
     @Getter
     private final Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> collector;
 
-    public MapXImpl(Map<K, V> map) {
+    public MapXImpl(final Map<K, V> map) {
         this.map = map;
         this.collector = MapX.defaultCollector();
     }
@@ -34,6 +34,7 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#size()
      */
+    @Override
     public int size() {
         return map.size();
     }
@@ -42,6 +43,7 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#isEmpty()
      */
+    @Override
     public boolean isEmpty() {
         return map.isEmpty();
     }
@@ -51,7 +53,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#containsKey(java.lang.Object)
      */
-    public boolean containsKey(Object key) {
+    @Override
+    public boolean containsKey(final Object key) {
         return map.containsKey(key);
     }
 
@@ -60,7 +63,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#containsValue(java.lang.Object)
      */
-    public boolean containsValue(Object value) {
+    @Override
+    public boolean containsValue(final Object value) {
         return map.containsValue(value);
     }
 
@@ -69,7 +73,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#get(java.lang.Object)
      */
-    public V get(Object key) {
+    @Override
+    public V get(final Object key) {
         return map.get(key);
     }
 
@@ -79,7 +84,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
-    public V put(K key, V value) {
+    @Override
+    public V put(final K key, final V value) {
         return map.put(key, value);
     }
 
@@ -88,7 +94,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#remove(java.lang.Object)
      */
-    public V remove(Object key) {
+    @Override
+    public V remove(final Object key) {
         return map.remove(key);
     }
 
@@ -96,7 +103,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @param m
      * @see java.util.Map#putAll(java.util.Map)
      */
-    public void putAll(Map<? extends K, ? extends V> m) {
+    @Override
+    public void putAll(final Map<? extends K, ? extends V> m) {
         map.putAll(m);
     }
 
@@ -104,6 +112,7 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * 
      * @see java.util.Map#clear()
      */
+    @Override
     public void clear() {
         map.clear();
     }
@@ -112,6 +121,7 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#keySet()
      */
+    @Override
     public Set<K> keySet() {
         return map.keySet();
     }
@@ -120,6 +130,7 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#values()
      */
+    @Override
     public Collection<V> values() {
         return map.values();
     }
@@ -128,6 +139,7 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#entrySet()
      */
+    @Override
     public Set<java.util.Map.Entry<K, V>> entrySet() {
         return map.entrySet();
     }
@@ -137,7 +149,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#equals(java.lang.Object)
      */
-    public boolean equals(Object o) {
+    @Override
+    public boolean equals(final Object o) {
         return map.equals(o);
     }
 
@@ -145,6 +158,7 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#hashCode()
      */
+    @Override
     public int hashCode() {
         return map.hashCode();
     }
@@ -155,7 +169,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#getOrDefault(java.lang.Object, java.lang.Object)
      */
-    public V getOrDefault(Object key, V defaultValue) {
+    @Override
+    public V getOrDefault(final Object key, final V defaultValue) {
         return map.getOrDefault(key, defaultValue);
     }
 
@@ -163,7 +178,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @param action
      * @see java.util.Map#forEach(java.util.function.BiConsumer)
      */
-    public void forEach(BiConsumer<? super K, ? super V> action) {
+    @Override
+    public void forEach(final BiConsumer<? super K, ? super V> action) {
         map.forEach(action);
     }
 
@@ -171,7 +187,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @param function
      * @see java.util.Map#replaceAll(java.util.function.BiFunction)
      */
-    public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
+    @Override
+    public void replaceAll(final BiFunction<? super K, ? super V, ? extends V> function) {
         map.replaceAll(function);
     }
 
@@ -181,7 +198,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#putIfAbsent(java.lang.Object, java.lang.Object)
      */
-    public V putIfAbsent(K key, V value) {
+    @Override
+    public V putIfAbsent(final K key, final V value) {
         return map.putIfAbsent(key, value);
     }
 
@@ -191,7 +209,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#remove(java.lang.Object, java.lang.Object)
      */
-    public boolean remove(Object key, Object value) {
+    @Override
+    public boolean remove(final Object key, final Object value) {
         return map.remove(key, value);
     }
 
@@ -202,7 +221,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#replace(java.lang.Object, java.lang.Object, java.lang.Object)
      */
-    public boolean replace(K key, V oldValue, V newValue) {
+    @Override
+    public boolean replace(final K key, final V oldValue, final V newValue) {
         return map.replace(key, oldValue, newValue);
     }
 
@@ -212,7 +232,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#replace(java.lang.Object, java.lang.Object)
      */
-    public V replace(K key, V value) {
+    @Override
+    public V replace(final K key, final V value) {
         return map.replace(key, value);
     }
 
@@ -222,7 +243,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#computeIfAbsent(java.lang.Object, java.util.function.Function)
      */
-    public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
+    @Override
+    public V computeIfAbsent(final K key, final Function<? super K, ? extends V> mappingFunction) {
         return map.computeIfAbsent(key, mappingFunction);
     }
 
@@ -232,7 +254,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#computeIfPresent(java.lang.Object, java.util.function.BiFunction)
      */
-    public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+    @Override
+    public V computeIfPresent(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
         return map.computeIfPresent(key, remappingFunction);
     }
 
@@ -242,7 +265,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#compute(java.lang.Object, java.util.function.BiFunction)
      */
-    public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+    @Override
+    public V compute(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
         return map.compute(key, remappingFunction);
     }
 
@@ -253,7 +277,8 @@ public class MapXImpl<K, V> implements MapX<K, V> {
      * @return
      * @see java.util.Map#merge(java.lang.Object, java.lang.Object, java.util.function.BiFunction)
      */
-    public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+    @Override
+    public V merge(final K key, final V value, final BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
         return map.merge(key, value, remappingFunction);
     }
 

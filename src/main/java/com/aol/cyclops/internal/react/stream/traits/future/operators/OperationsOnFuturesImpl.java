@@ -16,7 +16,7 @@ public class OperationsOnFuturesImpl<T> implements OperationsOnFutures<T> {
     private final LazyFutureStream<T> lfs;
 
     @Override
-    public LazyFutureStream<T> fromStreamOfFutures(Stream<FastFuture<T>> stream) {
+    public LazyFutureStream<T> fromStreamOfFutures(final Stream<FastFuture<T>> stream) {
         return lfs.fromStreamOfFutures(stream);
     }
 
@@ -26,12 +26,12 @@ public class OperationsOnFuturesImpl<T> implements OperationsOnFutures<T> {
     }
 
     @Override
-    public LazyFutureStream<T> withLastActive(LazyStreamWrapper<T> active) {
+    public LazyFutureStream<T> withLastActive(final LazyStreamWrapper<T> active) {
         return lfs.withLastActive(active);
     }
 
     @Override
-    public T safeJoin(FastFuture<T> f) {
+    public T safeJoin(final FastFuture<T> f) {
         return (T) BlockingStreamHelper.getSafe(f, lfs.getErrorHandler());
     }
 

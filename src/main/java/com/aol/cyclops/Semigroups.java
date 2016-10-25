@@ -289,7 +289,7 @@ public interface Semigroups {
      * @param joiner Separator in joined String
      * @return Combine two strings separated by the supplied joiner
      */
-    static Semigroup<String> stringJoin(String joiner) {
+    static Semigroup<String> stringJoin(final String joiner) {
         return (a, b) -> a + joiner + b;
     }
 
@@ -297,7 +297,7 @@ public interface Semigroups {
      * @param joiner Separator in joined String
      * @return Combine two StringBuilders separated by the supplied joiner
      */
-    static Semigroup<StringBuilder> stringBuilderJoin(String joiner) {
+    static Semigroup<StringBuilder> stringBuilderJoin(final String joiner) {
         return (a, b) -> a.append(joiner)
                           .append(b);
     }
@@ -306,7 +306,7 @@ public interface Semigroups {
      * @param joiner Separator in joined String
      * @return Combine two StringBuffers separated by the supplied joiner
      */
-    static Semigroup<StringBuffer> stringBufferJoin(String joiner) {
+    static Semigroup<StringBuffer> stringBufferJoin(final String joiner) {
         return (a, b) -> a.append(joiner)
                           .append(b);
     }

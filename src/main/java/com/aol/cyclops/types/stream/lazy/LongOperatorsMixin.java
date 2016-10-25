@@ -16,7 +16,8 @@ public interface LongOperatorsMixin<T> extends LongOperators<T>, HasStream<T> {
      * @see java.util.stream.Stream#mapToLong(ToLongFunction)
      * 	 @see java.util.stream.LongStream#sum()
      * */
-    default Eval<Long> sumLong(ToLongFunction<? super T> fn) {
+    @Override
+    default Eval<Long> sumLong(final ToLongFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToLong(t -> LongStream.of(fn.applyAsLong(t)))
                                            .sum());
@@ -28,7 +29,8 @@ public interface LongOperatorsMixin<T> extends LongOperators<T>, HasStream<T> {
      * @see java.util.stream.Stream#mapToLong(ToLongFunction)
      * 	 @see java.util.stream.LongStream#max()
      * */
-    default Eval<OptionalLong> maxLong(ToLongFunction<? super T> fn) {
+    @Override
+    default Eval<OptionalLong> maxLong(final ToLongFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToLong(t -> LongStream.of(fn.applyAsLong(t)))
                                            .max());
@@ -40,7 +42,8 @@ public interface LongOperatorsMixin<T> extends LongOperators<T>, HasStream<T> {
      * @see java.util.stream.Stream#mapToLong(ToLongFunction)
      * 	 @see java.util.stream.LongStream#min()
      * */
-    default Eval<OptionalLong> minLong(ToLongFunction<? super T> fn) {
+    @Override
+    default Eval<OptionalLong> minLong(final ToLongFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToLong(t -> LongStream.of(fn.applyAsLong(t)))
                                            .min());
@@ -52,7 +55,8 @@ public interface LongOperatorsMixin<T> extends LongOperators<T>, HasStream<T> {
      * @see java.util.stream.Stream#mapToLong(ToLongFunction)
      * 	 @see java.util.stream.LongStream#average()
      * */
-    default Eval<OptionalDouble> averageLong(ToLongFunction<? super T> fn) {
+    @Override
+    default Eval<OptionalDouble> averageLong(final ToLongFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToLong(t -> LongStream.of(fn.applyAsLong(t)))
                                            .average());
@@ -64,7 +68,8 @@ public interface LongOperatorsMixin<T> extends LongOperators<T>, HasStream<T> {
      * @see java.util.stream.Stream#mapToLong(ToLongFunction)
      * 	 @see java.util.stream.LongStream#summaryStatistics()
      * */
-    default Eval<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn) {
+    @Override
+    default Eval<LongSummaryStatistics> summaryStatisticsLong(final ToLongFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToLong(t -> LongStream.of(fn.applyAsLong(t)))
                                            .summaryStatistics());

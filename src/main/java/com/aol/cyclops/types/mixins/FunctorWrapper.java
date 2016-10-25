@@ -8,11 +8,13 @@ public class FunctorWrapper<T> implements WrappingFunctor<T> {
     @Wither
     Object functor;
 
+    @Override
     public Object getFunctor() {
         return functor;
     }
 
-    public <T> WrappingFunctor<T> withFunctor(T functor) {
+    @Override
+    public <T> WrappingFunctor<T> withFunctor(final T functor) {
         return new FunctorWrapper(
                                   functor);
     }

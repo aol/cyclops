@@ -6,7 +6,14 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.control.StreamUtils;
 
-public interface IterableFilterable<T> extends Filterable<T> {
+/**
+ * An interface that represents a non-scalar Filterable
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of elements stored in this IterableFilterable
+ */
+public interface IterableFilterable<T> extends Filterable<T>, Iterable<T> {
 
     /**
      * Remove all elements in the supplied Stream from this filterable
@@ -14,8 +21,8 @@ public interface IterableFilterable<T> extends Filterable<T> {
      * @param stream of elements to remove
      * @return Filterable with all supplied elements removed
      */
-    default Filterable<T> removeAll(Stream<? extends T> stream) {
-        Set<T> set = stream.collect(Collectors.toSet());
+    default Filterable<T> removeAll(final Stream<? extends T> stream) {
+        final Set<T> set = stream.collect(Collectors.toSet());
         return filterNot(i -> set.contains(i));
     }
 
@@ -25,7 +32,7 @@ public interface IterableFilterable<T> extends Filterable<T> {
      * @param it  an Iterable of elements to remove
      * @return Filterable with all supplied elements removed
      */
-    default Filterable<T> removeAll(Iterable<? extends T> it) {
+    default Filterable<T> removeAll(final Iterable<? extends T> it) {
         return removeAll(StreamUtils.stream(it));
     }
 
@@ -35,7 +42,7 @@ public interface IterableFilterable<T> extends Filterable<T> {
      * @param values to remove
      * @return Filterable with all supplied values removed
      */
-    default Filterable<T> removeAll(T... values) {
+    default Filterable<T> removeAll(final T... values) {
         return removeAll(Stream.of(values));
 
     }
@@ -46,7 +53,7 @@ public interface IterableFilterable<T> extends Filterable<T> {
      * @param it Iterable of elements to retain
      * @return Filterable with supplied values retained, and others removed
      */
-    default Filterable<T> retainAll(Iterable<? extends T> it) {
+    default Filterable<T> retainAll(final Iterable<? extends T> it) {
         return retainAll(StreamUtils.stream(it));
     }
 
@@ -56,8 +63,8 @@ public interface IterableFilterable<T> extends Filterable<T> {
      * @param stream of elements to retain
      * @return Filterable with supplied values retained, and others removed
      */
-    default Filterable<T> retainAll(Stream<? extends T> stream) {
-        Set<T> set = stream.collect(Collectors.toSet());
+    default Filterable<T> retainAll(final Stream<? extends T> stream) {
+        final Set<T> set = stream.collect(Collectors.toSet());
         return filter(i -> set.contains(i));
     }
 
@@ -67,7 +74,7 @@ public interface IterableFilterable<T> extends Filterable<T> {
      * @param values elements to retain
      * @return Filterable with supplied values retained, and others removed
      */
-    default Filterable<T> retainAll(T... values) {
+    default Filterable<T> retainAll(final T... values) {
         return retainAll(Stream.of(values));
     }
 

@@ -12,27 +12,27 @@ import com.aol.cyclops.types.mixins.Printable;
 public class TryTValueComprehender implements ValueComprehender<TryTValue>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, TryTValue apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final TryTValue apply) {
         return apply.isSuccess() ? comp.of(apply.get()) : comp.empty();
     }
 
     @Override
-    public Object filter(TryTValue t, Predicate p) {
+    public Object filter(final TryTValue t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(TryTValue t, Function fn) {
+    public Object map(final TryTValue t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(TryTValue t, Function fn) {
+    public Object flatMap(final TryTValue t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public TryTValue of(Object o) {
+    public TryTValue of(final Object o) {
 
         return TryTValue.of(Try.success(o));
     }

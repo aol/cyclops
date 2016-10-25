@@ -50,7 +50,7 @@ public interface ValidationResult<T, E> {
          * @param result : Successful Result
          * @return New instance
          */
-        public static <T, E> ValidationResult<T, E> success(T result) {
+        public static <T, E> ValidationResult<T, E> success(final T result) {
             return new SuccessfulResult<>(
                                           result);
         }
@@ -97,7 +97,7 @@ public interface ValidationResult<T, E> {
          * @param error
          * @return
          */
-        public static <T, E> ValidationResult<T, E> fail(E error) {
+        public static <T, E> ValidationResult<T, E> fail(final E error) {
             return new FailedResult<>(
                                       error);
         }

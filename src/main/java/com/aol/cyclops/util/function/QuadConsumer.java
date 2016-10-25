@@ -3,7 +3,6 @@ package com.aol.cyclops.util.function;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.jooq.lambda.function.Consumer3;
 import org.jooq.lambda.function.Consumer4;
 
 /**
@@ -25,9 +24,10 @@ public interface QuadConsumer<T1, T2, T3, T4> {
      * @param c4 jOOλ Consumer4
      * @return cyclops-react QuadConsumer
      */
-    static <S1, S2, S3,S4> QuadConsumer<S1, S2, S3,S4> fromConsumer3(Consumer4<S1,S2,S3,S4> c4){
-        return (a,b,c,d) ->c4.accept(a,b,c,d);
+    static <S1, S2, S3, S4> QuadConsumer<S1, S2, S3, S4> fromConsumer3(final Consumer4<S1, S2, S3, S4> c4) {
+        return (a, b, c, d) -> c4.accept(a, b, c, d);
     }
+
     /**
      * Performs operation with input parameters
      * 
@@ -41,16 +41,17 @@ public interface QuadConsumer<T1, T2, T3, T4> {
     /**
      * @return A jOOλ Consumer4
      */
-    default Consumer4<T1,T2,T3,T4> consumer4(){
-       return (a,b,c,d)->accept(a,b,c,d);
+    default Consumer4<T1, T2, T3, T4> consumer4() {
+        return (a, b, c, d) -> accept(a, b, c, d);
     }
+
     /**
      * Partially apply the first input parameter to this QuadConsumer
      * 
      * @param s the first input parameter
      * @return A curried function that eventually resolves to a Consumer
      */
-    default Function<T2, Function<T3, Consumer<T4>>> apply(T1 s) {
+    default Function<T2, Function<T3, Consumer<T4>>> apply(final T1 s) {
         return CurryConsumer.curryC4(this)
                             .apply(s);
     }
@@ -62,7 +63,7 @@ public interface QuadConsumer<T1, T2, T3, T4> {
      * @param s2 the second input parameter
      * @return A curried function that eventually resolves to a Consumer
      */
-    default Function<T3, Consumer<T4>> apply(T1 s, T2 s2) {
+    default Function<T3, Consumer<T4>> apply(final T1 s, final T2 s2) {
         return CurryConsumer.curryC4(this)
                             .apply(s)
                             .apply(s2);
@@ -76,7 +77,7 @@ public interface QuadConsumer<T1, T2, T3, T4> {
      * @param s3 the third input parameter
      * @return A consumer of the final value
      */
-    default Consumer<T4> apply(T1 s, T2 s2, T3 s3) {
+    default Consumer<T4> apply(final T1 s, final T2 s2, final T3 s3) {
         return CurryConsumer.curryC4(this)
                             .apply(s)
                             .apply(s2)

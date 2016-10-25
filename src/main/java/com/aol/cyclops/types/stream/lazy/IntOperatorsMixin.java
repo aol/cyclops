@@ -16,7 +16,8 @@ public interface IntOperatorsMixin<T> extends IntOperators<T>, HasStream<T> {
      * @see java.util.stream.Stream#mapToInt(ToIntFunction)
      * 	 @see java.util.stream.IntStream#sum()
      * */
-    default Eval<Integer> sumInt(ToIntFunction<? super T> fn) {
+    @Override
+    default Eval<Integer> sumInt(final ToIntFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToInt(t -> IntStream.of(fn.applyAsInt(t)))
                                            .sum());
@@ -28,7 +29,8 @@ public interface IntOperatorsMixin<T> extends IntOperators<T>, HasStream<T> {
      * @see java.util.stream.Stream#mapToInt(ToIntFunction)
      * 	 @see java.util.stream.IntStream#max()
      * */
-    default Eval<OptionalInt> maxInt(ToIntFunction<? super T> fn) {
+    @Override
+    default Eval<OptionalInt> maxInt(final ToIntFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToInt(t -> IntStream.of(fn.applyAsInt(t)))
                                            .max());
@@ -40,7 +42,8 @@ public interface IntOperatorsMixin<T> extends IntOperators<T>, HasStream<T> {
      * @see java.util.stream.Stream#mapToInt(ToIntFunction)
      * 	 @see java.util.stream.IntStream#min()
      * */
-    default Eval<OptionalInt> minInt(ToIntFunction<? super T> fn) {
+    @Override
+    default Eval<OptionalInt> minInt(final ToIntFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToInt(t -> IntStream.of(fn.applyAsInt(t)))
                                            .min());
@@ -52,7 +55,8 @@ public interface IntOperatorsMixin<T> extends IntOperators<T>, HasStream<T> {
      * @see java.util.stream.Stream#mapToInt(ToIntFunction)
      * 	 @see java.util.stream.IntStream#average()
      * */
-    default Eval<OptionalDouble> averageInt(ToIntFunction<? super T> fn) {
+    @Override
+    default Eval<OptionalDouble> averageInt(final ToIntFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToInt(t -> IntStream.of(fn.applyAsInt(t)))
                                            .average());
@@ -64,7 +68,8 @@ public interface IntOperatorsMixin<T> extends IntOperators<T>, HasStream<T> {
      * @see java.util.stream.Stream#mapToInt(ToIntFunction)
      * 	 @see java.util.stream.IntStream#summaryStatistics()
      * */
-    default Eval<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn) {
+    @Override
+    default Eval<IntSummaryStatistics> summaryStatisticsInt(final ToIntFunction<? super T> fn) {
 
         return Eval.later(() -> getStream().flatMapToInt(t -> IntStream.of(fn.applyAsInt(t)))
                                            .summaryStatistics());

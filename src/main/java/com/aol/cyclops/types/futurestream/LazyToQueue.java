@@ -25,11 +25,11 @@ public interface LazyToQueue<U> extends ToQueue<U> {
      * 
      * @return Queue populated asynchrnously by this Stream
      */
+    @Override
     default Queue<U> toQueue() {
-        Queue<U> queue = this.getQueueFactory()
-                             .build();
+        final Queue<U> queue = getQueueFactory().build();
 
-        Continuation continuation = peekSync(queue::add).self(s -> {
+        final Continuation continuation = peekSync(queue::add).self(s -> {
             if (this.getPopulator()
                     .isPoolingActive())
                 s.peekSync(v -> {
@@ -37,9 +37,9 @@ public interface LazyToQueue<U> extends ToQueue<U> {
                                                  v);
                 });
         })
-                                                        .runContinuation(() -> {
-                                                            queue.close();
-                                                        });
+                                                              .runContinuation(() -> {
+                                                                  queue.close();
+                                                              });
 
         queue.addContinuation(continuation);
         return queue;
@@ -53,11 +53,11 @@ public interface LazyToQueue<U> extends ToQueue<U> {
      *	@return This stream converted to a Queue
      * @see com.aol.cyclops.react.stream.traits.ToQueue#toQueue(java.util.function.Function)
      */
-    default Queue<U> toQueue(Function<Queue, Queue> fn) {
-        Queue<U> queue = fn.apply(this.getQueueFactory()
-                                      .build());
+    @Override
+    default Queue<U> toQueue(final Function<Queue, Queue> fn) {
+        final Queue<U> queue = fn.apply(getQueueFactory().build());
 
-        Continuation continuation = thenSync(queue::add).self(s -> {
+        final Continuation continuation = thenSync(queue::add).self(s -> {
             if (this.getPopulator()
                     .isPoolingActive())
                 s.peekSync(v -> {
@@ -65,16 +65,17 @@ public interface LazyToQueue<U> extends ToQueue<U> {
                                                  v);
                 });
         })
-                                                        .runContinuation(() -> {
-                                                            queue.close();
-                                                        });
+                                                              .runContinuation(() -> {
+                                                                  queue.close();
+                                                              });
         queue.addContinuation(continuation);
         return queue;
     }
 
-    default void addToQueue(Queue queue) {
+    @Override
+    default void addToQueue(final Queue queue) {
 
-        Continuation continuation = thenSync(queue::add).self(s -> {
+        final Continuation continuation = thenSync(queue::add).self(s -> {
             if (this.getPopulator()
                     .isPoolingActive())
                 s.peekSync(v -> {
@@ -82,9 +83,9 @@ public interface LazyToQueue<U> extends ToQueue<U> {
                                                  v);
                 });
         })
-                                                        .runContinuation(() -> {
-                                                            throw new ClosedQueueException();
-                                                        });
+                                                              .runContinuation(() -> {
+                                                                  throw new ClosedQueueException();
+                                                              });
         queue.addContinuation(continuation);
 
     }
@@ -96,11 +97,12 @@ public interface LazyToQueue<U> extends ToQueue<U> {
      *	@param sharder Sharding function, element to key converter
      * @see com.aol.cyclops.react.stream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
      */
-    default <K> void toQueue(Map<K, Queue<U>> shards, Function<? super U, ? extends K> sharder) {
+    @Override
+    default <K> void toQueue(final Map<K, Queue<U>> shards, final Function<? super U, ? extends K> sharder) {
 
         //in this case all the items have to be pushed to the shards, 
         //we can't rely on the client pulling them all to get them in to the right shards
-        LazyReact service = getPopulator();
+        final LazyReact service = getPopulator();
         then(it -> shards.get(sharder.apply(it))
                          .offer(it),
              service.getExecutor()).runThread(() -> {
@@ -113,7 +115,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 
     void returnPopulator(LazyReact service);
 
-    default U add(U value, Queue<U> queue) {
+    default U add(final U value, final Queue<U> queue) {
         if (!queue.add(value))
             throw new RuntimeException();
         return value;

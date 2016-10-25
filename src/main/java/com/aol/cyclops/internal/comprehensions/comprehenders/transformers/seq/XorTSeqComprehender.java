@@ -15,29 +15,29 @@ import com.aol.cyclops.types.mixins.Printable;
 public class XorTSeqComprehender implements Comprehender<XorTSeq>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, XorTSeq apply) {
-        List list = (List) apply.stream()
-                                .collect(Collectors.toCollection(MaterializedList::new));
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final XorTSeq apply) {
+        final List list = (List) apply.stream()
+                                      .collect(Collectors.toCollection(MaterializedList::new));
         return list.size() > 0 ? comp.of(list) : comp.empty();
     }
 
     @Override
-    public Object filter(XorTSeq t, Predicate p) {
+    public Object filter(final XorTSeq t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(XorTSeq t, Function fn) {
+    public Object map(final XorTSeq t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(XorTSeq t, Function fn) {
+    public Object flatMap(final XorTSeq t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public XorTSeq of(Object o) {
+    public XorTSeq of(final Object o) {
         return XorTSeq.of(Xor.primary(o));
     }
 
@@ -52,7 +52,7 @@ public class XorTSeqComprehender implements Comprehender<XorTSeq>, Printable {
     }
 
     @Override
-    public XorTSeq fromIterator(Iterator o) {
+    public XorTSeq fromIterator(final Iterator o) {
         return XorTSeq.of(Xor.fromIterable(() -> o));
     }
 

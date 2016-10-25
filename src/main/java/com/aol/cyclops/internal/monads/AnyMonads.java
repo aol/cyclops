@@ -27,7 +27,7 @@ public class AnyMonads {
      * @param fn Function to apply 
      * @return Monad with a list
      */
-    public <T, R> AnyMValue<ListX<R>> traverse(Collection<? extends AnyM<T>> seq, Function<? super T, ? extends R> fn) {
+    public <T, R> AnyMValue<ListX<R>> traverse(final Collection<? extends AnyM<T>> seq, final Function<? super T, ? extends R> fn) {
         if (seq.size() == 0)
             return AnyM.ofValue(Optional.empty());
         return new MonadWrapper<>(
@@ -39,7 +39,7 @@ public class AnyMonads {
                                                            .anyMValue();
     }
 
-    private <T> Comprehender<T> comprehender2(Collection<? extends AnyM<T>> seq) {
+    private <T> Comprehender<T> comprehender2(final Collection<? extends AnyM<T>> seq) {
         return new ComprehenderSelector().selectComprehender(seq.iterator()
                                                                 .next()
                                                                 .unwrap()
@@ -59,7 +59,7 @@ public class AnyMonads {
      * @param fn Function to apply 
      * @return Monad with a list
      */
-    public <T, R> AnyMValue<ListX<R>> traverse(Stream<? extends AnyM<T>> seq, Function<? super T, ? extends R> fn) {
+    public <T, R> AnyMValue<ListX<R>> traverse(final Stream<? extends AnyM<T>> seq, final Function<? super T, ? extends R> fn) {
 
         return traverse(seq.collect(Collectors.toList()), fn);
     }
@@ -77,7 +77,7 @@ public class AnyMonads {
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */
-    public <T1> AnyMValue<ListX<T1>> sequence(Collection<? extends AnyM<T1>> seq) {
+    public <T1> AnyMValue<ListX<T1>> sequence(final Collection<? extends AnyM<T1>> seq) {
         if (seq.size() == 0)
             return AnyM.ofValue(ListX.empty());
         else
@@ -89,9 +89,9 @@ public class AnyMonads {
                                                               .anyMValue();
     }
 
-    private <T1> Comprehender comprehender(Collection<? extends AnyM<T1>> seq) {
-        Object o = seq.iterator()
-                      .next();
+    private <T1> Comprehender comprehender(final Collection<? extends AnyM<T1>> seq) {
+        seq.iterator()
+           .next();
         return new ComprehenderSelector().selectComprehender(seq.iterator()
                                                                 .next()
                                                                 .unwrap()
@@ -110,7 +110,7 @@ public class AnyMonads {
      * @param seq Stream of monads to convert
      * @return Monad with a List
      */
-    public <T1> AnyMValue<ListX<T1>> sequence(Stream<? extends AnyM<T1>> seq) {
+    public <T1> AnyMValue<ListX<T1>> sequence(final Stream<? extends AnyM<T1>> seq) {
         return sequence(seq.collect(Collectors.toList()));
     }
 

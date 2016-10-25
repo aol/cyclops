@@ -16,7 +16,7 @@ public class SetXImpl<T> implements SetX<T> {
     @Getter
     private final Collector<T, ?, Set<T>> collector;
 
-    public SetXImpl(Set<T> set) {
+    public SetXImpl(final Set<T> set) {
         this.set = set;
         this.collector = SetX.defaultCollector();
     }
@@ -31,7 +31,8 @@ public class SetXImpl<T> implements SetX<T> {
      * @param action
      * @see java.lang.Iterable#forEach(java.util.function.Consumer)
      */
-    public void forEach(Consumer<? super T> action) {
+    @Override
+    public void forEach(final Consumer<? super T> action) {
         set.forEach(action);
     }
 
@@ -39,6 +40,7 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see org.pcollections.MapPSet#iterator()
      */
+    @Override
     public Iterator<T> iterator() {
         return set.iterator();
     }
@@ -47,6 +49,7 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see org.pcollections.MapPSet#size()
      */
+    @Override
     public int size() {
         return set.size();
     }
@@ -56,7 +59,8 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see org.pcollections.MapPSet#contains(java.lang.Object)
      */
-    public boolean contains(Object e) {
+    @Override
+    public boolean contains(final Object e) {
         return set.contains(e);
     }
 
@@ -65,7 +69,8 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractSet#equals(java.lang.Object)
      */
-    public boolean equals(Object o) {
+    @Override
+    public boolean equals(final Object o) {
         return set.equals(o);
     }
 
@@ -73,6 +78,7 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractCollection#isEmpty()
      */
+    @Override
     public boolean isEmpty() {
         return set.isEmpty();
     }
@@ -81,6 +87,7 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractSet#hashCode()
      */
+    @Override
     public int hashCode() {
         return set.hashCode();
     }
@@ -89,6 +96,7 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractCollection#toArray()
      */
+    @Override
     public Object[] toArray() {
         return set.toArray();
     }
@@ -98,7 +106,8 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractSet#removeAll(java.util.Collection)
      */
-    public boolean removeAll(Collection<?> c) {
+    @Override
+    public boolean removeAll(final Collection<?> c) {
         return set.removeAll(c);
     }
 
@@ -107,7 +116,8 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractCollection#toArray(java.lang.Object[])
      */
-    public <T> T[] toArray(T[] a) {
+    @Override
+    public <T> T[] toArray(final T[] a) {
         return set.toArray(a);
     }
 
@@ -116,7 +126,8 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractCollection#add(java.lang.Object)
      */
-    public boolean add(T e) {
+    @Override
+    public boolean add(final T e) {
         return set.add(e);
     }
 
@@ -125,7 +136,8 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractCollection#remove(java.lang.Object)
      */
-    public boolean remove(Object o) {
+    @Override
+    public boolean remove(final Object o) {
         return set.remove(o);
     }
 
@@ -134,7 +146,8 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractCollection#containsAll(java.util.Collection)
      */
-    public boolean containsAll(Collection<?> c) {
+    @Override
+    public boolean containsAll(final Collection<?> c) {
         return set.containsAll(c);
     }
 
@@ -143,7 +156,8 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractCollection#addAll(java.util.Collection)
      */
-    public boolean addAll(Collection<? extends T> c) {
+    @Override
+    public boolean addAll(final Collection<? extends T> c) {
         return set.addAll(c);
     }
 
@@ -152,7 +166,8 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractCollection#retainAll(java.util.Collection)
      */
-    public boolean retainAll(Collection<?> c) {
+    @Override
+    public boolean retainAll(final Collection<?> c) {
         return set.retainAll(c);
     }
 
@@ -160,6 +175,7 @@ public class SetXImpl<T> implements SetX<T> {
      * 
      * @see java.util.AbstractCollection#clear()
      */
+    @Override
     public void clear() {
         set.clear();
     }
@@ -168,6 +184,7 @@ public class SetXImpl<T> implements SetX<T> {
      * @return
      * @see java.util.AbstractCollection#toString()
      */
+    @Override
     public String toString() {
         return set.toString();
     }
@@ -176,7 +193,7 @@ public class SetXImpl<T> implements SetX<T> {
      * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
     @Override
-    public <R, A> R collect(Collector<? super T, A, R> collector) {
+    public <R, A> R collect(final Collector<? super T, A, R> collector) {
         return stream().collect(collector);
     }
 

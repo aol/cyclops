@@ -38,7 +38,7 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>, EagerToQu
 
     public SimpleReactStreamImpl(final SimpleReact simpleReact, final Stream<CompletableFuture<U>> stream) {
         this.simpleReact = simpleReact;
-        Stream s = stream;
+        final Stream s = stream;
 
         this.errorHandler = Optional.of((e) -> {
             log.error(e.getMessage(), e);
@@ -51,7 +51,7 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>, EagerToQu
     }
 
     @Override
-    public SimpleReactStream<U> withAsync(boolean b) {
+    public SimpleReactStream<U> withAsync(final boolean b) {
 
         return this.withSimpleReact(this.simpleReact.withAsync(b));
     }
@@ -81,17 +81,18 @@ public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>, EagerToQu
         return this.simpleReact.isAsync();
     }
 
+    @Override
     public Queue<U> toQueue() {
         return EagerToQueue.super.toQueue();
     }
 
     @Override
-    public SimpleReactStream<U> withTaskExecutor(Executor e) {
+    public SimpleReactStream<U> withTaskExecutor(final Executor e) {
         return this.withSimpleReact(simpleReact.withExecutor(e));
     }
 
     @Override
-    public SimpleReactStream<U> withRetrier(RetryExecutor retry) {
+    public SimpleReactStream<U> withRetrier(final RetryExecutor retry) {
         return this.withSimpleReact(simpleReact.withRetrier(retry));
     }
 }

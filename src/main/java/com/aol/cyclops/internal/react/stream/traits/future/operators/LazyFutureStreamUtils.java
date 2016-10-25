@@ -44,27 +44,27 @@ public class LazyFutureStreamUtils {
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachX(
-            LazyFutureStream<T> stream, long x, Consumer<? super T> consumerElement) {
-        CompletableFuture<Subscription> subscription = new CompletableFuture<>();
-        CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+            final LazyFutureStream<T> stream, final long x, final Consumer<? super T> consumerElement) {
+        final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
+        final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
         return tuple(subscription, () -> {
             stream.subscribe(new Subscriber<T>() {
 
                 @Override
-                public void onSubscribe(Subscription s) {
+                public void onSubscribe(final Subscription s) {
                     Objects.requireNonNull(s);
                     s.request(x);
                     subscription.complete(s);
                 }
 
                 @Override
-                public void onNext(T t) {
+                public void onNext(final T t) {
                     consumerElement.accept(t);
 
                 }
 
                 @Override
-                public void onError(Throwable t) {
+                public void onError(final Throwable t) {
 
                 }
 
@@ -111,27 +111,28 @@ public class LazyFutureStreamUtils {
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachXWithError(
-            LazyFutureStream<T> stream, long x, Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError) {
-        CompletableFuture<Subscription> subscription = new CompletableFuture<>();
-        CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+            final LazyFutureStream<T> stream, final long x, final Consumer<? super T> consumerElement,
+            final Consumer<? super Throwable> consumerError) {
+        final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
+        final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
         return tuple(subscription, () -> {
             stream.subscribe(new Subscriber<T>() {
 
                 @Override
-                public void onSubscribe(Subscription s) {
+                public void onSubscribe(final Subscription s) {
                     Objects.requireNonNull(s);
                     s.request(x);
                     subscription.complete(s);
                 }
 
                 @Override
-                public void onNext(T t) {
+                public void onNext(final T t) {
                     consumerElement.accept(t);
 
                 }
 
                 @Override
-                public void onError(Throwable t) {
+                public void onError(final Throwable t) {
                     consumerError.accept(t);
                 }
 
@@ -181,27 +182,28 @@ public class LazyFutureStreamUtils {
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachXEvents(
-            LazyFutureStream<T> stream, long x, Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-        CompletableFuture<Subscription> subscription = new CompletableFuture<>();
-        CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+            final LazyFutureStream<T> stream, final long x, final Consumer<? super T> consumerElement,
+            final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
+        final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
+        final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
         return tuple(subscription, () -> {
             stream.subscribe(new Subscriber<T>() {
 
                 @Override
-                public void onSubscribe(Subscription s) {
+                public void onSubscribe(final Subscription s) {
                     Objects.requireNonNull(s);
                     s.request(x);
                     subscription.complete(s);
                 }
 
                 @Override
-                public void onNext(T t) {
+                public void onNext(final T t) {
                     consumerElement.accept(t);
 
                 }
 
                 @Override
-                public void onError(Throwable t) {
+                public void onError(final Throwable t) {
                     consumerError.accept(t);
                 }
 
@@ -240,14 +242,14 @@ public class LazyFutureStreamUtils {
      * @param consumerError To accept incoming processing errors from the Stream
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachWithError(
-            LazyFutureStream<T> stream, Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError) {
-        CompletableFuture<Subscription> subscription = new CompletableFuture<>();
-        CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+            final LazyFutureStream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
+        final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
+        final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
         return tuple(subscription, () -> {
             stream.subscribe(new Subscriber<T>() {
 
                 @Override
-                public void onSubscribe(Subscription s) {
+                public void onSubscribe(final Subscription s) {
                     Objects.requireNonNull(s);
                     subscription.complete(s);
                     s.request(Long.MAX_VALUE);
@@ -255,13 +257,13 @@ public class LazyFutureStreamUtils {
                 }
 
                 @Override
-                public void onNext(T t) {
+                public void onNext(final T t) {
                     consumerElement.accept(t);
 
                 }
 
                 @Override
-                public void onError(Throwable t) {
+                public void onError(final Throwable t) {
                     consumerError.accept(t);
 
                 }
@@ -306,14 +308,15 @@ public class LazyFutureStreamUtils {
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachEvent(
-            LazyFutureStream<T> stream, Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-        CompletableFuture<Subscription> subscription = new CompletableFuture<>();
-        CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
+            final LazyFutureStream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
+            final Runnable onComplete) {
+        final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
+        final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
         return tuple(subscription, () -> {
             stream.subscribe(new Subscriber<T>() {
 
                 @Override
-                public void onSubscribe(Subscription s) {
+                public void onSubscribe(final Subscription s) {
                     Objects.requireNonNull(s);
                     subscription.complete(s);
                     s.request(Long.MAX_VALUE);
@@ -321,13 +324,13 @@ public class LazyFutureStreamUtils {
                 }
 
                 @Override
-                public void onNext(T t) {
+                public void onNext(final T t) {
                     consumerElement.accept(t);
 
                 }
 
                 @Override
-                public void onError(Throwable t) {
+                public void onError(final Throwable t) {
                     consumerError.accept(t);
 
                 }

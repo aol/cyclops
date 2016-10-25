@@ -19,19 +19,21 @@ public class ReversingListSpliterator<T> implements Spliterator<T>, ReversableSp
     @Setter
     private boolean reverse = false;
 
-    public ReversingListSpliterator(List<T> elements, boolean reverse) {
+    public ReversingListSpliterator(final List<T> elements, final boolean reverse) {
         this.list = elements;
         this.reverse = reverse;
         this.it = elements.listIterator();
 
     }
 
+    @Override
     public ReversingListSpliterator<T> invert() {
         setReverse(!isReverse());
         it = list.listIterator(list.size());
         return this;
     }
 
+    @Override
     public ReversableSpliterator copy() {
         return new ReversingListSpliterator(
                                             list, reverse);
@@ -49,7 +51,7 @@ public class ReversingListSpliterator<T> implements Spliterator<T>, ReversableSp
     }
 
     @Override
-    public boolean tryAdvance(Consumer<? super T> action) {
+    public boolean tryAdvance(final Consumer<? super T> action) {
         Objects.requireNonNull(action);
 
         if (!reverse) {

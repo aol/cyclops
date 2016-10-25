@@ -49,7 +49,7 @@ public class Blocker<U> {
 
     }
 
-    private Status buildStatus(Throwable ex) {
+    private Status buildStatus(final Throwable ex) {
         if (ex != null) {
             errors.incrementAndGet();
 

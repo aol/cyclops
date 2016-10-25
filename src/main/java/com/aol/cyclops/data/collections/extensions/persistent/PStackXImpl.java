@@ -25,10 +25,12 @@ public class PStackXImpl<T> implements PStackX<T> {
     @Getter
     private final boolean efficientOps;
 
+    @Override
     public PStackX<T> efficientOpsOn() {
         return this.withEfficientOps(true);
     }
 
+    @Override
     public PStackX<T> efficientOpsOff() {
         return this.withEfficientOps(false);
     }
@@ -37,7 +39,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @param action
      * @see java.lang.Iterable#forEach(java.util.function.Consumer)
      */
-    public void forEach(Consumer<? super T> action) {
+    @Override
+    public void forEach(final Consumer<? super T> action) {
         stack.forEach(action);
     }
 
@@ -45,6 +48,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.MapPSet#iterator()
      */
+    @Override
     public Iterator<T> iterator() {
         return stack.iterator();
     }
@@ -53,6 +57,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.MapPSet#size()
      */
+    @Override
     public int size() {
         return stack.size();
     }
@@ -62,7 +67,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.MapPSet#contains(java.lang.Object)
      */
-    public boolean contains(Object e) {
+    @Override
+    public boolean contains(final Object e) {
         return stack.contains(e);
     }
 
@@ -71,7 +77,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractSet#equals(java.lang.Object)
      */
-    public boolean equals(Object o) {
+    @Override
+    public boolean equals(final Object o) {
         return stack.equals(o);
     }
 
@@ -80,7 +87,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.MapPSet#plus(java.lang.Object)
      */
-    public PStackX<T> plus(T e) {
+    @Override
+    public PStackX<T> plus(final T e) {
         return this.withStack(stack.plus(e));
     }
 
@@ -89,7 +97,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.MapPSet#minus(java.lang.Object)
      */
-    public PStackX<T> minus(Object e) {
+    @Override
+    public PStackX<T> minus(final Object e) {
         return this.withStack(stack.minus(e));
     }
 
@@ -98,7 +107,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.MapPSet#plusAll(java.util.Collection)
      */
-    public PStackX<T> plusAll(Collection<? extends T> list) {
+    @Override
+    public PStackX<T> plusAll(final Collection<? extends T> list) {
         return this.withStack(stack.plusAll(list));
     }
 
@@ -107,7 +117,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.MapPSet#minusAll(java.util.Collection)
      */
-    public PStackX<T> minusAll(Collection<?> list) {
+    @Override
+    public PStackX<T> minusAll(final Collection<?> list) {
         return this.withStack(stack.minusAll(list));
     }
 
@@ -115,6 +126,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractCollection#isEmpty()
      */
+    @Override
     public boolean isEmpty() {
         return stack.isEmpty();
     }
@@ -123,6 +135,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractSet#hashCode()
      */
+    @Override
     public int hashCode() {
         return stack.hashCode();
     }
@@ -131,6 +144,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractCollection#toArray()
      */
+    @Override
     public Object[] toArray() {
         return stack.toArray();
     }
@@ -140,7 +154,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractSet#removeAll(java.util.Collection)
      */
-    public boolean removeAll(Collection<?> c) {
+    @Override
+    public boolean removeAll(final Collection<?> c) {
         return stack.removeAll(c);
     }
 
@@ -149,7 +164,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractCollection#toArray(java.lang.Object[])
      */
-    public <T> T[] toArray(T[] a) {
+    @Override
+    public <T> T[] toArray(final T[] a) {
         return stack.toArray(a);
     }
 
@@ -158,7 +174,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractCollection#add(java.lang.Object)
      */
-    public boolean add(T e) {
+    @Override
+    public boolean add(final T e) {
         return stack.add(e);
     }
 
@@ -167,7 +184,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractCollection#remove(java.lang.Object)
      */
-    public boolean remove(Object o) {
+    @Override
+    public boolean remove(final Object o) {
         return stack.remove(o);
     }
 
@@ -176,7 +194,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractCollection#containsAll(java.util.Collection)
      */
-    public boolean containsAll(Collection<?> c) {
+    @Override
+    public boolean containsAll(final Collection<?> c) {
         return stack.containsAll(c);
     }
 
@@ -185,8 +204,9 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractCollection#addAll(java.util.Collection)
      */
+    @Override
     @Deprecated
-    public boolean addAll(Collection<? extends T> c) {
+    public boolean addAll(final Collection<? extends T> c) {
         return stack.addAll(c);
     }
 
@@ -195,8 +215,9 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractCollection#retainAll(java.util.Collection)
      */
+    @Override
     @Deprecated
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(final Collection<?> c) {
         return stack.retainAll(c);
     }
 
@@ -204,6 +225,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * 
      * @see java.util.AbstractCollection#clear()
      */
+    @Override
     @Deprecated
     public void clear() {
         stack.clear();
@@ -213,6 +235,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.AbstractCollection#toString()
      */
+    @Override
     public String toString() {
         return stack.toString();
     }
@@ -221,7 +244,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
     @Override
-    public <R, A> R collect(Collector<? super T, A, R> collector) {
+    public <R, A> R collect(final Collector<? super T, A, R> collector) {
         return stream().collect(collector);
     }
 
@@ -239,7 +262,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.PStack#with(int, java.lang.Object)
      */
-    public PStackX<T> with(int i, T e) {
+    @Override
+    public PStackX<T> with(final int i, final T e) {
         return this.withStack(stack.with(i, e));
     }
 
@@ -249,7 +273,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.PStack#plus(int, java.lang.Object)
      */
-    public PStackX<T> plus(int i, T e) {
+    @Override
+    public PStackX<T> plus(final int i, final T e) {
         return this.withStack(stack.plus(i, e));
     }
 
@@ -259,7 +284,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.PStack#plusAll(int, java.util.Collection)
      */
-    public PStackX<T> plusAll(int i, Collection<? extends T> list) {
+    @Override
+    public PStackX<T> plusAll(final int i, final Collection<? extends T> list) {
         return this.withStack(stack.plusAll(i, list));
     }
 
@@ -268,7 +294,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.PStack#minus(int)
      */
-    public PStackX<T> minus(int i) {
+    @Override
+    public PStackX<T> minus(final int i) {
         return this.withStack(stack.minus(i));
     }
 
@@ -278,7 +305,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.PStack#subList(int, int)
      */
-    public PStackX<T> subList(int start, int end) {
+    @Override
+    public PStackX<T> subList(final int start, final int end) {
         return this.withStack(stack.subList(start, end));
     }
 
@@ -287,7 +315,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see org.pcollections.PStack#subList(int)
      */
-    public PStackX<T> subList(int start) {
+    @Override
+    public PStackX<T> subList(final int start) {
         return this.withStack(stack.subList(start));
     }
 
@@ -298,7 +327,9 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @deprecated
      * @see org.pcollections.PSequence#addAll(int, java.util.Collection)
      */
-    public boolean addAll(int index, Collection<? extends T> c) {
+    @Deprecated
+    @Override
+    public boolean addAll(final int index, final Collection<? extends T> c) {
         return stack.addAll(index, c);
     }
 
@@ -309,7 +340,9 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @deprecated
      * @see org.pcollections.PSequence#set(int, java.lang.Object)
      */
-    public T set(int index, T element) {
+    @Deprecated
+    @Override
+    public T set(final int index, final T element) {
         return stack.set(index, element);
     }
 
@@ -319,7 +352,9 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @deprecated
      * @see org.pcollections.PSequence#add(int, java.lang.Object)
      */
-    public void add(int index, T element) {
+    @Deprecated
+    @Override
+    public void add(final int index, final T element) {
         stack.add(index, element);
     }
 
@@ -329,7 +364,9 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @deprecated
      * @see org.pcollections.PSequence#remove(int)
      */
-    public T remove(int index) {
+    @Deprecated
+    @Override
+    public T remove(final int index) {
         return stack.remove(index);
     }
 
@@ -337,7 +374,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @param operator
      * @see java.util.List#replaceAll(java.util.function.UnaryOperator)
      */
-    public void replaceAll(UnaryOperator<T> operator) {
+    @Override
+    public void replaceAll(final UnaryOperator<T> operator) {
         stack.replaceAll(operator);
     }
 
@@ -346,7 +384,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.Collection#removeIf(java.util.function.Predicate)
      */
-    public boolean removeIf(Predicate<? super T> filter) {
+    @Override
+    public boolean removeIf(final Predicate<? super T> filter) {
         return stack.removeIf(filter);
     }
 
@@ -354,7 +393,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @param c
      * @see java.util.List#sort(java.util.Comparator)
      */
-    public void sort(Comparator<? super T> c) {
+    @Override
+    public void sort(final Comparator<? super T> c) {
         stack.sort(c);
     }
 
@@ -362,6 +402,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.Collection#spliterator()
      */
+    @Override
     public Spliterator<T> spliterator() {
         return stack.spliterator();
     }
@@ -371,7 +412,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.List#get(int)
      */
-    public T get(int index) {
+    @Override
+    public T get(final int index) {
         return stack.get(index);
     }
 
@@ -379,6 +421,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.Collection#parallelStream()
      */
+    @Override
     public Stream<T> parallelStream() {
         return stack.parallelStream();
     }
@@ -388,7 +431,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.List#indexOf(java.lang.Object)
      */
-    public int indexOf(Object o) {
+    @Override
+    public int indexOf(final Object o) {
         return stack.indexOf(o);
     }
 
@@ -397,7 +441,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.List#lastIndexOf(java.lang.Object)
      */
-    public int lastIndexOf(Object o) {
+    @Override
+    public int lastIndexOf(final Object o) {
         return stack.lastIndexOf(o);
     }
 
@@ -405,6 +450,7 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.List#listIterator()
      */
+    @Override
     public ListIterator<T> listIterator() {
         return stack.listIterator();
     }
@@ -414,7 +460,8 @@ public class PStackXImpl<T> implements PStackX<T> {
      * @return
      * @see java.util.List#listIterator(int)
      */
-    public ListIterator<T> listIterator(int index) {
+    @Override
+    public ListIterator<T> listIterator(final int index) {
         return stack.listIterator(index);
     }
 

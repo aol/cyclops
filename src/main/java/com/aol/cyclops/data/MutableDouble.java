@@ -62,7 +62,7 @@ public class MutableDouble implements DoubleSupplier, DoubleConsumer, Matchable.
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableDouble of(double var) {
+    public static <T> MutableDouble of(final double var) {
         return new MutableDouble(
                                  var);
     }
@@ -82,17 +82,20 @@ public class MutableDouble implements DoubleSupplier, DoubleConsumer, Matchable.
      * @param c Consumer that sets an external value
      * @return MutableDouble that gets / sets an external (mutable) value
      */
-    public static MutableDouble fromExternal(DoubleSupplier s, DoubleConsumer c) {
+    public static MutableDouble fromExternal(final DoubleSupplier s, final DoubleConsumer c) {
         return new MutableDouble() {
+            @Override
             public double getAsDouble() {
                 return s.getAsDouble();
             }
 
+            @Override
             public Double get() {
                 return getAsDouble();
             }
 
-            public MutableDouble set(double value) {
+            @Override
+            public MutableDouble set(final double value) {
                 c.accept(value);
                 return this;
             }
@@ -117,9 +120,10 @@ public class MutableDouble implements DoubleSupplier, DoubleConsumer, Matchable.
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(Function<Double, R> fn) {
-        MutableDouble host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Double, R> fn) {
+        final MutableDouble host = this;
         return new Mutable<R>() {
+            @Override
             public R get() {
                 return fn.apply(host.get());
             }
@@ -145,10 +149,11 @@ public class MutableDouble implements DoubleSupplier, DoubleConsumer, Matchable.
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(Function<T1, Double> fn) {
-        MutableDouble host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Double> fn) {
+        final MutableDouble host = this;
         return new Mutable<T1>() {
-            public Mutable<T1> set(T1 value) {
+            @Override
+            public Mutable<T1> set(final T1 value) {
                 host.set(fn.apply(value));
                 return this;
             }
@@ -174,9 +179,10 @@ public class MutableDouble implements DoubleSupplier, DoubleConsumer, Matchable.
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public MutableDouble mapOutput(DoubleUnaryOperator fn) {
-        MutableDouble host = this;
+    public MutableDouble mapOutput(final DoubleUnaryOperator fn) {
+        final MutableDouble host = this;
         return new MutableDouble() {
+            @Override
             public double getAsDouble() {
                 return fn.applyAsDouble(host.getAsDouble());
             }
@@ -202,10 +208,11 @@ public class MutableDouble implements DoubleSupplier, DoubleConsumer, Matchable.
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public MutableDouble mapInput(DoubleUnaryOperator fn) {
-        MutableDouble host = this;
+    public MutableDouble mapInput(final DoubleUnaryOperator fn) {
+        final MutableDouble host = this;
         return new MutableDouble() {
-            public MutableDouble set(double value) {
+            @Override
+            public MutableDouble set(final double value) {
                 host.set(fn.applyAsDouble(value));
                 return this;
             }
@@ -216,6 +223,7 @@ public class MutableDouble implements DoubleSupplier, DoubleConsumer, Matchable.
     /**
      * @return Current value
      */
+    @Override
     public double getAsDouble() {
         return var;
     }
@@ -224,7 +232,7 @@ public class MutableDouble implements DoubleSupplier, DoubleConsumer, Matchable.
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableDouble set(double var) {
+    public MutableDouble set(final double var) {
         this.var = var;
         return this;
     }
@@ -233,7 +241,7 @@ public class MutableDouble implements DoubleSupplier, DoubleConsumer, Matchable.
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableDouble mutate(DoubleFunction<Double> varFn) {
+    public MutableDouble mutate(final DoubleFunction<Double> varFn) {
         return set(varFn.apply(get()));
 
     }
@@ -252,7 +260,7 @@ public class MutableDouble implements DoubleSupplier, DoubleConsumer, Matchable.
     }
 
     @Override
-    public void accept(double value) {
+    public void accept(final double value) {
         set(value);
 
     }

@@ -30,17 +30,12 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad Transformer for Cyclops Streams
+ * Monad Transformer for Streams nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
  * 
- * StreamT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Stream
- * <pre>
- * {@code 
- * StreamT<AnyM<*SOME_MONAD_TYPE*<Stream<T>>>>
- * }</pre>
  * StreamT allows the deeply wrapped Stream to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> The type contained in the Stream(s) within
  */
 public class StreamTSeq<T> implements StreamT<T> {
 
@@ -50,6 +45,7 @@ public class StreamTSeq<T> implements StreamT<T> {
         this.run = run.map(s -> ReactiveSeq.fromStream(s));
     }
 
+    @Override
     public boolean isSeqPresent() {
         return !run.isEmpty();
     }
@@ -57,6 +53,7 @@ public class StreamTSeq<T> implements StreamT<T> {
     /**
      * @return The wrapped AnyM
      */
+    @Override
     public AnyMSeq<ReactiveSeq<T>> unwrap() {
         return run;
     }
@@ -75,7 +72,8 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @param peek  Consumer to accept current value of Stream
      * @return StreamT with peek call
      */
-    public StreamTSeq<T> peek(Consumer<? super T> peek) {
+    @Override
+    public StreamTSeq<T> peek(final Consumer<? super T> peek) {
         return map(a -> {
             peek.accept(a);
             return a;
@@ -95,7 +93,8 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @param test Predicate to filter the wrapped Stream
      * @return StreamT that applies the provided filter
      */
-    public StreamTSeq<T> filter(Predicate<? super T> test) {
+    @Override
+    public StreamTSeq<T> filter(final Predicate<? super T> test) {
         return of(run.map(stream -> stream.filter(test)));
     }
 
@@ -115,7 +114,8 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @param f Mapping function for the wrapped Stream
      * @return StreamT that applies the map function to the wrapped Stream
      */
-    public <B> StreamTSeq<B> map(Function<? super T, ? extends B> f) {
+    @Override
+    public <B> StreamTSeq<B> map(final Function<? super T, ? extends B> f) {
         return new StreamTSeq<B>(
                                  run.map(o -> o.map(f)));
     }
@@ -134,12 +134,13 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @param f FlatMap function
      * @return StreamT that applies the flatMap function to the wrapped Stream
      */
-    public <B> StreamTSeq<B> flatMapT(Function<? super T, StreamTSeq<? extends B>> f) {
+    public <B> StreamTSeq<B> flatMapT(final Function<? super T, StreamTSeq<? extends B>> f) {
         return of(run.map(stream -> stream.flatMap(a -> f.apply(a).run.stream())
                                           .<B> flatMap(a -> a)));
     }
 
-    public <B> StreamTSeq<B> flatMap(Function<? super T, ? extends Stream<? extends B>> f) {
+    @Override
+    public <B> StreamTSeq<B> flatMap(final Function<? super T, ? extends Stream<? extends B>> f) {
 
         return new StreamTSeq<B>(
                                  run.map(o -> o.flatMap(f)));
@@ -173,7 +174,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @param fn Function to enhance with functionality from Stream and another monad type
      * @return Function that accepts and returns an StreamT
      */
-    public static <U, R> Function<StreamTSeq<U>, StreamTSeq<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<StreamTSeq<U>, StreamTSeq<R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -184,7 +185,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @param anyM AnyM that doesn't contain a monad wrapping an Stream
      * @return StreamT
      */
-    public static <A> StreamTSeq<A> fromAnyM(AnyMSeq<A> anyM) {
+    public static <A> StreamTSeq<A> fromAnyM(final AnyMSeq<A> anyM) {
         return of(anyM.map(Stream::of));
     }
 
@@ -194,12 +195,12 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @param monads
      * @return
      */
-    public static <A> StreamTSeq<A> of(AnyMSeq<? extends Stream<A>> monads) {
+    public static <A> StreamTSeq<A> of(final AnyMSeq<? extends Stream<A>> monads) {
         return new StreamTSeq<>(
                                 monads);
     }
 
-    public static <A> StreamTSeq<A> of(Stream<A> monads) {
+    public static <A> StreamTSeq<A> of(final Stream<A> monads) {
         return StreamT.fromIterable(ReactiveSeq.of(monads));
     }
 
@@ -208,6 +209,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return String.format("StreamTSeq[%s]", run);
     }
@@ -216,7 +218,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
      */
     @Override
-    public <T> StreamTSeq<T> unit(T unit) {
+    public <T> StreamTSeq<T> unit(final T unit) {
         return of(run.unit(Stream.of(unit)));
     }
 
@@ -231,7 +233,8 @@ public class StreamTSeq<T> implements StreamT<T> {
         return stream().iterator();
     }
 
-    public <R> StreamTSeq<R> unitIterator(Iterator<R> it) {
+    @Override
+    public <R> StreamTSeq<R> unitIterator(final Iterator<R> it) {
         return of(run.unitIterator(it)
                      .map(i -> Stream.of(i)));
     }
@@ -254,7 +257,7 @@ public class StreamTSeq<T> implements StreamT<T> {
     }
 
     @Override
-    public <T> StreamTSeq<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+    public <T> StreamTSeq<T> unitAnyM(final AnyM<Traversable<T>> traversable) {
 
         return of((AnyMSeq) traversable.map(t -> ReactiveSeq.fromIterable(t)));
     }
@@ -273,7 +276,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
-    public StreamTSeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+    public StreamTSeq<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
         return (StreamTSeq<T>) StreamT.super.combine(predicate, op);
     }
@@ -282,7 +285,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#cycle(int)
      */
     @Override
-    public StreamTSeq<T> cycle(int times) {
+    public StreamTSeq<T> cycle(final int times) {
 
         return (StreamTSeq<T>) StreamT.super.cycle(times);
     }
@@ -291,7 +294,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#cycle(com.aol.cyclops.Monoid, int)
      */
     @Override
-    public StreamTSeq<T> cycle(Monoid<T> m, int times) {
+    public StreamTSeq<T> cycle(final Monoid<T> m, final int times) {
 
         return (StreamTSeq<T>) StreamT.super.cycle(m, times);
     }
@@ -300,7 +303,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#cycleWhile(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<T> cycleWhile(Predicate<? super T> predicate) {
+    public StreamTSeq<T> cycleWhile(final Predicate<? super T> predicate) {
 
         return (StreamTSeq<T>) StreamT.super.cycleWhile(predicate);
     }
@@ -309,7 +312,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#cycleUntil(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<T> cycleUntil(Predicate<? super T> predicate) {
+    public StreamTSeq<T> cycleUntil(final Predicate<? super T> predicate) {
 
         return (StreamTSeq<T>) StreamT.super.cycleUntil(predicate);
     }
@@ -318,7 +321,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> StreamTSeq<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> StreamTSeq<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (StreamTSeq<R>) StreamT.super.zip(other, zipper);
     }
@@ -327,7 +330,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> StreamTSeq<Tuple2<T, U>> zip(Stream<? extends U> other) {
+    public <U> StreamTSeq<Tuple2<T, U>> zip(final Stream<? extends U> other) {
 
         return (StreamTSeq) StreamT.super.zip(other);
     }
@@ -336,7 +339,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <S, U> StreamTSeq<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
+    public <S, U> StreamTSeq<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
 
         return (StreamTSeq) StreamT.super.zip3(second, third);
     }
@@ -345,7 +348,8 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> StreamTSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third, Stream<? extends T4> fourth) {
+    public <T2, T3, T4> StreamTSeq<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
+            final Stream<? extends T4> fourth) {
 
         return (StreamTSeq) StreamT.super.zip4(second, third, fourth);
     }
@@ -363,7 +367,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#sliding(int)
      */
     @Override
-    public StreamTSeq<ListX<T>> sliding(int windowSize) {
+    public StreamTSeq<ListX<T>> sliding(final int windowSize) {
 
         return (StreamTSeq<ListX<T>>) StreamT.super.sliding(windowSize);
     }
@@ -372,7 +376,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#sliding(int, int)
      */
     @Override
-    public StreamTSeq<ListX<T>> sliding(int windowSize, int increment) {
+    public StreamTSeq<ListX<T>> sliding(final int windowSize, final int increment) {
 
         return (StreamTSeq<ListX<T>>) StreamT.super.sliding(windowSize, increment);
     }
@@ -381,7 +385,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#grouped(int, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> StreamTSeq<C> grouped(int size, Supplier<C> supplier) {
+    public <C extends Collection<? super T>> StreamTSeq<C> grouped(final int size, final Supplier<C> supplier) {
 
         return (StreamTSeq<C>) StreamT.super.grouped(size, supplier);
     }
@@ -390,7 +394,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+    public StreamTSeq<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (StreamTSeq<ListX<T>>) StreamT.super.groupedUntil(predicate);
     }
@@ -399,7 +403,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public StreamTSeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public StreamTSeq<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
         return (StreamTSeq<ListX<T>>) StreamT.super.groupedStatefullyUntil(predicate);
     }
@@ -408,7 +412,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+    public StreamTSeq<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (StreamTSeq<ListX<T>>) StreamT.super.groupedWhile(predicate);
     }
@@ -417,7 +421,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> StreamTSeq<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends Collection<? super T>> StreamTSeq<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (StreamTSeq<C>) StreamT.super.groupedWhile(predicate, factory);
     }
@@ -426,7 +430,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> StreamTSeq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends Collection<? super T>> StreamTSeq<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (StreamTSeq<C>) StreamT.super.groupedUntil(predicate, factory);
     }
@@ -435,7 +439,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#grouped(int)
      */
     @Override
-    public StreamTSeq<ListX<T>> grouped(int groupSize) {
+    public StreamTSeq<ListX<T>> grouped(final int groupSize) {
 
         return (StreamTSeq<ListX<T>>) StreamT.super.grouped(groupSize);
     }
@@ -444,7 +448,8 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
-    public <K, A, D> StreamTSeq<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+    public <K, A, D> StreamTSeq<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
+            final Collector<? super T, A, D> downstream) {
 
         return (StreamTSeq) StreamT.super.grouped(classifier, downstream);
     }
@@ -453,7 +458,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#grouped(java.util.function.Function)
      */
     @Override
-    public <K> StreamTSeq<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+    public <K> StreamTSeq<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
 
         return (StreamTSeq) StreamT.super.grouped(classifier);
     }
@@ -471,7 +476,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#scanLeft(com.aol.cyclops.Monoid)
      */
     @Override
-    public StreamTSeq<T> scanLeft(Monoid<T> monoid) {
+    public StreamTSeq<T> scanLeft(final Monoid<T> monoid) {
 
         return (StreamTSeq<T>) StreamT.super.scanLeft(monoid);
     }
@@ -480,7 +485,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> StreamTSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
+    public <U> StreamTSeq<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
         return (StreamTSeq<U>) StreamT.super.scanLeft(seed, function);
     }
@@ -489,7 +494,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#scanRight(com.aol.cyclops.Monoid)
      */
     @Override
-    public StreamTSeq<T> scanRight(Monoid<T> monoid) {
+    public StreamTSeq<T> scanRight(final Monoid<T> monoid) {
 
         return (StreamTSeq<T>) StreamT.super.scanRight(monoid);
     }
@@ -498,7 +503,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> StreamTSeq<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+    public <U> StreamTSeq<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
 
         return (StreamTSeq<U>) StreamT.super.scanRight(identity, combiner);
     }
@@ -516,7 +521,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#sorted(java.util.Comparator)
      */
     @Override
-    public StreamTSeq<T> sorted(Comparator<? super T> c) {
+    public StreamTSeq<T> sorted(final Comparator<? super T> c) {
 
         return (StreamTSeq<T>) StreamT.super.sorted(c);
     }
@@ -525,7 +530,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#takeWhile(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<T> takeWhile(Predicate<? super T> p) {
+    public StreamTSeq<T> takeWhile(final Predicate<? super T> p) {
 
         return (StreamTSeq<T>) StreamT.super.takeWhile(p);
     }
@@ -534,7 +539,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#dropWhile(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<T> dropWhile(Predicate<? super T> p) {
+    public StreamTSeq<T> dropWhile(final Predicate<? super T> p) {
 
         return (StreamTSeq<T>) StreamT.super.dropWhile(p);
     }
@@ -543,7 +548,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#takeUntil(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<T> takeUntil(Predicate<? super T> p) {
+    public StreamTSeq<T> takeUntil(final Predicate<? super T> p) {
 
         return (StreamTSeq<T>) StreamT.super.takeUntil(p);
     }
@@ -552,7 +557,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#dropUntil(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<T> dropUntil(Predicate<? super T> p) {
+    public StreamTSeq<T> dropUntil(final Predicate<? super T> p) {
 
         return (StreamTSeq<T>) StreamT.super.dropUntil(p);
     }
@@ -561,7 +566,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#dropRight(int)
      */
     @Override
-    public StreamTSeq<T> dropRight(int num) {
+    public StreamTSeq<T> dropRight(final int num) {
 
         return (StreamTSeq<T>) StreamT.super.dropRight(num);
     }
@@ -570,7 +575,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#takeRight(int)
      */
     @Override
-    public StreamTSeq<T> takeRight(int num) {
+    public StreamTSeq<T> takeRight(final int num) {
 
         return (StreamTSeq<T>) StreamT.super.takeRight(num);
     }
@@ -579,7 +584,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#skip(long)
      */
     @Override
-    public StreamTSeq<T> skip(long num) {
+    public StreamTSeq<T> skip(final long num) {
 
         return (StreamTSeq<T>) StreamT.super.skip(num);
     }
@@ -588,7 +593,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#skipWhile(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<T> skipWhile(Predicate<? super T> p) {
+    public StreamTSeq<T> skipWhile(final Predicate<? super T> p) {
 
         return (StreamTSeq<T>) StreamT.super.skipWhile(p);
     }
@@ -597,7 +602,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#skipUntil(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<T> skipUntil(Predicate<? super T> p) {
+    public StreamTSeq<T> skipUntil(final Predicate<? super T> p) {
 
         return (StreamTSeq<T>) StreamT.super.skipUntil(p);
     }
@@ -606,7 +611,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#limit(long)
      */
     @Override
-    public StreamTSeq<T> limit(long num) {
+    public StreamTSeq<T> limit(final long num) {
 
         return (StreamTSeq<T>) StreamT.super.limit(num);
     }
@@ -615,7 +620,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#limitWhile(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<T> limitWhile(Predicate<? super T> p) {
+    public StreamTSeq<T> limitWhile(final Predicate<? super T> p) {
 
         return (StreamTSeq<T>) StreamT.super.limitWhile(p);
     }
@@ -624,7 +629,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#limitUntil(java.util.function.Predicate)
      */
     @Override
-    public StreamTSeq<T> limitUntil(Predicate<? super T> p) {
+    public StreamTSeq<T> limitUntil(final Predicate<? super T> p) {
 
         return (StreamTSeq<T>) StreamT.super.limitUntil(p);
     }
@@ -633,7 +638,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#intersperse(java.lang.Object)
      */
     @Override
-    public StreamTSeq<T> intersperse(T value) {
+    public StreamTSeq<T> intersperse(final T value) {
 
         return (StreamTSeq<T>) StreamT.super.intersperse(value);
     }
@@ -660,7 +665,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#skipLast(int)
      */
     @Override
-    public StreamTSeq<T> skipLast(int num) {
+    public StreamTSeq<T> skipLast(final int num) {
 
         return (StreamTSeq<T>) StreamT.super.skipLast(num);
     }
@@ -669,7 +674,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#limitLast(int)
      */
     @Override
-    public StreamTSeq<T> limitLast(int num) {
+    public StreamTSeq<T> limitLast(final int num) {
 
         return (StreamTSeq<T>) StreamT.super.limitLast(num);
     }
@@ -678,7 +683,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#onEmpty(java.lang.Object)
      */
     @Override
-    public StreamTSeq<T> onEmpty(T value) {
+    public StreamTSeq<T> onEmpty(final T value) {
 
         return (StreamTSeq<T>) StreamT.super.onEmpty(value);
     }
@@ -687,7 +692,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    public StreamTSeq<T> onEmptyGet(Supplier<? extends T> supplier) {
+    public StreamTSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
 
         return (StreamTSeq<T>) StreamT.super.onEmptyGet(supplier);
     }
@@ -696,7 +701,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    public <X extends Throwable> StreamTSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
+    public <X extends Throwable> StreamTSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
         return (StreamTSeq<T>) StreamT.super.onEmptyThrow(supplier);
     }
@@ -705,7 +710,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#shuffle(java.util.Random)
      */
     @Override
-    public StreamTSeq<T> shuffle(Random random) {
+    public StreamTSeq<T> shuffle(final Random random) {
 
         return (StreamTSeq<T>) StreamT.super.shuffle(random);
     }
@@ -714,7 +719,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#slice(long, long)
      */
     @Override
-    public StreamTSeq<T> slice(long from, long to) {
+    public StreamTSeq<T> slice(final long from, final long to) {
 
         return (StreamTSeq<T>) StreamT.super.slice(from, to);
     }
@@ -723,7 +728,7 @@ public class StreamTSeq<T> implements StreamT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.StreamT#sorted(java.util.function.Function)
      */
     @Override
-    public <U extends Comparable<? super U>> StreamTSeq<T> sorted(Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> StreamTSeq<T> sorted(final Function<? super T, ? extends U> function) {
         return (StreamTSeq) StreamT.super.sorted(function);
     }
 
@@ -733,7 +738,7 @@ public class StreamTSeq<T> implements StreamT<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof StreamTSeq) {
             return run.equals(((StreamTSeq) o).run);
         }

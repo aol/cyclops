@@ -36,6 +36,7 @@ public interface FutureOperations<T>
      * 
      * @return Future List
      */
+    @Override
     public CompletableFuture<List<T>> toList();
 
     /**
@@ -75,6 +76,7 @@ public interface FutureOperations<T>
      * 
      * @return Future Set
      */
+    @Override
     public CompletableFuture<Set<T>> toSet();
 
     /**
@@ -82,6 +84,7 @@ public interface FutureOperations<T>
      * 
      * @see org.jooq.lambda.Seq#minBy(Function)
      */
+    @Override
     public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> minBy(Function<? super T, ? extends U> function);
 
     /**
@@ -89,6 +92,7 @@ public interface FutureOperations<T>
      * 
      *  @see org.jooq.lambda.Seq#maxBy(Function)
      */
+    @Override
     public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> maxBy(Function<? super T, ? extends U> function);
 
     /**
@@ -97,12 +101,14 @@ public interface FutureOperations<T>
      * @see java.util.stream.Stream#collect(Collector)
      * 
      */
+    @Override
     public <R, A> CompletableFuture<R> collect(Collector<? super T, A, R> collector);
 
     /**
      *  Asynchronously perform a Stream collection
      * @see org.jooq.lambda.Seq#toCollection(Supplier)
      */
+    @Override
     public <C extends Collection<T>> CompletableFuture<C> toCollection(Supplier<C> collectionFactory);
 
     /**
@@ -154,12 +160,14 @@ public interface FutureOperations<T>
      * Perform an asyncrhonous min operation
      *  @see java.util.stream.Stream#min(Comparator)
      */
+    @Override
     public CompletableFuture<Optional<T>> min(Comparator<? super T> comparator);
 
     /**
      * Perform an asyncrhonous min operation
      *  @see java.util.stream.Stream#max(Comparator)
      */
+    @Override
     public CompletableFuture<Optional<T>> max(Comparator<? super T> comparator);
 
     /**
@@ -200,6 +208,7 @@ public interface FutureOperations<T>
      * @see java.util.stream.Stream#count()
      * 
      */
+    @Override
     public CompletableFuture<Long> count();
 
     public CompletableFuture<String> join(CharSequence sep);
@@ -238,18 +247,21 @@ public interface FutureOperations<T>
      * Perform an asynchronous All Match operation
      * 	@see java.util.stream.Stream#allMatch(Predicate)
      * */
+    @Override
     public CompletableFuture<Boolean> allMatch(Predicate<? super T> predicate);
 
     /**
      * Perform an asynchronous Any Match operation
      * 	 @see java.util.stream.Stream#anyMatch(Predicate)
      * */
+    @Override
     public CompletableFuture<Boolean> anyMatch(Predicate<? super T> predicate);
 
     /**
      * Perform an asynchronous Any Match operation
      * 	 @see java.util.stream.Stream#noneMatch(Predicate)
      * */
+    @Override
     public CompletableFuture<Boolean> noneMatch(Predicate<? super T> predicate);
 
     public void forEach(Consumer<? super T> object);

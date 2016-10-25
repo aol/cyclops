@@ -13,9 +13,9 @@ public class DebounceOperator<T> {
 
     private final Stream<T> stream;
 
-    public Stream<T> debounce(long time, TimeUnit t) {
-        Iterator<T> it = stream.iterator();
-        long timeNanos = t.toNanos(time);
+    public Stream<T> debounce(final long time, final TimeUnit t) {
+        final Iterator<T> it = stream.iterator();
+        final long timeNanos = t.toNanos(time);
         return StreamUtils.stream(new Iterator<T>() {
             volatile long last = 0;
 

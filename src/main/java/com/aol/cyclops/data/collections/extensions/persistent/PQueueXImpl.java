@@ -22,7 +22,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @param action
      * @see java.lang.Iterable#forEach(java.util.function.Consumer)
      */
-    public void forEach(Consumer<? super T> action) {
+    @Override
+    public void forEach(final Consumer<? super T> action) {
         set.forEach(action);
     }
 
@@ -30,6 +31,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see org.pcollections.MapPSet#iterator()
      */
+    @Override
     public Iterator<T> iterator() {
         return set.iterator();
     }
@@ -38,6 +40,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see org.pcollections.MapPSet#size()
      */
+    @Override
     public int size() {
         return set.size();
     }
@@ -47,7 +50,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see org.pcollections.MapPSet#contains(java.lang.Object)
      */
-    public boolean contains(Object e) {
+    @Override
+    public boolean contains(final Object e) {
         return set.contains(e);
     }
 
@@ -56,7 +60,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractSet#equals(java.lang.Object)
      */
-    public boolean equals(Object o) {
+    @Override
+    public boolean equals(final Object o) {
         return set.equals(o);
     }
 
@@ -65,7 +70,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see org.pcollections.MapPSet#plus(java.lang.Object)
      */
-    public PQueueX<T> plus(T e) {
+    @Override
+    public PQueueX<T> plus(final T e) {
         return new PQueueXImpl<>(
                                  set.plus(e));
     }
@@ -75,8 +81,9 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see org.pcollections.MapPSet#minus(java.lang.Object)
      */
-    public PQueueX<T> minus(Object e) {
-        PCollection<T> res = set.minus(e);
+    @Override
+    public PQueueX<T> minus(final Object e) {
+        final PCollection<T> res = set.minus(e);
         if (res instanceof PQueue)
             return new PQueueXImpl<>(
                                      (PQueue<T>) res);
@@ -89,7 +96,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see org.pcollections.MapPSet#plusAll(java.util.Collection)
      */
-    public PQueueX<T> plusAll(Collection<? extends T> list) {
+    @Override
+    public PQueueX<T> plusAll(final Collection<? extends T> list) {
         return new PQueueXImpl<>(
                                  set.plusAll(list));
     }
@@ -99,8 +107,9 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see org.pcollections.MapPSet#minusAll(java.util.Collection)
      */
-    public PQueueX<T> minusAll(Collection<?> list) {
-        PCollection<T> res = set.minusAll(list);
+    @Override
+    public PQueueX<T> minusAll(final Collection<?> list) {
+        final PCollection<T> res = set.minusAll(list);
         if (res instanceof PQueue)
             return new PQueueXImpl<>(
                                      (PQueue<T>) res);
@@ -112,6 +121,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractCollection#isEmpty()
      */
+    @Override
     public boolean isEmpty() {
         return set.isEmpty();
     }
@@ -120,6 +130,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractSet#hashCode()
      */
+    @Override
     public int hashCode() {
         return set.hashCode();
     }
@@ -128,6 +139,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractCollection#toArray()
      */
+    @Override
     public Object[] toArray() {
         return set.toArray();
     }
@@ -137,7 +149,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractSet#removeAll(java.util.Collection)
      */
-    public boolean removeAll(Collection<?> c) {
+    @Override
+    public boolean removeAll(final Collection<?> c) {
         return set.removeAll(c);
     }
 
@@ -146,7 +159,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractCollection#toArray(java.lang.Object[])
      */
-    public <T> T[] toArray(T[] a) {
+    @Override
+    public <T> T[] toArray(final T[] a) {
         return set.toArray(a);
     }
 
@@ -155,7 +169,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractCollection#add(java.lang.Object)
      */
-    public boolean add(T e) {
+    @Override
+    public boolean add(final T e) {
         return set.add(e);
     }
 
@@ -164,7 +179,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractCollection#remove(java.lang.Object)
      */
-    public boolean remove(Object o) {
+    @Override
+    public boolean remove(final Object o) {
         return set.remove(o);
     }
 
@@ -173,7 +189,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractCollection#containsAll(java.util.Collection)
      */
-    public boolean containsAll(Collection<?> c) {
+    @Override
+    public boolean containsAll(final Collection<?> c) {
         return set.containsAll(c);
     }
 
@@ -182,8 +199,9 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractCollection#addAll(java.util.Collection)
      */
+    @Override
     @Deprecated
-    public boolean addAll(Collection<? extends T> c) {
+    public boolean addAll(final Collection<? extends T> c) {
         return set.addAll(c);
     }
 
@@ -192,8 +210,9 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractCollection#retainAll(java.util.Collection)
      */
+    @Override
     @Deprecated
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(final Collection<?> c) {
         return set.retainAll(c);
     }
 
@@ -201,6 +220,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * 
      * @see java.util.AbstractCollection#clear()
      */
+    @Override
     @Deprecated
     public void clear() {
         set.clear();
@@ -210,6 +230,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.AbstractCollection#toString()
      */
+    @Override
     public String toString() {
         return set.toString();
     }
@@ -218,7 +239,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
     @Override
-    public <R, A> R collect(Collector<? super T, A, R> collector) {
+    public <R, A> R collect(final Collector<? super T, A, R> collector) {
         return stream().collect(collector);
     }
 
@@ -234,6 +255,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see org.pcollections.PQueue#minus()
      */
+    @Override
     public PQueue<T> minus() {
         return set.minus();
     }
@@ -244,7 +266,9 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @deprecated
      * @see org.pcollections.PQueue#offer(java.lang.Object)
      */
-    public boolean offer(T o) {
+    @Deprecated
+    @Override
+    public boolean offer(final T o) {
         return set.offer(o);
     }
 
@@ -253,6 +277,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @deprecated
      * @see org.pcollections.PQueue#poll()
      */
+    @Deprecated
+    @Override
     public T poll() {
         return set.poll();
     }
@@ -262,6 +288,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @deprecated
      * @see org.pcollections.PQueue#remove()
      */
+    @Deprecated
+    @Override
     public T remove() {
         return set.remove();
     }
@@ -270,6 +298,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.Queue#element()
      */
+    @Override
     public T element() {
         return set.element();
     }
@@ -278,6 +307,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.Queue#peek()
      */
+    @Override
     public T peek() {
         return set.peek();
     }
@@ -287,7 +317,8 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.Collection#removeIf(java.util.function.Predicate)
      */
-    public boolean removeIf(Predicate<? super T> filter) {
+    @Override
+    public boolean removeIf(final Predicate<? super T> filter) {
         return set.removeIf(filter);
     }
 
@@ -295,6 +326,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.Collection#spliterator()
      */
+    @Override
     public Spliterator<T> spliterator() {
         return set.spliterator();
     }
@@ -303,6 +335,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @return
      * @see java.util.Collection#parallelStream()
      */
+    @Override
     public Stream<T> parallelStream() {
         return set.parallelStream();
     }

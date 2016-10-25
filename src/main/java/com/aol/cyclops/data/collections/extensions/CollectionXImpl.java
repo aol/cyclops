@@ -21,12 +21,12 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
     private final Collection<T> delegate;
 
     @Override
-    public <R> CollectionX<R> unit(R value) {
+    public <R> CollectionX<R> unit(final R value) {
         return ListX.singleton(value);
     }
 
     @Override
-    public <R> FluentCollectionX<R> unit(Collection<R> col) {
+    public <R> FluentCollectionX<R> unit(final Collection<R> col) {
         return ListX.fromIterable(col);
     }
 
@@ -34,7 +34,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @param action
      * @see java.lang.Iterable#forEach(java.util.function.Consumer)
      */
-    public void forEach(Consumer<? super T> action) {
+    @Override
+    public void forEach(final Consumer<? super T> action) {
         delegate.forEach(action);
     }
 
@@ -42,6 +43,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#size()
      */
+    @Override
     public int size() {
         return delegate.size();
     }
@@ -50,6 +52,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#isEmpty()
      */
+    @Override
     public boolean isEmpty() {
         return delegate.isEmpty();
     }
@@ -59,7 +62,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#contains(java.lang.Object)
      */
-    public boolean contains(Object o) {
+    @Override
+    public boolean contains(final Object o) {
         return delegate.contains(o);
     }
 
@@ -67,6 +71,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#iterator()
      */
+    @Override
     public Iterator<T> iterator() {
         return delegate.iterator();
     }
@@ -75,6 +80,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#toArray()
      */
+    @Override
     public Object[] toArray() {
         return delegate.toArray();
     }
@@ -84,7 +90,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#toArray(java.lang.Object[])
      */
-    public <T> T[] toArray(T[] a) {
+    @Override
+    public <T> T[] toArray(final T[] a) {
         return delegate.toArray(a);
     }
 
@@ -93,7 +100,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#add(java.lang.Object)
      */
-    public boolean add(T e) {
+    @Override
+    public boolean add(final T e) {
         return delegate.add(e);
     }
 
@@ -102,7 +110,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#remove(java.lang.Object)
      */
-    public boolean remove(Object o) {
+    @Override
+    public boolean remove(final Object o) {
         return delegate.remove(o);
     }
 
@@ -111,7 +120,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#containsAll(java.util.Collection)
      */
-    public boolean containsAll(Collection<?> c) {
+    @Override
+    public boolean containsAll(final Collection<?> c) {
         return delegate.containsAll(c);
     }
 
@@ -120,7 +130,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#addAll(java.util.Collection)
      */
-    public boolean addAll(Collection<? extends T> c) {
+    @Override
+    public boolean addAll(final Collection<? extends T> c) {
         return delegate.addAll(c);
     }
 
@@ -129,7 +140,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#removeAll(java.util.Collection)
      */
-    public boolean removeAll(Collection<?> c) {
+    @Override
+    public boolean removeAll(final Collection<?> c) {
         return delegate.removeAll(c);
     }
 
@@ -138,7 +150,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#removeIf(java.util.function.Predicate)
      */
-    public boolean removeIf(Predicate<? super T> filter) {
+    @Override
+    public boolean removeIf(final Predicate<? super T> filter) {
         return delegate.removeIf(filter);
     }
 
@@ -147,7 +160,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#retainAll(java.util.Collection)
      */
-    public boolean retainAll(Collection<?> c) {
+    @Override
+    public boolean retainAll(final Collection<?> c) {
         return delegate.retainAll(c);
     }
 
@@ -155,6 +169,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * 
      * @see java.util.Collection#clear()
      */
+    @Override
     public void clear() {
         delegate.clear();
     }
@@ -164,7 +179,8 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#equals(java.lang.Object)
      */
-    public boolean equals(Object o) {
+    @Override
+    public boolean equals(final Object o) {
         return delegate.equals(o);
     }
 
@@ -172,6 +188,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#hashCode()
      */
+    @Override
     public int hashCode() {
         return delegate.hashCode();
     }
@@ -180,6 +197,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#spliterator()
      */
+    @Override
     public Spliterator<T> spliterator() {
         return delegate.spliterator();
     }
@@ -188,6 +206,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#stream()
      */
+    @Override
     public ReactiveSeq<T> stream() {
         return ReactiveSeq.fromIterable(this);
     }
@@ -196,6 +215,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @return
      * @see java.util.Collection#parallelStream()
      */
+    @Override
     public Stream<T> parallelStream() {
         return delegate.parallelStream();
     }
@@ -204,7 +224,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @see com.aol.cyclops.collections.extensions.CollectionX#from(java.util.Collection)
      */
     @Override
-    public <T1> CollectionX<T1> from(Collection<T1> c) {
+    public <T1> CollectionX<T1> from(final Collection<T1> c) {
         if (c instanceof CollectionX)
             return (CollectionX) c;
         return new CollectionXImpl(
@@ -215,7 +235,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    public <U> IterableFunctor<U> unitIterator(Iterator<U> u) {
+    public <U> IterableFunctor<U> unitIterator(final Iterator<U> u) {
         return ListX.fromIterable(() -> u);
     }
 
@@ -223,10 +243,11 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#fromStream(java.util.stream.Stream)
      */
     @Override
-    public <X> MutableCollectionX<X> fromStream(Stream<X> stream) {
+    public <X> MutableCollectionX<X> fromStream(final Stream<X> stream) {
         return ListX.fromIterable(stream.collect(Collectors.toList()));
     }
 
+    @Override
     public String toString() {
         return String.format("%s", delegate);
     }

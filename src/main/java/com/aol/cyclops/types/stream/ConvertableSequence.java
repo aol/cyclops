@@ -48,7 +48,7 @@ public interface ConvertableSequence<T> extends Iterable<T> {
         return Seq.seq(this);
     }
 
-    default LazyFutureStream<T> toFutureStream(LazyReact reactor) {
+    default LazyFutureStream<T> toFutureStream(final LazyReact reactor) {
         return reactor.fromIterable(this);
     }
 
@@ -56,7 +56,7 @@ public interface ConvertableSequence<T> extends Iterable<T> {
         return new LazyReact().fromIterable(this);
     }
 
-    default SimpleReactStream<T> toSimpleReact(SimpleReact reactor) {
+    default SimpleReactStream<T> toSimpleReact(final SimpleReact reactor) {
         return reactor.fromIterable(this);
     }
 
@@ -89,13 +89,13 @@ public interface ConvertableSequence<T> extends Iterable<T> {
         return ListX.fromIterable(this);
     }
 
-    default <K, V> PMapX<K, V> toPMapX(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+    default <K, V> PMapX<K, V> toPMapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
 
-        ReactiveSeq<Tuple2<K, V>> stream = stream().map(t -> Tuple.tuple(keyMapper.apply(t), valueMapper.apply(t)));
+        final ReactiveSeq<Tuple2<K, V>> stream = stream().map(t -> Tuple.tuple(keyMapper.apply(t), valueMapper.apply(t)));
         return stream.mapReduce(Reducers.toPMapX());
     }
 
-    default <K, V> MapX<K, V> toMapX(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+    default <K, V> MapX<K, V> toMapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
         return MapX.fromMap(stream().toMap(keyMapper, valueMapper));
     }
 
@@ -137,7 +137,7 @@ public interface ConvertableSequence<T> extends Iterable<T> {
      * @return
      */
     default Optional<ListX<T>> toOptional() {
-        ListX<T> list = toListX();
+        final ListX<T> list = toListX();
         if (list.size() == 0)
             return Optional.empty();
         return Optional.of(list);
@@ -153,7 +153,8 @@ public interface ConvertableSequence<T> extends Iterable<T> {
                                                   .collect(Collectors.toSet()));
     }
 
-    default <K, V> Value<MapX<K, V>> toValueMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+    default <K, V> Value<MapX<K, V>> toValueMap(final Function<? super T, ? extends K> keyMapper,
+            final Function<? super T, ? extends V> valueMapper) {
         return () -> MapX.fromMap(StreamUtils.stream(this)
                                              .collect(Collectors.toMap(keyMapper, valueMapper)));
     }

@@ -12,7 +12,7 @@ import com.aol.cyclops.types.mixins.Printable;
 public class MaybeTSeqComprehender implements Comprehender<MaybeTSeq>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, MaybeTSeq apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final MaybeTSeq apply) {
 
         return apply.isSeqPresent() ? comp.of(apply.stream()
                                                    .toListX())
@@ -20,22 +20,22 @@ public class MaybeTSeqComprehender implements Comprehender<MaybeTSeq>, Printable
     }
 
     @Override
-    public Object filter(MaybeTSeq t, Predicate p) {
+    public Object filter(final MaybeTSeq t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(MaybeTSeq t, Function fn) {
+    public Object map(final MaybeTSeq t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(MaybeTSeq t, Function fn) {
+    public Object flatMap(final MaybeTSeq t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public MaybeTSeq of(Object o) {
+    public MaybeTSeq of(final Object o) {
         return MaybeTSeq.of(Maybe.of(o));
     }
 
@@ -50,7 +50,7 @@ public class MaybeTSeqComprehender implements Comprehender<MaybeTSeq>, Printable
     }
 
     @Override
-    public MaybeTSeq fromIterator(Iterator o) {
+    public MaybeTSeq fromIterator(final Iterator o) {
         return MaybeTSeq.of(Maybe.fromIterable(() -> o));
     }
 

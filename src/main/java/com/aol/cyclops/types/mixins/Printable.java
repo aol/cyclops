@@ -9,7 +9,7 @@ package com.aol.cyclops.types.mixins;
  */
 public interface Printable {
 
-    default <T> T print(T object) {
+    default <T> T print(final T object) {
         System.out.println(object);
         return object;
     }

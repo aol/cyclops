@@ -13,7 +13,7 @@ public class AsFunctor {
      * @param o functor to wrap
      * @return Duck typed functor
      */
-    public static <T> WrappingFunctor<T> asFunctor(Object o) {
+    public static <T> WrappingFunctor<T> asFunctor(final Object o) {
         return new FunctorWrapper<>(
                                     o);
     }

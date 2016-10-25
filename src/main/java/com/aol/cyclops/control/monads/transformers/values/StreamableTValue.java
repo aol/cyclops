@@ -19,18 +19,14 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
- * Monad Transformer for Cyclops Streamables
+ * Monad Transformer for Streamables nested within Scalar data types (e.g. Optional, CompletableFuture, Eval, Maybe)
+
  * 
- * StreamableT consists of an AnyM instance that in turns wraps anoter Monad type that contains an Streamable
- * <pre>
- * {@code 
- * StreamableT<AnyM<*SOME_MONAD_TYPE*<Streamable<T>>>>
- * }</pre>
  * 
  * StreamableT allows the deeply wrapped Streamable to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> The type contained on the Streamable within
  */
 public class StreamableTValue<T> implements StreamableT<T> {
 
@@ -43,10 +39,12 @@ public class StreamableTValue<T> implements StreamableT<T> {
     /**
      * @return The wrapped AnyM
      */
+    @Override
     public AnyM<Streamable<T>> unwrap() {
         return run;
     }
 
+    @Override
     public boolean isSeqPresent() {
         return !run.isEmpty();
     }
@@ -65,7 +63,8 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @param peek  Consumer to accept current value of Streamable
      * @return StreamableT with peek call
      */
-    public StreamableTValue<T> peek(Consumer<? super T> peek) {
+    @Override
+    public StreamableTValue<T> peek(final Consumer<? super T> peek) {
         return map(a -> {
             peek.accept(a);
             return a;
@@ -86,7 +85,8 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @param test Predicate to filter the wrapped Streamable
      * @return StreamableT that applies the provided filter
      */
-    public StreamableTValue<T> filter(Predicate<? super T> test) {
+    @Override
+    public StreamableTValue<T> filter(final Predicate<? super T> test) {
         return of(run.map(stream -> stream.filter(test)));
     }
 
@@ -106,7 +106,8 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @param f Mapping function for the wrapped Streamable
      * @return StreamableT that applies the map function to the wrapped Streamable
      */
-    public <B> StreamableTValue<B> map(Function<? super T, ? extends B> f) {
+    @Override
+    public <B> StreamableTValue<B> map(final Function<? super T, ? extends B> f) {
         return new StreamableTValue<B>(
                                        run.map(o -> o.map(f)));
     }
@@ -125,12 +126,13 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @param f FlatMap function
      * @return StreamableT that applies the flatMap function to the wrapped Streamable
      */
-    public <B> StreamableTValue<B> flatMapT(Function<? super T, StreamableTValue<? extends B>> f) {
+    public <B> StreamableTValue<B> flatMapT(final Function<? super T, StreamableTValue<? extends B>> f) {
         return of(run.map(stream -> stream.flatMap(a -> Streamable.fromStream(f.apply(a).run.stream()))
                                           .<B> flatMap(a -> a)));
     }
 
-    public <B> StreamableTValue<B> flatMap(Function<? super T, ? extends Iterable<? extends B>> f) {
+    @Override
+    public <B> StreamableTValue<B> flatMap(final Function<? super T, ? extends Iterable<? extends B>> f) {
 
         return new StreamableTValue<B>(
                                        run.map(o -> o.flatMapIterable(f)));
@@ -166,7 +168,7 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @param fn Function to enhance with functionality from Streamable and another monad type
      * @return Function that accepts and returns an StreamableT
      */
-    public static <U, R> Function<StreamableTValue<U>, StreamableTValue<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<StreamableTValue<U>, StreamableTValue<R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -200,7 +202,7 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @return Function that accepts and returns an StreamableT
      */
     public static <U1, U2, R> BiFunction<StreamableTValue<U1>, StreamableTValue<U2>, StreamableTValue<R>> lift2(
-            BiFunction<? super U1, ? super U2, ? extends R> fn) {
+            final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -211,7 +213,7 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @param anyM AnyM that doesn't contain a monad wrapping an Streamable
      * @return StreamableT
      */
-    public static <A> StreamableTValue<A> fromAnyM(AnyMValue<A> anyM) {
+    public static <A> StreamableTValue<A> fromAnyM(final AnyMValue<A> anyM) {
         return of(anyM.map(Streamable::of));
     }
 
@@ -221,12 +223,12 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @param monads AnyM that contains a monad wrapping an Streamable
      * @return StreamableT
      */
-    public static <A> StreamableTValue<A> of(AnyMValue<Streamable<A>> monads) {
+    public static <A> StreamableTValue<A> of(final AnyMValue<Streamable<A>> monads) {
         return new StreamableTValue<>(
                                       monads);
     }
 
-    public static <A> StreamableTValue<A> of(Streamable<A> monads) {
+    public static <A> StreamableTValue<A> of(final Streamable<A> monads) {
         return StreamableT.fromOptional(Optional.of(monads));
     }
 
@@ -236,12 +238,12 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @param monads
      * @return
      */
-    public static <A> StreamableTValue<A> fromStream(AnyMValue<Stream<A>> monads) {
+    public static <A> StreamableTValue<A> fromStream(final AnyMValue<Stream<A>> monads) {
         return new StreamableTValue<>(
                                       monads.map(Streamable::fromStream));
     }
 
-    public static <A, V extends MonadicValue<Streamable<A>>> StreamableTValue<A> fromValue(V monadicValue) {
+    public static <A, V extends MonadicValue<Streamable<A>>> StreamableTValue<A> fromValue(final V monadicValue) {
         return of(AnyM.ofValue(monadicValue));
     }
 
@@ -250,6 +252,7 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return String.format("StreamableTValue[%s]", run);
     }
@@ -266,7 +269,7 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    public <U> StreamableTValue<U> unitIterator(Iterator<U> u) {
+    public <U> StreamableTValue<U> unitIterator(final Iterator<U> u) {
         return of(run.unit(Streamable.fromIterator(u)));
     }
 
@@ -274,7 +277,7 @@ public class StreamableTValue<T> implements StreamableT<T> {
      * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
      */
     @Override
-    public <T> StreamableTValue<T> unit(T unit) {
+    public <T> StreamableTValue<T> unit(final T unit) {
         return of(run.unit(Streamable.of(unit)));
     }
 
@@ -314,7 +317,7 @@ public class StreamableTValue<T> implements StreamableT<T> {
     }
 
     @Override
-    public <T> StreamableTValue<T> unitAnyM(AnyM<Traversable<T>> traversable) {
+    public <T> StreamableTValue<T> unitAnyM(final AnyM<Traversable<T>> traversable) {
 
         return of((AnyMValue) traversable.map(t -> Streamable.fromIterable(t)));
     }
@@ -331,7 +334,7 @@ public class StreamableTValue<T> implements StreamableT<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof StreamableTValue) {
             return run.equals(((StreamableTValue) o).run);
         }

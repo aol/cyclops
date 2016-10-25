@@ -33,7 +33,7 @@ public interface Cacheable<OUT> {
         return (key, fn) -> {
             try {
                 return computeIfAbsent(key, fn);
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 throw ExceptionSoftener.throwSoftenedException(t);
             }
         };

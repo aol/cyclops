@@ -17,7 +17,7 @@ public interface FluentCollectionX<T> extends CollectionX<T> {
      * @param e Element to add
      * @return Collection with element added
      */
-    default FluentCollectionX<T> plusInOrder(T e) {
+    default FluentCollectionX<T> plusInOrder(final T e) {
         return plus(e);
     }
 

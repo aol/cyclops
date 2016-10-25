@@ -60,6 +60,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * 
      * @return Future List
      */
+    @Override
     public CompletableFuture<List<T>> toList() {
         return CompletableFuture.supplyAsync(() -> stream.toList(), exec);
     }
@@ -67,9 +68,10 @@ public abstract class BaseFutureOperationsImpl<T>
     /**
      * @return Last value in this Stream (must be non-empty)
      */
+    @Override
     public CompletableFuture<T> lastValue() {
         return CompletableFuture.supplyAsync(() -> {
-            List<T> l = stream.toList();
+            final List<T> l = stream.toList();
             return l.get(l.size() - 1);
         } , exec);
     }
@@ -78,9 +80,10 @@ public abstract class BaseFutureOperationsImpl<T>
      * @return the only entry in this Stream if it is a single entry Stream,
      *         otherwise throws an UnsupportedOperationException
      */
+    @Override
     public CompletableFuture<T> single() {
         return CompletableFuture.supplyAsync(() -> {
-            List<T> l = stream.toList();
+            final List<T> l = stream.toList();
             if (l.size() == 1) {
                 return l.get(l.size() - 1);
             }
@@ -103,6 +106,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * 
      * @return Future Set
      */
+    @Override
     public CompletableFuture<Set<T>> toSet() {
         return CompletableFuture.supplyAsync(() -> stream.toSet(), exec);
     }
@@ -112,7 +116,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * 
      * @see org.jooq.lambda.Seq#minBy(Function)
      */
-    public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> minBy(Function<? super T, ? extends U> function) {
+    @Override
+    public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> minBy(final Function<? super T, ? extends U> function) {
         return CompletableFuture.supplyAsync(() -> stream.minBy(function));
     }
 
@@ -121,7 +126,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * 
      *  @see org.jooq.lambda.Seq#maxBy(Function)
      */
-    public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> maxBy(Function<? super T, ? extends U> function) {
+    @Override
+    public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> maxBy(final Function<? super T, ? extends U> function) {
         return CompletableFuture.supplyAsync(() -> stream.maxBy(function));
     }
 
@@ -131,7 +137,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see java.util.stream.Stream#collect(Collector)
      * 
      */
-    public <R, A> CompletableFuture<R> collect(Collector<? super T, A, R> collector) {
+    @Override
+    public <R, A> CompletableFuture<R> collect(final Collector<? super T, A, R> collector) {
         return CompletableFuture.supplyAsync(() -> stream.collect(collector));
     }
 
@@ -139,7 +146,8 @@ public abstract class BaseFutureOperationsImpl<T>
      *  Asynchronously perform a Stream collection
      * @see org.jooq.lambda.Seq#toCollection(Supplier)
      */
-    public <C extends Collection<T>> CompletableFuture<C> toCollection(Supplier<C> collectionFactory) {
+    @Override
+    public <C extends Collection<T>> CompletableFuture<C> toCollection(final Supplier<C> collectionFactory) {
         return CompletableFuture.supplyAsync(() -> stream.toCollection(collectionFactory), exec);
     }
 
@@ -148,7 +156,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * 
      * @see java.util.stream.Stream#toArray(IntFunction)
      */
-    public <A> CompletableFuture<A[]> toArray(IntFunction<A[]> generator) {
+    @Override
+    public <A> CompletableFuture<A[]> toArray(final IntFunction<A[]> generator) {
         return CompletableFuture.supplyAsync(() -> stream.toArray(generator), exec);
     }
 
@@ -157,6 +166,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * 
      * @see java.util.stream.Stream#toArray(IntFunction)
      */
+    @Override
     public CompletableFuture<Object[]> toArray() {
         return CompletableFuture.supplyAsync(() -> stream.toArray(), exec);
     }
@@ -165,7 +175,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asyncrhonous groupBy operation
      * @see org.jooq.lambda.Seq#groupBy(Function)
      */
-    public <K> CompletableFuture<Map<K, List<T>>> groupBy(Function<? super T, ? extends K> classifier) {
+    @Override
+    public <K> CompletableFuture<Map<K, List<T>>> groupBy(final Function<? super T, ? extends K> classifier) {
         return CompletableFuture.supplyAsync(() -> stream.groupBy(classifier), exec);
     }
 
@@ -173,7 +184,9 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asyncrhonous groupBy operation
      * @see org.jooq.lambda.Seq#groupBy(Function, Collector)
      */
-    public <K, A, D> CompletableFuture<Map<K, D>> groupBy(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+    @Override
+    public <K, A, D> CompletableFuture<Map<K, D>> groupBy(final Function<? super T, ? extends K> classifier,
+            final Collector<? super T, A, D> downstream) {
         return CompletableFuture.supplyAsync(() -> stream.groupBy(classifier, downstream), exec);
     }
 
@@ -181,8 +194,9 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asyncrhonous groupBy operation
      * @see org.jooq.lambda.Seq#groupBy(Function, Supplier, Collector)
      */
-    public <K, D, A, M extends Map<K, D>> CompletableFuture<M> groupBy(Function<? super T, ? extends K> classifier, Supplier<M> mapFactory,
-            Collector<? super T, A, D> downstream) {
+    @Override
+    public <K, D, A, M extends Map<K, D>> CompletableFuture<M> groupBy(final Function<? super T, ? extends K> classifier,
+            final Supplier<M> mapFactory, final Collector<? super T, A, D> downstream) {
         return CompletableFuture.supplyAsync(() -> stream.groupBy(classifier, mapFactory, downstream), exec);
     }
 
@@ -190,7 +204,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asynchronous foldLeft operation
      * 	 @see org.jooq.lambda.Seq#foldLeft(Object,BiFunction)
      * */
-    public <U> CompletableFuture<U> foldLeft(U seed, BiFunction<U, ? super T, U> function) {
+    @Override
+    public <U> CompletableFuture<U> foldLeft(final U seed, final BiFunction<U, ? super T, U> function) {
         return CompletableFuture.supplyAsync(() -> stream.foldLeft(seed, function), exec);
     }
 
@@ -198,7 +213,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asynchronous foldRight operation
      * 	 @see org.jooq.lambda.Seq#foldRight(Object,BiFunction)
      * */
-    public <U> CompletableFuture<U> foldRight(U seed, BiFunction<? super T, U, U> function) {
+    @Override
+    public <U> CompletableFuture<U> foldRight(final U seed, final BiFunction<? super T, U, U> function) {
         return CompletableFuture.supplyAsync(() -> stream.foldRight(seed, function), exec);
     }
 
@@ -206,7 +222,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asyncrhonous min operation
      *  @see java.util.stream.Stream#min(Comparator)
      */
-    public CompletableFuture<Optional<T>> min(Comparator<? super T> comparator) {
+    @Override
+    public CompletableFuture<Optional<T>> min(final Comparator<? super T> comparator) {
         return CompletableFuture.supplyAsync(() -> stream.min(comparator), exec);
     }
 
@@ -214,7 +231,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asyncrhonous min operation
      *  @see java.util.stream.Stream#max(Comparator)
      */
-    public CompletableFuture<Optional<T>> max(Comparator<? super T> comparator) {
+    @Override
+    public CompletableFuture<Optional<T>> max(final Comparator<? super T> comparator) {
 
         return CompletableFuture.supplyAsync(() -> stream.max(comparator), exec);
     }
@@ -225,7 +243,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see java.util.stream.Stream#collect(Supplier, BiConsumer, BiConsumer)
      * 
      */
-    public <R> CompletableFuture<R> collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+    @Override
+    public <R> CompletableFuture<R> collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
         return CompletableFuture.supplyAsync(() -> stream.collect(supplier, accumulator, combiner), exec);
     }
 
@@ -235,7 +254,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see java.util.stream.Stream#reduce(Object, BiFunction, BinaryOperator)
      * 
      */
-    public <U> CompletableFuture<U> reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+    @Override
+    public <U> CompletableFuture<U> reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
         return CompletableFuture.supplyAsync(() -> stream.reduce(identity, accumulator, combiner), exec);
     }
 
@@ -245,7 +265,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see java.util.stream.Stream#reduce(BinaryOperator)
      * 
      */
-    public CompletableFuture<Optional<T>> reduce(BinaryOperator<T> accumulator) {
+    @Override
+    public CompletableFuture<Optional<T>> reduce(final BinaryOperator<T> accumulator) {
 
         return CompletableFuture.supplyAsync(() -> stream.reduce(accumulator));
 
@@ -257,7 +278,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see java.util.stream.Stream#reduce(Object, BinaryOperator)
      * 
      */
-    public CompletableFuture<T> reduce(T identity, BinaryOperator<T> accumulator) {
+    @Override
+    public CompletableFuture<T> reduce(final T identity, final BinaryOperator<T> accumulator) {
         return CompletableFuture.supplyAsync(() -> stream.reduce(identity, accumulator), exec);
     }
 
@@ -267,11 +289,13 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see java.util.stream.Stream#count()
      * 
      */
+    @Override
     public CompletableFuture<Long> count() {
         return CompletableFuture.supplyAsync(() -> stream.count(), exec);
     }
 
-    public CompletableFuture<String> join(CharSequence sep) {
+    @Override
+    public CompletableFuture<String> join(final CharSequence sep) {
         return CompletableFuture.supplyAsync(() -> stream.join(sep), exec);
     }
 
@@ -279,6 +303,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asynchronous join operation
      * 	 @see org.jooq.lambda.Seq#join()
      * */
+    @Override
     public CompletableFuture<String> join() {
         return CompletableFuture.supplyAsync(() -> stream.join(), exec);
     }
@@ -287,7 +312,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asynchronous join operation
      * 	 @see org.jooq.lambda.Seq#join(CharSequence)
      * */
-    public CompletableFuture<String> join(CharSequence delimiter, CharSequence prefix, CharSequence suffix) {
+    @Override
+    public CompletableFuture<String> join(final CharSequence delimiter, final CharSequence prefix, final CharSequence suffix) {
         return CompletableFuture.supplyAsync(() -> stream.join(delimiter, prefix, suffix), exec);
     }
 
@@ -295,6 +321,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asynchronous findAny operation
      * 	 @see java.util.stream.Stream#findAny()
      * */
+    @Override
     public CompletableFuture<Optional<T>> findAny() {
         return CompletableFuture.supplyAsync(() -> stream.findAny(), exec);
     }
@@ -303,6 +330,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asynchronous findAny operation
      * 	 @see java.util.stream.Stream#findFirst()
      * */
+    @Override
     public CompletableFuture<Optional<T>> findFirst() {
         return CompletableFuture.supplyAsync(() -> stream.findFirst(), exec);
     }
@@ -311,6 +339,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asynchronous findAny operation
      * 	 @see java.util.stream.Stream#findFirst()
      * */
+    @Override
     public CompletableFuture<T> firstValue() {
         return CompletableFuture.supplyAsync(() -> stream.firstValue(), exec);
     }
@@ -319,7 +348,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asynchronous All Match operation
      * 	@see java.util.stream.Stream#allMatch(Predicate)
      * */
-    public CompletableFuture<Boolean> allMatch(Predicate<? super T> predicate) {
+    @Override
+    public CompletableFuture<Boolean> allMatch(final Predicate<? super T> predicate) {
         return CompletableFuture.supplyAsync(() -> stream.allMatch(predicate), exec);
     }
 
@@ -327,7 +357,8 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asynchronous Any Match operation
      * 	 @see java.util.stream.Stream#anyMatch(Predicate)
      * */
-    public CompletableFuture<Boolean> anyMatch(Predicate<? super T> predicate) {
+    @Override
+    public CompletableFuture<Boolean> anyMatch(final Predicate<? super T> predicate) {
         return CompletableFuture.supplyAsync(() -> stream.anyMatch(predicate), exec);
     }
 
@@ -335,18 +366,19 @@ public abstract class BaseFutureOperationsImpl<T>
      * Perform an asynchronous Any Match operation
      * 	 @see java.util.stream.Stream#noneMatch(Predicate)
      * */
-    public CompletableFuture<Boolean> noneMatch(Predicate<? super T> predicate) {
+    @Override
+    public CompletableFuture<Boolean> noneMatch(final Predicate<? super T> predicate) {
         return CompletableFuture.supplyAsync(() -> stream.noneMatch(predicate), exec);
     }
 
     @Override
-    public void forEach(Consumer<? super T> c) {
+    public void forEach(final Consumer<? super T> c) {
         CompletableFuture.runAsync(() -> stream.forEach(c), exec);
 
     }
 
     @Override
-    public CompletableFuture<T> single(Predicate<T> predicate) {
+    public CompletableFuture<T> single(final Predicate<T> predicate) {
         return CompletableFuture.supplyAsync(() -> stream.filter(predicate)
                                                          .single(),
                                              exec);
@@ -364,7 +396,7 @@ public abstract class BaseFutureOperationsImpl<T>
     }
 
     @Override
-    public <U> CompletableFuture<Long> countDistinctBy(Function<? super T, ? extends U> function) {
+    public <U> CompletableFuture<Long> countDistinctBy(final Function<? super T, ? extends U> function) {
         return CompletableFuture.supplyAsync(() -> stream.countDistinctBy(function), exec);
     }
 
@@ -379,7 +411,7 @@ public abstract class BaseFutureOperationsImpl<T>
     }
 
     @Override
-    public <U> CompletableFuture<Optional<U>> sum(Function<? super T, ? extends U> function) {
+    public <U> CompletableFuture<Optional<U>> sum(final Function<? super T, ? extends U> function) {
         return CompletableFuture.supplyAsync(() -> stream.sum(function), exec);
     }
 
@@ -389,7 +421,7 @@ public abstract class BaseFutureOperationsImpl<T>
     }
 
     @Override
-    public <U> CompletableFuture<Optional<U>> avg(Function<? super T, ? extends U> function) {
+    public <U> CompletableFuture<Optional<U>> avg(final Function<? super T, ? extends U> function) {
         return CompletableFuture.supplyAsync(() -> stream.avg(function), exec);
     }
 
@@ -399,17 +431,17 @@ public abstract class BaseFutureOperationsImpl<T>
     }
 
     @Override
-    public <U extends Comparable<? super U>> CompletableFuture<Optional<U>> min(Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> CompletableFuture<Optional<U>> min(final Function<? super T, ? extends U> function) {
         return CompletableFuture.supplyAsync(() -> stream.min(function), exec);
     }
 
     @Override
-    public <U> CompletableFuture<Optional<U>> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> CompletableFuture<Optional<U>> min(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return CompletableFuture.supplyAsync(() -> stream.min(function, comparator), exec);
     }
 
     @Override
-    public <U> CompletableFuture<Optional<T>> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> CompletableFuture<Optional<T>> minBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return CompletableFuture.supplyAsync(() -> stream.minBy(function, comparator), exec);
     }
 
@@ -419,17 +451,17 @@ public abstract class BaseFutureOperationsImpl<T>
     }
 
     @Override
-    public <U extends Comparable<? super U>> CompletableFuture<Optional<U>> max(Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> CompletableFuture<Optional<U>> max(final Function<? super T, ? extends U> function) {
         return CompletableFuture.supplyAsync(() -> stream.max(function), exec);
     }
 
     @Override
-    public <U> CompletableFuture<Optional<U>> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> CompletableFuture<Optional<U>> max(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return CompletableFuture.supplyAsync(() -> stream.max(function, comparator), exec);
     }
 
     @Override
-    public <U> CompletableFuture<Optional<T>> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> CompletableFuture<Optional<T>> maxBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return CompletableFuture.supplyAsync(() -> stream.maxBy(function, comparator), exec);
     }
 
@@ -439,54 +471,55 @@ public abstract class BaseFutureOperationsImpl<T>
     }
 
     @Override
-    public CompletableFuture<Optional<T>> median(Comparator<? super T> comparator) {
+    public CompletableFuture<Optional<T>> median(final Comparator<? super T> comparator) {
         return CompletableFuture.supplyAsync(() -> stream.median(comparator), exec);
     }
 
     @Override
-    public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> medianBy(Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> medianBy(final Function<? super T, ? extends U> function) {
         return CompletableFuture.supplyAsync(() -> stream.medianBy(function), exec);
     }
 
     @Override
-    public <U> CompletableFuture<Optional<T>> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> CompletableFuture<Optional<T>> medianBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return CompletableFuture.supplyAsync(() -> stream.medianBy(function, comparator), exec);
     }
 
     @Override
-    public CompletableFuture<Optional<T>> percentile(double percentile) {
+    public CompletableFuture<Optional<T>> percentile(final double percentile) {
         return CompletableFuture.supplyAsync(() -> stream.percentile(percentile), exec);
     }
 
     @Override
-    public CompletableFuture<Optional<T>> percentile(double percentile, Comparator<? super T> comparator) {
+    public CompletableFuture<Optional<T>> percentile(final double percentile, final Comparator<? super T> comparator) {
         return CompletableFuture.supplyAsync(() -> stream.percentile(percentile, comparator), exec);
     }
 
     @Override
-    public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> percentileBy(double percentile,
-            Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> CompletableFuture<Optional<T>> percentileBy(final double percentile,
+            final Function<? super T, ? extends U> function) {
         return CompletableFuture.supplyAsync(() -> stream.percentileBy(percentile, function), exec);
     }
 
     @Override
-    public <U> CompletableFuture<Optional<T>> percentileBy(double percentile, Function<? super T, ? extends U> function,
-            Comparator<? super U> comparator) {
+    public <U> CompletableFuture<Optional<T>> percentileBy(final double percentile, final Function<? super T, ? extends U> function,
+            final Comparator<? super U> comparator) {
         return CompletableFuture.supplyAsync(() -> stream.percentileBy(percentile, function, comparator), exec);
     }
 
     @Override
-    public <L extends List<T>> CompletableFuture<L> toList(Supplier<L> factory) {
+    public <L extends List<T>> CompletableFuture<L> toList(final Supplier<L> factory) {
         return CompletableFuture.supplyAsync(() -> stream.toList(factory), exec);
     }
 
     @Override
-    public <S extends Set<T>> CompletableFuture<S> toSet(Supplier<S> factory) {
+    public <S extends Set<T>> CompletableFuture<S> toSet(final Supplier<S> factory) {
         return CompletableFuture.supplyAsync(() -> stream.toSet(factory), exec);
     }
 
     @Override
-    public <K, V> CompletableFuture<MapX<K, V>> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+    public <K, V> CompletableFuture<MapX<K, V>> toMap(final Function<? super T, ? extends K> keyMapper,
+            final Function<? super T, ? extends V> valueMapper) {
         return CompletableFuture.supplyAsync(() -> stream.toMapX(keyMapper, valueMapper), exec);
     }
 
@@ -494,7 +527,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#sumDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    public CompletableFuture<Double> sumDouble(ToDoubleFunction<? super T> fn) {
+    public CompletableFuture<Double> sumDouble(final ToDoubleFunction<? super T> fn) {
         return DoubleOperatorsMixin.super.sumDouble(fn);
     }
 
@@ -502,7 +535,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.LongOperatorsMixin#sumLong(java.util.function.ToLongFunction)
      */
     @Override
-    public CompletableFuture<Long> sumLong(ToLongFunction<? super T> fn) {
+    public CompletableFuture<Long> sumLong(final ToLongFunction<? super T> fn) {
 
         return LongOperatorsMixin.super.sumLong(fn);
     }
@@ -511,7 +544,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.LongOperatorsMixin#maxLong(java.util.function.ToLongFunction)
      */
     @Override
-    public CompletableFuture<OptionalLong> maxLong(ToLongFunction<? super T> fn) {
+    public CompletableFuture<OptionalLong> maxLong(final ToLongFunction<? super T> fn) {
 
         return LongOperatorsMixin.super.maxLong(fn);
     }
@@ -520,7 +553,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.LongOperatorsMixin#minLong(java.util.function.ToLongFunction)
      */
     @Override
-    public CompletableFuture<OptionalLong> minLong(ToLongFunction<? super T> fn) {
+    public CompletableFuture<OptionalLong> minLong(final ToLongFunction<? super T> fn) {
 
         return LongOperatorsMixin.super.minLong(fn);
     }
@@ -529,7 +562,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.LongOperatorsMixin#averageLong(java.util.function.ToLongFunction)
      */
     @Override
-    public CompletableFuture<OptionalDouble> averageLong(ToLongFunction<? super T> fn) {
+    public CompletableFuture<OptionalDouble> averageLong(final ToLongFunction<? super T> fn) {
 
         return LongOperatorsMixin.super.averageLong(fn);
     }
@@ -538,7 +571,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.LongOperatorsMixin#summaryStatisticsLong(java.util.function.ToLongFunction)
      */
     @Override
-    public CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn) {
+    public CompletableFuture<LongSummaryStatistics> summaryStatisticsLong(final ToLongFunction<? super T> fn) {
 
         return LongOperatorsMixin.super.summaryStatisticsLong(fn);
     }
@@ -547,7 +580,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.IntOperatorsMixin#sumInt(java.util.function.ToIntFunction)
      */
     @Override
-    public CompletableFuture<Integer> sumInt(ToIntFunction<? super T> fn) {
+    public CompletableFuture<Integer> sumInt(final ToIntFunction<? super T> fn) {
 
         return IntOperatorsMixin.super.sumInt(fn);
     }
@@ -556,7 +589,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.IntOperatorsMixin#maxInt(java.util.function.ToIntFunction)
      */
     @Override
-    public CompletableFuture<OptionalInt> maxInt(ToIntFunction<? super T> fn) {
+    public CompletableFuture<OptionalInt> maxInt(final ToIntFunction<? super T> fn) {
 
         return IntOperatorsMixin.super.maxInt(fn);
     }
@@ -565,7 +598,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.IntOperatorsMixin#minInt(java.util.function.ToIntFunction)
      */
     @Override
-    public CompletableFuture<OptionalInt> minInt(ToIntFunction<? super T> fn) {
+    public CompletableFuture<OptionalInt> minInt(final ToIntFunction<? super T> fn) {
 
         return IntOperatorsMixin.super.minInt(fn);
     }
@@ -574,7 +607,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.IntOperatorsMixin#averageInt(java.util.function.ToIntFunction)
      */
     @Override
-    public CompletableFuture<OptionalDouble> averageInt(ToIntFunction<? super T> fn) {
+    public CompletableFuture<OptionalDouble> averageInt(final ToIntFunction<? super T> fn) {
 
         return IntOperatorsMixin.super.averageInt(fn);
     }
@@ -583,7 +616,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.IntOperatorsMixin#summaryStatisticsInt(java.util.function.ToIntFunction)
      */
     @Override
-    public CompletableFuture<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn) {
+    public CompletableFuture<IntSummaryStatistics> summaryStatisticsInt(final ToIntFunction<? super T> fn) {
 
         return IntOperatorsMixin.super.summaryStatisticsInt(fn);
     }
@@ -592,7 +625,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#maxDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    public CompletableFuture<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn) {
+    public CompletableFuture<OptionalDouble> maxDouble(final ToDoubleFunction<? super T> fn) {
 
         return DoubleOperatorsMixin.super.maxDouble(fn);
     }
@@ -601,7 +634,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#minDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    public CompletableFuture<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn) {
+    public CompletableFuture<OptionalDouble> minDouble(final ToDoubleFunction<? super T> fn) {
 
         return DoubleOperatorsMixin.super.minDouble(fn);
     }
@@ -610,7 +643,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#averageDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    public CompletableFuture<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn) {
+    public CompletableFuture<OptionalDouble> averageDouble(final ToDoubleFunction<? super T> fn) {
 
         return DoubleOperatorsMixin.super.averageDouble(fn);
     }
@@ -619,7 +652,7 @@ public abstract class BaseFutureOperationsImpl<T>
      * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#summaryStatisticsDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    public CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn) {
+    public CompletableFuture<DoubleSummaryStatistics> summaryStatisticsDouble(final ToDoubleFunction<? super T> fn) {
 
         return DoubleOperatorsMixin.super.summaryStatisticsDouble(fn);
     }

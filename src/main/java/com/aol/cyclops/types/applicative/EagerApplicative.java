@@ -23,24 +23,24 @@ public interface EagerApplicative<T, R, D extends ConvertableFunctor<R>> extends
      * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
      */
     @Override
-    default <U> Functor<U> map(Function<? super Function<? super T, ? extends R>, ? extends U> fn) {
+    default <U> Functor<U> map(final Function<? super Function<? super T, ? extends R>, ? extends U> fn) {
         return delegate().map(fn);
     }
 
     ConvertableFunctor<Function<? super T, ? extends R>> delegate();
 
-    default D ap(ConvertableFunctor<T> f) {
+    default D ap(final ConvertableFunctor<T> f) {
 
         return (D) delegate().toOptional()
                              .map(myFn -> f.map(t -> myFn.apply(t)))
                              .orElse(Maybe.none());
     }
 
-    default D ap(Optional<T> f) {
+    default D ap(final Optional<T> f) {
         return ap(Maybe.fromOptional(f));
     }
 
-    default D ap(CompletableFuture<T> f) {
+    default D ap(final CompletableFuture<T> f) {
         return ap(FutureW.of(f));
     }
 

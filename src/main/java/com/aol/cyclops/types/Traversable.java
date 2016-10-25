@@ -26,13 +26,27 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyOperations;
 
+/**
+ * A non-scalar navigatable data type
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> The data type of the elements in this Traversable
+ */
 public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Zippable<T> {
 
+    /**
+     * @return This Traversable converted to a Stream
+     */
     default ReactiveSeq<T> stream() {
         return ReactiveSeq.fromIterable(this);
     }
 
-    default void subscribe(Subscriber<? super T> s) {
+    /* (non-Javadoc)
+     * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
+     */
+    @Override
+    default void subscribe(final Subscriber<? super T> s) {
         traversable().subscribe(s);
     }
 
@@ -53,7 +67,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * @param op Reducer to combine neighbours
      * @return Combined / Partially Reduced Traversable
      */
-    default Traversable<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+    default Traversable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return traversable().combine(predicate, op);
     }
 
@@ -75,7 +89,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Times values should be repeated within a Stream
      * @return Stream with values repeated
      */
-    default Traversable<T> cycle(int times) {
+    default Traversable<T> cycle(final int times) {
         return traversable().cycle(times);
     }
 
@@ -98,7 +112,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Number of times value should be repeated
      * @return Stream with reduced values repeated
      */
-    default Traversable<T> cycle(Monoid<T> m, int times) {
+    default Traversable<T> cycle(final Monoid<T> m, final int times) {
         return traversable().cycle(m, times);
     }
 
@@ -119,7 +133,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            repeat while true
      * @return Repeating Stream
      */
-    default Traversable<T> cycleWhile(Predicate<? super T> predicate) {
+    default Traversable<T> cycleWhile(final Predicate<? super T> predicate) {
         return traversable().cycleWhile(predicate);
     }
 
@@ -142,19 +156,31 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            repeat while true
      * @return Repeating Stream
      */
-    default Traversable<T> cycleUntil(Predicate<? super T> predicate) {
+    default Traversable<T> cycleUntil(final Predicate<? super T> predicate) {
         return traversable().cycleUntil(predicate);
     }
 
-    default <U, R> Traversable<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    default <U, R> Traversable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return traversable().zip(other, zipper);
     }
 
-    default <U, R> Traversable<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+     */
+    @Override
+    default <U, R> Traversable<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return zip((Iterable<? extends U>) other, zipper);
     }
 
-    default <U, R> Traversable<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     */
+    @Override
+    default <U, R> Traversable<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
     }
 
@@ -170,15 +196,24 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * </pre>
      * 
      */
-    default <U> Traversable<Tuple2<T, U>> zip(Stream<? extends U> other) {
+    @Override
+    default <U> Traversable<Tuple2<T, U>> zip(final Stream<? extends U> other) {
         return traversable().zip(other);
     }
 
-    default <U> Traversable<Tuple2<T, U>> zip(Seq<? extends U> other) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
+     */
+    @Override
+    default <U> Traversable<Tuple2<T, U>> zip(final Seq<? extends U> other) {
         return zip((Stream<? extends U>) other);
     }
 
-    default <U> Traversable<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+     */
+    @Override
+    default <U> Traversable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return zip((Stream<? extends U>) ReactiveSeq.fromIterable(other));
     }
 
@@ -195,7 +230,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * 
      * </pre>
      */
-    default <S, U> Traversable<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third) {
+    default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
         return traversable().zip3(second, third);
     }
 
@@ -212,8 +247,8 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * // [[1,100,'a',&quot;hello&quot;],[2,200,'b',&quot;world&quot;]]
      * </pre>
      */
-    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third,
-            Stream<? extends T4> fourth) {
+    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
+            final Stream<? extends T4> fourth) {
         return traversable().zip4(second, third, fourth);
     }
 
@@ -249,7 +284,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Size of sliding window
      * @return SequenceM with sliding view
      */
-    default Traversable<ListX<T>> sliding(int windowSize) {
+    default Traversable<ListX<T>> sliding(final int windowSize) {
         return traversable().sliding(windowSize);
     }
 
@@ -274,7 +309,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            for each window
      * @return SequenceM with sliding view
      */
-    default Traversable<ListX<T>> sliding(int windowSize, int increment) {
+    default Traversable<ListX<T>> sliding(final int windowSize, final int increment) {
         return traversable().sliding(windowSize, increment);
     }
 
@@ -295,7 +330,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * @param supplier Collection factory
      * @return SequenceM batched into collection types by size
      */
-    default <C extends Collection<? super T>> Traversable<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends Collection<? super T>> Traversable<C> grouped(final int size, final Supplier<C> supplier) {
         return traversable().grouped(size, supplier);
     }
 
@@ -316,7 +351,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Batch until predicate holds, then open next batch
      * @return SequenceM batched into lists determined by the predicate supplied
      */
-    default Traversable<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+    default Traversable<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
         return traversable().groupedUntil(predicate);
     }
 
@@ -339,7 +374,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Window while true
      * @return Traversable windowed while predicate holds
      */
-    default Traversable<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default Traversable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
         return traversable().groupedStatefullyUntil(predicate);
     }
 
@@ -360,7 +395,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Batch while predicate holds, then open next batch
      * @return SequenceM batched into lists determined by the predicate supplied
      */
-    default Traversable<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+    default Traversable<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
         return traversable().groupedWhile(predicate);
     }
 
@@ -384,7 +419,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * @return SequenceM batched into collections determined by the predicate
      *         supplied
      */
-    default <C extends Collection<? super T>> Traversable<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends Collection<? super T>> Traversable<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return traversable().groupedWhile(predicate, factory);
     }
 
@@ -409,7 +444,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * @return SequenceM batched into collections determined by the predicate
      *         supplied
      */
-    default <C extends Collection<? super T>> Traversable<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends Collection<? super T>> Traversable<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return traversable().groupedUntil(predicate, factory);
     }
 
@@ -431,15 +466,29 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Size of each Group
      * @return Stream with elements grouped by size
      */
-    default Traversable<ListX<T>> grouped(int groupSize) {
+    default Traversable<ListX<T>> grouped(final int groupSize) {
         return traversable().grouped(groupSize);
     }
 
-    default <K, A, D> Traversable<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+    /**
+     * Group this Traversable by the provided classifying function and collected by the provided Collector
+     * 
+     * @param classifier Grouping function
+     * @param downstream Collector to create the grouping collection
+     * @return Traversable of grouped data
+     */
+    default <K, A, D> Traversable<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
+            final Collector<? super T, A, D> downstream) {
         return traversable().grouped(classifier, downstream);
     }
 
-    default <K> Traversable<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+    /**
+     * Group this Traversable by the provided classifying function and collected by the provided Collector
+     * 
+     * @param classifier Grouping function
+     * @return Traversable of grouped data
+     */
+    default <K> Traversable<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return traversable().grouped(classifier);
     }
 
@@ -468,7 +517,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * @param monoid
      * @return
      */
-    default Traversable<T> scanLeft(Monoid<T> monoid) {
+    default Traversable<T> scanLeft(final Monoid<T> monoid) {
         return traversable().scanLeft(monoid);
     }
 
@@ -482,7 +531,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * }
      * </pre>
      */
-    default <U> Traversable<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
+    default <U> Traversable<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
         return traversable().scanLeft(seed, function);
     }
 
@@ -496,7 +545,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * }
      * </pre>
      */
-    default Traversable<T> scanRight(Monoid<T> monoid) {
+    default Traversable<T> scanRight(final Monoid<T> monoid) {
         return traversable().scanRight(monoid);
     }
 
@@ -511,7 +560,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * }
      * </pre>
      */
-    default <U> Traversable<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+    default <U> Traversable<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
         return traversable().scanRight(identity, combiner);
     }
 
@@ -536,31 +585,100 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Compartor to sort with
      * @return Sorted Stream
      */
-    default Traversable<T> sorted(Comparator<? super T> c) {
+    default Traversable<T> sorted(final Comparator<? super T> c) {
         return traversable().sorted(c);
     }
 
-    default Traversable<T> takeWhile(Predicate<? super T> p) {
+    /**
+     * Generate a new Traversable that takes elements from this Traversable as long as the predicate holds
+     * 
+     * <pre>
+     * {@code 
+     *     ListX.of(1,2,3).takeWhile(i<3);
+     *     //[1,2]
+     * }
+     * </pre>
+     * 
+     * @param p Predicate to determine when values should be taken
+     * @return Traversable generated by application of the predicate to the elements in this Traversable in order
+     */
+    default Traversable<T> takeWhile(final Predicate<? super T> p) {
         return limitWhile(p);
     }
 
-    default Traversable<T> dropWhile(Predicate<? super T> p) {
+    /**
+     * Generate a new Traversable that drops elements from this Traversable as long as the predicate holds
+     * <pre>
+     * {@code 
+     *     ListX.of(1,2,3).dropWhile(i<3);
+     *     //[3]
+     * }
+     * </pre> 
+     * @param p Predicate to determine when values should be dropped
+     * @return Traversable generated by application of the predicate to the elements in this Traversable in order
+     */
+    default Traversable<T> dropWhile(final Predicate<? super T> p) {
         return skipWhile(p);
     }
 
-    default Traversable<T> takeUntil(Predicate<? super T> p) {
+    /**
+     * Generate a new Traversable that takes elements from this Traversable until the predicate holds
+      * <pre>
+     * {@code 
+     *     ListX.of(1,2,3).takeUntil(i<2);
+     *     //[1,2]
+     * }
+     * </pre>
+     * 
+     * @param p Predicate to determine when values should be taken until
+     * @return  Traversable generated by application of the predicate to the elements in this Traversable in order
+     */
+    default Traversable<T> takeUntil(final Predicate<? super T> p) {
         return limitUntil(p);
     }
 
-    default Traversable<T> dropUntil(Predicate<? super T> p) {
+    /**
+     * Generate a new Traversable that drops elements from this Traversable until the predicate holds
+     * <pre>
+     * {@code 
+     *     ListX.of(1,2,3).dropUntil(i>2);
+     *     //[3]
+     * }
+     * </pre> 
+     * @param p Predicate to determine when values should be dropped
+     * @return Traversable generated by application of the predicate to the elements in this Traversable in order
+     */
+    default Traversable<T> dropUntil(final Predicate<? super T> p) {
         return skipUntil(p);
     }
 
-    default Traversable<T> dropRight(int num) {
+    /**
+     * Generate a new Traversable that drops the specified number elements from the end of this Traversable
+     * <pre>
+     * {@code 
+     *     ListX.of(1,2,3).dropRight(2);
+     *     //[1]
+     * }
+     * </pre>
+     * @param num Drop this number of elements from the end of this Traversable
+     * @return Traversable generated by application of the predicate to the elements in this Traversable in order
+     */
+    default Traversable<T> dropRight(final int num) {
         return skipLast(num);
     }
 
-    default Traversable<T> takeRight(int num) {
+    /**
+     * Generate a new Traversable that takes the specified number elements from the end of this Traversable
+     * <pre>
+     * {@code 
+     *     ListX.of(1,2,3).takeRight(2);
+     *     //[2,3]
+     * }
+     * </pre>
+     * @param num Take this number of elements from the end of this Traversable
+     * @return Traversable generated by application of the predicate to the elements in this Traversable in order
+     */
+    default Traversable<T> takeRight(final int num) {
         return limitLast(num);
     }
 
@@ -575,7 +693,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Number of elemenets to skip
      * @return Stream with specified number of elements skipped
      */
-    default Traversable<T> skip(long num) {
+    default Traversable<T> skip(final long num) {
         return traversable().skip(num);
     }
 
@@ -594,7 +712,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Predicate to skip while true
      * @return Stream with elements skipped while predicate holds
      */
-    default Traversable<T> skipWhile(Predicate<? super T> p) {
+    default Traversable<T> skipWhile(final Predicate<? super T> p) {
         return traversable().skipWhile(p);
     }
 
@@ -611,7 +729,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Predicate to skip until true
      * @return Stream with elements skipped until predicate holds
      */
-    default Traversable<T> skipUntil(Predicate<? super T> p) {
+    default Traversable<T> skipUntil(final Predicate<? super T> p) {
         return traversable().skipUntil(p);
     }
 
@@ -626,7 +744,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Limit element size to num
      * @return Monad converted to Stream with elements up to num
      */
-    default Traversable<T> limit(long num) {
+    default Traversable<T> limit(final long num) {
         return traversable().limit(num);
     }
 
@@ -642,7 +760,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Limit while predicate is true
      * @return Stream with limited elements
      */
-    default Traversable<T> limitWhile(Predicate<? super T> p) {
+    default Traversable<T> limitWhile(final Predicate<? super T> p) {
         return traversable().limitWhile(p);
     }
 
@@ -658,7 +776,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Limit until predicate is true
      * @return Stream with limited elements
      */
-    default Traversable<T> limitUntil(Predicate<? super T> p) {
+    default Traversable<T> limitUntil(final Predicate<? super T> p) {
         return traversable().limitUntil(p);
     }
 
@@ -670,7 +788,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * // (1, 0, 2, 0, 3, 0, 4) ReactiveSeq.of(1, 2, 3, 4).intersperse(0)
      * 
      */
-    default Traversable<T> intersperse(T value) {
+    default Traversable<T> intersperse(final T value) {
         return traversable().intersperse(value);
     }
 
@@ -705,7 +823,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *            Executor to use for Stream execution
      * @return Async Future Terminal Operations
      */
-    default FutureOperations<T> futureOperations(Executor exec) {
+    default FutureOperations<T> futureOperations(final Executor exec) {
         return traversable().futureOperations(exec);
     }
 
@@ -726,7 +844,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * @param num
      * @return
      */
-    default Traversable<T> skipLast(int num) {
+    default Traversable<T> skipLast(final int num) {
         return traversable().skipLast(num);
     }
 
@@ -744,7 +862,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * @param num of elements to return (last elements)
      * @return SequenceM limited to last num elements
      */
-    default Traversable<T> limitLast(int num) {
+    default Traversable<T> limitLast(final int num) {
         return traversable().limitLast(num);
     }
 
@@ -753,7 +871,8 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * 
      * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
      */
-    default Traversable<T> onEmpty(T value) {
+    @Override
+    default Traversable<T> onEmpty(final T value) {
         return traversable().onEmpty(value);
     }
 
@@ -762,7 +881,8 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * 
      * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
      */
-    default Traversable<T> onEmptyGet(Supplier<? extends T> supplier) {
+    @Override
+    default Traversable<T> onEmptyGet(final Supplier<? extends T> supplier) {
         return traversable().onEmptyGet(supplier);
     }
 
@@ -771,7 +891,8 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * 
      * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
      */
-    default <X extends Throwable> Traversable<T> onEmptyThrow(Supplier<? extends X> supplier) {
+    @Override
+    default <X extends Throwable> Traversable<T> onEmptyThrow(final Supplier<? extends X> supplier) {
         return traversable().onEmptyThrow(supplier);
     }
 
@@ -780,7 +901,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * 
      * @see org.jooq.lambda.Seq#shuffle(java.util.Random)
      */
-    default Traversable<T> shuffle(Random random) {
+    default Traversable<T> shuffle(final Random random) {
         return traversable().shuffle(random);
     }
 
@@ -789,7 +910,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * 
      * @see org.jooq.lambda.Seq#slice(long, long)
      */
-    default Traversable<T> slice(long from, long to) {
+    default Traversable<T> slice(final long from, final long to) {
         return traversable().slice(from, to);
     }
 
@@ -798,10 +919,13 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * 
      * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
      */
-    default <U extends Comparable<? super U>> Traversable<T> sorted(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Traversable<T> sorted(final Function<? super T, ? extends U> function) {
         return traversable().sorted(function);
     }
 
+    /**
+     * @return This Traversable converted to a Stream and type narrowed to Traversable
+     */
     default Traversable<T> traversable() {
         return stream();
     }

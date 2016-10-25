@@ -51,6 +51,7 @@ import com.aol.cyclops.util.CompletableFutures;
 import com.aol.cyclops.util.function.Predicates;
 
 import lombok.val;
+import reactor.core.publisher.Flux;
 
 
 
@@ -866,4 +867,19 @@ public class FutureWTest {
 	    assertThat(FutureW.ofError(new RuntimeException()).recover(__ -> true).get(), equalTo(true));
 	}
 	
+	@Test
+	public void testFlatMapIterable() {
+		FutureW<Integer> f = just.flatMapIterable(i -> Arrays.asList(i, 20, 30));
+		assertThat(f.get(), equalTo(10));
+
+		f = just.flatMapIterable(i -> AnyM.fromStream(ReactiveSeq.of(20, i, 30)));
+		assertThat(f.get(), equalTo(20));
+	}
+	
+	@Test
+	public void testFlatMapPublisher() {
+		FutureW<Integer> f = just.flatMapPublisher(i -> Flux.just(100, i));
+		assertThat(f.get(), equalTo(100));
+	}
+
 }

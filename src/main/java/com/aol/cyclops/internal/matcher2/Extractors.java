@@ -25,7 +25,7 @@ public class Extractors {
             else if (input instanceof Iterable)
                 return (R) input;
             if (input instanceof Optional) {
-                return (R) Maybe.fromOptional((Optional) (input));
+                return (R) Maybe.fromOptional((Optional) input);
             }
             return (R) input;
 
@@ -42,7 +42,7 @@ public class Extractors {
             else if (input instanceof Iterable)
                 return (R) input;
             if (input instanceof Optional) {
-                return (R) Maybe.fromOptional((Optional) (input));
+                return (R) Maybe.fromOptional((Optional) input);
             }
 
             return (R) ReflectionCache.getUnapplyMethod(input.getClass())

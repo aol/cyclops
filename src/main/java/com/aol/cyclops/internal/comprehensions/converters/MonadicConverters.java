@@ -29,7 +29,7 @@ public class MonadicConverters {
 
     }
 
-    public Object convertToMonadicForm(Object o) {
+    public Object convertToMonadicForm(final Object o) {
         return upscaler.upscaleIfStream(converters.stream()
                                                   .filter(t -> t.accept(o))
                                                   .map(m -> m.convertToMonadicForm(o))

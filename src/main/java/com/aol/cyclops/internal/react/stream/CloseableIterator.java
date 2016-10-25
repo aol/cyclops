@@ -14,6 +14,7 @@ public class CloseableIterator<T> implements Iterator<T> {
     private final Continueable subscription;
     private final Queue queue;
 
+    @Override
     public boolean hasNext() {
         if (!iterator.hasNext())
             close();
@@ -24,8 +25,9 @@ public class CloseableIterator<T> implements Iterator<T> {
         subscription.closeAll(queue);
     }
 
+    @Override
     public T next() {
-        T next = iterator.next();
+        final T next = iterator.next();
         return next;
     }
 

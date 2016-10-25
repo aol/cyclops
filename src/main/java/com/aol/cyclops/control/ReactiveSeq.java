@@ -97,7 +97,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see org.jooq.lambda.Seq#foldRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> U foldRight(U identity, BiFunction<? super T, ? super U, ? extends U> accumulator) {
+    default <U> U foldRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> accumulator) {
         return JoolWindowing.super.foldRight(identity, accumulator);
     }
 
@@ -114,7 +114,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      */
     @Override
     default <R> ApplyingZippingApplicativeBuilder<T, R, ZippingApplicativable<R>> applicatives() {
-        Streamable<T> streamable = toStreamable();
+        final Streamable<T> streamable = toStreamable();
         return new ApplyingZippingApplicativeBuilder<T, R, ZippingApplicativable<R>>(
                                                                                      streamable, streamable);
     }
@@ -123,9 +123,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.applicative.zipping.ZippingApplicativable#ap1(java.util.function.Function)
      */
     @Override
-    default <R> ZippingApplicativable<R> ap1(Function<? super T, ? extends R> fn) {
+    default <R> ZippingApplicativable<R> ap1(final Function<? super T, ? extends R> fn) {
         val dup = this.duplicateSequence();
-        Streamable<T> streamable = dup.v1.toStreamable();
+        final Streamable<T> streamable = dup.v1.toStreamable();
         return new ApplyingZippingApplicativeBuilder<T, R, ZippingApplicativable<R>>(
                                                                                      streamable, streamable).applicative(fn)
                                                                                                             .ap(dup.v2);
@@ -136,7 +136,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> ReactiveSeq<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ReactiveSeq<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return ReactiveSeq.fromStream(Seq.zip(this, other, zipper));
     }
@@ -148,13 +148,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * java.util.function.BiFunction)
      */
     @Override
-    default <U, R> ReactiveSeq<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ReactiveSeq<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return zip((Iterable<? extends U>) other, zipper);
     }
 
     @Override
-    default <U, R> ReactiveSeq<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ReactiveSeq<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
     }
@@ -202,6 +202,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Times values should be repeated within a Stream
      * @return Stream with values repeated
      */
+    @Override
     ReactiveSeq<T> cycle(int times);
 
     /**
@@ -216,6 +217,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @return Stream with values repeated
      */
+    @Override
     ReactiveSeq<T> cycle();
 
     /**
@@ -407,12 +409,12 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      */
     @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> zip(Stream<? extends U> other) {
+    default <U> ReactiveSeq<Tuple2<T, U>> zip(final Stream<? extends U> other) {
         return zip(Seq.seq(other));
     }
 
     @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+    default <U> ReactiveSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return zip(Seq.seq(other));
     }
 
@@ -429,7 +431,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      */
     @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> zip(Seq<? extends U> other) {
+    default <U> ReactiveSeq<Tuple2<T, U>> zip(final Seq<? extends U> other) {
         return fromStream(JoolManipulation.super.zip(other));
     }
 
@@ -708,6 +710,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Batch until predicate holds, then open next batch
      * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
+    @Override
     ReactiveSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate);
 
     /**
@@ -781,7 +784,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see org.jooq.lambda.Seq#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
-    default <K, A, D> ReactiveSeq<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+    default <K, A, D> ReactiveSeq<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
+            final Collector<? super T, A, D> downstream) {
         return fromStream(JoolManipulation.super.grouped(classifier, downstream));
     }
 
@@ -789,7 +793,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see org.jooq.lambda.Seq#grouped(java.util.function.Function)
      */
     @Override
-    default <K> ReactiveSeq<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier) {
+    default <K> ReactiveSeq<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return fromStream(JoolManipulation.super.grouped(classifier));
     }
 
@@ -809,7 +813,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * </pre>
      */
     @Override
-    default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
+    default <K> MapX<K, List<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return MapX.fromMap(JoolManipulation.super.groupBy(classifier));
     }
 
@@ -819,6 +823,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * <pre> {@code List<Integer> list = ReactiveSeq.of(1,2,2,2,5,6) .distinct()
      * .collect(Collectors.toList()); }</pre>
      */
+    @Override
     ReactiveSeq<T> distinct();
 
     /**
@@ -836,6 +841,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param monoid
      * @return ReactiveSeq with values combined scanning left
      */
+    @Override
     ReactiveSeq<T> scanLeft(Monoid<T> monoid);
 
     /**
@@ -848,6 +854,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * }
      * </pre>
      */
+    @Override
     <U> ReactiveSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function);
 
     /**
@@ -860,6 +867,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * }
      * </pre>
      */
+    @Override
     ReactiveSeq<T> scanRight(Monoid<T> monoid);
 
     /**
@@ -873,6 +881,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * }
      * </pre>
      */
+    @Override
     <U> ReactiveSeq<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner);
 
     /**
@@ -881,12 +890,14 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * </pre>
      * 
      */
+    @Override
     ReactiveSeq<T> sorted();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
-    default ReactiveSeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+    @Override
+    default ReactiveSeq<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return fromStream(StreamUtils.combine(this, predicate, op));
     }
 
@@ -901,13 +912,14 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Compartor to sort with
      * @return Sorted Stream
      */
+    @Override
     ReactiveSeq<T> sorted(Comparator<? super T> c);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
-    default ReactiveSeq<T> takeWhile(Predicate<? super T> p) {
+    default ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
 
         return (ReactiveSeq<T>) ExtendedTraversable.super.takeWhile(p);
     }
@@ -916,7 +928,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see org.jooq.lambda.Seq#drop(long)
      */
     @Override
-    default ReactiveSeq<T> drop(long drop) {
+    default ReactiveSeq<T> drop(final long drop) {
         return skip(drop);
     }
 
@@ -924,7 +936,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see org.jooq.lambda.Seq#drop(long)
      */
     @Override
-    default ReactiveSeq<T> take(long take) {
+    default ReactiveSeq<T> take(final long take) {
         return limit(take);
     }
 
@@ -932,7 +944,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
-    default ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
+    default ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
 
         return (ReactiveSeq<T>) ExtendedTraversable.super.dropWhile(p);
     }
@@ -941,7 +953,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
-    default ReactiveSeq<T> takeUntil(Predicate<? super T> p) {
+    default ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
 
         return (ReactiveSeq<T>) ExtendedTraversable.super.takeUntil(p);
     }
@@ -950,7 +962,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
-    default ReactiveSeq<T> dropUntil(Predicate<? super T> p) {
+    default ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
 
         return (ReactiveSeq<T>) ExtendedTraversable.super.dropUntil(p);
     }
@@ -959,7 +971,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.Traversable#dropRight(int)
      */
     @Override
-    default ReactiveSeq<T> dropRight(int num) {
+    default ReactiveSeq<T> dropRight(final int num) {
 
         return (ReactiveSeq<T>) ExtendedTraversable.super.dropRight(num);
     }
@@ -968,7 +980,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.Traversable#takeRight(int)
      */
     @Override
-    default ReactiveSeq<T> takeRight(int num) {
+    default ReactiveSeq<T> takeRight(final int num) {
 
         return (ReactiveSeq<T>) ExtendedTraversable.super.takeRight(num);
     }
@@ -984,6 +996,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Number of elemenets to skip
      * @return Stream with specified number of elements skipped
      */
+    @Override
     ReactiveSeq<T> skip(long num);
 
     /**
@@ -1001,6 +1014,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Predicate to skip while true
      * @return Stream with elements skipped while predicate holds
      */
+    @Override
     ReactiveSeq<T> skipWhile(Predicate<? super T> p);
 
     /**
@@ -1016,12 +1030,14 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Predicate to skip until true
      * @return Stream with elements skipped until predicate holds
      */
+    @Override
     ReactiveSeq<T> skipUntil(Predicate<? super T> p);
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#skipUntilClosed(java.util.function.Predicate)
      */
-    default ReactiveSeq<T> skipUntilClosed(Predicate<? super T> p) {
+    @Override
+    default ReactiveSeq<T> skipUntilClosed(final Predicate<? super T> p) {
         return fromStream(JoolManipulation.super.skipUntilClosed(p));
     }
 
@@ -1036,6 +1052,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Limit element size to num
      * @return Monad converted to Stream with elements up to num
      */
+    @Override
     ReactiveSeq<T> limit(long num);
 
     /**
@@ -1050,6 +1067,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Limit while predicate is true
      * @return Stream with limited elements
      */
+    @Override
     ReactiveSeq<T> limitWhile(Predicate<? super T> p);
 
     /**
@@ -1064,13 +1082,14 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Limit until predicate is true
      * @return Stream with limited elements
      */
+    @Override
     ReactiveSeq<T> limitUntil(Predicate<? super T> p);
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#limitUntilClosed(java.util.function.Predicate)
      */
     @Override
-    default ReactiveSeq<T> limitUntilClosed(Predicate<? super T> p) {
+    default ReactiveSeq<T> limitUntilClosed(final Predicate<? super T> p) {
         return fromStream(JoolManipulation.super.limitUntilClosed(p));
     }
 
@@ -1078,6 +1097,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @return Does nothing ReactiveSeq is for Sequential Streams
      * 
      */
+    @Override
     ReactiveSeq<T> parallel();
 
     /**
@@ -1092,6 +1112,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param c
      *            Predicate to check if all match
      */
+    @Override
     boolean allMatch(Predicate<? super T> c);
 
     /**
@@ -1106,6 +1127,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param c
      *            Predicate to check if any match
      */
+    @Override
     boolean anyMatch(Predicate<? super T> c);
 
     /**
@@ -1119,6 +1141,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * </pre>
      * 
      */
+    @Override
     boolean xMatch(int num, Predicate<? super T> c);
 
     /*
@@ -1127,6 +1150,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * } </pre>
      */
+    @Override
     boolean noneMatch(Predicate<? super T> c);
 
     /**
@@ -1138,6 +1162,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @return Stream as concatenated String
      */
+    @Override
     String join();
 
     /**
@@ -1149,6 +1174,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @return Stream as concatenated String
      */
+    @Override
     String join(String sep);
 
     /**
@@ -1160,6 +1186,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @return Stream as concatenated String
      */
+    @Override
     String join(String sep, String start, String end);
 
     /**
@@ -1180,6 +1207,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @return HeadAndTail
      */
+    @Override
     HeadAndTail<T> headAndTail();
 
     /**
@@ -1196,6 +1224,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *         (deterministic)
      * 
      */
+    @Override
     Optional<T> findFirst();
 
     /**
@@ -1212,6 +1241,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      *         (non-deterministic)
      */
+    @Override
     Optional<T> findAny();
 
     /**
@@ -1246,7 +1276,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
     * @param mapper
     * @return
     */
-    default <R> ReactiveSeq<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+    @Override
+    default <R> ReactiveSeq<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return map(in -> mapper.apply(in)
                                .result());
     }
@@ -1267,6 +1298,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Monoid to reduce values
      * @return Reduce result
      */
+    @Override
     <R> R mapReduce(Reducer<R> reducer);
 
     /**
@@ -1300,6 +1332,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Monoid to reduce values
      * @return Reduce result
      */
+    @Override
     <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer);
 
     /**
@@ -1315,12 +1348,14 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Use supplied Monoid to reduce values
      * @return reduced values
      */
+    @Override
     T reduce(Monoid<T> reducer);
 
     /*
      * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
      * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
      */
+    @Override
     Optional<T> reduce(BinaryOperator<T> accumulator);
 
     /*
@@ -1329,6 +1364,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
+    @Override
     T reduce(T identity, BinaryOperator<T> accumulator);
 
     /*
@@ -1337,6 +1373,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
+    @Override
     <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner);
 
     /**
@@ -1361,6 +1398,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param reducers
      * @return
      */
+    @Override
     ListX<T> reduce(Stream<? extends Monoid<T>> reducers);
 
     /**
@@ -1384,6 +1422,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param reducers
      * @return
      */
+    @Override
     ListX<T> reduce(Iterable<? extends Monoid<T>> reducers);
 
     /**
@@ -1400,6 +1439,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Use supplied Monoid to reduce values starting via foldRight
      * @return Reduced result
      */
+    @Override
     T foldRight(Monoid<T> reducer);
 
     /**
@@ -1412,6 +1452,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * </pre>
      * 
      */
+    @Override
     public T foldRight(T identity, BinaryOperator<T> accumulator);
 
     /**
@@ -1431,6 +1472,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Monoid to reduce values
      * @return Reduce result
      **/
+    @Override
     public <T> T foldRightMapToType(Reducer<T> reducer);
 
     /**
@@ -1448,16 +1490,19 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @return Lazily Convert to a repeatable Streamable
      * 
      */
+    @Override
     public Streamable<T> toStreamable();
 
     /**
      * @return This Stream converted to a set
      */
+    @Override
     public Set<T> toSet();
 
     /**
      * @return this Stream converted to a list
      */
+    @Override
     public List<T> toList();
 
     /*
@@ -1465,6 +1510,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#toCollection(java.util.function.Supplier)
      */
+    @Override
     public <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory);
 
     /**
@@ -1478,6 +1524,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
     /**
      * Convert this ReactiveSeq into a Stream
      */
+    @Override
     public ReactiveSeq<T> stream();
 
     /**
@@ -1491,6 +1538,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
+    @Override
     boolean startsWithIterable(Iterable<T> iterable);
 
     /**
@@ -1501,6 +1549,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param iterator
      * @return True if Monad starts with Iterators sequence of data
      */
+    @Override
     boolean startsWith(Stream<T> stream);
 
     /**
@@ -1513,6 +1562,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see java.util.stream.Stream#map(java.util.function.Function)
      */
+    @Override
     <R> ReactiveSeq<R> map(Function<? super T, ? extends R> fn);
 
     /*
@@ -1520,6 +1570,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see java.util.stream.Stream#peek(java.util.function.Consumer)
      */
+    @Override
     ReactiveSeq<T> peek(Consumer<? super T> c);
 
     /**
@@ -1538,6 +1589,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            to be applied
      * @return new stage in Sequence with flatMap operation to be lazily applied
      */
+    @Override
     <R> ReactiveSeq<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn);
 
     /**
@@ -1599,11 +1651,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see java.util.stream.Stream#filter(java.util.function.Predicate)
      */
+    @Override
     ReactiveSeq<T> filter(Predicate<? super T> fn);
 
     /* (non-Javadoc)
      * @see java.util.stream.BaseStream#sequential()
      */
+    @Override
     ReactiveSeq<T> sequential();
 
     /*
@@ -1611,6 +1665,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see java.util.stream.BaseStream#unordered()
      */
+    @Override
     ReactiveSeq<T> unordered();
 
     /**
@@ -1621,6 +1676,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * // (1, 0, 2, 0, 3, 0, 4) ReactiveSeq.of(1, 2, 3, 4).intersperse(0)
      * 
      */
+    @Override
     ReactiveSeq<T> intersperse(T value);
 
     /**
@@ -1630,6 +1686,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * // (1, 2, 3) ReactiveSeq.of(1, "a", 2, "b",3).ofType(Integer.class)
      * 
      */
+    @Override
     @SuppressWarnings("unchecked")
     <U> ReactiveSeq<U> ofType(Class<? extends U> type);
 
@@ -1641,6 +1698,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
      * 
      */
+    @Override
     <U> ReactiveSeq<U> cast(Class<? extends U> type);
 
     /**
@@ -1660,6 +1718,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @return
      */
+    @Override
     CollectionX<T> toLazyCollection();
 
     /**
@@ -1679,6 +1738,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @return
      */
+    @Override
     CollectionX<T> toConcurrentLazyCollection();
 
     /**
@@ -1695,6 +1755,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @return Streamable that replay this ReactiveSeq, populated lazily and can
      *         be populated across threads
      */
+    @Override
     public Streamable<T> toConcurrentLazyStreamable();
 
     /*
@@ -1708,6 +1769,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * <pre> {@code assertThat( of(1, 2, 3).reverse().toList(),
      * equalTo(asList(3, 2, 1))); } </pre>
      */
+    @Override
     public ReactiveSeq<T> reverse();
 
     /*
@@ -1723,6 +1785,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#shuffle()
      */
+    @Override
     public ReactiveSeq<T> shuffle();
 
     /**
@@ -1778,6 +1841,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            to append
      * @return ReactiveSeq with appended values
      */
+    @Override
     ReactiveSeq<T> append(T... values);
 
     @Override
@@ -1801,6 +1865,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param values to prepend
      * @return ReactiveSeq with values prepended
      */
+    @Override
     ReactiveSeq<T> prepend(T... values);
 
     /**
@@ -1871,6 +1936,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Executor to use for Stream execution
      * @return Async Future Terminal Operations
      */
+    @Override
     FutureOperations<T> futureOperations(Executor exec);
 
     /**
@@ -1884,6 +1950,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param iterable Values to check
      * @return true if ReactiveSeq ends with values in the supplied iterable
      */
+    @Override
     boolean endsWithIterable(Iterable<T> iterable);
 
     /**
@@ -1898,6 +1965,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Values to check
      * @return true if ReactiveSeq endswith values in the supplied Stream
      */
+    @Override
     boolean endsWith(Stream<T> stream);
 
     /**
@@ -1948,6 +2016,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param num
      * @return
      */
+    @Override
     ReactiveSeq<T> skipLast(int num);
 
     /**
@@ -1964,6 +2033,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param num of elements to return (last elements)
      * @return ReactiveSeq limited to last num elements
      */
+    @Override
     ReactiveSeq<T> limitLast(int num);
 
     /**
@@ -2076,6 +2146,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @return first value in this Stream
      */
+    @Override
     T firstValue();
 
     /**
@@ -2096,10 +2167,11 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @return a single value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
      */
+    @Override
     default T single() {
-        Iterator<T> it = iterator();
+        final Iterator<T> it = iterator();
         if (it.hasNext()) {
-            T result = it.next();
+            final T result = it.next();
             if (!it.hasNext())
                 return result;
         }
@@ -2108,7 +2180,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
 
     }
 
-    default T single(Predicate<? super T> predicate) {
+    @Override
+    default T single(final Predicate<? super T> predicate) {
         return this.filter(predicate)
                    .single();
 
@@ -2132,10 +2205,11 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @return An Optional with single value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
+    @Override
     default Optional<T> singleOptional() {
-        Iterator<T> it = iterator();
+        final Iterator<T> it = iterator();
         if (it.hasNext()) {
-            T result = it.next();
+            final T result = it.next();
             if (!it.hasNext())
                 return Optional.of(result);
         }
@@ -2156,7 +2230,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            to extract element from
      * @return elementAt index
      */
-    default Optional<T> get(long index) {
+    @Override
+    default Optional<T> get(final long index) {
         return this.zipWithIndex()
                    .filter(t -> t.v2 == index)
                    .findFirst()
@@ -2178,8 +2253,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            to extract element from
      * @return Element and Sequence
      */
-    default Tuple2<T, ReactiveSeq<T>> elementAt(long index) {
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> tuple = this.duplicateSequence();
+    default Tuple2<T, ReactiveSeq<T>> elementAt(final long index) {
+        final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> tuple = this.duplicateSequence();
         return tuple.map1(s -> s.zipWithIndex()
                                 .filter(t -> t.v2 == index)
                                 .findFirst()
@@ -2200,13 +2275,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *         element
      */
     default ReactiveSeq<Tuple2<T, Long>> elapsed() {
-        AtomicLong last = new AtomicLong(
-                                         System.currentTimeMillis());
+        final AtomicLong last = new AtomicLong(
+                                               System.currentTimeMillis());
 
         return zip(ReactiveSeq.generate(() -> {
-            long now = System.currentTimeMillis();
+            final long now = System.currentTimeMillis();
 
-            long result = now - last.get();
+            final long result = now - last.get();
             last.set(now);
             return result;
         }));
@@ -2264,9 +2339,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @return
      */
     @SafeVarargs
-    public static <T> ReactiveSeq<T> of(T... elements) {
-        ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
-                                                                              elements, false, 0);
+    public static <T> ReactiveSeq<T> of(final T... elements) {
+        final ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
+                                                                                    elements, false, 0);
         return StreamUtils.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array));
 
     }
@@ -2280,9 +2355,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @return
      */
     @SafeVarargs
-    public static <T> ReactiveSeq<T> reversedOf(T... elements) {
-        ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
-                                                                              elements, false, 0).invert();
+    public static <T> ReactiveSeq<T> reversedOf(final T... elements) {
+        final ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
+                                                                                    elements, false, 0).invert();
         return StreamUtils.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array));
 
     }
@@ -2295,10 +2370,10 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            To Construct sequence from
      * @return
      */
-    public static <T> ReactiveSeq<T> reversedListOf(List<T> elements) {
+    public static <T> ReactiveSeq<T> reversedListOf(final List<T> elements) {
         Objects.requireNonNull(elements);
-        ReversingListSpliterator list = new ReversingListSpliterator<T>(
-                                                                        elements, false).invert();
+        final ReversingListSpliterator list = new ReversingListSpliterator<T>(
+                                                                              elements, false).invert();
         return StreamUtils.reactiveSeq(StreamSupport.stream(list, false), Optional.ofNullable(list));
 
     }
@@ -2313,9 +2388,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Number for range to end at
      * @return Range ReactiveSeq
      */
-    public static ReactiveSeq<Integer> range(int start, int end) {
-        ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(
-                                                                              start, end, false);
+    public static ReactiveSeq<Integer> range(final int start, final int end) {
+        final ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(
+                                                                                    start, end, false);
         return StreamUtils.reactiveSeq(StreamSupport.stream(range, false), Optional.ofNullable(range));
 
     }
@@ -2330,9 +2405,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Number for range to end at
      * @return Range ReactiveSeq
      */
-    public static ReactiveSeq<Long> rangeLong(long start, long end) {
-        ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(
-                                                                                start, end, false);
+    public static ReactiveSeq<Long> rangeLong(final long start, final long end) {
+        final ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(
+                                                                                      start, end, false);
         return StreamUtils.reactiveSeq(StreamSupport.stream(range, false), Optional.ofNullable(range));
 
     }
@@ -2344,7 +2419,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Stream to construct Sequence from
      * @return
      */
-    public static <T> ReactiveSeq<T> fromStream(Stream<T> stream) {
+    public static <T> ReactiveSeq<T> fromStream(final Stream<T> stream) {
         Objects.requireNonNull(stream);
         if (stream instanceof ReactiveSeq)
             return (ReactiveSeq<T>) stream;
@@ -2358,7 +2433,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Stream to construct Sequence from
      * @return
      */
-    public static ReactiveSeq<Integer> fromIntStream(IntStream stream) {
+    public static ReactiveSeq<Integer> fromIntStream(final IntStream stream) {
         Objects.requireNonNull(stream);
         return StreamUtils.reactiveSeq(stream.boxed(), Optional.empty());
 
@@ -2371,7 +2446,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Stream to construct Sequence from
      * @return
      */
-    public static ReactiveSeq<Long> fromLongStream(LongStream stream) {
+    public static ReactiveSeq<Long> fromLongStream(final LongStream stream) {
         Objects.requireNonNull(stream);
         return StreamUtils.reactiveSeq(stream.boxed(), Optional.empty());
     }
@@ -2383,7 +2458,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Stream to construct Sequence from
      * @return
      */
-    public static ReactiveSeq<Double> fromDoubleStream(DoubleStream stream) {
+    public static ReactiveSeq<Double> fromDoubleStream(final DoubleStream stream) {
         Objects.requireNonNull(stream);
         return StreamUtils.reactiveSeq(stream.boxed(), Optional.empty());
     }
@@ -2396,10 +2471,10 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            to construct Sequence from
      * @return ReactiveSeq
      */
-    public static <T> ReactiveSeq<T> fromList(List<T> list) {
+    public static <T> ReactiveSeq<T> fromList(final List<T> list) {
         Objects.requireNonNull(list);
-        ReversingListSpliterator array = new ReversingListSpliterator<T>(
-                                                                         list, false);
+        final ReversingListSpliterator array = new ReversingListSpliterator<T>(
+                                                                               list, false);
         return StreamUtils.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array));
     }
 
@@ -2410,9 +2485,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            to construct ReactiveSeq from
      * @return ReactiveSeq
      */
-    public static <T> ReactiveSeq<T> fromPublisher(Publisher<? extends T> publisher) {
+    public static <T> ReactiveSeq<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
-        SeqSubscriber<T> sub = SeqSubscriber.subscriber();
+        final SeqSubscriber<T> sub = SeqSubscriber.subscriber();
         publisher.subscribe(sub);
         return sub.stream();
     }
@@ -2424,7 +2499,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            to construct Sequence from
      * @return ReactiveSeq
      */
-    public static <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable) {
+    public static <T> ReactiveSeq<T> fromIterable(final Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
         return StreamUtils.reactiveSeq(StreamSupport.stream(iterable.spliterator(), false), Optional.empty());
     }
@@ -2436,7 +2511,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            to construct Sequence from
      * @return ReactiveSeq
      */
-    public static <T> ReactiveSeq<T> fromIterator(Iterator<T> iterator) {
+    public static <T> ReactiveSeq<T> fromIterator(final Iterator<T> iterator) {
         Objects.requireNonNull(iterator);
         return fromIterable(() -> iterator);
     }
@@ -2464,14 +2539,14 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param unfolder Iteratively applied function, terminated by an empty Optional
      * @return ReactiveSeq generated by unfolder function
      */
-    static <U, T> ReactiveSeq<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    static <U, T> ReactiveSeq<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.fromStream(Seq.unfold(seed, unfolder));
     }
 
     /**
      * @see Stream#generate(Supplier)
      */
-    static <T> ReactiveSeq<T> generate(Supplier<T> s) {
+    static <T> ReactiveSeq<T> generate(final Supplier<T> s) {
         return StreamUtils.reactiveSeq(Stream.generate(s), Optional.empty());
 
     }
@@ -2489,8 +2564,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * </pre>
      * 
      */
-    public static <T, U> Tuple2<ReactiveSeq<T>, ReactiveSeq<U>> unzip(ReactiveSeq<Tuple2<T, U>> sequence) {
-        Tuple2<ReactiveSeq<Tuple2<T, U>>, ReactiveSeq<Tuple2<T, U>>> tuple2 = sequence.duplicateSequence();
+    public static <T, U> Tuple2<ReactiveSeq<T>, ReactiveSeq<U>> unzip(final ReactiveSeq<Tuple2<T, U>> sequence) {
+        final Tuple2<ReactiveSeq<Tuple2<T, U>>, ReactiveSeq<Tuple2<T, U>>> tuple2 = sequence.duplicateSequence();
         return new Tuple2(
                           tuple2.v1.map(Tuple2::v1), tuple2.v2.map(Tuple2::v2));
     }
@@ -2505,8 +2580,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * // ReactiveSeq[1,2,3], ReactiveSeq[a,b,c], ReactiveSeq[2l,3l,4l]
      * </pre>
      */
-    public static <T1, T2, T3> Tuple3<ReactiveSeq<T1>, ReactiveSeq<T2>, ReactiveSeq<T3>> unzip3(ReactiveSeq<Tuple3<T1, T2, T3>> sequence) {
-        Tuple3<ReactiveSeq<Tuple3<T1, T2, T3>>, ReactiveSeq<Tuple3<T1, T2, T3>>, ReactiveSeq<Tuple3<T1, T2, T3>>> tuple3 = sequence.triplicate();
+    public static <T1, T2, T3> Tuple3<ReactiveSeq<T1>, ReactiveSeq<T2>, ReactiveSeq<T3>> unzip3(final ReactiveSeq<Tuple3<T1, T2, T3>> sequence) {
+        final Tuple3<ReactiveSeq<Tuple3<T1, T2, T3>>, ReactiveSeq<Tuple3<T1, T2, T3>>, ReactiveSeq<Tuple3<T1, T2, T3>>> tuple3 = sequence.triplicate();
         return new Tuple3(
                           tuple3.v1.map(Tuple3::v1), tuple3.v2.map(Tuple3::v2), tuple3.v3.map(Tuple3::v3));
     }
@@ -2523,8 +2598,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * </pre>
      */
     public static <T1, T2, T3, T4> Tuple4<ReactiveSeq<T1>, ReactiveSeq<T2>, ReactiveSeq<T3>, ReactiveSeq<T4>> unzip4(
-            ReactiveSeq<Tuple4<T1, T2, T3, T4>> sequence) {
-        Tuple4<ReactiveSeq<Tuple4<T1, T2, T3, T4>>, ReactiveSeq<Tuple4<T1, T2, T3, T4>>, ReactiveSeq<Tuple4<T1, T2, T3, T4>>, ReactiveSeq<Tuple4<T1, T2, T3, T4>>> quad = sequence.quadruplicate();
+            final ReactiveSeq<Tuple4<T1, T2, T3, T4>> sequence) {
+        final Tuple4<ReactiveSeq<Tuple4<T1, T2, T3, T4>>, ReactiveSeq<Tuple4<T1, T2, T3, T4>>, ReactiveSeq<Tuple4<T1, T2, T3, T4>>, ReactiveSeq<Tuple4<T1, T2, T3, T4>>> quad = sequence.quadruplicate();
         return new Tuple4(
                           quad.v1.map(Tuple4::v1), quad.v2.map(Tuple4::v2), quad.v3.map(Tuple4::v3), quad.v4.map(Tuple4::v4));
     }
@@ -2534,21 +2609,24 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
      */
-    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Stream<? extends U> other) {
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(final Stream<? extends U> other) {
         return fromStream(JoolManipulation.super.crossJoin(other));
     }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#crossJoin(org.jooq.lambda.Seq)
      */
-    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Seq<? extends U> other) {
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(final Seq<? extends U> other) {
         return fromStream(JoolManipulation.super.crossJoin(other));
     }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#crossJoin(java.lang.Iterable)
      */
-    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Iterable<? extends U> other) {
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(final Iterable<? extends U> other) {
         return fromStream(JoolManipulation.super.crossJoin(other));
     }
 
@@ -2559,62 +2637,84 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * java.util.function.BiPredicate)
      */
 
-    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Stream<? extends U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
-        Streamable<? extends U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(final Stream<? extends U> other,
+            final java.util.function.BiPredicate<? super T, ? super U> predicate) {
+        final Streamable<? extends U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
 
         return innerJoin(s, predicate);
     }
 
-    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Iterable<? extends U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
-        Streamable<? extends U> s = Streamable.fromIterable(other);
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#innerJoin(java.lang.Iterable, java.util.function.BiPredicate)
+     */
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(final Iterable<? extends U> other,
+            final java.util.function.BiPredicate<? super T, ? super U> predicate) {
+        final Streamable<? extends U> s = Streamable.fromIterable(other);
         return innerJoin(s, predicate);
     }
 
-    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Seq<? extends U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
-        Streamable<? extends U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#innerJoin(org.jooq.lambda.Seq, java.util.function.BiPredicate)
+     */
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(final Seq<? extends U> other,
+            final java.util.function.BiPredicate<? super T, ? super U> predicate) {
+        final Streamable<? extends U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
 
         return innerJoin(s, predicate);
     }
 
-    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(Streamable<? extends U> other, java.util.function.BiPredicate<? super T, ? super U> predicate) {
+    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(final Streamable<? extends U> other,
+            final java.util.function.BiPredicate<? super T, ? super U> predicate) {
         return flatMap(t -> other.stream()
                                  .filter(u -> predicate.test(t, u))
                                  .map(u -> Tuple.tuple(t, u)));
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream,
-     * java.util.function.BiPredicate)
+  
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
-    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Stream<? extends U> other, BiPredicate<? super T, ? super U> predicate) {
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Stream<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
 
-        Streamable<? extends U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other)
-                                                                       .toLazyCollection());
-
-        return leftOuterJoin(s, predicate);
-
-    }
-
-    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Seq<? extends U> other, BiPredicate<? super T, ? super U> predicate) {
-
-        Streamable<? extends U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other));
+        final Streamable<? extends U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other)
+                                                                             .toLazyCollection());
 
         return leftOuterJoin(s, predicate);
 
     }
 
-    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Iterable<? extends U> other, BiPredicate<? super T, ? super U> predicate) {
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#leftOuterJoin(org.jooq.lambda.Seq, java.util.function.BiPredicate)
+     */
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Seq<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
 
-        Streamable<? extends U> s = Streamable.fromIterable(other);
+        final Streamable<? extends U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other));
 
         return leftOuterJoin(s, predicate);
 
     }
 
-    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(Streamable<? extends U> s, java.util.function.BiPredicate<? super T, ? super U> predicate) {
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#leftOuterJoin(java.lang.Iterable, java.util.function.BiPredicate)
+     */
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Iterable<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
+
+        final Streamable<? extends U> s = Streamable.fromIterable(other);
+
+        return leftOuterJoin(s, predicate);
+
+    }
+
+   
+    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Streamable<? extends U> s,
+            final java.util.function.BiPredicate<? super T, ? super U> predicate) {
         return flatMap(t -> Seq.seq(s.stream())
                                .filter(u -> predicate.test(t, u))
                                .onEmpty(null)
@@ -2627,15 +2727,18 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream,
      * java.util.function.BiPredicate)
      */
-    default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Stream<? extends U> other, BiPredicate<? super T, ? super U> predicate) {
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(final Stream<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
         return fromStream(JoolManipulation.super.rightOuterJoin(other, predicate));
     }
 
-    default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Iterable<? extends U> other, BiPredicate<? super T, ? super U> predicate) {
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(final Iterable<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
         return fromStream(JoolManipulation.super.rightOuterJoin(other, predicate));
     }
 
-    default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(Seq<? extends U> other, BiPredicate<? super T, ? super U> predicate) {
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(final Seq<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
         return fromStream(JoolManipulation.super.rightOuterJoin(other, predicate));
     }
 
@@ -2655,9 +2758,10 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Supplier that will generate the alternative Stream
      * @return ReactiveSeq that will switch to an alternative Stream if empty
      */
-    default ReactiveSeq<T> onEmptySwitch(Supplier<? extends Stream<T>> switchTo) {
-        AtomicBoolean called = new AtomicBoolean(
-                                                 false);
+    @Override
+    default ReactiveSeq<T> onEmptySwitch(final Supplier<? extends Stream<T>> switchTo) {
+        final AtomicBoolean called = new AtomicBoolean(
+                                                       false);
         return ReactiveSeq.fromStream(onEmptyGet((Supplier) () -> {
             called.set(true);
             return switchTo.get();
@@ -2673,6 +2777,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
      */
+    @Override
     ReactiveSeq<T> onEmpty(T value);
 
     /*
@@ -2680,6 +2785,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
      */
+    @Override
     ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier);
 
     /*
@@ -2687,7 +2793,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
      */
-    default <X extends Throwable> ReactiveSeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
+    @Override
+    default <X extends Throwable> ReactiveSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
         return ReactiveSeq.fromStream(JoolManipulation.super.onEmptyThrow(supplier));
     }
 
@@ -2696,6 +2803,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
      */
+    @Override
     ReactiveSeq<T> concat(Stream<? extends T> other);
 
     /*
@@ -2703,6 +2811,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#concat(java.lang.Object)
      */
+    @Override
     ReactiveSeq<T> concat(T other);
 
     /*
@@ -2710,6 +2819,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#concat(java.lang.Object[])
      */
+    @Override
     ReactiveSeq<T> concat(T... other);
 
     /*
@@ -2717,6 +2827,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#distinct(java.util.function.Function)
      */
+    @Override
     <U> ReactiveSeq<T> distinct(Function<? super T, ? extends U> keyExtractor);
 
     /*
@@ -2724,6 +2835,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#shuffle(java.util.Random)
      */
+    @Override
     ReactiveSeq<T> shuffle(Random random);
 
     /*
@@ -2731,6 +2843,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#slice(long, long)
      */
+    @Override
     ReactiveSeq<T> slice(long from, long to);
 
     /*
@@ -2738,16 +2851,21 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
      */
+    @Override
     <U extends Comparable<? super U>> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function);
 
     /**
      * emit x elements per time period
      * 
      * <pre>
-     * {
-     * 	&#064;code
+     * {@code
+     * 	code
      * 	SimpleTimer timer = new SimpleTimer();
-     * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).xPer(6, 100000000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+     * 	ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+     *             .xPer(6, 100000000, TimeUnit.NANOSECONDS)
+     *             .collect(Collectors.toList())
+     *             .size();
+     * //6            
      * 
      * }
      * </pre>
@@ -2796,9 +2914,9 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * }
      * </pre>
      * 
-     * @param time
-     * @param t
-     * @return
+     * @param time Time to apply debouncing over
+     * @param t Time unit for debounce period
+     * @return ReactiveSeq with debouncing applied
      */
     ReactiveSeq<T> debounce(long time, TimeUnit t);
 
@@ -2806,10 +2924,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * emit elements after a fixed delay
      * 
      * <pre>
-     * {
-     * 	&#064;code
+     * {@code
      * 	SimpleTimer timer = new SimpleTimer();
-     * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).fixedDelay(10000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+     * 	ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+     *             .fixedDelay(10000, TimeUnit.NANOSECONDS)
+     *             .collect(Collectors.toList())
+     *             .size();
+     *  //6           
      * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(60000l));
      * }
      * </pre>
@@ -2826,17 +2947,19 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * Introduce a random jitter / time delay between the emission of elements
      * 
      * <pre>
-     * {
-     * 	&#064;code
+     * { @code
      * 	SimpleTimer timer = new SimpleTimer();
-     * 	assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).jitter(10000).collect(Collectors.toList()).size(), is(6));
+     * 	ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+     *             .jitter(10000)
+     *             .collect(Collectors.toList());
+     *             
      * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(20000l));
      * }
      * </pre>
      * 
      * @param maxJitterPeriodInNanos
      *            - random number less than this is used for each jitter
-     * @return Sequence with a random jitter between element emission
+     * @return ReactiveSeq with a random jitter between element emission
      */
     ReactiveSeq<T> jitter(long maxJitterPeriodInNanos);
 
@@ -2878,7 +3001,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Type to recover from
      * @param fn
      *            That accepts an error and returns an alternative value
-     * @return Sequence that can recover from a particular exception
+     * @return ReactiveSeq that can recover from a particular exception
      */
     <EX extends Throwable> ReactiveSeq<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn);
 
@@ -2907,7 +3030,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            Function to retry if fails
      * 
      */
-    default <R> ReactiveSeq<R> retry(Function<? super T, ? extends R> fn) {
+    default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn) {
         return retry(fn, 7, 2, TimeUnit.SECONDS);
     }
 
@@ -2941,17 +3064,17 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @param 
      *            TimeUnit to use for delay
      */
-    default <R> ReactiveSeq<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        Function<T, R> retry = t -> {
+    default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        final Function<T, R> retry = t -> {
             int count = retries;
-            long[] sleep = { timeUnit.toMillis(delay) };
+            final long[] sleep = { timeUnit.toMillis(delay) };
             Throwable exception = null;
             while (count-- > 0) {
                 ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep[0]))
                                  .run();
                 try {
                     return fn.apply(t);
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     exception = e;
                 }
 
@@ -2978,7 +3101,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            element to remove
      * @return Filtered Stream / ReactiveSeq
      */
-    default ReactiveSeq<T> remove(T t) {
+    @Override
+    default ReactiveSeq<T> remove(final T t) {
         return this.filter(v -> v != t);
     }
 
@@ -2989,9 +3113,10 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @return Permutations from this ReactiveSeq
      */
+    @Override
     default ReactiveSeq<ReactiveSeq<T>> permutations() {
-        Streamable<Streamable<T>> streamable = Streamable.fromStream(this)
-                                                         .permutations();
+        final Streamable<Streamable<T>> streamable = Streamable.fromStream(this)
+                                                               .permutations();
         return streamable.map(s -> s.reactiveSeq())
                          .reactiveSeq();
     }
@@ -3015,7 +3140,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            index exclusive
      * @return Sequence between supplied indexes of original Sequence
      */
-    default ReactiveSeq<T> subStream(int start, int end) {
+    default ReactiveSeq<T> subStream(final int start, final int end) {
         return this.limit(end)
                    .deleteBetween(0, start);
     }
@@ -3035,9 +3160,10 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @return All combinations of the elements in this stream of the specified
      *         size
      */
-    default ReactiveSeq<ReactiveSeq<T>> combinations(int size) {
-        Streamable<Streamable<T>> streamable = Streamable.fromStream(this)
-                                                         .combinations(size);
+    @Override
+    default ReactiveSeq<ReactiveSeq<T>> combinations(final int size) {
+        final Streamable<Streamable<T>> streamable = Streamable.fromStream(this)
+                                                               .combinations(size);
         return streamable.map(s -> s.reactiveSeq())
                          .reactiveSeq();
     }
@@ -3055,9 +3181,10 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 
      * @return All combinations of the elements in this stream
      */
+    @Override
     default ReactiveSeq<ReactiveSeq<T>> combinations() {
-        Streamable<Streamable<T>> streamable = Streamable.fromStream(this)
-                                                         .combinations();
+        final Streamable<Streamable<T>> streamable = Streamable.fromStream(this)
+                                                               .combinations();
         return streamable.map(s -> s.reactiveSeq())
                          .reactiveSeq();
     }
@@ -3094,6 +3221,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
+    @Override
     HotStream<T> schedule(String cron, ScheduledExecutorService ex);
 
     /**
@@ -3128,6 +3256,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
+    @Override
     HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex);
 
     /**
@@ -3160,6 +3289,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      *            ScheduledExecutorService
      * @return Connectable HotStream of output from scheduled Stream
      */
+    @Override
     HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex);
 
     /**
@@ -3297,17 +3427,18 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
         return CyclopsCollectable.super.count();
     }
 
-    default <R, A> R collect(Collector<? super T, A, R> collector) {
+    @Override
+    default <R, A> R collect(final Collector<? super T, A, R> collector) {
         return CyclopsCollectable.super.collect(collector);
     }
 
     @Override
     default Collectable<T> collectable() {
-        return (Collectable<T>) this;
+        return this;
     }
 
     @Override
-    default <R> ReactiveSeq<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
+    default <R> ReactiveSeq<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
         return (ReactiveSeq<R>) ZippingApplicativable.super.patternMatch(case1, otherwise);
     }
@@ -3316,7 +3447,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#count(java.util.function.Predicate)
      */
     @Override
-    default long count(Predicate<? super T> predicate) {
+    default long count(final Predicate<? super T> predicate) {
 
         return CyclopsCollectable.super.count(predicate);
     }
@@ -3325,7 +3456,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinct(java.util.function.Predicate)
      */
     @Override
-    default long countDistinct(Predicate<? super T> predicate) {
+    default long countDistinct(final Predicate<? super T> predicate) {
 
         return CyclopsCollectable.super.countDistinct(predicate);
     }
@@ -3334,7 +3465,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinctBy(java.util.function.Function, java.util.function.Predicate)
      */
     @Override
-    default <U> long countDistinctBy(Function<? super T, ? extends U> function, Predicate<? super U> predicate) {
+    default <U> long countDistinctBy(final Function<? super T, ? extends U> function, final Predicate<? super U> predicate) {
 
         return CyclopsCollectable.super.countDistinctBy(function, predicate);
     }
@@ -3352,7 +3483,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinctBy(java.util.function.Function)
      */
     @Override
-    default <U> long countDistinctBy(Function<? super T, ? extends U> function) {
+    default <U> long countDistinctBy(final Function<? super T, ? extends U> function) {
 
         return CyclopsCollectable.super.countDistinctBy(function);
     }
@@ -3379,7 +3510,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#sum(java.util.function.Function)
      */
     @Override
-    default <U> Optional<U> sum(Function<? super T, ? extends U> function) {
+    default <U> Optional<U> sum(final Function<? super T, ? extends U> function) {
 
         return CyclopsCollectable.super.sum(function);
     }
@@ -3388,7 +3519,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#sumInt(java.util.function.ToIntFunction)
      */
     @Override
-    default int sumInt(ToIntFunction<? super T> function) {
+    default int sumInt(final ToIntFunction<? super T> function) {
 
         return CyclopsCollectable.super.sumInt(function);
     }
@@ -3397,7 +3528,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#sumLong(java.util.function.ToLongFunction)
      */
     @Override
-    default long sumLong(ToLongFunction<? super T> function) {
+    default long sumLong(final ToLongFunction<? super T> function) {
 
         return CyclopsCollectable.super.sumLong(function);
     }
@@ -3406,7 +3537,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#sumDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    default double sumDouble(ToDoubleFunction<? super T> function) {
+    default double sumDouble(final ToDoubleFunction<? super T> function) {
 
         return CyclopsCollectable.super.sumDouble(function);
     }
@@ -3424,7 +3555,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#avg(java.util.function.Function)
      */
     @Override
-    default <U> Optional<U> avg(Function<? super T, ? extends U> function) {
+    default <U> Optional<U> avg(final Function<? super T, ? extends U> function) {
 
         return CyclopsCollectable.super.avg(function);
     }
@@ -3433,7 +3564,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#avgInt(java.util.function.ToIntFunction)
      */
     @Override
-    default double avgInt(ToIntFunction<? super T> function) {
+    default double avgInt(final ToIntFunction<? super T> function) {
 
         return CyclopsCollectable.super.avgInt(function);
     }
@@ -3442,7 +3573,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#avgLong(java.util.function.ToLongFunction)
      */
     @Override
-    default double avgLong(ToLongFunction<? super T> function) {
+    default double avgLong(final ToLongFunction<? super T> function) {
 
         return CyclopsCollectable.super.avgLong(function);
     }
@@ -3451,7 +3582,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#avgDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    default double avgDouble(ToDoubleFunction<? super T> function) {
+    default double avgDouble(final ToDoubleFunction<? super T> function) {
 
         return CyclopsCollectable.super.avgDouble(function);
     }
@@ -3469,7 +3600,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#min(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> Optional<U> min(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<U> min(final Function<? super T, ? extends U> function) {
 
         return CyclopsCollectable.super.min(function);
     }
@@ -3478,7 +3609,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#min(java.util.function.Function, java.util.Comparator)
      */
     @Override
-    default <U> Optional<U> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<U> min(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return CyclopsCollectable.super.min(function, comparator);
     }
@@ -3487,7 +3618,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#minBy(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<T> minBy(final Function<? super T, ? extends U> function) {
 
         return CyclopsCollectable.super.minBy(function);
     }
@@ -3496,7 +3627,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#minBy(java.util.function.Function, java.util.Comparator)
      */
     @Override
-    default <U> Optional<T> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<T> minBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return CyclopsCollectable.super.minBy(function, comparator);
     }
@@ -3514,7 +3645,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#max(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> Optional<U> max(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<U> max(final Function<? super T, ? extends U> function) {
 
         return CyclopsCollectable.super.max(function);
     }
@@ -3523,7 +3654,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#max(java.util.function.Function, java.util.Comparator)
      */
     @Override
-    default <U> Optional<U> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<U> max(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return CyclopsCollectable.super.max(function, comparator);
     }
@@ -3532,7 +3663,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#maxBy(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> Optional<T> maxBy(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<T> maxBy(final Function<? super T, ? extends U> function) {
 
         return CyclopsCollectable.super.maxBy(function);
     }
@@ -3541,7 +3672,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#maxBy(java.util.function.Function, java.util.Comparator)
      */
     @Override
-    default <U> Optional<T> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<T> maxBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return CyclopsCollectable.super.maxBy(function, comparator);
     }
@@ -3559,7 +3690,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#median(java.util.Comparator)
      */
     @Override
-    default Optional<T> median(Comparator<? super T> comparator) {
+    default Optional<T> median(final Comparator<? super T> comparator) {
 
         return CyclopsCollectable.super.median(comparator);
     }
@@ -3568,7 +3699,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#medianBy(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> Optional<T> medianBy(Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<T> medianBy(final Function<? super T, ? extends U> function) {
 
         return CyclopsCollectable.super.medianBy(function);
     }
@@ -3577,7 +3708,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#medianBy(java.util.function.Function, java.util.Comparator)
      */
     @Override
-    default <U> Optional<T> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<T> medianBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return CyclopsCollectable.super.medianBy(function, comparator);
     }
@@ -3586,7 +3717,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentile(double)
      */
     @Override
-    default Optional<T> percentile(double percentile) {
+    default Optional<T> percentile(final double percentile) {
 
         return CyclopsCollectable.super.percentile(percentile);
     }
@@ -3595,7 +3726,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentile(double, java.util.Comparator)
      */
     @Override
-    default Optional<T> percentile(double percentile, Comparator<? super T> comparator) {
+    default Optional<T> percentile(final double percentile, final Comparator<? super T> comparator) {
 
         return CyclopsCollectable.super.percentile(percentile, comparator);
     }
@@ -3604,7 +3735,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentileBy(double, java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> Optional<T> percentileBy(final double percentile, final Function<? super T, ? extends U> function) {
 
         return CyclopsCollectable.super.percentileBy(percentile, function);
     }
@@ -3613,7 +3744,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentileBy(double, java.util.function.Function, java.util.Comparator)
      */
     @Override
-    default <U> Optional<T> percentileBy(double percentile, Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    default <U> Optional<T> percentileBy(final double percentile, final Function<? super T, ? extends U> function,
+            final Comparator<? super U> comparator) {
 
         return CyclopsCollectable.super.percentileBy(percentile, function, comparator);
     }
@@ -3622,7 +3754,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#toList(java.util.function.Supplier)
      */
     @Override
-    default <L extends List<T>> L toList(Supplier<L> factory) {
+    default <L extends List<T>> L toList(final Supplier<L> factory) {
 
         return CyclopsCollectable.super.toList(factory);
     }
@@ -3631,7 +3763,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#toSet(java.util.function.Supplier)
      */
     @Override
-    default <S extends Set<T>> S toSet(Supplier<S> factory) {
+    default <S extends Set<T>> S toSet(final Supplier<S> factory) {
 
         return CyclopsCollectable.super.toSet(factory);
     }
@@ -3640,7 +3772,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#toMap(java.util.function.Function, java.util.function.Function)
      */
     @Override
-    default <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+    default <K, V> Map<K, V> toMap(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
 
         return CyclopsCollectable.super.toMap(keyMapper, valueMapper);
     }
@@ -3649,7 +3781,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#toString(java.lang.CharSequence)
      */
     @Override
-    default String toString(CharSequence delimiter) {
+    default String toString(final CharSequence delimiter) {
 
         return CyclopsCollectable.super.toString(delimiter);
     }
@@ -3658,20 +3790,20 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#toString(java.lang.CharSequence, java.lang.CharSequence, java.lang.CharSequence)
      */
     @Override
-    default String toString(CharSequence delimiter, CharSequence prefix, CharSequence suffix) {
+    default String toString(final CharSequence delimiter, final CharSequence prefix, final CharSequence suffix) {
 
         return CyclopsCollectable.super.toString(delimiter, prefix, suffix);
     }
 
     @Override
-    default Optional<T> max(Comparator<? super T> comparator) {
+    default Optional<T> max(final Comparator<? super T> comparator) {
 
         return StreamUtils.max(this, comparator);
 
     }
 
     @Override
-    default Optional<T> min(Comparator<? super T> comparator) {
+    default Optional<T> min(final Comparator<? super T> comparator) {
         return StreamUtils.min(this, comparator);
     }
 
@@ -3682,13 +3814,13 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
     }
 
     @Override
-    default void print(PrintWriter writer) {
+    default void print(final PrintWriter writer) {
 
         JoolWindowing.super.print(writer);
     }
 
     @Override
-    default void print(PrintStream stream) {
+    default void print(final PrintStream stream) {
 
         JoolWindowing.super.print(stream);
     }

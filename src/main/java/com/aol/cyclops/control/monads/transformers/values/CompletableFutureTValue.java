@@ -34,17 +34,12 @@ import com.aol.cyclops.util.CompletableFutures;
 import lombok.val;
 
 /**
- * Monad Transformer for Java  CompletableFutures
+ * Monad Transformer for Java  CompletableFutures nested within Scalar data types (e.g. Optional, CompletableFuture, Eval, Maybe)
  * 
- * CompletableFutureT consists of an AnyM instance that in turns wraps anoter Monad type that contains an CompletableFuture
- * <pre>
- * {@code 
- * CompletableFutureT<AnyMValue<*SOME_MONAD_TYPE*<CompletableFuture<T>>>>
- * }</pre>
  * CompletableFutureT allows the deeply wrapped CompletableFuture to be manipulating within it's nested /contained context
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> The type contained on the CompletableFuture within
  */
 public class CompletableFutureTValue<A> implements CompletableFutureT<A>, TransformerValue<A>, MonadicValue<A>, Supplier<A>, ConvertableFunctor<A>,
         Filterable<A>, ApplicativeFunctor<A>, Matchable.ValueAndOptionalMatcher<A> {
@@ -54,6 +49,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
     /**
      * @return The wrapped AnyM
      */
+    @Override
     public AnyMValue<CompletableFuture<A>> unwrap() {
         return run;
     }
@@ -62,10 +58,12 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
         this.run = run;
     }
 
+    @Override
     public FutureW<A> value() {
         return FutureW.of(run.get());
     }
 
+    @Override
     public boolean isValuePresent() {
         return !run.isEmpty();
     }
@@ -86,7 +84,8 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
     *            Predicate to filter the wrapped Maybe
     * @return MaybeT that applies the provided filter
     */
-    public MaybeTValue<A> filter(Predicate<? super A> test) {
+    @Override
+    public MaybeTValue<A> filter(final Predicate<? super A> test) {
         return MaybeTValue.of(run.map(opt -> FutureW.of(opt)
                                                     .filter(test)));
     }
@@ -105,7 +104,8 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @param peek  Consumer to accept current value of CompletableFuture
      * @return CompletableFutureT with peek call
      */
-    public CompletableFutureTValue<A> peek(Consumer<? super A> peek) {
+    @Override
+    public CompletableFutureTValue<A> peek(final Consumer<? super A> peek) {
 
         return of(run.peek(future -> future.thenApply(a -> {
             peek.accept(a);
@@ -129,7 +129,8 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @param f Mapping function for the wrapped CompletableFuture
      * @return CompletableFutureT that applies the map function to the wrapped CompletableFuture
      */
-    public <B> CompletableFutureTValue<B> map(Function<? super A, ? extends B> f) {
+    @Override
+    public <B> CompletableFutureTValue<B> map(final Function<? super A, ? extends B> f) {
         return new CompletableFutureTValue<B>(
                                               run.map(o -> o.thenApply(f)));
     }
@@ -142,7 +143,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> CompletableFutureTValue<R> combine(Value<? extends T2> app, BiFunction<? super A, ? super T2, ? extends R> fn) {
+    public <T2, R> CompletableFutureTValue<R> combine(final Value<? extends T2> app, final BiFunction<? super A, ? super T2, ? extends R> fn) {
         return new CompletableFutureTValue<R>(
                                               run.map(o -> CompletableFutures.combine(o, app, fn)));
     }
@@ -154,7 +155,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> CompletableFutureTValue<R> zip(Iterable<? extends T2> app, BiFunction<? super A, ? super T2, ? extends R> fn) {
+    public <T2, R> CompletableFutureTValue<R> zip(final Iterable<? extends T2> app, final BiFunction<? super A, ? super T2, ? extends R> fn) {
         return new CompletableFutureTValue<R>(
                                               run.map(o -> CompletableFutures.zip(o, app, fn)));
     }
@@ -166,7 +167,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> CompletableFutureTValue<R> zip(BiFunction<? super A, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
+    public <T2, R> CompletableFutureTValue<R> zip(final BiFunction<? super A, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         return new CompletableFutureTValue<R>(
                                               run.map(o -> CompletableFutures.zip(app, o, fn)));
     }
@@ -175,7 +176,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> CompletableFutureTValue<R> zip(Seq<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+    public <U, R> CompletableFutureTValue<R> zip(final Seq<? extends U> other, final BiFunction<? super A, ? super U, ? extends R> zipper) {
 
         return (CompletableFutureTValue<R>) TransformerValue.super.zip(other, zipper);
     }
@@ -184,7 +185,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> CompletableFutureTValue<R> zip(Stream<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+    public <U, R> CompletableFutureTValue<R> zip(final Stream<? extends U> other, final BiFunction<? super A, ? super U, ? extends R> zipper) {
 
         return (CompletableFutureTValue<R>) TransformerValue.super.zip(other, zipper);
     }
@@ -193,7 +194,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    public <U> CompletableFutureTValue<Tuple2<A, U>> zip(Stream<? extends U> other) {
+    public <U> CompletableFutureTValue<Tuple2<A, U>> zip(final Stream<? extends U> other) {
 
         return (CompletableFutureTValue) TransformerValue.super.zip(other);
     }
@@ -202,7 +203,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> CompletableFutureTValue<Tuple2<A, U>> zip(Seq<? extends U> other) {
+    public <U> CompletableFutureTValue<Tuple2<A, U>> zip(final Seq<? extends U> other) {
 
         return (CompletableFutureTValue) TransformerValue.super.zip(other);
     }
@@ -211,7 +212,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
-    public <U> CompletableFutureTValue<Tuple2<A, U>> zip(Iterable<? extends U> other) {
+    public <U> CompletableFutureTValue<Tuple2<A, U>> zip(final Iterable<? extends U> other) {
 
         return (CompletableFutureTValue) TransformerValue.super.zip(other);
     }
@@ -230,21 +231,22 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
     	* @param f FlatMap function
     	* @return CompletableFutureT that applies the flatMap function to the wrapped CompletableFuture
     */
-    public <B> CompletableFutureTValue<B> flatMapT(Function<? super A, CompletableFutureTValue<B>> f) {
+    public <B> CompletableFutureTValue<B> flatMapT(final Function<? super A, CompletableFutureTValue<B>> f) {
         return of(run.map(future -> future.thenCompose(a -> f.apply(a).run.stream()
                                                                           .toList()
                                                                           .get(0))));
     }
 
-    private static <B> AnyMValue<CompletableFuture<B>> narrow(AnyMValue<CompletableFuture<? extends B>> run) {
+    private static <B> AnyMValue<CompletableFuture<B>> narrow(final AnyMValue<CompletableFuture<? extends B>> run) {
         return (AnyMValue) run;
     }
 
-    public <B> CompletableFutureTValue<B> flatMap(Function<? super A, ? extends MonadicValue<? extends B>> f) {
+    @Override
+    public <B> CompletableFutureTValue<B> flatMap(final Function<? super A, ? extends MonadicValue<? extends B>> f) {
 
-        AnyMValue<CompletableFuture<? extends B>> mapped = run.map(o -> FutureW.of(o)
-                                                                               .flatMap(f)
-                                                                               .getFuture());
+        final AnyMValue<CompletableFuture<? extends B>> mapped = run.map(o -> FutureW.of(o)
+                                                                                     .flatMap(f)
+                                                                                     .getFuture());
         return of(narrow(mapped));
 
     }
@@ -278,7 +280,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @param fn Function to enhance with functionality from CompletableFuture and another monad type
      * @return Function that accepts and returns an CompletableFutureT
      */
-    public static <U, R> Function<CompletableFutureTValue<U>, CompletableFutureTValue<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<CompletableFutureTValue<U>, CompletableFutureTValue<R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -313,7 +315,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @return Function that accepts and returns an CompletableFutureT
      */
     public static <U1, U2, R> BiFunction<CompletableFutureTValue<U1>, CompletableFutureTValue<U2>, CompletableFutureTValue<R>> lift2(
-            BiFunction<? super U1, ? super U2, ? extends R> fn) {
+            final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -324,7 +326,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @param anyM AnyM that doesn't contain a monad wrapping an CompletableFuture
      * @return CompletableFutureT
      */
-    public static <A> CompletableFutureTValue<A> fromAnyM(AnyMValue<A> anyM) {
+    public static <A> CompletableFutureTValue<A> fromAnyM(final AnyMValue<A> anyM) {
         return of(anyM.map(CompletableFuture::completedFuture));
     }
 
@@ -334,17 +336,17 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @param monads AnyM that contains a monad wrapping an CompletableFuture
      * @return CompletableFutureT
      */
-    public static <A> CompletableFutureTValue<A> of(AnyMValue<CompletableFuture<A>> monads) {
+    public static <A> CompletableFutureTValue<A> of(final AnyMValue<CompletableFuture<A>> monads) {
         return new CompletableFutureTValue<>(
                                              monads);
     }
 
-    public static <A> CompletableFutureTValue<A> of(CompletableFuture<A> maybe) {
+    public static <A> CompletableFutureTValue<A> of(final CompletableFuture<A> maybe) {
 
         return CompletableFutureT.fromOptional(Optional.of(maybe));
     }
 
-    public static <A, V extends MonadicValue<CompletableFuture<A>>> CompletableFutureTValue<A> fromValue(V monadicValue) {
+    public static <A, V extends MonadicValue<CompletableFuture<A>>> CompletableFutureTValue<A> fromValue(final V monadicValue) {
         return of(AnyM.ofValue(monadicValue));
     }
 
@@ -353,6 +355,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return String.format("CompletableFutureTValue[%s]", run);
     }
@@ -381,7 +384,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
     }
 
     @Override
-    public void subscribe(Subscriber<? super A> s) {
+    public void subscribe(final Subscriber<? super A> s) {
         run.toMaybe()
            .forEach(e -> FutureW.of(e)
                                 .subscribe(s));
@@ -394,7 +397,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
     }
 
     @Override
-    public boolean test(A t) {
+    public boolean test(final A t) {
         val maybeEval = run.toMaybe();
         return maybeEval.isPresent() ? FutureW.of(maybeEval.get())
                                               .test(t)
@@ -402,10 +405,12 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
 
     }
 
-    public <R> CompletableFutureTValue<R> unit(R value) {
+    @Override
+    public <R> CompletableFutureTValue<R> unit(final R value) {
         return of(run.unit(CompletableFuture.completedFuture(value)));
     }
 
+    @Override
     public <R> CompletableFutureTValue<R> empty() {
         return of(run.unit(new CompletableFuture<R>()));
     }
@@ -418,7 +423,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> CompletableFutureTValue<U> cast(Class<? extends U> type) {
+    public <U> CompletableFutureTValue<U> cast(final Class<? extends U> type) {
         return (CompletableFutureTValue<U>) TransformerValue.super.cast(type);
     }
 
@@ -426,7 +431,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    public <R> CompletableFutureTValue<R> trampoline(Function<? super A, ? extends Trampoline<? extends R>> mapper) {
+    public <R> CompletableFutureTValue<R> trampoline(final Function<? super A, ? extends Trampoline<? extends R>> mapper) {
         return (CompletableFutureTValue<R>) TransformerValue.super.trampoline(mapper);
     }
 
@@ -434,7 +439,8 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    public <R> CompletableFutureTValue<R> patternMatch(Function<CheckValue1<A, R>, CheckValue1<A, R>> case1, Supplier<? extends R> otherwise) {
+    public <R> CompletableFutureTValue<R> patternMatch(final Function<CheckValue1<A, R>, CheckValue1<A, R>> case1,
+            final Supplier<? extends R> otherwise) {
         return (CompletableFutureTValue<R>) TransformerValue.super.patternMatch(case1, otherwise);
     }
 
@@ -442,7 +448,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> MaybeTValue<U> ofType(Class<? extends U> type) {
+    public <U> MaybeTValue<U> ofType(final Class<? extends U> type) {
 
         return (MaybeTValue<U>) CompletableFutureT.super.ofType(type);
     }
@@ -451,7 +457,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    public MaybeTValue<A> filterNot(Predicate<? super A> fn) {
+    public MaybeTValue<A> filterNot(final Predicate<? super A> fn) {
 
         return (MaybeTValue<A>) CompletableFutureT.super.filterNot(fn);
     }
@@ -471,7 +477,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof CompletableFutureTValue) {
             return run.equals(((CompletableFutureTValue) o).run);
         }

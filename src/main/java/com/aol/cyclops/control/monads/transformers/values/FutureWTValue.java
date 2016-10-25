@@ -31,7 +31,13 @@ import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
 import lombok.val;
 
-
+/**
+ * Monad Transformer for Futures nested within Scalar data types (e.g. Optional, CompletableFuture, Eval, Maybe)
+ * 
+ * @author johnmcclean
+ *
+ * @param <A> The type contained on the Future within
+ */
 public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, MonadicValue<A>, Supplier<A>, ConvertableFunctor<A>, Filterable<A>,
         ApplicativeFunctor<A>, Matchable.ValueAndOptionalMatcher<A> {
 
@@ -40,6 +46,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
     /**
      * @return The wrapped AnyM
      */
+    @Override
     public AnyMValue<FutureW<A>> unwrap() {
         return run;
     }
@@ -48,10 +55,12 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
         this.run = run;
     }
 
+    @Override
     public FutureW<A> value() {
         return run.get();
     }
 
+    @Override
     public boolean isValuePresent() {
         return !run.isEmpty();
     }
@@ -72,7 +81,8 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
     *            Predicate to filter the wrapped Maybe
     * @return MaybeT that applies the provided filter
     */
-    public MaybeTValue<A> filter(Predicate<? super A> test) {
+    @Override
+    public MaybeTValue<A> filter(final Predicate<? super A> test) {
         return MaybeTValue.of(run.map(opt -> opt.filter(test)));
     }
 
@@ -90,7 +100,8 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @param peek  Consumer to accept current value of CompletableFuture
      * @return CompletableFutureT with peek call
      */
-    public FutureWTValue<A> peek(Consumer<? super A> peek) {
+    @Override
+    public FutureWTValue<A> peek(final Consumer<? super A> peek) {
 
         return of(run.peek(future -> future.map(a -> {
             peek.accept(a);
@@ -114,7 +125,8 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @param f Mapping function for the wrapped CompletableFuture
      * @return CompletableFutureT that applies the map function to the wrapped CompletableFuture
      */
-    public <B> FutureWTValue<B> map(Function<? super A, ? extends B> f) {
+    @Override
+    public <B> FutureWTValue<B> map(final Function<? super A, ? extends B> f) {
         return new FutureWTValue<B>(
                                     run.map(o -> o.map(f)));
     }
@@ -127,7 +139,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> FutureWTValue<R> combine(Value<? extends T2> app, BiFunction<? super A, ? super T2, ? extends R> fn) {
+    public <T2, R> FutureWTValue<R> combine(final Value<? extends T2> app, final BiFunction<? super A, ? super T2, ? extends R> fn) {
         return new FutureWTValue<>(
                                    run.map(o -> o.combine(app, fn)));
     }
@@ -139,7 +151,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> FutureWTValue<R> zip(Iterable<? extends T2> app, BiFunction<? super A, ? super T2, ? extends R> fn) {
+    public <T2, R> FutureWTValue<R> zip(final Iterable<? extends T2> app, final BiFunction<? super A, ? super T2, ? extends R> fn) {
 
         return new FutureWTValue<>(
                                    run.map(o -> o.zip(app, fn)));
@@ -152,7 +164,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> FutureWTValue<R> zip(BiFunction<? super A, ? super T2, ? extends R> fn, Publisher<? extends T2> app) {
+    public <T2, R> FutureWTValue<R> zip(final BiFunction<? super A, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         return new FutureWTValue<>(
                                    run.map(o -> o.zip(fn, app)));
     }
@@ -161,7 +173,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> FutureWTValue<R> zip(Seq<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+    public <U, R> FutureWTValue<R> zip(final Seq<? extends U> other, final BiFunction<? super A, ? super U, ? extends R> zipper) {
 
         return (FutureWTValue<R>) TransformerValue.super.zip(other, zipper);
     }
@@ -170,7 +182,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> FutureWTValue<R> zip(Stream<? extends U> other, BiFunction<? super A, ? super U, ? extends R> zipper) {
+    public <U, R> FutureWTValue<R> zip(final Stream<? extends U> other, final BiFunction<? super A, ? super U, ? extends R> zipper) {
 
         return (FutureWTValue<R>) TransformerValue.super.zip(other, zipper);
     }
@@ -179,7 +191,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    public <U> FutureWTValue<Tuple2<A, U>> zip(Stream<? extends U> other) {
+    public <U> FutureWTValue<Tuple2<A, U>> zip(final Stream<? extends U> other) {
 
         return (FutureWTValue) TransformerValue.super.zip(other);
     }
@@ -188,7 +200,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> FutureWTValue<Tuple2<A, U>> zip(Seq<? extends U> other) {
+    public <U> FutureWTValue<Tuple2<A, U>> zip(final Seq<? extends U> other) {
 
         return (FutureWTValue) TransformerValue.super.zip(other);
     }
@@ -197,7 +209,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
-    public <U> FutureWTValue<Tuple2<A, U>> zip(Iterable<? extends U> other) {
+    public <U> FutureWTValue<Tuple2<A, U>> zip(final Iterable<? extends U> other) {
 
         return (FutureWTValue) TransformerValue.super.zip(other);
     }
@@ -217,19 +229,20 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @return CompletableFutureT that applies the flatMap function to the wrapped CompletableFuture
      */
 
-    public <B> FutureWTValue<B> flatMapT(Function<? super A, FutureWTValue<B>> f) {
+    public <B> FutureWTValue<B> flatMapT(final Function<? super A, FutureWTValue<B>> f) {
         return of(run.map(future -> future.flatMap(a -> f.apply(a).run.stream()
                                                                       .toList()
                                                                       .get(0))));
     }
 
-    private static <B> AnyMValue<FutureW<B>> narrow(AnyMValue<FutureW<? extends B>> run) {
+    private static <B> AnyMValue<FutureW<B>> narrow(final AnyMValue<FutureW<? extends B>> run) {
         return (AnyMValue) run;
     }
 
-    public <B> FutureWTValue<B> flatMap(Function<? super A, ? extends MonadicValue<? extends B>> f) {
+    @Override
+    public <B> FutureWTValue<B> flatMap(final Function<? super A, ? extends MonadicValue<? extends B>> f) {
 
-        AnyMValue<FutureW<? extends B>> mapped = run.map(o -> o.flatMap(f));
+        final AnyMValue<FutureW<? extends B>> mapped = run.map(o -> o.flatMap(f));
         return of(narrow(mapped));
 
     }
@@ -263,7 +276,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @param fn Function to enhance with functionality from CompletableFuture and another monad type
      * @return Function that accepts and returns an CompletableFutureT
      */
-    public static <U, R> Function<FutureWTValue<U>, FutureWTValue<R>> lift(Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<FutureWTValue<U>, FutureWTValue<R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -298,7 +311,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @return Function that accepts and returns an CompletableFutureT
      */
     public static <U1, U2, R> BiFunction<FutureWTValue<U1>, FutureWTValue<U2>, FutureWTValue<R>> lift2(
-            BiFunction<? super U1, ? super U2, ? extends R> fn) {
+            final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -309,7 +322,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @param anyM AnyM that doesn't contain a monad wrapping an CompletableFuture
      * @return CompletableFutureT
      */
-    public static <A> FutureWTValue<A> fromAnyM(AnyMValue<A> anyM) {
+    public static <A> FutureWTValue<A> fromAnyM(final AnyMValue<A> anyM) {
         return of(anyM.map(FutureW::ofResult));
     }
 
@@ -319,16 +332,16 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @param monads AnyM that contains a monad wrapping an CompletableFuture
      * @return CompletableFutureT
      */
-    public static <A> FutureWTValue<A> of(AnyMValue<FutureW<A>> monads) {
+    public static <A> FutureWTValue<A> of(final AnyMValue<FutureW<A>> monads) {
         return new FutureWTValue<>(
                                    monads);
     }
 
-    public static <A> FutureWTValue<A> of(FutureW<A> monads) {
+    public static <A> FutureWTValue<A> of(final FutureW<A> monads) {
         return FutureWT.fromOptional(Optional.of(monads));
     }
 
-    public static <A, V extends MonadicValue<FutureW<A>>> FutureWTValue<A> fromValue(V monadicValue) {
+    public static <A, V extends MonadicValue<FutureW<A>>> FutureWTValue<A> fromValue(final V monadicValue) {
         return of(AnyM.ofValue(monadicValue));
     }
 
@@ -337,6 +350,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * 
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return String.format("FutureWTValue[%s]", run);
     }
@@ -365,7 +379,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
     }
 
     @Override
-    public void subscribe(Subscriber<? super A> s) {
+    public void subscribe(final Subscriber<? super A> s) {
         run.toMaybe()
            .forEach(e -> e.subscribe(s));
 
@@ -377,7 +391,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
     }
 
     @Override
-    public boolean test(A t) {
+    public boolean test(final A t) {
         val maybeEval = run.toMaybe();
         return maybeEval.isPresent() ? maybeEval.get()
                                                 .test(t)
@@ -385,10 +399,12 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
 
     }
 
-    public <R> FutureWTValue<R> unit(R value) {
+    @Override
+    public <R> FutureWTValue<R> unit(final R value) {
         return of(run.unit(FutureW.ofResult(value)));
     }
 
+    @Override
     public <R> FutureWTValue<R> empty() {
         return of(run.unit(FutureW.empty()));
     }
@@ -401,7 +417,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> FutureWTValue<U> cast(Class<? extends U> type) {
+    public <U> FutureWTValue<U> cast(final Class<? extends U> type) {
         return (FutureWTValue<U>) TransformerValue.super.cast(type);
     }
 
@@ -409,7 +425,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    public <R> FutureWTValue<R> trampoline(Function<? super A, ? extends Trampoline<? extends R>> mapper) {
+    public <R> FutureWTValue<R> trampoline(final Function<? super A, ? extends Trampoline<? extends R>> mapper) {
         return (FutureWTValue<R>) TransformerValue.super.trampoline(mapper);
     }
 
@@ -417,7 +433,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    public <R> FutureWTValue<R> patternMatch(Function<CheckValue1<A, R>, CheckValue1<A, R>> case1, Supplier<? extends R> otherwise) {
+    public <R> FutureWTValue<R> patternMatch(final Function<CheckValue1<A, R>, CheckValue1<A, R>> case1, final Supplier<? extends R> otherwise) {
         return (FutureWTValue<R>) TransformerValue.super.patternMatch(case1, otherwise);
     }
 
@@ -425,7 +441,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> MaybeTValue<U> ofType(Class<? extends U> type) {
+    public <U> MaybeTValue<U> ofType(final Class<? extends U> type) {
 
         return (MaybeTValue<U>) FutureWT.super.ofType(type);
     }
@@ -434,7 +450,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    public MaybeTValue<A> filterNot(Predicate<? super A> fn) {
+    public MaybeTValue<A> filterNot(final Predicate<? super A> fn) {
 
         return (MaybeTValue<A>) FutureWT.super.filterNot(fn);
     }
@@ -454,7 +470,7 @@ public class FutureWTValue<A> implements FutureWT<A>, TransformerValue<A>, Monad
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o instanceof FutureWTValue) {
             return run.equals(((FutureWTValue) o).run);
         }

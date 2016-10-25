@@ -35,11 +35,11 @@ public abstract class BaseSimpleReact implements ReactBuilder {
         queueService = null;
     }
 
-    protected BaseSimpleReact(Executor queueService) {
+    protected BaseSimpleReact(final Executor queueService) {
         this.queueService = queueService;
     }
 
-    public BaseSimpleReactStream<Integer> range(int startInclusive, int endExclusive) {
+    public BaseSimpleReactStream<Integer> range(final int startInclusive, final int endExclusive) {
         return from(IntStream.range(startInclusive, endExclusive));
     }
 
@@ -87,7 +87,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
      */
     public <U> BaseSimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
-        Stream s = stream;
+        final Stream s = stream;
         return construct(s);
     }
 
@@ -99,7 +99,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
      */
     public <U> BaseSimpleReactStream<U> from(final Stream<U> stream) {
 
-        Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
+        final Stream s = stream.map(it -> CompletableFuture.completedFuture(it));
         return construct(s);
     }
 
@@ -139,15 +139,15 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 
     }
 
-    public <U> BaseSimpleReactStream<U> of(U... array) {
+    public <U> BaseSimpleReactStream<U> of(final U... array) {
         return from(Stream.of(array));
     }
 
-    public <U> BaseSimpleReactStream<U> from(CompletableFuture<U> cf) {
+    public <U> BaseSimpleReactStream<U> from(final CompletableFuture<U> cf) {
         return this.construct(Stream.of(cf));
     }
 
-    public <U> BaseSimpleReactStream<U> from(CompletableFuture<U>... cf) {
+    public <U> BaseSimpleReactStream<U> from(final CompletableFuture<U>... cf) {
         return this.construct(Stream.of(cf));
     }
 
@@ -163,7 +163,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     @SuppressWarnings("unchecked")
     public <U> BaseSimpleReactStream<U> react(final Collection<Supplier<U>> actions) {
 
-        return react((Supplier[]) actions.toArray(new Supplier[] {}));
+        return react(actions.toArray(new Supplier[] {}));
     }
 
     /**
@@ -237,7 +237,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     @SuppressWarnings("unchecked")
     protected <U> BaseSimpleReactStream<U> reactI(final Supplier<U>... actions) {
         return construct(Stream.of(actions)
-                               .map(next -> CompletableFuture.supplyAsync(next, this.getExecutor())));
+                               .map(next -> CompletableFuture.supplyAsync(next, getExecutor())));
     }
 
 }

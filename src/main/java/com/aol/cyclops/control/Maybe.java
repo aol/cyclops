@@ -33,15 +33,16 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 /**
- * Totally lazy more powerful general Option(al) type. Maybe is lazy like a Java 8 Stream that
- * represents 0 or 1 values rather than eager like a Java 8 Optional. map / peek/ filter and flatMap build the execution chaing,
- * but are not executed until the value inside the Maybe is required.
+ * Totally lazy more powerful general Option(al) type. Maybe is lazy like a Java
+ * 8 Stream that represents 0 or 1 values rather than eager like a Java 8
+ * Optional. map / peek/ filter and flatMap build the execution chaing, but are
+ * not executed until the value inside the Maybe is required.
  * 
  * Maybe is tail recursive
  * 
  * <pre>
  * {@code 
- * @Test
+ * &#64;Test
     public void odd() {
         System.out.println(even(Maybe.just(200000)).get());
     }
@@ -78,6 +79,29 @@ public interface Maybe<T>
 
     static <T> Maybe<T> none() {
         return EMPTY;
+    }
+
+    /**
+     * Flat map the wrapped Streamable and return the first element
+     *
+     * @param mapper FlatMap function with Iterable type returned value
+     * @return Maybe typed the first element returned after the flatMap function is applied
+     */
+    @Override
+    default <R> Maybe<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (Maybe<R>) MonadicValue1.super.flatMapIterable(mapper);
+    }
+
+    /**
+     * Flat map the wrapped Streamable and return the element published
+     *
+     * @param mapper FlatMap function with Publisher type returned value
+     * @return Maybe typed value subscribed from publisher after the flatMap function is applied
+     */
+    @Override
+    default <R> Maybe<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        final MonadicValue<R> m = MonadicValue1.super.flatMapPublisher(mapper);
+        return (Maybe<R>) m;
     }
 
     public static <T> Maybe<T> fromPublisher(final Publisher<T> pub) {
@@ -156,12 +180,17 @@ public interface Maybe<T>
                                               .get());
     }
 
-   
-    /* Apply a function across to values at once. If this Maybe is none, or the supplied value represents none Maybe.none is returned.
-     * Otherwise a Maybe with the function applied with this value and the supplied value is returned
+    /*
+     * Apply a function across to values at once. If this Maybe is none, or the
+     * supplied value represents none Maybe.none is returned. Otherwise a Maybe
+     * with the function applied with this value and the supplied value is
+     * returned
      * 
      * (non-Javadoc)
-     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     * 
+     * @see
+     * com.aol.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.
+     * cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Maybe<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -170,10 +199,12 @@ public interface Maybe<T>
                                             .apply(v))).flatMap(tuple -> app.visit(i -> Maybe.just(tuple.v2.apply(i)), () -> Maybe.none()));
     }
 
-   
-    /* Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
-     * (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
+    /*
+     * Equivalent to combine, but accepts an Iterable and takes the first value
+     * only from that iterable. (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable,
+     * java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Maybe<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -184,15 +215,19 @@ public interface Maybe<T>
     }
 
     /**
-     * Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
+     * Equivalent to combine, but accepts a Publisher and takes the first value
+     * only from that publisher.
      * 
      * @param app
      * @param fn
      * @return
      */
-    /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
-     * (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+    /*
+     * Equivalent to combine, but accepts a Publisher and takes the first value
+     * only from that publisher. (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction,
+     * org.reactivestreams.Publisher)
      */
     @Override
     default <T2, R> Maybe<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
@@ -202,16 +237,22 @@ public interface Maybe<T>
 
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq,
+     * java.util.function.BiFunction)
      */
     @Override
     default <U, R> Maybe<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return (Maybe<R>) MonadicValue1.super.zip(other, zipper);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream,
+     * java.util.function.BiFunction)
      */
     @Override
     default <U, R> Maybe<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -219,7 +260,9 @@ public interface Maybe<T>
         return (Maybe<R>) MonadicValue1.super.zip(other, zipper);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
@@ -228,7 +271,9 @@ public interface Maybe<T>
         return (Maybe) MonadicValue1.super.zip(other);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
      */
     @Override
@@ -237,7 +282,9 @@ public interface Maybe<T>
         return (Maybe) MonadicValue1.super.zip(other);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
@@ -251,16 +298,20 @@ public interface Maybe<T>
         return Maybe.of(unit);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     default <R> Maybe<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
         return (Maybe<R>) MonadicValue1.super.coflatMap(mapper);
     }
 
-    /* cojoin
-     * (non-Javadoc)
+    /*
+     * cojoin (non-Javadoc)
+     * 
      * @see com.aol.cyclops.types.MonadicValue#nest()
      */
     @Override
@@ -268,15 +319,20 @@ public interface Maybe<T>
         return (Maybe<MonadicValue<T>>) MonadicValue1.super.nest();
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid,
+     * com.aol.cyclops.types.MonadicValue2)
      */
     @Override
     default Maybe<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
         return (Maybe<T>) MonadicValue1.super.combineEager(monoid, v2);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.aol.cyclops.value.Value#toMaybe()
      */
     @Override
@@ -300,13 +356,18 @@ public interface Maybe<T>
     @Override
     <R> R visit(Function<? super T, ? extends R> some, Supplier<? extends R> none);
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.
+     * Predicate)
      */
     @Override
     Maybe<T> filter(Predicate<? super T> fn);
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
      */
     @Override
@@ -315,8 +376,12 @@ public interface Maybe<T>
         return (Maybe<U>) Filterable.super.ofType(type);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.
+     * Predicate)
      */
     @Override
     default Maybe<T> filterNot(final Predicate<? super T> fn) {
@@ -324,7 +389,9 @@ public interface Maybe<T>
         return (Maybe<T>) Filterable.super.filterNot(fn);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
      */
     @Override
@@ -333,7 +400,9 @@ public interface Maybe<T>
         return (Maybe<T>) Filterable.super.notNull();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
      */
     @Override
@@ -342,8 +411,11 @@ public interface Maybe<T>
         return (Maybe<U>) ApplicativeFunctor.super.cast(type);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
      */
     @Override
     default Maybe<T> peek(final Consumer<? super T> c) {
@@ -351,8 +423,11 @@ public interface Maybe<T>
         return (Maybe<T>) ApplicativeFunctor.super.peek(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.
+     * Function)
      */
     @Override
     default <R> Maybe<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -421,7 +496,9 @@ public interface Maybe<T>
             return true;
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see java.lang.Object#hashCode()
          */
         @Override
@@ -429,7 +506,9 @@ public interface Maybe<T>
             return Objects.hashCode(lazy.get());
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
@@ -450,6 +529,18 @@ public interface Maybe<T>
         @Override
         public T orElseGet(final Supplier<? extends T> value) {
             return lazy.get();
+        }
+
+        @Override
+        public <R> Just<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+            final Maybe<R> maybe = Maybe.super.flatMapIterable(mapper);
+            return (Just<R>) Maybe.just(maybe.get());
+        }
+
+        @Override
+        public <R> Just<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+            final Maybe<R> m = Maybe.super.flatMapPublisher(mapper);
+            return (Just<R>) Maybe.just(m.get());
         }
 
     }
@@ -548,7 +639,9 @@ public interface Maybe<T>
             return maybe.orElseGet(value);
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see java.lang.Object#hashCode()
          */
         @Override
@@ -560,7 +653,9 @@ public interface Maybe<T>
             return Objects.hashCode(maybe.get());
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
@@ -578,6 +673,20 @@ public interface Maybe<T>
                 }
             }
             return false;
+        }
+
+        @Override
+        public <R> Lazy<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+            final Maybe<R> m = Maybe.super.flatMapIterable(mapper);
+            return new Lazy(
+                            Eval.later(() -> m.get()));
+        }
+
+        @Override
+        public <R> Lazy<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+            final Maybe<R> m = (Lazy<R>) Maybe.super.flatMapPublisher(mapper);
+            return new Lazy(
+                            Eval.later(() -> m.get()));
         }
 
     }
@@ -656,6 +765,16 @@ public interface Maybe<T>
         @Override
         public T orElseGet(final Supplier<? extends T> value) {
             return value.get();
+        }
+
+        @Override
+        public <R> Nothing<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+            return (Nothing<R>) EMPTY;
+        }
+
+        @Override
+        public <R> Nothing<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+            return (Nothing<R>) EMPTY;
         }
     }
 

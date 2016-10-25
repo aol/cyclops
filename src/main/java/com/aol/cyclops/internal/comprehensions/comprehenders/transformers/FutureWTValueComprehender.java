@@ -12,29 +12,29 @@ import com.aol.cyclops.types.mixins.Printable;
 public class FutureWTValueComprehender implements ValueComprehender<FutureWTValue>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, FutureWTValue apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final FutureWTValue apply) {
 
         return apply.isFuturePresent() ? comp.of(apply.get()) : comp.empty();
     }
 
     @Override
-    public Object filter(FutureWTValue t, Predicate p) {
+    public Object filter(final FutureWTValue t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(FutureWTValue t, Function fn) {
+    public Object map(final FutureWTValue t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(FutureWTValue t, Function fn) {
+    public Object flatMap(final FutureWTValue t, final Function fn) {
 
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public FutureWTValue of(Object o) {
+    public FutureWTValue of(final Object o) {
         return FutureWTValue.of(FutureW.ofResult(o));
     }
 

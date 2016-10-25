@@ -8,32 +8,33 @@ import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
 public class MaybeComprehender implements ValueComprehender<Maybe> {
+    @Override
     public Class getTargetClass() {
         return Maybe.class;
     }
 
     @Override
-    public Object filter(Maybe o, Predicate p) {
+    public Object filter(final Maybe o, final Predicate p) {
         return o.filter(p);
     }
 
     @Override
-    public Object map(Maybe o, Function fn) {
+    public Object map(final Maybe o, final Function fn) {
         return o.map(fn);
     }
 
     @Override
-    public Maybe flatMap(Maybe o, Function fn) {
+    public Maybe flatMap(final Maybe o, final Function fn) {
         return o.flatMap(fn);
     }
 
     @Override
-    public boolean instanceOfT(Object apply) {
+    public boolean instanceOfT(final Object apply) {
         return apply instanceof Maybe;
     }
 
     @Override
-    public Maybe of(Object o) {
+    public Maybe of(final Object o) {
         return Maybe.of(o);
     }
 
@@ -42,7 +43,8 @@ public class MaybeComprehender implements ValueComprehender<Maybe> {
         return Maybe.none();
     }
 
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, Maybe apply) {
+    @Override
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final Maybe apply) {
         if (apply.isPresent())
             return comp.of(apply.get());
         else

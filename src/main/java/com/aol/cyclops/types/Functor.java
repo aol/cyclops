@@ -8,10 +8,12 @@ import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Trampoline;
 
-/* 
+/** 
+ * An interface that represents a type that can transform a value from one type to another
+ * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Data type of element(s) stored in this Functor
  */
 @FunctionalInterface
 public interface Functor<T> {
@@ -24,7 +26,7 @@ public interface Functor<T> {
      * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
      * 
      */
-    default <U> Functor<U> cast(Class<? extends U> type) {
+    default <U> Functor<U> cast(final Class<? extends U> type) {
         return map(type::cast);
     }
 
@@ -65,7 +67,7 @@ public interface Functor<T> {
      * @param c Consumer that recieves each element from this Functor
      * @return Functor that will peek at each value
      */
-    default Functor<T> peek(Consumer<? super T> c) {
+    default Functor<T> peek(final Consumer<? super T> c) {
         return map(input -> {
             c.accept(input);
             return input;
@@ -105,7 +107,7 @@ public interface Functor<T> {
      * @param mapper TCO Transformation function
      * @return Functor transformed by the supplied transformation function
      */
-    default <R> Functor<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+    default <R> Functor<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return map(in -> mapper.apply(in)
                                .result());
     }
@@ -128,7 +130,7 @@ public interface Functor<T> {
     * @param otherwise Value if supplied case doesn't match
     * @return CollectionX where elements are transformed by pattern matching
     */
-    default <R> Functor<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, Supplier<? extends R> otherwise) {
+    default <R> Functor<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
         return map(u -> Matchable.of(u)
                                  .matches(case1, otherwise)

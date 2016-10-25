@@ -46,7 +46,7 @@ public interface Comprehender<T> {
         return 5;
     }
 
-    default T unwrap(Object o) {
+    default T unwrap(final Object o) {
         return (T) o;
     }
 
@@ -57,7 +57,7 @@ public interface Comprehender<T> {
      * @param p JDK Predicate to wrap
      * @return Result of call to <pre>{@code t.filter ( i -> p.test(i)); }</pre>
      */
-    default Object filter(T t, Predicate p) {
+    default Object filter(final T t, final Predicate p) {
         return this.flatMap(t, d -> p.test(d) ? of(d) : empty());
     }
 
@@ -78,7 +78,7 @@ public interface Comprehender<T> {
      * @param fn FlatMap function that returns different type
      * @return flatMap applied and return type converted back to host type, non-Monadic return values lifted into a Monadic form
      */
-    default Object liftAndFlatMap(T t, Function fn) {
+    default Object liftAndFlatMap(final T t, final Function fn) {
 
         return executeflatMap(t, input -> liftObject(this, fn.apply(input)));
 
@@ -91,13 +91,13 @@ public interface Comprehender<T> {
      * @param fn JDK Function to wrap
      * @return Result of call to <pre>{@code t.flatMap( i -> fn.apply(i)); }</pre>
      */
-    default Object executeflatMap(T t, Function fn) {
+    default Object executeflatMap(final T t, final Function fn) {
         return flatMap(t, input -> unwrapOtherMonadTypes(this, fn.apply(input)));
     }
 
     public Object flatMap(T t, Function fn);
 
-    default boolean instanceOfT(Object apply) {
+    default boolean instanceOfT(final Object apply) {
         return getTargetClass().isAssignableFrom(apply.getClass());
     }
 
@@ -107,14 +107,14 @@ public interface Comprehender<T> {
 
     public T empty();
 
-    static Object liftObject(Comprehender comp, Object apply) {
-        Object o = new MonadicConverters().convertToMonadicForm(apply);
+    static Object liftObject(final Comprehender comp, final Object apply) {
+        final Object o = new MonadicConverters().convertToMonadicForm(apply);
 
         return o;
 
     }
 
-    static <T> T unwrapOtherMonadTypes(Comprehender<T> comp, Object apply) {
+    static <T> T unwrapOtherMonadTypes(final Comprehender<T> comp, final Object apply) {
 
         if (comp.instanceOfT(apply))
             return (T) apply;
@@ -138,7 +138,7 @@ public interface Comprehender<T> {
         if (apply instanceof CompletableFuture) {
             try {
                 return comp.of(((CompletableFuture) apply).join());
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 return comp.empty();
             }
         }
@@ -157,7 +157,7 @@ public interface Comprehender<T> {
      * @param apply
      * @return
      */
-    default Object resolveForCrossTypeFlatMap(Comprehender comp, T apply) {
+    default Object resolveForCrossTypeFlatMap(final Comprehender comp, final T apply) {
         return comp.of(apply);
     }
 

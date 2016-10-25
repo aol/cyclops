@@ -12,7 +12,7 @@ import com.aol.cyclops.types.mixins.Printable;
 public class TryTSeqComprehender implements Comprehender<TryTSeq>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, TryTSeq apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final TryTSeq apply) {
 
         return apply.isSeqPresent() ? comp.of(apply.stream()
                                                    .toListX())
@@ -20,22 +20,22 @@ public class TryTSeqComprehender implements Comprehender<TryTSeq>, Printable {
     }
 
     @Override
-    public Object filter(TryTSeq t, Predicate p) {
+    public Object filter(final TryTSeq t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(TryTSeq t, Function fn) {
+    public Object map(final TryTSeq t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(TryTSeq t, Function fn) {
+    public Object flatMap(final TryTSeq t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public TryTSeq of(Object o) {
+    public TryTSeq of(final Object o) {
         return TryTSeq.of(Try.success(o));
     }
 
@@ -50,7 +50,7 @@ public class TryTSeqComprehender implements Comprehender<TryTSeq>, Printable {
     }
 
     @Override
-    public TryTSeq fromIterator(Iterator o) {
+    public TryTSeq fromIterator(final Iterator o) {
         return TryTSeq.of(Try.fromIterable(() -> o));
     }
 

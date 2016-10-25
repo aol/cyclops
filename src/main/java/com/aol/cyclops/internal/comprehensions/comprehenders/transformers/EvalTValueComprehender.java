@@ -12,28 +12,28 @@ import com.aol.cyclops.types.mixins.Printable;
 public class EvalTValueComprehender implements ValueComprehender<EvalTValue>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, EvalTValue apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final EvalTValue apply) {
 
         return apply.isValuePresent() ? comp.of(apply.get()) : comp.empty();
     }
 
     @Override
-    public Object filter(EvalTValue t, Predicate p) {
+    public Object filter(final EvalTValue t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(EvalTValue t, Function fn) {
+    public Object map(final EvalTValue t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(EvalTValue t, Function fn) {
+    public Object flatMap(final EvalTValue t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public EvalTValue of(Object o) {
+    public EvalTValue of(final Object o) {
         return EvalTValue.of(Eval.later(() -> o));
     }
 

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.Spliterators;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.internal.verification.Times;
 
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.SimpleReact;
@@ -37,17 +39,61 @@ public class QueueTest {
 	private final AtomicInteger found = new AtomicInteger(0);
 
 	volatile boolean success = false;
+	
+	@Test
+	public void parallelStreamClose(){
+	    int cores = Runtime.getRuntime().availableProcessors();
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(cores*4));
+        
+        for(int k=0; k < 10;k++) {
+
+            com.aol.cyclops.data.async.Queue<Integer> queue = QueueFactories.<Integer>boundedQueue(5000).build();
+
+            new Thread(() -> {
+                while(!queue.isOpen()){
+                    System.out.println("Queue isn't open yet!");
+                }
+                System.err.println("Closing " + queue.close());
+            }).start();
+            
+            Stream<Integer> stream = queue.jdkStream();
+
+            stream = stream.parallel();
+            stream.forEach(e ->
+            {
+                System.out.println(e);
+            });
+            System.out.println("done " + k);
+        }
+	}
+	@Test
+	public void closedParallelStream(){
+	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();
+	    for(int i=0;i<1000;i++){
+            q.add(i);
+        }
+	    q.close();
+	    q.jdkStream().parallel().forEach(System.out::println);
+	}
 	@Test
 	public void parallelStream(){
+	    
+	    
 	    success = false;
 	    AtomicLong threadId = new AtomicLong(Thread.currentThread().getId());
-	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();
+	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(2000).build();
         for(int i=0;i<10000;i++){
             q.add(i);
         }
+        System.out.println(" queue " + q.size());
+        System.out.println(threadId.get());
         q.jdkStream()
           .parallel()
-          .peek(i-> { if(threadId.get()!= Thread.currentThread().getId()){
+          .peek(System.out::println)
+          .peek(i-> { 
+              System.out.println(Thread.currentThread().getId());
+              if(threadId.get()!= Thread.currentThread().getId()){
+              System.out.println("closing");
               success=true;
               q.close();
           }})
@@ -57,6 +103,36 @@ public class QueueTest {
         assertTrue(success);
             
 	}
+	@Test
+    public void parallelStreamSmallBounds(){
+        
+        for(int x=0;x<10;x++){
+            System.out.println("Run  " + x);
+        success = false;
+        AtomicLong threadId = new AtomicLong(Thread.currentThread().getId());
+        Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();
+        for(int i=0;i<10000;i++){
+            q.add(i);
+        }
+        System.out.println(" queue " + q.size());
+        System.out.println(threadId.get());
+        q.jdkStream()
+          .parallel()
+          .peek(System.out::println)
+          .peek(i-> { 
+              System.out.println(Thread.currentThread().getId());
+              if(threadId.get()!= Thread.currentThread().getId()){
+              System.out.println("closing");
+              success=true;
+              q.close();
+          }})
+          .peek(i->System.out.println(Thread.currentThread().getId()))
+          .forEach(System.out::println);
+        
+        assertTrue(success);
+        }
+            
+    }
 	@Test
 	public void closeQueue(){
 	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();

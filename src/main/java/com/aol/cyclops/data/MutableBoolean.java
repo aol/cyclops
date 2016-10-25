@@ -58,7 +58,7 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Match
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableBoolean of(boolean var) {
+    public static <T> MutableBoolean of(final boolean var) {
         return new MutableBoolean(
                                   var);
     }
@@ -78,17 +78,20 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Match
      * @param c Consumer that sets an external value
      * @return MutableBoolean that gets / sets an external (mutable) value
      */
-    public static MutableBoolean fromExternal(BooleanSupplier s, Consumer<Boolean> c) {
+    public static MutableBoolean fromExternal(final BooleanSupplier s, final Consumer<Boolean> c) {
         return new MutableBoolean() {
+            @Override
             public boolean getAsBoolean() {
                 return s.getAsBoolean();
             }
 
+            @Override
             public Boolean get() {
                 return getAsBoolean();
             }
 
-            public MutableBoolean set(boolean value) {
+            @Override
+            public MutableBoolean set(final boolean value) {
                 c.accept(value);
                 return this;
             }
@@ -113,9 +116,10 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Match
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(Function<Boolean, R> fn) {
-        MutableBoolean host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Boolean, R> fn) {
+        final MutableBoolean host = this;
         return new Mutable<R>() {
+            @Override
             public R get() {
                 return fn.apply(host.get());
             }
@@ -141,10 +145,11 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Match
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(Function<T1, Boolean> fn) {
-        MutableBoolean host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Boolean> fn) {
+        final MutableBoolean host = this;
         return new Mutable<T1>() {
-            public Mutable<T1> set(T1 value) {
+            @Override
+            public Mutable<T1> set(final T1 value) {
                 host.set(fn.apply(value));
                 return this;
             }
@@ -155,6 +160,7 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Match
     /**
      * @return Current value
      */
+    @Override
     public boolean getAsBoolean() {
         return var;
     }
@@ -163,7 +169,7 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Match
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableBoolean set(boolean var) {
+    public MutableBoolean set(final boolean var) {
         this.var = var;
         return this;
     }
@@ -172,7 +178,7 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Match
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableBoolean mutate(BooleanFunction varFn) {
+    public MutableBoolean mutate(final BooleanFunction varFn) {
         return set(varFn.apply(getAsBoolean()));
 
     }
@@ -182,7 +188,7 @@ public class MutableBoolean implements BooleanSupplier, Consumer<Boolean>, Match
     }
 
     @Override
-    public void accept(Boolean t) {
+    public void accept(final Boolean t) {
         set(t);
 
     }

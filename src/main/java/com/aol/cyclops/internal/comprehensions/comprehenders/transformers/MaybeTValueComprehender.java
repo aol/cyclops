@@ -12,28 +12,28 @@ import com.aol.cyclops.types.mixins.Printable;
 public class MaybeTValueComprehender implements ValueComprehender<MaybeTValue>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, MaybeTValue apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final MaybeTValue apply) {
 
         return apply.isPresent() ? comp.of(apply.get()) : comp.empty();
     }
 
     @Override
-    public Object filter(MaybeTValue t, Predicate p) {
+    public Object filter(final MaybeTValue t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(MaybeTValue t, Function fn) {
+    public Object map(final MaybeTValue t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(MaybeTValue t, Function fn) {
+    public Object flatMap(final MaybeTValue t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public MaybeTValue of(Object o) {
+    public MaybeTValue of(final Object o) {
         return MaybeTValue.of(Maybe.just(o));
     }
 

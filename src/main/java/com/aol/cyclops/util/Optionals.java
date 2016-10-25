@@ -18,56 +18,57 @@ import com.aol.cyclops.types.Value;
 
 public class Optionals {
 
-    public static <T> Optional<ListX<T>> sequence(CollectionX<Optional<T>> opts) {
+    public static <T> Optional<ListX<T>> sequence(final CollectionX<Optional<T>> opts) {
         return sequence(opts.stream()).map(s -> s.toListX());
 
     }
 
-    public static <T> Optional<ListX<T>> sequencePresent(CollectionX<Optional<T>> opts) {
-        Optional<ListX<T>> unwrapped = AnyM.sequence(opts.map(o -> AnyM.fromOptional(o)))
-                                           .unwrap();
+    public static <T> Optional<ListX<T>> sequencePresent(final CollectionX<Optional<T>> opts) {
+        final Optional<ListX<T>> unwrapped = AnyM.sequence(opts.map(o -> AnyM.fromOptional(o)))
+                                                 .unwrap();
         return unwrapped;
     }
 
-    public static <T> Optional<ReactiveSeq<T>> sequence(Stream<Optional<T>> opts) {
+    public static <T> Optional<ReactiveSeq<T>> sequence(final Stream<Optional<T>> opts) {
         return AnyM.sequence(opts.map(f -> AnyM.fromOptional(f)), () -> AnyM.fromOptional(Optional.of(Stream.<T> empty())))
                    .map(s -> ReactiveSeq.fromStream(s))
                    .unwrap();
 
     }
 
-    public static <T, R> Optional<R> accumulatePresent(CollectionX<Optional<T>> maybes, Reducer<R> reducer) {
+    public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> maybes, final Reducer<R> reducer) {
         return sequencePresent(maybes).map(s -> s.mapReduce(reducer));
     }
 
-    public static <T, R> Optional<R> accumulatePresent(CollectionX<Optional<T>> maybes, Function<? super T, R> mapper, Semigroup<R> reducer) {
+    public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> maybes, final Function<? super T, R> mapper,
+            final Semigroup<R> reducer) {
         return sequencePresent(maybes).map(s -> s.map(mapper)
                                                  .reduce(reducer.reducer())
                                                  .get());
     }
 
-    public static <T1, T2, R> Optional<R> combine(Optional<? extends T1> f, Value<? extends T2> v,
-            BiFunction<? super T1, ? super T2, ? extends R> fn) {
+    public static <T1, T2, R> Optional<R> combine(final Optional<? extends T1> f, final Value<? extends T2> v,
+            final BiFunction<? super T1, ? super T2, ? extends R> fn) {
         return narrow(Maybe.fromOptional(f)
                            .combine(v, fn)
                            .toOptional());
     }
 
-    public static <T1, T2, R> Optional<R> zip(Optional<? extends T1> f, Iterable<? extends T2> v,
-            BiFunction<? super T1, ? super T2, ? extends R> fn) {
+    public static <T1, T2, R> Optional<R> zip(final Optional<? extends T1> f, final Iterable<? extends T2> v,
+            final BiFunction<? super T1, ? super T2, ? extends R> fn) {
         return narrow(Maybe.fromOptional(f)
                            .zip(v, fn)
                            .toOptional());
     }
 
-    public static <T1, T2, R> Optional<R> zip(Publisher<? extends T2> p, Optional<? extends T1> f,
-            BiFunction<? super T1, ? super T2, ? extends R> fn) {
+    public static <T1, T2, R> Optional<R> zip(final Publisher<? extends T2> p, final Optional<? extends T1> f,
+            final BiFunction<? super T1, ? super T2, ? extends R> fn) {
         return narrow(Maybe.fromOptional(f)
                            .zip(fn, p)
                            .toOptional());
     }
 
-    public static <T> Optional<T> narrow(Optional<? extends T> f) {
+    public static <T> Optional<T> narrow(final Optional<? extends T> f) {
         return (Optional<T>) f;
     }
 

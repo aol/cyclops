@@ -12,28 +12,28 @@ import com.aol.cyclops.types.mixins.Printable;
 public class ListTValueComprehender implements Comprehender<ListTValue>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, ListTValue apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final ListTValue apply) {
 
         return apply.isListPresent() ? comp.of(apply.get()) : comp.empty();
     }
 
     @Override
-    public Object filter(ListTValue t, Predicate p) {
+    public Object filter(final ListTValue t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(ListTValue t, Function fn) {
+    public Object map(final ListTValue t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(ListTValue t, Function fn) {
+    public Object flatMap(final ListTValue t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public ListTValue of(Object o) {
+    public ListTValue of(final Object o) {
         return ListTValue.of(ListX.of(o));
     }
 
@@ -48,7 +48,7 @@ public class ListTValueComprehender implements Comprehender<ListTValue>, Printab
     }
 
     @Override
-    public ListTValue fromIterator(Iterator o) {
+    public ListTValue fromIterator(final Iterator o) {
         return ListTValue.of(ListX.fromIterable(() -> o));
     }
 

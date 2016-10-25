@@ -3,7 +3,6 @@ package com.aol.cyclops.util.function;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.jooq.lambda.function.Consumer4;
 import org.jooq.lambda.function.Consumer5;
 
 /**
@@ -26,9 +25,10 @@ public interface QuintConsumer<T1, T2, T3, T4, T5> {
      * @param c4 jOOλ Consumer5
      * @return cyclops-react QuintConsumer
      */
-    static <S1, S2, S3,S4,S5> QuintConsumer<S1, S2, S3,S4,S5> fromConsumer3(Consumer5<S1,S2,S3,S4,S5> c5){
-        return (a,b,c,d,e) ->c5.accept(a,b,c,d,e);
+    static <S1, S2, S3, S4, S5> QuintConsumer<S1, S2, S3, S4, S5> fromConsumer3(final Consumer5<S1, S2, S3, S4, S5> c5) {
+        return (a, b, c, d, e) -> c5.accept(a, b, c, d, e);
     }
+
     /**
      * Performs operation with input parameters
      * 
@@ -43,17 +43,17 @@ public interface QuintConsumer<T1, T2, T3, T4, T5> {
     /**
      * @return A jOOλ Consumer5
      */
-    default Consumer5<T1,T2,T3,T4,T5> consumer5(){
-       return (a,b,c,d,e)->accept(a,b,c,d,e);
+    default Consumer5<T1, T2, T3, T4, T5> consumer5() {
+        return (a, b, c, d, e) -> accept(a, b, c, d, e);
     }
-    
+
     /**
      * Partially apply the first input parameter to this QuintConsumer
      * 
      * @param s the first input parameter
      * @return A curried function that eventually resolves to a Consumer
      */
-    default Function<T2, Function<T3, Function<T4, Consumer<T5>>>> apply(T1 s) {
+    default Function<T2, Function<T3, Function<T4, Consumer<T5>>>> apply(final T1 s) {
         return CurryConsumer.curryC5(this)
                             .apply(s);
     }
@@ -65,7 +65,7 @@ public interface QuintConsumer<T1, T2, T3, T4, T5> {
      * @param s2 the second input parameter
      * @return A curried function that eventually resolves to a Consumer
      */
-    default Function<T3, Function<T4, Consumer<T5>>> apply(T1 s, T2 s2) {
+    default Function<T3, Function<T4, Consumer<T5>>> apply(final T1 s, final T2 s2) {
         return CurryConsumer.curryC5(this)
                             .apply(s)
                             .apply(s2);
@@ -79,7 +79,7 @@ public interface QuintConsumer<T1, T2, T3, T4, T5> {
      * @param s3 the third input parameter
      * @return A curried function that eventually resolves to a Consumer
      */
-    default Function<T4, Consumer<T5>> apply(T1 s, T2 s2, T3 s3) {
+    default Function<T4, Consumer<T5>> apply(final T1 s, final T2 s2, final T3 s3) {
         return CurryConsumer.curryC5(this)
                             .apply(s)
                             .apply(s2)
@@ -96,7 +96,7 @@ public interface QuintConsumer<T1, T2, T3, T4, T5> {
      * @param s4 the fourth input parameter
      * @return A consumer of the final value
      */
-    default Consumer<T5> apply(T1 s, T2 s2, T3 s3, T4 s4) {
+    default Consumer<T5> apply(final T1 s, final T2 s2, final T3 s3, final T4 s4) {
         return CurryConsumer.curryC5(this)
                             .apply(s)
                             .apply(s2)

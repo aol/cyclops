@@ -19,7 +19,7 @@ public class InvokeDynamic {
 
     private static volatile Map<String, Map<Class, List<Method>>> generalMethods = new ConcurrentHashMap<>();
 
-    public <T> Optional<T> execute(List<String> methodNames, Object obj, Object... args) {
+    public <T> Optional<T> execute(final List<String> methodNames, final Object obj, final Object... args) {
         return (Optional) methodNames.stream()
                                      .map(s -> execute(s, obj, args))
                                      .filter(Optional::isPresent)
@@ -27,17 +27,17 @@ public class InvokeDynamic {
                                      .flatMap(i -> i);
     }
 
-    public <T> Optional<T> execute(String methodName, Object obj, Object... args) {
-        Class clazz = obj instanceof Class ? (Class) obj : obj.getClass();
-        Map<Class, List<Method>> methods = generalMethods.computeIfAbsent(methodName, k -> new ConcurrentHashMap<>());
-        List<Method> om = methods.computeIfAbsent(clazz, c -> Stream.of(c.getMethods())
-                                                                    .filter(method -> methodName.equals(method.getName()))
-                                                                    .filter(method -> method.getParameterCount() == args.length)
-                                                                    .map(m2 -> {
-                                                                        m2.setAccessible(true);
-                                                                        return m2;
-                                                                    })
-                                                                    .collect(Collectors.toList()));
+    public <T> Optional<T> execute(final String methodName, final Object obj, final Object... args) {
+        final Class clazz = obj instanceof Class ? (Class) obj : obj.getClass();
+        final Map<Class, List<Method>> methods = generalMethods.computeIfAbsent(methodName, k -> new ConcurrentHashMap<>());
+        final List<Method> om = methods.computeIfAbsent(clazz, c -> Stream.of(c.getMethods())
+                                                                          .filter(method -> methodName.equals(method.getName()))
+                                                                          .filter(method -> method.getParameterCount() == args.length)
+                                                                          .map(m2 -> {
+                                                                              m2.setAccessible(true);
+                                                                              return m2;
+                                                                          })
+                                                                          .collect(Collectors.toList()));
 
         if (om.size() > 0) {
             return obj instanceof Class ? Optional.of((T) executeStaticMethod(om.get(0), (Class) obj, args))
@@ -46,21 +46,21 @@ public class InvokeDynamic {
         return Optional.empty();
     }
 
-    private Object executeStaticMethod(Method m, Class type, Object... args) {
+    private Object executeStaticMethod(final Method m, final Class type, final Object... args) {
         try {
 
-            MethodHandle mh = this.callSites.computeIfAbsent(m, (m2) -> {
+            final MethodHandle mh = callSites.computeIfAbsent(m, (m2) -> {
                 try {
                     return new ConstantCallSite(
                                                 MethodHandles.publicLookup()
                                                              .unreflect(m2));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw ExceptionSoftener.throwSoftenedException(e);
 
                 }
 
             })
-                                            .dynamicInvoker();
+                                             .dynamicInvoker();
 
             if (args.length == 0)
                 return mh.invoke();
@@ -69,7 +69,7 @@ public class InvokeDynamic {
             if (args.length == 2)
                 return mh.invoke(args[0], args[1]);
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             throw ExceptionSoftener.throwSoftenedException(e);
         } finally {
 
@@ -77,21 +77,21 @@ public class InvokeDynamic {
         return null;
     }
 
-    public Object executeMethod(Method m, Object obj, Object... args) {
+    public Object executeMethod(final Method m, final Object obj, final Object... args) {
         try {
 
-            MethodHandle mh = this.callSites.computeIfAbsent(m, (m2) -> {
+            final MethodHandle mh = callSites.computeIfAbsent(m, (m2) -> {
                 try {
                     return new ConstantCallSite(
                                                 MethodHandles.publicLookup()
                                                              .unreflect(m2));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw ExceptionSoftener.throwSoftenedException(e);
 
                 }
 
             })
-                                            .dynamicInvoker();
+                                             .dynamicInvoker();
             if (args.length == 0)
                 return mh.invoke(obj);
             if (args.length == 1)
@@ -99,7 +99,7 @@ public class InvokeDynamic {
             if (args.length == 2)
                 return mh.invoke(obj, args[0], args[1]);
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             throw ExceptionSoftener.throwSoftenedException(e);
         } finally {
 

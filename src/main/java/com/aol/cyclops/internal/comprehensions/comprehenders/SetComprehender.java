@@ -18,42 +18,44 @@ import com.aol.cyclops.types.extensability.Comprehender;
 public class SetComprehender implements Comprehender<Set> {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, Set apply) {
-        List list = (List) apply.stream()
-                                .collect(Collectors.toCollection(MaterializedList::new));
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final Set apply) {
+        final List list = (List) apply.stream()
+                                      .collect(Collectors.toCollection(MaterializedList::new));
         return list.size() > 0 ? comp.of(list) : comp.empty();
     }
 
+    @Override
     public Class getTargetClass() {
         return Set.class;
     }
 
     @Override
-    public Object filter(Set t, Predicate p) {
+    public Object filter(final Set t, final Predicate p) {
         return SetX.fromIterable(t)
                    .filter(p);
 
     }
 
     @Override
-    public Object map(Set t, Function fn) {
+    public Object map(final Set t, final Function fn) {
         return SetX.fromIterable(t)
                    .map(fn);
     }
 
-    public Object executeflatMap(Set t, Function fn) {
+    @Override
+    public Object executeflatMap(final Set t, final Function fn) {
         return flatMap(t, input -> unwrapOtherMonadTypesLC(this, fn.apply(input)));
     }
 
     @Override
-    public Object flatMap(Set t, Function fn) {
+    public Object flatMap(final Set t, final Function fn) {
         return SetX.fromIterable((Iterable) t)
                    .flatMap(fn);
 
     }
 
     @Override
-    public boolean instanceOfT(Object apply) {
+    public boolean instanceOfT(final Object apply) {
         return apply instanceof Stream;
     }
 
@@ -63,24 +65,25 @@ public class SetComprehender implements Comprehender<Set> {
     }
 
     @Override
-    public Set of(Object o) {
+    public Set of(final Object o) {
         return SetX.of(o);
 
     }
 
-    public Set fromIterator(Iterator it) {
+    @Override
+    public Set fromIterator(final Iterator it) {
         return SetX.fromIterable(() -> it);
     }
 
     @Override
-    public Set unwrap(Object o) {
+    public Set unwrap(final Object o) {
         if (o instanceof Set)
             return (Set) o;
         else
             return (Set) ((Stream) o).collect(Collectors.toSet());
     }
 
-    static Set unwrapOtherMonadTypesLC(Comprehender comp, Object apply) {
+    static Set unwrapOtherMonadTypesLC(final Comprehender comp, final Object apply) {
 
         if (apply instanceof Collection) {
             return SetX.fromIterable((Collection) apply);
@@ -95,7 +98,7 @@ public class SetComprehender implements Comprehender<Set> {
             return SetX.fromIterable(() -> ((BaseStream) apply).iterator());
 
         }
-        Object o = Comprehender.unwrapOtherMonadTypes(comp, apply);
+        final Object o = Comprehender.unwrapOtherMonadTypes(comp, apply);
         if (o instanceof Collection) {
             return SetX.fromIterable((Collection) apply);
         }

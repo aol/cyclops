@@ -28,6 +28,7 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
         return IMMUTABLE;
     }
 
+    @Override
     public ReversingArraySpliterator<T> invert() {
         setReverse(!isReverse());
         index = array.length - 1;
@@ -35,7 +36,7 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
     }
 
     @Override
-    public boolean tryAdvance(Consumer<? super T> action) {
+    public boolean tryAdvance(final Consumer<? super T> action) {
         Objects.requireNonNull(action);
 
         if (!reverse) {

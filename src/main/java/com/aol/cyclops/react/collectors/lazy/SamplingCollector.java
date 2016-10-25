@@ -32,7 +32,7 @@ public class SamplingCollector<T> implements LazyResultConsumer<T> {
      * @param sampleRate Modulus of sampleRate will determine result collection
      * @param consumer  SamplingCollector won't actually collect results, it passes control to another consumer when triggered.
      */
-    public SamplingCollector(int sampleRate, LazyResultConsumer<T> consumer) {
+    public SamplingCollector(final int sampleRate, final LazyResultConsumer<T> consumer) {
         this.sampleRate = sampleRate;
         this.consumer = consumer;
     }
@@ -41,13 +41,14 @@ public class SamplingCollector<T> implements LazyResultConsumer<T> {
      * @see java.util.function.Consumer#accept(java.lang.Object)
      */
     @Override
-    public void accept(FastFuture<T> t) {
+    public void accept(final FastFuture<T> t) {
         if (count++ % sampleRate == 0)
             consumer.accept(t);
 
     }
 
-    public void block(Function<FastFuture<T>, T> safeJoin) {
+    @Override
+    public void block(final Function<FastFuture<T>, T> safeJoin) {
         consumer.block(safeJoin);
     }
 
@@ -55,7 +56,7 @@ public class SamplingCollector<T> implements LazyResultConsumer<T> {
      * @see com.aol.cyclops.react.collectors.lazy.LazyResultConsumer#withResults(java.util.Collection)
      */
     @Override
-    public LazyResultConsumer<T> withResults(Collection<FastFuture<T>> t) {
+    public LazyResultConsumer<T> withResults(final Collection<FastFuture<T>> t) {
         return this.withConsumer(consumer.withResults(t));
     }
 

@@ -12,7 +12,7 @@ import com.aol.cyclops.types.mixins.Printable;
 public class EvalTSeqComprehender implements Comprehender<EvalTSeq>, Printable {
 
     @Override
-    public Object resolveForCrossTypeFlatMap(Comprehender comp, EvalTSeq apply) {
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final EvalTSeq apply) {
 
         return apply.isSeqPresent() ? comp.of(apply.stream()
                                                    .toListX())
@@ -20,22 +20,22 @@ public class EvalTSeqComprehender implements Comprehender<EvalTSeq>, Printable {
     }
 
     @Override
-    public Object filter(EvalTSeq t, Predicate p) {
+    public Object filter(final EvalTSeq t, final Predicate p) {
         return t.filter(p);
     }
 
     @Override
-    public Object map(EvalTSeq t, Function fn) {
+    public Object map(final EvalTSeq t, final Function fn) {
         return t.map(r -> fn.apply(r));
     }
 
     @Override
-    public Object flatMap(EvalTSeq t, Function fn) {
+    public Object flatMap(final EvalTSeq t, final Function fn) {
         return t.flatMapT(r -> fn.apply(r));
     }
 
     @Override
-    public EvalTSeq of(Object o) {
+    public EvalTSeq of(final Object o) {
         return EvalTSeq.of(Eval.now(o));
     }
 
@@ -50,7 +50,7 @@ public class EvalTSeqComprehender implements Comprehender<EvalTSeq>, Printable {
     }
 
     @Override
-    public EvalTSeq fromIterator(Iterator o) {
+    public EvalTSeq fromIterator(final Iterator o) {
         return EvalTSeq.of(Eval.fromIterable(() -> o));
     }
 

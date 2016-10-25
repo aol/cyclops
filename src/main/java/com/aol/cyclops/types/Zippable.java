@@ -10,6 +10,13 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.control.ReactiveSeq;
 
+/**
+ * A Data Type that can be comined with another data type 
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of element(s) of this Zippable
+ */
 public interface Zippable<T> extends Iterable<T> {
     /**
      * Zip (combine) this Zippable with the supplied Iterable using the supplied combining function
@@ -19,7 +26,7 @@ public interface Zippable<T> extends Iterable<T> {
      * @return Combined zippable
      */
 
-    default <T2, R> Zippable<R> zip(Iterable<? extends T2> iterable, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> Zippable<R> zip(final Iterable<? extends T2> iterable, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return ReactiveSeq.fromIterable(this)
                           .zip(iterable, fn);
     }
@@ -31,7 +38,7 @@ public interface Zippable<T> extends Iterable<T> {
      * @param fn Zip / combining function
      * @return Combined zippable
      */
-    default <T2, R> Zippable<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+    default <T2, R> Zippable<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
         return ReactiveSeq.fromIterable(this)
                           .zip(fn, publisher);
     }
@@ -43,7 +50,7 @@ public interface Zippable<T> extends Iterable<T> {
      * @param zipper Zip / combining function
      * @return Combined zippable
      */
-    default <U, R> Zippable<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Zippable<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return zip((Iterable<? extends U>) other, zipper);
     }
 
@@ -54,7 +61,7 @@ public interface Zippable<T> extends Iterable<T> {
      * @param zipper Zip / combining function
      * @return Combined zippable
      */
-    default <U, R> Zippable<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Zippable<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
     }
 
@@ -64,7 +71,7 @@ public interface Zippable<T> extends Iterable<T> {
      * @param other Stream to combine with
      * @return Combined Zippable
      */
-    default <U> Zippable<Tuple2<T, U>> zip(Stream<? extends U> other) {
+    default <U> Zippable<Tuple2<T, U>> zip(final Stream<? extends U> other) {
         return zip(other, (a, b) -> Tuple.tuple(a, b));
     }
 
@@ -74,7 +81,7 @@ public interface Zippable<T> extends Iterable<T> {
      * @param other Seq to combine with
      * @return Combined Zippable
      */
-    default <U> Zippable<Tuple2<T, U>> zip(Seq<? extends U> other) {
+    default <U> Zippable<Tuple2<T, U>> zip(final Seq<? extends U> other) {
         return zip((Stream<? extends U>) other);
     }
 
@@ -84,7 +91,7 @@ public interface Zippable<T> extends Iterable<T> {
      * @param other Iterable to combine with
      * @return
      */
-    default <U> Zippable<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+    default <U> Zippable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return zip((Stream<? extends U>) ReactiveSeq.fromIterable(other));
     }
 

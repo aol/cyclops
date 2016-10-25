@@ -28,6 +28,7 @@ public final class ActiveCase<T, R> implements Case<T, R> {
     @Getter
     private final boolean empty = false;
 
+    @Override
     public Tuple2<Predicate<? super T>, Function<? super T, ? extends R>> get() {
         return pattern;
     }

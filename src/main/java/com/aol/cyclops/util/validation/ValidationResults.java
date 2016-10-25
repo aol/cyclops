@@ -24,6 +24,7 @@ public class ValidationResults<T, E> {
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return results.toString();
     }
@@ -36,11 +37,11 @@ public class ValidationResults<T, E> {
         return Xor.sequenceSecondary(toXors());
     }
 
-    public <R> Xor<?, R> accumulateErrors(Reducer<R> reducer) {
+    public <R> Xor<?, R> accumulateErrors(final Reducer<R> reducer) {
         return Xor.accumulateSecondary(toXors(), reducer);
     }
 
-    public <R> Xor<?, E> accumulateErrors(Semigroup<E> combiner) {
+    public <R> Xor<?, E> accumulateErrors(final Semigroup<E> combiner) {
         return Xor.accumulateSecondary(toXors(), combiner);
     }
 
@@ -48,11 +49,11 @@ public class ValidationResults<T, E> {
         return Xor.sequencePrimary(toXors());
     }
 
-    public <R> Xor<?, R> accumulateSuccess(Reducer<R> reducer) {
+    public <R> Xor<?, R> accumulateSuccess(final Reducer<R> reducer) {
         return Xor.accumulateSecondary(toXors(), reducer);
     }
 
-    public <R> Xor<?, E> accumulateSuccess(Semigroup<E> combiner) {
+    public <R> Xor<?, E> accumulateSuccess(final Semigroup<E> combiner) {
         return Xor.accumulateSecondary(toXors(), combiner);
     }
 

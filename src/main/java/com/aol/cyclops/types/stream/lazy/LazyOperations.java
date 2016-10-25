@@ -52,6 +52,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * 
      * @return Future List
      */
+    @Override
     public Eval<List<T>> toList() {
         return Eval.later(() -> stream.toList());
     }
@@ -59,9 +60,10 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
     /**
      * @return Last value in this Stream (must be non-empty)
      */
+    @Override
     public Eval<T> lastValue() {
         return Eval.later(() -> {
-            List<T> l = stream.toList();
+            final List<T> l = stream.toList();
             return l.get(l.size() - 1);
         });
     }
@@ -70,9 +72,10 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @return the only entry in this Stream if it is a single entry Stream,
      *         otherwise throws an UnsupportedOperationException
      */
+    @Override
     public Eval<T> single() {
         return Eval.later(() -> {
-            List<T> l = stream.toList();
+            final List<T> l = stream.toList();
             if (l.size() == 1) {
                 return l.get(l.size() - 1);
             }
@@ -95,6 +98,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * 
      * @return Future Set
      */
+    @Override
     public Eval<Set<T>> toSet() {
         return Eval.later(() -> stream.toSet());
     }
@@ -104,7 +108,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * 
      * @see org.jooq.lambda.Seq#minBy(Function)
      */
-    public <U extends Comparable<? super U>> Eval<Optional<T>> minBy(Function<? super T, ? extends U> function) {
+    @Override
+    public <U extends Comparable<? super U>> Eval<Optional<T>> minBy(final Function<? super T, ? extends U> function) {
         return Eval.later(() -> stream.minBy(function));
     }
 
@@ -113,7 +118,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * 
      *  @see org.jooq.lambda.Seq#maxBy(Function)
      */
-    public <U extends Comparable<? super U>> Eval<Optional<T>> maxBy(Function<? super T, ? extends U> function) {
+    @Override
+    public <U extends Comparable<? super U>> Eval<Optional<T>> maxBy(final Function<? super T, ? extends U> function) {
         return Eval.later(() -> stream.maxBy(function));
     }
 
@@ -123,7 +129,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see java.util.stream.Stream#collect(Collector)
      * 
      */
-    public <R, A> Eval<R> collect(Collector<? super T, A, R> collector) {
+    @Override
+    public <R, A> Eval<R> collect(final Collector<? super T, A, R> collector) {
         return Eval.later(() -> stream.collect(collector));
     }
 
@@ -131,7 +138,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      *  Asynchronously perform a Stream collection
      * @see org.jooq.lambda.Seq#toCollection(Supplier)
      */
-    public <C extends Collection<T>> Eval<C> toCollection(Supplier<C> collectionFactory) {
+    @Override
+    public <C extends Collection<T>> Eval<C> toCollection(final Supplier<C> collectionFactory) {
         return Eval.later(() -> stream.toCollection(collectionFactory));
     }
 
@@ -140,7 +148,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * 
      * @see java.util.stream.Stream#toArray(IntFunction)
      */
-    public <A> Eval<A[]> toArray(IntFunction<A[]> generator) {
+    @Override
+    public <A> Eval<A[]> toArray(final IntFunction<A[]> generator) {
         return Eval.later(() -> stream.toArray(generator));
     }
 
@@ -149,6 +158,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * 
      * @see java.util.stream.Stream#toArray(IntFunction)
      */
+    @Override
     public Eval<Object[]> toArray() {
         return Eval.later(() -> stream.toArray());
     }
@@ -157,7 +167,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asyncrhonous groupBy operation
      * @see org.jooq.lambda.Seq#groupBy(Function)
      */
-    public <K> Eval<Map<K, List<T>>> groupBy(Function<? super T, ? extends K> classifier) {
+    @Override
+    public <K> Eval<Map<K, List<T>>> groupBy(final Function<? super T, ? extends K> classifier) {
         return Eval.later(() -> stream.groupBy(classifier));
     }
 
@@ -165,7 +176,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asyncrhonous groupBy operation
      * @see org.jooq.lambda.Seq#groupBy(Function, Collector)
      */
-    public <K, A, D> Eval<Map<K, D>> groupBy(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+    @Override
+    public <K, A, D> Eval<Map<K, D>> groupBy(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
         return Eval.later(() -> stream.groupBy(classifier, downstream));
     }
 
@@ -173,8 +185,9 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asyncrhonous groupBy operation
      * @see org.jooq.lambda.Seq#groupBy(Function, Supplier, Collector)
      */
-    public <K, D, A, M extends Map<K, D>> Eval<M> groupBy(Function<? super T, ? extends K> classifier, Supplier<M> mapFactory,
-            Collector<? super T, A, D> downstream) {
+    @Override
+    public <K, D, A, M extends Map<K, D>> Eval<M> groupBy(final Function<? super T, ? extends K> classifier, final Supplier<M> mapFactory,
+            final Collector<? super T, A, D> downstream) {
         return Eval.later(() -> stream.groupBy(classifier, mapFactory, downstream));
     }
 
@@ -182,7 +195,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asynchronous foldLeft operation
      * 	 @see org.jooq.lambda.Seq#foldLeft(Object,BiFunction)
      * */
-    public <U> Eval<U> foldLeft(U seed, BiFunction<U, ? super T, U> function) {
+    @Override
+    public <U> Eval<U> foldLeft(final U seed, final BiFunction<U, ? super T, U> function) {
         return Eval.later(() -> stream.foldLeft(seed, function));
     }
 
@@ -190,7 +204,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asynchronous foldRight operation
      * 	 @see org.jooq.lambda.Seq#foldRight(Object,BiFunction)
      * */
-    public <U> Eval<U> foldRight(U seed, BiFunction<? super T, U, U> function) {
+    @Override
+    public <U> Eval<U> foldRight(final U seed, final BiFunction<? super T, U, U> function) {
         return Eval.later(() -> stream.foldRight(seed, function));
     }
 
@@ -198,7 +213,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asyncrhonous min operation
      *  @see java.util.stream.Stream#min(Comparator)
      */
-    public Eval<Optional<T>> min(Comparator<? super T> comparator) {
+    @Override
+    public Eval<Optional<T>> min(final Comparator<? super T> comparator) {
         return Eval.later(() -> stream.min(comparator));
     }
 
@@ -206,7 +222,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asyncrhonous min operation
      *  @see java.util.stream.Stream#max(Comparator)
      */
-    public Eval<Optional<T>> max(Comparator<? super T> comparator) {
+    @Override
+    public Eval<Optional<T>> max(final Comparator<? super T> comparator) {
 
         return Eval.later(() -> stream.max(comparator));
     }
@@ -217,7 +234,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see java.util.stream.Stream#collect(Supplier, BiConsumer, BiConsumer)
      * 
      */
-    public <R> Eval<R> collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+    @Override
+    public <R> Eval<R> collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
         return Eval.later(() -> stream.collect(supplier, accumulator, combiner));
     }
 
@@ -227,7 +245,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see java.util.stream.Stream#reduce(Object, BiFunction, BinaryOperator)
      * 
      */
-    public <U> Eval<U> reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+    @Override
+    public <U> Eval<U> reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
         return Eval.later(() -> stream.reduce(identity, accumulator, combiner));
     }
 
@@ -237,7 +256,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see java.util.stream.Stream#reduce(BinaryOperator)
      * 
      */
-    public Eval<Optional<T>> reduce(BinaryOperator<T> accumulator) {
+    @Override
+    public Eval<Optional<T>> reduce(final BinaryOperator<T> accumulator) {
 
         return Eval.later(() -> stream.reduce(accumulator));
 
@@ -249,7 +269,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see java.util.stream.Stream#reduce(Object, BinaryOperator)
      * 
      */
-    public Eval<T> reduce(T identity, BinaryOperator<T> accumulator) {
+    @Override
+    public Eval<T> reduce(final T identity, final BinaryOperator<T> accumulator) {
         return Eval.later(() -> stream.reduce(identity, accumulator));
     }
 
@@ -259,11 +280,13 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see java.util.stream.Stream#count()
      * 
      */
+    @Override
     public Eval<Long> count() {
         return Eval.later(() -> stream.count());
     }
 
-    public Eval<String> join(CharSequence sep) {
+    @Override
+    public Eval<String> join(final CharSequence sep) {
         return Eval.later(() -> stream.join(sep));
     }
 
@@ -271,6 +294,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asynchronous join operation
      * 	 @see org.jooq.lambda.Seq#join()
      * */
+    @Override
     public Eval<String> join() {
         return Eval.later(() -> stream.join());
     }
@@ -279,7 +303,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asynchronous join operation
      * 	 @see org.jooq.lambda.Seq#join(CharSequence)
      * */
-    public Eval<String> join(CharSequence delimiter, CharSequence prefix, CharSequence suffix) {
+    @Override
+    public Eval<String> join(final CharSequence delimiter, final CharSequence prefix, final CharSequence suffix) {
         return Eval.later(() -> stream.join(delimiter, prefix, suffix));
     }
 
@@ -287,6 +312,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asynchronous findAny operation
      * 	 @see java.util.stream.Stream#findAny()
      * */
+    @Override
     public Eval<Optional<T>> findAny() {
         return Eval.later(() -> stream.findAny());
     }
@@ -295,6 +321,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asynchronous findAny operation
      * 	 @see java.util.stream.Stream#findFirst()
      * */
+    @Override
     public Eval<Optional<T>> findFirst() {
         return Eval.later(() -> stream.findFirst());
     }
@@ -303,6 +330,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asynchronous findAny operation
      * 	 @see java.util.stream.Stream#findFirst()
      * */
+    @Override
     public Eval<T> firstValue() {
         return Eval.later(() -> stream.firstValue());
     }
@@ -311,7 +339,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asynchronous All Match operation
      * 	@see java.util.stream.Stream#allMatch(Predicate)
      * */
-    public Eval<Boolean> allMatch(Predicate<? super T> predicate) {
+    @Override
+    public Eval<Boolean> allMatch(final Predicate<? super T> predicate) {
         return Eval.later(() -> stream.allMatch(predicate));
     }
 
@@ -319,7 +348,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asynchronous Any Match operation
      * 	 @see java.util.stream.Stream#anyMatch(Predicate)
      * */
-    public Eval<Boolean> anyMatch(Predicate<? super T> predicate) {
+    @Override
+    public Eval<Boolean> anyMatch(final Predicate<? super T> predicate) {
         return Eval.later(() -> stream.anyMatch(predicate));
     }
 
@@ -327,11 +357,12 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * Perform an asynchronous Any Match operation
      * 	 @see java.util.stream.Stream#noneMatch(Predicate)
      * */
-    public Eval<Boolean> noneMatch(Predicate<? super T> predicate) {
+    @Override
+    public Eval<Boolean> noneMatch(final Predicate<? super T> predicate) {
         return Eval.later(() -> stream.noneMatch(predicate));
     }
 
-    public Eval<Void> forEach(Consumer<T> c) {
+    public Eval<Void> forEach(final Consumer<T> c) {
         return Eval.later(() -> {
             stream.forEach(c);
             return null;
@@ -339,12 +370,14 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
 
     }
 
-    public Eval<T> single(Predicate<T> predicate) {
+    @Override
+    public Eval<T> single(final Predicate<T> predicate) {
         return Eval.later(() -> stream.filter(predicate)
                                       .single());
 
     }
 
+    @Override
     public Eval<Optional<T>> singleOptional() {
         return Eval.later(() -> stream.singleOptional());
     }
@@ -355,7 +388,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
     }
 
     @Override
-    public <U> Eval<Long> countDistinctBy(Function<? super T, ? extends U> function) {
+    public <U> Eval<Long> countDistinctBy(final Function<? super T, ? extends U> function) {
         return Eval.later(() -> stream.countDistinctBy(function));
     }
 
@@ -370,7 +403,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
     }
 
     @Override
-    public <U> Eval<Optional<U>> sum(Function<? super T, ? extends U> function) {
+    public <U> Eval<Optional<U>> sum(final Function<? super T, ? extends U> function) {
         return Eval.later(() -> stream.sum(function));
     }
 
@@ -380,7 +413,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
     }
 
     @Override
-    public <U> Eval<Optional<U>> avg(Function<? super T, ? extends U> function) {
+    public <U> Eval<Optional<U>> avg(final Function<? super T, ? extends U> function) {
         return Eval.later(() -> stream.avg(function));
     }
 
@@ -390,17 +423,17 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
     }
 
     @Override
-    public <U extends Comparable<? super U>> Eval<Optional<U>> min(Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> Eval<Optional<U>> min(final Function<? super T, ? extends U> function) {
         return Eval.later(() -> stream.min(function));
     }
 
     @Override
-    public <U> Eval<Optional<U>> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> Eval<Optional<U>> min(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return Eval.later(() -> stream.min(function, comparator));
     }
 
     @Override
-    public <U> Eval<Optional<T>> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> Eval<Optional<T>> minBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return Eval.later(() -> stream.minBy(function, comparator));
     }
 
@@ -410,17 +443,17 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
     }
 
     @Override
-    public <U extends Comparable<? super U>> Eval<Optional<U>> max(Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> Eval<Optional<U>> max(final Function<? super T, ? extends U> function) {
         return Eval.later(() -> stream.max(function));
     }
 
     @Override
-    public <U> Eval<Optional<U>> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> Eval<Optional<U>> max(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return Eval.later(() -> stream.max(function, comparator));
     }
 
     @Override
-    public <U> Eval<Optional<T>> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> Eval<Optional<T>> maxBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return Eval.later(() -> stream.maxBy(function, comparator));
     }
 
@@ -430,52 +463,54 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
     }
 
     @Override
-    public Eval<Optional<T>> median(Comparator<? super T> comparator) {
+    public Eval<Optional<T>> median(final Comparator<? super T> comparator) {
         return Eval.later(() -> stream.median(comparator));
     }
 
     @Override
-    public <U extends Comparable<? super U>> Eval<Optional<T>> medianBy(Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> Eval<Optional<T>> medianBy(final Function<? super T, ? extends U> function) {
         return Eval.later(() -> stream.medianBy(function));
     }
 
     @Override
-    public <U> Eval<Optional<T>> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> Eval<Optional<T>> medianBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return Eval.later(() -> stream.medianBy(function, comparator));
     }
 
     @Override
-    public Eval<Optional<T>> percentile(double percentile) {
+    public Eval<Optional<T>> percentile(final double percentile) {
         return Eval.later(() -> stream.percentile(percentile));
     }
 
     @Override
-    public Eval<Optional<T>> percentile(double percentile, Comparator<? super T> comparator) {
+    public Eval<Optional<T>> percentile(final double percentile, final Comparator<? super T> comparator) {
         return Eval.later(() -> stream.percentile(percentile, comparator));
     }
 
     @Override
-    public <U extends Comparable<? super U>> Eval<Optional<T>> percentileBy(double percentile, Function<? super T, ? extends U> function) {
+    public <U extends Comparable<? super U>> Eval<Optional<T>> percentileBy(final double percentile,
+            final Function<? super T, ? extends U> function) {
         return Eval.later(() -> stream.percentileBy(percentile, function));
     }
 
     @Override
-    public <U> Eval<Optional<T>> percentileBy(double percentile, Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+    public <U> Eval<Optional<T>> percentileBy(final double percentile, final Function<? super T, ? extends U> function,
+            final Comparator<? super U> comparator) {
         return Eval.later(() -> stream.percentileBy(percentile, function, comparator));
     }
 
     @Override
-    public <L extends List<T>> Eval<L> toList(Supplier<L> factory) {
+    public <L extends List<T>> Eval<L> toList(final Supplier<L> factory) {
         return Eval.later(() -> stream.toList(factory));
     }
 
     @Override
-    public <S extends Set<T>> Eval<S> toSet(Supplier<S> factory) {
+    public <S extends Set<T>> Eval<S> toSet(final Supplier<S> factory) {
         return Eval.later(() -> stream.toSet(factory));
     }
 
     @Override
-    public <K, V> Eval<MapX<K, V>> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+    public <K, V> Eval<MapX<K, V>> toMap(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
         return Eval.later(() -> stream.toMapX(keyMapper, valueMapper));
     }
 
@@ -483,7 +518,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#sumDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    public Eval<Double> sumDouble(ToDoubleFunction<? super T> fn) {
+    public Eval<Double> sumDouble(final ToDoubleFunction<? super T> fn) {
         return DoubleOperatorsMixin.super.sumDouble(fn);
     }
 
@@ -491,7 +526,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.LongOperatorsMixin#sumLong(java.util.function.ToLongFunction)
      */
     @Override
-    public Eval<Long> sumLong(ToLongFunction<? super T> fn) {
+    public Eval<Long> sumLong(final ToLongFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return LongOperatorsMixin.super.sumLong(fn);
     }
@@ -500,7 +535,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.LongOperatorsMixin#maxLong(java.util.function.ToLongFunction)
      */
     @Override
-    public Eval<OptionalLong> maxLong(ToLongFunction<? super T> fn) {
+    public Eval<OptionalLong> maxLong(final ToLongFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return LongOperatorsMixin.super.maxLong(fn);
     }
@@ -509,7 +544,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.LongOperatorsMixin#minLong(java.util.function.ToLongFunction)
      */
     @Override
-    public Eval<OptionalLong> minLong(ToLongFunction<? super T> fn) {
+    public Eval<OptionalLong> minLong(final ToLongFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return LongOperatorsMixin.super.minLong(fn);
     }
@@ -518,7 +553,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.LongOperatorsMixin#averageLong(java.util.function.ToLongFunction)
      */
     @Override
-    public Eval<OptionalDouble> averageLong(ToLongFunction<? super T> fn) {
+    public Eval<OptionalDouble> averageLong(final ToLongFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return LongOperatorsMixin.super.averageLong(fn);
     }
@@ -527,7 +562,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.LongOperatorsMixin#summaryStatisticsLong(java.util.function.ToLongFunction)
      */
     @Override
-    public Eval<LongSummaryStatistics> summaryStatisticsLong(ToLongFunction<? super T> fn) {
+    public Eval<LongSummaryStatistics> summaryStatisticsLong(final ToLongFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return LongOperatorsMixin.super.summaryStatisticsLong(fn);
     }
@@ -536,7 +571,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.IntOperatorsMixin#sumInt(java.util.function.ToIntFunction)
      */
     @Override
-    public Eval<Integer> sumInt(ToIntFunction<? super T> fn) {
+    public Eval<Integer> sumInt(final ToIntFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return IntOperatorsMixin.super.sumInt(fn);
     }
@@ -545,7 +580,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.IntOperatorsMixin#maxInt(java.util.function.ToIntFunction)
      */
     @Override
-    public Eval<OptionalInt> maxInt(ToIntFunction<? super T> fn) {
+    public Eval<OptionalInt> maxInt(final ToIntFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return IntOperatorsMixin.super.maxInt(fn);
     }
@@ -554,7 +589,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.IntOperatorsMixin#minInt(java.util.function.ToIntFunction)
      */
     @Override
-    public Eval<OptionalInt> minInt(ToIntFunction<? super T> fn) {
+    public Eval<OptionalInt> minInt(final ToIntFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return IntOperatorsMixin.super.minInt(fn);
     }
@@ -563,7 +598,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.IntOperatorsMixin#averageInt(java.util.function.ToIntFunction)
      */
     @Override
-    public Eval<OptionalDouble> averageInt(ToIntFunction<? super T> fn) {
+    public Eval<OptionalDouble> averageInt(final ToIntFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return IntOperatorsMixin.super.averageInt(fn);
     }
@@ -572,7 +607,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.IntOperatorsMixin#summaryStatisticsInt(java.util.function.ToIntFunction)
      */
     @Override
-    public Eval<IntSummaryStatistics> summaryStatisticsInt(ToIntFunction<? super T> fn) {
+    public Eval<IntSummaryStatistics> summaryStatisticsInt(final ToIntFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return IntOperatorsMixin.super.summaryStatisticsInt(fn);
     }
@@ -581,7 +616,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#maxDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    public Eval<OptionalDouble> maxDouble(ToDoubleFunction<? super T> fn) {
+    public Eval<OptionalDouble> maxDouble(final ToDoubleFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return DoubleOperatorsMixin.super.maxDouble(fn);
     }
@@ -590,7 +625,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#minDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    public Eval<OptionalDouble> minDouble(ToDoubleFunction<? super T> fn) {
+    public Eval<OptionalDouble> minDouble(final ToDoubleFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return DoubleOperatorsMixin.super.minDouble(fn);
     }
@@ -599,7 +634,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#averageDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    public Eval<OptionalDouble> averageDouble(ToDoubleFunction<? super T> fn) {
+    public Eval<OptionalDouble> averageDouble(final ToDoubleFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return DoubleOperatorsMixin.super.averageDouble(fn);
     }
@@ -608,7 +643,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see com.aol.cyclops.streams.future.DoubleOperatorsMixin#summaryStatisticsDouble(java.util.function.ToDoubleFunction)
      */
     @Override
-    public Eval<DoubleSummaryStatistics> summaryStatisticsDouble(ToDoubleFunction<? super T> fn) {
+    public Eval<DoubleSummaryStatistics> summaryStatisticsDouble(final ToDoubleFunction<? super T> fn) {
         // TODO Auto-generated method stub
         return DoubleOperatorsMixin.super.summaryStatisticsDouble(fn);
     }
