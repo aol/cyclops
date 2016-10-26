@@ -1,17 +1,41 @@
 package com.aol.cyclops.data.async;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.data.async.wait.NoWaitRetry;
 import com.aol.cyclops.data.async.wait.WaitStrategy;
 
 /**
  * Methods for generating QueueFactories for plumbing Streams together
+ * 
+ * 
+ * <pre>
+ * {@code 
+ *    Queue<String> transferQueue = QueueFactories.<String>boundedQueue(4)
+                                                 .build();
+        
+      new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
+                                                      .map(d->"produced on " + Thread.currentThread().getId())
+                                                      .peek(System.out::println)
+                                                      .peek(d->transferQueue.offer(d))
+                                                      .run();
+        
+
+       transferQueue.stream()
+                    .map(e->"Consumed on " + Thread.currentThread().getId())
+                     .futureOperations(Executors.newFixedThreadPool(1))
+                     .forEach(System.out::println);
+ * 
+ * 
+ * }
+ * </pre>
  * 
  * @author johnmcclean
  *
@@ -21,6 +45,26 @@ public class QueueFactories {
     /**
      * Create a QueueFactory for boundedQueues where bound is determined by the provided queueSize parameter
      * Generated Queues will be backed by a LinkedBlockingQueue
+     * 
+     * <pre>
+     * {@code 
+     *   Queue<String> transferQueue = QueueFactories.<String>boundedQueue(4)
+                                                 .build();
+        
+         new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
+                                                      .map(d->"produced on " + Thread.currentThread().getId())
+                                                      .peek(System.out::println)
+                                                      .peek(d->transferQueue.offer(d))
+                                                      .run();
+        
+
+         transferQueue.stream()
+                      .map(e->"Consumed on " + Thread.currentThread().getId())
+                      .futureOperations(Executors.newFixedThreadPool(1))
+                      .forEach(System.out::println);
+     * 
+     * }
+     * </pre>
      * 
      * @param queueSize  Max queue size
      * @return QueueFactory for bounded Queues backed by a LinkedBlockingQueue
@@ -32,6 +76,14 @@ public class QueueFactories {
     }
 
     /**
+     * <pre>
+     * {@code 
+     *   ReactiveSeq.of(1,2,3)
+                    .flatMapPublisher(i->ReactiveSeq.range(i,1500),1000,QueueFactories.unboundedQueue())
+                    .toListX()
+     * }
+     * </pre>
+     * 
      * @return A QueueFactory for unbounded Queues backed by a LinkedBlockingQueue
      */
     public static <T> QueueFactory<T> unboundedQueue() {
@@ -51,7 +103,7 @@ public class QueueFactories {
      * }</pre>
      * 
      * 
-     * @return unbounded wait free queue
+     * @return Factory for unbounded wait free queue backed by ConcurrentLinkedQueue
      */
     public static <T> QueueFactory<T> unboundedNonBlockingQueue() {
         return () -> new Queue<T>(
@@ -59,6 +111,14 @@ public class QueueFactories {
 
     }
 
+    /**
+     * Creates an async.Queue backed by a JDK Wait Free unbounded ConcurrentLinkedQueue
+     * The provided WaitStrategy is used to determine behaviour of both producers and consumers when the Queue is full (producer) 
+     * or empty (consumer). {@see WaitStrategy#spinWait() , @see WaitStrategy#exponentialBackOff() , @see WaitStrategy#noWaitRetry() }
+     * 
+     * @param strategy Strategy to be employed by producers when Queue is full, or consumers when Queue is empty
+     * @return Factory for unbounded wait free queue backed by ConcurrentLinkedQueue
+     */
     public static <T> QueueFactory<T> unboundedNonBlockingQueue(final WaitStrategy<T> strategy) {
         return () -> new Queue<T>(
                                   new ConcurrentLinkedQueue<>(), strategy, strategy);
