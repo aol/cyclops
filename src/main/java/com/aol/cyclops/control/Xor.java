@@ -146,6 +146,9 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
                              value);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#anyM()
+     */
     @Override
     default AnyMValue<PT> anyM() {
         return AnyM.ofValue(this);
@@ -204,6 +207,9 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
         return isPrimary() ? Optional.of(get()) : Optional.empty();
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     */
     @Override
     Xor<ST, PT> filter(Predicate<? super PT> test);
 
@@ -211,29 +217,47 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
 
     <R> Xor<R, PT> secondaryMap(Function<? super ST, ? extends R> fn);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#map(java.util.function.Function)
+     */
     @Override
     <R> Xor<ST, R> map(Function<? super PT, ? extends R> fn);
 
     Xor<ST, PT> secondaryPeek(Consumer<? super ST> action);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#peek(java.util.function.Consumer)
+     */
     @Override
     Xor<ST, PT> peek(Consumer<? super PT> action);
 
     Xor<PT, ST> swap();
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toIor()
+     */
     @Override
     Ior<ST, PT> toIor();
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#isPresent()
+     */
     @Override
     default boolean isPresent() {
         return isPrimary();
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toXor()
+     */
     @Override
     default Xor<ST, PT> toXor() {
         return this;
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toXor(java.lang.Object)
+     */
     @Override
     default <ST2> Xor<ST2, PT> toXor(final ST2 secondary) {
         return visit(s -> secondary(secondary), p -> primary(p));
@@ -309,6 +333,9 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
         return (Xor<R1, R2>) map(primary);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
     @Override
     default <R> Xor<ST, R> patternMatch(final Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1, final Supplier<? extends R> otherwise) {
 
