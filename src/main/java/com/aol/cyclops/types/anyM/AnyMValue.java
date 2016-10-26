@@ -128,8 +128,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
      * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
      */
     default AnyMValue<T> combine(final Monoid<T> monoid, final AnyMValue<? extends T> v2) {
-        return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.combiner()
-                                                              .apply(t1, t2)))
+        return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.apply(t1, t2)))
                         .orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 

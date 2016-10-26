@@ -251,7 +251,7 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
     public static <ST, PT, R> Xor<?, R> accumulateSecondary(final CollectionX<Xor<ST, PT>> xors, final Function<? super ST, R> mapper,
             final Semigroup<R> reducer) {
         return sequenceSecondary(xors).map(s -> s.map(mapper)
-                                                 .reduce(reducer.reducer())
+                                                 .reduce(reducer)
                                                  .get());
     }
 
@@ -267,12 +267,12 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
     public static <ST, PT, R> Xor<?, R> accumulatePrimary(final CollectionX<Xor<ST, PT>> xors, final Function<? super PT, R> mapper,
             final Semigroup<R> reducer) {
         return sequencePrimary(xors).map(s -> s.map(mapper)
-                                               .reduce(reducer.reducer())
+                                               .reduce(reducer)
                                                .get());
     }
 
     public static <ST, PT> Xor<?, PT> accumulatePrimary(final CollectionX<Xor<ST, PT>> xors, final Semigroup<PT> reducer) {
-        return sequencePrimary(xors).map(s -> s.reduce(reducer.reducer())
+        return sequencePrimary(xors).map(s -> s.reduce(reducer)
                                                .get());
     }
 
@@ -296,7 +296,7 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
      * @return
      */
     public static <ST, PT> Xor<?, ST> accumulateSecondary(final CollectionX<Xor<ST, PT>> xors, final Semigroup<ST> reducer) {
-        return sequenceSecondary(xors).map(s -> s.reduce(reducer.reducer())
+        return sequenceSecondary(xors).map(s -> s.reduce(reducer)
                                                  .get());
     }
 

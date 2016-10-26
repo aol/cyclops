@@ -43,7 +43,7 @@ public class Optionals {
     public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> maybes, final Function<? super T, R> mapper,
             final Semigroup<R> reducer) {
         return sequencePresent(maybes).map(s -> s.map(mapper)
-                                                 .reduce(reducer.reducer())
+                                                 .reduce(reducer)
                                                  .get());
     }
 

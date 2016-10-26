@@ -14,8 +14,16 @@ import java.util.stream.Stream;
  * @param <T> Type this Reducer operates on
  */
 public interface Reducer<T> extends Monoid<T> {
-    default Stream<T> mapToType(final Stream stream) {
-        return stream;
+    /**
+     * Map this reducer to the supported Type t. 
+     * 
+     * Default implementation is a simple cast.
+     * 
+     * @param stream Stream to convert
+     * @return Converted Stream
+     */
+    default Stream<T> mapToType(final Stream<?> stream) {
+        return (Stream<T>)stream;
     }
 
     /**
@@ -35,12 +43,12 @@ public interface Reducer<T> extends Monoid<T> {
      * @param toReduce Stream to reduce
      * @return reduced value
      */
-    default T mapReduce(final Stream toReduce) {
+    default T mapReduce(final Stream<?> toReduce) {
         return reduce(mapToType(toReduce));
     }
 
     public static <T> Reducer<T> fromMonoid(final Monoid<T> monoid, final Function<?, ? extends T> mapper) {
-        return of(monoid.zero(), monoid.combiner(), mapper);
+        return of(monoid.zero(), monoid, mapper);
     }
 
     public static <T> Reducer<T> of(final T zero, final BiFunction<T, T, T> combiner, final Function<?, ? extends T> mapToType) {

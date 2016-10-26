@@ -131,7 +131,7 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
 
         public SemigroupApplyer<T> ap(final Semigroup<T> fn) {
             return new SemigroupApplyer<>(
-                                          fn.combiner(), app);
+                                          fn, app);
         }
 
         public <R> ApplicativeFunctor<R> ap1(final Function<? super T, ? extends R> fn) {

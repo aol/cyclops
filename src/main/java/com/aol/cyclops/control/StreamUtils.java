@@ -1509,7 +1509,7 @@ public class StreamUtils {
                     init = true;
                     return monoid.zero();
                 }
-                return next = monoid.combiner()
+                return next = monoid
                                     .apply(next, it.next());
 
             }

@@ -171,12 +171,12 @@ public interface Maybe<T>
     public static <T, R> Maybe<R> accumulateJust(final CollectionX<Maybe<T>> maybes, final Function<? super T, R> mapper,
             final Semigroup<R> reducer) {
         return sequenceJust(maybes).map(s -> s.map(mapper)
-                                              .reduce(reducer.reducer())
+                                              .reduce(reducer)
                                               .get());
     }
 
     public static <T> Maybe<T> accumulateJust(final CollectionX<Maybe<T>> maybes, final Semigroup<T> reducer) {
-        return sequenceJust(maybes).map(s -> s.reduce(reducer.reducer())
+        return sequenceJust(maybes).map(s -> s.reduce(reducer)
                                               .get());
     }
 

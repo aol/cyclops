@@ -264,12 +264,12 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     public static <T, R> FutureW<R> accumulate(final CollectionX<FutureW<T>> fts, final Function<? super T, R> mapper, final Semigroup<R> reducer) {
         return sequence(fts).map(s -> s.map(mapper)
-                                       .reduce(reducer.reducer())
+                                       .reduce(reducer)
                                        .get());
     }
 
     public static <T> FutureW<T> accumulate(final CollectionX<FutureW<T>> fts, final Semigroup<T> reducer) {
-        return sequence(fts).map(s -> s.reduce(reducer.reducer())
+        return sequence(fts).map(s -> s.reduce(reducer)
                                        .get());
     }
 

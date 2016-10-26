@@ -79,7 +79,7 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
      * @return
      */
     default MonadicValue1<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
-        return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.combiner()
+        return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid
                                                               .apply(t1, t2)))
                         .orElseGet(() -> orElseGet(() -> monoid.zero())));
     }

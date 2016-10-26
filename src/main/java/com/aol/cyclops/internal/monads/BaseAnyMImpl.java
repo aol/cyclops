@@ -232,7 +232,7 @@ public abstract class BaseAnyMImpl<T> {
         //  convert to list Optionals
         return monad.reduceM(Monoid.of(reducer.zero()
                                               .unwrap(),
-                                       (a, b) -> reducer.combiner()
+                                       (a, b) -> reducer
                                                         .apply(AnyM.ofValue(a), AnyM.ofValue(b))))
                     .anyMValue();
     }
@@ -242,7 +242,7 @@ public abstract class BaseAnyMImpl<T> {
         //	convert to list Optionals
         return monad.reduceM(Monoid.of(reducer.zero()
                                               .unwrap(),
-                                       (a, b) -> reducer.combiner()
+                                       (a, b) -> reducer
                                                         .apply(AnyM.ofSeq(a), AnyM.ofSeq(b))))
                     .anyMSeq();
     }

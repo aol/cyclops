@@ -235,7 +235,7 @@ public interface Eval<T>
      */
     public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Function<? super T, R> mapper, final Semigroup<R> reducer) {
         return sequence(evals).map(s -> s.map(mapper)
-                                          .reduce(reducer.reducer())
+                                          .reduce(reducer)
                                           .get());
     }
 
@@ -256,7 +256,7 @@ public interface Eval<T>
      * @return Eval with a value
      */
     public static <T> Eval<T> accumulate(final CollectionX<Eval<T>> evals, final Semigroup<T> reducer) {
-        return sequence(evals).map(s -> s.reduce(reducer.reducer())
+        return sequence(evals).map(s -> s.reduce(reducer)
                                           .get());
     }
 
@@ -295,7 +295,7 @@ public interface Eval<T>
      */
     @Override
     default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
-        return unit(each2(this, t1 -> v2, (t1, t2) -> monoid.combiner()
+        return unit(each2(this, t1 -> v2, (t1, t2) -> monoid
                                                             .apply(t1, t2)).orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 

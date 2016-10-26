@@ -48,7 +48,7 @@ public class CompletableFutures {
     public static <T, R> CompletableFuture<R> accumulate(final CollectionX<CompletableFuture<T>> fts, final Function<? super T, R> mapper,
             final Semigroup<R> reducer) {
         return sequence(fts).thenApply(s -> s.map(mapper)
-                                             .reduce(reducer.reducer())
+                                             .reduce(reducer)
                                              .get());
     }
 

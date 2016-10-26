@@ -27,7 +27,8 @@ import lombok.ToString;
  * 
  * example usage
  * 
- * <pre>{@code
+ * <pre>
+ * {@code
  * public static <T> Supplier<T> memoiseSupplier(Supplier<T> s){
 		LazyImmutable<T> lazy = LazyImmutable.def();
 		return () -> lazy.computeIfAbsent(s);
@@ -102,6 +103,9 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
             return LazyImmutable.of(fn.apply(val));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
     @Override
     public <R> LazyImmutable<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
@@ -161,27 +165,42 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
 
     }
 
+    /**
+     * @return true if this LazyImmutable value has been set
+     */
     public boolean isSet() {
         return this.set.get();
     }
 
+    /* (non-Javadoc)
+     * @see java.util.function.Consumer#accept(java.lang.Object)
+     */
     @Override
     public void accept(final T t) {
         setOnce(t);
 
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#stream()
+     */
     @Override
     public ReactiveSeq<T> stream() {
         return ReactiveSeq.generate(this)
                           .limit(1);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.Matchable.ValueAndOptionalMatcher#iterator()
+     */
     @Override
     public Iterator<T> iterator() {
         return stream().iterator();
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
+     */
     @Override
     public <T> Unit<T> unit(final T unit) {
         return LazyImmutable.of(unit);
@@ -222,12 +241,18 @@ public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.Val
         return (LazyImmutable<R>) ApplicativeFunctor.super.trampoline(mapper);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
         return value.get()
                     .hashCode();
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(final Object obj) {
         if (!(obj instanceof LazyImmutable))

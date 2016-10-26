@@ -129,7 +129,7 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
     }
 
     default Try<T, X> combine(final Monoid<T> monoid, final Try<? extends T, X> v2) {
-        return unit(each2(this, t1 -> v2, (t1, t2) -> monoid.combiner()
+        return unit(each2(this, t1 -> v2, (t1, t2) -> monoid
                                                             .apply(t1, t2)).orElseGet(() -> this.orElseGet(() -> monoid.zero())));
     }
 

@@ -142,6 +142,9 @@ public class Mutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndO
         return set(varFn.apply(get()));
     }
 
+    /* (non-Javadoc)
+     * @see java.util.function.Consumer#accept(java.lang.Object)
+     */
     @Override
     public void accept(final T t) {
         set(t);

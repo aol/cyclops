@@ -10,14 +10,30 @@ import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import com.aol.cyclops.data.async.wait.NoWaitRetry;
 import com.aol.cyclops.data.async.wait.WaitStrategy;
 
+/**
+ * Methods for generating QueueFactories for plumbing Streams together
+ * 
+ * @author johnmcclean
+ *
+ */
 public class QueueFactories {
 
+    /**
+     * Create a QueueFactory for boundedQueues where bound is determined by the provided queueSize parameter
+     * Generated Queues will be backed by a LinkedBlockingQueue
+     * 
+     * @param queueSize  Max queue size
+     * @return QueueFactory for bounded Queues backed by a LinkedBlockingQueue
+     */
     public static <T> QueueFactory<T> boundedQueue(final int queueSize) {
         return () -> new Queue<T>(
                                   new LinkedBlockingQueue<>(
                                                             queueSize));
     }
 
+    /**
+     * @return A QueueFactory for unbounded Queues backed by a LinkedBlockingQueue
+     */
     public static <T> QueueFactory<T> unboundedQueue() {
         return () -> new Queue<T>();
     }
@@ -62,7 +78,7 @@ public class QueueFactories {
      * }</pre>
      * 
      * @param queueSize upper bound for Queue
-     * @return bounded wait free Queue
+     * @return bounded wait free Queue Factory backed by an Agrona ManyToOneConcurrentArrayQueue
      */
     public static <T> QueueFactory<T> boundedNonBlockingQueue(final int queueSize) {
         return () -> new Queue<T>(
@@ -71,6 +87,15 @@ public class QueueFactories {
                                   new NoWaitRetry<>(), new NoWaitRetry<>());
     }
 
+    /**
+     * Generate QueueFactory for bounded non blocking queues. Max queue size is determined by the input parameter.
+     * The provided WaitStrategy is used to determine behaviour of both producers and consumers when the Queue is full (producer) 
+     * or empty (consumer). {@see WaitStrategy#spinWait() , @see WaitStrategy#exponentialBackOff() , @see WaitStrategy#noWaitRetry() }
+     * 
+     * @param queueSize Max Queue size
+     * @param strategy Strategy to be employed by producers when Queue is full, or consumers when Queue is empty
+     * @return bounded wait free Queue Factory backed by an Agrona ManyToOneConcurrentArrayQueue
+     */
     public static <T> QueueFactory<T> boundedNonBlockingQueue(final int queueSize, final WaitStrategy<T> strategy) {
         return () -> new Queue<T>(
                                   new ManyToOneConcurrentArrayQueue<>(
@@ -100,7 +125,15 @@ public class QueueFactories {
                                   new NoWaitRetry<>(), new NoWaitRetry<>());
 
     }
-
+    /**
+     * Generate QueueFactory for bounded non blocking queues. Max queue size is determined by the input parameter.
+     * The provided WaitStrategy is used to determine behaviour of both producers and consumers when the Queue is full (producer) 
+     * or empty (consumer). {@see WaitStrategy#spinWait() , @see WaitStrategy#exponentialBackOff() , @see WaitStrategy#noWaitRetry() }
+     * 
+     * @param queueSize Max Queue size
+     * @param strategy Strategy to be employed by producers when Queue is full, or consumers when Queue is empty
+     * @return bounded wait free Queue Factory backed by an Agrona OneToOneConcurrentArrayQueue
+     */
     public static <T> QueueFactory<T> singleWriterboundedNonBlockingQueue(final int queueSize, final WaitStrategy<T> strategy) {
         return () -> new Queue<T>(
                                   new OneToOneConcurrentArrayQueue<>(

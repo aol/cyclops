@@ -298,12 +298,12 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
     public static <ST, PT, R> Ior<?, R> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Function<? super ST, R> mapper,
             final Semigroup<R> reducer) {
         return sequenceSecondary(iors).map(s -> s.map(mapper)
-                                                 .reduce(reducer.reducer())
+                                                 .reduce(reducer)
                                                  .get());
     }
 
     public static <ST, PT> Ior<?, ST> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Semigroup<ST> reducer) {
-        return sequenceSecondary(iors).map(s -> s.reduce(reducer.reducer())
+        return sequenceSecondary(iors).map(s -> s.reduce(reducer)
                                                  .get());
     }
 
@@ -319,12 +319,12 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
     public static <ST, PT, R> Ior<?, R> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Function<? super PT, R> mapper,
             final Semigroup<R> reducer) {
         return sequencePrimary(iors).map(s -> s.map(mapper)
-                                               .reduce(reducer.reducer())
+                                               .reduce(reducer)
                                                .get());
     }
 
     public static <ST, PT> Ior<?, PT> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Semigroup<PT> reducer) {
-        return sequencePrimary(iors).map(s -> s.reduce(reducer.reducer())
+        return sequencePrimary(iors).map(s -> s.reduce(reducer)
                                                .get());
     }
 

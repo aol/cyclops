@@ -8,15 +8,19 @@ import static com.aol.cyclops.control.Try.success;
 import static com.aol.cyclops.util.function.Predicates.__;
 import static com.aol.cyclops.util.function.Predicates.any;
 import static com.aol.cyclops.util.function.Predicates.eq;
+import static com.aol.cyclops.util.function.Predicates.equal;
 import static com.aol.cyclops.util.function.Predicates.in;
 import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static com.aol.cyclops.util.function.Predicates.not;
 import static com.aol.cyclops.util.function.Predicates.some;
+import static com.aol.cyclops.util.function.Predicates.equals;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,13 +34,15 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.Matchable.AutoCloseableMatchableIterable;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
+import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.data.async.Adapter;
+import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.util.function.Predicates;
-
-import lombok.val;
 
 public class MatchablesTest {
     @Test
@@ -235,7 +241,18 @@ public class MatchablesTest {
         assertThat(url,equalTo(Eval.now("correct")));
         
     }
-	
+	@Test
+    public void fileBr() throws FileNotFoundException{
+        String file = ReactiveSeq.of("input.file")
+                                 .map(getClass().getClassLoader()::getResource)
+                                 .map(URL::getFile)
+                                 .single();
+        String result = Matchables.lines(new BufferedReader(new FileReader(new File(file))))
+                                  .on$12___()
+                                  .matches(c->c.is(when("hello","world"),then("correct")), otherwise("miss")).get();
+        
+        assertThat(result,equalTo("correct"));
+    }
 	@Test
 	public void file(){
 	    String file = ReactiveSeq.of("input.file")
@@ -255,9 +272,10 @@ public class MatchablesTest {
                                  .map(URL::getFile)
                                  .single();
         String result = null;
-        try(val matchable = Matchables.lines(new File(file))){
+        try( AutoCloseableMatchableIterable<String> matchable = Matchables.lines(new File(file))){
                                result =  matchable.on$12___()
-                                          .matches(c->c.is(when("hello","world"),then("correct")), otherwise("miss")).get();
+                                                  .matches(c->c.is(when("hello","world"),then("correct")), otherwise("miss"))
+                                                  .get();
                                throw new RuntimeException();
         } catch (Exception e) {
             
@@ -279,6 +297,51 @@ public class MatchablesTest {
 	                             .get();
 	   assertThat(result,equalTo("correct"));
 	}
+	@Test
+    public void xor(){
+        Xor<Exception, String> xor = Xor.primary("hello world");
+
+        Eval<String> result = Matchables.xor(xor)
+                                        .matches(c -> c.is(when(instanceOf(RuntimeException.class)), () -> "runtime"),
+                                                 c -> c.is(when(equal("hello world")), () -> "hello back"), () -> "unknown");
+
+        assertThat(result.get(), equalTo("hello back"));
+            
+    }
+	@Test
+	public void adapter(){
+	    Adapter<Integer> adapter = QueueFactories.<Integer>unboundedQueue()
+	                                                        .build();
+	                                                         
+	        String result =   Matchables.adapter(adapter)
+	                                          .visit(queue->"we have a queue",topic->"we have a topic");
+	        assertThat(result,equalTo("we have a queue"));
+	        
+	}
+	@Test
+    public void chars(){
+      String result =   Matchables.chars("hello,world")
+                                  .matches(c->c.has(when('h','e','l','l','o'), then("startsWith")), otherwise("miss"))
+                                  .get();
+      
+      assertThat(result,equalTo("startsWith"));
+    }
+	@Test
+    public void wordsSep(){
+      String result =   Matchables.words("hello,world",",")
+                                  .matches(c->c.has(when("hello","world","boo!"), then("incorrect")), otherwise("miss"))
+                                  .get();
+      
+      assertThat(result,equalTo("miss"));
+    }
+	@Test
+    public void words2Sep(){
+        String result =   Matchables.words("hello,world",",")
+                                    .matches(c->c.has(when("hello","world"), then("correct")), otherwise("miss"))
+                                    .get();
+        
+        assertThat(result,equalTo("correct"));
+   }
 	@Test
 	public void words(){
 	  String result =   Matchables.words("hello world")
