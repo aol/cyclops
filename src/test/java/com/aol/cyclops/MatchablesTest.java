@@ -75,6 +75,12 @@ public class MatchablesTest {
     private final  int UNEXPECTED_RESULT = 0;
     private final  int SUCCESS = 1;
     @Test
+    public void matchTest(){
+       assertThat( Matchables.match(100)
+                .matches(c->c.is(when(Predicates.greaterThan(50)), ()->"large"), ()->"small").get(),
+                equalTo("large"));
+    }
+    @Test
     public void futurePatternMatching(){
         
         CompletableFuture<String> future = CompletableFuture.supplyAsync(this::loadData);

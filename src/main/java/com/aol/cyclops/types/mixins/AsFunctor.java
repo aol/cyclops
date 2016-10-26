@@ -1,5 +1,11 @@
 package com.aol.cyclops.types.mixins;
 
+/**
+ * Wrapper for an Object that can behave as a Functor
+ * 
+ * @author johnmcclean
+ *
+ */
 public class AsFunctor {
 
     /**

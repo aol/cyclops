@@ -16,6 +16,15 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Value;
 
+import lombok.experimental.UtilityClass;
+
+/**
+ * Utility class for working with JDK Optionals
+ * 
+ * @author johnmcclean
+ *
+ */
+@UtilityClass
 public class Optionals {
 
     public static <T> Optional<ListX<T>> sequence(final CollectionX<Optional<T>> opts) {

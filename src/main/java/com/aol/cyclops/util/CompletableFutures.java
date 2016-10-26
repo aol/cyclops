@@ -21,6 +21,15 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Value;
 
+import lombok.experimental.UtilityClass;
+
+/**
+ * Utilty methods for working with JDK CompletableFutures
+ * 
+ * @author johnmcclean
+ *
+ */
+@UtilityClass
 public class CompletableFutures {
 
     public static <T> CompletableFuture<ListX<T>> sequence(final CollectionX<CompletableFuture<T>> fts) {

@@ -11,6 +11,13 @@ import com.aol.cyclops.internal.stream.ReversedIterator;
 import com.aol.cyclops.internal.stream.SeqUtils;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
+/**
+ * Interface that represents a data type that can be converted to a Stream
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of elements in the this ToStream type
+ */
 public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
 
     default LazyFutureStream<T> futureStream(final LazyReact react) {

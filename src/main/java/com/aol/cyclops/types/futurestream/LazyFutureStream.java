@@ -512,9 +512,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      */
     @Override
     default void subscribe(final Subscriber<? super U> s) {
-        /**  if(isAsync())
-            FutureStreamAsyncPublisher.super.subscribe(s);
-        else**/
+        
         FutureStreamSynchronousPublisher.super.subscribe(s);
     }
 
