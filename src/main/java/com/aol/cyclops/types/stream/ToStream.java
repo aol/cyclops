@@ -20,35 +20,57 @@ import com.aol.cyclops.types.futurestream.LazyFutureStream;
  */
 public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
 
+    /**
+     * Convert this type to a LazyFutureStream using the provided LazyReact futureStream builder
+     * to configure parallelism / executors and more.
+     * 
+     * @param react LazyReact futureStream builder (configurer)
+     * @return This convertable type converted to a LazyFutureStream
+     */
     default LazyFutureStream<T> futureStream(final LazyReact react) {
         return react.fromIterable(this);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.ConvertableToReactiveSeq#reactiveSeq()
+     */
     @Override
     default ReactiveSeq<T> reactiveSeq() {
         return ReactiveSeq.fromStream(StreamSupport.stream(getStreamable().spliterator(), false));
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Iterable#iterator()
+     */
     @Override
     default Iterator<T> iterator() {
         return stream().iterator();
     }
 
+    /**
+     * @return This type narrowed to an Iterable
+     */
     default Iterable<T> getStreamable() {
         return this;
     }
 
+    /**
+     * @return This type as a reversed Stream 
+     */
     default ReactiveSeq<T> reveresedStream() {
         return ReactiveSeq.fromStream(reveresedStream());
     }
 
     /**
-     * @return SequenceM from this Streamable
+     * @return ReactiveSeq from this Streamable
      */
     default ReactiveSeq<T> stream() {
         return ReactiveSeq.fromStream(StreamSupport.stream(getStreamable().spliterator(), false));
     }
 
+    /**
+     * @return This type as a reversed Stream 
+     */
     default Stream<T> reveresedJDKStream() {
         final Iterable<T> streamable = getStreamable();
         if (streamable instanceof List) {
@@ -60,12 +82,18 @@ public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
         return SeqUtils.reverse(jdkStream());
     }
 
+    /**
+     * @return True if this type is empty, false otherwise
+     */
     default boolean isEmpty() {
 
         return this.reactiveSeq()
                    .isEmpty();
     }
 
+    /**
+     * @return This type converted to a JDK Stream
+     */
     default Stream<T> jdkStream() {
         return StreamSupport.stream(getStreamable().spliterator(), false);
 

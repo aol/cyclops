@@ -1,6 +1,10 @@
 package com.aol.cyclops.control;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -19,9 +23,11 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
@@ -66,6 +72,19 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
     /**
      * Construct a FutureW asyncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
      * 
+     * 
+     * <pre>
+     * {@code 
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        FutureW<Integer> future = FutureW.fromPublisher(stream,ex);
+        
+        //FutureW[1]
+     * 
+     * }
+     * </pre>
+     * 
+     * 
      * @param pub Publisher to extract value from
      * @param ex Executor to extract value on
      * @return FutureW populated asyncrhonously from Publisher
@@ -78,7 +97,16 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     /**
      * Construct a FutureW asyncrhonously that contains a single value extracted from the supplied Iterable
+     * <pre>
+     * {@code 
+     *  ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        FutureW<Integer> future = FutureW.fromIterable(stream,ex);
+        
+        //FutureW[1]
      * 
+     * }
+     * </pre>
      * @param iterable Iterable to generate a FutureW from
      * @param ex  Executor to extract value on
      * @return FutureW populated asyncrhonously from Iterable
@@ -91,7 +119,16 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     /**
      * Construct a FutureW syncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
+     * <pre>
+     * {@code 
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        FutureW<Integer> future = FutureW.fromPublisher(stream);
+        
+        //FutureW[1]
      * 
+     * }
+     * </pre>
      * @param pub Publisher to extract value from
      * @return FutureW populated syncrhonously from Publisher
      */
@@ -103,6 +140,18 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     /**
      * Construct a FutureW syncrhonously that contains a single value extracted from the supplied Iterable
+     * 
+     * <pre>
+     * {@code 
+     *  ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        FutureW<Integer> future = FutureW.fromIterable(stream);
+        
+        //FutureW[1]
+     * 
+     * }
+     * </pre>
+     * 
      * 
      * @param iterable Iterable to extract value from
      * @return FutureW populated syncrhonously from Iterable
@@ -153,7 +202,9 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
      * <pre>
      * {@code 
      *  
-     *    FutureW<String> future = FutureW.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello")
+     *    FutureW<String> future = FutureW.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello");
+     *    
+     *    //FutureW["hello"]
      * 
      * }</pre>
      * 
@@ -184,6 +235,14 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
     /**
      * Schedule the population of a FutureW from the provided Supplier after the specified delay. The provided ScheduledExecutorService provided the thread on which the 
      * Supplier will be executed.
+     * <pre>
+     * {@code 
+     *  
+     *    FutureW<String> future = FutureW.schedule(10l, Executors.newScheduledThreadPool(1), ()->"hello");
+     *    
+     *    //FutureW["hello"]
+     * 
+     * }</pre>
      * 
      * @param delay Delay after which the FutureW should be populated
      * @param ex ScheduledExecutorService used to execute the provided Supplier
@@ -210,7 +269,7 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
     }
 
     /**
-     * Sequence operation that convert a Collection of FutureWs to a FutureW with a List
+     * Asynchronous sequence operation that convert a Collection of FutureWs to a FutureW with a List
      * 
      * <pre>
      * {@code 
@@ -251,10 +310,27 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     }
 
+    /**
+     * Asynchronously accumulate the results only from those Futures which have completed successfully.
+     * <pre>
+     * {@code 
+     * 
+     * FutureW<Integer> just =FutureW.of(CompletableFuture.completedFuture(10));
+       FutureW<Integer> none = FutureW.ofError(new NoSuchElementException());
+       
+     * FutureW<PSetX<Integer>> futures = FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofResult(1)),Reducers.toPSetX());
+       
+       //FutureW[PSetX[10,1]]
+     *  }
+     *  </pre>
+     * 
+     * @param fts Collection of Futures to accumulate successes
+     * @param reducer Reducer to accumulate results
+     * @return FutureW asynchronously populated with the accumulate success operation
+     */
     public static <T, R> FutureW<R> accumulateSuccess(final CollectionX<FutureW<T>> fts, final Reducer<R> reducer) {
-
-        final FutureW<ListX<T>> sequenced = AnyM.sequence(fts.map(f -> AnyM.fromFutureW(f)))
-                                                .unwrap();
+        
+        final FutureW<ListX<T>> sequenced = sequence(fts);
         return sequenced.map(s -> s.mapReduce(reducer));
     }
 

@@ -54,6 +54,9 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
                                                                     .apply(v))).map(tuple -> app.visit(i -> tuple.v2.apply(i), () -> tuple.v1));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
     @Override
     default <T2, R> ApplicativeFunctor<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
@@ -62,6 +65,9 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
                                                                                                   .visit(i -> tuple.v2.apply(i), () -> tuple.v1));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
     @Override
     default <T2, R> ApplicativeFunctor<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
 

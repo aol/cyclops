@@ -220,8 +220,15 @@ public class FutureWTest {
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
 		FutureW<PSetX<Integer>> maybes =FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofResult(1)),Reducers.toPSetX());
+		
 		assertThat(maybes.get(),equalTo(PSetX.of(10,1)));
 	}
+	@Test
+    public void testAccumulateJNonBlocking() {
+        FutureW<PSetX<Integer>> maybes =FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)),FutureW.ofResult(1)),Reducers.toPSetX());
+        System.out.println("not blocked")
+       
+    }
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {

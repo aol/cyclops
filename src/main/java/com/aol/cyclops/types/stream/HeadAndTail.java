@@ -13,11 +13,11 @@ import com.aol.cyclops.util.function.Memoize;
 import lombok.AllArgsConstructor;
 
 /**
- * A class that represents a lazily constructed Head and Tail from a Stream
+ * A class that represents a lazily constructed Head and Tail from a non-scalar data type
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Data type of elements in this Head and Tail
  */
 @AllArgsConstructor
 public class HeadAndTail<T> {
@@ -25,6 +25,11 @@ public class HeadAndTail<T> {
     private final Supplier<ReactiveSeq<T>> tail;
     private final Supplier<Boolean> isHead;
 
+    /** 
+     * Construct a HeadAndTail from an Iterator
+     * 
+     * @param it Iterator to construct head and tail from
+     */
     public HeadAndTail(final Iterator<T> it) {
         isHead = Memoize.memoizeSupplier(() -> it.hasNext());
         head = Memoize.memoizeSupplier(() -> {
@@ -49,6 +54,9 @@ public class HeadAndTail<T> {
         return isHead.get();
     }
 
+    /**
+     * @return Head (first) value, will throw an exception if the head is not present
+     */
     public T head() {
         return head.get();
     }
@@ -61,6 +69,9 @@ public class HeadAndTail<T> {
 
     }
 
+    /**
+     * @return Maybe.none if the head is not present, otherwise a Maybe.some containing the first value
+     */
     public Maybe<T> headMaybe() {
         return isHeadPresent() ? Maybe.fromEvalOf(Eval.later(head)) : Maybe.none();
 

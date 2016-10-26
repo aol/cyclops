@@ -38,6 +38,13 @@ import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
+/**
+ * Represents a non-scalar Data Structure that can be converted to other types
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data types of elements in this ConvertableSequence
+ */
 public interface ConvertableSequence<T> extends Iterable<T> {
 
     default ReactiveSeq<T> stream() {
@@ -123,19 +130,7 @@ public interface ConvertableSequence<T> extends Iterable<T> {
         return POrderedSetX.fromIterable(this);
     }
 
-    /**
-     *  
-     * <pre>
-     * {@code 
-     * Optional<List<String>> stream = anyM("hello","world")
-    										.asSequence()
-    										.unwrapOptional();
-    	assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
-     * }
-     * 
-     * </pre>
-     * @return
-     */
+  
     default Optional<ListX<T>> toOptional() {
         final ListX<T> list = toListX();
         if (list.size() == 0)
@@ -198,17 +193,7 @@ public interface ConvertableSequence<T> extends Iterable<T> {
         return toValue().toEvalAlways();
     }
 
-    /**
-     * <pre>
-     * {@code 
-     * CompletableFuture<List<String>> cf = anyM("hello","world")
-    										.asSequence()
-    										.unwrapCompletableFuture();
-    	assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
-     * }
-     * </pre>
-     * @return
-     */
+    
     default CompletableFuture<ListX<T>> toCompletableFuture() {
         return toValue().toCompletableFuture();
     }
