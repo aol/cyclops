@@ -1,19 +1,10 @@
 package com.aol.cyclops.control;
 
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
-import static com.aol.cyclops.util.function.Predicates.instanceOf;
-import static com.aol.cyclops.util.function.Predicates.some;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;

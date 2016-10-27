@@ -96,7 +96,7 @@ public class LazyReact implements ReactBuilder {
     @Getter
     private final boolean autoMemoize;
     @Getter
-    private final Cacheable memoizeCache;
+    private final Cacheable<?> memoizeCache;
 
     /**
      * Turn automatic caching of values on for the FutureStream to be generated
@@ -105,7 +105,7 @@ public class LazyReact implements ReactBuilder {
      * @param memoizeCache Cacheable instance that controls memoization (Caching)
      * @return LazyReact Stream builder
      */
-    public LazyReact autoMemoizeOn(final Cacheable memoizeCache) {
+    public LazyReact autoMemoizeOn(final Cacheable<?> memoizeCache) {
         return withAutoMemoize(true).withMemoizeCache(memoizeCache);
     }
 
