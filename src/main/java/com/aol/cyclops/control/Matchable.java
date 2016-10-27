@@ -1,10 +1,19 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.control.Matchable.otherwise;
+import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops.util.function.Predicates.instanceOf;
+import static com.aol.cyclops.util.function.Predicates.some;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -137,8 +146,30 @@ public interface Matchable<TYPE> {
     /**
      * Matchable DSL operator for outcomes
      * 
-     * @param value
-     * @return
+     * <pre>
+     * {@code 
+     * import static com.aol.cyclops.control.Matchable.otherwise;
+       import static com.aol.cyclops.control.Matchable.then;
+       import static com.aol.cyclops.control.Matchable.when;
+       import static com.aol.cyclops.util.function.Predicates.instanceOf;
+       
+       Eval<Integer> result = Matchables.future(CompletableFuture.completedFuture(10))
+                                         .matches(c-> 
+                                                     c.is( when(some(10)), then(20)),  //success
+                                                      
+                                                     c->c.is(when(instanceOf(RuntimeException.class)), then(2)), //failure
+                                                      
+                                                     otherwise(3) //no match
+                                                 );
+        
+        //Eval.now(20)
+    
+     * 
+     * }
+     * </pre>
+     * 
+     * @param value Result value
+     * @return Supplier for outcomes in the Pattern matching DSL
      */
     public static <T, R> Supplier<? extends R> then(final R value) {
         return () -> value;

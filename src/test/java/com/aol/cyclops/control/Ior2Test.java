@@ -145,10 +145,26 @@ public class Ior2Test {
 
 	@Test
     public void testSequenceSecondary() {
-        Ior<ListX<Integer>,ListX<String>> maybes =Ior.sequenceSecondary(ListX.of(just,none,Ior.primary(1)));
-        assertThat(maybes,equalTo(Ior.primary(ListX.of("none"))));
+        Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceSecondary(ListX.of(just,none,Ior.primary(1)));
+        assertThat(iors,equalTo(Ior.primary(ListX.of("none"))));
     }
 
+	@Test
+    public void testAccumulateSecondary() {
+        Ior<?,PSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPSetX());
+        assertThat(iors,equalTo(Ior.primary(PSetX.of("none"))));
+    }
+
+	@Test
+    public void testAccumulateSecondarySemigroup() {
+        Ior<?,String> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.secondary("1")),i->""+i,Semigroups.stringConcat);
+        assertThat(iors,equalTo(Ior.primary("none1")));
+    }
+	@Test
+    public void testAccumulateSecondarySemigroupIntSum() {
+        Ior<?,Integer> iors = Ior.accumulateSecondary(ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)),Semigroups.intSum);
+        assertThat(iors,equalTo(Ior.primary(3)));
+    }
 	@Test
 	public void testSequence() {
 		Ior<ListX<String>,ListX<Integer>> maybes =Ior.sequencePrimary(ListX.of(just,none,Ior.primary(1)));
