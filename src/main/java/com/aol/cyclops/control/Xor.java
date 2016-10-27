@@ -47,7 +47,7 @@ import lombok.EqualsAndHashCode;
  *  <pre>
  *  {@code 
  *      Xor.primary("hello").map(v->v+" world") 
- *      //Xor.primary["hello world"]
+ *    //Xor.primary["hello world"]
  *  }
  *  </pre>
  *  
@@ -70,6 +70,9 @@ import lombok.EqualsAndHashCode;
  *  }
  *  </pre>
  * 
+ * 
+ * For Inclusive Ors @see Ior
+ * 
  * @author johnmcclean
  *
  * @param <ST> Secondary type
@@ -79,7 +82,16 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
 
     /**
      * Construct a Primary Xor from the supplied publisher
+     * <pre>
+     * {@code 
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+         Xor<Throwable,Integer> future = Xor.fromPublisher(stream);
+        
+         //Xor[1]
      * 
+     * }
+     * </pre>
      * @param pub Publisher to construct an Xor from
      * @return Xor constructed from the supplied Publisher
      */
@@ -91,7 +103,16 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
 
     /**
      * Construct a Primary Xor from the supplied Iterable
+     * <pre>
+     * {@code 
+     *   List<Integer> list =  Arrays.asList(1,2,3);
+        
+         Xor<Throwable,Integer> future = Xor.fromPublisher(stream);
+        
+         //Xor[1]
      * 
+     * }
+     * </pre> 
      * @param iterable Iterable to construct an Xor from
      * @return Xor constructed from the supplied Iterable
      */

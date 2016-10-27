@@ -57,8 +57,8 @@ import lombok.Getter;
  * 
  * import static com.aol.cyclops.control.Matchable.matchable;
  * 
- * @Test
-    public void odd(){
+ *  @Test
+    public void oddRun(){
         System.out.println(even(Eval.now(200000)).get());
     }
     public Eval<String> odd(Eval<Integer> n )  {
@@ -67,8 +67,7 @@ import lombok.Getter;
     }
     public Eval<String> even(Eval<Integer> n )  {
         return n.flatMap(x->{
-            return matchable(x)
-                            .matches(c->c.is(when(lessThanOrEquals(0)), then(()->"done")), 
+            return matchable(x).matches(c->c.is(when(lessThanOrEquals(0)), then(()->"done")), 
                                                     odd(Eval.now(x-1)));
         });
      }

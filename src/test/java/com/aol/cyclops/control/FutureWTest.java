@@ -226,7 +226,7 @@ public class FutureWTest {
 	@Test
     public void testAccumulateJNonBlocking() {
         FutureW<PSetX<Integer>> maybes =FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)),FutureW.ofResult(1)),Reducers.toPSetX());
-        System.out.println("not blocked")
+        System.out.println("not blocked");
        
     }
 
@@ -863,7 +863,10 @@ public class FutureWTest {
 	}
 
 	
-
+	@Test
+	public void mapBoth(){
+	    assertThat(FutureW.ofResult(1).map(i->i*2,e->-1).get(),equalTo(2));
+	}
 	@Test
 	public void testUnitT1() {
 		assertThat(none.unit(10).get(),equalTo(just.get()));
