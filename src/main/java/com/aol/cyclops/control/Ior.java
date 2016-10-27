@@ -1,5 +1,8 @@
 package com.aol.cyclops.control;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -489,6 +492,22 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
      */
     public boolean isBoth();
 
+    /**
+     *  Turn a collection of Iors into a single Ior with Lists of values.
+     *  Primary and secondary types are swapped during this operation.
+     * 
+     * <pre>
+     * {@code 
+     *  Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceSecondary(ListX.of(just,none,Ior.primary(1)));
+        //Ior.primary(ListX.of("none")))
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param iors Iors to sequence
+     * @return Ior sequenced and swapped
+     */
     public static <ST, PT> Ior<ListX<PT>, ListX<ST>> sequenceSecondary(final CollectionX<Ior<ST, PT>> iors) {
         return AnyM.sequence(AnyM.listFromIor(iors.map(Ior::swap)))
                    .unwrap();

@@ -81,6 +81,12 @@ public class MatchablesTest {
                 equalTo("large"));
     }
     @Test
+    public void match2Test(){
+       assertThat( Matchables.match2(100,2)
+                .matches(c->c.is(when(Predicates.greaterThan(50),Predicates.lessThan(10)), ()->"large and small"), ()->"not large and small").get(),
+                equalTo("large and small"));
+    }
+    @Test
     public void futurePatternMatching(){
         
         CompletableFuture<String> future = CompletableFuture.supplyAsync(this::loadData);

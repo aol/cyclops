@@ -120,6 +120,23 @@ public class Matchables {
         return () -> Tuple.tuple(v);
     }
 
+    /**
+     * Match on a two values 
+     * <pre>
+     * {@code 
+     * import static com.aol.cyclops.util.function.Predicates.greaterThan;
+     * import static com.aol.cyclops.control.Matchable.when;
+     * 
+        Matchables.match2(100,2)
+                  .matches(c->c.is(when(Predicates.greaterThan(50),Predicates.lessThan(10)), ()->"large and small"), 
+                  ()->"not large and small");
+       //Eval["large and small"]
+     * }
+     * </pre>
+     * @param t1 1st Value to match on
+     * @param t2 2nd Value to match on
+     * @return  Structural Pattern matching API for those values
+     */
     public static <T1, T2> MTuple2<T1, T2> match2(final T1 t1, final T2 t2) {
         return () -> Tuple.tuple(t1, t2);
     }

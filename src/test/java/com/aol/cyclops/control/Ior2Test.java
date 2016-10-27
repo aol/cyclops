@@ -143,7 +143,11 @@ public class Ior2Test {
 
 	
 
-	
+	@Test
+    public void testSequenceSecondary() {
+        Ior<ListX<Integer>,ListX<String>> maybes =Ior.sequenceSecondary(ListX.of(just,none,Ior.primary(1)));
+        assertThat(maybes,equalTo(Ior.primary(ListX.of("none"))));
+    }
 
 	@Test
 	public void testSequence() {
