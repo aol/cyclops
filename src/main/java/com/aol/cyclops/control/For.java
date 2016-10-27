@@ -408,7 +408,9 @@ public class For {
      * 
      * 
      * 
-     * <pre>{@code   Do.add(iterable)
+     * <pre>
+     * {@code     
+     *               Do.add(iterable)
      				   .filter( -> i1>5)
     			  	   .yield( -> );
     						
@@ -423,6 +425,18 @@ public class For {
                            ConsPStack.empty()).iterable(o);
     }
 
+    /**
+     * Add a Publisher as the next nested level in the comprehension
+     * <pre>
+     * {@code   
+     *              Do.add(publisher)
+                      .filter(i1 -> i1>5)
+                      .yield( i-> i+1 );
+                            
+        }</pre>
+     * @param o
+     * @return
+     */
     public static <T1> DoComp1<T1> publisher(final Publisher<T1> o) {
         return new DoComp0(
                            ConsPStack.empty()).publisher(o);
