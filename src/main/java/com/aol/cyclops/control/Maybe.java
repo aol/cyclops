@@ -38,11 +38,26 @@ import lombok.AllArgsConstructor;
  * Optional. map / peek/ filter and flatMap build the execution chaing, but are
  * not executed until the value inside the Maybe is required.
  * 
+ * <pre>
+ * {@code 
+ *    
+ *    //eagerly load data
+ *    Optional.of(10)
+ *            .map(this::load);
+ *    
+ *    //lazily tee up loading of data until needed
+ *    Maybe.of(10)
+ *         .map(this::load);        
+ *            .
+ * 
+ * }
+ * </pre>
+ * 
  * Maybe is tail recursive
  * 
  * <pre>
  * {@code 
- * &#64;Test
+ *  @Test
     public void odd() {
         System.out.println(even(Maybe.just(200000)).get());
     }
@@ -70,19 +85,22 @@ import lombok.AllArgsConstructor;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Data type of element stored in Maybe
  */
 public interface Maybe<T>
         extends MonadicValue1<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 
     final static Maybe EMPTY = new Nothing<>();
 
+    /**
+     * @return An empty Maybe
+     */
     static <T> Maybe<T> none() {
         return EMPTY;
     }
 
     /**
-     * Flat map the wrapped Streamable and return the first element
+     * Flat map the wrapped Iterable and return the first element
      *
      * @param mapper FlatMap function with Iterable type returned value
      * @return Maybe typed the first element returned after the flatMap function is applied
@@ -93,7 +111,7 @@ public interface Maybe<T>
     }
 
     /**
-     * Flat map the wrapped Streamable and return the element published
+     * Flat map the wrapped Iterable and return the first element published
      *
      * @param mapper FlatMap function with Publisher type returned value
      * @return Maybe typed value subscribed from publisher after the flatMap function is applied
@@ -214,14 +232,7 @@ public interface Maybe<T>
                                                                               .visit(i -> Maybe.just(tuple.v2.apply(i)), () -> Maybe.none()));
     }
 
-    /**
-     * Equivalent to combine, but accepts a Publisher and takes the first value
-     * only from that publisher.
-     * 
-     * @param app
-     * @param fn
-     * @return
-     */
+    
     /*
      * Equivalent to combine, but accepts a Publisher and takes the first value
      * only from that publisher. (non-Javadoc)
@@ -293,6 +304,9 @@ public interface Maybe<T>
         return (Maybe) MonadicValue1.super.zip(other);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue1#unit(java.lang.Object)
+     */
     @Override
     default <T> Maybe<T> unit(final T unit) {
         return Maybe.of(unit);
@@ -340,6 +354,9 @@ public interface Maybe<T>
         return this;
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#isPresent()
+     */
     @Override
     boolean isPresent();
 
