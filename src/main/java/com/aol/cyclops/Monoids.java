@@ -29,12 +29,13 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 
 /**
- * @author johnmcclean
+ * 
  * A static class with a large number of Monoids  or Combiners with identity elements.
  * 
  * A Monoid is an Object that can be used to combine objects of the same type inconjunction with it's
  * identity element which leaves any element it is combined with unchanged.
- *
+ * 
+ * @author johnmcclean
  */
 public interface Monoids {
 

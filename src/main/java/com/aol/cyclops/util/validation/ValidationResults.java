@@ -1,5 +1,6 @@
 package com.aol.cyclops.util.validation;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Xor;
@@ -41,8 +42,8 @@ public class ValidationResults<T, E> {
         return Xor.accumulateSecondary(toXors(), reducer);
     }
 
-    public <R> Xor<?, E> accumulateErrors(final Semigroup<E> combiner) {
-        return Xor.accumulateSecondary(toXors(), combiner);
+    public <R> Xor<?, E> accumulateErrors(final Monoid<E> combiner) {
+        return Xor.accumulateSecondary(combiner,toXors());
     }
 
     public Xor<ListX<E>, ListX<T>> toSuccessSequence() {
@@ -50,11 +51,11 @@ public class ValidationResults<T, E> {
     }
 
     public <R> Xor<?, R> accumulateSuccess(final Reducer<R> reducer) {
-        return Xor.accumulateSecondary(toXors(), reducer);
+        return Xor.accumulatePrimary(toXors(), reducer);
     }
 
-    public <R> Xor<?, E> accumulateSuccess(final Semigroup<E> combiner) {
-        return Xor.accumulateSecondary(toXors(), combiner);
+    public <R> Xor<?, T> accumulateSuccess(final Monoid<T> combiner) {
+        return Xor.accumulatePrimary(combiner,toXors());
     }
 
 }

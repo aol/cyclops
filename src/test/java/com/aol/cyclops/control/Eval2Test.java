@@ -151,12 +151,12 @@ public class Eval2Test {
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Eval<String> maybes =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Semigroups.stringConcat);
+		Eval<String> maybes =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
 		assertThat(maybes,equalTo(Eval.now("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Eval<Integer> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Semigroups.intSum);
+		Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,ListX.of(just,Eval.now(1)));
 		assertThat(maybes,equalTo(Eval.now(11)));
 	}
 

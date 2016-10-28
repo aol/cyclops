@@ -970,10 +970,13 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      }</pre>
      * 
      * with Optionals 
-     * <pre>{@code
+     * <pre>
+     * {@code
      * 
      *  Any<Integer> applied =AnyM.fromOptional(Optional.of(2)).applyM(AnyM.fromOptional(Optional.of( (Integer a)->a+1)) );
-    	assertThat(applied.toList(),equalTo(Arrays.asList(3)));}
+    	assertThat(applied.toList(),equalTo(Arrays.asList(3)));
+    	
+    	}
     	</pre>
      * 
      * @param fn

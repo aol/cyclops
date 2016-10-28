@@ -29,11 +29,12 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 
 /**
- * @author johnmcclean
+ * 
  * A static class with a large number of Semigroups  or Combiners.
  * 
  * A semigroup is an Object that can be used to combine objects of the same type.
  *
+ *  @author johnmcclean
  */
 public interface Semigroups {
 

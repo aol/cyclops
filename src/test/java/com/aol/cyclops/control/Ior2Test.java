@@ -157,12 +157,12 @@ public class Ior2Test {
 
 	@Test
     public void testAccumulateSecondarySemigroup() {
-        Ior<?,String> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.secondary("1")),i->""+i,Semigroups.stringConcat);
+        Ior<?,String> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.secondary("1")),i->""+i,Monoids.stringConcat);
         assertThat(iors,equalTo(Ior.primary("none1")));
     }
 	@Test
     public void testAccumulateSecondarySemigroupIntSum() {
-        Ior<?,Integer> iors = Ior.accumulateSecondary(ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)),Semigroups.intSum);
+        Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
         assertThat(iors,equalTo(Ior.primary(3)));
     }
 	@Test
