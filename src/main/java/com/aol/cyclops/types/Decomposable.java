@@ -1,21 +1,9 @@
 package com.aol.cyclops.types;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
-import com.aol.cyclops.internal.matcher2.Case;
-import com.aol.cyclops.internal.matcher2.Cases;
-import com.aol.cyclops.matcher.DecomposableTest;
-import com.aol.cyclops.matcher.CasesTest.MyClass;
-import com.aol.cyclops.matcher.DecomposableTest.DefaultDecomposable;
 import com.aol.cyclops.util.ExceptionSoftener;
-
-import lombok.AllArgsConstructor;
-import lombok.Value;
 
 /**
  * Unapply returns an ordered Iterable of the values of this types fields
