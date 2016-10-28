@@ -1,5 +1,13 @@
 package com.aol.cyclops;
 
+import static com.aol.cyclops.control.Matchable.otherwise;
+import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops.util.function.Predicates.instanceOf;
+import static com.aol.cyclops.util.function.Predicates.some;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -27,6 +35,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.jooq.lambda.tuple.Tuple5;
 
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.AsMatchable;
@@ -141,23 +150,64 @@ public class Matchables {
         return () -> Tuple.tuple(t1, t2);
     }
 
+    /**
+     * Match on three values 
+     * <pre>
+     * {@code 
+     * 
+     * Matchables.match3(100,2,1000)
+                .matches(c->c.is(when(Predicates.greaterThan(50),Predicates.lessThan(10),Predicates.greaterThan(500)), ()->"large and small and huge"),
+                         ()->"not large and small")
+                         
+        //"large and small and huge"
+     * 
+     * }
+     * </pre>
+     * 
+     * @param t1 1st Value to match on
+     * @param t2 2nd Value to match on
+     * @param t3 3rd Value to match on
+     * @return Structural Pattern matching API for those values
+     */
     public static <T1, T2, T3> MTuple3<T1, T2, T3> match3(final T1 t1, final T2 t2, final T3 t3) {
         return () -> Tuple.tuple(t1, t2, t3);
     }
 
+    /**
+     * Match on four values
+     * 
+     * <pre>
+     * {@code
+     * 
+     * Matchables.match4(100,2,1000,1)
+                .matches(c->c.is(when(Predicates.greaterThan(50),
+                                       Predicates.lessThan(10),
+                                       Predicates.greaterThan(500),
+                                       Predicates.lessThan(2)), ()->"large and small and huge and tiny"), ()->"not large and small").get();
+       
+       //"large and small and huge and tiny"
+     * }
+     * @param t1 1st Value to match on
+     * @param t2 2nd Value to match on
+     * @param t3 3rd Value to match on
+     * @param t4 4th Value to match on
+     * @return Structural Pattern matching API for those values
+     */
     public static <T1, T2, T3, T4> MTuple4<T1, T2, T3, T4> match4(final T1 t1, final T2 t2, final T3 t3, final T4 t4) {
         return () -> Tuple.tuple(t1, t2, t3, t4);
     }
 
     /**
+     *  Match on a Supplier 
+     *  
      * <pre>
      * {@code
      * import static com.aol.cyclops.util.function.Predicates.greaterThan;
      * import static com.aol.cyclops.control.Matchable.when;
      * 
      * Matchables.supplier(() -> 100)
-                                 .matches(c->c.is(when(greaterThan(50)), ()->"large"), ()->"small");
-                                  .get())
+                                 .matches(c->c.is(when(greaterThan(50)), ()->"large"), ()->"small")
+                                 .get()
                                   
       //large   
      * }
@@ -171,6 +221,25 @@ public class Matchables {
         return () -> Tuple.tuple(s1.get());
     }
 
+    /**
+     *  Match on a tuple
+     *  
+     * <pre>
+     * {@code
+     * import static com.aol.cyclops.util.function.Predicates.greaterThan;
+     * import static com.aol.cyclops.control.Matchable.when;
+     * 
+     * Matchables.tuple1(Tuple.tuple(100))
+                                 .matches(c->c.is(when(greaterThan(50)), ()->"large"), ()->"small")
+                                 .get()
+                                  
+      //large   
+     * }
+     * </pre>  
+     * 
+     * @param t2 Tuple1 to match on
+     * @return Structural Pattern matching API for Tuple
+     */ 
     public static <T1> MTuple1<T1> tuple1(final Tuple1<T1> t2) {
         return () -> t2;
     }
@@ -298,6 +367,34 @@ public class Matchables {
                             .swap();
     }
 
+    /**
+     * Pattern Match on a FutureW handling success and failure cases differently
+     * <pre>
+     * {@code 
+     *  Eval<Integer> result = Matchables.future(FutureW.ofResult(1))
+                                         .matches(c-> c.is( when(some(1)), then(10)), 
+                                                  c->c.is(when(instanceOf(RuntimeException.class)), then(2)),
+                                                  otherwise(3));
+        
+        //Eval.now[10]
+     * 
+     *  Eval<Integer> result = Matchables.future(FutureW.ofError(new RuntimeException()))
+                                         .matches(c-> c.is( when(some(10)), then(2)), 
+                                                  c->c.is(when(instanceOf(RuntimeException.class)), then(2)),
+                                                  otherwise(3));
+        
+       //Eval.now(2)
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * 
+     * 
+     * @param future Future to match on
+     * @return Pattern Matcher for Futures
+     */
     public static <T1> MXor<T1, Throwable> future(final FutureW<T1> future) {
         return () -> future.toXor()
                            .swap();

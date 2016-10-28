@@ -183,7 +183,8 @@ public class MatchableTest implements Printable{
 							   						 .recover("incorrectly configured house")
 							   						 .applyFunctions()
 							   		                 .ap2(this::concat)
-							   		            	 .ap(just(street).filter(this::isValidStreet)
+							   		            	 .ap(just(street)
+							   		            	 .filter(this::isValidStreet)
 							   		            			   .map(s->"valid street")
 							   		            			   .recover("incorrectly configured steet"))
 							   		            	 .get());
@@ -261,7 +262,7 @@ public class MatchableTest implements Printable{
 		int c;
 	}
 	@Value
-	static class NestedCase implements MatchSelf<MyCase>, Decomposable{
+	static class NestedCase implements MatchSelf<NestedCase>, Decomposable{
 		int a;
 		int b;
 		NestedCase c;

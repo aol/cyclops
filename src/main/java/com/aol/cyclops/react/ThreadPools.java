@@ -36,6 +36,10 @@ public class ThreadPools {
 
     private static volatile boolean useCommon = true;
 
+    /**
+     * @return Standard Parallel Executor, uses the ForkJoin Common Pool is @see {@link ThreadPools#isUseCommon()} is true
+     *         Otherwise a new Executor sized to the number of threads is used.
+     */
     public static Executor getStandard() {
         if (useCommon)
             return ForkJoinPool.commonPool();

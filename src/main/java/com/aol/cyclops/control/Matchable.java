@@ -41,6 +41,8 @@ import lombok.Getter;
  * 
  * Gateway to the guard based pattern matching API.
  * 
+ * Supports Structural Pattern matching
+ * 
  * Matchable uses a when / then / otherwise DSL.
  * The Matchable class provides static when / then /otherwise methods @see {@link Matchable#then(Supplier)} {@link Matchable#when(Predicate)} {@link Matchable#otherwise(Supplier)}
  * 
@@ -49,6 +51,45 @@ import lombok.Getter;
  * @see {@link Matchables} for precanned structural pattern matching against JDK classes
  * 
  * Use Matchable#of or Matchable#matchable (an alias for use with static imports) to pattern match via guards on an Object.
+ *
+ * <pre>
+ * {@code 
+ * import static com.aol.cyclops.control.Matchable.otherwise;
+   import static com.aol.cyclops.control.Matchable.then;
+   import static com.aol.cyclops.control.Matchable.when;
+   import static com.aol.cyclops.util.function.Predicates.decons;
+   
+ *  Customer customer = new Customer("test",new Address(10,"hello","my city"));
+ *  String result =   customer.match()
+                              .on$_2() //match on address
+                              .matches(c->c.is(when(decons(when(10,"hello","my city"))),then("hello")), 
+                                       otherwise("miss"))
+                              .get();
+      
+      //"hello"
+ * 
+ * @AllArgsConstructor
+    static class Address{
+        int house;
+        String street;
+        String city;
+        
+        public MTuple3<Integer,String,String> match(){
+            return Matchables.supplier3(()->house,()->street,()->city);
+        }
+    }
+    @AllArgsConstructor
+    static class Customer{
+        String name;
+        Address address;
+        public MTuple2<String,MTuple3<Integer,String,String>> match(){
+            return Matchables.supplier2(()->name,()->Maybe.ofNullable(address).map(a->a.match()).orElseGet(()->null));
+        }
+    }
+ * }
+ * </pre>
+ *
+ *
  *
  * Matchable supports tail recursion
  * 
@@ -166,14 +207,76 @@ public interface Matchable<TYPE> {
         return () -> value;
     }
 
+    /**
+     * Matchable DSL operator for outcomes
+     * 
+     * <pre>
+     * {@code 
+     * import static com.aol.cyclops.control.Matchable.otherwise;
+       import static com.aol.cyclops.control.Matchable.then;
+       import static com.aol.cyclops.control.Matchable.when;
+       
+     *  Maybe.just(2).matches(c->c.is(when(1),then("hello"))
+                                  .is(when(2),then(()->load(1)))
+                                  .is(when(3),then(()->"hello")),otherwise("miss"));
+                                  
+     *  //Eval[load(1)]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn Supplier that generates the result value
+     * @return Supplier for outcomes in the Pattern matching DSL
+     */
     public static <T, R> Supplier<? extends R> then(final Supplier<? extends R> fn) {
         return fn;
     }
 
+    /**
+     * Matchable DSL operator for default results when no match is found
+     * 
+     * <pre>
+     * {@code 
+     *  import static com.aol.cyclops.control.Matchable.otherwise;
+       import static com.aol.cyclops.control.Matchable.then;
+       import static com.aol.cyclops.control.Matchable.when;
+       
+     * Try.success(30).matches(c->c.is(when(10),then("hello")),
+                               c->c.is(when(instanceOf(Throwable.class)), then("error")),
+                              otherwise("miss")).get()
+                              
+     * //miss
+     *  
+     * }</pre>
+     * 
+     * 
+     * @param value Defult value
+     * @return Supplier for default results in Pattern matching DSL
+     */
     public static <R> Supplier<R> otherwise(final R value) {
         return () -> value;
     }
 
+    /**
+     * 
+     * Matchable DSL operator for default results when no match is found
+     * 
+     * <pre>
+     * {@code 
+     * import static com.aol.cyclops.control.Matchable.otherwise;
+       import static com.aol.cyclops.control.Matchable.then;
+       import static com.aol.cyclops.control.Matchable.when;
+     * 
+       Try.success(30).matches(c->c.is(when(10),then("hello")),
+                               c->c.is(when(instanceOf(Throwable.class)), then("error")),
+                               otherwise(()->"miss")).get()
+                              
+     * //miss
+     * }</pre>
+     * 
+     * @param s Supplier that generates a default value
+     * @return Supplier for default results in Pattern matching DSL
+     */
     public static <R> Supplier<R> otherwise(final Supplier<? extends R> s) {
         return (Supplier<R>) s;
     }
@@ -185,6 +288,41 @@ public interface Matchable<TYPE> {
                                            .iterator();
     }
 
+    /**
+     * Matchable DSL operator for matching recursively
+     * 
+     * <pre>
+     * {@code 
+     *  //given a recursively defined Case class
+     *  @Value
+        public class NestedCase implements  Decomposable{
+        int a;
+        int b;
+        NestedCase c;
+       }
+      
+       import static com.aol.cyclops.control.Matchable.otherwise;
+       import static com.aol.cyclops.control.Matchable.then;
+       import static com.aol.cyclops.control.Matchable.whenGuard;
+       import static com.aol.cyclops.util.function.Predicates.__;
+       import static com.aol.cyclops.util.function.Predicates.type;
+     * 
+     * 
+     * 
+     * 
+     * Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null)))
+            .matches(c->c.is(whenGuard(1,__,type(NestedCase.class).hasGuard(3,4,__)),then("2")),
+                    otherwise("-1"))
+            .get();
+     * //"2"
+     * }
+     * </pre>
+     * 
+     * 
+     * 
+     * @param values To match target against with potential for recursively matching within provided values
+     * @return Pattern Matcher for further matching
+     */
     @SafeVarargs
     public static <T, V> MTuple1<Predicate<? super T>> whenGuard(final V... values) {
         return () -> Tuple.tuple((final T in) -> ReactiveSeq.of(values)
@@ -194,23 +332,64 @@ public interface Matchable<TYPE> {
 
     public static <T1> Iterable<Predicate<? super T1>> whenValues(final T1... t1){
 
-    return (List) ReactiveSeq.of(t1)
-                             .map(Predicates::eq)
-                             .toList();
-}
+        return (List) ReactiveSeq.of(t1)
+                                 .map(Predicates::eq)
+                                 .toList();
+    }
 
-public static <T1> Iterable<Predicate<? super T1>> whenTrue(final Predicate<? super T1>... t1) {
+    public static <T1> Iterable<Predicate<? super T1>> whenTrue(final Predicate<? super T1>... t1) {
 
         return ReactiveSeq.of(t1)
                           .toList();
     }
 
     //when arity 1
+    /**
+     * Matchable DSL operator for matching against a single value
+     * 
+     * <pre>
+     * {@code 
+     * import static com.aol.cyclops.control.Matchable.when;
+     * import static com.aol.cyclops.control.Matchable.then;
+     * import static com.aol.cyclops.control.Matchable.otherwise;
+     * 
+     * Eval.later(()->10)
+     *     .matches(c->c.is(when(10),then("hello")),
+     *              otherwise("miss"))
+     * 
+     * //Eval["hello"]
+     * }
+     * </pre>
+     * 
+     * 
+     * 
+     * @param t1 Value to match against (equality check)
+     * @return Pattern Matcher for further matching
+     */
     public static <T1> MTuple1<Predicate<? super T1>> when(final T1 t1) {
 
         return () -> Tuple.tuple(test -> Objects.equals(test, t1));
     }
 
+    /**
+     * Matchable DSL operator for matching against a single value
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *   FutureW.ofResult(10)
+     *          .map(i->throw new RuntimeException())
+     *          .matches(c->c.is(when(10),then("hello")).is(when(2),then("hello")),
+                         c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
+                         otherwise("miss"));
+                                           
+     * //Eval["error"]
+     * }
+     * </pre>
+     * 
+     * @param t1 Predicate to match against
+     * @return Pattern Matcher for further matching
+     */
     public static <T1> MTuple1<Predicate<? super T1>> when(final Predicate<? super T1> t1) {
 
         return () -> Tuple.tuple(t1);
@@ -218,11 +397,54 @@ public static <T1> Iterable<Predicate<? super T1>> whenTrue(final Predicate<? su
 
     //when arity 2
 
+    /**
+     * Matchable DSL operator for matching against two values
+     * 
+     * 
+     * <pre>
+     * {@code  
+     *  URL url =  ReactiveSeq.of("input.file")
+                           .map(getClass().getClassLoader()::getResource)
+                           .single();
+       
+       //Match on the first two lines of a file defined by an URL
+        * 
+       String result = Matchables.lines(url)
+                                 .on$12___()
+                                 .matches(c->c.is(when("hello","world2"),then("incorrect"))
+                                              .is(when("hello","world"),then("correct")), 
+                                          otherwise("miss"))
+                                 .get();
+       //"correct"
+       
+       }
+     * @param t1 1st value to match against (equality check)
+     * @param t2 2nd value to match against (equality check)
+     * @return Pattern Matcher for further matching
+     */
     public static <T1, T2> MTuple2<Predicate<? super T1>, Predicate<? super T2>> when(final T1 t1, final T2 t2) {
 
         return () -> Tuple.tuple(test -> Objects.equals(test, t1), test -> Objects.equals(test, t2));
     }
 
+    /**
+     * Matchable DSL operator for matching against two values using predicates
+     * 
+     * <pre>
+     * {@code 
+     * Matchables.match2(100,2)
+                .matches(c->c.is(when(Predicates.greaterThan(50),Predicates.lessThan(10)), ()->"large and small"), ()->"not large and small")
+                .get(),
+        //"large and small"
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param t1 1st value to match against
+     * @param t2 2nd value to match against
+     * @return Pattern Matcher for further matching
+     */
     public static <T1, T2, T3> MTuple2<Predicate<? super T1>, Predicate<? super T2>> when(final Predicate<? super T1> t1,
             final Predicate<? super T2> t2) {
 
@@ -271,6 +493,36 @@ public static <T1> Iterable<Predicate<? super T1>> whenTrue(final Predicate<? su
         return () -> Tuple.tuple(t1, t2, t3, t4, t5);
     }
 
+    /**
+     * Interface that returns this as the Matchable
+     * 
+     * <pre>
+     * {@code 
+     * @Value
+       public class MyCase  implements MatchSelf<MyCase>, Decomposable{
+               int a;
+               int b;
+               int c;
+       }
+
+
+       import static com.aol.cyclops.control.Matchable.otherwise;
+       import static com.aol.cyclops.control.Matchable.then;
+       import static com.aol.cyclops.control.Matchable.when;
+       import static com.aol.cyclops.util.function.Predicates.__;
+
+       Eval<String> result = new MyCase(4,5,6).matches(c->c.is(when(4,5,6),then("res")),
+                                                       otherwise("n/a"));
+        
+       //Eval["res"]
+     * }
+     * </pre>
+     * 
+     * 
+     * @author johnmcclean
+     *
+     * @param <TYPE> Concrete type to match against. 
+     */
     public static interface MatchSelf<TYPE> extends MatchableObject<TYPE> {
         @Override
         default Object getMatchable() {

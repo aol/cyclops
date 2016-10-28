@@ -1,14 +1,42 @@
 package com.aol.cyclops.types;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
+import com.aol.cyclops.internal.matcher2.Case;
+import com.aol.cyclops.internal.matcher2.Cases;
+import com.aol.cyclops.matcher.DecomposableTest;
+import com.aol.cyclops.matcher.CasesTest.MyClass;
+import com.aol.cyclops.matcher.DecomposableTest.DefaultDecomposable;
 import com.aol.cyclops.util.ExceptionSoftener;
 
+import lombok.AllArgsConstructor;
+import lombok.Value;
+
 /**
- * trait / interface for Value Objects / Case Classes / Algebraic Data Types
+ * Unapply returns an ordered Iterable of the values of this types fields
  * 
  * unapply uses Reflection by default, but clients can override it if neccessary
+ * 
+ * <pre>
+ * {@code 
+ *  @Value 
+ *  public class DefaultDecomposable implements Decomposable{ 
+ *      int num; 
+ *      String name; 
+ *      int num2;
+ *   }
+ *   
+ *   new DefaultDecomposable(1,"hello",2).unapply();
+ *   //[1,"hello",2]
+
+ * }
+ * </pre>
+ * 
  * 
  * @author johnmcclean
  *

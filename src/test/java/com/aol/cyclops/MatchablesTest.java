@@ -9,11 +9,11 @@ import static com.aol.cyclops.util.function.Predicates.__;
 import static com.aol.cyclops.util.function.Predicates.any;
 import static com.aol.cyclops.util.function.Predicates.eq;
 import static com.aol.cyclops.util.function.Predicates.equal;
+import static com.aol.cyclops.util.function.Predicates.greaterThan;
 import static com.aol.cyclops.util.function.Predicates.in;
 import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static com.aol.cyclops.util.function.Predicates.not;
 import static com.aol.cyclops.util.function.Predicates.some;
-import static com.aol.cyclops.util.function.Predicates.equals;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -30,6 +30,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;
@@ -75,6 +76,22 @@ public class MatchablesTest {
     private final  int UNEXPECTED_RESULT = 0;
     private final  int SUCCESS = 1;
     @Test
+    public void matchTuple1(){
+
+       String result =    Matchables.tuple1(Tuple.tuple(100))
+                                    .matches(c->c.is(when(greaterThan(50)), ()->"large"), ()->"small")
+                                    .get();
+       assertThat(result,equalTo("large"));
+    }
+    @Test
+    public void matcSupplier(){
+
+       String result =    Matchables.supplier(()->100)
+                                    .matches(c->c.is(when(greaterThan(50)), ()->"large"), ()->"small")
+                                    .get();
+       assertThat(result,equalTo("large"));
+    }
+    @Test
     public void matchTest(){
        assertThat( Matchables.match(100)
                 .matches(c->c.is(when(Predicates.greaterThan(50)), ()->"large"), ()->"small").get(),
@@ -85,6 +102,21 @@ public class MatchablesTest {
        assertThat( Matchables.match2(100,2)
                 .matches(c->c.is(when(Predicates.greaterThan(50),Predicates.lessThan(10)), ()->"large and small"), ()->"not large and small").get(),
                 equalTo("large and small"));
+    }
+    @Test
+    public void match3Test(){
+       assertThat( Matchables.match3(100,2,1000)
+                .matches(c->c.is(when(Predicates.greaterThan(50),Predicates.lessThan(10),Predicates.greaterThan(500)), ()->"large and small and huge"), ()->"not large and small").get(),
+                equalTo("large and small and huge"));
+    }
+    @Test
+    public void match4Test(){
+       assertThat( Matchables.match4(100,2,1000,1)
+                .matches(c->c.is(when(Predicates.greaterThan(50),
+                                       Predicates.lessThan(10),
+                                       Predicates.greaterThan(500),
+                                       Predicates.lessThan(2)), ()->"large and small and huge and tiny"), ()->"not large and small").get(),
+                equalTo("large and small and huge and tiny"));
     }
     @Test
     public void futurePatternMatching(){
