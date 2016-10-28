@@ -1,9 +1,5 @@
 package com.aol.cyclops.control;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -18,7 +14,6 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.async.Adapter;
-import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
@@ -351,6 +346,28 @@ public class Pipes<K, V> {
                                                                         "no adapter for key " + key)));
     }
 
+    /**
+     * Extact one value from the selected pipe or an empty Maybe if it doesn't exist. Currently only Adapter's and not Publishers
+     * are managed by Pipes so Publisher errors are not propagated (@see {@link Pipes#oneValue(Object)} or @see {@link Pipes#oneOrError(Object)} is better at the moment.
+     * 
+     *  <pre>
+     *  {@code 
+     *  Queue<String> q = new Queue<>();
+        pipes.register("hello", q);
+        pipes.push("hello", "world");
+        pipes.push("hello", "world2");
+      
+        
+        pipes.oneValueOrError("hello",Throwable.class).get(); //Try["world"]
+       
+     *  }
+     *  </pre>
+     * 
+     * @param key
+     * @param classes
+     * @return
+     */
+    @Deprecated //errors aren't propagated across Adapters (at least without continuations)
     public <X extends Throwable> Maybe<Try<V, X>> oneValueOrError(final K key, final Class<X>... classes) {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
@@ -358,6 +375,27 @@ public class Pipes<K, V> {
                        .map(a -> sub.toTry(classes));
     }
 
+    /**
+     * Extact one value from the selected pipe or an empty Maybe if it doesn't exist. Currently only Adapter's and not Publishers
+     * are managed by Pipes so Publisher errors are not propagated (@see {@link Pipes#oneValue(Object)} or @see {@link Pipes#oneOrError(Object)} is better at the moment.
+     * 
+     *  <pre>
+     *  {@code 
+     *  Queue<String> q = new Queue<>();
+        pipes.register("hello", q);
+        pipes.push("hello", "world");
+        pipes.push("hello", "world2");
+      
+        
+        pipes.oneValueOrError("hello").get(); //Try["world"]
+       
+     *  }
+     *  </pre>
+     * 
+     * @param key : Adapter identifier
+     * @return
+     */
+    @Deprecated //errors aren't propagated across Adapters (at least without continuations)
     public Maybe<Try<V, Throwable>> oneValueOrError(final K key) {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
@@ -365,6 +403,25 @@ public class Pipes<K, V> {
                        .map(a -> sub.toTry(Throwable.class));
     }
 
+    /**
+     * Asynchronously extract a value from the Adapter identified by the provided Key
+     * <pre>
+     * {@code 
+     *  Queue<String> q = new Queue<>();
+        pipes.register("hello", q);
+        pipes.push("hello", "world");
+        pipes.push("hello", "world2");
+       
+        pipes.oneOrErrorAsync("hello", ex) // FutureW.ofResult("world")
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param key : Adapter identifier
+     * @param ex Executor to extract value from Adapter from on
+     * @return FutureW containing either next value or NoSuchElementException
+     */
     public FutureW<V> oneOrErrorAsync(final K key, final Executor ex) {
         final CompletableFuture<V> cf = CompletableFuture.supplyAsync(() -> {
 
@@ -380,12 +437,35 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Return an Eval that allows retrieval of the next value from the attached pipe when get() is called
+     * Return an Eval that allows retrieval of the next value from the attached pipe when get() is called,
+     * can be used as an Iterator over the future & present values in the Adapter
      * 
      * Maybe.some is returned if a value is present, Maybe.none is returned if the publisher is complete or an error occurs
      * 
-     * @param key
-     * @return
+     * <pre>
+     * {@code 
+     *  Queue<String> q = new Queue<>();
+        pipes.register("hello", q);
+        pipes.push("hello", "world");
+        pipes.push("hello", "world2");
+        q.close();
+        Eval<Maybe<String>> nextValue = pipes.nextValue("hello");
+        int values = 0;
+        while(nextValue.get().isPresent()){
+            System.out.println(values++);
+            
+        }
+            
+        assertThat(values,equalTo(2));
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * 
+     * @param key : Adapter identifier
+     * @return Eval that can lazily extract the next Value from the Adapter identified by the provided key once triggered
      */
     public Eval<Maybe<V>> nextValue(final K key) {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
@@ -409,8 +489,29 @@ public class Pipes<K, V> {
      * 
      * A value is returned if a value is present, otherwise null is returned if the publisher is complete or an error occurs
      * 
+     * <pre>
+     * {@code 
+     *  Queue<String> q = new Queue<>();
+        pipes.register("hello", q);
+        pipes.push("hello", "world");
+        pipes.push("hello", "world2");
+        q.close();
+        Eval<String> nextValue = pipes.nextOrNull("hello");
+        int values = 0;
+        while(nextValue.get()!=null){
+            System.out.println(values++);
+            
+        }
+            
+        assertThat(values,equalTo(2));
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
      * @param key : Adapter identifier
-     * @return
+     * @return Eval that can lazily extract the next Value from the Adapter identified by the provided key once triggered
      */
     public Eval<V> nextOrNull(final K key) {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
@@ -478,6 +579,22 @@ public class Pipes<K, V> {
     /**
      *  Subscribe asynchronously to a pipe
      * 
+     *  <pre>
+     *  {@code 
+     *  SeqSubscriber<String> subscriber = SeqSubscriber.subscriber();
+        Queue<String> queue = new Queue();
+        pipes.register("hello", queue);
+        pipes.subscribeTo("hello",subscriber,ForkJoinPool.commonPool());
+        queue.offer("world");
+        queue.close();
+       
+        assertThat(subscriber.stream().findAny().get(),equalTo("world"));
+     *  
+     *  
+     *  }
+     *  </pre>
+     * 
+     * 
      * @param key for registered simple-react async.Adapter
      * @param subscriber Reactive Streams subscriber for data on this pipe
      */
@@ -487,6 +604,8 @@ public class Pipes<K, V> {
     }
 
     /**
+     * Synchronously publish data to the Adapter specified by the provided Key, blocking the current thread
+     * 
      * @param key for registered cylops-react async.Adapter
      * @param publisher Reactive Streams publisher  to push data onto this pipe
      */
@@ -497,7 +616,28 @@ public class Pipes<K, V> {
                   .fromStream(sub.stream());
     }
 
+    
     /**
+     * Asynchronously publish data to the Adapter specified by the provided Key
+     * 
+     * <pre>
+     * {@code 
+     *  Pipes<String,Integer> pipes = Pipes.of();
+        Queue<Integer> queue = new Queue();
+        pipes.register("hello", queue);
+        
+        pipes.publishToAsync("hello",ReactiveSeq.of(1,2,3));
+        
+        Thread.sleep(100);
+        queue.offer(4);
+        queue.close();
+       
+        assertThat(queue.stream().toList(),equalTo(Arrays.asList(1,2,3,4)));
+     * 
+     * }
+     * </pre>
+     * 
+     * 
      * @param key for registered simple-react async.Adapter
      * @param publisher Reactive Streams publisher  to push data onto this pipe
      */

@@ -58,16 +58,12 @@ public interface LazyToQueue<U> extends ToQueue<U> {
         final Queue<U> queue = fn.apply(getQueueFactory().build());
 
         final Continuation continuation = thenSync(queue::add).self(s -> {
-            if (this.getPopulator()
-                    .isPoolingActive())
+            if (this.getPopulator().isPoolingActive())
                 s.peekSync(v -> {
                     throw new CompletedException(
                                                  v);
                 });
-        })
-                                                              .runContinuation(() -> {
-                                                                  queue.close();
-                                                              });
+        }).runContinuation(() -> {queue.close();});
         queue.addContinuation(continuation);
         return queue;
     }
@@ -82,10 +78,9 @@ public interface LazyToQueue<U> extends ToQueue<U> {
                     throw new CompletedException(
                                                  v);
                 });
-        })
-                                                              .runContinuation(() -> {
-                                                                  throw new ClosedQueueException();
-                                                              });
+        }).runContinuation(() -> {throw new ClosedQueueException();
+                                   }
+                           );
         queue.addContinuation(continuation);
 
     }

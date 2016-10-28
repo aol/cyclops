@@ -257,6 +257,7 @@ public class StreamSource {
      * Construct a StreamSource that supports multiple readers of the same data backed by a Queue created
      * from the supplied QueueFactory
      * 
+     * 
      * @see com.aol.cyclops.data.async.QueueFactories for Factory creation options and various backpressure strategies
      * <pre>
      * {@code 
@@ -272,7 +273,7 @@ public class StreamSource {
      * }
      * </pre>
      * 
-     * 
+     * @param q QueueFactory used to create the Adapter to back the pushable StreamSource
      * @return a builder that will use Topics to allow multiple Streams from the same data
      */
     public static <T> MultipleStreamSource<T> ofMultiple(final QueueFactory<?> q) {
@@ -282,6 +283,38 @@ public class StreamSource {
                                                        .createQueue());
     }
 
+    /**
+     * Construct a Pushable StreamSource using the provided QueueFactory as a push mechanism
+     * @see com.aol.cyclops.data.async.QueueFactories for Factory creation options and various backpressure strategies
+     * 
+     * <pre>
+     * {@code 
+     * PushableStream<Integer> pushable = StreamSource.of(QueueFactories.boundedQueue(10))
+                                                        .stream();
+       pushable.getInput()
+               .offer(10);
+    
+        Stream<Integer> stream = pushable.getStream();
+        stream.forEach(System.out::println);
+    
+        //print 10
+     
+        pushable.getInput()
+               .offer(20);
+           
+        //print 20       
+       
+                
+        pushable.getInput()
+                .close();            
+        }
+     * </pre> 
+     * 
+     * 
+     * 
+     * @param q QueueFactory used to create the Adapter to back the pushable StreamSource
+     * @return Pushable StreamSource
+     */
     public static StreamSource of(final QueueFactory<?> q) {
         Objects.requireNonNull(q);
         return new StreamSource() {
@@ -294,10 +327,61 @@ public class StreamSource {
         };
     }
 
+    /**
+     * Construct a Pushable StreamSource with no max size. Warning if data producers pushing data to this StreamSource
+     * are faster than Data consumers the JVM will eventually run out of memory.
+     * <pre>
+     * {@code 
+     * PushableStream<Integer> pushable = StreamSource.ofUnbounded()
+                                                      .stream();
+       pushable.getInput()
+               .offer(10);
+    
+        Stream<Integer> stream = pushable.getStream();
+        stream.forEach(System.out::println);
+    
+        //print 10
+     
+        pushable.getInput()
+               .offer(20);
+           
+        //print 20       
+       
+                
+        pushable.getInput()
+                .close();            
+        }
+     * </pre>
+     * 
+     * @return Pushable StreamSource
+     */
     public static StreamSource ofUnbounded() {
         return new StreamSource();
     }
-
+    /**
+     * A builder for pushable Streams that apply backpressure if producing Streams exceed the capacity of consuming Streams.
+     * 
+     * In this backpresure is applied by using a LinkedBlockingQueue. @see com.aol.cyclops.control.StreamSource#ofMultiple(QueueFactory)
+     * For more granular management of Adapter based backpressure. Adapters can be backed by non-blocking data structures and different backpressure strategies applied
+    
+       <pre>
+       {@code 
+           StreamSource source = StreamSource.of(10);
+           
+           pushable.getInput()
+               .offer(10);
+           
+           //on a separate thread
+           source.reactiveSeq()
+                 .forEach(System.out::println);
+       
+       }
+       </pre>
+    
+     * @param backPressureAfter Excess number of produced records over consumed (by all connected Streams
+     * after which backPressure will be applied).
+     * @return A builder for Pushable Streams
+     */
     public static StreamSource of(final int backPressureAfter) {
         if (backPressureAfter < 1)
             throw new IllegalArgumentException(
@@ -327,6 +411,23 @@ public class StreamSource {
 
     /**
      * Create a pushable LazyFutureStream using the supplied ReactPool
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  PushableLazyFutureStream<Integer> pushable = StreamSource.ofUnbounded()
+                                                                 .futureStream(new LazyReact());
+        pushable.getInput().add(100);
+        pushable.getInput().close();
+        
+        
+        assertThat(pushable.getStream().collect(Collectors.toList()),
+                hasItem(100));
+     * 
+     * 
+     * }</pre>
+     * 
+     * 
      * 
      * @param s ReactPool to use to create the Stream
      * @return a Tuple2 with a Queue&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
