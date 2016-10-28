@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Monoids;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.LazyImmutable;
