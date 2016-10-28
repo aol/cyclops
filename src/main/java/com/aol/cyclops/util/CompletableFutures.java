@@ -236,12 +236,47 @@ public class CompletableFutures {
         return sequence(fts).thenApply(s -> s
                                              .reduce(reducer));
     }
-
+    /**
+     * Schedule the population of a CompletableFuture from the provided Supplier, the provided Cron (Quartz format) expression will be used to
+     * trigger the population of the CompletableFuture. The provided ScheduledExecutorService provided the thread on which the 
+     * Supplier will be executed.
+     * 
+     * <pre>
+     * {@code 
+     *  
+     *    CompletableFuture<String> future = CompletableFutures.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello");
+     *    
+     *    //CompletableFuture["hello"]
+     * 
+     * }</pre>
+     * 
+     * 
+     * @param cron Cron expression in Quartz format
+     * @param ex ScheduledExecutorService used to execute the provided Supplier
+     * @param t The Supplier to execute to populate the CompletableFuture
+     * @return CompletableFuture populated on a Cron based Schedule
+     */
     public static <T> CompletableFuture<T> schedule(final String cron, final ScheduledExecutorService ex, final Supplier<T> t) {
         return FutureW.schedule(cron, ex, t)
                       .getFuture();
     }
-
+    /**
+     * Schedule the population of a CompletableFuture from the provided Supplier after the specified delay. The provided ScheduledExecutorService provided the thread on which the 
+     * Supplier will be executed.
+     * <pre>
+     * {@code 
+     *  
+     *    CompletableFuture<String> future = CompletableFutures.schedule(10l, Executors.newScheduledThreadPool(1), ()->"hello");
+     *    
+     *    //CompletableFuture["hello"]
+     * 
+     * }</pre>
+     * 
+     * @param delay Delay after which the CompletableFuture should be populated
+     * @param ex ScheduledExecutorService used to execute the provided Supplier
+     * @param t he Supplier to execute to populate the CompletableFuture
+     * @return CompletableFuture populated after the specified delay
+     */
     public static <T> CompletableFuture<T> schedule(final long delay, final ScheduledExecutorService ex, final Supplier<T> t) {
         return FutureW.schedule(delay, ex, t)
                       .getFuture();

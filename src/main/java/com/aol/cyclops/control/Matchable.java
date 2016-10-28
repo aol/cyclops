@@ -116,6 +116,20 @@ import lombok.Getter;
  * }
  * </pre>
  * 
+ * cyclops-react pattern matching uses the is /has methods to denote individual cases.
+
+    is : indicates exact matching
+
+    has : indicates that the supplied values must be present in order
+
+    <pre>
+    {@code 
+        is(when(1,2,3),then("match")) : must have values 1,2,3 only in that order
+
+        has(when(1,2,3),then("match")) : must have values 1,2,3 in that order, but may also have additional values
+    }
+    </pre>
+ * 
  * @author johnmcclean
  *
  */
@@ -2098,6 +2112,12 @@ public interface Matchable<TYPE> {
         }
     }
 
+    /**
+     * Coerce a type to implement the MatchableObject interface
+     * 
+     * @author johnmcclean
+     *
+     */
     public class AsMatchable {
 
         /**
@@ -2124,6 +2144,26 @@ public interface Matchable<TYPE> {
         }
     }
 
+    /**
+     * Class used to build a pattern matching class against a single optional value 
+     *  cyclops-react pattern matching uses the is /has methods to denote individual cases.
+
+        is : indicates exact matching
+    
+        has : indicates that the supplied values must be present in order
+    
+        <pre>
+        {@code 
+            is(when(1,2,3),then("match")) : must have values 1,2,3 only in that order
+    
+            has(when(1,2,3),then("match")) : must have values 1,2,3 in that order, but may also have additional values
+        }
+        </pre> 
+     * @author johnmcclean
+     *
+     * @param <T> Input type to match against
+     * @param <R> Return type if matched
+     */
     @AllArgsConstructor(access = AccessLevel.PUBLIC)
     public static class CheckValueOpt<T, R> {
         private final Class<T> clazz;
@@ -2180,6 +2220,20 @@ public interface Matchable<TYPE> {
     /**
      * Class used to build a pattern matching class against a single value
      * 
+     *  cyclops-react pattern matching uses the is /has methods to denote individual cases.
+
+        is : indicates exact matching
+    
+        has : indicates that the supplied values must be present in order
+    
+        <pre>
+        {@code 
+            is(when(1,2,3),then("match")) : must have values 1,2,3 only in that order
+    
+            has(when(1,2,3),then("match")) : must have values 1,2,3 in that order, but may also have additional values
+        }
+        </pre>
+             * 
      * @author johnmcclean
      *
      * @param <T> Input type to match against
@@ -2243,6 +2297,19 @@ public interface Matchable<TYPE> {
     /**
      * Class used to build a pattern matching class against two values
      * 
+     *  cyclops-react pattern matching uses the is /has methods to denote individual cases.
+
+        is : indicates exact matching
+    
+        has : indicates that the supplied values must be present in order
+    
+        <pre>
+        {@code 
+            is(when(1,2,3),then("match")) : must have values 1,2,3 only in that order
+    
+            has(when(1,2,3),then("match")) : must have values 1,2,3 in that order, but may also have additional values
+        }
+        </pre>    * 
      * @author johnmcclean
      *
      * @param <T> Input type to match against
@@ -2320,6 +2387,21 @@ public interface Matchable<TYPE> {
     }
     /**
      * Class used to build a pattern matching class against three values
+     * 
+     * 
+     *  cyclops-react pattern matching uses the is /has methods to denote individual cases.
+
+        is : indicates exact matching
+    
+        has : indicates that the supplied values must be present in order
+    
+        <pre>
+        {@code 
+            is(when(1,2,3),then("match")) : must have values 1,2,3 only in that order
+    
+            has(when(1,2,3),then("match")) : must have values 1,2,3 in that order, but may also have additional values
+        }
+        </pre>    * 
      * 
      * @author johnmcclean
      *
@@ -2404,6 +2486,20 @@ public interface Matchable<TYPE> {
     /**
      * Class used to build a pattern matching class against four values
      * 
+     * 
+     *  cyclops-react pattern matching uses the is /has methods to denote individual cases.
+
+        is : indicates exact matching
+    
+        has : indicates that the supplied values must be present in order
+    
+        <pre>
+        {@code 
+            is(when(1,2,3),then("match")) : must have values 1,2,3 only in that order
+    
+            has(when(1,2,3),then("match")) : must have values 1,2,3 in that order, but may also have additional values
+        }
+        </pre>     * 
      * @author johnmcclean
      *
      * @param <T> Input type to match against
@@ -2494,6 +2590,20 @@ public interface Matchable<TYPE> {
     /**
      * Class used to build a pattern matching class against a five values
      * 
+        cyclops-react pattern matching uses the is /has methods to denote individual cases.
+
+        is : indicates exact matching
+    
+        has : indicates that the supplied values must be present in order
+    
+        <pre>
+        {@code 
+            is(when(1,2,3),then("match")) : must have values 1,2,3 only in that order
+    
+            has(when(1,2,3),then("match")) : must have values 1,2,3 in that order, but may also have additional values
+        }
+        </pre> 
+        
      * @author johnmcclean
      *
      * @param <T> Input type to match against
@@ -2573,7 +2683,20 @@ public interface Matchable<TYPE> {
 
     /**
      * Class used to build a pattern matching class against multiple values
-     * 
+     *  
+     *  cyclops-react pattern matching uses the is /has methods to denote individual cases.
+
+        is : indicates exact matching
+    
+        has : indicates that the supplied values must be present in order
+    
+        <pre>
+        {@code 
+            is(when(1,2,3),then("match")) : must have values 1,2,3 only in that order
+    
+            has(when(1,2,3),then("match")) : must have values 1,2,3 in that order, but may also have additional values
+        }
+        </pre>
      * @author johnmcclean
      *
      * @param <T> Input type to match against
