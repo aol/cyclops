@@ -190,7 +190,7 @@ public class MaybeTest implements Printable {
 
     @Test
     public void testFromEvalSome() {
-        assertThat(Maybe.fromEvalOf(Eval.now(10)), equalTo(just));
+        assertThat(Maybe.fromEval(Eval.now(10)), equalTo(just));
     }
 
     @Test

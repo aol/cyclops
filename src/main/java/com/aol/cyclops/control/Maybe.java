@@ -1,5 +1,8 @@
 package com.aol.cyclops.control;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -16,9 +19,12 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
@@ -158,7 +164,7 @@ public interface Maybe<T>
      * @return Maybe populated with first value from Iterable (Maybe.empty if Publisher empty)
      */
     static <T> Maybe<T> fromIterable(final Iterable<T> iterable) {
-        return Maybe.fromEvalOf(Eval.fromIterable(iterable));
+        return Maybe.fromEval(Eval.fromIterable(iterable));
     }
 
     /**
@@ -181,8 +187,28 @@ public interface Maybe<T>
             return Maybe.of(opt.get());
         return none();
     }
-
+    
+    @Deprecated
     static <T> Maybe<T> fromEvalOf(final Eval<T> eval) {
+        return new Just<T>(
+                           eval);
+    }
+    
+    /**
+     * Construct a Maybe from the supplied Eval
+     * 
+     * <pre>
+     * {@code 
+     *     Maybe<Integer> maybe =  Maybe.fromEval(Eval.now(10));
+     *     //Maybe[10]
+     *      
+     * }
+     * </pre>
+     * 
+     * @param eval Eval to construct Maybe from
+     * @return Maybe created from Eval
+     */
+    static <T> Maybe<T> fromEval(final Eval<T> eval) {
         return new Just<T>(
                            eval);
     }
@@ -249,21 +275,88 @@ public interface Maybe<T>
         return none();
     }
 
+    /**
+     * Narrow covariant type parameter
+     * 
+     * @param broad Maybe with covariant type parameter
+     * @return Narrowed Maybe
+     */
     static <T> Maybe<T> narrow(final Maybe<? extends T> broad) {
         return (Maybe<T>) broad;
     }
 
-    public static <T> Maybe<ListX<T>> sequenceJust(final CollectionX<Maybe<T>> opts) {
-        final Maybe<ListX<T>> unwrapped = AnyM.sequence(opts.map(o -> AnyM.fromMaybe(o)))
+    /**
+     * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
+     * Only successes are retained. By constrast with {@link Maybe#sequence(CollectionX)} Maybe#empty/ None types are 
+     * tolerated and ignored.
+     * 
+     * <pre>
+     * {@code 
+     *  Maybe<Integer> just = Maybe.of(10);
+        Maybe<Integer> none = Maybe.none();
+     * 
+     * Maybe<ListX<Integer>> maybes = Maybe.sequenceJust(ListX.of(just, none, Maybe.of(1)));
+       //Maybe.of(ListX.of(10, 1));
+     * }
+     * </pre>
+     * 
+     * @param maybes Maybes to Sequence
+     * @return Maybe with a List of values
+     */
+    public static <T> Maybe<ListX<T>> sequenceJust(final CollectionX<Maybe<T>> maybes) {
+        final Maybe<ListX<T>> unwrapped = AnyM.sequence(maybes.map(o -> AnyM.fromMaybe(o)))
                                               .unwrap();
         return unwrapped;
     }
 
+    /**
+     * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
+     * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#empty/ None types are 
+     * result in the returned Maybe being Maybe.empty / None
+     * 
+     * <pre>
+     * {@code
+     * 
+     *  Maybe<Integer> just = Maybe.of(10);
+        Maybe<Integer> none = Maybe.none();
+     *  
+     *  Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
+        //Maybe.none();
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param maybes Maybes to Sequence
+     * @return  Maybe with a List of values
+     */
     public static <T> Maybe<ListX<T>> sequence(final CollectionX<Maybe<T>> maybes) {
         return sequence(maybes.stream()).map(s -> s.toListX());
 
     }
 
+    /**
+     * Sequence operation, take a Stream of Maybes and turn it into a Maybe with a Stream
+     * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#empty/ None types are 
+     * result in the returned Maybe being Maybe.empty / None 
+     * 
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  Maybe<Integer> just = Maybe.of(10);
+        Maybe<Integer> none = Maybe.none();
+        
+     *  Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(Stream.of(just, none, Maybe.of(1)));
+        //Maybe.none();
+     * 
+     * }
+     * </pre> 
+     * 
+     * 
+     * @param maybes Maybes to Sequence
+     * @return  Maybe with a Stream of values
+     */
     public static <T> Maybe<ReactiveSeq<T>> sequence(final Stream<Maybe<T>> maybes) {
         return AnyM.sequence(maybes.map(f -> AnyM.fromMaybe(f)), () -> AnyM.fromMaybe(Maybe.just(Stream.<T> empty())))
                    .map(s -> ReactiveSeq.fromStream(s))
@@ -271,10 +364,51 @@ public interface Maybe<T>
 
     }
 
+    /**
+     * Accummulating operation using the supplied Reducer (@see com.aol.cyclops.Reducers). A typical use case is to accumulate into a Persistent Collection type. 
+     * Accumulates the present results, ignores empty Maybes.
+     * 
+     * <pre>
+     * {@code 
+     *  Maybe<Integer> just = Maybe.of(10);
+        Maybe<Integer> none = Maybe.none();
+        
+     * Maybe<PSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPSetX());
+       //Maybe.of(PSetX.of(10, 1)));
+     * 
+     * }
+     * </pre>
+     * 
+     * @param maybes Maybes to accumulate
+     * @param reducer Reducer to accumulate values with
+     * @return Maybe with reduced value
+     */
     public static <T, R> Maybe<R> accumulateJust(final CollectionX<Maybe<T>> maybes, final Reducer<R> reducer) {
         return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
     }
 
+    /**
+     * Accumulate the results only from those Maybes which have a value present, using the supplied mapping function to
+     * convert the data from each Maybe before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+     * 
+     * <pre>
+     * {@code 
+     *  Maybe<Integer> just = Maybe.of(10);
+        Maybe<Integer> none = Maybe.none();
+        
+     *  Maybe<String> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), i -> "" + i,
+                                                     Semigroups.stringConcat);
+        //Maybe.of("101")
+     * 
+     * }
+     * </pre>
+     * 
+     * @param maybes Maybes to accumulate
+     * @param mapper Mapping function to be applied to the result of each Maybe
+     * @param reducer Semigroup to combine values from each Maybe
+     * @return Maybe with reduced value
+     */
     public static <T, R> Maybe<R> accumulateJust(final CollectionX<Maybe<T>> maybes, final Function<? super T, R> mapper,
             final Semigroup<R> reducer) {
         return sequenceJust(maybes).map(s -> s.map(mapper)
@@ -282,6 +416,26 @@ public interface Maybe<T>
                                               .get());
     }
 
+    /**
+     * Accumulate the results only from those Maybes which have a value present, using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  Maybe<Integer> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Semigroups.intSum);
+        //Maybe.of(11)
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * 
+     * @param maybes Maybes to accumulate
+     * @param reducer Semigroup to combine values from each Maybe
+     * @return Maybe with reduced value
+     */
     public static <T> Maybe<T> accumulateJust(final CollectionX<Maybe<T>> maybes, final Semigroup<T> reducer) {
         return sequenceJust(maybes).map(s -> s.reduce(reducer)
                                               .get());

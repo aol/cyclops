@@ -1482,8 +1482,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 												.map(i->i*2)
      * 												.toStreamable();
      * 		
-     * 		repeat.sequenceM().toList(); //Arrays.asList(2,4,6,8,10,12));
-     * 		repeat.sequenceM().toList() //Arrays.asList(2,4,6,8,10,12));
+     * 		repeat.stream().toList(); //Arrays.asList(2,4,6,8,10,12));
+     * 		repeat.stream().toList() //Arrays.asList(2,4,6,8,10,12));
      * 
      * }
      * 
@@ -1747,8 +1747,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 	&#064;code
      * 	Streamable&lt;Integer&gt; repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -&gt; i + 2).toConcurrentLazyStreamable();
      * 
-     * 	assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     * 	assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     * 	assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     * 	assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
      * }
      * </pre>
      * 

@@ -51,7 +51,7 @@ public interface FeatureToggle<F>
     /**
      * Narrow covariant type parameter
      * 
-     * @param toggle Eval with covariant type parameter
+     * @param toggle FeatureToggle with covariant type parameter
      * @return Narrowed FeatureToggle
      */
     static <T> FeatureToggle<T> narrow(final FeatureToggle<? extends T> toggle) {

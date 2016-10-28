@@ -415,7 +415,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     }
 
     /**
-     * Remove all occurances of the specified element from the SequenceM
+     * Remove all occurances of the specified element from the Streamable
      * <pre>
      * {@code
      * 	Streamable.of(1,2,3,4,5,1,2,3).remove(1)
@@ -425,7 +425,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * 
      * @param t element to remove
-     * @return Filtered Stream / SequenceM
+     * @return Filtered Streamable
      */
     default Streamable<T> remove(final T t) {
         return Streamable.fromStream(reactiveSeq().remove(t));
