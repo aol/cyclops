@@ -1,12 +1,5 @@
 package com.aol.cyclops.types.mixins;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.Map;
-
-import com.aol.cyclops.lambda.mixins.CoerceToMapTest.MyEntity;
-
 import lombok.AllArgsConstructor;
 
 /**

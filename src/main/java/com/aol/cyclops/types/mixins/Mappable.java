@@ -1,21 +1,11 @@
 package com.aol.cyclops.types.mixins;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-
 import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
-import com.aol.cyclops.lambda.mixins.CoerceToMapTest;
-import com.aol.cyclops.lambda.mixins.CoerceToMapTest.MyEntity;
 import com.aol.cyclops.util.ExceptionSoftener;
-
-import lombok.Value;
 
 /**
  * Interface that represents an Object that can be converted to a map
