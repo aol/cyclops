@@ -39,6 +39,9 @@ public interface CompletableFutureT<A> extends Unit<A>, Publisher<A>, Functor<A>
 
     public <R> CompletableFutureT<R> empty();
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     */
     @Override
     MaybeT<A> filter(Predicate<? super A> test);
 

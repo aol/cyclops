@@ -74,7 +74,28 @@ public class Xor2Test {
         assertThat(Xor.primary(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }
    
+	@Test
+    public void testSequenceSecondary() {
+        Xor<ListX<Integer>,ListX<String>> xors =Xor.sequenceSecondary(ListX.of(just,none,Xor.primary(1)));
+        assertThat(xors,equalTo(Xor.primary(ListX.of("none"))));
+    }
 
+    @Test
+    public void testAccumulateSecondary2() {
+        Xor<?,PSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPSetX());
+        assertThat(xors,equalTo(Xor.primary(PSetX.of("none"))));
+    }
+
+    @Test
+    public void testAccumulateSecondarySemigroup() {
+        Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.secondary("1")),i->""+i,Semigroups.stringConcat);
+        assertThat(xors,equalTo(Xor.primary("none1")));
+    }
+    @Test
+    public void testAccumulateSecondarySemigroupIntSum() {
+        Ior<?,Integer> iors = Ior.accumulateSecondary(ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)),Semigroups.intSum);
+        assertThat(iors,equalTo(Ior.primary(3)));
+    }
     @Test
     public void testZipPubFeatureToggle() {
         assertThat(just.zip(FeatureToggle.enable(20),this::add).get(),equalTo(30));
