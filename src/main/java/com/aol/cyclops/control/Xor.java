@@ -41,15 +41,53 @@ import lombok.EqualsAndHashCode;
 /**
  * eXclusive Or (Xor)
  * 
- * 'Right' (or primary type) biased disjunct union.
+ * 'Right' (or primary type) biased disjunct union. Often called Either, but in a generics heavy Java world Xor is half the length of Either.
+ * 
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *  
+ *  Xor is used to represent values that can be one of two states (for example a validation result, either everything is ok - or we have an error).
+ *  It can be used to avoid a common design anti-pattern where an Object has two fields one of which is always null (or worse, both are defined as Optionals).
+ *  
+ *  <pre>
+ *  {@code 
+ *     
+ *     public class Member{
+ *           Xor<SeniorTeam,JuniorTeam> team;      
+ *     }
+ *     
+ *     Rather than
+ *     
+ *     public class Member{
+ *           @Setter
+ *           SeniorTeam seniorTeam = null;
+ *           @Setter
+ *           JuniorTeam juniorTeam = null;      
+ *     }
+ *  }
+ *  </pre>
+ *  
+ *  Xor's have two states
+ *  Primary : Most methods operate naturally on the primary type, if it is present. If it is not, nothing happens.
+ *  Secondary : Most methods do nothing to the secondary type if it is present. 
+ *              To operate on the Secondary type first call swap() or use secondary analogs of the main operators.
+ *  
+ *  Instantiating an Xor - Primary
  *  <pre>
  *  {@code 
  *      Xor.primary("hello").map(v->v+" world") 
  *    //Xor.primary["hello world"]
  *  }
  *  </pre>
+ *  
+ *  Instantiating an Xor - Secondary
+ *  <pre>
+ *  {@code 
+ *      Xor.secondary("hello").map(v->v+" world") 
+ *    //Xor.seconary["hello"]
+ *  }
+ *  </pre>
+ *  
+ *  Xor can operate (via map/flatMap) as a Functor / Monad and via combine as an ApplicativeFunctor
  *  
  *   Values can be accumulated via 
  *  <pre>
@@ -218,11 +256,17 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
         return (Xor<ST, PT>) MonadicValue2.super.combineEager(monoid, v2);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue2#unit(java.lang.Object)
+     */
     @Override
     default <T> Xor<ST, T> unit(final T unit) {
         return Xor.primary(unit);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toOptional()
+     */
     @Override
     default Optional<PT> toOptional() {
         return isPrimary() ? Optional.of(get()) : Optional.empty();
@@ -234,8 +278,21 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
     @Override
     Xor<ST, PT> filter(Predicate<? super PT> test);
 
+    /**
+     * If this Xor contains the Secondary type, map it's value so that it contains the Primary type 
+     * 
+     * 
+     * @param fn Function to map secondary type to primary
+     * @return Xor with secondary type mapped to primary
+     */
     Xor<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
 
+    /**
+     * Always map the Secondary type of this Xor if it is present using the provided transformation function
+     * 
+     * @param fn Transformation function for Secondary types
+     * @return Xor with Secondary type transformed
+     */
     <R> Xor<R, PT> secondaryMap(Function<? super ST, ? extends R> fn);
 
     /* (non-Javadoc)
@@ -244,6 +301,12 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
     @Override
     <R> Xor<ST, R> map(Function<? super PT, ? extends R> fn);
 
+    /**
+     * Peek at the Secondary type value if present
+     * 
+     * @param action Consumer to peek at the Secondary type value
+     * @return Xor with the same values as before
+     */
     Xor<ST, PT> secondaryPeek(Consumer<? super ST> action);
 
     /* (non-Javadoc)
@@ -252,6 +315,26 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
     @Override
     Xor<ST, PT> peek(Consumer<? super PT> action);
 
+    /**
+     * Swap types so operations directly affect the current (pre-swap) Secondary type
+     *<pre>
+     *  {@code 
+     *    
+     *    Xor.secondary("hello")
+     *       .map(v->v+" world") 
+     *    //Xor.seconary["hello"]
+     *    
+     *    Xor.secondary("hello")
+     *       .swap()
+     *       .map(v->v+" world") 
+     *       .swap()
+     *    //Xor.seconary["hello world"]
+     *  }
+     *  </pre>
+     * 
+     * 
+     * @return Swap the primary and secondary types, allowing operations directly on what was the Secondary type
+     */
     Xor<PT, ST> swap();
 
     /* (non-Javadoc)
@@ -345,6 +428,32 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
                                                  .get());
     }
 
+    /**
+     * Visitor pattern for this Ior.
+     * Execute the secondary function if this Xor contains an element of the secondary type
+     * Execute the primary function if this Xor contains an element of the primary type
+     * 
+     * 
+     * <pre>
+     * {@code 
+     *  Xor.primary(10)
+     *     .visit(secondary->"no", primary->"yes")
+     *  //Xor["yes"]
+        
+        Xor.secondary(90)
+           .visit(secondary->"no", primary->"yes")
+        //Xor["no"]
+         
+ 
+     * 
+     * }
+     * </pre>
+     * 
+     * @param secondary Function to execute if this is a Secondary Xor
+     * @param primary Function to execute if this is a Primary Ior
+     * @param both Function to execute if this Ior contains both types
+     * @return Result of executing the appropriate function
+     */
     <R> R visit(Function<? super ST, ? extends R> secondary, Function<? super PT, ? extends R> primary);
 
     default <R1, R2> Xor<R1, R2> mapBoth(final Function<? super ST, ? extends R1> secondary, final Function<? super PT, ? extends R2> primary) {
@@ -363,9 +472,40 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
         return (Xor<ST, R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
     }
 
+    /**
+     * Pattern match on the value/s inside this Xor.
+     * 
+     * <pre>
+     * {@code 
+     * 
+     * import static com.aol.cyclops.control.Matchable.otherwise;
+       import static com.aol.cyclops.control.Matchable.then;
+       import static com.aol.cyclops.control.Matchable.when;
+       import static com.aol.cyclops.util.function.Predicates.instanceOf;
+     * 
+     * Xor.primary(10)
+     *    .matches(c->c.is(when("10"),then("hello")),
+                   c->c.is(when(instanceOf(Integer.class)), then("error")),
+                   otherwise("miss"))
+           .get()
+       //"error" Note the second case, 'primary' case is the one that matches
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn1 Pattern matching function executed if this Xor has the secondary type
+     * @param fn2 Pattern matching function executed if this Xor has the primary type
+     * @param otherwise Supplier used to provide a value if the selecting pattern matching function fails to find a match
+     * @return Lazy result of the pattern matching
+     */
     <R> Eval<R> matches(Function<CheckValue1<ST, R>, CheckValue1<ST, R>> fn1, Function<CheckValue1<PT, R>, CheckValue1<PT, R>> fn2,
             Supplier<? extends R> otherwise);
 
+    /* (non-Javadoc)
+     * @see java.util.function.Supplier#get()
+     */
     @Override
     PT get();
 

@@ -444,6 +444,21 @@ public class StreamSource {
     /**
      * Create a LazyFutureStream. his will call LazyFutureStream#futureStream(Stream) which creates
      * a sequential LazyFutureStream
+     *
+     * <pre>
+     * {@code 
+     * 
+     *  PushableLazyFutureStream<Integer> pushable = StreamSource.futureStream(QueueFactories.boundedNonBlockingQueue(1000),new LazyReact());
+        pushable.getInput().add(100);
+        pushable.getInput().close();
+        
+        
+        assertThat(pushable.getStream().collect(Collectors.toList()),
+                hasItem(100));
+     * 
+     * 
+     * }</pre> 
+     * 
      * 
      * @param adapter Adapter to create a LazyFutureStream from
      * @return A LazyFutureStream that will accept values from the supplied adapter
@@ -455,7 +470,23 @@ public class StreamSource {
 
     /**
      * Create a pushable JDK 8 Stream
-     * @return a Tuple2 with a Queue&lt;T&gt; and Stream&lt;T&gt; - add data to the Queue
+     * 
+     * <pre>
+     * {@code 
+     * PushableStream<Integer> pushable = StreamSource.ofUnbounded()
+                                                        .stream();
+        pushable.getInput()
+                .add(10);
+        pushable.getInput()
+                .close();
+        
+        pushable.getStream().collect(Collectors.toList()) //[10]
+               
+     * 
+     * }
+     * </pre>
+     * 
+     * @return PushableStream that can accept data to push into a Java 8 Stream
      * to push it to the Stream
      */
     public <T> PushableStream<T> stream() {
@@ -468,7 +499,23 @@ public class StreamSource {
     /**
      * Create a pushable {@link PushableReactiveSeq}
      * 
-     * @return a Tuple2 with a Queue&lt;T&gt; and Seq&lt;T&gt; - add data to the Queue
+     * <pre>
+     * {@code 
+     *  PushableReactiveSeq<Integer> pushable = StreamSource.ofUnbounded()
+                                                            .reactiveSeq();
+        pushable.getInput()
+                .add(10);
+        
+        //on another thread
+        pushable.getStream()
+                .collect(Collectors.toList()) //[10]
+              
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @return PushableStream that can accept data to push into a {@see com.aol.cyclops.control.ReactiveSeq}
      * to push it to the Stream
      */
     public <T> PushableReactiveSeq<T> reactiveSeq() {
@@ -480,6 +527,16 @@ public class StreamSource {
     /**
      * Create a JDK 8 Stream from the supplied Adapter
      * 
+     * <pre>
+     * {@code 
+     *   Queue<Integer> q = QueueFactories.boundedNonBlockingQueue(1000);
+     *   Stream<Integer> stream = StreamSource.stream(q);
+     *   stream.forEach(System.out::println);
+     *   
+     *   //on a separate thread
+     *   q.offer(10);
+     * }
+     * </pre>
      * @param adapter Adapter to create a Steam from
      * @return Stream that will accept input from supplied adapter
      */
@@ -490,6 +547,18 @@ public class StreamSource {
 
     /**
      * Create a pushable {@link ReactiveSeq}
+     * 
+     * <pre>
+     * {@code 
+     *  Signal<Integer> signal = Signal.queueBackedSignal();
+        ReactiveSeq<Integer> pushable = StreamSource.reactiveSeq(signal
+                                                    .getDiscrete());
+        signal.set(100);
+        signal.close();
+        
+        assertThat(pushable.collect(Collectors.toList()), hasItem(100));
+     * }
+     * </pre>
      * 
      * @param adapter Adapter to create a Seq from
      * @return A Seq that will accept input from a supplied adapter

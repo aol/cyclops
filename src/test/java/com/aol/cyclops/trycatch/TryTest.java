@@ -2,7 +2,7 @@ package com.aol.cyclops.trycatch;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -30,11 +30,17 @@ public class TryTest {
 		return null;
 	}
 	@Test
+	public void ongoing(){
+	    assertTrue(Try.of(2, RuntimeException.class)
+	       .map(i->{throw new RuntimeException();}).isFailure());
+	       
+	}
+	@Test
 	public void test2(){
 		assertThat(Try.withCatch(()-> exceptional2())
 						.map(i->i+" woo!")
 						.onFail(System.out::println)
-						.toOptional()
+						
 						.orElse("default"),is("hello world woo!"));
 		
 		
