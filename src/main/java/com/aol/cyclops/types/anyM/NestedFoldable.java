@@ -711,7 +711,7 @@ public interface NestedFoldable<T> {
      * <pre>
      * {@code
      *  //run every 60 seconds
-     *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
+     *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
      *            .map(this::processJob)
      *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
      * }

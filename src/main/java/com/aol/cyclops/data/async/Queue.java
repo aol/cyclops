@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.async.AdaptersModule.ClosingSpliterator;
 import com.aol.cyclops.data.async.AdaptersModule.QueueToBlockingQueueWrapper;
@@ -44,6 +46,38 @@ import lombok.experimental.Wither;
  * Interface specifies a BlockingQueue, but non-BlockingQueues (such as ConcurrentLinkedQueue can be used
  * in conjunction with an implementation of the Continuation interface
  * @see QueueFactories#unboundedNonBlockingQueue() )
+ * 
+ * 
+ * Example transfering data using a Queue between two streams
+ * <pre>
+ * {@code 
+ *  Queue<String> transferQueue = QueueFactories.<String>boundedQueue(4)
+                                                 .build();
+        
+        new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
+                                                      .map(d->"produced on " + Thread.currentThread().getId())
+                                                      .peek(System.out::println)
+                                                      .peek(d->transferQueue.offer(d))
+                                                      .run();
+        
+
+        transferQueue.stream()
+                  .map(e->"Consumed on " + Thread.currentThread().getId())
+                  .futureOperations(Executors.newFixedThreadPool(1))
+                  .forEach(System.out::println);
+        
+        
+        
+        
+        while(true){
+          //  System.out.println(inputQueue.size());
+        }
+ * 
+ * 
+ * }
+ * </pre>
+ * 
+ * 
  * 
  * @author johnmcclean, thomas kountis
  *
