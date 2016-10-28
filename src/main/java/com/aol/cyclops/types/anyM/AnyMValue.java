@@ -37,6 +37,13 @@ import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
+/**
+ * Wrapper around 'Any' scalar 'M'onad
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data types of elements managed by wrapped scalar Monad.
+ */
 public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, ApplicativeFunctor<T>, MonadicValue<T>, Matchable.ValueAndOptionalMatcher<T> {
 
     /**

@@ -57,6 +57,13 @@ import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.val;
 
+/**
+ * Wrapper around 'Any' non-scalar 'M'onad
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data types of elements managed by wrapped non-scalar Monad.
+ */
 public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSequence<T>, ExtendedTraversable<T>, Sequential<T>,
         CyclopsCollectable<T>, FilterableFunctor<T>, ZippingApplicativable<T>, ReactiveStreamsTerminalOperations<T>, Publisher<T> {
 

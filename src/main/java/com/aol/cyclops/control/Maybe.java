@@ -311,8 +311,8 @@ public interface Maybe<T>
 
     /**
      * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#empty/ None types are 
-     * result in the returned Maybe being Maybe.empty / None
+     * By constrast with {@link Maybe#sequenceJust(CollectionX)} if any Maybe types are None / empty 
+     * the return type will be an empty Maybe / None
      * 
      * <pre>
      * {@code

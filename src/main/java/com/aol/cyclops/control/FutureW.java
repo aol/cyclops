@@ -43,6 +43,7 @@ import com.aol.cyclops.types.MonadicValue1;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops.util.CompletableFutures;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.function.Predicates;
 
@@ -318,8 +319,10 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
     }
 
     /**
-     * Use @see {@link FutureW#accumulate(CollectionX, Reducer)}
+     * 
      * Asynchronously accumulate the results only from those Futures which have completed successfully.
+     * Also @see {@link FutureW#accumulate(CollectionX, Reducer)} if you would like a failure to result in a FutureW 
+     * with an error
      * <pre>
      * {@code 
      * 
@@ -336,14 +339,11 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
      * @param reducer Reducer to accumulate results
      * @return FutureW asynchronously populated with the accumulate success operation
      */
-    @Deprecated
     public static <T, R> FutureW<R> accumulateSuccess(final CollectionX<FutureW<T>> fts, final Reducer<R> reducer) {
-        
-        final FutureW<ListX<T>> sequenced = sequence(fts);
-        return sequenced.map(s -> s.mapReduce(reducer));
+       return FutureW.of(CompletableFutures.accumulateSuccess(fts.map(FutureW::getFuture), reducer));  
     }
     /**
-     * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied Reducer {@see com.aol.cyclops.Reducers}
+     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see com.aol.cyclops.Reducers}
      * <pre>
      * {@code 
      * 
@@ -363,50 +363,95 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
     public static <T, R> FutureW<R> accumulate(final CollectionX<FutureW<T>> fts, final Reducer<R> reducer) {
         return sequence(fts).map(s -> s.mapReduce(reducer));
     }
-
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied mapping function to
-     * convert the data from each FutureW before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }.
+     * convert the data from each FutureW before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
-     * FutureW<String> future = FutureW.accumulate(ListX.of(FutureW.ofResult(10),FutureW.ofResult(1)),i->""+i,Semigroups.stringConcat);
+     * FutureW<String> future = FutureW.accumulate(ListX.of(FutureW.ofResult(10),FutureW.ofResult(1)),i->""+i,Monoids.stringConcat);
         //FutureW["101"]
      * }
      * </pre>
      * 
      * @param fts Collection of Futures to accumulate successes
      * @param mapper Mapping function to be applied to the result of each Future
-     * @param reducer Semigroup to combine values from each Future
+     * @param reducer Monoid to combine values from each Future
      * @return FutureW asynchronously populated with the accumulate operation
      */
-    public static <T, R> FutureW<R> accumulate(final CollectionX<FutureW<T>> fts, final Function<? super T, R> mapper, final Semigroup<R> reducer) {
-        return sequence(fts).map(s -> s.map(mapper)
-                                       .reduce(reducer)
-                                       .get());
+    public static <T, R> FutureW<R> accumulateSuccess(final CollectionX<FutureW<T>> fts, final Function<? super T, R> mapper, final Monoid<R> reducer) {
+        return FutureW.of(CompletableFutures.accumulateSuccess(fts.map(FutureW::getFuture),mapper,reducer)); 
     }
 
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully,
-     *  reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }.
+     *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
-     * FutureW<Integer> future =FutureW.accumulate(ListX.of(just,FutureW.ofResult(1)),Semigroups.intSum);
+     * FutureW<Integer> just =FutureW.of(CompletableFuture.completedFuture(10));
+     * FutureW<Integer> future =FutureW.accumulate(Monoids.intSum, ListX.of(just,FutureW.ofResult(1)));
        //FutureW[11]
      * }
      * </pre>
      * 
      * 
      * @param fts Collection of Futures to accumulate successes
-     * @param reducer Semigroup to combine values from each Future
+     * @param reducer Monoid to combine values from each Future
      * @return FutureW asynchronously populated with the accumulate operation
      */
-    public static <T> FutureW<T> accumulate(final CollectionX<FutureW<T>> fts, final Semigroup<T> reducer) {
+    public static <T> FutureW<T> accumulateSuccess(final Monoid<T> reducer,final CollectionX<FutureW<T>> fts ) {
+        return FutureW.of(CompletableFutures.accumulateSuccess(reducer,fts.map(FutureW::getFuture))); 
+    }
+
+    /**
+     * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function to
+     * convert the data from each FutureW before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * A single Failure results in a Failed  Future.
+     * 
+     * <pre>
+     * {@code 
+     * FutureW<String> future = FutureW.accumulate(ListX.of(FutureW.ofResult(10),FutureW.ofResult(1)),i->""+i,Monoids.stringConcat);
+        //FutureW["101"]
+     * }
+     * </pre>
+     * 
+     * @param fts Collection of Futures to accumulate successes
+     * @param mapper Mapping function to be applied to the result of each Future
+     * @param reducer Monoid to combine values from each Future
+     * @return FutureW asynchronously populated with the accumulate operation
+     */
+    public static <T, R> FutureW<R> accumulate(final CollectionX<FutureW<T>> fts, final Function<? super T, R> mapper, final Monoid<R> reducer) {
+        return sequence(fts).map(s -> s.map(mapper)
+                                       .reduce(reducer)
+                                       );
+    }
+
+    /**
+     * Asynchronously accumulate the results only from the provided Futures,
+     *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }
+     * 
+     * A single Failure results in a Failed  Future.
+     * 
+     * <pre>
+     * {@code 
+     * FutureW<Integer> future =FutureW.accumulate(Monoids.intSum,ListX.of(just,FutureW.ofResult(1)));
+       //FutureW[11]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fts Collection of Futures to accumulate successes
+     * @param reducer Monoid to combine values from each Future
+     * @return FutureW asynchronously populated with the accumulate operation
+     */
+    public static <T> FutureW<T> accumulate(final Monoid<T> reducer,final CollectionX<FutureW<T>> fts) {
         return sequence(fts).map(s -> s.reduce(reducer)
-                                       .get());
+                                      );
     }
 
     /**

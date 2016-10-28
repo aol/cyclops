@@ -330,6 +330,12 @@ public interface Matchable<TYPE> {
                                                             .allMatch(p -> p.test(in)));
     }
 
+    /**
+     * Create an Iterable of Predicates that check for equality against the provided values
+     * 
+     * @param t1 Values to create equality check predicates for
+     * @return Iterable of Predicates that check equality against the provided array
+     */
     public static <T1> Iterable<Predicate<? super T1>> whenValues(final T1... t1){
 
         return (List) ReactiveSeq.of(t1)
@@ -452,12 +458,55 @@ public interface Matchable<TYPE> {
     }
 
     //when arity 3
+    /**
+     * Matchable DSL operator for matching against three values 
+     * <pre>
+     * {@code 
+     * 
+     *  Predicates.decons(when(10,"hello","my city"))
+     *            .test(new Address(10,"hello","my city").match()));
+     *  //true          
+       
+       String result =  new Customer("test",new Address(10,"hello","my city"))
+                                .match()
+                                .on$_2()
+                                .matches(c->c.is(when(decons(when(10,"hello","my city"))),then("hello")), otherwise("miss")).get();
+      
+        //"hello")
+     * 
+     * }
+     * </pre>
+     * 
+     * @param t1 1st value to match against
+     * @param t2 2nd value to match against
+     * @param t3 3rd value to match against
+     * @return Pattern Matcher for further matching
+     */
     public static <T1, T2, T3> MTuple3<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>> when(final T1 t1, final T2 t2,
             final T3 t3) {
 
         return () -> Tuple.tuple(test -> Objects.equals(test, t1), test -> Objects.equals(test, t2), test -> Objects.equals(test, t3));
     }
 
+    /**
+     * Matchable DSL operator for matching against three values with predicates
+     * <pre>
+     * {@code 
+     *    Matchables.match3(100,2,1000)
+                    .matches(c->c.is(when(Predicates.greaterThan(50),Predicates.lessThan(10),Predicates.greaterThan(500)), ()->"large and small and huge"), ()->"not large and small")
+                    .get()
+                
+          //"large and small and huge"
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param t1 1st value to match against
+     * @param t2 2nd value to match against
+     * @param t3 3rd value to match against
+     * @return Pattern Matcher for further matching
+     */
     public static <T1, T2, T3> MTuple3<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>> when(final Predicate<? super T1> t1,
             final Predicate<? super T2> t2, final Predicate<? super T3> t3) {
 
@@ -465,6 +514,29 @@ public interface Matchable<TYPE> {
     }
 
     //when arity 4
+    /**
+     * Matchable DSL operator for matching against four values
+     * 
+     * <pre>
+     * {@code 
+     * Eval<String> url = Matchables.url(new URL("http://www.aol.com/path?q=hello"))
+                                     .on$12_45()
+                                     .matches(c->c.is(when("http","www.aol.com","/path","q=hello"), then("correct")),otherwise("miss"));
+        
+        //Eval.now("correct")
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * 
+     * @param t1 1st value to match against
+     * @param t2 2nd value to match against
+     * @param t3 3rd value to match against
+     * @param t4 4th value to match against
+     * @return Pattern Matcher for further matching
+     */
     public static <T1, T2, T3, T4> MTuple4<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>> when(
             final T1 t1, final T2 t2, final T3 t3, final T4 t4) {
 
@@ -472,6 +544,27 @@ public interface Matchable<TYPE> {
                                  test -> Objects.equals(test, t4));
     }
 
+    /**
+     * Matchable DSL operator for matching against four values with predicates
+     * 
+     * <pre>
+     * {@code 
+     * Matchables.url(new URL("http://www.aol.com/path?q=hello"))
+                 .on$12_45()
+                 .matches(c->c.is(when(eq("http"),in("www.aol.com","aol.com"),any(),not(eq("q=hello!"))), then("correct")),
+                          otherwise("miss"));
+   
+        //Eval["miss"]
+     * 
+     * }
+     * </pre>
+     * 
+     * @param t1 1st value to match against
+     * @param t2 2nd value to match against
+     * @param t3 3rd value to match against
+     * @param t4 4th value to match against
+     * @return  Pattern Matcher for further matching
+     */
     public static <T1, T2, T3, T4> MTuple4<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>> when(
             final Predicate<? super T1> t1, final Predicate<? super T2> t2, final Predicate<? super T3> t3, final Predicate<? super T4> t4) {
 
@@ -479,6 +572,26 @@ public interface Matchable<TYPE> {
     }
 
     //when arity 5
+    /**
+     * Matchable DSL operator for matching against five values with predicates
+     * 
+     * <pre>
+     * {@code 
+     *   String result =   Matchables.chars("hello,world")
+                                     .matches(c->c.has(when('h','e','l','l','o'), then("startsWith")),
+                                               otherwise("miss"))
+                                     .get();
+      
+         Eval["startsWith"]
+     * }
+     * </pre>
+     * @param t1 1st value to match against
+     * @param t2 2nd value to match against
+     * @param t3 3rd value to match against
+     * @param t4 4th value to match against
+     * @param t5 5th value to match against
+     * @return Pattern Matcher for further matching
+     */
     public static <T1, T2, T3, T4, T5> MTuple5<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>, Predicate<? super T5>> when(
             final T1 t1, final T2 t2, final T3 t3, final T4 t4, final T5 t5) {
 
@@ -486,6 +599,27 @@ public interface Matchable<TYPE> {
                                  test -> Objects.equals(test, t4), test -> Objects.equals(test, t5));
     }
 
+    /**
+     * Matchable DSL operator for matching against five values with predicates
+     * 
+     * <pre>
+     * {@code 
+     *   String result =   Matchables.chars("hello,world")
+                                     .matches(c->c.has(when(eq('h'),not(eq('e')),eq('l'),eq('l'),eq('o')), then("startsWith")),
+                                               otherwise("miss"))
+                                     .get();
+      
+         Eval["miss"]
+     * } 
+     * 
+     * 
+     * @param t1 1st value to match against
+     * @param t2 2nd value to match against
+     * @param t3 3rd value to match against
+     * @param t4 4th value to match against
+     * @param t5 5th value to match against
+     * @return Pattern Matcher for further matching
+     */
     public static <T1, T2, T3, T4, T5> MTuple5<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>, Predicate<? super T5>> when(
             final Predicate<? super T1> t1, final Predicate<? super T2> t2, final Predicate<? super T3> t3, final Predicate<? super T4> t4,
             final Predicate<? super T5> t5) {
@@ -2043,11 +2177,41 @@ public interface Matchable<TYPE> {
     }
 
     @AllArgsConstructor(access = AccessLevel.PUBLIC)
+    /**
+     * Class used to build a pattern matching class against a single value
+     * 
+     * @author johnmcclean
+     *
+     * @param <T> Input type to match against
+     * @param <R> Return type if matched
+     */
     public static class CheckValue1<T, R> {
         private final Class<T> clazz;
         protected final MatchableCase<R> simplerCase;
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
+        /**
+         * Check that the provided Tuple-Predicate (use {@link Matchable#when(Predicate)} or {@link Matchable#when(Object)} to create it) matches this value
+         * 
+         * 
+         * <pre>
+         * {@code 
+         *  Eval<Integer> result = Matchables.future(CompletableFuture.completedFuture(10))
+                                         .matches(c-> 
+                                                     c.is( when(some(10)), then(20)),  //success
+                                                      
+                                                     c->c.is(when(instanceOf(RuntimeException.class)), then(2)), //failure
+                                                      
+                                                     otherwise(3) //no match
+                                                 );
+        
+             //Eval.now(20);
+         * }
+         * </pre>
+         * @param when Tuple containing a predicate to match against this element
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         public final CheckValue1<T, R> is(final MTuple1<Predicate<? super T>> when, final Supplier<? extends R> then) {
             return isWhere(then, when.getMatchable().v1);
         }
@@ -2076,17 +2240,42 @@ public interface Matchable<TYPE> {
             return simplerCase.getPatternMatcher();
         }
     }
-
+    /**
+     * Class used to build a pattern matching class against two values
+     * 
+     * @author johnmcclean
+     *
+     * @param <T> Input type to match against
+     * @param <R> Return type if matched
+     */
     @AllArgsConstructor(access = AccessLevel.PUBLIC)
     public static class CheckValue2<T1, T2, R> {
         private final Class<Tuple2<T1, T2>> clazz;
         protected final MatchableCase<R> simplerCase;
-
+        /**
+         * Check that the provided Tuple-of-Predicates (use {@link Matchable#when(Predicate, Predicate)} or {@link Matchable#when(Object,Object)} to create it) matches the first value
+         * of our target values to match on
+         * <pre>
+         * {@code 
+           String result = Matchables.lines(new File(file))
+                                  .on$12___()
+                                  .matches(c->c.is(when("hello","world"),then("correct")), otherwise("miss")).get();
+        
+            Eval["correct"]
+        
+         * 
+         * }
+         * </pre>
+         * @param when  Tuple containing a predicates to match against the first 2 elements / fields
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public final CheckValue2<T1, T2, R> is(final MTuple2<Predicate<? super T1>, Predicate<? super T2>> when, final Supplier<? extends R> then) {
             return isWhere(then, when.getMatchable().v1, when.getMatchable().v2);
         }
 
+        
         @SuppressWarnings({ "rawtypes", "unchecked" })
         private final CheckValue2<T1, T2, R> isWhere(final Supplier<? extends R> result, final Predicate<? super T1> value1,
                 final Predicate<? super T2> value2) {
@@ -2129,12 +2318,36 @@ public interface Matchable<TYPE> {
             return simplerCase.getPatternMatcher();
         }
     }
-
+    /**
+     * Class used to build a pattern matching class against three values
+     * 
+     * @author johnmcclean
+     *
+     * @param <T> Input type to match against
+     * @param <R> Return type if matched
+     */
     @AllArgsConstructor(access = AccessLevel.PUBLIC)
     public static class CheckValue3<T1, T2, T3, R> {
         private final Class<Tuple3<T1, T2, T3>> clazz;
         protected final MatchableCase<R> simplerCase;
-
+        /**
+         *  Check that the provided Tuple-of-Predicates (use {@link Matchable#when(Predicate, Predicate, Predicate)} or {@link Matchable#when(Object,Object,Object)} to create it) 
+         *  matches the first 3 values  of our target values to match on
+         * 
+         * <pre>
+         * {@code 
+         * Matchables.match3(100,2,1000)
+                     .matches(c->c.is(when(Predicates.greaterThan(50),Predicates.lessThan(10),Predicates.greaterThan(500)), ()->"large and small and huge"), ()->"not large and small")
+                     .get(),
+           //"large and small and huge"
+         * 
+         * }
+         * </pre>
+         * 
+         * @param when Tuple containing a predicates to match against the first 3 elements / fields
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public final CheckValue3<T1, T2, T3, R> is(final MTuple3<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>> when,
                 final Supplier<? extends R> then) {
@@ -2188,12 +2401,40 @@ public interface Matchable<TYPE> {
             return simplerCase.getPatternMatcher();
         }
     }
-
+    /**
+     * Class used to build a pattern matching class against four values
+     * 
+     * @author johnmcclean
+     *
+     * @param <T> Input type to match against
+     * @param <R> Return type if matched
+     */
     @AllArgsConstructor(access = AccessLevel.PUBLIC)
     public static class CheckValue4<T1, T2, T3, T4, R> {
         private final Class<Tuple4<T1, T2, T3, T4>> clazz;
         protected final MatchableCase<R> simplerCase;
 
+        /**
+         *  Check that the provided Tuple-of-Predicates (use {@link Matchable#when(Predicate, Predicate, Predicate, Predicate)} or {@link Matchable#when(Object,Object,Object, Object)} 
+         *  to create it)  matches the first 4 values  of our target values to match on
+         * 
+         * <pre>
+         * {@code 
+         *  Matchables.match4(100,2,1000,1)
+                      .matches(c->c.is(when(Predicates.greaterThan(50),
+                                       Predicates.lessThan(10),
+                                       Predicates.greaterThan(500),
+                                       Predicates.lessThan(2)), ()->"large and small and huge and tiny"), ()->"not large and small")
+                      .get()
+             
+            Eval["large and small and huge and tiny"]
+         * 
+         * }
+         * </pre>
+         * @param when Tuple containing a predicates to match against the first 4 elements / fields
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public final CheckValue4<T1, T2, T3, T4, R> is(
                 final MTuple4<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>> when,
@@ -2250,12 +2491,26 @@ public interface Matchable<TYPE> {
             return simplerCase.getPatternMatcher();
         }
     }
-
+    /**
+     * Class used to build a pattern matching class against a five values
+     * 
+     * @author johnmcclean
+     *
+     * @param <T> Input type to match against
+     * @param <R> Return type if matched
+     */
     @AllArgsConstructor(access = AccessLevel.PUBLIC)
     public static class CheckValue5<T1, T2, T3, T4, T5, R> {
         private final Class<Tuple5<T1, T2, T3, T4, T5>> clazz;
         protected final MatchableCase<R> simplerCase;
-
+        /**
+         * Check that the provided Tuple-of-Predicates (use {@link Matchable#when(Predicate, Predicate, Predicate, Predicate, Predicate)} or {@link Matchable#when(Object,Object,Object, Object, Object)} 
+         * to create it)  matches the first 5 values  of our target values to match on
+         * 
+         * @param when  Tuple containing a predicates to match against the first 5 elements / fields
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public final CheckValue5<T1, T2, T3, T4, T5, R> is(
                 final MTuple5<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>, Predicate<? super T5>> when,
@@ -2316,33 +2571,106 @@ public interface Matchable<TYPE> {
         }
     }
 
+    /**
+     * Class used to build a pattern matching class against multiple values
+     * 
+     * @author johnmcclean
+     *
+     * @param <T> Input type to match against
+     * @param <R> Return type if matched
+     */
     @AllArgsConstructor(access = AccessLevel.PUBLIC)
     public static class CheckValues<T, R> {
         private final Class<T> clazz;
         protected final MatchableCase<R> simplerCase;
 
+        /**
+         * Check that each Predicate executed in order holds true against each element / field in order
+         * If a match is found the supplier is executed and returned
+         * 
+         * @param when Predicates to test against our dataset
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         public final CheckValues<T, R> is(final Iterable<Predicate<? super T>> when, final Supplier<? extends R> then) {
             return isWhere(then, when);
         }
 
+        /**
+         * Check that the provided Tuple-Predicate (use {@link Matchable#when(Predicate)} or {@link Matchable#when(Object)} to create it) matches the first value
+         * of our target values to match on
+         * 
+         * <pre>
+         * {@code 
+         *  Matchables.listOfValues(1,2,3)
+                      .matches(c->c.is(when((Object i)->(i instanceof Integer)),then(2)),
+                               otherwise(-1)),
+            //Eval[2]
+         * }
+         * </pre>
+         * @param when Tuple containing a predicate to match against our first element / field
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         public final CheckValues<T, R> is(final MTuple1<Predicate<? super T>> when, final Supplier<? extends R> then) {
             return isWhere(then, Arrays.asList(when.getMatchable().v1));
         }
 
+        /**
+         * Check that the provided Tuple-of-Predicates (use {@link Matchable#when(Predicate, Predicate)} or {@link Matchable#when(Object,Object)} to create it) 
+         * matches the first two values of our target values to match on
+         * <pre>
+         * {@code 
+         * Eval<String> result = Matchables.listOfValues(1,new MyCase(4,5,6))
+                                .matches(c->c.is(when(__,Predicates.has(4,5,6)),then("rec")),
+                                         otherwise("n/a"));
+        
+           Eval["rec"]
+         * 
+         * }
+         * </pre>
+         * @param when  Tuple containing a predicates to match against the first 2 elements / fields
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         public final CheckValues<T, R> is(final MTuple2<Predicate<? super T>, Predicate<? super T>> when, final Supplier<? extends R> then) {
             return isWhere(then, Arrays.asList(when.getMatchable().v1, when.getMatchable().v2));
         }
 
+        /**
+         *  Check that the provided Tuple-of-Predicates (use {@link Matchable#when(Predicate, Predicate, Predicate)} or {@link Matchable#when(Object,Object,Object)} to create it) 
+         *  matches the first 3 values  of our target values to match on
+         * 
+         * @param when Tuple containing a predicates to match against the first 3 elements / fields
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         public final CheckValues<T, R> is(final MTuple3<Predicate<? super T>, Predicate<? super T>, Predicate<? super T>> when,
                 final Supplier<? extends R> then) {
             return isWhere(then, Arrays.asList(when.getMatchable().v1, when.getMatchable().v2, when.getMatchable().v3));
         }
 
+        /**
+         *  Check that the provided Tuple-of-Predicates (use {@link Matchable#when(Predicate, Predicate, Predicate, Predicate)} or {@link Matchable#when(Object,Object,Object, Object)} 
+         *  to create it)  matches the first 4 values  of our target values to match on
+         * 
+         * @param when Tuple containing a predicates to match against the first 4 elements / fields
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         public final CheckValues<T, R> is(final MTuple4<Predicate<? super T>, Predicate<? super T>, Predicate<? super T>, Predicate<? super T>> when,
                 final Supplier<? extends R> then) {
             return isWhere(then, Arrays.asList(when.getMatchable().v1, when.getMatchable().v2, when.getMatchable().v3, when.getMatchable().v4));
         }
 
+        /**
+         * Check that the provided Tuple-of-Predicates (use {@link Matchable#when(Predicate, Predicate, Predicate, Predicate, Predicate)} or {@link Matchable#when(Object,Object,Object, Object, Object)} 
+         * to create it)  matches the first 5 values  of our target values to match on
+         * 
+         * @param when  Tuple containing a predicates to match against the first 5 elements / fields
+         * @param then Supplier to execute provide return value if match found
+         * @return Case builder, allowing more cases to be chained
+         */
         public final CheckValues<T, R> is(
                 final MTuple5<Predicate<? super T>, Predicate<? super T>, Predicate<? super T>, Predicate<? super T>, Predicate<? super T>> when,
                 final Supplier<? extends R> then) {

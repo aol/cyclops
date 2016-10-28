@@ -7,6 +7,7 @@ import org.jooq.lambda.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Semigroup;
+import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
@@ -43,6 +44,20 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
 
     /**
      * Lazily combine this ApplicativeFunctor with the supplied value via the supplied BiFunction
+     * 
+     * Example
+     * <pre>
+     * {@code 
+     *   Maybe<Integer> some = Maybe.just(10);
+     *   just.combine(Eval.now(20), this::add);
+     *   //Some[30]
+     *   
+     *   Maybe<Integer> none = Maybe.none();
+     *   none.combine(Eval.now(20), this::add);
+     *   //None
+     *   
+     * }
+     * </pre>
      * 
      * @param app Value to combine with this one.
      * @param fn BiFunction to combine them

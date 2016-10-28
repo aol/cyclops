@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Monoids;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.LazyImmutable;
@@ -216,9 +217,14 @@ public class FutureWTest {
         assertThat(maybes.isCompletedExceptionally(),equalTo(true));
  
     }
-
 	@Test
-	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
+    public void testAccumulateSuccessSemigroup() {
+        FutureW<Integer> maybes =FutureW.accumulateSuccess(Monoids.intCount,ListX.of(just,none,FutureW.ofResult(1)));
+        
+        assertThat(maybes.get(),equalTo(2));
+    }
+	@Test
+	public void testAccumulateSuccess() {
 		FutureW<PSetX<Integer>> maybes =FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofResult(1)),Reducers.toPSetX());
 		
 		assertThat(maybes.get(),equalTo(PSetX.of(10,1)));
@@ -229,17 +235,31 @@ public class FutureWTest {
         System.out.println("not blocked");
        
     }
-
+	@Test
+    public void testAccumulateNoValue() {
+        FutureW<String> maybes = FutureW.accumulate(ListX.of(),i->""+i,Monoids.stringConcat);
+        assertThat(maybes.get(),equalTo(""));
+    }
+	@Test
+    public void testAccumulateOneValue() {
+        FutureW<String> maybes = FutureW.accumulate(ListX.of(just),i->""+i,Monoids.stringConcat);
+        assertThat(maybes.get(),equalTo("10"));
+    }
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		FutureW<String> maybes = FutureW.accumulate(ListX.of(just,FutureW.ofResult(1)),i->""+i,Semigroups.stringConcat);
+		FutureW<String> maybes = FutureW.accumulate(ListX.of(just,FutureW.ofResult(1)),i->""+i,Monoids.stringConcat);
 		assertThat(maybes.get(),equalTo("101"));
 	}
 	@Test
 	public void testAccumulateJust() {
-		FutureW<Integer> maybes =FutureW.accumulate(ListX.of(just,FutureW.ofResult(1)),Semigroups.intSum);
+		FutureW<Integer> maybes =FutureW.accumulate(Monoids.intSum,ListX.of(just,FutureW.ofResult(1)));
 		assertThat(maybes.get(),equalTo(11));
 	}
+	@Test
+    public void testAccumulateError() {
+        FutureW<Integer> maybes =FutureW.accumulate(Monoids.intSum,ListX.of(none,FutureW.ofResult(1)));
+        assertTrue(maybes.isFailed());
+    }
 	
 
 	@Test
