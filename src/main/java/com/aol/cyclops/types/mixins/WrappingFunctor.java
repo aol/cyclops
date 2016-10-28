@@ -17,7 +17,7 @@ import com.aol.cyclops.util.ExceptionSoftener;
  * 
  * @author johnmcclean
  *
- * @param <T>
+ * @param <T> Data type of elements transformed by wrapped functor
  */
 
 public interface WrappingFunctor<T> extends Functor<T> {
@@ -72,6 +72,9 @@ public interface WrappingFunctor<T> extends Functor<T> {
 
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#peek(java.util.function.Consumer)
+     */
     @Override
     default WrappingFunctor<T> peek(final Consumer<? super T> c) {
         return map(input -> {
@@ -80,6 +83,9 @@ public interface WrappingFunctor<T> extends Functor<T> {
         });
     }
 
+    /**
+     * @return Unwrapped functor
+     */
     default <X> X unwrap() {
         if (getFunctor() != this && getFunctor() instanceof Functor)
             return (X) ((WrappingFunctor) getFunctor()).unwrap();

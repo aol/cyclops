@@ -19,6 +19,105 @@ import lombok.AllArgsConstructor;
 /**
  * Create Java 8 Streams that data can be pushed into
  * 
+ * Pushing data into a Java 8 Stream
+ * 
+ * <pre>
+ * {@code 
+ * PushableStream<Integer> pushable = StreamSource.ofUnbounded()
+                                                        .stream();
+   pushable.getInput()
+           .offer(10);
+    
+    Stream<Integer> stream = pushable.getStream();
+    stream.forEach(System.out::println);
+    
+    //print 10
+     
+    pushable.getInput()
+           .offer(20);
+           
+    //print 20       
+       
+                
+    pushable.getInput()
+            .close();            
+ * 
+ * 
+ * }
+ * </pre>
+ * 
+ * 
+ * 
+ * Pushing data into a FutureStream
+ * 
+ * <pre>
+ * {@code 
+ * PushableLazyFutureStream<Integer> pushable = StreamSource.ofUnbounded()
+                                                            .futureStream(new LazyReact());
+   pushable.getInput()
+           .offer(100);
+   
+   //on another thread
+   pushable.getStream()
+           .forEach(this:process);
+               
+                
+   //close input into Stream -         
+   pushable.getInput().close();             
+ * 
+ * 
+ * }
+ * </pre>
+ * 
+ * Multiple Streams reading the same data across threads
+ * 
+ * <pre>
+ * {@code 
+ *   MultipleStreamSource<Integer> multi = StreamSource.ofMultiple();
+     multi.getInput()
+          .offer(100);
+        
+    //example on separate threads
+    
+     //thread 1
+    LazyFutureStream<Integer> futureStream = multi.futureStream(new LazyReact());
+    futureStream.forEach(System.out::println);
+    
+    //print 100
+    
+    //thread 2
+    ReactiveSeq<Integer> seq = multi.reactiveSeq();
+    seq.forEach(System.out::println);
+   
+    //print 100
+     
+    //thread 3
+    Stream<Integer> stream = multi.stream();
+    stream.forEach(System.out::println);
+   
+    //print 100    
+       
+    multi.getInput()
+         .offer(200);  
+         
+    //thread 1 
+    //print 200  
+    
+    //thread 2 
+    //print 200 
+    
+    //thread 3 
+    //print 200 
+     
+    multi.getInput()
+         .close();
+        
+        
+ * 
+ * 
+ * }
+ * </pre>
+ * 
  * @author johnmcclean
  *
  */
@@ -30,6 +129,55 @@ public class StreamSource {
     private final boolean backPressureOn;
 
     /**
+     * Connect multiple Streams to a Pushable datasource, each Stream will recieve the same
+     * data.
+     * <pre>
+     * {@code 
+     * 
+ 
+     *   MultipleStreamSource<Integer> multi = StreamSource.ofMultiple();
+         multi.getInput()
+              .offer(100);
+        
+        //example on separate threads
+    
+         //thread 1
+        LazyFutureStream<Integer> futureStream = multi.futureStream(new LazyReact());
+        futureStream.forEach(System.out::println);
+        
+        //print 100
+        
+        //thread 2
+        ReactiveSeq<Integer> seq = multi.reactiveSeq();
+        seq.forEach(System.out::println);
+       
+        //print 100
+         
+        //thread 3
+        Stream<Integer> stream = multi.stream();
+        stream.forEach(System.out::println);
+       
+        //print 100    
+           
+        multi.getInput()
+             .offer(200);  
+             
+        //thread 1 
+        //print 200  
+        
+        //thread 2 
+        //print 200 
+        
+        //thread 3 
+        //print 200 
+         
+        multi.getInput()
+             .close();
+
+     * 
+     * }
+     * </pre>
+     * 
      * @return a builder that will use Topics to allow multiple Streams from the same data
      */
     public static <T> MultipleStreamSource<T> ofMultiple() {
@@ -39,6 +187,64 @@ public class StreamSource {
     }
 
     /**
+     * Connect multiple Streams to a Pushable datasource, each Stream will recieve the same
+     * data. In this backpresure is applied by using a LinkedBlockingQueue. @see com.aol.cyclops.control.StreamSource#ofMultiple(QueueFactory)
+     * For more granular management of Adapter based backpressure. Adapters can be backed by non-blocking data structures and different backpressure strategies applied
+     * <pre>
+     * {@code 
+     * 
+ 
+     *   MultipleStreamSource<Integer> multi = StreamSource.ofMultiple(2);
+         multi.getInput()
+              .offer(100);
+        
+        //example on separate threads
+    
+         //thread 1
+        LazyFutureStream<Integer> futureStream = multi.futureStream(new LazyReact());
+        futureStream.map(this::slowProcess)
+                    .forEach(System.out::println);
+        
+        //print 100
+        
+        //thread 2
+        ReactiveSeq<Integer> seq = multi.reactiveSeq();
+        seq.forEach(System.out::println);
+       
+        //print 100
+         
+        //thread 3
+        Stream<Integer> stream = multi.stream();
+        stream.forEach(System.out::println);
+       
+        //print 100    
+           
+        multi.getInput()
+             .offer(200);  
+             
+        //thread 1 
+        //print 200  
+        
+        //thread 2 
+        //print 200 
+        
+        //thread 3 
+        //print 200 
+         
+        multi.getInput()
+             .offer(300);
+        multi.getInput()
+             .offer(400); 
+        multi.getInput()
+             .offer(500);    //blocked as backpressure applied        
+        multi.getInput()
+             .close();
+
+     * 
+     * }
+     * </pre>
+     * @param backPressureAfter Excess number of produced records over consumed (by all connected Streams
+     * after which backPressure will be applied).
      * @return a builder that will use Topics to allow multiple Streams from the same data
      */
     public static <T> MultipleStreamSource<T> ofMultiple(final int backPressureAfter) {
@@ -48,6 +254,25 @@ public class StreamSource {
     }
 
     /**
+     * Construct a StreamSource that supports multiple readers of the same data backed by a Queue created
+     * from the supplied QueueFactory
+     * 
+     * @see com.aol.cyclops.data.async.QueueFactories for Factory creation options and various backpressure strategies
+     * <pre>
+     * {@code 
+     *  MultipleStreamSource<Integer> multi = StreamSource
+                                                .ofMultiple(QueueFactories.boundedQueue(100));
+        LazyFutureStream<Integer> pushable = multi.futureStream(new LazyReact());
+        ReactiveSeq<Integer> seq = multi.reactiveSeq();
+        multi.getInput().offer(100);
+        multi.getInput().close();
+        pushable.collect(Collectors.toList()); //[100]
+        seq.collect(Collectors.toList()); //[100]     
+     * 
+     * }
+     * </pre>
+     * 
+     * 
      * @return a builder that will use Topics to allow multiple Streams from the same data
      */
     public static <T> MultipleStreamSource<T> ofMultiple(final QueueFactory<?> q) {
@@ -135,7 +360,7 @@ public class StreamSource {
     public <T> PushableStream<T> stream() {
         final Queue<T> q = createQueue();
         return new PushableStream<T>(
-                                     q, q.stream());
+                                     q, q.jdkStream());
 
     }
 

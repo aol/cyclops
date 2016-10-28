@@ -1,5 +1,12 @@
 package com.aol.cyclops.types.mixins;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+import java.util.Map;
+
+import com.aol.cyclops.lambda.mixins.CoerceToMapTest.MyEntity;
+
 import lombok.AllArgsConstructor;
 
 /**
@@ -14,6 +21,17 @@ public class AsMappable {
     /**
      * Convert supplied object to a Mappable instance.
      * Mappable will convert the (non-static) fields of the supplied object into a map
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  Map<String,?> map = AsMappable.asMappable(new MyEntity(10,"hello")).toMap();
+        
+        assertThat(map.get("num"),equalTo(10));
+        assertThat(map.get("str"),equalTo("hello"));
+     * 
+     * }
+     * </pre>
      * 
      * 
      * @param toCoerce Object to convert to a Mappable

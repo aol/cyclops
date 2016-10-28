@@ -1,5 +1,9 @@
 package com.aol.cyclops.control;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -14,6 +18,7 @@ import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.async.Adapter;
+import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
@@ -25,12 +30,49 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * Store for Pipes for cross-thread communication
+ * Pipes : Stores and manages cyclops-react Adapters for cross-thread communication
  * 
  * Connected Streams will not be able to complete collect or reduce style methods unless the underlying Adapter for data transfer is closed.
  * I.e. connected Streams remain connected until either the Adapter is closed, or they disconnect (due to a limit for example).
  * 
+ * <pre>
+ * {@close 
+ * 
+ *      //create a Pipes instance to manage inter-thread communication
+ *      Pipes<String, Integer> bus = Pipes.of();
+ *      
+ *      //register a non-blocking queue for data transfer
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        //publish data to transfer queue
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        //close transfer queue - connected Streams will disconnect once all
+        //data transferred
+        bus.close("reactor");
+        
+        
+        //on another thread
+       
+       //connect to our transfer queue
+       LazyFutureStream<Integer> futureStream =  bus.futureStream("reactor", new LazyReact(10,10)).get();
+       
+       
+       //read data and print it out the console.
+       futureStream.map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+                   .forEach(System.out::println);
+ * 
+ * }
+ * </pre>
+ * 
+ * @see com.aol.cyclops.data.async.Adapter
+ * 
  * @author johnmcclean
+ * 
+ * 
+ * @param <K> Key type
+ * @param <V> Value type transferred via managed Adapters
  *
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -39,14 +81,14 @@ public class Pipes<K, V> {
     private final ConcurrentMap<K, Adapter<V>> registered = new ConcurrentHashMap<>();
 
     /**
-     * @return Size of registered pipes
+     * @return Numer of registered adapters
      */
     public int size() {
         return registered.size();
     }
 
     /**
-     * @return Persistent map of all registered pipes
+     * @return Persistent map of all registered adapters
      */
     public PMapX<K, Adapter<V>> registered() {
         return PMapX.fromMap(registered);
@@ -59,6 +101,12 @@ public class Pipes<K, V> {
         return new Pipes<>();
     }
 
+    /**
+     * Construct a Pipes instance to manage a predefined Map of Adapaters
+     * 
+     * @param registered Adapters to register
+     * @return Pipes instance to manage provided Adapters
+     */
     public static <K, V> Pipes<K, V> of(final Map<K, Adapter<V>> registered) {
         Objects.requireNonNull(registered);
         final Pipes<K, V> pipes = new Pipes<>();
@@ -66,12 +114,48 @@ public class Pipes<K, V> {
         return pipes;
     }
 
+    /**
+     * Push a single value synchronously into the Adapter identified by the supplied Key,
+     * if it exists
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *     Pipes<String,String> pipes = Pipes.of();
+     *     pipes.register("hello", new Queue<String>());
+           
+           pipes.push("hello", "world");
+            
+           //on another thread 
+           pipes.reactiveSeq("hello")
+                .get()
+                .forEach(System.out::println);
+     * 
+     * }
+     * </pre>
+     * 
+     * @param key Adapter key
+     * @param value Value to push to Adapter
+     */
     public void push(final K key, final V value) {
         Optional.ofNullable(registered.get(key))
                 .ifPresent(a -> a.offer(value));
     }
 
     /**
+     * Get the Adapter identified by the specified key
+     * 
+     * <pre>
+     * {@code 
+     *    //close an adapter
+     *   pipes.get("adapter-key")
+     *        .map(a->a.close())
+     *        .orElse(false); //Maybe is lazy - trigger action
+     *   
+     * }
+     * </pre>
+     * 
+     * 
      * @param key : Adapter identifier
      * @return selected Queue
      */
@@ -81,6 +165,37 @@ public class Pipes<K, V> {
     }
 
     /**
+     * Create a FutureStream using default Parallelism from the Adapter
+     * identified by the provided key
+     * 
+     * @see com.aol.cyclops.control.LazyReact#parallelBuilder()
+     * 
+     * <pre>
+     * {@code 
+     *  Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        bus.close("reactor");
+        
+        
+        //on another thread
+       List<String> res =  bus.futureStream("reactor")
+                              .get()
+                              .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+                               .toList();
+       System.out.println(res);
+       
+        assertThat(res.size(),equalTo(3));
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * 
      * @param key : Adapter identifier
      * @return LazyFutureStream from selected Queue
      */
@@ -90,16 +205,65 @@ public class Pipes<K, V> {
     }
 
     /**
+     * Create a FutureStream using the provided LazyReact futureStream builder
+     * from the Adapter identified by the provided Key
+     * 
+     * <pre>
+     * {@code 
+     *  Pipes<String, Integer> bus = Pipes.of();
+        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
+                                              .build());
+        
+        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
+        
+        bus.close("reactor");
+        
+        
+        //on another thread
+       List<String> res =  bus.futureStream("reactor", new LazyReact(10,10))
+                              .get()
+                              .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+                               .toList();
+       System.out.println(res);
+       
+        assertThat(res.size(),equalTo(3));
+     * 
+     * 
+     * }
+     * </pre> 
+     * 
+     * 
      * @param key : Adapter identifier
+     * @param builder LazyReact futureStream builder
      * @return LazyFutureStream from selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<LazyFutureStream<V>> futureStream(final K key, final LazyReact reactor) {
+    public Maybe<LazyFutureStream<V>> futureStream(final K key, final LazyReact builder) {
 
-        return get(key).map(a -> a.futureStream(reactor));
+        return get(key).map(a -> a.futureStream(builder));
     }
 
     /**
+     * Create a ReactiveSeq from the Adapter identified by the provided Key
+     * 
+     * <pre>
+     * {@code 
+     *  Queue<String> q = new Queue<>();
+        pipes.register("data-queue", q);
+        pipes.push("data-queue", "world");
+        
+        //on a separate thread
+        ReactiveSeq<String> stream = pipes.reactiveSeq("data-queue");
+        stream.forEach(System.out::println);
+        //"world"
+       
+      
+        
+     * 
+     * }
+     * </pre>
+     * 
+     * 
      * @param key : Adapter identifier
      * @return {@link ReactiveSeq} from selected Queue
      */
@@ -108,6 +272,32 @@ public class Pipes<K, V> {
         return get(key).map(a -> a.stream());
     }
 
+    /**
+     * Extract the next x values from the Adapter identified by the provided Key
+     * If the Adapter doesn't exist an empty List is returned
+     * 
+     * <pre>
+     * {@code 
+     *  Queue<String> q = new Queue<>();
+        pipes.register("hello", q);
+        pipes.push("hello", "world");
+        pipes.push("hello", "world2");
+        pipes.push("hello", "world3");
+        pipes.push("hello", "world4");
+        
+        //on a separate thread
+        pipes.xValues("hello",2) //ListX.of("world","world2")
+        pipes.xValues("hello",2) //ListX.of("world3","world4")
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param key : Adapter identifier
+     * @param x Number of elements to return
+     * @return List of the next x elements from the Adapter identified by the provided key
+     */
     public ListX<V> xValues(final K key, final long x) {
         final SeqSubscriber<V> sub = SeqSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
@@ -120,8 +310,9 @@ public class Pipes<K, V> {
 
     /**
      * Extract one value from the selected pipe, if it exists
+     * 
      * @param key : Adapter identifier
-     * @return LazyFutureStream from selected Queue
+     * @return Maybe containing next value from the Adapter identified by the provided key
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Maybe<V> oneValue(final K key) {
@@ -131,6 +322,26 @@ public class Pipes<K, V> {
                        .flatMap(a -> sub.toMaybe());
     }
 
+    /**
+     * Extact one value from the selected pipe or an error if it doesn't exist (NoSuchElementException).
+     * 
+     * <pre>
+     * {@code 
+     *  
+     *  Queue<String> q = new Queue<>();
+        pipes.register("hello", q);
+        pipes.push("hello", "world");
+        pipes.push("hello", "world2");
+        
+       pipes.oneOrError("hello")
+            .get() //"world"
+       
+     * }
+     * </pre>
+     * @param key : Adapter identifier
+     * @return Xor containing either a NoSuchElementException an Adapter with the specified key does not exist,
+     *            or the next value from that Adapter
+     */
     public Xor<Throwable, V> oneOrError(final K key) {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
@@ -198,7 +409,7 @@ public class Pipes<K, V> {
      * 
      * A value is returned if a value is present, otherwise null is returned if the publisher is complete or an error occurs
      * 
-     * @param key
+     * @param key : Adapter identifier
      * @return
      */
     public Eval<V> nextOrNull(final K key) {
@@ -243,6 +454,9 @@ public class Pipes<K, V> {
 
     }
 
+    /**
+     * Clear all managed Adapters (without closing them or performing any other operation on them)
+     */
     public void clear() {
         registered.clear();
 
@@ -273,7 +487,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * @param key for registered simple-react async.Adapter
+     * @param key for registered cylops-react async.Adapter
      * @param publisher Reactive Streams publisher  to push data onto this pipe
      */
     public void publishTo(final K key, final Publisher<V> publisher) {
@@ -292,6 +506,11 @@ public class Pipes<K, V> {
                                                          .peek(p -> publishTo(key, p)));
     }
 
+    /**
+     * Close the Adapter identified by the provided Key if it exists
+     * 
+     * @param key : Adapter identifier
+     */
     public void close(final String key) {
         Optional.ofNullable(registered.get(key))
                 .ifPresent(a -> a.close());

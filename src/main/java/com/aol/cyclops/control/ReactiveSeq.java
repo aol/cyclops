@@ -77,6 +77,44 @@ import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.val;
 
+/**
+ * A powerful extended, sequential Stream type.
+ * Extends JDK 8 java.util.stream.Stream.
+ * Extends org.jooq.lambda.Seq.
+ * Implements the reactive-stream api.
+ * 
+ * Features include
+ *      Asynchronous execution
+ *      Scheduling
+ *      Error handling
+ *      Retries
+ *      Zipping
+ *      Duplication
+ *      Cartesian product operations (e.g. crossJoin, forEach2)
+ *      Subscriptions and fined grained control
+ *      Interoperability
+ *      Parallelism via LazyFutureStream
+ *      Lazy grouping (group by size, time, state)
+ *      Sliding windows
+ *      Efficient reversal
+ *      foldRight / scanLeft / scanRight
+ *      Zipping and Combining
+ *      Data insertion and removal
+ *      Time based operations (debouncing, onePer, xPer)
+ *      SQL style Window operations
+ *      Reduction and partial reduction
+ *      Mathematical terminal operations
+ *      Lazy execution
+ *      Empty handling
+ *      Cycling / repeating
+ *      Controlled iteration (forEachX)
+ *      Event handling (on next, on error, on complete)
+ *      
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of elements within the Stream
+ */
 public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
         FilterableFunctor<T>, ExtendedTraversable<T>, IterableFoldable<T>, CyclopsCollectable<T>, JoolWindowing<T>, Seq<T>, Iterable<T>, Publisher<T>,
         ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {

@@ -1,9 +1,5 @@
 package com.aol.cyclops.data.async;
 
-import java.util.concurrent.Executors;
-
-import com.aol.cyclops.control.LazyReact;
-
 /**
  * Interface for Factories of async.Queues
  * {@see QueueFactories}

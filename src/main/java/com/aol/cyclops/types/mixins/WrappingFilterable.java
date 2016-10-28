@@ -4,8 +4,12 @@ import java.util.function.Predicate;
 
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.types.Filterable;
-
+//@TODO move to internal 2.0.0
+@Deprecated //internal interface - move in 2.0.0
 public interface WrappingFilterable<T> extends Filterable<T> {
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     */
     @Override
     default Filterable<T> filter(final Predicate<? super T> fn) {
         final Object filterable = getFilterable();
@@ -17,8 +21,15 @@ public interface WrappingFilterable<T> extends Filterable<T> {
         return withFilterable(result);
     }
 
-    //ofType
-    public Filterable<T> withFilterable(T filter);
+    
+    /**
+     * @param filterable Wrapped filterable
+     * @return Filterable wrapping new Filterable
+     */
+    public Filterable<T> withFilterable(T filterable);
 
+    /**
+     * @return Wrapped filterable
+     */
     public Object getFilterable();
 }
