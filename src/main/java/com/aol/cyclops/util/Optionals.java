@@ -266,8 +266,8 @@ public class Optionals {
      * }
      * </pre> 
      * 
-     * @param p
-     * @param f  Publisher to combine
+     * @param p Publisher to combine
+     * @param f  Optional to combine with
      * @param fn Combining function
      * @return Optional combined with supplied Publisher, or empty Optional if no value present
      */

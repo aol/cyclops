@@ -246,7 +246,26 @@ public class CompletableFutures {
         return FutureW.schedule(delay, ex, t)
                       .getFuture();
     }
-
+    /**
+     * Combine a CompletableFuture with the provided Value asynchronously (if not completed) using the supplied BiFunction
+     * 
+     * <pre>
+     * {@code 
+     *  CompletableFutures.combine(CompletableFuture.completedFuture(10),Maybe.just(20), this::add)
+     *  //CompletableFuture [30]
+     *  
+     *  private int add(int a, int b) {
+            return a + b;
+        }
+     *  
+     * }
+     * </pre>
+     * 
+     * @param f CompletableFuture  to combine with a value
+     * @param v Value  to combine with
+     * @param fn Combining function
+     * @return CompletableFuture  combined with supplied value
+     */
     public static <T1, T2, R> CompletableFuture<R> combine(final CompletableFuture<? extends T1> f, final Value<? extends T2> v,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
         return narrow(FutureW.of(f)
@@ -254,20 +273,87 @@ public class CompletableFutures {
                              .getFuture());
     }
 
+    /**
+     * Combine a CompletableFuture with the provided CompletableFuture asynchronously (if not completed) using the supplied BiFunction
+     * 
+     * <pre>
+     * {@code 
+     *  CompletableFutures.combine(CompletableFuture.completedFuture(10),CompletableFuture.completedFuture(20), this::add)
+     *  //CompletableFuture [30]
+     *  
+     *  private int add(int a, int b) {
+            return a + b;
+        }
+     *  
+     * }
+     * </pre>
+     * 
+     * @param f CompletableFuture  to combine with a value
+     * @param v Value  to combine with
+     * @param fn Combining function
+     * @return CompletableFuture  combined with supplied value
+     */
+    public static <T1, T2, R> CompletableFuture<R> combine(final CompletableFuture<? extends T1> f, final CompletableFuture<? extends T2> v,
+            final BiFunction<? super T1, ? super T2, ? extends R> fn) {
+        return narrow(FutureW.of(f)
+                             .combine(FutureW.of(v), fn)
+                             .getFuture());
+    }
+    /**
+     * Combine an CompletableFuture with the provided Iterable (selecting one element if present) using the supplied BiFunction
+     * <pre>
+     * {@code 
+     *  CompletableFutures.zip(CompletableFuture.completedFuture(10),Arrays.asList(20), this::add)
+     *  //CompletableFuture[30]
+     *  
+     *  private int add(int a, int b) {
+            return a + b;
+        }
+     *  
+     * }
+     * </pre>
+     * @param f CompletableFuture to combine with first element in Iterable (if present)
+     * @param v Iterable to combine
+     * @param fn Combining function
+     * @return CompletableFuture combined with supplied Iterable
+     */
     public static <T1, T2, R> CompletableFuture<R> zip(final CompletableFuture<? extends T1> f, final Iterable<? extends T2> v,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
         return narrow(FutureW.of(f)
                              .zip(v, fn)
                              .getFuture());
     }
-
+    /**
+     * Combine an CompletableFuture with the provided Publisher (selecting one element if present) using the supplied BiFunction
+     * <pre>
+     * {@code 
+     *  CompletableFutures.zip(Flux.just(10),CompletableFuture.completedResult(10), this::add)
+     *  //CompletableFuture[30]
+     *  
+     *  private int add(int a, int b) {
+            return a + b;
+        }
+     *  
+     * }
+     * </pre> 
+     * 
+     * @param p Publisher to combine
+     * @param f  CompletableFuture to combine with
+     * @param fn Combining function
+     * @return CompletableFuture combined with supplied Publisher
+     */
     public static <T1, T2, R> CompletableFuture<R> zip(final Publisher<? extends T2> p, final CompletableFuture<? extends T1> f,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
         return narrow(FutureW.of(f)
                              .zip(fn, p)
                              .getFuture());
     }
-
+    /**
+     * Narrow covariant type parameter
+     * 
+     * @param broad CompletableFuture with covariant type parameter
+     * @return Narrowed Optional
+     */
     public static <T> CompletableFuture<T> narrow(final CompletableFuture<? extends T> f) {
         return (CompletableFuture<T>) f;
     }
