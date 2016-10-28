@@ -42,7 +42,7 @@ repositories {
 	jcenter()
 
 }
-
+/**
 if (JavaVersion.current().isJava8Compatible()) {
     allprojects {
       tasks.withType(Javadoc) {
@@ -50,7 +50,7 @@ if (JavaVersion.current().isJava8Compatible()) {
       }
     }
   }
-  
+**/  
 
 configurations {
 	provided

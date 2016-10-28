@@ -41,6 +41,7 @@ public interface Filterable<T> {
      * // (1, 2, 3) ReactiveSeq.of(1, "a", 2, "b",3).ofType(Integer.class)
      * 
      * }
+     * </pre>
      */
     @SuppressWarnings("unchecked")
     default <U> Filterable<U> ofType(final Class<? extends U> type) {
@@ -80,6 +81,7 @@ public interface Filterable<T> {
      *   //[1,2,4]
      *   
      * }
+     * </pre>
      * 
      * @return Filterable with nulls removed
      */

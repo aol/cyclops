@@ -52,7 +52,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
 
     /**
      * Combine two adjacent elements in a traversable using the supplied BinaryOperator
-     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
      * with it's neighbour
      * <pre>
      * {@code 
@@ -150,7 +150,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * 
      * 		//List[1,2,2,1,2,2,1]	
      * }
-     * 
+     * </pre>
      * 
      * @param predicate
      *            repeat while true
@@ -325,7 +325,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      *                      .get(0)
      *                      .size(),is(1));
      * }
-     * 
+     * </pre>
      * @param size batch size
      * @param supplier Collection factory
      * @return SequenceM batched into collection types by size
@@ -792,8 +792,8 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
         return traversable().intersperse(value);
     }
 
-    /*
-     * Potentially efficient Sequence reversal. Is efficient if
+    /**
+     * Potentially efficient Stream reversal. Is efficient if
      * 
      * - Sequence created via a range - Sequence created via a List - Sequence
      * created via an Array / var args
@@ -858,6 +858,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
      * 
      * }
+     * </pre>
      * 
      * @param num of elements to return (last elements)
      * @return SequenceM limited to last num elements
