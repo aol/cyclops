@@ -535,15 +535,15 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
 
     /**
      * Accumulate the results only from those Iors which have a Secondary type present, using the supplied mapping function to
-     * convert the data from each Ior before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }.
+     * convert the data from each Ior before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
         
-     *  Ior<?,String> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.secondary("1")),i->""+i,Semigroups.stringConcat);
+     *  Ior<?,String> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.secondary("1")),i->""+i,Monoids.stringConcat);
         //Ior.primary("none1")
      * 
      * }
@@ -557,15 +557,14 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
      * @return Ior populated with the accumulate Secondary operation
      */
     public static <ST, PT, R> Ior<?, R> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Function<? super ST, R> mapper,
-            final Semigroup<R> reducer) {
+            final Monoid<R> reducer) {
         return sequenceSecondary(iors).map(s -> s.map(mapper)
-                                                 .reduce(reducer)
-                                                 .get());
+                                                 .reduce(reducer));
     }
 
     /**
-     *  Accumulate the results only from those Iors which have a Secondary type present, using the supplied  Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }.
+     *  Accumulate the results only from those Iors which have a Secondary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -573,7 +572,7 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
         
-     * Ior<?,Integer> iors = Ior.accumulateSecondary(ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)),Semigroups.intSum);
+     * Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
        //Ior.primary(3);  2+1
      * 
      * 
@@ -585,9 +584,8 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
      * @param reducer  Semigroup to combine values from each Ior
      * @return populated with the accumulate Secondary operation
      */
-    public static <ST, PT> Ior<?, ST> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Semigroup<ST> reducer) {
-        return sequenceSecondary(iors).map(s -> s.reduce(reducer)
-                                                 .get());
+    public static <ST, PT> Ior<?, ST> accumulateSecondary(final Monoid<ST> reducer,final CollectionX<Ior<ST, PT>> iors) {
+        return sequenceSecondary(iors).map(s -> s.reduce(reducer));
     }
 
     /**

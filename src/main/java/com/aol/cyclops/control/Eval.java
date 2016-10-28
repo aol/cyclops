@@ -222,7 +222,7 @@ public interface Eval<T>
      * 
      * <pre>
      * {@code
-     *   Eval<String> evals =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Semigroups.stringConcat);
+     *   Eval<String> evals =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
          //Eval.now("101")
      * }
      * </pre>
@@ -233,10 +233,10 @@ public interface Eval<T>
      * @param reducer Combiner function to apply to converted values
      * @return  Eval with a value
      */
-    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Function<? super T, R> mapper, final Semigroup<R> reducer) {
+    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Function<? super T, R> mapper, final Monoid<R> reducer) {
         return sequence(evals).map(s -> s.map(mapper)
                                           .reduce(reducer)
-                                          .get());
+                                          );
     }
 
     /**
@@ -244,7 +244,7 @@ public interface Eval<T>
      * 
      * <pre>
      * {@code 
-     *   Eval<Integer> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Semigroups.intSum);
+     *   Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,ListX.of(just,Eval.now(1)));
          //Eval.now(11)
      * 
      * }
@@ -255,9 +255,8 @@ public interface Eval<T>
      * @param reducer Combiner function to apply to converted values
      * @return Eval with a value
      */
-    public static <T> Eval<T> accumulate(final CollectionX<Eval<T>> evals, final Semigroup<T> reducer) {
-        return sequence(evals).map(s -> s.reduce(reducer)
-                                          .get());
+    public static <T> Eval<T> accumulate(final Monoid<T> reducer,final CollectionX<Eval<T>> evals) {
+        return sequence(evals).map(s -> s.reduce(reducer));
     }
 
     /* (non-Javadoc)

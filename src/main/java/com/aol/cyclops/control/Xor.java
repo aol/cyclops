@@ -410,15 +410,15 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
     }
     /**
      * Accumulate the results only from those Xors which have a Secondary type present, using the supplied mapping function to
-     * convert the data from each Xor before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }.
+     * convert the data from each Xor before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }..
      * 
      * <pre>
      * {@code 
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
         
-     *  Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.secondary("1")),i->""+i,Semigroups.stringConcat);
+     *  Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.secondary("1")),i->""+i,Monoids.stringConcat);
         //Xor.primary("none1")
      * 
      * }
@@ -432,10 +432,9 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
      * @return Xor populated with the accumulate Secondary operation
      */
     public static <ST, PT, R> Xor<?, R> accumulateSecondary(final CollectionX<Xor<ST, PT>> xors, final Function<? super ST, R> mapper,
-            final Semigroup<R> reducer) {
+            final Monoid<R> reducer) {
         return sequenceSecondary(xors).map(s -> s.map(mapper)
-                                                 .reduce(reducer)
-                                                 .get());
+                                                 .reduce(reducer));
     }
     
   
@@ -485,15 +484,15 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
     
     /**
      * Accumulate the results only from those Iors which have a Primary type present, using the supplied mapping function to
-     * convert the data from each Xor before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+     * convert the data from each Xor before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.. 
      * 
      * <pre>
      * {@code 
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
         
-     * Xor<?,String> iors = Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),i->""+i,Semigroups.stringConcat);
+     * Xor<?,String> iors = Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),i->""+i,Monoids.stringConcat);
        //Xor.primary("101"));
      * }
      * </pre>
@@ -505,21 +504,20 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
      * @return Xor populated with the accumulate primary operation
      */
     public static <ST, PT, R> Xor<?, R> accumulatePrimary(final CollectionX<Xor<ST, PT>> xors, final Function<? super PT, R> mapper,
-            final Semigroup<R> reducer) {
+            final Monoid<R> reducer) {
         return sequencePrimary(xors).map(s -> s.map(mapper)
-                                               .reduce(reducer)
-                                               .get());
+                                               .reduce(reducer));
     }
     /**
-     *  Accumulate the results only from those Xors which have a Primary type present, using the supplied  Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+     *  Accumulate the results only from those Xors which have a Primary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
      *  
-     *  Xor<?,Integer> xors XIor.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Semigroups.intSum);
+     *  Xor<?,Integer> xors XIor.accumulatePrimary(Monoids.intSum,ListX.of(just,none,Ior.primary(1)));
         //Ior.primary(11);
      * 
      * }
@@ -531,15 +529,14 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
      * @param reducer  Reducer to accumulate results
      * @return  Xor populated with the accumulate primary operation
      */
-    public static <ST, PT> Xor<?, PT> accumulatePrimary(final CollectionX<Xor<ST, PT>> xors, final Semigroup<PT> reducer) {
-        return sequencePrimary(xors).map(s -> s.reduce(reducer)
-                                               .get());
+    public static <ST, PT> Xor<?, PT> accumulatePrimary(final Monoid<PT> reducer,final CollectionX<Xor<ST, PT>> xors) {
+        return sequencePrimary(xors).map(s -> s.reduce(reducer));
     }
  
     /**
      * 
-     * Accumulate the results only from those Xors which have a Secondary type present, using the supplied  Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }.
+     * Accumulate the results only from those Xors which have a Secondary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
      * <pre>
      * {@code 
      * Xor.accumulateSecondary(ListX.of(Xor.secondary("failed1"),
@@ -557,7 +554,7 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
         
-     * Xor<?,Integer> iors = Xor.accumulateSecondary(ListX.of(Xor.both(2, "boo!"),Xor.secondary(1)),Semigroups.intSum);
+     * Xor<?,Integer> iors = Xor.accumulateSecondary(Monoids.intSum,ListX.of(Xor.both(2, "boo!"),Xor.secondary(1)));
        //Xor.primary(3);  2+1
      * 
      * 
@@ -568,9 +565,8 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
      * @param reducer  Semigroup to combine values from each Xor
      * @return Xor populated with the accumulate Secondary operation
      */
-    public static <ST, PT> Xor<?, ST> accumulateSecondary(final CollectionX<Xor<ST, PT>> xors, final Semigroup<ST> reducer) {
-        return sequenceSecondary(xors).map(s -> s.reduce(reducer)
-                                                 .get());
+    public static <ST, PT> Xor<?, ST> accumulateSecondary(final Monoid<ST> reducer,final CollectionX<Xor<ST, PT>> xors) {
+        return sequenceSecondary(xors).map(s -> s.reduce(reducer));
     }
 
     /**

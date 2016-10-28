@@ -7,8 +7,8 @@ import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
 
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -125,8 +125,8 @@ public class Optionals {
     }
     /**
      * Accumulate the results only from those Optionals which have a value present, using the supplied mapping function to
-     * convert the data from each Optional before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+     * convert the data from each Optional before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }. 
      * 
      * <pre>
      * {@code 
@@ -134,7 +134,7 @@ public class Optionals {
         Optional<Integer> none = Optional.empty();
         
      *  Optional<String> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), i -> "" + i,
-                                                     Semigroups.stringConcat);
+                                                     Monoids.stringConcat);
         //Optional.of("101")
      * 
      * }
@@ -142,14 +142,39 @@ public class Optionals {
      * 
      * @param optionals Optionals to accumulate
      * @param mapper Mapping function to be applied to the result of each Optional
-     * @param reducer Semigroup to combine values from each Optional
+     * @param reducer Monoid to combine values from each Optional
      * @return Optional with reduced value
      */
     public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> optionals, final Function<? super T, R> mapper,
-            final Semigroup<R> reducer) {
+            final Monoid<R> reducer) {
         return sequencePresent(optionals).map(s -> s.map(mapper)
-                                                 .reduce(reducer)
-                                                 .get());
+                                                 .reduce(reducer));
+    }
+    /**
+     * Accumulate the results only from those Optionals which have a value present, using the 
+     * supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }. 
+     * 
+     * <pre>
+     * {@code 
+     *  Optional<Integer> just = Optional.of(10);
+        Optional<Integer> none = Optional.empty();
+        
+     *  Optional<String> opts = Optional.accumulateJust(Monoids.stringConcat,ListX.of(just, none, Optional.of(1)), 
+                                                     );
+        //Optional.of("101")
+     * 
+     * }
+     * </pre>
+     * 
+     * @param optionals Optionals to accumulate
+     * @param mapper Mapping function to be applied to the result of each Optional
+     * @param reducer Monoid to combine values from each Optional
+     * @return Optional with reduced value
+     */
+    public static <T> Optional<T> accumulatePresent(final Monoid<T> reducer,final CollectionX<Optional<T>> optionals) {
+        return sequencePresent(optionals).map(s -> s
+                                                 .reduce(reducer));
     }
 
     /**

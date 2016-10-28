@@ -389,8 +389,8 @@ public interface Maybe<T>
 
     /**
      * Accumulate the results only from those Maybes which have a value present, using the supplied mapping function to
-     * convert the data from each Maybe before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+     * convert the data from each Maybe before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.. 
      * 
      * <pre>
      * {@code 
@@ -406,25 +406,24 @@ public interface Maybe<T>
      * 
      * @param maybes Maybes to accumulate
      * @param mapper Mapping function to be applied to the result of each Maybe
-     * @param reducer Semigroup to combine values from each Maybe
+     * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
     public static <T, R> Maybe<R> accumulateJust(final CollectionX<Maybe<T>> maybes, final Function<? super T, R> mapper,
-            final Semigroup<R> reducer) {
+            final Monoid<R> reducer) {
         return sequenceJust(maybes).map(s -> s.map(mapper)
-                                              .reduce(reducer)
-                                              .get());
+                                              .reduce(reducer));
     }
 
     /**
-     * Accumulate the results only from those Maybes which have a value present, using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+     * Accumulate the results only from those Maybes which have a value present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }. 
 
      * 
      * <pre>
      * {@code 
      * 
-     *  Maybe<Integer> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Semigroups.intSum);
+     *  Maybe<Integer> maybes = Maybe.accumulateJust(Monoids.intSum,ListX.of(just, none, Maybe.of(1)));
         //Maybe.of(11)
      * 
      * }
@@ -433,12 +432,11 @@ public interface Maybe<T>
      * 
      * 
      * @param maybes Maybes to accumulate
-     * @param reducer Semigroup to combine values from each Maybe
+     * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T> Maybe<T> accumulateJust(final CollectionX<Maybe<T>> maybes, final Semigroup<T> reducer) {
-        return sequenceJust(maybes).map(s -> s.reduce(reducer)
-                                              .get());
+    public static <T> Maybe<T> accumulateJust(final Monoid<T> reducer,final CollectionX<Maybe<T>> maybes) {
+        return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 
     /*
