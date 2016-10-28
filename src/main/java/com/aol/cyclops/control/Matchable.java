@@ -633,174 +633,378 @@ public interface Matchable<TYPE> {
             }
         }
 
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<TYPE> on$1____() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple1<TYPE>(
                                           it.v1);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<TYPE> on$_2___() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple1<TYPE>(
                                           it.v2);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<TYPE> on$__3__() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple1<TYPE>(
                                           it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<TYPE> on$___4_() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple1<TYPE>(
                                           it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<TYPE> on$____5() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple1<TYPE>(
                                           it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<TYPE, TYPE> on$12___() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple2<TYPE, TYPE>(
                                                 it.v1, it.v2);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<TYPE, TYPE> on$1_3__() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple2<TYPE, TYPE>(
                                                 it.v1, it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<TYPE, TYPE> on$1__4_() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple2<TYPE, TYPE>(
                                                 it.v1, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<TYPE, TYPE> on$1___5() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple2<TYPE, TYPE>(
                                                 it.v1, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<TYPE, TYPE> on$_23__() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple2<TYPE, TYPE>(
                                                 it.v2, it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<TYPE, TYPE> on$_2_4_() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple2<TYPE, TYPE>(
                                                 it.v2, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<TYPE, TYPE> on$_2__5() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple2<TYPE, TYPE>(
                                                 it.v2, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<TYPE, TYPE> on$__34_() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple2<TYPE, TYPE>(
                                                 it.v3, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<TYPE, TYPE> on$__3_5() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple2<TYPE, TYPE>(
                                                 it.v3, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<TYPE, TYPE> on$___45() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple2<TYPE, TYPE>(
                                                 it.v4, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<TYPE, TYPE, TYPE> on$123__() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple3<TYPE, TYPE, TYPE>(
                                                       it.v1, it.v2, it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<TYPE, TYPE, TYPE> on$12_4_() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple3<TYPE, TYPE, TYPE>(
                                                       it.v1, it.v2, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<TYPE, TYPE, TYPE> on$12__5() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple3<TYPE, TYPE, TYPE>(
                                                       it.v1, it.v2, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<TYPE, TYPE, TYPE> on$1_34_() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple3<TYPE, TYPE, TYPE>(
                                                       it.v1, it.v3, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<TYPE, TYPE, TYPE> on$1_3_5() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple3<TYPE, TYPE, TYPE>(
                                                       it.v1, it.v3, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<TYPE, TYPE, TYPE> on$1__45() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple3<TYPE, TYPE, TYPE>(
                                                       it.v1, it.v4, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<TYPE, TYPE, TYPE> on$_234_() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple3<TYPE, TYPE, TYPE>(
                                                       it.v2, it.v3, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<TYPE, TYPE, TYPE> on$_23_5() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple3<TYPE, TYPE, TYPE>(
                                                       it.v2, it.v3, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<TYPE, TYPE, TYPE> on$__345() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple3<TYPE, TYPE, TYPE>(
                                                       it.v3, it.v4, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple4<TYPE, TYPE, TYPE, TYPE> on$1234_() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple4<TYPE, TYPE, TYPE, TYPE>(
                                                             it.v1, it.v2, it.v3, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple4<TYPE, TYPE, TYPE, TYPE> on$123_5() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple4<TYPE, TYPE, TYPE, TYPE>(
                                                             it.v1, it.v2, it.v3, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple4<TYPE, TYPE, TYPE, TYPE> on$12_45() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple4<TYPE, TYPE, TYPE, TYPE>(
                                                             it.v1, it.v2, it.v4, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple4<TYPE, TYPE, TYPE, TYPE> on$1_345() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple4<TYPE, TYPE, TYPE, TYPE>(
                                                             it.v1, it.v3, it.v4, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple4<TYPE, TYPE, TYPE, TYPE> on$_2345() {
             final Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE> it = (Tuple5<TYPE, TYPE, TYPE, TYPE, TYPE>) MIUtil.toTuple5(getMatchable());
             return () -> new Tuple4<TYPE, TYPE, TYPE, TYPE>(
@@ -811,17 +1015,26 @@ public interface Matchable<TYPE> {
 
     static interface ValueAndOptionalMatcher<T> extends MatchableOptional<T>, Value<T> {
 
+        /* (non-Javadoc)
+         * @see com.aol.cyclops.control.Matchable.MatchableOptional#toOptional()
+         */
         @Override
         default Optional<T> toOptional() {
 
             return Value.super.toOptional();
         }
 
+        /* (non-Javadoc)
+         * @see com.aol.cyclops.control.Matchable.MatchableOptional#visit(java.util.function.Function, java.util.function.Supplier)
+         */
         @Override
         default <R> R visit(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
             return Value.super.visit(present, absent);
         }
 
+        /* (non-Javadoc)
+         * @see com.aol.cyclops.control.Matchable.MatchableOptional#iterator()
+         */
         @Override
         default Iterator<T> iterator() {
 
@@ -975,13 +1188,27 @@ public interface Matchable<TYPE> {
                                                                                   .getPatternMatcher())).match(getMatchable())
                                                                                                         .orElseGet(otherwise));
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 2 fields.
+         * Wildcards are indicated by '_'.
+         * $1_ matches on elements / field 1 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T1> on$1_() {
             final Tuple2<T1, T2> it = getMatchable();
             return () -> new Tuple1<T1>(
                                         it.v1);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 2 fields.
+         * Wildcards are indicated by '_'.
+         * $1_ matches on elements / field 1
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T2> on$_2() {
             final Tuple2<T1, T2> it = getMatchable();
             return () -> new Tuple1<T2>(
@@ -1024,37 +1251,79 @@ public interface Matchable<TYPE> {
                                                                                   .getPatternMatcher())).match(getMatchable())
                                                                                                         .orElseGet(otherwise));
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 3 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3 matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T1> on$1__() {
             final Tuple3<T1, T2, T3> it = getMatchable();
             return () -> new Tuple1<T1>(
                                         it.v1);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 3 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3 matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T2> on$_2_() {
             final Tuple3<T1, T2, T3> it = getMatchable();
             return () -> new Tuple1<T2>(
                                         it.v2);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 3 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3 matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T3> on$__3() {
             final Tuple3<T1, T2, T3> it = getMatchable();
             return () -> new Tuple1<T3>(
                                         it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 3 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3 matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T1, T2> on$12_() {
             final Tuple3<T1, T2, T3> it = getMatchable();
             return () -> new Tuple2<T1, T2>(
                                             it.v1, it.v2);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 3 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3 matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T1, T3> on$1_3() {
             final Tuple3<T1, T2, T3> it = getMatchable();
             return () -> new Tuple2<T1, T3>(
                                             it.v1, it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 3 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3 matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T2, T3> on$_23() {
             final Tuple3<T1, T2, T3> it = getMatchable();
             return () -> new Tuple2<T2, T3>(
@@ -1096,85 +1365,183 @@ public interface Matchable<TYPE> {
                                                                                   .getPatternMatcher())).match(getMatchable())
                                                                                                         .orElseGet(otherwise));
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T1> on$1___() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple1<T1>(
                                         it.v1);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T2> on$_2__() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple1<T2>(
                                         it.v2);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T3> on$__3_() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple1<T3>(
                                         it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T4> on$___4() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple1<T4>(
                                         it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T1, T2> on$12__() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple2<T1, T2>(
                                             it.v1, it.v2);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T1, T3> on$1_3_() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple2<T1, T3>(
                                             it.v1, it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T1, T4> on$1__4() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple2<T1, T4>(
                                             it.v1, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T2, T3> on$_23_() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple2<T2, T3>(
                                             it.v2, it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T2, T4> on$_2_4() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple2<T2, T4>(
                                             it.v2, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T3, T4> on$__34() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple2<T3, T4>(
                                             it.v3, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T1, T2, T3> on$123_() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple3<T1, T2, T3>(
                                                 it.v1, it.v2, it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T1, T2, T4> on$12_4() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple3<T1, T2, T4>(
                                                 it.v1, it.v2, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T1, T3, T4> on$1_34() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple3<T1, T3, T4>(
                                                 it.v1, it.v3, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 4 fields.
+         * Wildcards are indicated by '_'.
+         * $1_3_ matches on elements / field 1 and 3 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T2, T3, T4> on$_234() {
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return () -> new Tuple3<T2, T3, T4>(
@@ -1218,175 +1585,378 @@ public interface Matchable<TYPE> {
                                                                                   .getPatternMatcher())).match(getMatchable())
                                                                                                         .orElseGet(otherwise));
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T1> on$1____() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple1<T1>(
                                         it.v1);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T2> on$_2___() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple1<T2>(
                                         it.v2);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T3> on$__3__() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple1<T3>(
                                         it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T4> on$___4_() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple1<T4>(
                                         it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple1<T5> on$____5() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple1<T5>(
                                         it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T1, T2> on$12___() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple2<T1, T2>(
                                             it.v1, it.v2);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T1, T3> on$1_3__() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple2<T1, T3>(
                                             it.v1, it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T1, T4> on$1__4_() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple2<T1, T4>(
                                             it.v1, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T1, T5> on$1___5() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple2<T1, T5>(
                                             it.v1, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T2, T3> on$_23__() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple2<T2, T3>(
                                             it.v2, it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T2, T4> on$_2_4_() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple2<T2, T4>(
                                             it.v2, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T2, T5> on$_2__5() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple2<T2, T5>(
                                             it.v2, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T3, T4> on$__34_() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple2<T3, T4>(
                                             it.v3, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T3, T5> on$__3_5() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple2<T3, T5>(
                                             it.v3, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple2<T4, T5> on$___45() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple2<T4, T5>(
                                             it.v4, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T1, T2, T3> on$123__() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple3<T1, T2, T3>(
                                                 it.v1, it.v2, it.v3);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T1, T2, T4> on$12_4_() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple3<T1, T2, T4>(
                                                 it.v1, it.v2, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T1, T2, T5> on$12__5() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple3<T1, T2, T5>(
                                                 it.v1, it.v2, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T1, T3, T4> on$1_34_() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple3<T1, T3, T4>(
                                                 it.v1, it.v3, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T1, T3, T5> on$1_3_5() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple3<T1, T3, T5>(
                                                 it.v1, it.v3, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T1, T4, T5> on$1__45() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple3<T1, T4, T5>(
                                                 it.v1, it.v4, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T2, T3, T4> on$_234_() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple3<T2, T3, T4>(
                                                 it.v2, it.v3, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T2, T3, T5> on$_23_5() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple3<T2, T3, T5>(
                                                 it.v2, it.v3, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple3<T3, T4, T5> on$__345() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple3<T3, T4, T5>(
                                                 it.v3, it.v4, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple4<T1, T2, T3, T4> on$1234_() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple4<T1, T2, T3, T4>(
                                                     it.v1, it.v2, it.v3, it.v4);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple4<T1, T2, T3, T5> on$123_5() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple4<T1, T2, T3, T5>(
                                                     it.v1, it.v2, it.v3, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple4<T1, T2, T4, T5> on$12_45() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple4<T1, T2, T4, T5>(
                                                     it.v1, it.v2, it.v4, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple4<T1, T3, T4, T5> on$1_345() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple4<T1, T3, T4, T5>(
                                                     it.v1, it.v3, it.v4, it.v5);
         }
-
+        /**
+         * Match only on the selected elements / fields.
+         * Fields are indexed in a 1 based index up to the first 5 fields.
+         * Wildcards are indicated by '_'.
+         * $1__4_ matches on elements / field 1 and 4 only
+         * 
+         * @return Matcher for the selected elements
+         */
         default MTuple4<T2, T3, T4, T5> on$_2345() {
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return () -> new Tuple4<T2, T3, T4, T5>(

@@ -159,6 +159,9 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
+     */
     @Override
     default Collectable<T> collectable() {
 

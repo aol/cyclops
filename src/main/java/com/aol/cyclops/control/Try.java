@@ -2,18 +2,8 @@
 package com.aol.cyclops.control;
 
 import static com.aol.cyclops.control.For.Values.each2;
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
-import static com.aol.cyclops.util.function.Predicates.instanceOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
-import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -31,7 +21,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
