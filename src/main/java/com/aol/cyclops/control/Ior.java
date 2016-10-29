@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,6 +24,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Matchable.CheckValue2;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
@@ -687,6 +689,22 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
                                                .get());
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> Ior<ST,R> combine(Value<? extends T2> app,
+            BiFunction<? super PT, ? super T2, ? extends R> fn) {
+        return (Ior<ST,R>)ApplicativeFunctor.super.combine(app, fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default <R> Ior<ST,PT> combine(BinaryOperator<Applicative<PT>> combiner, Applicative<PT> app) {
+       
+        return (Ior<ST,PT>)MonadicValue2.super.combine(combiner, app);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
      */

@@ -24,6 +24,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
@@ -215,6 +216,15 @@ public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functo
     }
     
     
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default Xor<ST,PT> combine(BinaryOperator<Applicative<PT>> combiner, Applicative<PT> app) {
+       
+        return (Xor<ST,PT>)MonadicValue2.super.combine(combiner, app);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue2#flatMapIterable(java.util.function.Function)

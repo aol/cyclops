@@ -1,5 +1,6 @@
 package com.aol.cyclops.types;
 
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -53,6 +54,7 @@ public interface IterableFoldable<T> extends Foldable<T>, Iterable<T> {
         return ifEmpty.get();
 
     }
+   
 
     /**
      * extract head and tail together, where head is expected to be present

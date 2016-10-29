@@ -43,11 +43,13 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.stream.SeqUtils;
 import com.aol.cyclops.internal.stream.StreamableImpl;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -645,6 +647,23 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     default <C extends Collection<T>> C toCollection(final Supplier<C> collectionFactory) {
 
         return reactiveSeq().toCollection(collectionFactory);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> Streamable<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (Streamable<R>)ZippingApplicativable.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default <R> Applicative<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+       
+        return (Streamable<T>)ZippingApplicativable.super.combine(combiner, app);
     }
 
     /**

@@ -53,6 +53,7 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFilterable;
@@ -60,6 +61,7 @@ import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -118,6 +120,25 @@ import lombok.val;
 public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
         FilterableFunctor<T>, ExtendedTraversable<T>, IterableFoldable<T>, CyclopsCollectable<T>, JoolWindowing<T>, Seq<T>, Iterable<T>, Publisher<T>,
         ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {
+
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> ReactiveSeq<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return ( ReactiveSeq<R>)ExtendedTraversable.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default ReactiveSeq<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+       
+        return (ReactiveSeq<T>)ExtendedTraversable.super.combine(combiner, app);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)

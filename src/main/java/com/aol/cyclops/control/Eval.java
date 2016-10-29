@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,6 +24,7 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
@@ -313,6 +315,14 @@ public interface Eval<T>
     @Override
     default <R> Eval<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return (Eval<R>)MonadicValue1.super.flatMapPublisher(mapper);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default <R> Eval<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+        return (Eval)MonadicValue1.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)

@@ -1,19 +1,5 @@
 package com.aol.cyclops.util.function;
 
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
-import static com.aol.cyclops.util.function.Predicates.any;
-import static com.aol.cyclops.util.function.Predicates.anyOf;
-import static com.aol.cyclops.util.function.Predicates.decons;
-import static com.aol.cyclops.util.function.Predicates.eq;
-import static com.aol.cyclops.util.function.Predicates.in;
-import static com.aol.cyclops.util.function.Predicates.not;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -21,8 +7,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.Matchables;
-import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple1;
 import com.aol.cyclops.control.Matchable.MTuple2;
@@ -33,8 +17,6 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
-import com.aol.cyclops.matcher.MatchableTest.Address;
-import com.aol.cyclops.matcher.MatchableTest.Customer;
 import com.aol.cyclops.types.Value;
 
 import lombok.NoArgsConstructor;

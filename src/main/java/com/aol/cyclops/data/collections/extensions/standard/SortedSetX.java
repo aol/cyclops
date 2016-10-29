@@ -33,7 +33,9 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.Value;
 
 public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEmptySwitch<T, SortedSet<T>> {
     static <T> Collector<T, ?, SortedSet<T>> defaultCollector() {
@@ -197,7 +199,23 @@ public interface SortedSetX<T> extends SortedSet<T>, MutableCollectionX<T>, OnEm
     default SortedSetX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (SortedSetX<T>) MutableCollectionX.super.combine(predicate, op);
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> SortedSetX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return ( SortedSetX<R>)MutableCollectionX.super.combine(app, fn);
+    }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default  SortedSetX<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+      
+        return ( SortedSetX<T>)MutableCollectionX.super.combine(combiner, app);
+    }
     @Override
     default <R> SortedSetX<R> unit(final R value) {
         return singleton(value);

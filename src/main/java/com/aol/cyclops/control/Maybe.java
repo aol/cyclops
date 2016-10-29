@@ -3,6 +3,7 @@ package com.aol.cyclops.control;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -19,6 +20,7 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
@@ -481,6 +483,16 @@ public interface Maybe<T>
                                                                               .visit(i -> Maybe.just(tuple.v2.apply(i)), () -> Maybe.none()));
 
     }
+    
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default <R> Maybe<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+        return (Maybe<T>)MonadicValue1.super.combine(combiner, app);
+    }
+
 
     /*
      * (non-Javadoc)

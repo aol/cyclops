@@ -32,7 +32,9 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.Value;
 
 public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>, OnEmptySwitch<T, PStack<T>> {
 
@@ -290,6 +292,24 @@ public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentS
     @Override
     default PStackX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (PStackX<T>) PersistentCollectionX.super.combine(predicate, op);
+    }
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> PStackX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return ( PStackX<R>)PersistentCollectionX.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default  PStackX<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+      
+        return ( PStackX<T>)PersistentCollectionX.super.combine(combiner, app);
     }
 
     @Override

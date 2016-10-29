@@ -7,8 +7,8 @@ import org.jooq.lambda.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Semigroup;
-import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
@@ -25,15 +25,19 @@ import lombok.experimental.Wither;
 /**
  * @author johnmcclean
  *
- * Interface for applicative-like behavior. Allows the application of functions within a wrapped context, support both 
+ * Interface for applicative-like behavior (via Applicative) otherise allows (mostly eager)
+ * partial application of functions inside wrapped contexts. 
+ * 
+ * 
+ * Allows the application of functions within a wrapped context, support both 
  * abscence / error short-circuiting and error accumulation
  * 
  * <pre> {@code ap(BiFunction<T,T,T>)}</pre> and <pre>{@code ap(Semigroup<T>}</pre> for accumulation despite absence
  * use ap1..5 for absence short-circuiting
  *
- * @param <T>
+ * @param <T> Data type of element/s inside this Applicative Functo
  */
-public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
+public interface ApplicativeFunctor<T> extends Applicative<T>,ConvertableFunctor<T>, Unit<T> {
 
     public static class Applicatives {
         public static <T, R> ApplyingApplicativeBuilder<T, R, ApplicativeFunctor<R>> applicatives(final Unit unit, final Functor functor) {

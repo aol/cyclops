@@ -30,7 +30,9 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.Value;
 
 /**
  * An eXtended Deque type, that offers additional eagerly executed functional style operators such as bimap, filter and more
@@ -264,6 +266,24 @@ public interface DequeX<T> extends Deque<T>, MutableCollectionX<T>, OnEmptySwitc
     @Override
     default DequeX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (DequeX<T>) MutableCollectionX.super.combine(predicate, op);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> DequeX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return ( DequeX<R>)MutableCollectionX.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default  DequeX<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+      
+        return ( DequeX<T>)MutableCollectionX.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)

@@ -31,7 +31,9 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.Value;
 
 public interface QueueX<T> extends Queue<T>, MutableCollectionX<T>, OnEmptySwitch<T, Queue<T>> {
 
@@ -171,12 +173,35 @@ public interface QueueX<T> extends Queue<T>, MutableCollectionX<T>, OnEmptySwitc
     default QueueX<T> toQueueX() {
         return this;
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> QueueX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return ( QueueX<R>)MutableCollectionX.super.combine(app, fn);
+    }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default  QueueX<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+      
+        return ( QueueX<T>)MutableCollectionX.super.combine(combiner, app);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#from(java.util.Collection)
+     */
     @Override
     default <T1> QueueX<T1> from(final Collection<T1> c) {
         return QueueX.<T1> fromIterable(getCollector(), c);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#fromStream(java.util.stream.Stream)
+     */
     @Override
     default <X> QueueX<X> fromStream(final Stream<X> stream) {
         return new QueueXImpl<>(

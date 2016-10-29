@@ -11,6 +11,7 @@ import java.util.OptionalLong;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -54,12 +55,14 @@ import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
@@ -97,7 +100,37 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, FlatMap<T>, ToStream<T> {
+public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>, Applicative<T>,Functor<T>, FlatMap<T>, ToStream<T> {
+   
+    
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> AnyM<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return (AnyM<R>)Applicative.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default  AnyM<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+        
+        return (AnyM<T>)Applicative.super.combine(combiner, app);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
+     */
+    @Override
+    default <T> Unit<T> emptyUnit() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     /**
      * Tests for equivalency between two AnyM types
      * 

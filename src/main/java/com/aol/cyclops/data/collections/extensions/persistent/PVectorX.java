@@ -31,7 +31,9 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.Value;
 
 public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PVector<T>> {
 
@@ -280,7 +282,23 @@ public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>, OnEmp
     default PVectorX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (PVectorX<T>) PersistentCollectionX.super.combine(predicate, op);
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> PVectorX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return ( PVectorX<R>)PersistentCollectionX.super.combine(app, fn);
+    }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default  PVectorX<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+      
+        return ( PVectorX<T>)PersistentCollectionX.super.combine(combiner, app);
+    }
     default PVector<T> toPVector() {
         return this;
     }

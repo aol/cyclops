@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,6 +29,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMonads;
+import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
@@ -63,6 +65,17 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
         return Predicates.eqv(t)
                          .test(this);
     }
+    
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default AnyMValue<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+        
+        return (AnyMValue<T>)AnyM.super.combine(combiner, app);
+    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.AnyM#collect(java.util.stream.Collector)

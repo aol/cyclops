@@ -27,6 +27,9 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.types.Zippable;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 /**
  * 
@@ -199,8 +202,8 @@ public interface Monoids {
      * <pre>
      * {@code
      *    
-     *    Monoid<List<Integer>> list = Semigroups.collectionConcat();
-     *    Monoid<Set<Integer>> set = Semigroups.collectionConcat();
+     *    Monoid<List<Integer>> list = Monoids.collectionConcat();
+     *    Monoid<Set<Integer>> set = Monoids.collectionConcat();
      *    
      *    
      * 
@@ -211,7 +214,44 @@ public interface Monoids {
     static <T, C extends Collection<T>> Monoid<C> collectionConcat(C zero) {
         return Monoid.of(zero, Semigroups.collectionConcat());
     }
-
+    /**
+     * Example sum integer Maybes
+     * <pre>
+     * {@code 
+     *     Monoid<Maybe<Integer>> sumMaybes = Monoids.combineApplicatives(Maybe::just,Monoids.intSum);
+     * }
+     * </pre>
+     * 
+     * @param zeroFn Function to lift the Identity value into an ApplicativeFunctor
+     * @param monoid Monoid to combine the values inside the applicatives
+     * @return Combination of two Applicatives 
+     */
+    static <T,A extends ApplicativeFunctor<T>> Monoid<A> combineApplicatives(Function<T,A> zeroFn,Monoid<T> monoid) {
+       
+        return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineApplicatives(monoid));
+    }
+    /**
+     * Example sum integer Lists
+     * <pre>
+     * {@code 
+     *      Monoid<ListX<Integer>> sumLists = Monoids.combineZippables(ListX::of,Monoids.intSum);
+     * }
+     * </pre>
+     * 
+     * @param zeroFn Function to lift the Identity value into a Zippable
+     * @param monoid Monoid to combine the values inside the Zippables
+     * @return Combination of two Applicatives 
+     */
+    static <T,A extends Zippable<T>> Monoid<A> combineZippables(Function<T,A> zeroFn,Monoid<T> monoid) {
+       
+        return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineZippables(monoid));
+    }
+    /**
+     * @return Combination of two LazyFutureStreams Streams b is appended to a
+     */
+    static <T> Semigroup<LazyFutureStream<T>> combineFutureStream() {
+        return (a, b) -> a.appendStream(b);
+    }
     /**
      * @return Combination of two ReactiveSeq Streams b is appended to a
      */
@@ -232,7 +272,20 @@ public interface Monoids {
     static <T> Monoid<Stream<T>> combineStream() {
         return Monoid.of(Stream.empty(), Semigroups.combineStream());
     }
-
+    /**
+     * @param zero Empty Collection of same type
+     * @return Combination of two Collection, first non-empty is returned
+     */
+    static <T,C extends Collection<T>> Monoid<C> firstNonEmpty(C zero) {
+        return  Monoid.of(zero,Semigroups.firstNonEmpty());
+    }
+    /**
+     * @param zero Empty Collection of same type
+     * @return Combination of two Collection, last non-empty is returned
+     */
+    static <T,C extends Collection<T>> Monoid<C> lastNonEmpty(C zero) {
+        return Monoid.of(zero,Semigroups.lastNonEmpty());
+    }
     /**
      * @return Combination of two Objects of same type, first non-null is returned
      */

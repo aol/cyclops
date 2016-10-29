@@ -814,12 +814,15 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * Predicate functional interface that will allow SimpleReact to stop
      * blocking the current thread when the Predicate has been fulfilled. E.g.
      *
-     * <code>
-        List&lt;String&gt; strings = new SimpleReact().&lt;Integer, Integer&gt; react(() -&gt; 1, () -&gt; 2, () -&gt; 3)
-                .then(it -&gt; it * 100)
-                .then(it -&gt; "*" + it)
-                .block(status -&gt; status.getCompleted()&gt;1);
-      </code>
+     * <pre>
+     * {@code 
+        List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
+                                                .then(it -> it * 100)
+                                                .then(it -> "*" + it)
+                                                .block(status -> status.getCompleted()->1);
+                
+         }       
+      </pre>
      *
      * In this example the current thread will unblock once more than one result
      * has been returned.
@@ -834,7 +837,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
     default ListX<U> block(final Predicate<Status<U>> breakout) {
         return new Blocker<U>(
-                              getLastActive().list(), getErrorHandler()).block(breakout);
+                              (List)getLastActive().list(), getErrorHandler()).block(breakout);
     }
 
     /**

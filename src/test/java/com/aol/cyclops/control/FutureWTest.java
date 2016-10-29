@@ -7,6 +7,7 @@ import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -16,6 +17,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -77,6 +79,39 @@ public class FutureWTest {
             e.printStackTrace();
         }
 	}
+	@Test
+	public void testBreakout(){
+	    
+        FutureW<ListX<Integer>> strings = FutureW.quorum(status -> status.getCompleted() > 1, FutureW.ofSupplier(()->1),FutureW.ofSupplier(()->1),FutureW.ofSupplier(()->1));
+               
+
+        assertThat(strings.get().size(), is(greaterThan(1)));
+	}
+	@Test
+    public void testBreakoutAll(){
+        
+        FutureW<ListX<Integer>> strings = FutureW.quorum(status -> status.getCompleted() > 2, FutureW.ofSupplier(()->1),FutureW.ofSupplier(()->1),FutureW.ofSupplier(()->1));
+               
+
+        assertThat(strings.get().size(), is(equalTo(3)));
+    }
+	@Test
+    public void testFirstSuccess(){
+        
+	    FutureW<Integer> ft = FutureW.future();
+        FutureW<Integer> result = FutureW.firstSuccess(FutureW.ofSupplier(()->1),ft);
+               
+        ft.complete(10);
+        assertThat(result.get(), is(equalTo(1)));
+    }
+	@Test
+    public void testBreakoutOne(){
+        
+        FutureW<ListX<Integer>> strings = FutureW.quorum(status -> status.getCompleted() >0, FutureW.ofSupplier(()->1),FutureW.future(),FutureW.future());
+               
+
+        assertThat(strings.get().size(), is(equalTo(1)));
+    }
 	@Test
     public void testApFeatureToggle() {
         
