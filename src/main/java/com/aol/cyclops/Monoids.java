@@ -8,10 +8,10 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
-import org.pcollections.PCollection;
 
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -410,4 +410,11 @@ public interface Monoids {
      * Combine two booleans by AND'ing them (conjunction)
      */
     static Monoid<Boolean> booleanConjunction =Monoid.of(true, Semigroups.booleanDisjunction);
+    
+    /**
+     * @return Monoid for composing functions
+     */
+    static <A> Monoid<Function<A,A>> functionComposition(){
+        return Monoid.of(Function.identity(), Semigroups.functionComposition());
+    }
 }

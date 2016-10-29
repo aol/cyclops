@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
@@ -430,5 +431,12 @@ public interface Semigroups {
      * Combine two booleans by AND'ing them (conjunction)
      */
     static Semigroup<Boolean> booleanConjunction = (a, b) -> a && b;
+    
+    /**
+     * @return Combine  functions
+     */
+    static <A> Semigroup<Function<A,A>> functionComposition(){
+        return  (a,b)->a.andThen(b);
+    }
 
 }

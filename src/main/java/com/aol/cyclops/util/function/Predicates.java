@@ -1,5 +1,19 @@
 package com.aol.cyclops.util.function;
 
+import static com.aol.cyclops.control.Matchable.otherwise;
+import static com.aol.cyclops.control.Matchable.then;
+import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops.util.function.Predicates.any;
+import static com.aol.cyclops.util.function.Predicates.anyOf;
+import static com.aol.cyclops.util.function.Predicates.decons;
+import static com.aol.cyclops.util.function.Predicates.eq;
+import static com.aol.cyclops.util.function.Predicates.in;
+import static com.aol.cyclops.util.function.Predicates.not;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -7,6 +21,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.Matchables;
+import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.MTuple1;
 import com.aol.cyclops.control.Matchable.MTuple2;
@@ -17,6 +33,8 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.matcher2.ADTPredicateBuilder;
+import com.aol.cyclops.matcher.MatchableTest.Address;
+import com.aol.cyclops.matcher.MatchableTest.Customer;
 import com.aol.cyclops.types.Value;
 
 import lombok.NoArgsConstructor;
@@ -270,13 +288,54 @@ public class Predicates {
         }
     }
 
+    
     /**
-     * A return a predicate builder for deconstructing a tuple. Any Object can be mapped to a nested hierarchy of Tuples,
+     * Return a predicate builder for deconstructing a tuple. Any Object can be mapped to a nested hierarchy of Tuples,
      * decons can be used to perform structural pattern matching over Java objects (once the Object to tuple mapping has been 
      * created).
      * 
-     * @param when
-     * @return
+     * Supports structural pattern matching on a Tuple of a single field.
+     * decons deconstructs the Tuple so each field can be matched independently.
+     * 
+     * Example : Given a class with § fields, we can provide a method to create a Matchable Tuple containing those fields
+     * <pre>
+     * {@code 
+         * static class Address{
+            int house;
+         
+            
+            
+            public MTuple1<Integer> match(){
+                return Matchables.supplier(()->house);
+            }
+        }
+        }
+        </pre>
+     * 
+     * decons can be used to match against those fields directly
+     * <pre>
+     * {@code
+     *  Predicates.decons(when(10)).test(new Address(10).match()));
+        //true
+       }
+       </pre>
+       And in the pattern matching API
+     * <pre>
+     * {@code
+      String result =  new Customer("test",new Address(10))
+                                .match()
+                                .on$_2()
+                                .matches(c->c.is(when(decons(when(10))),then("hello")), otherwise("miss"))
+                                .get();
+      
+       //"hello"
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param when 1 Predicates to match against (in the returned builder)
+     * @return Builder that matches values provided to it, with the Predicated provided to decons
      */
     public static <T1, T2, T3> PredicateBuilder1<T1> decons(final MTuple1<Predicate<? super T1>> when) {
 
@@ -302,7 +361,54 @@ public class Predicates {
             return predicate.test(t);
         }
     }
-
+    /**
+     * Return a predicate builder for deconstructing a tuple. Any Object can be mapped to a nested hierarchy of Tuples,
+     * decons can be used to perform structural pattern matching over Java objects (once the Object to tuple mapping has been 
+     * created).
+     * 
+     * Supports structural pattern matching on a Tuple of two fields.
+     * decons deconstructs the Tuple so each field can be matched independently.
+     * 
+     * Example : Given a class with 2 fields, we can provide a method to create a Matchable Tuple containing those fields
+     * <pre>
+     * {@code 
+         * static class Address{
+            int house;
+            String street;
+            
+            
+            public MTuple2<Integer,String> match(){
+                return Matchables.supplier2(()->house,()->street);
+            }
+        }
+        }
+        </pre>
+     * 
+     * decons can be used to match against those fields directly
+     * <pre>
+     * {@code
+     *  Predicates.decons(when(10,"hello")).test(new Address(10,"hello").match()));
+        //true
+       }
+       </pre>
+       And in the pattern matching API
+     * <pre>
+     * {@code
+      String result =  new Customer("test",new Address(10,"hello"))
+                                .match()
+                                .on$_2()
+                                .matches(c->c.is(when(decons(when(10,"hello"))),then("hello")), otherwise("miss"))
+                                .get();
+      
+       //"hello"
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param when 2 Predicates to match against (in the returned builder)
+     * @return Builder that matches values provided to it, with the Predicated provided to decons
+     */
     public static <T1, T2, T3> PredicateBuilder2<T1, T2> decons(final MTuple2<Predicate<? super T1>, Predicate<? super T2>> when) {
 
         return new PredicateBuilder2<T1, T2>(
@@ -330,6 +436,52 @@ public class Predicates {
         }
     }
 
+    /**
+     * Return a predicate builder for deconstructing a tuple. Any Object can be mapped to a nested hierarchy of Tuples,
+     * decons can be used to perform structural pattern matching over Java objects (once the Object to tuple mapping has been 
+     * created). 
+     * Supports structural pattern matching on a Tuple of three fields.
+     * decons deconstructs the Tuple so each field can be matched independently.
+     * 
+     * Example : Given a class with 3 fields, we can provide a method to create a Matchable Tuple containing those fields
+     * <pre>
+     * {@code 
+         * static class Address{
+            int house;
+            String street;
+            String city;
+            
+            public MTuple3<Integer,String,String> match(){
+                return Matchables.supplier3(()->house,()->street,()->city);
+            }
+        }
+        }
+        </pre>
+     * 
+     * decons can be used to match against those fields directly
+     * <pre>
+     * {@code
+     *  Predicates.decons(when(10,"hello","my city")).test(new Address(10,"hello","my city").match()));
+        //true
+       }
+       </pre>
+       And in the pattern matching API
+     * <pre>
+     * {@code
+      String result =  new Customer("test",new Address(10,"hello","my city"))
+                                .match()
+                                .on$_2()
+                                .matches(c->c.is(when(decons(when(10,"hello","my city"))),then("hello")), otherwise("miss")).get();
+      
+       //"hello"
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param when 3 Predicates to match against (in the returned builder)
+     * @return Builder that matches values provided to it, with the Predicated provided to decons
+     */
     public static <T1, T2, T3> PredicateBuilder3<T1, T2, T3> decons(
             final MTuple3<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>> when) {
 
@@ -359,7 +511,54 @@ public class Predicates {
             return predicate.test(t);
         }
     }
-
+    /**
+     * Return a predicate builder for deconstructing a tuple. Any Object can be mapped to a nested hierarchy of Tuples,
+     * decons can be used to perform structural pattern matching over Java objects (once the Object to tuple mapping has been 
+     * created). 
+     * Supports structural pattern matching on a Tuple of four fields.
+     * decons deconstructs the Tuple so each field can be matched independently.
+     * 
+     * Example : Given a class with 4 fields, we can provide a method to create a Matchable Tuple containing those fields
+     * <pre>
+     * {@code 
+         * static class Address{
+            int house;
+            String street;
+            String city;
+            String country;
+            
+            public MTuple4<Integer,String,String> match(){
+                return Matchables.supplier4(()->house,()->street,()->city,()->country);
+            }
+        }
+        }
+        </pre>
+     * 
+     * decons can be used to match against those fields directly
+     * <pre>
+     * {@code
+     *  Predicates.decons(when(10,"hello","my city","Faroe Islands")).test(new Address(10,"hello","my city","Faroe Islands").match()));
+        //true
+       }
+       </pre>
+       And in the pattern matching API
+     * <pre>
+     * {@code
+      String result =  new Customer("test",new Address(10,"hello","my city","Faroe Islands"))
+                                .match()
+                                .on$_2()
+                                .matches(c->c.is(when(decons(when(10,"hello","my city","Faroe Islands"))),then("hello")), otherwise("miss"))
+                                .get();
+      
+       //"hello"
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param when 4 Predicates to match against (in the returned builder)
+     * @return Builder that matches values provided to it, with the Predicated provided to decons
+     */
     public static <T1, T2, T3, T4> PredicateBuilder4<T1, T2, T3, T4> decons(
             final MTuple4<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>> when) {
 
@@ -390,7 +589,55 @@ public class Predicates {
             return predicate.test(t);
         }
     }
-
+    /**
+     * Return a predicate builder for deconstructing a tuple. Any Object can be mapped to a nested hierarchy of Tuples,
+     * decons can be used to perform structural pattern matching over Java objects (once the Object to tuple mapping has been 
+     * created). 
+     * Supports structural pattern matching on a Tuple of five fields.
+     * decons deconstructs the Tuple so each field can be matched independently.
+     * 
+     * Example : Given a class with 5 fields, we can provide a method to create a Matchable Tuple containing those fields
+     * <pre>
+     * {@code 
+         * static class Address{
+            int house;
+            String street;
+            String city;
+            String country;
+            String zip;
+            
+            public MTuple5<Integer,String,String> match(){
+                return Matchables.supplier5(()->house,()->street,()->city,()->country,()->zip);
+            }
+        }
+        }
+        </pre>
+     * 
+     * decons can be used to match against those fields directly
+     * <pre>
+     * {@code
+     *  Predicates.decons(when(10,"hello","my city","Faroe Islands")).test(new Address(10,"hello","my city","Faroe Islands","CR25").match()));
+        //true
+       }
+       </pre>
+       And in the pattern matching API
+     * <pre>
+     * {@code
+      String result =  new Customer("test",new Address(10,"hello","my city","Faroe Islands","CR25"))
+                                .match()
+                                .on$_2()
+                                .matches(c->c.is(when(decons(when(10,"hello","my city","Faroe Islands","CR25"))),then("hello")), otherwise("miss"))
+                                .get();
+      
+       //"hello"
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param when 5 Predicates to match against (in the returned builder)
+     * @return Builder that matches values provided to it, with the Predicated provided to decons
+     */
     public static <T1, T2, T3, T4, T5> PredicateBuilder5<T1, T2, T3, T4, T5> decons(
             final MTuple5<Predicate<? super T1>, Predicate<? super T2>, Predicate<? super T3>, Predicate<? super T4>, Predicate<? super T5>> when) {
 
@@ -443,8 +690,32 @@ public class Predicates {
 
     /**
      * Check for universal equality (Object#equals)
-     * @param value
-     * @return
+     * 
+     * Filtering example
+     * <pre>
+     * {@code 
+     *  ReactiveSeq.of(1,2,3).filter(anyOf(not(eq(2)),in(1,10,20)));
+     *  //ReactiveSeq[1]
+     * 
+     * }
+     * </pre>
+     * 
+     * Pattern Matching Example 
+     * 
+     *  <pre>
+     *  {@code 
+     *   Eval<String> url = Matchables.url(new URL("http://www.aol.com/path?q=hello"))
+                                     .on$12_45()
+                                     .matches(c->c.is(when(eq("http"),in("www.aol.com","aol.com"),any(),not(eq("q=hello!"))), then("correct")),otherwise("miss"));
+       
+        //Eval.now("correct");
+     *  
+     *  
+     *  }
+     *  </pre>
+     * 
+     * @param value Value to check equality of 
+     * @return Predicate for equality
      */
     public static <V> Predicate<V> eq(final V value) {
 
