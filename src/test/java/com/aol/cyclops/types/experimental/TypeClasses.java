@@ -137,7 +137,7 @@ public interface TypeClasses {
         default void test(){
             ListX<Integer> listx = ListX.of(1,2,3);
             Higher<ListType.listx,Integer> mapped1 =listFunctor().map(a->a+1, widen(listx));
-            mapped1.to(ListType::narrow)
+            mapped1.convert(ListType::narrow)
                    .map(x->x*2)
                    .add(1);
             listFunctor().partialMap(listx)
