@@ -46,32 +46,7 @@ public interface ApplicativeFunctor<T> extends Applicative<T>,ConvertableFunctor
         }
     }
 
-    /**
-     * Lazily combine this ApplicativeFunctor with the supplied value via the supplied BiFunction
-     * 
-     * Example
-     * <pre>
-     * {@code 
-     *   Maybe<Integer> some = Maybe.just(10);
-     *   just.combine(Eval.now(20), this::add);
-     *   //Some[30]
-     *   
-     *   Maybe<Integer> none = Maybe.none();
-     *   none.combine(Eval.now(20), this::add);
-     *   //None
-     *   
-     * }
-     * </pre>
-     * 
-     * @param app Value to combine with this one.
-     * @param fn BiFunction to combine them
-     * @return New Applicativefunctor that represents the combined values
-     */
-    default <T2, R> ApplicativeFunctor<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-        return (ApplicativeFunctor<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                                                                    .apply(v))).map(tuple -> app.visit(i -> tuple.v2.apply(i), () -> tuple.v1));
-    }
+   
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 
 /**
@@ -73,7 +74,7 @@ import com.aol.cyclops.types.Value;
  * @param <T> Return type
  */
 @FunctionalInterface
-public interface Trampoline<T> extends Supplier<T>, Value<T> {
+public interface Trampoline<T> extends Supplier<T>, Value<T>, To<Trampoline<T>> {
 
     /**
      * @return next stage in Trampolining

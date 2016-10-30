@@ -47,9 +47,11 @@ import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFoldable;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -67,8 +69,8 @@ import lombok.AllArgsConstructor;
  *
  * @param <T> Data type for Stream
  */
-public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, CyclopsCollectable<T>, ConvertableSequence<T>, Functor<T>, Filterable<T>,
-        Traversable<T>, Unit<T>, ZippingApplicativable<T> {
+public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFoldable<T>, CyclopsCollectable<T>, ConvertableSequence<T>, Functor<T>, Filterable<T>,
+        Traversable<T>, Unit<T>, ZippingApplicativable<T>, Zippable<T> {
 
     public static <T> Streamable<T> fromObject(final Object toCoerce) {
         return new StreamableImpl(
@@ -661,7 +663,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default <R> Applicative<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default Streamable<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
        
         return (Streamable<T>)ZippingApplicativable.super.combine(combiner, app);
     }

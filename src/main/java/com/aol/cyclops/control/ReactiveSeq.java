@@ -59,12 +59,15 @@ import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.types.higherkindedtypes.Higher;
+import com.aol.cyclops.types.higherkindedtypes.type.constructors.ReactiveSeqType;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -117,9 +120,13 @@ import lombok.val;
  *
  * @param <T> Data type of elements within the Stream
  */
-public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
-        FilterableFunctor<T>, ExtendedTraversable<T>, IterableFoldable<T>, CyclopsCollectable<T>, JoolWindowing<T>, Seq<T>, Iterable<T>, Publisher<T>,
-        ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {
+public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
+                                        Higher<ReactiveSeqType.reactiveseq,T>,
+                                        Unwrapable, 
+                                        Stream<T>, 
+                                        OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
+                                        FilterableFunctor<T>, ExtendedTraversable<T>, IterableFoldable<T>, CyclopsCollectable<T>, JoolWindowing<T>, Seq<T>, Iterable<T>, Publisher<T>,
+                                        ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {
 
     
     /* (non-Javadoc)
@@ -128,7 +135,7 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
     @Override
     default <T2, R> ReactiveSeq<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
         
-        return ( ReactiveSeq<R>)ExtendedTraversable.super.combine(app, fn);
+        return ( ReactiveSeq<R>)ZippingApplicativable.super.combine(app, fn);
     }
 
     /* (non-Javadoc)

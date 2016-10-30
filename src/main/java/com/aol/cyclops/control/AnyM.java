@@ -60,6 +60,7 @@ import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.Value;
@@ -100,7 +101,7 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>, Applicative<T>,Functor<T>, FlatMap<T>, ToStream<T> {
+public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Applicative<T>,Functor<T>, FlatMap<T>, ToStream<T> {
    
     
     
@@ -110,7 +111,7 @@ public interface AnyM<T> extends Unwrapable, EmptyUnit<T>, Unit<T>, Foldable<T>,
     @Override
     default <T2, R> AnyM<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
         
-        return (AnyM<R>)Applicative.super.combine(app, fn);
+        return (AnyM<R>)FlatMap.super.combine(app, fn);
     }
 
     /* (non-Javadoc)

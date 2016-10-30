@@ -28,6 +28,7 @@ import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
@@ -143,7 +144,7 @@ import lombok.val;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T>, ToStream<T>, Filterable<T>, Functor<T>, ApplicativeFunctor<T> {
+public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, MonadicValue<T>, ToStream<T>, Filterable<T>, Functor<T>, ApplicativeFunctor<T> {
 
     /**
      * Construct a Try  that contains a single value extracted from the supplied reactive-streams Publisher, will catch any Exceptions

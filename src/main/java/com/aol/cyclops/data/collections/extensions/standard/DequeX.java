@@ -27,11 +27,13 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 
 /**
@@ -41,7 +43,7 @@ import com.aol.cyclops.types.Value;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface DequeX<T> extends Deque<T>, MutableCollectionX<T>, OnEmptySwitch<T, Deque<T>> {
+public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>, OnEmptySwitch<T, Deque<T>> {
 
     /**
      * Create a DequeX that contains the Integers between start and end

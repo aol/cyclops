@@ -19,7 +19,6 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
@@ -29,6 +28,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
@@ -64,8 +64,9 @@ import com.aol.cyclops.util.function.Memoize;
  * @param <T> Type of value storable in this Eval
  */
 public interface Eval<T>
-        extends Supplier<T>, MonadicValue1<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
+        extends  To<Eval<T>>,Supplier<T>, MonadicValue1<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 
+   
     /**
      * Create an Eval instance from a reactive-streams publisher
      * 
@@ -321,7 +322,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default <R> Eval<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default Eval<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
         return (Eval)MonadicValue1.super.combine(combiner, app);
     }
 

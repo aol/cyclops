@@ -33,6 +33,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
@@ -59,7 +60,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Slf4j
-public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>, MonadicValue1<T>, FlatMap<T>, Filterable<T> {
+public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, ApplicativeFunctor<T>, MonadicValue1<T>, FlatMap<T>, Filterable<T> {
 
     /**
      * An empty FutureW
@@ -1241,7 +1242,7 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    public <R> FutureW<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    public FutureW<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
         return (FutureW<T>)MonadicValue1.super.combine(combiner, app);
     }
 

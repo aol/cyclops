@@ -22,6 +22,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
@@ -35,7 +36,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> The type contained on the nested Try within
  */
-public interface TryT<T, X extends Throwable> extends Publisher<T>, Functor<T>, Filterable<T> {
+public interface TryT<T, X extends Throwable> extends To<TryT<T,X>>,Publisher<T>, Functor<T>, Filterable<T> {
 
     public <R> TryT<R, X> unit(R value);
 

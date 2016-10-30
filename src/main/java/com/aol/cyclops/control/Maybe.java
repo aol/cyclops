@@ -25,8 +25,12 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.types.higherkindedtypes.Higher;
+import com.aol.cyclops.types.higherkindedtypes.type.constructors.MaybeType;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
 
@@ -90,8 +94,11 @@ import lombok.AllArgsConstructor;
  *
  * @param <T> Data type of element stored in Maybe
  */
-public interface Maybe<T>
-        extends MonadicValue1<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
+public interface Maybe<T> extends To<Maybe<T>>,
+                                  Higher<MaybeType.maybe,T>,
+                                  MonadicValue1<T>, 
+                                  Zippable<T>,
+                                  Supplier<T>, ConvertableFunctor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 
     final static Maybe EMPTY = new Nothing<>();
 
@@ -489,7 +496,7 @@ public interface Maybe<T>
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default <R> Maybe<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default  Maybe<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
         return (Maybe<T>)MonadicValue1.super.combine(combiner, app);
     }
 

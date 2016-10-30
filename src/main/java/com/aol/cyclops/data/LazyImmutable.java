@@ -13,6 +13,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 
@@ -43,7 +44,7 @@ import lombok.ToString;
  */
 @ToString
 
-public class LazyImmutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndOptionalMatcher<T>, Functor<T>, ApplicativeFunctor<T> {
+public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consumer<T>, Matchable.ValueAndOptionalMatcher<T>, Functor<T>, ApplicativeFunctor<T> {
     private final static Object UNSET = new Object();
     private final AtomicReference value = new AtomicReference<>(
                                                                 UNSET);

@@ -27,8 +27,8 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Zippable;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 /**
@@ -218,17 +218,17 @@ public interface Monoids {
      * Example sum integer Maybes
      * <pre>
      * {@code 
-     *     Monoid<Maybe<Integer>> sumMaybes = Monoids.combineApplicatives(Maybe::just,Monoids.intSum);
+     *     Monoid<Maybe<Integer>> sumMaybes = Monoids.combineScalarFunctors(Maybe::just,Monoids.intSum);
      * }
      * </pre>
      * 
-     * @param zeroFn Function to lift the Identity value into an ApplicativeFunctor
-     * @param monoid Monoid to combine the values inside the applicatives
-     * @return Combination of two Applicatives 
+     * @param zeroFn Function to lift the Identity value into a Scalar Functor
+     * @param monoid Monoid to combine the values inside the Scalar Functors
+     * @return Combination of two Scalar Functors
      */
-    static <T,A extends ApplicativeFunctor<T>> Monoid<A> combineApplicatives(Function<T,A> zeroFn,Monoid<T> monoid) {
+    static <T,A extends MonadicValue<T>> Monoid<A> combineScalarFunctors(Function<T,A> zeroFn,Monoid<T> monoid) {
        
-        return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineApplicatives(monoid));
+        return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineScalarFunctors(monoid));
     }
     /**
      * Example sum integer Lists

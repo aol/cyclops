@@ -34,8 +34,8 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Zippable;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 /**
@@ -247,10 +247,10 @@ public interface Semigroups {
         return (a, b) -> (A) a.zip(b, semigroup);
     }
     /**
-     * @param semigroup Semigroup to combine the values inside the applicatives
-     * @return Combination of two Applicatives 
+     * @param semigroup Semigroup to combine the values inside the Scalar Functors (Maybe, Xor, Ior, Try, Eva, FeatureToggle etc)
+     * @return Combination of two Scalar Functors
      */
-    static <T,A extends ApplicativeFunctor<T>> Semigroup<A> combineApplicatives(BiFunction<T,T,T> semigroup) {
+    static <T,A extends MonadicValue<T>> Semigroup<A> combineScalarFunctors(BiFunction<T,T,T> semigroup) {
         return (a, b) -> (A) a.combine(b, semigroup);
     }
     /**

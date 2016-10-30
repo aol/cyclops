@@ -1,5 +1,6 @@
 package com.aol.cyclops.types.anyM;
 
+import static com.aol.cyclops.internal.Utils.firstOrNull;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;

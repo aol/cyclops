@@ -32,9 +32,10 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 
-public interface PQueueX<T> extends PQueue<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PQueue<T>> {
+public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PQueue<T>> {
 
     /**
      * Narrow a covariant PQueueX

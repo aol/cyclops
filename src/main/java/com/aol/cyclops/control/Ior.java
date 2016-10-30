@@ -30,6 +30,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
@@ -55,7 +56,7 @@ import lombok.EqualsAndHashCode;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunctor<ST, PT>, Functor<PT>, Filterable<PT>, ApplicativeFunctor<PT> {
+public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue2<ST, PT>, BiFunctor<ST, PT>, Functor<PT>, Filterable<PT>, ApplicativeFunctor<PT> {
 
     @Deprecated //internal use only
     public static <ST, PT> Ior<ST, PT> both(final Ior<ST, PT> secondary, final Ior<ST, PT> primary) {
@@ -701,7 +702,7 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default <R> Ior<ST,PT> combine(BinaryOperator<Applicative<PT>> combiner, Applicative<PT> app) {
+    default  Ior<ST,PT> combine(BinaryOperator<Applicative<PT>> combiner, Applicative<PT> app) {
        
         return (Ior<ST,PT>)MonadicValue2.super.combine(combiner, app);
     }

@@ -23,6 +23,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.ToStream;
@@ -37,7 +38,7 @@ import com.aol.cyclops.types.stream.ToStream;
  * @param <T>
  *            The type contained on the nested Eval(s) within
  */
-public interface EvalT<T> extends Publisher<T>, Functor<T>, Filterable<T>, ToStream<T> {
+public interface EvalT<T> extends To<EvalT<T>>,Publisher<T>, Functor<T>, Filterable<T>, ToStream<T> {
 
     public <R> EvalT<R> unit(R value);
 

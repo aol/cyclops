@@ -23,6 +23,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
@@ -38,7 +39,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Xor within
  */
-public interface XorT<ST, T> extends Publisher<T>, Functor<T>, Filterable<T> {
+public interface XorT<ST, T> extends To<XorT<ST,T>>,Publisher<T>, Functor<T>, Filterable<T> {
     public <R> XorT<ST, R> unit(R value);
 
     public <R> XorT<ST, R> empty();

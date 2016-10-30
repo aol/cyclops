@@ -54,7 +54,12 @@ import lombok.AllArgsConstructor;
  * @param <T> Data type of element in this value
  */
 @FunctionalInterface
-public interface Value<T> extends Supplier<T>, Foldable<T>, Convertable<T>, Publisher<T>, Predicate<T>, Zippable<T> {
+public interface Value<T> extends Supplier<T>, 
+                                    Foldable<T>, 
+                                    Convertable<T>, 
+                                    Publisher<T>, 
+                                    Predicate<T>, 
+                                    Zippable<T>{
 
     /* An Iterator over the list returned from toList()
      * 

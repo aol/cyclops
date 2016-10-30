@@ -33,9 +33,10 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 
-public interface PSetX<T> extends PSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
+public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
     /**
      * Narrow a covariant PSetX
      * 

@@ -93,7 +93,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
      */
     @Override
     default <T2, R> AnyMValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (AnyMValue<R>) ApplicativeFunctor.super.combine(app, fn);
+        return (AnyMValue<R>) AnyM.super.combine(app, fn);
     }
 
     /* (non-Javadoc)

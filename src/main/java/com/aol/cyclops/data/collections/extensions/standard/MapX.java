@@ -27,12 +27,14 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
+import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.OnEmpty;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
@@ -43,7 +45,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  * @param <K> Key type
  * @param <V> Value type
  */
-public interface MapX<K, V> extends Map<K, V>, FluentMapX<K, V>, BiFunctor<K, V>, Functor<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
+public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, BiFunctor<K, V>, Functor<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
         OnEmptySwitch<Tuple2<K, V>, Map<K, V>>, Publisher<Tuple2<K, V>>, Foldable<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {
 
     /**

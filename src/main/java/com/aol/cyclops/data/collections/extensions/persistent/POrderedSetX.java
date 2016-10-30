@@ -33,9 +33,10 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 
-public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, POrderedSet<T>> {
+public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, POrderedSet<T>> {
     /**
      * Narrow a covariant POrderedSetX
      * 

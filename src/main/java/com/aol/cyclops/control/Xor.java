@@ -18,7 +18,6 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -30,6 +29,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
@@ -118,7 +118,7 @@ import lombok.EqualsAndHashCode;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Xor<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, Functor<PT>, BiFunctor<ST,PT>,Filterable<PT>, ApplicativeFunctor<PT> {
+public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<ST, PT>, Functor<PT>, BiFunctor<ST,PT>,Filterable<PT>, ApplicativeFunctor<PT> {
 
     /**
      * Construct a Primary Xor from the supplied publisher

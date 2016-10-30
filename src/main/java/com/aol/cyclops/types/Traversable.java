@@ -33,7 +33,7 @@ import com.aol.cyclops.types.stream.lazy.LazyOperations;
  *
  * @param <T> The data type of the elements in this Traversable
  */
-public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Zippable<T> {
+public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Zippable<T>{
 
     /**
      * @return This Traversable converted to a Stream

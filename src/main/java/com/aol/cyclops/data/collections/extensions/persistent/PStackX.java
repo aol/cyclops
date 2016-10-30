@@ -34,9 +34,10 @@ import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 
-public interface PStackX<T> extends PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>, OnEmptySwitch<T, PStack<T>> {
+public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>, OnEmptySwitch<T, PStack<T>> {
 
     /**
      * Narrow a covariant PStackX

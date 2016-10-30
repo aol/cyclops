@@ -22,6 +22,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
@@ -37,7 +38,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> The type contained on the Optional within
  */
-public interface OptionalT<T> extends Publisher<T>, Functor<T>, Filterable<T> {
+public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>, Filterable<T> {
 
     public ReactiveSeq<T> stream();
 

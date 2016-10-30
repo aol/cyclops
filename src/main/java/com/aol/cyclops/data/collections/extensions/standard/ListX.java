@@ -20,6 +20,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.derive4j.hkt.__;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -36,7 +37,8 @@ import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.experimental.higherkindedtypes.ListType;
+import com.aol.cyclops.types.higherkindedtypes.Higher;
+import com.aol.cyclops.types.higherkindedtypes.type.constructors.ListType;
 
 /**
  * An eXtended List type, that offers additional eagerly executed functional style operators such as bimap, filter and more
@@ -45,11 +47,18 @@ import com.aol.cyclops.types.experimental.higherkindedtypes.ListType;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface ListX<T> extends ListType<T>,List<T>, MutableCollectionX<T>, MutableSequenceX<T>, Comparable<T>, IterableFunctor<T>, ZippingApplicativable<T>,
-        OnEmptySwitch<T, List<T>> {
+public interface ListX<T> extends __<ListX.µ,T>,
+                                 Higher<ListType.listx,T>,
+                                 List<T>, 
+                                 MutableCollectionX<T>, 
+                                 MutableSequenceX<T>, 
+                                 Comparable<T>, 
+                                 IterableFunctor<T>, 
+                                 ZippingApplicativable<T>,
+                                 OnEmptySwitch<T, List<T>> {
 
    
- 
+    public static final class µ {}
     /**
      * Create a ListX that contains the Integers between start and end
      * 

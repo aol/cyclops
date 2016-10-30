@@ -33,9 +33,10 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Applicative;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 
-public interface PVectorX<T> extends PVector<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PVector<T>> {
+public interface PVectorX<T> extends To<PVectorX<T>>,PVector<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PVector<T>> {
 
     /**
      * Narrow a covariant PVectorX

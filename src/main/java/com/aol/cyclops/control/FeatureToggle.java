@@ -23,6 +23,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
@@ -37,14 +38,14 @@ import com.aol.cyclops.util.function.Curry;
  * @param <F> Type of value storable in this FeatureToggle
  */
 public interface FeatureToggle<F>
-        extends Supplier<F>, MonadicValue1<F>, Filterable<F>, Functor<F>, ApplicativeFunctor<F>, Matchable.ValueAndOptionalMatcher<F> {
+        extends To<FeatureToggle<F>>,Supplier<F>, MonadicValue1<F>, Filterable<F>, Functor<F>, ApplicativeFunctor<F>, Matchable.ValueAndOptionalMatcher<F> {
 
     
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default <R> FeatureToggle<F> combine(BinaryOperator<Applicative<F>> combiner, Applicative<F> app) {
+    default  FeatureToggle<F> combine(BinaryOperator<Applicative<F>> combiner, Applicative<F> app) {
        
         return (FeatureToggle<F>)MonadicValue1.super.combine(combiner, app);
     }
