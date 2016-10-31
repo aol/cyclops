@@ -245,25 +245,5 @@ public interface TypeClasses {
         
     }
 
-    static interface Sets {
-        static interface SetFunctor extends _Functor<SetType.setx>{
-            default <T> SetX<T> narrow(Higher<SetType.setx, T> list){
-                return (SetX<T>)list;
-            }
-            default <T, R> SetType<R> map(Function<? super T,? extends R> fn, Higher<SetType.setx, T> functor){
-                return narrow(functor).map(fn);
-            }
-        }
-       
-        static  SetFunctor setFunctor(){
-            
-            return new SetFunctor(){};
-        }
-        
-        default void test(){
-            SetX<Integer> setx = SetX.of(1,2,3);
-            SetType<Integer> mapped1 =setFunctor().map(a->a+1, setx);
-            mapped1.add(1);
-        }
-    }
+   
 }
