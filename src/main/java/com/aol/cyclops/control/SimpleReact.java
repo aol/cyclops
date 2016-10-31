@@ -32,19 +32,57 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
 /**
- * Builder class for FutureStream
  * 
-  * react methods - submit Suppliers to task executor
- * of methods - build Streams directly from data 
+ * Builder class for SimpleReact Stream types
+ * 
+ * SimpleReact streams are finite eager parallel Streams with a concise API.
+ * Awesome for loading discrete batches of files or remote resources.
+ * Useful for doing shortcircuiting querying operations against remote services.
+ *
+ * Confgure 
+ *      Executors
+ *      Parallelism / concurrent tasks
+ *      Caching
+ *      Object pooling
+ *
+ 
+   E.g implementing a Quorum
+ * <pre>
+ * {@code 
+ *   new SimpleReact().react(this:query,this:query,this:query,this:query)
+                .then(this:process)
+                .block(status -> status.getAllCompleted() >2 && status.getElapsedMillis()>200);
+
+     //short circuit if 2 results after 200ms 
+ * 
+ * 
+ * }
+ * </pre>
+ * 
+ * E.g. loading files
+ * <pre>
+ * {@code 
+ *   List<File> files;
+ *   
+ *   new SimpleReact().from(files)
+ *                    .thenAsync(FileUtils::load)
+                      .then(this:process)
+                      .block();
+
+ * 
+ * 
+ * }
+ * </pre>
+ *  
+ *  In general if you have a small discrete data sets SimpleReact may be a fit.
+ *  If you need infinite  / continuous Stream processing & more advanced features use LazyReact
+ *  (Even flatMap is relatively limited in SimpleReact Stream - for advanced operations @see LazyReact)
  * 
  * @author johnmcclean
  *
- *
  */
-
 @Builder
 @Wither
-
 public class SimpleReact implements ReactBuilder {
     @Getter
     private final Executor queueService;
@@ -71,6 +109,14 @@ public class SimpleReact implements ReactBuilder {
         this(ThreadPools.getStandard());
     }
 
+    /**
+     * Construct a SimpleReact builder from the provided Executor, Retrier.
+     * 
+     * @param executor Task executor to execute tasks on
+     * @param retrier Retrier to use for asyncrhonous retry
+     * @param async If false, subsequent tasks are executed on the completing thread
+     *              If true each subsequent task is resubmitted to a task executor,
+     */
     public SimpleReact(final Executor executor, final RetryExecutor retrier, final Boolean async) {
         queueService = ThreadPools.getQueueCopyExecutor();
         this.executor = Optional.ofNullable(executor)
@@ -94,6 +140,12 @@ public class SimpleReact implements ReactBuilder {
         async = true;
     }
 
+    /**
+     * Construct a SimpleReact builder from the provided Executor, Retrier.
+     * 
+     * @param executor Task executor to execute tasks on
+     * @param retrier Retrier to use for asyncrhonous retry
+     */
     public SimpleReact(final Executor executor, final RetryExecutor retrier) {
         queueService = ThreadPools.getQueueCopyExecutor();
         this.executor = executor;
@@ -102,6 +154,12 @@ public class SimpleReact implements ReactBuilder {
         async = true;
     }
 
+    /**
+     * 
+     * @param executor Task executor to execute tasks on
+     * @param retrier
+     * @param queueCopier Task executor to transfer results during flatMap operations
+     */
     public SimpleReact(final Executor executor, final RetryExecutor retrier, final Executor queueCopier) {
         queueService = ThreadPools.getQueueCopyExecutor();
         this.executor = executor;
@@ -388,6 +446,12 @@ public class SimpleReact implements ReactBuilder {
         return this.construct(Stream.of(cf));
     }
 
+    /**
+     * Construct a simpleReactStream from an Array of CompletableFutures
+     * 
+     * @param cf CompletableFutures to turn into a Stream
+     * @return SimpleReactStream from an Array of CompletableFutures
+     */
     public <U> SimpleReactStream<U> from(final CompletableFuture<U>... cf) {
         return this.construct(Stream.of(cf));
     }

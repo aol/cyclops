@@ -61,11 +61,11 @@ public class EvalTSeq<T>
     }
 
     /**
-     * Peek at the current value of the Maybe
+     * Peek at the current value of the Eval
      * 
      * <pre>
      * {@code 
-     *    MaybeT.of(AnyM.fromStream(Maybe.of(10))
+     *    EvalT.fromStream(Stream.of(Eval.now(10)))
      *             .peek(System.out::println);
      *             
      *     //prints 10        
@@ -73,8 +73,8 @@ public class EvalTSeq<T>
      * </pre>
      * 
      * @param peek
-     *            Consumer to accept current value of Maybe
-     * @return MaybeT with peek call
+     *            Consumer to accept current value of Eval
+     * @return EvalT with peek call
      */
     @Override
     public EvalTSeq<T> peek(final Consumer<? super T> peek) {
@@ -85,19 +85,19 @@ public class EvalTSeq<T>
     }
 
     /**
-     * Filter the wrapped Maybe
+     * Filter the wrapped Eval
      * 
      * <pre>
      * {@code 
-     *    MaybeT.of(AnyM.fromStream(Maybe.of(10))
+     *    EvalT.fromStream(Stream.of(Eval.now(10)))
      *             .filter(t->t!=10);
      *             
-     *     //MaybeT<AnyMSeq<Stream<Maybe.empty>>>
+     *    //EvalT[Stream[Eval[10]]] 
      * }
      * </pre>
      * 
      * @param test
-     *            Predicate to filter the wrapped Maybe
+     *            Predicate to filter the wrapped Eval
      * @return MaybeT that applies the provided filter
      */
     @Override
@@ -106,21 +106,21 @@ public class EvalTSeq<T>
     }
 
     /**
-     * Map the wrapped Maybe
+     * Map the wrapped Eval
      * 
      * <pre>
      * {@code 
-     *  MaybeT.of(AnyM.fromStream(Maybe.of(10))
+     *  EvalT.fromStream(Stream.of(Eval.now(10)))
      *             .map(t->t=t+1);
      *  
      *  
-     *  //MaybeT<AnyMSeq<Stream<Maybe[11]>>>
+     *  //EvalT[Stream[Eval[11]]] 
      * }
      * </pre>
      * 
      * @param f
-     *            Mapping function for the wrapped Maybe
-     * @return MaybeT that applies the map function to the wrapped Maybe
+     *            Mapping function for the wrapped Eval
+     * @return EvalT that applies the map function to the wrapped Eval
      */
     @Override
     public <B> EvalTSeq<B> map(final Function<? super T, ? extends B> f) {
@@ -129,21 +129,22 @@ public class EvalTSeq<T>
     }
 
     /**
-     * Flat Map the wrapped Maybe
+     * Flat Map the wrapped Eval
      * 
      * <pre>
     * {@code 
-    *  MaybeT.of(AnyM.fromStream(Maybe.of(10))
-    *             .flatMap(t->Maybe.empty();
+    *  EvalT.fromStream(Stream.of(Eval.now(10)))
+    *       .flatMap(t->Maybe.just(i->i+1));
     *  
     *  
-    *  //MaybeT<AnyMSeq<Stream<Maybe.empty>>>
+    *  EvalT[Stream[Eval[11]]]
+    *  
     * }
      * </pre>
      * 
      * @param f
      *            FlatMap function
-     * @return MaybeT that applies the flatMap function to the wrapped Maybe
+     * @return EvalT that applies the flatMap function to the wrapped Eval
      */
     public <B> EvalTSeq<B> flatMapT(final Function<? super T, EvalTSeq<? extends B>> f) {
 
@@ -154,6 +155,9 @@ public class EvalTSeq<T>
 
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.EvalT#flatMap(java.util.function.Function)
+     */
     @Override
     public <B> EvalTSeq<B> flatMap(final Function<? super T, ? extends Eval<? extends B>> f) {
 
@@ -162,112 +166,87 @@ public class EvalTSeq<T>
 
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq#unitStream(com.aol.cyclops.control.ReactiveSeq)
+     */
     @Override
     public <T> EvalTSeq<T> unitStream(final ReactiveSeq<T> traversable) {
         return EvalT.fromStream(traversable.map(Eval::now));
 
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#unitAnyM(com.aol.cyclops.control.AnyM)
+     */
     @Override
     public <T> EvalTSeq<T> unitAnyM(final AnyM<Traversable<T>> traversable) {
         return of((AnyMSeq) traversable.map(t -> Eval.fromIterable(t)));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#transformerStream()
+     */
     @Override
     public AnyMSeq<? extends Traversable<T>> transformerStream() {
 
-        return AnyM.fromList(ListX.of(stream().peek(System.out::println)));
+        return AnyM.fromList(ListX.of(stream()));
     }
 
     /**
-     * Lift a function into one that accepts and returns an MaybeT This allows
+     * Lift a function into one that accepts and returns an EvalT This allows
      * multiple monad types to add functionality to existing functions and
      * methods
      * 
      * e.g. to add null handling (via Maybe) and iteration (via Stream) to an
      * existing function
      * 
-     * <pre>
-     * {@code
-     *     Function<Integer, Integer> add2 = i -> i + 2;
-     *     Function<MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift(add2);
-     * 
-     *     Stream<Integer> withNulls = Stream.of(1, 2, null);
-     *     AnyMSeq<Integer> stream = AnyM.ofMonad(withNulls);
-     *     AnyMSeq<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
-     *     List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt)).unwrap().<Stream<Maybe<Integer>>> unwrap()
-     *             .filter(Maybe::isPresent).map(Maybe::get).collect(Collectors.toList());
-     * 
-     *     // Arrays.asList(3,4);
-     * 
-     * }
-     * </pre>
-     * 
      * 
      * @param fn
-     *            Function to enhance with functionality from Maybe and another
+     *            Function to enhance with functionality from Eval and another
      *            monad type
-     * @return Function that accepts and returns an MaybeT
+     * @return Function that accepts and returns an EvalT
      */
     public static <U, R> Function<EvalTSeq<U>, EvalTSeq<R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
     /**
-     * Lift a BiFunction into one that accepts and returns MaybeTs This allows
+     * Lift a BiFunction into one that accepts and returns EvalTs This allows
      * multiple monad types to add functionality to existing functions and
      * methods
      * 
      * e.g. to add null handling (via Maybe), iteration (via Stream) and
      * asynchronous execution (CompletableFuture) to an existing function
      * 
-     * <pre>
-     * {@code
-     *    
-     *     BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
-     *     BiFunction<MaybeT<Integer>, MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift2(add);
-     * 
-     *     Stream<Integer> withNulls = Stream.of(1, 2, null);
-     *     AnyMSeq<Integer> stream = AnyM.ofMonad(withNulls);
-     *     AnyMSeq<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
-     * 
-     *     CompletableFuture<Maybe<Integer>> two = CompletableFuture.supplyAsync(() -> Maybe.of(2));
-     *     AnyMSeq<Maybe<Integer>> future = AnyM.ofMonad(two);
-     *     List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt), MaybeT.of(future)).unwrap()
-     *             .<Stream<Maybe<Integer>>> unwrap().filter(Maybe::isPresent).map(Maybe::get)
-     *             .collect(Collectors.toList());
-     *     // Arrays.asList(3,4);
-     * }
-     * </pre>
+    
      * 
      * @param fn
-     *            BiFunction to enhance with functionality from Maybe and
+     *            BiFunction to enhance with functionality from Eval and
      *            another monad type
-     * @return Function that accepts and returns an MaybeT
+     * @return Function that accepts and returns an EvalT
      */
     public static <U1, U2, R> BiFunction<EvalTSeq<U1>, EvalTSeq<U2>, EvalTSeq<R>> lift2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
     /**
-     * Construct an MaybeT from an AnyM that contains a monad type that contains
-     * type other than Maybe The values in the underlying monad will be mapped
-     * to Maybe<A>
+     * Construct an EvalT from an AnyM that contains a monad. The values in the underlying monad will be mapped
+     * to Eval<A>
      * 
      * @param anyM
-     *            AnyM that doesn't contain a monad wrapping an Maybe
-     * @return MaybeT
+     *            AnyM that doesn't contain a monad wrapping an Eval
+     * @return EvalT
      */
     public static <A> EvalTSeq<A> fromAnyM(final AnyMSeq<A> anyM) {
         return of(anyM.map(a -> Eval.later(() -> a)));
     }
 
     /**
-     * Construct an MaybeT from an AnyM that wraps a monad containing Maybes
+     * Construct an EvalT from an AnyM that wraps a monad containing Evals
      * 
      * @param monads
-     *            AnyM that contains a monad wrapping an Maybe
-     * @return MaybeT
+     *            AnyM that contains a monad wrapping an Eval
+     * @return EvalT
      */
     public static <A> EvalTSeq<A> of(final AnyMSeq<Eval<A>> monads) {
         return new EvalTSeq<>(

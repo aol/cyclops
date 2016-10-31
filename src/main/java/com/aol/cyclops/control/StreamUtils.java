@@ -82,11 +82,27 @@ import lombok.AllArgsConstructor;
 import lombok.val;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Static utility methods for working with Java  8 Streams
+ * 
+ * @author johnmcclean
+ *
+ */
 @UtilityClass
 public class StreamUtils {
 
     /**
      * Create an Optional containing a List materialized from a Stream
+     * 
+     * <pre>
+     * {@code 
+     *   Optional<ListX<Integer>> opt = StreamUtils.streamToOptional(Stream.of(1,2,3));
+     *   
+     *   //Optional[[1,2,3]]
+     * 
+     * }
+     * </pre>
+     * 
      * 
      * @param stream To convert into an Optional
      * @return Optional with a List of values
@@ -100,7 +116,17 @@ public class StreamUtils {
     }
 
     /**
-     * Convert a Stream to an Optional
+     * Convert an Optional to a Stream
+     * 
+     * <pre>
+     * {@code 
+     *     Stream<Integer> stream = StreamUtils.optionalToStream(Optional.of(1));
+     *     //Stream[1]
+     *     
+     *     Stream<Integer> empty = StreamUtils.optionalToStream(Optional.empty());
+     *     //Stream[]
+     * }
+     * </pre>
      * 
      * @param optional Optional to convert to a Stream
      * @return Stream with a single value (if present) created from an Optional
@@ -1509,7 +1535,7 @@ public class StreamUtils {
                     init = true;
                     return monoid.zero();
                 }
-                return next = monoid.combiner()
+                return next = monoid
                                     .apply(next, it.next());
 
             }

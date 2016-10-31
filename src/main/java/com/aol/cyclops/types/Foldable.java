@@ -35,7 +35,7 @@ import com.aol.cyclops.types.stream.HotStream;
 public interface Foldable<T> {
 
     /**
-     * @return this Foldable converted to a Stream ({@link com.aol.cyclops.control.ReativeSeq}) of it's elements
+     * @return this Foldable converted to a Stream ({@link com.aol.cyclops.control.ReactiveSeq}) of it's elements
      */
     ReactiveSeq<T> stream();
 
@@ -147,7 +147,7 @@ public interface Foldable<T> {
     }
 
     /**
-     * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BiFunction)}
+     * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
      * 
      * @param identity Identity value for the combiner function (leaves the input unchanged)
      * @param accumulator Combiner function
@@ -448,6 +448,7 @@ public interface Foldable<T> {
      *              .endsWith(Arrays.asList(5,6)));
      * 
      * }
+     * </pre>
      * 
      * @param iterable Values to check
      * @return true if SequenceM ends with values in the supplied iterable

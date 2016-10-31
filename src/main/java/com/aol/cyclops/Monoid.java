@@ -47,7 +47,7 @@ public interface Monoid<T> extends Semigroup<T> {
      * @return Reduced value
      */
     default T reduce(final Stream<T> toReduce) {
-        return toReduce.reduce(zero(), reducer());
+        return toReduce.reduce(zero(), this);
     }
 
     /**
@@ -115,4 +115,5 @@ public interface Monoid<T> extends Semigroup<T> {
             }
         };
     }
+    
 }

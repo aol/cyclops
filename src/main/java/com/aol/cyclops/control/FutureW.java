@@ -1,16 +1,19 @@
 package com.aol.cyclops.control;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
@@ -19,23 +22,28 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.react.Status;
+import com.aol.cyclops.react.collectors.lazy.Blocker;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops.util.CompletableFutures;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A Wrapper around CompletableFuture that implements cyclops-react interfaces and provides a more standard api
@@ -51,7 +59,8 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @EqualsAndHashCode
-public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>, MonadicValue1<T>, FlatMap<T>, Filterable<T> {
+@Slf4j
+public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, ApplicativeFunctor<T>, MonadicValue1<T>, FlatMap<T>, Filterable<T> {
 
     /**
      * An empty FutureW
@@ -59,12 +68,134 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
      * @return A FutureW that wraps a CompletableFuture with a null result
      */
     public static <T> FutureW<T> empty() {
-        return new FutureW(
+        return new FutureW<>(
                            CompletableFuture.completedFuture(null));
     }
+    /**
+     * An empty FutureW
+     * 
+     * @return A FutureW that wraps a CompletableFuture with a null result
+     */
+    public static <T> FutureW<T> future() {
+        return new FutureW<>(
+                           new CompletableFuture<>());
+    }
+    
+    /**
+     * Select the first FutureW to complete
+     * 
+     * @see CompletableFuture#anyOf(CompletableFuture...)
+     * @param fts FutureWs to race
+     * @return First FutureW to complete
+     */
+    public static <T> FutureW<T> anyOf(FutureW<T>... fts) {
+        
+       return (FutureW<T>) FutureW.ofResult( (CompletableFuture<T>)CompletableFuture.anyOf(Stream.of(fts)
+                                                                              .map(FutureW::getFuture)
+                                                                              .collect(Collectors.toList())
+                                                                              .toArray(new CompletableFuture[0])));
+    }
+    /**
+     * Wait until all the provided FutureW's to complete
+     * 
+     * @see CompletableFuture#allOf(CompletableFuture...)
+     * 
+     * @param fts FutureWs to  wait on
+     * @return FutureW that completes when all the provided Futures Complete. Empty Future result, or holds an Exception
+     *         from a provided FutureW that failed.
+     */
+    public static <T> FutureW<T> allOf(FutureW<T>... fts) {
+        
+        return (FutureW<T>) FutureW.ofResult((CompletableFuture<T>)CompletableFuture.allOf(Stream.of(fts)
+                                                                      .map(FutureW::getFuture)
+                                                                      .collect(Collectors.toList())
+                                                                      .toArray(new CompletableFuture[0])));
+     }
+    /**
+     * Block until a Quorum of results have returned as determined by the provided Predicate
+     * 
+     * <pre>
+     * {@code 
+     * 
+     * FutureW<ListX<Integer>> strings = FutureW.quorum(status -> status.getCompleted() >0, FutureW.ofSupplier(()->1),FutureW.future(),FutureW.future());
+               
 
+        strings.get().size()
+        //1
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param breakout Predicate that determines whether the block should be
+     *            continued or removed
+     * @param fts FutureWs to  wait on results from
+     * @return FutureW which will be populated with a Quorum of results
+     */
+    @SafeVarargs
+    public static <T> FutureW<ListX<T>> quorum(Predicate<Status<T>> breakout,FutureW<T>... fts) {
+        
+        List<CompletableFuture<?>> list = Stream.of(fts)
+                                                .map(FutureW::getFuture)
+                                                .collect(Collectors.toList());
+        
+        return FutureW.of(new Blocker<T>(list, Optional.of(e-> {
+                    log.error(e.getMessage(), e);
+                })).nonBlocking(breakout));
+                
+       
+    }
+    /**
+     * Select the first Future to return with a successful result
+     * 
+     * <pre>
+     * {@code 
+     * FutureW<Integer> ft = FutureW.future();
+       FutureW<Integer> result = FutureW.firstSuccess(FutureW.ofSupplier(()->1),ft);
+               
+       ft.complete(10);
+       result.get() //1
+     * }
+     * </pre>
+     * 
+     * @param fts Futures to race
+     * @return First Future to return with a result
+     */
+    @SafeVarargs
+    public static <T> FutureW<T> firstSuccess(FutureW<T>... fts) {
+        FutureW<T> future = FutureW.future();
+        Stream.of(fts)
+              .forEach(f->f.peek(r->future.complete(r)));
+        FutureW<T> all = allOf(fts).recover(e->{ future.completeExceptionally(e); return null;});
+        return future;
+        
+      }
+    
+    /**
+     * Complete this FutureW with an Exception
+     * @see CompletableFuture#completeExceptionally(Throwable)
+     *
+     * @param e Throwable to complete this FutureW with
+     */
+    public boolean completeExceptionally(Throwable e) {
+        return this.future.completeExceptionally(e);
+        
+    }
     /**
      * Construct a FutureW asyncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
+     * 
+     * 
+     * <pre>
+     * {@code 
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        FutureW<Integer> future = FutureW.fromPublisher(stream,ex);
+        
+        //FutureW[1]
+     * 
+     * }
+     * </pre>
+     * 
      * 
      * @param pub Publisher to extract value from
      * @param ex Executor to extract value on
@@ -78,7 +209,16 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     /**
      * Construct a FutureW asyncrhonously that contains a single value extracted from the supplied Iterable
+     * <pre>
+     * {@code 
+     *  ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        FutureW<Integer> future = FutureW.fromIterable(stream,ex);
+        
+        //FutureW[1]
      * 
+     * }
+     * </pre>
      * @param iterable Iterable to generate a FutureW from
      * @param ex  Executor to extract value on
      * @return FutureW populated asyncrhonously from Iterable
@@ -91,7 +231,16 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     /**
      * Construct a FutureW syncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
+     * <pre>
+     * {@code 
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        FutureW<Integer> future = FutureW.fromPublisher(stream);
+        
+        //FutureW[1]
      * 
+     * }
+     * </pre>
      * @param pub Publisher to extract value from
      * @return FutureW populated syncrhonously from Publisher
      */
@@ -103,6 +252,18 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     /**
      * Construct a FutureW syncrhonously that contains a single value extracted from the supplied Iterable
+     * 
+     * <pre>
+     * {@code 
+     *  ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        FutureW<Integer> future = FutureW.fromIterable(stream);
+        
+        //FutureW[1]
+     * 
+     * }
+     * </pre>
+     * 
      * 
      * @param iterable Iterable to extract value from
      * @return FutureW populated syncrhonously from Iterable
@@ -153,7 +314,9 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
      * <pre>
      * {@code 
      *  
-     *    FutureW<String> future = FutureW.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello")
+     *    FutureW<String> future = FutureW.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello");
+     *    
+     *    //FutureW["hello"]
      * 
      * }</pre>
      * 
@@ -184,6 +347,14 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
     /**
      * Schedule the population of a FutureW from the provided Supplier after the specified delay. The provided ScheduledExecutorService provided the thread on which the 
      * Supplier will be executed.
+     * <pre>
+     * {@code 
+     *  
+     *    FutureW<String> future = FutureW.schedule(10l, Executors.newScheduledThreadPool(1), ()->"hello");
+     *    
+     *    //FutureW["hello"]
+     * 
+     * }</pre>
      * 
      * @param delay Delay after which the FutureW should be populated
      * @param ex ScheduledExecutorService used to execute the provided Supplier
@@ -210,7 +381,7 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
     }
 
     /**
-     * Sequence operation that convert a Collection of FutureWs to a FutureW with a List
+     * Asynchronous sequence operation that convert a Collection of FutureWs to a FutureW with a List
      * 
      * <pre>
      * {@code 
@@ -251,32 +422,186 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
 
     }
 
+    /**
+     * 
+     * Asynchronously accumulate the results only from those Futures which have completed successfully.
+     * Also @see {@link FutureW#accumulate(CollectionX, Reducer)} if you would like a failure to result in a FutureW 
+     * with an error
+     * <pre>
+     * {@code 
+     * 
+     * FutureW<Integer> just =FutureW.of(CompletableFuture.completedFuture(10));
+       FutureW<Integer> none = FutureW.ofError(new NoSuchElementException());
+       
+     * FutureW<PSetX<Integer>> futures = FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofResult(1)),Reducers.toPSetX());
+       
+       //FutureW[PSetX[10,1]]
+     *  }
+     *  </pre>
+     * 
+     * @param fts Collection of Futures to accumulate successes
+     * @param reducer Reducer to accumulate results
+     * @return FutureW asynchronously populated with the accumulate success operation
+     */
     public static <T, R> FutureW<R> accumulateSuccess(final CollectionX<FutureW<T>> fts, final Reducer<R> reducer) {
-
-        final FutureW<ListX<T>> sequenced = AnyM.sequence(fts.map(f -> AnyM.fromFutureW(f)))
-                                                .unwrap();
-        return sequenced.map(s -> s.mapReduce(reducer));
+       return FutureW.of(CompletableFutures.accumulateSuccess(fts.map(FutureW::getFuture), reducer));  
     }
-
+    /**
+     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see com.aol.cyclops.Reducers}
+     * <pre>
+     * {@code 
+     * 
+     * FutureW<Integer> just =FutureW.of(CompletableFuture.completedFuture(10));
+       FutureW<Integer> none = FutureW.ofError(new NoSuchElementException());
+       
+     * FutureW<PSetX<Integer>> futures = FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofResult(1)),Reducers.toPSetX());
+       
+       //FutureW[PSetX[10,1]]
+     *  }
+     *  </pre>
+     * 
+     * @param fts Collection of Futures to accumulate successes
+     * @param reducer Reducer to accumulate results
+     * @return FutureW asynchronously populated with the accumulate success operation
+     */
     public static <T, R> FutureW<R> accumulate(final CollectionX<FutureW<T>> fts, final Reducer<R> reducer) {
         return sequence(fts).map(s -> s.mapReduce(reducer));
     }
+    /**
+     * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied mapping function to
+     * convert the data from each FutureW before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * 
+     * <pre>
+     * {@code 
+     * FutureW<String> future = FutureW.accumulate(ListX.of(FutureW.ofResult(10),FutureW.ofResult(1)),i->""+i,Monoids.stringConcat);
+        //FutureW["101"]
+     * }
+     * </pre>
+     * 
+     * @param fts Collection of Futures to accumulate successes
+     * @param mapper Mapping function to be applied to the result of each Future
+     * @param reducer Monoid to combine values from each Future
+     * @return FutureW asynchronously populated with the accumulate operation
+     */
+    public static <T, R> FutureW<R> accumulateSuccess(final CollectionX<FutureW<T>> fts, final Function<? super T, R> mapper, final Monoid<R> reducer) {
+        return FutureW.of(CompletableFutures.accumulateSuccess(fts.map(FutureW::getFuture),mapper,reducer)); 
+    }
 
-    public static <T, R> FutureW<R> accumulate(final CollectionX<FutureW<T>> fts, final Function<? super T, R> mapper, final Semigroup<R> reducer) {
+    /**
+     * Asynchronously accumulate the results only from those Futures which have completed successfully,
+     *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * 
+     * <pre>
+     * {@code 
+     * FutureW<Integer> just =FutureW.of(CompletableFuture.completedFuture(10));
+     * FutureW<Integer> future =FutureW.accumulate(Monoids.intSum, ListX.of(just,FutureW.ofResult(1)));
+       //FutureW[11]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fts Collection of Futures to accumulate successes
+     * @param reducer Monoid to combine values from each Future
+     * @return FutureW asynchronously populated with the accumulate operation
+     */
+    public static <T> FutureW<T> accumulateSuccess(final Monoid<T> reducer,final CollectionX<FutureW<T>> fts ) {
+        return FutureW.of(CompletableFutures.accumulateSuccess(reducer,fts.map(FutureW::getFuture))); 
+    }
+
+    /**
+     * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function to
+     * convert the data from each FutureW before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * A single Failure results in a Failed  Future.
+     * 
+     * <pre>
+     * {@code 
+     * FutureW<String> future = FutureW.accumulate(ListX.of(FutureW.ofResult(10),FutureW.ofResult(1)),i->""+i,Monoids.stringConcat);
+        //FutureW["101"]
+     * }
+     * </pre>
+     * 
+     * @param fts Collection of Futures to accumulate successes
+     * @param mapper Mapping function to be applied to the result of each Future
+     * @param reducer Monoid to combine values from each Future
+     * @return FutureW asynchronously populated with the accumulate operation
+     */
+    public static <T, R> FutureW<R> accumulate(final CollectionX<FutureW<T>> fts, final Function<? super T, R> mapper, final Monoid<R> reducer) {
         return sequence(fts).map(s -> s.map(mapper)
-                                       .reduce(reducer.reducer())
-                                       .get());
+                                       .reduce(reducer)
+                                       );
     }
 
-    public static <T> FutureW<T> accumulate(final CollectionX<FutureW<T>> fts, final Semigroup<T> reducer) {
-        return sequence(fts).map(s -> s.reduce(reducer.reducer())
-                                       .get());
+    /**
+     * Asynchronously accumulate the results only from the provided Futures,
+     *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }
+     * 
+     * A single Failure results in a Failed  Future.
+     * 
+     * <pre>
+     * {@code 
+     * FutureW<Integer> future =FutureW.accumulate(Monoids.intSum,ListX.of(just,FutureW.ofResult(1)));
+       //FutureW[11]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fts Collection of Futures to accumulate successes
+     * @param reducer Monoid to combine values from each Future
+     * @return FutureW asynchronously populated with the accumulate operation
+     */
+    public static <T> FutureW<T> accumulate(final Monoid<T> reducer,final CollectionX<FutureW<T>> fts) {
+        return sequence(fts).map(s -> s.reduce(reducer)
+                                      );
     }
 
-    public <R> Eval<R> matches(final Function<CheckValue1<T, R>, CheckValue1<T, R>> secondary,
-            final Function<CheckValue1<Throwable, R>, CheckValue1<Throwable, R>> primary, final Supplier<? extends R> otherwise) {
-        return toXor().swap()
-                      .matches(secondary, primary, otherwise);
+    /**
+     * Asychronously pattern match on the value inside this FutureW once it becomes available.
+     * 
+     * <pre>
+     * {@code 
+     * 
+       import static com.aol.cyclops.control.Matchable.otherwise;
+       import static com.aol.cyclops.control.Matchable.then;
+       import static com.aol.cyclops.control.Matchable.when;
+       import static com.aol.cyclops.util.function.Predicates.instanceOf;
+
+       FutureW.ofResult(10).matches(c->c.is(when(10),then("hello")),
+                                    c->c.is(when(instanceOf(Throwable.class)), then("error")),
+                                    otherwise("miss"));
+       //FutureW["hello"]
+        
+       FutureW.ofResult(10).matches(c->c.is(when(10),then("hello")).is(when(2),then("hello")),
+                                    c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
+                                    otherwise("miss"));
+       //FutureW["hello"]
+            
+       FutureW.ofResult(10).matches(c->c.is(when(1),then("hello"))
+                                        .is(when(2),then(()->"hello"))
+                                        .is(when(3),then(()->"hello")),
+                                    c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
+                                    otherwise("miss"));
+       //FutureW["miss"]
+     * 
+     * }
+     * </pre>
+     * 
+     * @param successCase Pattern matching function executed if this FutureW completes the previous stage successfully
+     * @param failureCase Pattern matching function executed if this FutureW completes the previous stage with an exception
+     * @param otherwise Supplier used to provide a value if the selecting pattern matching function fails to find a match
+     * @return FutureW containing result asynchronously populated by pattern matching on the result of previous stage
+     */
+    public <R> FutureW<R> matches(final Function<CheckValue1<T, R>, CheckValue1<T, R>> successCase,
+            final Function<CheckValue1<Throwable, R>, CheckValue1<Throwable, R>> failureCase, final Supplier<? extends R> otherwise) {
+       return this.map(t->Matchable.of(t)
+                                 .matches(successCase, otherwise)
+                                 .get())
+                    .recover(e->Matchable.of(e)
+                             .matches(failureCase, otherwise)
+                             .get()); 
     }
 
     @Getter
@@ -325,6 +650,19 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
         return new FutureW<R>(
                               future.thenApply(fn));
     }
+    /**
+     * Asyncrhonous map operation
+     * 
+     * @see CompletableFuture#thenApplyAsync(Function, Executor)
+     * 
+     * @param fn Transformation function
+     * @param ex Executor to execute the transformation asynchronously
+     * @return Mapped FutureW
+     */
+    public <R> FutureW<R> map(final Function<? super T, ? extends R> fn,Executor ex) {
+        return new FutureW<R>(
+                              future.thenApplyAsync(fn,ex));
+    }
 
     /*
      * (non-Javadoc)
@@ -359,6 +697,36 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
      */
     public boolean isSuccess() {
         return future.isDone() && !future.isCompletedExceptionally();
+    }
+    /**
+     * @see java.util.concurrent.CompletableFuture#isDone
+     * @return true if this FutureW has completed executing
+     */
+    public boolean isDone(){
+       
+        return future.isDone();
+    }
+    /**
+     * @see java.util.concurrent.CompletableFuture#isCancelled
+     * @return True if this FutureW has been cancelled
+     */
+    public boolean isCancelled(){
+        return future.isCancelled();
+    }
+    /**
+     *  If not already completed, completes this FutureW with a {@link java.util.concurrent.CancellationException}
+     *  Passes true to @see java.util.concurrent.CompletableFuture#cancel as mayInterruptIfRunning parameter on that method
+     *  has no effect for the default CompletableFuture implementation
+     */
+    public void cancel(){
+        future.cancel(true);
+    }
+    /**If not already completed, sets the value of this FutureW to the provided value
+     * 
+     * @param value Value to set this FutureW to
+     */
+    public void complete(T value){
+        future.complete(value);
     }
 
     /**
@@ -515,6 +883,16 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
      * function. Otherwise, if this FutureW completes normally, then the
      * returned FutureW also completes normally with the same value.
      * 
+     * <pre>
+     * {@code 
+     *     FutureW.ofError(new RuntimeException())
+     *            .recover(__ -> true)
+     *            
+     *    //FutureW[true]
+     * 
+     * }
+     * </pre>
+     * 
      * @param fn
      *            the function to use to compute the value of the returned
      *            FutureW if this FutureW completed exceptionally
@@ -527,6 +905,14 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
     /**
      * Map this FutureW differently depending on whether the previous stage
      * completed successfully or failed
+     * 
+     * <pre>
+     * {@code 
+     *  FutureW.ofResult(1)
+     *         .map(i->i*2,e->-1);
+     * //FutureW[2]
+     * 
+     * }</pre>
      * 
      * @param success
      *            Mapping function for successful outcomes
@@ -852,5 +1238,14 @@ public class FutureW<T> implements ConvertableFunctor<T>, ApplicativeFunctor<T>,
     public <R> FutureW<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return (FutureW<R>) MonadicValue1.super.flatMapPublisher(mapper);
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    public FutureW<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+        return (FutureW<T>)MonadicValue1.super.combine(combiner, app);
+    }
+
+   
 
 }

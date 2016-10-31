@@ -39,6 +39,7 @@ import com.aol.cyclops.control.monads.transformers.values.SetTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
@@ -52,7 +53,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T>
  */
-public interface SetT<T> extends FoldableTransformerSeq<T> {
+public interface SetT<T> extends To<SetT<T>>,FoldableTransformerSeq<T> {
 
     public <R> SetT<R> unitIterator(Iterator<R> it);
 

@@ -77,23 +77,7 @@ Stream.of(1,2,3).filter(not(in(2,3,4)))
 ----
 ====
 
-# Composition via Matchers
 
-We can write nearly identical code with Hamcrest Matchers.
-
-.composing matches with Predicates
-====
-[source,java]
-----
- Matchable.of(Optional.of(1))
-          .matches(c->
-                 c.is(when(Matchers.not(Matchers.isOneOf(2,3,4)),Matchers.isOneOf(4,5,6)),
-                      then(3)),
-                      otherwise(2));
-
-//Eval[2]
-----
-====
 
 # Recursive matching of datatypes
 

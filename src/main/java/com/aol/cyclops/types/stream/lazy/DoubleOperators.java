@@ -10,7 +10,8 @@ public interface DoubleOperators<T> {
     /**
      * Perform an asynchronous sum operation
      * @see java.util.stream.Stream#mapToDouble(ToDoubleFunction)
-     * 	 @see java.util.stream.DoubleStream#sum()
+     * @see java.util.stream.DoubleStream#sum()
+     * 
      * */
     Eval<Double> sumDouble(ToDoubleFunction<? super T> fn);
 

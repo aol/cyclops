@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.types.To;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -39,7 +40,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class Mutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndOptionalMatcher<T> {
+public class Mutable<T> implements To<Mutable<T>>,Supplier<T>, Consumer<T>, Matchable.ValueAndOptionalMatcher<T> {
 
     private T var;
 
@@ -142,6 +143,9 @@ public class Mutable<T> implements Supplier<T>, Consumer<T>, Matchable.ValueAndO
         return set(varFn.apply(get()));
     }
 
+    /* (non-Javadoc)
+     * @see java.util.function.Consumer#accept(java.lang.Object)
+     */
     @Override
     public void accept(final T t) {
         set(t);

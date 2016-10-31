@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,9 +24,11 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
@@ -59,43 +62,206 @@ import lombok.val;
  * Fluent step builders
  * Fail fast
  * 
+ * Examples :
+ * 
+ * Create a 'successful' value
+ * <pre>
+ * {@code 
+ *  Try.success("return-value");
+ * }
+ * </pre>
+ * 
+ * Create a failure value
+ * 
+ * <pre>
+ * {@code 
+ *  Try.failure(new MyException("error details"));
+ * }
+ * </pre>
+ * 
+ * Exceute methods that may throw exceptions
+ * 
+ * Non-void methods
+ * <pre>
+ * {@code 
+ * 
+ * Try.withCatch(()-> exceptional2())
+                        .map(i->i+" woo!")
+                        .onFail(System.out::println)
+                        .orElse("default");
+                        
+ *  //"hello world woo!"
+ * 
+ *  private String exceptional2() throws RuntimeException{
+        return "hello world";
+    }
+ * }
+ * </pre>
+ * 
+ * Void methods
+ * <pre>
+ * {@code 
+ *   
+ *   
+ *  //Only catch IOExceptions
+ *  
+ *  Try.runWithCatch(this::exceptional,IOException.class)
+        .onFail(System.err::println);
+        
+    private void exceptional() throws IOException{
+        throw new IOException();
+    }
+ * 
+ * }
+ * </pre>
+ * 
+ * Try with resources
+ * <pre>
+ * {@code 
+ *    
+ *   Try.catchExceptions(FileNotFoundException.class,IOException.class)
+         .init(()->new BufferedReader(new FileReader("file.txt")))
+         .tryWithResources(this::read)
+         .map(this::processData)
+         .recover(e->"default);
+ *  
+ * }
+ * </pre>
+ * 
+ * By default Try does not catch exception within it's operators such as map / flatMap, to catch Exceptions in ongoing operations use @see {@link Try#of(Object, Class...)}
+ * <pre>
+ * {@code 
+ *  Try.of(2, RuntimeException.class)
+       .map(i->{throw new RuntimeException();});
+       
+    //Failure[RuntimeException]   
+ * 
+ * }
+ * </pre>
+ * 
  * @author johnmcclean
  *
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T>, ToStream<T>, Filterable<T>, Functor<T>, ApplicativeFunctor<T> {
+public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, MonadicValue<T>, ToStream<T>, Filterable<T>, Functor<T>, ApplicativeFunctor<T> {
 
+    /**
+     * Construct a Try  that contains a single value extracted from the supplied reactive-streams Publisher, will catch any Exceptions
+     * of the provided types
+     * <pre>
+     * {@code 
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        Try<Integer,Throwable> attempt = Try.fromPublisher(stream, RuntimeException.class);
+        
+        //Try[1]
+     * 
+     * }
+     * </pre> 
+     * 
+     * @param pub Publisher to extract value from
+     * @return Try populated with first value from Publisher 
+     */
     public static <T, X extends Throwable> Try<T, X> fromPublisher(final Publisher<T> pub, final Class<X>... classes) {
+       
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toTry(classes);
     }
 
+    /**
+     * Construct a Try  that contains a single value extracted from the supplied reactive-streams Publisher
+     * 
+     * <pre>
+     * {@code 
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        Try<Integer,Throwable> attempt = Try.fromPublisher(stream);
+        
+        //Try[1]
+     * 
+     * }
+     * </pre> 
+     * 
+     * @param pub Publisher to extract value from
+     * @return Try populated with first value from Publisher
+     */
     public static <T> Try<T, Throwable> fromPublisher(final Publisher<T> pub) {
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toTry();
     }
-
+    /**
+     * Construct a Try  that contains a single value extracted from the supplied Iterable
+     * 
+     * <pre>
+     * {@code 
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        Try<Integer,Throwable> attempt = Try.fromIterable(stream);
+        
+        //Try[1]
+     * 
+     * }
+     * </pre> 
+     * 
+     * @param iterable Iterable to extract value from
+     * @return Try populated with first value from Iterable
+     */
     public static <T, X extends Throwable> Try<T, X> fromIterable(final Iterable<T> iterable) {
         final Iterator<T> it = iterable.iterator();
         return Try.success(it.hasNext() ? it.next() : null);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#toTry()
+     */
     @Override
     default Try<T, Throwable> toTry() {
         return (Try<T, Throwable>) this;
 
     }
 
-    default <R> Eval<R> matches(final Function<CheckValue1<T, R>, CheckValue1<T, R>> secondary,
-            final Function<CheckValue1<X, R>, CheckValue1<X, R>> primary, final Supplier<? extends R> otherwise) {
+    /**
+     * Pattern match on the value/s inside this Try
+     * 
+     * <pre>
+     * {@code 
+     * 
+     * import static com.aol.cyclops.control.Matchable.otherwise;
+       import static com.aol.cyclops.control.Matchable.then;
+       import static com.aol.cyclops.control.Matchable.when;
+       import static com.aol.cyclops.util.function.Predicates.instanceOf;
+       
+       
+     *   Try.success(10)
+     *      .matches(c->c.is(when(10),then("hello")),
+                     c->c.is(when(instanceOf(Throwable.class)), then("error")),
+                     otherwise("miss"))
+            .get()
+            
+         //"hello"
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param successCase Pattern matching function executed if this Try is a Success
+     * @param failureCase Pattern matching function executed if this Try is a Failure
+     * @param otherwise Supplier used to provide a value if the selecting pattern matching function fails to find a match
+     * @return Lazy result of the pattern matching
+     */
+    default <R> Eval<R> matches(final Function<CheckValue1<T, R>, CheckValue1<T, R>> successCase,
+            final Function<CheckValue1<X, R>, CheckValue1<X, R>> failureCase, final Supplier<? extends R> otherwise) {
         return toXor().swap()
-                      .matches(secondary, primary, otherwise);
+                      .matches(successCase, failureCase, otherwise);
     }
 
     
+    /**
+     * @return The exception returned in the Failure case, Implementations should throw NoSuchElementException if no failure is present
+     */
     public X failureGet();
 
     /* (non-Javadoc)
@@ -128,9 +294,45 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
         return this.map(t -> unit(t));
     }
 
+    /**
+     * Combine this Try with another using the supplied Monoid as a combiner
+     * 
+     * <pre>
+     * {@code 
+     *  
+     *  Try<Integer> just = Try.success(10);
+     *  Try<Integer> none = Try.failure(new RuntimeException());
+     *  
+     *  Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+     *  
+     *  
+        assertThat(just.combine(add,none),equalTo(Try.success(10)));
+        assertThat(none.combine(add,just),equalTo(Try.success(0))); 
+        assertThat(none.combine(add,none),equalTo(Try.success(0))); 
+        assertThat(just.combine(add,Try.success(10)),equalTo(Try.success(20)));
+        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+        assertThat(just.combine(firstNonNull,Try.success(null)),equalTo(just));
+        
+     * }
+     * </pre>
+     * 
+     * 
+     * @param monoid Combiner
+     * @param v2 Try to combine with
+     * @return Combined Try
+     */
     default Try<T, X> combine(final Monoid<T> monoid, final Try<? extends T, X> v2) {
-        return unit(each2(this, t1 -> v2, (t1, t2) -> monoid.combiner()
+        return unit(each2(this, t1 -> v2, (t1, t2) -> monoid
                                                             .apply(t1, t2)).orElseGet(() -> this.orElseGet(() -> monoid.zero())));
+    }
+    
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default Combiner<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+        return (Try<T,X>)MonadicValue.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)
@@ -177,7 +379,12 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
     }
 
     /**
-     * Construct a Failure instance from a throwable
+     * Construct a Failure instance from a throwable (an implementation of Try)
+     * <pre>
+     * {@code 
+     *    Failure<Exception> failure = Try.failure(new RuntimeException());
+     * }
+     * </pre>
      * 
      * @param error for Failure
      * @return new Failure with error
@@ -188,6 +395,14 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
     }
 
     /**
+     * Construct a Success instance (an implementation of Try)
+     * 
+     * <pre>
+     * {@code 
+     *    Success<Integer> success = Try.success(new RuntimeException());
+     * }
+     * </pre>
+     * 
      * @param value Successful value
      * @return new Success with value
      */
@@ -197,6 +412,9 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
                              value, new Class[0]);
     }
 
+    /**
+     * @return Convert this Try to an Xor with the error type as the secondary value
+     */
     default Xor<X, T> toXorWithError() {
         if (isSuccess())
             return Xor.primary(get());
@@ -205,17 +423,40 @@ public interface Try<T, X extends Throwable> extends Supplier<T>, MonadicValue<T
                                             .get());
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
+     */
     @Override
     default <T> Try<T, X> unit(final T value) {
         return success(value);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
     @Override
     default <R> Try<R, X> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
         return (Try<R, X>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
     }
 
+    /**
+     * Execute one function conditional on Try state (Success / Failure)
+     * 
+     * <pre>
+     * {@code 
+     *    
+     *     Try<Integer> result = this.execute();
+     *     
+     *     this.logState(result.visit(t->"value is " +t,e->"error is "+e.getMessage());
+     *  
+     * }
+     * </pre>
+     * 
+     * @param success Function to execute if this Try is a Success
+     * @param failure Funcion to execute if this Try is a Failure
+     * @return Result of executed function (one or other depending on case)
+     */
     public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure);
 
     /**

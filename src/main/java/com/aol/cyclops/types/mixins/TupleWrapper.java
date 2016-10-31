@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
 import com.aol.cyclops.util.ExceptionSoftener;
-
+@Deprecated //internal interface - move in 2.0.0
 public interface TupleWrapper {
 
     public Object getInstance();

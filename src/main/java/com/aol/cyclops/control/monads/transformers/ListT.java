@@ -36,6 +36,7 @@ import com.aol.cyclops.control.monads.transformers.values.FoldableTransformerSeq
 import com.aol.cyclops.control.monads.transformers.values.ListTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
@@ -49,7 +50,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> Data type of the elements in the nested Lists
  */
-public interface ListT<T> extends FoldableTransformerSeq<T> {
+public interface ListT<T> extends To<ListT<T>>,FoldableTransformerSeq<T> {
 
     public <R> ListT<R> unitIterator(Iterator<R> it);
 

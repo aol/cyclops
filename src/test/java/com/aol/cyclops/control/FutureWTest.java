@@ -7,6 +7,7 @@ import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -28,9 +29,11 @@ import java.util.stream.StreamSupport;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Monoids;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.LazyImmutable;
@@ -76,6 +79,39 @@ public class FutureWTest {
             e.printStackTrace();
         }
 	}
+	@Test
+	public void testBreakout(){
+	    
+        FutureW<ListX<Integer>> strings = FutureW.quorum(status -> status.getCompleted() > 1, FutureW.ofSupplier(()->1),FutureW.ofSupplier(()->1),FutureW.ofSupplier(()->1));
+               
+
+        assertThat(strings.get().size(), is(greaterThan(1)));
+	}
+	@Test
+    public void testBreakoutAll(){
+        
+        FutureW<ListX<Integer>> strings = FutureW.quorum(status -> status.getCompleted() > 2, FutureW.ofSupplier(()->1),FutureW.ofSupplier(()->1),FutureW.ofSupplier(()->1));
+               
+
+        assertThat(strings.get().size(), is(equalTo(3)));
+    }
+	@Test
+    public void testFirstSuccess(){
+        
+	    FutureW<Integer> ft = FutureW.future();
+        FutureW<Integer> result = FutureW.firstSuccess(FutureW.ofSupplier(()->1),ft);
+               
+        ft.complete(10);
+        assertThat(result.get(), is(equalTo(1)));
+    }
+	@Test
+    public void testBreakoutOne(){
+        
+        FutureW<ListX<Integer>> strings = FutureW.quorum(status -> status.getCompleted() >0, FutureW.ofSupplier(()->1),FutureW.future(),FutureW.future());
+               
+
+        assertThat(strings.get().size(), is(equalTo(1)));
+    }
 	@Test
     public void testApFeatureToggle() {
         
@@ -216,23 +252,49 @@ public class FutureWTest {
         assertThat(maybes.isCompletedExceptionally(),equalTo(true));
  
     }
-
 	@Test
-	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
+    public void testAccumulateSuccessSemigroup() {
+        FutureW<Integer> maybes =FutureW.accumulateSuccess(Monoids.intCount,ListX.of(just,none,FutureW.ofResult(1)));
+        
+        assertThat(maybes.get(),equalTo(2));
+    }
+	@Test
+	public void testAccumulateSuccess() {
 		FutureW<PSetX<Integer>> maybes =FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofResult(1)),Reducers.toPSetX());
+		
 		assertThat(maybes.get(),equalTo(PSetX.of(10,1)));
 	}
-
+	@Test @Ignore
+    public void testAccumulateJNonBlocking() {
+        FutureW<PSetX<Integer>> maybes =FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)),FutureW.ofResult(1)),Reducers.toPSetX());
+        System.out.println("not blocked");
+       
+    }
+	@Test
+    public void testAccumulateNoValue() {
+        FutureW<String> maybes = FutureW.accumulate(ListX.of(),i->""+i,Monoids.stringConcat);
+        assertThat(maybes.get(),equalTo(""));
+    }
+	@Test
+    public void testAccumulateOneValue() {
+        FutureW<String> maybes = FutureW.accumulate(ListX.of(just),i->""+i,Monoids.stringConcat);
+        assertThat(maybes.get(),equalTo("10"));
+    }
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		FutureW<String> maybes = FutureW.accumulate(ListX.of(just,FutureW.ofResult(1)),i->""+i,Semigroups.stringConcat);
+		FutureW<String> maybes = FutureW.accumulate(ListX.of(just,FutureW.ofResult(1)),i->""+i,Monoids.stringConcat);
 		assertThat(maybes.get(),equalTo("101"));
 	}
 	@Test
 	public void testAccumulateJust() {
-		FutureW<Integer> maybes =FutureW.accumulate(ListX.of(just,FutureW.ofResult(1)),Semigroups.intSum);
+		FutureW<Integer> maybes =FutureW.accumulate(Monoids.intSum,ListX.of(just,FutureW.ofResult(1)));
 		assertThat(maybes.get(),equalTo(11));
 	}
+	@Test
+    public void testAccumulateError() {
+        FutureW<Integer> maybes =FutureW.accumulate(Monoids.intSum,ListX.of(none,FutureW.ofResult(1)));
+        assertTrue(maybes.isFailed());
+    }
 	
 
 	@Test
@@ -856,7 +918,10 @@ public class FutureWTest {
 	}
 
 	
-
+	@Test
+	public void mapBoth(){
+	    assertThat(FutureW.ofResult(1).map(i->i*2,e->-1).get(),equalTo(2));
+	}
 	@Test
 	public void testUnitT1() {
 		assertThat(none.unit(10).get(),equalTo(just.get()));

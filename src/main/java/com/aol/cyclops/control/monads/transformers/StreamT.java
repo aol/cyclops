@@ -33,6 +33,7 @@ import com.aol.cyclops.control.monads.transformers.values.FoldableTransformerSeq
 import com.aol.cyclops.control.monads.transformers.values.StreamTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 
@@ -45,7 +46,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> Data type of the elements within the nested Stream(s)
  */
-public interface StreamT<T> extends FoldableTransformerSeq<T> {
+public interface StreamT<T> extends To<StreamT<T>>,FoldableTransformerSeq<T> {
 
     public <R> StreamT<R> unitIterator(Iterator<R> it);
 

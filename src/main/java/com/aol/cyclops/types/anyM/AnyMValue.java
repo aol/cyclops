@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,6 +29,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMonads;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
@@ -37,6 +39,13 @@ import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
+/**
+ * Wrapper around 'Any' scalar 'M'onad
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data types of elements managed by wrapped scalar Monad.
+ */
 public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, ApplicativeFunctor<T>, MonadicValue<T>, Matchable.ValueAndOptionalMatcher<T> {
 
     /**
@@ -56,6 +65,17 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
         return Predicates.eqv(t)
                          .test(this);
     }
+    
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default AnyMValue<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+        
+        return (AnyMValue<T>)AnyM.super.combine(combiner, app);
+    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.AnyM#collect(java.util.stream.Collector)
@@ -73,7 +93,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
      */
     @Override
     default <T2, R> AnyMValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (AnyMValue<R>) ApplicativeFunctor.super.combine(app, fn);
+        return (AnyMValue<R>) AnyM.super.combine(app, fn);
     }
 
     /* (non-Javadoc)
@@ -128,8 +148,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
      * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
      */
     default AnyMValue<T> combine(final Monoid<T> monoid, final AnyMValue<? extends T> v2) {
-        return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.combiner()
-                                                              .apply(t1, t2)))
+        return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.apply(t1, t2)))
                         .orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 

@@ -44,9 +44,29 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * Builder class for LazyFutureStreams
  *
- * 
- * react methods - submit Suppliers to task executor
- * of methods - build Streams directly from data 
+ * Confgure 
+ *      Executors
+ *      Parallelism / concurrent tasks
+ *      Caching
+ *      Object pooling
+ *
+ *<pre>
+ *{@code 
+ * new LazyReact(Executors.newFixedThreadPool(4)).of(6,5,2,1)
+                                                      .map(this::loadData)
+                                                      .map(e->e*100)
+                                                      .filter(e->e<551)
+                                                      .peek(e->{
+                                                          System.out.println("e is " + e 
+                                                                              + " on thread " 
+                                                                              + Thread.currentThread().getId());
+                                                      })
+                                                      .runOnCurrent();
+ *
+ *}
+ *</pre>
+ *
+ *  
  * 
  * @author johnmcclean
  *
@@ -76,22 +96,45 @@ public class LazyReact implements ReactBuilder {
     @Getter
     private final boolean autoMemoize;
     @Getter
-    private final Cacheable memoizeCache;
+    private final Cacheable<?> memoizeCache;
 
     /**
      * Turn automatic caching of values on for the FutureStream to be generated
      * by this Stream builder
      * 
+     * <pre>
+     * {@code 
+     *  Map cache = new ConcurrentHashMap<>();
+        LazyReact builder = new LazyReact().autoMemoizeOn((key,fn)-> cache.computeIfAbsent(key,fn));
+        Set<Integer> result = builder.of(1,1,1,1)
+                                     .capture(e->e.printStackTrace())
+                                     .map(i->calc(i))
+                                     .peek(System.out::println)
+                                     .toSet();
+     * 
+     * 
+     * }</pre>
+     * 
+     * 
      * @param memoizeCache Cacheable instance that controls memoization (Caching)
      * @return LazyReact Stream builder
      */
-    public LazyReact autoMemoizeOn(final Cacheable memoizeCache) {
+    public LazyReact autoMemoizeOn(final Cacheable<?> memoizeCache) {
         return withAutoMemoize(true).withMemoizeCache(memoizeCache);
     }
 
     /* 
+     * The async flag determines whether, on completion, a Future executes the next task
+     * synchronously on it's current thread or redistributes it back to a task executor
+     * to handle execution.  
+     * E.g. if async is false, subsequent tasks will be executed on the calling thread.
+     *      if async is true, a task executor will be used to determine the executing thread.
+     * 
+     * 
+     *  {@see LazyReact#autoOptimize}
+     *  
      *	@return true if async
-     * @see com.aol.cyclops.react.stream.BaseSimpleReact#isAsync()
+     *  
      */
     public boolean isAsync() {
         return async;
@@ -101,6 +144,8 @@ public class LazyReact implements ReactBuilder {
      * Construct a LazyReact builder using standard thread pool.
      * By default, unless ThreadPools is configured otherwise this will be sized
      * to the available processors
+     * 
+     * ThreadPools#getStandard is used to determine task executor for parallel task execution
      * 
      * @see ThreadPools#getStandard()
      */
@@ -129,6 +174,10 @@ public class LazyReact implements ReactBuilder {
         memoizeCache = null;
     }
 
+    /**
+     * @param maxActive Max active Future Tasks
+     * @param executor  Executor to use
+     */
     public LazyReact(final int maxActive, final Executor executor) {
 
         this.executor = executor;
@@ -165,12 +214,38 @@ public class LazyReact implements ReactBuilder {
         memoizeCache = null;
     }
 
+    /**
+     * Construct a LazyFutureStream containing a single Future
+     * 
+     * @param cf CompletableFuture to create Stream from
+     * @return LazyFutureStream of a single value
+     */
     public <U> LazyFutureStream<U> from(final CompletableFuture<U> cf) {
 
         return this.constructFutures(Stream.of(cf));
 
     }
 
+    /**
+     * Construct a LazyFutureStream from an array of CompletableFutures 
+     * 
+     * <pre>
+     * {@code 
+     *  CompletableFuture<String> future1 = CompletableFuture.supplyAsync(()->"hello");
+        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(()->"hello2");
+        new LazyReact().from(future1,future2)
+                       .peek(System.out::println)
+                       .then(action->"result")
+                       .toList()
+                       .size()
+        //2               
+     * 
+     * }
+     * </pre>
+     * 
+     * @param cf Array of Futures to construct Stream from
+     * @return LazyFutureStream from array of Futures
+     */
     public <U> LazyFutureStream<U> from(final CompletableFuture<U>... cf) {
         return this.constructFutures(Stream.of(cf));
 
@@ -191,6 +266,12 @@ public class LazyReact implements ReactBuilder {
 
     }
 
+    /**
+     * Construct a LazyFutureStream from a Stream of CompletableFutures
+     * 
+     * @param s Stream of CompletableFutures
+     * @return LazyFutureStream
+     */
     public <U> LazyFutureStream<U> constructFutures(final Stream<CompletableFuture<U>> s) {
         final LazyReact toUse = withStreamOfFutures(true);
         log.debug("Constructing Stream with {}", toUse);
@@ -287,6 +368,20 @@ public class LazyReact implements ReactBuilder {
     /**
      * Start any created Streams in asyncrhonous mode - that is tasks will be submited to an Executor to be run.
      * 
+     * <pre>
+     * {@code 
+     * Turn async on
+     * LazyReact.sequentialBuilder()
+     *          .withMaxActive(MaxActive.IO)
+     *          .async()
+                .generateAsync(()->1)
+                .limit(1_000_000);
+                
+                
+     * 
+     * }
+     * </pre>
+     * 
      * @return LazyReact that creates Streams in async mode
      */
     public LazyReact async() {
@@ -305,6 +400,13 @@ public class LazyReact implements ReactBuilder {
     /**
      * Construct a LazyFutureStream from an Publisher
      * 
+     * <pre>
+     * {@code 
+     *    new LazyReact().fromPublisher(Flux.just(1,2,3)).toList();
+     * 
+     * }
+     * </pre>
+     * 
      * @param publisher
      *            to construct LazyFutureStream from
      * @return LazyFutureStream
@@ -319,6 +421,22 @@ public class LazyReact implements ReactBuilder {
     /* 
      * Generate an LazyFutureStream that is a range of Integers
      * 
+     * <pre>
+     * {@code 
+     * new LazyReact().range(0,Integer.MAX_VALUE)
+                    .limit(100)
+                    .peek(v->value=v)
+                    .peek(v->latch.countDown())
+                    .peek(System.out::println)
+                    .hotStream(exec)
+                    .connect()
+                    .limit(100)
+                    .futureOperations(ForkJoinPool.commonPool())
+                    .forEach(System.out::println);
+     * 
+     * }
+     * </pre>
+     * 
      *	@param startInclusive Start of range 
      *	@param endExclusive End of range
      *	@return LazyFutureStream that is a range of Integers
@@ -331,6 +449,26 @@ public class LazyReact implements ReactBuilder {
     /* 
      * Construct a LazyFutureStream from the provided Stream of completableFutures
      * 
+     * <pre>
+     * {@code 
+     * 
+     * CompletableFuture<List<String>> query(String string);
+     * 
+     * List<String> titles = new LazyReact().fromStreamFutures(Stream.of(query("Hello, world!")))
+                                            .flatMap(Collection::stream)
+                                            .peek(System.out::println)
+                                            .<String>then(url -> getTitle(url))
+                                            .filter(Objects::nonNull)
+                                            .limit(5)
+                                            .peek(title -> saveTitle(title) )
+                                            .peek(System.out::println)
+                                            .block();
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
      *	@param stream Stream that serves as input to LazyFutureStream
      *	@return LazyFutureStream
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#fromStream(java.util.stream.Stream)
@@ -341,7 +479,22 @@ public class LazyReact implements ReactBuilder {
     }
 
     /* 
-     * Create a steam from provided Suppleirs
+     * Create a steam from provided Suppliers, e.g. Supplier will be executed asynchronously
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  LazyReact.parallelCommonBuilder()
+     *           .ofAsync(() -> loadFromDb(),() -> loadFromService1(),
+                                                        () -> loadFromService2())
+                 .map(this::convertToStandardFormat)
+                 .peek(System.out::println)
+                 .map(this::saveData)
+                 .block();
+     * 
+     * }
+     * </pre>
+     * 
      * 
      *	@param actions Supplier Actions
      *	@return
@@ -357,6 +510,18 @@ public class LazyReact implements ReactBuilder {
     /* 
      *  Construct a LazyFutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
      * 
+     * <pre>
+     * {@code 
+     * new LazyReact(100,110).fromStream(Files.walk(Paths.get(".")))
+                             .map(d->{ throw new RuntimeException("hello");})
+                             .map(Object::toString)
+                             .recover(e->"hello world")
+                             .forEach(System.out::println);
+     * 
+     * }
+     * </pre>
+     * 
+     * 
      *	@param stream Stream that serves as input to LazyFutureStream
      *	@return LazyFutureStream
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
@@ -370,6 +535,16 @@ public class LazyReact implements ReactBuilder {
      * 
      * Construct a LazyFutureStream from specified Suppliers. Each Supplier is executed asyncrhonously,
      * and it's results provided to next phase of the Stream
+     * 
+     * <pre>
+     * {@code 
+     *   LazyReact.parallelBuilder()
+     *            .react(asList(this::load)
+                  .map(list -> 1 + 2)
+                  .block();
+     * 
+     * }
+     * </pre>
      * 
      *	@param actions Suppliers to execute
      *	@return LazyFutureStream
@@ -411,12 +586,32 @@ public class LazyReact implements ReactBuilder {
         this.memoizeCache = memoizeCache;
     }
 
-    public LazyReact(final Executor currentThreadExecutor, final AsyncRetryExecutor withScheduler, final boolean async, final MaxActive maxActive2) {
-        this(currentThreadExecutor, withScheduler, async, maxActive2, false, false, async, false, null);
+    /**
+     * @param executor Task Executor for concurrent tasks
+     * @param retrier Async Retrier
+     * @param async If true each task will be submitted to an executor service
+     * @param maxActive2 Max Active Future Tasks
+     */
+    public LazyReact(final Executor executor, final AsyncRetryExecutor retrier, final boolean async, final MaxActive maxActive2) {
+        this(executor, retrier, async, maxActive2, false, false, async, false, null);
     }
 
     /* 
      * Build an LazyFutureStream from the supplied iterable
+     * 
+     * <pre>
+     * {@code 
+     * List<Integer> list= new ArrayList<>();
+        for(int i=0;i<1000;i++)
+            list.add(i);
+            
+       new LazyReact().fromIterable(list)
+                      .limit(100)
+                      .peek(System.out::println)
+                      .count()
+     * 
+     * }
+     * </pre>
      * 
      *	@param iter Iterable
      *	@return LazyFutureStream
@@ -431,6 +626,16 @@ public class LazyReact implements ReactBuilder {
      * Build an LazyFutureStream that reacts Asynchronously to the Suppliers within the
      * specified Stream
      * 
+     * <pre>
+     * {@code 
+     * Stream<Supplier<Data>> stream = Stream.of(this::load1,this::looad2,this::load3);
+     * 
+     * LazyReact().fromStreamAsync(stream)
+     *            .map(this::process)
+     *            .forEach(this::save)
+     * }
+     * </pre>
+     * 
      *	@param actions Stream to react to
      *	@return LazyFutureStream
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#react(java.util.stream.Stream)
@@ -443,6 +648,20 @@ public class LazyReact implements ReactBuilder {
     /* 
      * Build an LazyFutureStream that reacts Asynchronously to the Suppliers within the
      * specified Iterator 
+     * 
+     * <pre>
+     * {@code 
+     *  List<Supplier<Data>> list = Arrays.asList(this::load1,this::looad2,this::load3);
+     * 
+     * LazyReact().fromIteratorAsync(list.iterator())
+     *            .map(this::process)
+     *            .forEach(this::save)
+     *
+     * 
+     * }
+     * </pre>
+     * 
+     * 
      * 
      *	@param actions Iterator to react to
      *	@return LazyFutureStream
@@ -460,6 +679,18 @@ public class LazyReact implements ReactBuilder {
      * Build an LazyFutureStream that reacts Asynchronously to the Suppliers within the
      * specified Iterator 
      *   
+     * <pre>
+     * {@code 
+     *  List<Supplier<Data>> list = Arrays.asList(this::load1,this::looad2,this::load3);
+     * 
+     * LazyReact().fromIterableAsync(list)
+     *            .map(this::process)
+     *            .forEach(this::save)
+     *
+     * 
+     * }
+     * </pre>   
+     *   
      *	@param actions
      *	@return
      * @see com.aol.cyclops.react.stream.BaseSimpleReact#reactIterable(java.lang.Iterable)
@@ -471,7 +702,15 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * @return Lazy SimpleReact for handling infinite streams
+     * * Construct a LazyReact builder using standard thread pool.
+     * By default, unless ThreadPools is configured otherwise this will be sized
+     * to the available processors
+     * 
+     * ThreadPools#getStandard is used to determine task executor for parallel task execution
+     * 
+     * @see ThreadPools#getStandard()
+     * 
+     * @return LazyReact for building infinite, parallel streams
      */
     public static LazyReact parallelBuilder() {
         return new LazyReact();
@@ -556,10 +795,22 @@ public class LazyReact implements ReactBuilder {
      * Iterate infinitely using the supplied seed and function
      * Iteration is synchronized to support multiple threads using the same iterator.
      * 
+     * <pre>
+     * {@code 
+     *  new LazyReact().objectPoolingOn()
+                       .iterate(1,i->i+1)
+                       .limit(1_000_000)
+                       .map(this::process)
+                       .forEach(this::save);
+     * 
+     * }
+     * </pre>
+     * 
+     * 
      * @see LazyFutureStream#iterate for an alternative which does not synchronize iteration
      * @param seed Initial value
      * @param f Function that performs the iteration
-     * @return Next stage in the flow / stream
+     * @return LazyFutureStream
      */
     public <U> LazyFutureStream<U> iterate(final U seed, final UnaryOperator<U> f) {
 
@@ -579,6 +830,27 @@ public class LazyReact implements ReactBuilder {
 
     }
 
+    /**
+     * Generate a LazyFutureStream from the data flowing into the prodiced Adapter
+     * <pre>
+     * {@code 
+     *    
+     *    Topic<Integer> topic = new Topic<>();
+     *    
+     *    new LazyReact(10,10).fromAdapter(topic)
+     *                        .forEach(this::process);
+     *    
+     *    //on anther thread
+     *    topic.offer(100);
+     *    topic.offer(200);
+     *   
+     * }
+     * </pre>
+     * 
+     * 
+     * @param adapter Adapter to construct LazyFutureStream from
+     * @return LazyFutureStream
+     */
     public <U> LazyFutureStream<U> fromAdapter(final Adapter<U> adapter) {
         final Subscription sub = new Subscription();
         return this.construct(adapter.stream(sub));
@@ -598,7 +870,7 @@ public class LazyReact implements ReactBuilder {
      * }</pre>
      * 
      * @param generate Supplier that generates stream input
-     * @return
+     * @return Infinite LazyFutureStream
      */
     public <U> LazyFutureStream<U> generate(final Supplier<U> generate) {
 
@@ -607,6 +879,21 @@ public class LazyReact implements ReactBuilder {
                                                   false));
     }
 
+    /**
+     * Generate an infinite FutureStream executing the provided Supplier continually and asynhcronously
+     * 
+     * <pre>
+     * {@code 
+     *  new LazyReact().generate(this::load)
+                       .limit(5)
+                       .reduce(Semigroups.stringConcat);
+                       
+        //Optional["data1data2data3data4data5"]         
+     * 
+     * }</pre>
+     * @param s Supplier to execute asynchronously to create an infinite Stream
+     * @return Infinite LazyFutureStream
+     */
     public <U> LazyFutureStream<U> generateAsync(final Supplier<U> s) {
         return this.constructFutures(ReactiveSeq.generate(() -> 1)
                                                 .map(n -> CompletableFuture.supplyAsync(s, getExecutor())));
@@ -615,9 +902,16 @@ public class LazyReact implements ReactBuilder {
 
     /**
      * Start a reactive flow from a JDK Iterator
+     * <pre>
+     * {@code 
+     *  Iterator<Integer> iterator;
+     *  new LazyReact(10,10).from(iterator)
+     *                       .map(this::process);
      * 
+     * }
+     * </pre>
      * @param iterator SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
-     * @return Next stage in the reactive flow
+     * @return  LazyFutureStream
      */
     @SuppressWarnings("unchecked")
     public <U> LazyFutureStream<U> from(final Iterator<U> iterator) {
@@ -628,9 +922,20 @@ public class LazyReact implements ReactBuilder {
     /**
      * Start a reactive flow from a Collection using an Iterator
      * 
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  new LazyReact(10,10).from(myList)
+     *                       .map(this::process);
+     * 
+     * }
+     * </pre>
+     * 
+     * 
      * @param collection - Collection SimpleReact will iterate over at the start of the flow
      *
-     * @return Next stage in the reactive flow
+     * @return  LazyFutureStream
      */
     @SuppressWarnings("unchecked")
     public <R> LazyFutureStream<R> from(final Collection<R> collection) {
@@ -641,7 +946,7 @@ public class LazyReact implements ReactBuilder {
      * Start a reactive dataflow from a stream.
      * 
      * @param stream that will be used to drive the reactive dataflow
-     * @return Next stage in the reactive flow
+     * @return  LazyFutureStream
      */
     public LazyFutureStream<Integer> from(final IntStream stream) {
 
@@ -653,7 +958,7 @@ public class LazyReact implements ReactBuilder {
      * Start a reactive dataflow from a stream.
      * 
      * @param stream that will be used to drive the reactive dataflow
-     * @return Next stage in the reactive flow
+     * @return  LazyFutureStream
      */
     public LazyFutureStream<Double> from(final DoubleStream stream) {
         return fromStream(stream.boxed());
@@ -663,12 +968,25 @@ public class LazyReact implements ReactBuilder {
      * Start a reactive dataflow from a stream.
      * 
      * @param stream that will be used to drive the reactive dataflow
-     * @return Next stage in the reactive flow
+     * @return LazyFutureStream
      */
     public LazyFutureStream<Long> from(final LongStream stream) {
         return fromStream(stream.boxed());
     }
 
+    /**
+     * Construct a LazyFurureStream from the values in the supplied array
+     * <pre>
+     * {@code 
+     * 
+     *  new LazyReact(10,10).of(1,2,3,4)
+     *                      .map(this::process);
+     * 
+     * }
+     * </pre>
+     * @param array Array to construct LazyFutureStream from
+     * @return  LazyFutureStream
+     */
     @SafeVarargs
     public final <U> LazyFutureStream<U> of(final U... array) {
         return fromStream(Stream.of(array));

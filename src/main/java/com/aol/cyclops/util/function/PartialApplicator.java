@@ -52,11 +52,25 @@ public class PartialApplicator extends Lambda {
      * @param <T2> Generic argument type
     
      * @param <R> Function generic return type
-     * @return Function as a result of 2 arguments being applied to the incoming TriFunction
+     * @return Function as a result of 2 arguments being applied to the incoming BiFunction
      */
 
     public static <T1, T2, R> Function<T2, R> partial2(final T1 t1, final BiFunction<T1, T2, R> biFunc) {
         return (t2) -> biFunc.apply(t1, t2);
+    }
+    /**
+     * Returns a function with 1 arguments applied to the supplied BiFunction
+     * @param t2 Generic argument
+     * @param biFunc Function that accepts 2 parameters
+     * @param <T1> Generic argument type
+     * @param <T2> Generic argument type
+    
+     * @param <R> Function generic return type
+     * @return Function as a result of 2 arguments being applied to the incoming BiFunction
+     */
+
+    public static <T1, T2, R> Function<T1, R> partial2b(final T2 t2, final BiFunction<T1, T2, R> biFunc) {
+        return (t1) -> biFunc.apply(t1, t2);
     }
 
     /**

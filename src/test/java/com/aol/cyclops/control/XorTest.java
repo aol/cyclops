@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import com.aol.cyclops.Monoids;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -30,10 +31,10 @@ public class XorTest {
 	   
 	    
 	    
-		assertThat(Xor.accumulateSecondary(ListX.of(Xor.secondary("failed1"),
+		assertThat(Xor.accumulateSecondary(Monoids.stringConcat,ListX.of(Xor.secondary("failed1"),
 													Xor.secondary("failed2"),
-													Xor.primary("success")),
-													Semigroups.stringConcat).get(),equalTo("failed1failed2"));
+													Xor.primary("success"))
+													).get(),equalTo("failed1failed2"));
 		
 	}
 	@Test

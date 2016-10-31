@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -17,10 +18,12 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
@@ -35,7 +38,17 @@ import com.aol.cyclops.util.function.Curry;
  * @param <F> Type of value storable in this FeatureToggle
  */
 public interface FeatureToggle<F>
-        extends Supplier<F>, MonadicValue1<F>, Filterable<F>, Functor<F>, ApplicativeFunctor<F>, Matchable.ValueAndOptionalMatcher<F> {
+        extends To<FeatureToggle<F>>,Supplier<F>, MonadicValue1<F>, Filterable<F>, Functor<F>, ApplicativeFunctor<F>, Matchable.ValueAndOptionalMatcher<F> {
+
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default  FeatureToggle<F> combine(BinaryOperator<Combiner<F>> combiner, Combiner<F> app) {
+       
+        return (FeatureToggle<F>)MonadicValue1.super.combine(combiner, app);
+    }
 
     /**
      * @return true if enabled
@@ -51,7 +64,7 @@ public interface FeatureToggle<F>
     /**
      * Narrow covariant type parameter
      * 
-     * @param toggle Eval with covariant type parameter
+     * @param toggle FeatureToggle with covariant type parameter
      * @return Narrowed FeatureToggle
      */
     static <T> FeatureToggle<T> narrow(final FeatureToggle<? extends T> toggle) {

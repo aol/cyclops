@@ -31,9 +31,12 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
+import com.aol.cyclops.types.Value;
 
-public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, POrderedSet<T>> {
+public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, POrderedSet<T>> {
     /**
      * Narrow a covariant POrderedSetX
      * 
@@ -259,6 +262,23 @@ public interface POrderedSetX<T> extends POrderedSet<T>, PersistentCollectionX<T
     @Override
     default POrderedSetX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (POrderedSetX<T>) PersistentCollectionX.super.combine(predicate, op);
+    }  
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> POrderedSetX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return ( POrderedSetX<R>)PersistentCollectionX.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default  POrderedSetX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+      
+        return ( POrderedSetX<T>)PersistentCollectionX.super.combine(combiner, app);
     }
 
     @Override

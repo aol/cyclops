@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -18,15 +19,16 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
@@ -62,8 +64,9 @@ import com.aol.cyclops.util.function.Memoize;
  * @param <T> Type of value storable in this Eval
  */
 public interface Eval<T>
-        extends Supplier<T>, MonadicValue1<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
+        extends  To<Eval<T>>,Supplier<T>, MonadicValue1<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 
+   
     /**
      * Create an Eval instance from a reactive-streams publisher
      * 
@@ -222,7 +225,7 @@ public interface Eval<T>
      * 
      * <pre>
      * {@code
-     *   Eval<String> evals =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Semigroups.stringConcat);
+     *   Eval<String> evals =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
          //Eval.now("101")
      * }
      * </pre>
@@ -233,10 +236,10 @@ public interface Eval<T>
      * @param reducer Combiner function to apply to converted values
      * @return  Eval with a value
      */
-    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Function<? super T, R> mapper, final Semigroup<R> reducer) {
+    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Function<? super T, R> mapper, final Monoid<R> reducer) {
         return sequence(evals).map(s -> s.map(mapper)
-                                          .reduce(reducer.reducer())
-                                          .get());
+                                          .reduce(reducer)
+                                          );
     }
 
     /**
@@ -244,7 +247,7 @@ public interface Eval<T>
      * 
      * <pre>
      * {@code 
-     *   Eval<Integer> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Semigroups.intSum);
+     *   Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,ListX.of(just,Eval.now(1)));
          //Eval.now(11)
      * 
      * }
@@ -255,9 +258,8 @@ public interface Eval<T>
      * @param reducer Combiner function to apply to converted values
      * @return Eval with a value
      */
-    public static <T> Eval<T> accumulate(final CollectionX<Eval<T>> evals, final Semigroup<T> reducer) {
-        return sequence(evals).map(s -> s.reduce(reducer.reducer())
-                                          .get());
+    public static <T> Eval<T> accumulate(final Monoid<T> reducer,final CollectionX<Eval<T>> evals) {
+        return sequence(evals).map(s -> s.reduce(reducer));
     }
 
     /* (non-Javadoc)
@@ -295,7 +297,7 @@ public interface Eval<T>
      */
     @Override
     default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
-        return unit(each2(this, t1 -> v2, (t1, t2) -> monoid.combiner()
+        return unit(each2(this, t1 -> v2, (t1, t2) -> monoid
                                                             .apply(t1, t2)).orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 
@@ -314,6 +316,14 @@ public interface Eval<T>
     @Override
     default <R> Eval<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return (Eval<R>)MonadicValue1.super.flatMapPublisher(mapper);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default Eval<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+        return (Eval)MonadicValue1.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)

@@ -8,13 +8,20 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 import org.pcollections.PCollection;
 
+import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Try;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
@@ -27,13 +34,17 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Zippable;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 /**
- * @author johnmcclean
+ * 
  * A static class with a large number of Semigroups  or Combiners.
  * 
  * A semigroup is an Object that can be used to combine objects of the same type.
  *
+ *  @author johnmcclean
  */
 public interface Semigroups {
 
@@ -228,6 +239,27 @@ public interface Semigroups {
             return a;
         };
     }
+    /**
+     * @param semigroup Semigroup to combine the values inside the zippables
+     * @return Combination of two Zippables
+     */
+    static <T,A extends Zippable<T>> Semigroup<A> combineZippables(BiFunction<T,T,T> semigroup) {
+        return (a, b) -> (A) a.zip(b, semigroup);
+    }
+    /**
+     * @param semigroup Semigroup to combine the values inside the Scalar Functors (Maybe, Xor, Ior, Try, Eva, FeatureToggle etc)
+     * @return Combination of two Scalar Functors
+     */
+    static <T,A extends MonadicValue<T>> Semigroup<A> combineScalarFunctors(BiFunction<T,T,T> semigroup) {
+        return (a, b) -> (A) a.combine(b, semigroup);
+    }
+    /**
+     * @return Combination of two LazyFutureStreams Streams b is appended to a
+     */
+    static <T> Semigroup<LazyFutureStream<T>> combineFutureStream() {
+        return (a, b) -> a.appendStream(b);
+    }
+
 
     /**
      * @return Combination of two ReactiveSeq Streams b is appended to a
@@ -249,12 +281,116 @@ public interface Semigroups {
     static <T> Semigroup<Stream<T>> combineStream() {
         return (a, b) -> Stream.concat(a, b);
     }
+    
+    /**
+     * @return Combination of two Collection, first non-empty is returned
+     */
+    static <T,C extends Collection<T>> Semigroup<C> firstNonEmpty() {
+        return (a, b) -> a.isEmpty() ? b: a;
+    }
+    /**
+     * @return Combination of two Collection, last non-empty is returned
+     */
+    static <T,C extends Collection<T>> Semigroup<C> lastNonEmpty() {
+        return (a, b) -> b.isEmpty() ? a: b;
+    }
 
     /**
      * @return Combination of two Objects of same type, first non-null is returned
      */
     static <T> Semigroup<T> firstNonNull() {
         return (a, b) -> a != null ? a : b;
+    }
+    
+    /**
+     * @return Combine two CompletableFuture's by taking the first present
+     */
+    static <T> Semigroup<CompletableFuture<T>> firstCompleteCompletableFuture() {
+        return (a, b) -> (CompletableFuture<T>)CompletableFuture.<T>anyOf(a,b);
+    }
+    /**
+     * @return Combine two FutureW's by taking the first result
+     */
+    static <T> Semigroup<FutureW<T>> firstCompleteFuture() {
+        return (a, b) -> FutureW.anyOf(a,b);
+    }
+    /**
+     * @return Combine two FutureW's by taking the first successful
+     */
+    static <T> Semigroup<FutureW<T>> firstSuccessfulFuture() {
+        return (a, b) -> FutureW.firstSuccess(a,b);
+    }
+    /**
+     * @return Combine two Xor's by taking the first primary
+     */
+    static <ST,PT> Semigroup<Xor<ST,PT>> firstPrimaryXor() {
+        return  (a, b) -> a.isPrimary() ? a : b;
+    }
+    /**
+     * @return Combine two Xor's by taking the first secondary
+     */
+    static <ST,PT> Semigroup<Xor<ST,PT>> firstSecondaryXor() {
+        return  (a, b) -> a.isSecondary() ? a : b;
+    }
+    /**
+     * @return Combine two Xor's by taking the last primary
+     */
+    static <ST,PT> Semigroup<Xor<ST,PT>> lastPrimaryXor() {
+        return  (a, b) -> b.isPrimary() ? b : a;
+    }
+    /**
+     * @return Combine two Xor's by taking the last secondary
+     */
+    static <ST,PT> Semigroup<Xor<ST,PT>> lastSecondaryXor() {
+        return  (a, b) -> b.isSecondary() ? b : a;
+    }
+    /**
+     * @return Combine two Try's by taking the first primary
+     */
+    static <T,X extends Throwable> Semigroup<Try<T,X>> firstTrySuccess() {
+        return  (a, b) -> a.isSuccess() ? a : b;
+    }
+    /**
+     * @return Combine two Try's by taking the first secondary
+     */
+    static <T,X extends Throwable> Semigroup<Try<T,X>> firstTryFailure() {
+        return  (a, b) -> a.isFailure() ? a : b;
+    }
+    /**
+     * @return Combine two Tryr's by taking the last primary
+     */
+    static<T,X extends Throwable> Semigroup<Try<T,X>> lastTrySuccess() {
+        return  (a, b) -> b.isSuccess() ? b : a;
+    }
+    /**
+     * @return Combine two Try's by taking the last secondary
+     */
+    static <T,X extends Throwable> Semigroup<Try<T,X>>lastTryFailure() {
+        return  (a, b) -> b.isFailure() ? b : a;
+    }
+    /**
+     * @return Combine two Ior's by taking the first primary
+     */
+    static <ST,PT> Semigroup<Ior<ST,PT>> firstPrimaryIor() {
+        return  (a, b) -> a.isPrimary() ? a : b;
+    }
+    /**
+     * @return Combine two Ior's by taking the first secondary
+     */
+    static <ST,PT> Semigroup<Ior<ST,PT>> firstSecondaryIor() {
+        return  (a, b) -> a.isSecondary() ? a : b;
+    }
+    /**
+     * @return Combine two Ior's by taking the last primary
+     */
+    static <ST,PT> Semigroup<Ior<ST,PT>> lastPrimaryIor() {
+        return  (a, b) -> b.isPrimary() ? b : a;
+    }
+    /**
+     * @return Combine two Ior's by taking the last secondary
+     */
+    static <ST,PT> Semigroup<Ior<ST,PT>> lastSecondaryIor() {
+        return  (a, b) -> b.isSecondary() ? b : a;
     }
 
     /**
@@ -429,5 +565,12 @@ public interface Semigroups {
      * Combine two booleans by AND'ing them (conjunction)
      */
     static Semigroup<Boolean> booleanConjunction = (a, b) -> a && b;
+    
+    /**
+     * @return Combine  functions
+     */
+    static <A> Semigroup<Function<A,A>> functionComposition(){
+        return  (a,b)->a.andThen(b);
+    }
 
 }

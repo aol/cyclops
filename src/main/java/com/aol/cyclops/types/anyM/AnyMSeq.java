@@ -1,7 +1,6 @@
 package com.aol.cyclops.types.anyM;
 
 import static com.aol.cyclops.internal.Utils.firstOrNull;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -39,6 +38,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFoldable;
@@ -57,6 +57,13 @@ import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.val;
 
+/**
+ * Wrapper around 'Any' non-scalar 'M'onad
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data types of elements managed by wrapped non-scalar Monad.
+ */
 public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSequence<T>, ExtendedTraversable<T>, Sequential<T>,
         CyclopsCollectable<T>, FilterableFunctor<T>, ZippingApplicativable<T>, ReactiveStreamsTerminalOperations<T>, Publisher<T> {
 
@@ -85,6 +92,24 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
     default <R, A> R collect(final Collector<? super T, A, R> collector) {
         return stream().collect(collector);
 
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.AnyM#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> AnyMSeq<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return (AnyMSeq<R>)AnyM.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default AnyMSeq<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+        
+        return ( AnyMSeq<T>)AnyM.super.combine(combiner, app);
     }
 
     /**
@@ -963,10 +988,13 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      }</pre>
      * 
      * with Optionals 
-     * <pre>{@code
+     * <pre>
+     * {@code
      * 
      *  Any<Integer> applied =AnyM.fromOptional(Optional.of(2)).applyM(AnyM.fromOptional(Optional.of( (Integer a)->a+1)) );
-    	assertThat(applied.toList(),equalTo(Arrays.asList(3)));}
+    	assertThat(applied.toList(),equalTo(Arrays.asList(3)));
+    	
+    	}
     	</pre>
      * 
      * @param fn

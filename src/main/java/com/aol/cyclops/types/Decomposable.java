@@ -6,9 +6,25 @@ import com.aol.cyclops.internal.invokedynamic.ReflectionCache;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 /**
- * trait / interface for Value Objects / Case Classes / Algebraic Data Types
+ * Unapply returns an ordered Iterable of the values of this types fields
  * 
  * unapply uses Reflection by default, but clients can override it if neccessary
+ * 
+ * <pre>
+ * {@code 
+ *  @Value 
+ *  public class DefaultDecomposable implements Decomposable{ 
+ *      int num; 
+ *      String name; 
+ *      int num2;
+ *   }
+ *   
+ *   new DefaultDecomposable(1,"hello",2).unapply();
+ *   //[1,"hello",2]
+
+ * }
+ * </pre>
+ * 
  * 
  * @author johnmcclean
  *

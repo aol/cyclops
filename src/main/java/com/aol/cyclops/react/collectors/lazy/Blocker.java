@@ -18,6 +18,7 @@ import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.ThrowsSoftened;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor
@@ -25,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Blocker<U> {
 
     @SuppressWarnings("rawtypes")
-    private final List<CompletableFuture> lastActive;
+    private final List<CompletableFuture<?>> lastActive;
     private final Optional<Consumer<Throwable>> errorHandler;
     private final CompletableFuture<List<U>> promise = new CompletableFuture<>();
 
@@ -39,13 +40,19 @@ public class Blocker<U> {
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
     public ListX<U> block(final Predicate<Status<U>> breakout) {
 
+        
+        return nonBlocking(breakout).join();
+
+    }
+    public CompletableFuture<ListX<U>> nonBlocking(final Predicate<Status<U>> breakout) {
+
         if (lastActive.size() == 0)
-            return ListX.empty();
+            return CompletableFuture.completedFuture(ListX.empty());
         lastActive.forEach(f -> f.whenComplete((result, ex) -> {
             testBreakoutConditionsBeforeUnblockingCurrentThread(breakout, result, (Throwable) ex);
         }));
 
-        return ListX.fromIterable(promise.join());
+        return promise.thenApply(ListX::fromIterable);
 
     }
 

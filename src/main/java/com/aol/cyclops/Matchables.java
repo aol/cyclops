@@ -100,6 +100,18 @@ public class Matchables {
 
     /**
      * Match on a single value 
+     * 
+     * <pre>
+     * {@code 
+     * import static com.aol.cyclops.util.function.Predicates.greaterThan;
+     * import static com.aol.cyclops.control.Matchable.when;
+     * 
+     * Matchables.match(100)
+                 .matches(c->c.is(when(greaterThan(50)), ()->"large"), ()->"small");
+       
+       //Eval["large"]
+     * }
+     * </pre>
      * @param v Value to match on
      * 
      * @return Structural Pattern matching API for that value (encompasing presence and absence / null)
@@ -108,23 +120,117 @@ public class Matchables {
         return () -> Tuple.tuple(v);
     }
 
+    /**
+     * Match on a two values 
+     * <pre>
+     * {@code 
+     * import static com.aol.cyclops.util.function.Predicates.greaterThan;
+     * import static com.aol.cyclops.control.Matchable.when;
+     * 
+        Matchables.match2(100,2)
+                  .matches(c->c.is(when(Predicates.greaterThan(50),Predicates.lessThan(10)), ()->"large and small"), 
+                  ()->"not large and small");
+       //Eval["large and small"]
+     * }
+     * </pre>
+     * @param t1 1st Value to match on
+     * @param t2 2nd Value to match on
+     * @return  Structural Pattern matching API for those values
+     */
     public static <T1, T2> MTuple2<T1, T2> match2(final T1 t1, final T2 t2) {
         return () -> Tuple.tuple(t1, t2);
     }
 
+    /**
+     * Match on three values 
+     * <pre>
+     * {@code 
+     * 
+     * Matchables.match3(100,2,1000)
+                .matches(c->c.is(when(Predicates.greaterThan(50),Predicates.lessThan(10),Predicates.greaterThan(500)), ()->"large and small and huge"),
+                         ()->"not large and small")
+                         
+        //"large and small and huge"
+     * 
+     * }
+     * </pre>
+     * 
+     * @param t1 1st Value to match on
+     * @param t2 2nd Value to match on
+     * @param t3 3rd Value to match on
+     * @return Structural Pattern matching API for those values
+     */
     public static <T1, T2, T3> MTuple3<T1, T2, T3> match3(final T1 t1, final T2 t2, final T3 t3) {
         return () -> Tuple.tuple(t1, t2, t3);
     }
 
+    /**
+     * Match on four values
+     * 
+     * <pre>
+     * {@code
+     * 
+     * Matchables.match4(100,2,1000,1)
+                .matches(c->c.is(when(Predicates.greaterThan(50),
+                                       Predicates.lessThan(10),
+                                       Predicates.greaterThan(500),
+                                       Predicates.lessThan(2)), ()->"large and small and huge and tiny"), ()->"not large and small").get();
+       
+       //"large and small and huge and tiny"
+     * }
+     * @param t1 1st Value to match on
+     * @param t2 2nd Value to match on
+     * @param t3 3rd Value to match on
+     * @param t4 4th Value to match on
+     * @return Structural Pattern matching API for those values
+     */
     public static <T1, T2, T3, T4> MTuple4<T1, T2, T3, T4> match4(final T1 t1, final T2 t2, final T3 t3, final T4 t4) {
         return () -> Tuple.tuple(t1, t2, t3, t4);
     }
 
+    /**
+     *  Match on a Supplier 
+     *  
+     * <pre>
+     * {@code
+     * import static com.aol.cyclops.util.function.Predicates.greaterThan;
+     * import static com.aol.cyclops.control.Matchable.when;
+     * 
+     * Matchables.supplier(() -> 100)
+                                 .matches(c->c.is(when(greaterThan(50)), ()->"large"), ()->"small")
+                                 .get()
+                                  
+      //large   
+     * }
+     * </pre>         
+     *                 
+     * @param s1 Supplier to generate a value to match on
+     * @return  Structural Pattern matching API for Supplier (encompasing presence and absence / null)
+     */
     public static <T1> MTuple1<T1> supplier(final Supplier<T1> s1) {
 
         return () -> Tuple.tuple(s1.get());
     }
 
+    /**
+     *  Match on a tuple
+     *  
+     * <pre>
+     * {@code
+     * import static com.aol.cyclops.util.function.Predicates.greaterThan;
+     * import static com.aol.cyclops.control.Matchable.when;
+     * 
+     * Matchables.tuple1(Tuple.tuple(100))
+                                 .matches(c->c.is(when(greaterThan(50)), ()->"large"), ()->"small")
+                                 .get()
+                                  
+      //large   
+     * }
+     * </pre>  
+     * 
+     * @param t2 Tuple1 to match on
+     * @return Structural Pattern matching API for Tuple
+     */ 
     public static <T1> MTuple1<T1> tuple1(final Tuple1<T1> t2) {
         return () -> t2;
     }
@@ -183,6 +289,17 @@ public class Matchables {
     /**
      * Create a matchable that matches on the provided Objects
      * 
+     * <pre>
+     * {@code 
+     * Eval<String> result = Matchables.listOfValues(1,2)
+                                        .matches(c->c.has(when(1,3),then("2"))
+                                                     .has(when(1,2),then("3")),otherwise("8"));
+        
+       //Eval["3"];
+     * }
+     * </pre>
+     * 
+     * 
      * @param o Objects to match on
      * @return new Matchable
      */
@@ -190,16 +307,85 @@ public class Matchables {
         return AsMatchable.asMatchable(Arrays.asList(o));
     }
 
+    /**
+     * Create a Pattern Matcher on cyclops-react adapter type (note this will only match
+     * on known types within the cyclops-react library)
+     * 
+     * <pre>
+     * {@code 
+     *     Adapter<Integer> adapter = QueueFactories.<Integer>unboundedQueue()
+     *                                              .build();
+     *                                              
+     *     String result =   Matchables.adapter(adapter)
+                                       .visit(queue->"we have a queue",topic->"we have a topic");
+     *                      
+     *    //"we have a queue"                                                  
+     * } 
+     * </pre>
+     * 
+     * @param adapter Adapter to match on
+     * @return Structural pattern matcher for Adapter types.
+     */
     public static <T> MXor<Queue<T>, Topic<T>> adapter(final Adapter<T> adapter) {
         return adapter.matches();
     }
 
+    /**
+     * Create a Pattern Matcher on CompletableFutures, specify success and failure event paths
+     * 
+     * <pre>
+     * {@code 
+     *  Eval<Integer> result = Matchables.future(CompletableFuture.completedFuture(10))
+                                         .matches(c-> 
+                                                     c.is( when(some(10)), then(20)),  //success
+                                                      
+                                                     c->c.is(when(instanceOf(RuntimeException.class)), then(2)), //failure
+                                                      
+                                                     otherwise(3) //no match
+                                                 );
+        
+        //Eval[20]
+     * 
+     * }</pre>
+     * 
+     * 
+     * @param future Future to match on
+     * @return Pattern Matcher for CompletableFutures
+     */
     public static <T1> MXor<T1, Throwable> future(final CompletableFuture<T1> future) {
         return () -> FutureW.of(future)
                             .toXor()
                             .swap();
     }
 
+    /**
+     * Pattern Match on a FutureW handling success and failure cases differently
+     * <pre>
+     * {@code 
+     *  Eval<Integer> result = Matchables.future(FutureW.ofResult(1))
+                                         .matches(c-> c.is( when(some(1)), then(10)), 
+                                                  c->c.is(when(instanceOf(RuntimeException.class)), then(2)),
+                                                  otherwise(3));
+        
+        //Eval.now[10]
+     * 
+     *  Eval<Integer> result = Matchables.future(FutureW.ofError(new RuntimeException()))
+                                         .matches(c-> c.is( when(some(10)), then(2)), 
+                                                  c->c.is(when(instanceOf(RuntimeException.class)), then(2)),
+                                                  otherwise(3));
+        
+       //Eval.now(2)
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * 
+     * 
+     * @param future Future to match on
+     * @return Pattern Matcher for Futures
+     */
     public static <T1> MXor<T1, Throwable> future(final FutureW<T1> future) {
         return () -> future.toXor()
                            .swap();
@@ -286,13 +472,41 @@ public class Matchables {
      * Break an URL down into
      * protocol, host, port, path, query
      * 
-     * @param url
-     * @return
+     * <pre>
+     * {@code 
+     * Eval<String> url = Matchables.url(new URL("http://www.aol.com/path?q=hello"))
+                                     .on$12_45()
+                                     .matches(c->c.is(when("http","www.aol.com","/path","q=hello"), then("correct")),otherwise("miss"));
+        
+        //Eval["correct"]
+     * 
+     * }
+     * </pre>
+     * 
+     * @param url URL to pattern match on
+     * @return Pattern Matcher for URLs
      */
     public static MTuple5<String, String, Integer, String, String> url(final URL url) {
         return supplier5(() -> url.getProtocol(), () -> url.getHost(), () -> url.getPort(), () -> url.getPath(), () -> url.getQuery());
     }
 
+    /**
+     * Pattern match on the contents of a BufferedReader
+     * <pre>
+     * {@code 
+     *  String result = Matchables.lines(new BufferedReader(new FileReader(new File(file))))
+                                  .on$12___()
+                                  .matches(c->c.is(when("hello","world"),then("correct")), otherwise("miss")).get();
+        
+        //"correct"
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param in BufferedReader to match on
+     * @return
+     */
     public static Matchable.AutoCloseableMatchableIterable<String> lines(final BufferedReader in) {
 
         return new Matchable.AutoCloseableMatchableIterable<>(
@@ -332,11 +546,64 @@ public class Matchables {
                                                               stream, () -> stream.iterator());
     }
 
+    /**
+     * Pattern match on the words (space separated) in a character sequence
+     * <pre>
+     * {@code 
+     *  Matchables.words("hello world")
+                                  .matches(c->c.has(when("hello","world"), then("correct")), otherwise("miss"))
+                                  .get();
+     *  //"correct
+     * }</pre>
+     * 
+     * 
+     * 
+     * @param seq Character Sequence to match against
+     * @return Pattern matching for words based on input sequence
+     */
     public static MatchableIterable<String> words(final CharSequence seq) {
         return iterable(Arrays.asList(seq.toString()
                                          .split(" ")));
     }
+    /**
+     * Pattern match on the words  in a character sequence
+     * <pre>
+     * {@code 
+     *  Matchables.words("hello,world",",")
+                                  .matches(c->c.has(when("hello","world","boo!"), then("incorrect")), otherwise("miss"))
+                                  .get();
+     *  //"miss"
+     * }</pre>
+     * 
+     * 
+     * 
+     * @param seq Character Sequence to match against
+     * @param separator Word separator
+     * @return Pattern matching for words based on input sequence
+     */
+    public static MatchableIterable<String> words(final CharSequence seq, String separator) {
+        return iterable(Arrays.asList(seq.toString()
+                                         .split(separator)));
+    }
 
+    /**
+     * Pattern match on the characters in a character sequence
+     * 
+     * <pre>
+     * {@code 
+     *  String result =   Matchables.chars("hello,world")
+                                    .matches(c->c.has(when('h','e','l','l','o'), then("startsWith")), otherwise("miss"))
+                                    .get();
+      
+       //"startsWith"
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param chars Characters to match on
+     * @return MatchableIterable for pattern matching on the characters in the sequence
+     */
     public static MatchableIterable<Character> chars(final CharSequence chars) {
         final Iterable<Character> it = () -> chars.chars()
                                                   .boxed()
@@ -345,6 +612,25 @@ public class Matchables {
         return () -> it;
     }
 
+    /**
+     * Pattern match on an Xor type
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  Xor<Exception, String> xor = Xor.primary("hello world");
+
+        Eval<String> result = Matchables.xor(xor)
+                                        .matches(c -> c.is(when(instanceOf(RuntimeException.class)), () -> "runtime"),
+                                                 c -> c.is(when(equal("hello world")), () -> "hello back"), () -> "unknown");
+
+       //Eval["hello back"]
+     * 
+     * }</pre>
+     * 
+     * @param xor Xor to match on
+     * @return Pattern matcher for Xor
+     */
     public static <ST, PT> MXor<ST, PT> xor(final Xor<ST, PT> xor) {
         return () -> xor;
     }
@@ -407,6 +693,26 @@ public class Matchables {
         return supplier3(() -> time.getHour(), () -> time.getMinute(), () -> time.getSecond());
     }
 
+    /**
+     * Pattern matching on the blocking / non-blocking nature of a Queue
+     * 
+     * <pre>
+     * {@code 
+     *  Matchables.blocking(new ManyToManyConcurrentArrayQueue(10))
+                  .visit(c->"blocking", c->"not")
+         //"not"
+    
+   
+       Matchables.blocking(new LinkedBlockingQueue(10))
+                 .visit(c->"blocking", c->"not")
+        //"blocking
+     * 
+     * }
+     * </pre>
+     * 
+     * @param queue Queue to pattern match on
+     * @return Pattern matchier on the blocking / non-blocking nature of the supplied Queue
+     */
     public static <T> MXor<BlockingQueue<T>, java.util.Queue<T>> blocking(final java.util.Queue<T> queue) {
 
         return () -> queue instanceof BlockingQueue ? Xor.<BlockingQueue<T>, java.util.Queue<T>> secondary((BlockingQueue) queue)

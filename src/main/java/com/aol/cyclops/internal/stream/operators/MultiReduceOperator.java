@@ -28,20 +28,7 @@ public class MultiReduceOperator<R> {
                                   .collect(Collectors.toList());
             }
 
-            @Override
-            public BiFunction<List<R>, List<R>, List<R>> combiner() {
-                return (c1, c2) -> {
-                    final List l = new ArrayList<>();
-                    int i = 0;
-                    for (final Monoid next : reducers) {
-                        l.add(next.combiner()
-                                  .apply(c1.get(i), c2.get(0)));
-                        i++;
-                    }
-
-                    return l;
-                };
-            }
+           
 
             @Override
             public Stream mapToType(final Stream stream) {
@@ -49,8 +36,17 @@ public class MultiReduceOperator<R> {
             }
 
             @Override
-            public List<R> apply(final List<R> t, final List<R> u) {
-                return combiner().apply(t, u);
+            public List<R> apply(final List<R> c1, final List<R> c2) {
+                final List l = new ArrayList<>();
+                int i = 0;
+                for (final Monoid next : reducers) {
+                    l.add(next
+                              .apply(c1.get(i), c2.get(0)));
+                    i++;
+                }
+
+                return l;
+
             }
         };
         return m.mapReduce(stream);

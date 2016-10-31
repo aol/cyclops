@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Monoids;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.LazyImmutable;
@@ -74,7 +75,28 @@ public class Xor2Test {
         assertThat(Xor.primary(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }
    
+	@Test
+    public void testSequenceSecondary() {
+        Xor<ListX<Integer>,ListX<String>> xors =Xor.sequenceSecondary(ListX.of(just,none,Xor.primary(1)));
+        assertThat(xors,equalTo(Xor.primary(ListX.of("none"))));
+    }
 
+    @Test
+    public void testAccumulateSecondary2() {
+        Xor<?,PSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPSetX());
+        assertThat(xors,equalTo(Xor.primary(PSetX.of("none"))));
+    }
+
+    @Test
+    public void testAccumulateSecondarySemigroup() {
+        Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.secondary("1")),i->""+i,Monoids.stringConcat);
+        assertThat(xors,equalTo(Xor.primary("none1")));
+    }
+    @Test
+    public void testAccumulateSecondarySemigroupIntSum() {
+        Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
+        assertThat(iors,equalTo(Ior.primary(3)));
+    }
     @Test
     public void testZipPubFeatureToggle() {
         assertThat(just.zip(FeatureToggle.enable(20),this::add).get(),equalTo(30));
@@ -156,17 +178,17 @@ public class Xor2Test {
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Xor<?,String> maybes = Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),i->""+i,Semigroups.stringConcat);
+		Xor<?,String> maybes = Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),i->""+i,Monoids.stringConcat);
 		assertThat(maybes,equalTo(Xor.primary("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Xor<?,Integer> maybes =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Semigroups.intSum);
+		Xor<?,Integer> maybes =Xor.accumulatePrimary(Monoids.intSum,ListX.of(just,none,Xor.primary(1)));
 		assertThat(maybes,equalTo(Xor.primary(11)));
 	}
 	@Test
     public void testAccumulateSecondary() {
-        Xor<?,String> maybes =Xor.accumulateSecondary(ListX.of(just,none,Xor.secondary("hello")),Semigroups.stringConcat);
+        Xor<?,String> maybes =Xor.accumulateSecondary(Monoids.stringConcat,ListX.of(just,none,Xor.secondary("hello")));
         assertThat(maybes,equalTo(Xor.primary("nonehello")));
     }
 

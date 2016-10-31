@@ -29,7 +29,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * A reactive-streams subscriber for merging data from multiple publishers into a single Stream
+ * A reactive-streams subscriber, backed by a cyclops-react async.Queue, for merging data from multiple publishers into a single Stream
  * 
  * @author johnmcclean
  *
@@ -37,16 +37,39 @@ import lombok.Setter;
  */
 public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
+    /**
+     * Create a QueueBasedSubscriber, backed by a JDK LinkedBlockingQueue
+     * 
+     * @param counter Counter for tracking connections to the queue and data volumes
+     * @param maxConcurrency Maximum number of subscriptions
+     * @return QueueBasedSubscriber
+     */
     public static <T> QueueBasedSubscriber<T> subscriber(final Counter counter, final int maxConcurrency) {
         return new QueueBasedSubscriber<>(
                                           counter, maxConcurrency);
     }
 
+    /**
+     * Create a QueueBasedSubscriber, backed by the provided Queue
+     * 
+     * @param q Queue backing the subscriber
+     * @param counter Counter for tracking connections to the queue and data volumes
+     * @param maxConcurrency Maximum number of subscriptions
+     * @return QueueBasedSubscriber
+     */
     public static <T> QueueBasedSubscriber<T> subscriber(final Queue<T> q, final Counter counter, final int maxConcurrency) {
         return new QueueBasedSubscriber<>(
                                           q, counter, maxConcurrency);
     }
 
+    /**
+     * Create a QueueBasedSubscriber, backed by a Queue that will be created with the provided QueueFactory
+     * 
+     * @param factory QueueFactory
+     * @param counter Counter for tracking connections to the queue and data volumes
+     * @param maxConcurrency Maximum number of subscriptions
+     * @return QueueBasedSubscriber
+     */
     public static <T> QueueBasedSubscriber<T> subscriber(final QueueFactory<T> factory, final Counter counter, final int maxConcurrency) {
 
         return new QueueBasedSubscriber<>(
@@ -119,18 +142,30 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
     }
 
+    /**
+     * @return LazyFutureStream generated from this QueueBasedSubscriber
+     */
     public LazyFutureStream<T> futureStream() {
         return stream = futureStream.get();
     }
 
+    /**
+     * @return JDK Stream generated from this QueueBasedSubscriber
+     */
     public Stream<T> jdkStream() {
         return jdkStream.get();
     }
 
+    /**
+     * @return ReactiveSeq generated from this QueueBasedSubscriber
+     */
     public ReactiveSeq<T> reactiveSeq() {
         return reactiveSeq.get();
     }
 
+    /* (non-Javadoc)
+     * @see org.reactivestreams.Subscriber#onSubscribe(org.reactivestreams.Subscription)
+     */
     @Override
     public void onSubscribe(final Subscription s) {
         Objects.requireNonNull(s);
@@ -147,7 +182,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
         while (counter.subscription.size() > maxConcurrency) {
 
-            LockSupport.parkNanos(100l); //max of 10k active subscriptions
+            LockSupport.parkNanos(100l); 
         }
         counter.subscription.plus(subscription);
 
@@ -155,6 +190,9 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
     }
 
+    /* (non-Javadoc)
+     * @see org.reactivestreams.Subscriber#onNext(java.lang.Object)
+     */
     @Override
     public void onNext(final T t) {
 
@@ -164,6 +202,9 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
     }
 
+    /* (non-Javadoc)
+     * @see org.reactivestreams.Subscriber#onError(java.lang.Throwable)
+     */
     @Override
     public void onError(final Throwable t) {
 
@@ -187,6 +228,9 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         volatile int added = 0;
     }
 
+    /* (non-Javadoc)
+     * @see org.reactivestreams.Subscriber#onComplete()
+     */
     @Override
     public void onComplete() {
 

@@ -43,6 +43,7 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -76,9 +77,12 @@ import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFoldable;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -138,6 +142,35 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
                                                                                      streamable, streamable).applicative(fn)
                                                                                                             .ap(dup.v2);
 
+    }
+   
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> LazyFutureStream<R> combine(Value<? extends T2> app, BiFunction<? super U, ? super T2, ? extends R> fn) {
+        
+        return (LazyFutureStream<R>)ReactiveSeq.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default LazyFutureStream<U> combine(BinaryOperator<Combiner<U>> combiner, Combiner<U> app) {
+        
+        return (LazyFutureStream<U>)ReactiveSeq.super.combine(combiner, app);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    default <T2, R> LazyFutureStream<R> zip(BiFunction<? super U, ? super T2, ? extends R> fn,
+            Publisher<? extends T2> publisher) {
+      
+        return (LazyFutureStream<R>)ReactiveSeq.super.zip(fn, publisher);
     }
 
     /**
@@ -512,9 +545,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      */
     @Override
     default void subscribe(final Subscriber<? super U> s) {
-        /**  if(isAsync())
-            FutureStreamAsyncPublisher.super.subscribe(s);
-        else**/
+        
         FutureStreamSynchronousPublisher.super.subscribe(s);
     }
 

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,11 +24,13 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Matchable.CheckValue2;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.BiFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
@@ -45,14 +48,38 @@ import lombok.EqualsAndHashCode;
  * 'Right' (or primary type) biased disjunct union.
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *  
+ *  
+ *  For eXclusive Ors @see Xor
  * 
  * @author johnmcclean
  *
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunctor<ST, PT>, Functor<PT>, Filterable<PT>, ApplicativeFunctor<PT> {
+public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue2<ST, PT>, BiFunctor<ST, PT>, Functor<PT>, Filterable<PT>, ApplicativeFunctor<PT> {
 
+    @Deprecated //internal use only
+    public static <ST, PT> Ior<ST, PT> both(final Ior<ST, PT> secondary, final Ior<ST, PT> primary) {
+        return new Both<ST, PT>(
+                                secondary, primary);
+    }
+    /**
+     * Construct an Ior that contains a single value extracted from the supplied reactive-streams Publisher
+
+     * <pre>
+     * {@code 
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+        
+        Ior<Throwable,Integer> future = Ior.fromPublisher(stream);
+        
+        //Ior[1]
+     * 
+     * }
+     * </pre>
+     * 
+     * @param pub Publisher to extract value from
+     * @return Ior populated from Publisher
+     */
     public static <T> Ior<Throwable, T> fromPublisher(final Publisher<T> pub) {
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
@@ -60,26 +87,86 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
                   .toIor();
     }
 
+    /**
+     * Construct an Ior that contains a single value extracted from the supplied Iterable
+     * <pre>
+     * {@code 
+     *   List<Integer> list =  Arrays.asList(1,2,3);
+        
+        Ior<Throwable,Integer> future = Ior.fromPublisher(list);
+        
+        //Ior[1]
+     * 
+     * }
+     * </pre>
+     * @param iterable Iterable to extract value from
+     * @return Ior populated from Iterable
+     */
     public static <ST, T> Ior<ST, T> fromIterable(final Iterable<T> iterable) {
         final Iterator<T> it = iterable.iterator();
         return Ior.primary(it.hasNext() ? it.next() : null);
     }
 
+    /**
+     * Create an instance of the primary type. Most methods are biased to the primary type,
+     * which means, for example, that the map method operates on the primary type but does nothing on secondary Iors
+     * 
+     * <pre>
+     * {@code 
+     *   Ior.<Integer,Integer>primary(10).map(i->i+1);
+     * //Ior.primary[11]
+     *    
+     *   
+     * }
+     * </pre>
+     * 
+     * 
+     * @param value To construct an Ior from
+     * @return Primary type instanceof Ior
+     */
     public static <ST, PT> Ior<ST, PT> primary(final PT primary) {
         return new Primary<>(
                              primary);
     }
-
+    /**
+     * Create an instance of the secondary type. Most methods are biased to the primary type,
+     * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
+     * 
+     * <pre>
+     * {@code 
+     *   Ior.<Integer,Integer>secondary(10).map(i->i+1);
+     *   //Ior.secondary[10]
+     *    
+     *    Ior.<Integer,Integer>secondary(10).swap().map(i->i+1);
+     *    //Ior.primary[11]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param value to wrap
+     * @return Secondary instance of Ior
+     */
     public static <ST, PT> Ior<ST, PT> secondary(final ST secondary) {
         return new Secondary<>(
                                secondary);
     }
 
-    public static <ST, PT> Ior<ST, PT> both(final Ior<ST, PT> secondary, final Ior<ST, PT> primary) {
-        return new Both<ST, PT>(
-                                secondary, primary);
-    }
+    
 
+    /**
+     * Create an Ior instance that contains both secondary and primary types
+     * 
+     * <pre>
+     * {@code 
+     *    Ior<String,Ingeger> kv = Ior.both("hello",90);
+     *    //Ior["hello",90]
+     * }
+     * </pre>
+     * 
+     * @param secondary Secondary value
+     * @param primary Primary value
+     * @return Ior that contains both the secondary and the primary value
+     */
     public static <ST, PT> Ior<ST, PT> both(final ST secondary, final PT primary) {
         return new Both<ST, PT>(
                                 Ior.secondary(secondary), Ior.primary(primary));
@@ -131,7 +218,10 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
     @Override
     Xor<ST, PT> toXor(); //drop ST
 
-    Xor<ST, PT> toXorDropPrimary(); //drop ST
+    /**
+     * @return Convert to an Xor, dropping the primary type if this Ior contains both
+     */
+    Xor<ST, PT> toXorDropPrimary(); //drop PT
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Value#toXor(java.lang.Object)
@@ -149,8 +239,21 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
         return this;
     }
 
+    /**
+     * If this Ior contains the Secondary type only, map it's value so that it contains the Primary type only
+     * If this Ior contains both types, this method has no effect in the default implementations
+     * 
+     * @param fn Function to map secondary type to primary
+     * @return Ior with secondary type mapped to primary
+     */
     Ior<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
 
+    /**
+     * Always map the Secondary type of this Ior if it is present using the provided transformation function
+     * 
+     * @param fn Transformation function for Secondary types
+     * @return Ior with Secondary type transformed
+     */
     <R> Ior<R, PT> secondaryMap(Function<? super ST, ? extends R> fn);
 
     /* (non-Javadoc)
@@ -159,6 +262,12 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
     @Override
     <R> Ior<ST, R> map(Function<? super PT, ? extends R> fn);
 
+    /**
+     * Peek at the Secondary type value if present
+     * 
+     * @param action Consumer to peek at the Secondary type value
+     * @return Ior with the same values as before
+     */
     Ior<ST, PT> secondaryPeek(Consumer<? super ST> action);
 
     /* (non-Javadoc)
@@ -167,6 +276,9 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
     @Override
     Ior<ST, PT> peek(Consumer<? super PT> action);
 
+    /**
+     * @return Ior with Primary and Secondary types and value swapped
+     */
     Ior<PT, ST> swap();
 
     /* (non-Javadoc)
@@ -194,8 +306,15 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
         return (Ior<ST, PT>) MonadicValue2.super.combineEager(monoid, v2);
     }
 
+    /**
+     * @return An empty Optional if this Ior only has either the Secondary or Primary type. Or an Optional containing a Tuple2
+     * with both the Secondary and Primary types if they are both present.
+     */
     Optional<Tuple2<ST, PT>> both();
 
+    /**
+     * @return The result of @see Ior#both wrapped in a Value
+     */
     default Value<Optional<Tuple2<ST, PT>>> bothValue() {
         return () -> both();
     }
@@ -224,14 +343,38 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
                                                .swap()
                                                .get());
 
-        return Ior.both(stMap.get(), ptMap.get());
+        return Both.both(stMap.get(), ptMap.get());
     }
 
+   
     /**
-     * @param secondary
-     * @param primary
-     * @param both
-     * @return
+     * Visitor pattern for this Ior.
+     * Execute the secondary function if this Ior contains an element of the secondary type only
+     * Execute the primary function if this Ior contains an element of the primary type only
+     * Execute the both function if this Ior contains an element of both type
+     * 
+     * <pre>
+     * {@code 
+     *  Ior.primary(10)
+     *     .visit(secondary->"no", primary->"yes",(sec,pri)->"oops!")
+     *  //Ior["yes"]
+        
+        Ior.secondary(90)
+           .visit(secondary->"no", primary->"yes",(sec,pri)->"oops!")
+        //Ior["no"]
+         
+        Ior.both(10, "eek")
+           .visit(secondary->"no", primary->"yes",(sec,pri)->"oops!")
+        //Ior["oops!"]
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * @param secondary Function to execute if this is a Secondary Ior
+     * @param primary Function to execute if this is a Primary Ior
+     * @param both Function to execute if this Ior contains both types
+     * @return Result of executing the appropriate function
      */
     default <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
             final BiFunction<? super ST, ? super PT, ? extends R> both) {
@@ -245,6 +388,37 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
                          .visit((a, b) -> both.apply(a, b));
     }
 
+    /**
+     * Pattern match on the value/s inside this Ior.
+     * 
+     * <pre>
+     * {@code 
+     * import static com.aol.cyclops.control.Matchable.otherwise;
+       import static com.aol.cyclops.control.Matchable.then;
+       import static com.aol.cyclops.control.Matchable.when;
+       import static com.aol.cyclops.util.function.Predicates.instanceOf;
+
+       Ior.primary(10)
+          .matches(c->c.is(when("10"),then("hello")),
+                   c->c.is(when(instanceOf(Integer.class)), then("error")),
+                   c->c.is(when("10",10), then("boo!")),
+                   otherwise("miss"));
+                   
+       //Eval["error"]
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * 
+     * 
+     * @param secondary Pattern matching function executed if this Ior has the secondary type only
+     * @param primary Pattern matching function executed if this Ior has the primary type only
+     * @param both Pattern matching function executed if this Ior has both types
+     * @param otherwise Supplier used to provide a value if the selecting pattern matching function fails to find a match
+     * @return Lazy result of the pattern matching
+     */
     <R> Eval<R> matches(Function<CheckValue1<ST, R>, CheckValue1<ST, R>> secondary, Function<CheckValue1<PT, R>, CheckValue1<PT, R>> primary,
             Function<CheckValue2<ST, PT, R>, CheckValue2<ST, PT, R>> both, Supplier<? extends R> otherwise);
 
@@ -262,12 +436,24 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
         return isPrimary() || isBoth();
     }
 
+    /**
+     * @return A Value containing the secondary Value if present
+     */
     Value<ST> secondaryValue();
 
+    /**
+     * @return The Secondary Value if present, otherwise null
+     */
     ST secondaryGet();
 
+    /**
+     * @return The Secondary value wrapped in an Optional if present, otherwise an empty Optional
+     */
     Optional<ST> secondaryToOptional();
 
+    /**
+     * @return A Stream containing the secondary value if present, otherwise an empty Stream
+     */
     ReactiveSeq<ST> secondaryToStream();
 
     /* (non-Javadoc)
@@ -276,58 +462,250 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
     @Override
     <LT1, RT1> Ior<LT1, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper);
 
+    /**
+     * Perform a flatMap operation on the Secondary type
+     * 
+     * @param mapper Flattening transformation function
+     * @return Ior containing the value inside the result of the transformation function as the Secondary value, if the Secondary type was present
+     */
     <LT1, RT1> Ior<LT1, RT1> secondaryFlatMap(Function<? super ST, ? extends Ior<LT1, RT1>> mapper);
 
+    /**
+     * A flatMap operation that keeps the Secondary and Primary types the same
+     * 
+     * @param fn Transformation function
+     * @return Ior
+     */
     Ior<ST, PT> secondaryToPrimayFlatMap(Function<? super ST, ? extends Ior<ST, PT>> fn);
 
+    /**
+     * @return True if this is a primary (only) Ior
+     */
     public boolean isPrimary();
 
+    /**
+     * @return True if this was a secondary (only) Ior
+     */
     public boolean isSecondary();
 
+    /**
+     * @return True if this Ior has both secondary and primary types
+     */
     public boolean isBoth();
 
+    /**
+     *  Turn a collection of Iors into a single Ior with Lists of values.
+     *  Primary and secondary types are swapped during this operation.
+     * 
+     * <pre>
+     * {@code 
+     *  Ior<String,Integer> just  = Ior.primary(10);
+        Ior<String,Integer> none = Ior.secondary("none");
+     *  Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceSecondary(ListX.of(just,none,Ior.primary(1)));
+        //Ior.primary(ListX.of("none")))
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param iors Iors to sequence
+     * @return Ior sequenced and swapped
+     */
     public static <ST, PT> Ior<ListX<PT>, ListX<ST>> sequenceSecondary(final CollectionX<Ior<ST, PT>> iors) {
         return AnyM.sequence(AnyM.listFromIor(iors.map(Ior::swap)))
                    .unwrap();
     }
 
+    /**
+     * Accumulate the result of the Secondary types in the Collection of Iors provided using the supplied Reducer  {@see com.aol.cyclops.Reducers}.
+     * 
+     * <pre>
+     * {@code 
+     *  Ior<String,Integer> just  = Ior.primary(10);
+        Ior<String,Integer> none = Ior.secondary("none");
+        
+     *  Ior<?,PSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPSetX());
+      //Ior.primary(PSetX.of("none"))));
+      * }
+     * </pre>
+     * @param iors Collection of Iors to accumulate secondary values
+     * @param reducer Reducer to accumulate results
+     * @return Ior populated with the accumulate secondary operation
+     */
     public static <ST, PT, R> Ior<?, R> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Reducer<R> reducer) {
         return sequenceSecondary(iors).map(s -> s.mapReduce(reducer));
     }
 
+    /**
+     * Accumulate the results only from those Iors which have a Secondary type present, using the supplied mapping function to
+     * convert the data from each Ior before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * 
+     * <pre>
+     * {@code 
+     *  Ior<String,Integer> just  = Ior.primary(10);
+        Ior<String,Integer> none = Ior.secondary("none");
+        
+     *  Ior<?,String> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.secondary("1")),i->""+i,Monoids.stringConcat);
+        //Ior.primary("none1")
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     *  
+     * @param iors Collection of Iors to accumulate secondary values
+     * @param mapper Mapping function to be applied to the result of each Ior
+     * @param reducer Semigroup to combine values from each Ior
+     * @return Ior populated with the accumulate Secondary operation
+     */
     public static <ST, PT, R> Ior<?, R> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Function<? super ST, R> mapper,
-            final Semigroup<R> reducer) {
+            final Monoid<R> reducer) {
         return sequenceSecondary(iors).map(s -> s.map(mapper)
-                                                 .reduce(reducer.reducer())
-                                                 .get());
+                                                 .reduce(reducer));
     }
 
-    public static <ST, PT> Ior<?, ST> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Semigroup<ST> reducer) {
-        return sequenceSecondary(iors).map(s -> s.reduce(reducer.reducer())
-                                                 .get());
+    /**
+     *  Accumulate the results only from those Iors which have a Secondary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  Ior<String,Integer> just  = Ior.primary(10);
+        Ior<String,Integer> none = Ior.secondary("none");
+        
+     * Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
+       //Ior.primary(3);  2+1
+     * 
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param iors Collection of Iors to accumulate secondary values
+     * @param reducer  Semigroup to combine values from each Ior
+     * @return populated with the accumulate Secondary operation
+     */
+    public static <ST, PT> Ior<?, ST> accumulateSecondary(final Monoid<ST> reducer,final CollectionX<Ior<ST, PT>> iors) {
+        return sequenceSecondary(iors).map(s -> s.reduce(reducer));
     }
 
+    /**
+     *  Turn a collection of Iors into a single Ior with Lists of values.
+     *  
+     * <pre>
+     * {@code 
+     * 
+     * Ior<String,Integer> just  = Ior.primary(10);
+       Ior<String,Integer> none = Ior.secondary("none");
+        
+        
+     * Ior<ListX<String>,ListX<Integer>> iors =Ior.sequencePrimary(ListX.of(just,none,Ior.primary(1)));
+       //Ior.primary(ListX.of(10,1)));
+     * 
+     * }</pre>
+     *
+     * 
+     * 
+     * @param iors Iors to sequence
+     * @return Ior Sequenced
+     */
     public static <ST, PT> Ior<ListX<ST>, ListX<PT>> sequencePrimary(final CollectionX<Ior<ST, PT>> iors) {
         return AnyM.sequence(AnyM.<ST, PT> listFromIor(iors))
                    .unwrap();
     }
 
+    /**
+     * Accumulate the result of the Primary types in the Collection of Iors provided using the supplied Reducer  {@see com.aol.cyclops.Reducers}.
+
+     * <pre>
+     * {@code 
+     *  Ior<String,Integer> just  = Ior.primary(10);
+        Ior<String,Integer> none = Ior.secondary("none");
+     * 
+     *  Ior<?,PSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPSetX());
+        //Ior.primary(PSetX.of(10,1))));
+     * }
+     * </pre>
+     * @param iors Collection of Iors to accumulate primary values
+     * @param reducer Reducer to accumulate results
+     * @return Ior populated with the accumulate primary operation
+     */
     public static <ST, PT, R> Ior<?, R> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Reducer<R> reducer) {
         return sequencePrimary(iors).map(s -> s.mapReduce(reducer));
     }
 
+    /**
+     * Accumulate the results only from those Iors which have a Primary type present, using the supplied mapping function to
+     * convert the data from each Ior before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+     * 
+     * <pre>
+     * {@code 
+     *  Ior<String,Integer> just  = Ior.primary(10);
+        Ior<String,Integer> none = Ior.secondary("none");
+        
+     * Ior<?,String> iors = Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),i->""+i,Semigroups.stringConcat);
+       //Ior.primary("101"));
+     * }
+     * </pre>
+     * 
+     * 
+     * @param iors Collection of Iors to accumulate primary values
+     * @param mapper Mapping function to be applied to the result of each Ior
+     * @param reducer Reducer to accumulate results
+     * @return Ior populated with the accumulate primary operation
+     */
     public static <ST, PT, R> Ior<?, R> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Function<? super PT, R> mapper,
             final Semigroup<R> reducer) {
         return sequencePrimary(iors).map(s -> s.map(mapper)
-                                               .reduce(reducer.reducer())
+                                               .reduce(reducer)
                                                .get());
     }
 
+    /**
+     *  Accumulate the results only from those Iors which have a Primary type present, using the supplied  Semgigroup (a combining BiFunction/BinaryOperator that takes two
+     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+     * 
+     * <pre>
+     * {@code 
+     *  Ior<String,Integer> just  = Ior.primary(10);
+        Ior<String,Integer> none = Ior.secondary("none");
+     *  
+     *  Ior<?,Integer> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Semigroups.intSum);
+        //Ior.primary(11);
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * 
+     * @param iors Collection of Iors to accumulate primary values
+     * @param reducer  Reducer to accumulate results
+     * @return  Ior populated with the accumulate primary operation
+     */
     public static <ST, PT> Ior<?, PT> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Semigroup<PT> reducer) {
-        return sequencePrimary(iors).map(s -> s.reduce(reducer.reducer())
+        return sequencePrimary(iors).map(s -> s.reduce(reducer)
                                                .get());
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> Ior<ST,R> combine(Value<? extends T2> app,
+            BiFunction<? super PT, ? super T2, ? extends R> fn) {
+        return (Ior<ST,R>)ApplicativeFunctor.super.combine(app, fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default  Ior<ST,PT> combine(BinaryOperator<Combiner<PT>> combiner, Combiner<PT> app) {
+       
+        return (Ior<ST,PT>)MonadicValue2.super.combine(combiner, app);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
      */
@@ -815,7 +1193,10 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
     public static class Both<ST, PT> implements Ior<ST, PT> {
         private final Ior<ST, PT> secondary;
         private final Ior<ST, PT> primary;
-
+        private static <ST, PT> Ior<ST, PT> both(final Ior<ST, PT> secondary, final Ior<ST, PT> primary) {
+            return new Both<ST, PT>(
+                                    secondary, primary);
+        }
         @Override
         public ReactiveSeq<PT> stream() {
             return primary.stream();
@@ -843,12 +1224,12 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
 
         @Override
         public <R> Ior<R, PT> secondaryMap(final Function<? super ST, ? extends R> fn) {
-            return Ior.both(secondary.secondaryMap(fn), primary.secondaryMap(fn));
+            return Both.both(secondary.secondaryMap(fn), primary.secondaryMap(fn));
         }
 
         @Override
         public <R> Ior<ST, R> map(final Function<? super PT, ? extends R> fn) {
-            return Ior.<ST, R> both(secondary.map(fn), primary.map(fn));
+            return Both.<ST, R> both(secondary.map(fn), primary.map(fn));
         }
 
         @Override
@@ -870,7 +1251,7 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
 
         @Override
         public Ior<PT, ST> swap() {
-            return Ior.both(primary.swap(), secondary.swap());
+            return Both.both(primary.swap(), secondary.swap());
 
         }
 
@@ -913,17 +1294,17 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
 
         @Override
         public <LT1, RT1> Ior<LT1, RT1> flatMap(final Function<? super PT, ? extends MonadicValue2<? extends LT1, ? extends RT1>> mapper) {
-            return Ior.both(secondary.flatMap(mapper), primary.flatMap(mapper));
+            return Both.both(secondary.flatMap(mapper), primary.flatMap(mapper));
         }
 
         @Override
         public <LT1, RT1> Ior<LT1, RT1> secondaryFlatMap(final Function<? super ST, ? extends Ior<LT1, RT1>> mapper) {
-            return Ior.both(secondary.secondaryFlatMap(mapper), primary.secondaryFlatMap(mapper));
+            return Both.both(secondary.secondaryFlatMap(mapper), primary.secondaryFlatMap(mapper));
         }
 
         @Override
         public Ior<ST, PT> secondaryToPrimayFlatMap(final Function<? super ST, ? extends Ior<ST, PT>> fn) {
-            return Ior.both(secondary.secondaryToPrimayFlatMap(fn), primary.secondaryToPrimayFlatMap(fn));
+            return Both.both(secondary.secondaryToPrimayFlatMap(fn), primary.secondaryToPrimayFlatMap(fn));
         }
 
         @Override
@@ -935,7 +1316,7 @@ public interface Ior<ST, PT> extends Supplier<PT>, MonadicValue2<ST, PT>, BiFunc
 
         @Override
         public <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
-            return Ior.both((Ior) secondary.secondaryMap(fn1), (Ior) primary.map(fn2));
+            return Both.both((Ior) secondary.secondaryMap(fn1), (Ior) primary.map(fn2));
         }
 
         @Override

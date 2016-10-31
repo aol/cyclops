@@ -23,6 +23,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.ToStream;
@@ -37,7 +38,7 @@ import com.aol.cyclops.types.stream.ToStream;
  * @param <T>
  *            The type contained on the nested Eval(s) within
  */
-public interface EvalT<T> extends Publisher<T>, Functor<T>, Filterable<T>, ToStream<T> {
+public interface EvalT<T> extends To<EvalT<T>>,Publisher<T>, Functor<T>, Filterable<T>, ToStream<T> {
 
     public <R> EvalT<R> unit(R value);
 
@@ -180,24 +181,6 @@ public interface EvalT<T> extends Publisher<T>, Functor<T>, Filterable<T>, ToStr
      * e.g. to add null handling (via Maybe), iteration (via Stream) and
      * asynchronous execution (CompletableFuture) to an existing function
      * 
-     * <pre>
-     * {@code
-     *    
-     *     BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
-     *     BiFunction<MaybeT<Integer>, MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift2(add);
-     * 
-     *     Stream<Integer> withNulls = Stream.of(1, 2, null);
-     *     AnyM<Integer> stream = AnyM.ofMonad(withNulls);
-     *     AnyM<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
-     * 
-     *     CompletableFuture<Maybe<Integer>> two = CompletableFuture.supplyAsync(() -> Maybe.of(2));
-     *     AnyM<Maybe<Integer>> future = AnyM.ofMonad(two);
-     *     List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt), MaybeT.of(future)).unwrap()
-     *             .<Stream<Maybe<Integer>>> unwrap().filter(Maybe::isPresent).map(Maybe::get)
-     *             .collect(Collectors.toList());
-     *     // Arrays.asList(3,4);
-     * }
-     * </pre>
      * 
      * @param fn
      *            BiFunction to enhance with functionality from Maybe and

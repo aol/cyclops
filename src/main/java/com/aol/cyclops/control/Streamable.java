@@ -43,11 +43,15 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.stream.SeqUtils;
 import com.aol.cyclops.internal.stream.StreamableImpl;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFoldable;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -65,8 +69,8 @@ import lombok.AllArgsConstructor;
  *
  * @param <T> Data type for Stream
  */
-public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, CyclopsCollectable<T>, ConvertableSequence<T>, Functor<T>, Filterable<T>,
-        Traversable<T>, Unit<T>, ZippingApplicativable<T> {
+public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFoldable<T>, CyclopsCollectable<T>, ConvertableSequence<T>, Functor<T>, Filterable<T>,
+        Traversable<T>, Unit<T>, ZippingApplicativable<T>, Zippable<T> {
 
     public static <T> Streamable<T> fromObject(final Object toCoerce) {
         return new StreamableImpl(
@@ -159,6 +163,9 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
+     */
     @Override
     default Collectable<T> collectable() {
 
@@ -415,7 +422,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     }
 
     /**
-     * Remove all occurances of the specified element from the SequenceM
+     * Remove all occurances of the specified element from the Streamable
      * <pre>
      * {@code
      * 	Streamable.of(1,2,3,4,5,1,2,3).remove(1)
@@ -425,7 +432,7 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
      * </pre>
      * 
      * @param t element to remove
-     * @return Filtered Stream / SequenceM
+     * @return Filtered Streamable
      */
     default Streamable<T> remove(final T t) {
         return Streamable.fromStream(reactiveSeq().remove(t));
@@ -642,6 +649,23 @@ public interface Streamable<T> extends ToStream<T>, IterableFoldable<T>, Cyclops
     default <C extends Collection<T>> C toCollection(final Supplier<C> collectionFactory) {
 
         return reactiveSeq().toCollection(collectionFactory);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> Streamable<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (Streamable<R>)ZippingApplicativable.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default Streamable<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+       
+        return (Streamable<T>)ZippingApplicativable.super.combine(combiner, app);
     }
 
     /**

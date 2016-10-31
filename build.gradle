@@ -50,7 +50,7 @@ if (JavaVersion.current().isJava8Compatible()) {
       }
     }
   }
-  
+ 
 
 configurations {
 	provided
@@ -58,7 +58,7 @@ configurations {
 dependencies {
    
 	
-   
+    compile(group: 'org.derive4j.hkt', name: 'hkt', version: '0.2', ext: 'jar')
 	compile 'com.nurkiewicz.asyncretry:asyncretry:'+asyncRetryVersion
 	compile 'org.pcollections:pcollections:'+pCollectionsVersion
 	compile "org.jooq:jool:${joolVersion}"
@@ -129,6 +129,7 @@ javadoc {
     configure((CoreJavadocOptions) getOptions()) {
         addStringOption('sourcepath', "/Sources/jool-0.9.11-sources.jar")
     }
+    exclude '**/internal/**'
 }
 modifyPom {
 	project {

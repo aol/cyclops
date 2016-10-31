@@ -321,6 +321,9 @@ public interface JoolWindowing<T> extends Seq<T> {
     /**
      * Map this stream to a windowed stream with 16 distinct windows.
      */
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#window(org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification, org.jooq.lambda.WindowSpecification)
+     */
     @Override
     @Generated("This method was generated using jOOQ-tools")
     default ReactiveSeq<Tuple16<Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>, Window<T>>> window(

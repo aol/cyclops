@@ -8,11 +8,21 @@ import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.FluentFunctions;
 import com.aol.cyclops.internal.stream.BaseHotStreamImpl;
 
+/**
+ * A HotStream (Stream already emitting data) that can not be paused
+ * 
+ * @author johnmcclean
+ *
+ * @param <T>  Data type of elements in the Stream
+ */
 public class NonPausableHotStream<T> extends BaseHotStreamImpl<T> {
     public NonPausableHotStream(final Stream<T> stream) {
         super(stream);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.internal.stream.BaseHotStreamImpl#init(java.util.concurrent.Executor)
+     */
     @Override
     public HotStream<T> init(final Executor exec) {
         CompletableFuture.runAsync(() -> {

@@ -9,6 +9,7 @@ import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.types.To;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -42,7 +43,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableInt implements IntSupplier, IntConsumer, Matchable.ValueAndOptionalMatcher<Integer> {
+public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Matchable.ValueAndOptionalMatcher<Integer> {
 
     private int var;
 

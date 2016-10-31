@@ -21,6 +21,27 @@ public interface Mappable {
     /**
      * default implementation maps field values on the host object by name
      * 
+     * <pre>
+     * {@code 
+     *  @Value static class MyEntity { int num; String str;}
+     * 
+     *  Map<String,?> map = AsMappable.asMappable(new MyEntity(10,"hello")).toMap();
+       
+        assertThat(map.get("num"),equalTo(10));
+        assertThat(map.get("str"),equalTo("hello"));
+   
+        Map<String,?> map = AsMappable.asMappable(new MyEntity(10,null)).toMap();
+        
+        assertThat(map.get("num"),equalTo(10));
+        assertThat(map.get("str"),nullValue());
+    
+
+     * 
+     * }
+     * </pre>
+     * 
+     * 
+     * 
      * @return Map representation
      */
     default Map<String, ?> toMap() {

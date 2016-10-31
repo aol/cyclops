@@ -9,6 +9,7 @@ import java.util.function.LongUnaryOperator;
 import java.util.stream.LongStream;
 
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.types.To;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -42,7 +43,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableLong implements LongSupplier, LongConsumer, Matchable.ValueAndOptionalMatcher<Long> {
+public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer, Matchable.ValueAndOptionalMatcher<Long> {
 
     private long var;
 

@@ -5,18 +5,76 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 
 /**
  * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl 
  * and Mario Fusco presentation
  * 
+ * Allows Stack Free Recursion
+ * 
+ * <pre>
+ * {@code 
+ * @Test
+    public void trampolineTest(){
+        
+        assertThat(loop(500000,10).result(),equalTo(446198426));
+        
+    }
+    Trampoline<Integer> loop(int times,int sum){
+        
+        if(times==0)
+            return Trampoline.done(sum);
+        else
+            return Trampoline.more(()->loop(times-1,sum+times));
+    }
+ * 
+ * }
+ * </pre>
+ * 
+ * And co-routines
+ * 
+ * <pre>
+ * {@code 
+ *  List results;
+    @Test
+    public void coroutine(){
+        results = new ArrayList();
+        Iterator<String> it = Arrays.asList("hello","world","end").iterator();
+        val coroutine = new Trampoline[1];
+        coroutine[0] = Trampoline.more( ()-> it.hasNext() ? print(it.next(),coroutine[0]) : Trampoline.done(0));
+        withCoroutine(coroutine[0]);
+        
+        assertThat(results,equalTo(Arrays.asList(0,"hello",1,"world",2,"end",3,4)));
+    }
+    
+    private Trampoline<Integer> print(Object next, Trampoline trampoline) {
+        System.out.println(next);
+        results.add(next);
+        return trampoline;
+    }
+    public void withCoroutine(Trampoline coroutine){
+        
+        for(int i=0;i<5;i++){
+                print(i,coroutine);
+                if(!coroutine.complete())
+                    coroutine= coroutine.bounce();
+                
+        }
+        
+    }
+ * 
+ * }
+ * </pre>
+ * 
+ * 
  * @author johnmcclean
  *
  * @param <T> Return type
  */
 @FunctionalInterface
-public interface Trampoline<T> extends Supplier<T>, Value<T> {
+public interface Trampoline<T> extends Supplier<T>, Value<T>, To<Trampoline<T>> {
 
     /**
      * @return next stage in Trampolining
@@ -32,9 +90,15 @@ public interface Trampoline<T> extends Supplier<T>, Value<T> {
         return get();
     }
 
+    /* (non-Javadoc)
+     * @see java.util.function.Supplier#get()
+     */
     @Override
     T get();
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Value#iterator()
+     */
     @Override
     default Iterator<T> iterator() {
         return Arrays.asList(result())

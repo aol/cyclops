@@ -53,16 +53,21 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.types.higherkindedtypes.Higher;
+import com.aol.cyclops.types.higherkindedtypes.type.constructors.StreamType;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -77,9 +82,70 @@ import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.val;
 
-public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
-        FilterableFunctor<T>, ExtendedTraversable<T>, IterableFoldable<T>, CyclopsCollectable<T>, JoolWindowing<T>, Seq<T>, Iterable<T>, Publisher<T>,
-        ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {
+/**
+ * A powerful extended, sequential Stream type.
+ * Extends JDK 8 java.util.stream.Stream.
+ * Extends org.jooq.lambda.Seq.
+ * Implements the reactive-stream api.
+ * 
+ * Features include
+ *      Asynchronous execution
+ *      Scheduling
+ *      Error handling
+ *      Retries
+ *      Zipping
+ *      Duplication
+ *      Cartesian product operations (e.g. crossJoin, forEach2)
+ *      Subscriptions and fined grained control
+ *      Interoperability
+ *      Parallelism via LazyFutureStream
+ *      Lazy grouping (group by size, time, state)
+ *      Sliding windows
+ *      Efficient reversal
+ *      foldRight / scanLeft / scanRight
+ *      Zipping and Combining
+ *      Data insertion and removal
+ *      Time based operations (debouncing, onePer, xPer)
+ *      SQL style Window operations
+ *      Reduction and partial reduction
+ *      Mathematical terminal operations
+ *      Lazy execution
+ *      Empty handling
+ *      Cycling / repeating
+ *      Controlled iteration (forEachX)
+ *      Event handling (on next, on error, on complete)
+ *      
+ * 
+ * @author johnmcclean
+ *
+ * @param <T> Data type of elements within the Stream
+ */
+public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
+                                        Higher<StreamType.stream,T>,
+                                        Unwrapable, 
+                                        Stream<T>, 
+                                        OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
+                                        FilterableFunctor<T>, ExtendedTraversable<T>, IterableFoldable<T>, CyclopsCollectable<T>, JoolWindowing<T>, Seq<T>, Iterable<T>, Publisher<T>,
+                                        ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {
+
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> ReactiveSeq<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return ( ReactiveSeq<R>)ZippingApplicativable.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     */
+    @Override
+    default ReactiveSeq<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+       
+        return (ReactiveSeq<T>)ExtendedTraversable.super.combine(combiner, app);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
@@ -1482,8 +1548,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 												.map(i->i*2)
      * 												.toStreamable();
      * 		
-     * 		repeat.sequenceM().toList(); //Arrays.asList(2,4,6,8,10,12));
-     * 		repeat.sequenceM().toList() //Arrays.asList(2,4,6,8,10,12));
+     * 		repeat.stream().toList(); //Arrays.asList(2,4,6,8,10,12));
+     * 		repeat.stream().toList() //Arrays.asList(2,4,6,8,10,12));
      * 
      * }
      * 
@@ -1747,8 +1813,8 @@ public interface ReactiveSeq<T> extends Unwrapable, Stream<T>, OnEmptySwitch<T, 
      * 	&#064;code
      * 	Streamable&lt;Integer&gt; repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -&gt; i + 2).toConcurrentLazyStreamable();
      * 
-     * 	assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     * 	assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     * 	assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     * 	assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
      * }
      * </pre>
      * 

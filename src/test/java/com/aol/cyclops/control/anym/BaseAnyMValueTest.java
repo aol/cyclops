@@ -109,7 +109,7 @@ public abstract class BaseAnyMValueTest {
 
 	@Test
 	public void testFromEvalSome() {
-		assertThat(Maybe.fromEvalOf(Eval.now(10)),equalTo(just.toMaybe()));
+		assertThat(Maybe.fromEval(Eval.now(10)),equalTo(just.toMaybe()));
 	}
 
 	@Test

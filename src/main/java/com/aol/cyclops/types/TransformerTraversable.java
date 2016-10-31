@@ -15,7 +15,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
  *
  * @param <T> Data type of the elements stored inside the traversable manipulated by this monad transformer
  */
-public interface TransformerTraversable<T> {
+public interface TransformerTraversable<T>{
 
     /**
      * Group the elements in this Traversable into batches of the provided size.

@@ -57,26 +57,7 @@ public class ReaderTSeq<T, R> {
         })));
     }
 
-    /**
-     * Filter the wrapped Maybe
-     * 
-     * <pre>
-     * {@code 
-     *    MaybeT.of(AnyM.fromStream(Maybe.of(10))
-     *             .filter(t->t!=10);
-     *             
-     *     //MaybeT<AnyMSeq<Stream<Maybe.empty>>>
-     * }
-     * </pre>
-     * 
-     * @param test
-     *            Predicate to filter the wrapped Maybe
-     * @return MaybeT that applies the provided filter
     
-    public ReaderT<T,R> filter(Predicate<? super T> test) {
-        return of(run.map(opt -> opt.filter(test)));
-    } */
-
     /**
      * Map the wrapped Maybe
      * 
@@ -129,22 +110,6 @@ public class ReaderTSeq<T, R> {
      * e.g. to add null handling (via Maybe) and iteration (via Stream) to an
      * existing function
      * 
-     * <pre>
-     * {
-     *     &#64;code
-     *     Function<Integer, Integer> add2 = i -> i + 2;
-     *     Function<MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift(add2);
-     * 
-     *     Stream<Integer> withNulls = Stream.of(1, 2, null);
-     *     AnyMSeq<Integer> stream = AnyM.ofMonad(withNulls);
-     *     AnyMSeq<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
-     *     List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt)).unwrap().<Stream<Maybe<Integer>>> unwrap()
-     *             .filter(Maybe::isPresent).map(Maybe::get).collect(Collectors.toList());
-     * 
-     *     // Arrays.asList(3,4);
-     * 
-     * }
-     * </pre>
      * 
      * 
      * @param fn
@@ -164,24 +129,6 @@ public class ReaderTSeq<T, R> {
      * e.g. to add null handling (via Maybe), iteration (via Stream) and
      * asynchronous execution (CompletableFuture) to an existing function
      * 
-     * <pre>
-     * {
-     *     &#64;code
-     *     BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
-     *     BiFunction<MaybeT<Integer>, MaybeT<Integer>, MaybeT<Integer>> optTAdd2 = MaybeT.lift2(add);
-     * 
-     *     Stream<Integer> withNulls = Stream.of(1, 2, null);
-     *     AnyMSeq<Integer> stream = AnyM.ofMonad(withNulls);
-     *     AnyMSeq<Maybe<Integer>> streamOpt = stream.map(Maybe::ofNullable);
-     * 
-     *     CompletableFuture<Maybe<Integer>> two = CompletableFuture.supplyAsync(() -> Maybe.of(2));
-     *     AnyMSeq<Maybe<Integer>> future = AnyM.ofMonad(two);
-     *     List<Integer> results = optTAdd2.apply(MaybeT.of(streamOpt), MaybeT.of(future)).unwrap()
-     *             .<Stream<Maybe<Integer>>> unwrap().filter(Maybe::isPresent).map(Maybe::get)
-     *             .collect(Collectors.toList());
-     *     // Arrays.asList(3,4);
-     * }
-     * </pre>
      * 
      * @param fn
      *            BiFunction to enhance with functionality from Maybe and

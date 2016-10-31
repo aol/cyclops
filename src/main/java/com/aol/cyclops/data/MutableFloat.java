@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.control.Matchable;
+import com.aol.cyclops.types.To;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -38,7 +39,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableFloat implements Supplier<Float>, Consumer<Float>, Matchable.ValueAndOptionalMatcher<Float> {
+public class MutableFloat implements To<MutableFloat>,Supplier<Float>, Consumer<Float>, Matchable.ValueAndOptionalMatcher<Float> {
 
     private float var;
 

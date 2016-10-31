@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Monoids;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.LazyImmutable;
@@ -190,7 +191,7 @@ public class MaybeTest implements Printable {
 
     @Test
     public void testFromEvalSome() {
-        assertThat(Maybe.fromEvalOf(Eval.now(10)), equalTo(just));
+        assertThat(Maybe.fromEval(Eval.now(10)), equalTo(just));
     }
 
     @Test
@@ -239,13 +240,13 @@ public class MaybeTest implements Printable {
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
         Maybe<String> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), i -> "" + i,
-                Semigroups.stringConcat);
+                Monoids.stringConcat);
         assertThat(maybes, equalTo(Maybe.of("101")));
     }
 
     @Test
     public void testAccumulateJust() {
-        Maybe<Integer> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Semigroups.intSum);
+        Maybe<Integer> maybes = Maybe.accumulateJust(Monoids.intSum,ListX.of(just, none, Maybe.of(1)));
         assertThat(maybes, equalTo(Maybe.of(11)));
     }
 

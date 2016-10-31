@@ -8,6 +8,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
@@ -24,15 +25,19 @@ import lombok.experimental.Wither;
 /**
  * @author johnmcclean
  *
- * Interface for applicative-like behavior. Allows the application of functions within a wrapped context, support both 
+ * Interface for applicative-like behavior (via Applicative) otherise allows (mostly eager)
+ * partial application of functions inside wrapped contexts. 
+ * 
+ * 
+ * Allows the application of functions within a wrapped context, support both 
  * abscence / error short-circuiting and error accumulation
  * 
  * <pre> {@code ap(BiFunction<T,T,T>)}</pre> and <pre>{@code ap(Semigroup<T>}</pre> for accumulation despite absence
  * use ap1..5 for absence short-circuiting
  *
- * @param <T>
+ * @param <T> Data type of element/s inside this Applicative Functo
  */
-public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
+public interface ApplicativeFunctor<T> extends Combiner<T>,ConvertableFunctor<T>, Unit<T> {
 
     public static class Applicatives {
         public static <T, R> ApplyingApplicativeBuilder<T, R, ApplicativeFunctor<R>> applicatives(final Unit unit, final Functor functor) {
@@ -41,19 +46,11 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
         }
     }
 
-    /**
-     * Lazily combine this ApplicativeFunctor with the supplied value via the supplied BiFunction
-     * 
-     * @param app Value to combine with this one.
-     * @param fn BiFunction to combine them
-     * @return New Applicativefunctor that represents the combined values
+   
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
-    default <T2, R> ApplicativeFunctor<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-        return (ApplicativeFunctor<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                                                                    .apply(v))).map(tuple -> app.visit(i -> tuple.v2.apply(i), () -> tuple.v1));
-    }
-
     @Override
     default <T2, R> ApplicativeFunctor<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
@@ -62,6 +59,9 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
                                                                                                   .visit(i -> tuple.v2.apply(i), () -> tuple.v1));
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
     @Override
     default <T2, R> ApplicativeFunctor<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
 
@@ -131,7 +131,7 @@ public interface ApplicativeFunctor<T> extends ConvertableFunctor<T>, Unit<T> {
 
         public SemigroupApplyer<T> ap(final Semigroup<T> fn) {
             return new SemigroupApplyer<>(
-                                          fn.combiner(), app);
+                                          fn, app);
         }
 
         public <R> ApplicativeFunctor<R> ap1(final Function<? super T, ? extends R> fn) {
