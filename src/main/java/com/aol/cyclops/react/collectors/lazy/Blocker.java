@@ -41,8 +41,7 @@ public class Blocker<U> {
     public ListX<U> block(final Predicate<Status<U>> breakout) {
 
         
-        nonBlocking(breakout);
-        return ListX.fromIterable(promise.join());
+        return nonBlocking(breakout).join();
 
     }
     public CompletableFuture<ListX<U>> nonBlocking(final Predicate<Status<U>> breakout) {

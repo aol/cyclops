@@ -65,16 +65,16 @@ public final class StreamType<T> implements  Higher<StreamType.stream,T>{
     public Stream<T> narrow(){
         return boxed;
     }
-    public static final <T> Function<Stream<T>,Seq<T>> seq(){
+    public static final <T> Function<Stream<T>,Seq<T>> toSeq(){
         return Seq::seq;
     }
-    public static final <T> Function<Stream<T>,ReactiveSeq<T>> reactiveSeq(){
+    public static final <T> Function<Stream<T>,ReactiveSeq<T>> toReactiveSeq(){
         return ReactiveSeq::fromStream;
     }
-    public static final <T> Function<Stream<T>,ReactiveSeq<T>> futureStream(LazyReact react){
+    public static final <T> Function<Stream<T>,ReactiveSeq<T>> toFutureStream(LazyReact react){
         return s->react.fromStream(s);
     }
-    public static final <T> Function<Stream<T>,ReactiveSeq<T>> futureStream(){
+    public static final <T> Function<Stream<T>,ReactiveSeq<T>> toFutureStream(){
         return LazyFutureStream::lazyFutureStream;
     }
     

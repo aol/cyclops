@@ -17,7 +17,6 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -30,6 +29,7 @@ import java.util.stream.StreamSupport;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
@@ -264,7 +264,7 @@ public class FutureWTest {
 		
 		assertThat(maybes.get(),equalTo(PSetX.of(10,1)));
 	}
-	@Test
+	@Test @Ignore
     public void testAccumulateJNonBlocking() {
         FutureW<PSetX<Integer>> maybes =FutureW.accumulateSuccess(ListX.of(just,none,FutureW.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)),FutureW.ofResult(1)),Reducers.toPSetX());
         System.out.println("not blocked");

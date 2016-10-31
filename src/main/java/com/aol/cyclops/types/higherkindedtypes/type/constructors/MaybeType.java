@@ -32,7 +32,7 @@ public final class MaybeType<T> implements  Higher<MaybeType.maybe,T>{
     /**
      * Convert the HigherKindedType definition for a Maybe into a Maybe
      * @param maybeType Type Constructor to convert
-     * @return Maybe
+     * @return Maybe from Higher Kinded Type
      */
     public static <T> Maybe<T> narrow(Higher<MaybeType.maybe, T> maybeType){
         return ((MaybeType<T>)maybeType).narrow();
