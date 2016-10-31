@@ -32,7 +32,7 @@ import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
@@ -188,7 +188,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default  QueueX<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default  QueueX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
       
         return ( QueueX<T>)MutableCollectionX.super.combine(combiner, app);
     }

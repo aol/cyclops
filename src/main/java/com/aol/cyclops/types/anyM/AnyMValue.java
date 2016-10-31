@@ -29,7 +29,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMonads;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
@@ -71,7 +71,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
      * @see com.aol.cyclops.control.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default AnyMValue<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default AnyMValue<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
         
         return (AnyMValue<T>)AnyM.super.combine(combiner, app);
     }

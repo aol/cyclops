@@ -9,7 +9,7 @@ import java.util.function.BinaryOperator;
  *
  * @param <T> Data type of the element/s inside this Applicative
  */
-public interface Applicative<T>{
+public interface Combiner<T>{
     
 
    
@@ -39,7 +39,7 @@ public interface Applicative<T>{
      * @param app
      * @return
      */
-    default  Applicative<T> combine(BinaryOperator<Applicative<T>> combiner,final Applicative<T> app) {
+    default  Combiner<T> combine(BinaryOperator<Combiner<T>> combiner,final Combiner<T> app) {
         return combiner.apply(this, app);
     }
 }

@@ -31,7 +31,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
@@ -276,7 +276,7 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default  POrderedSetX<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default  POrderedSetX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
       
         return ( POrderedSetX<T>)PersistentCollectionX.super.combine(combiner, app);
     }

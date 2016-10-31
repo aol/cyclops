@@ -18,7 +18,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
@@ -45,7 +45,7 @@ public interface FeatureToggle<F>
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default  FeatureToggle<F> combine(BinaryOperator<Applicative<F>> combiner, Applicative<F> app) {
+    default  FeatureToggle<F> combine(BinaryOperator<Combiner<F>> combiner, Combiner<F> app) {
        
         return (FeatureToggle<F>)MonadicValue1.super.combine(combiner, app);
     }

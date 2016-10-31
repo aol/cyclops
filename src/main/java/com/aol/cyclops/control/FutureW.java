@@ -27,7 +27,7 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.Status;
 import com.aol.cyclops.react.collectors.lazy.Blocker;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FlatMap;
@@ -1242,7 +1242,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    public FutureW<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    public FutureW<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
         return (FutureW<T>)MonadicValue1.super.combine(combiner, app);
     }
 

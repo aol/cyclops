@@ -53,7 +53,7 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFilterable;
@@ -142,7 +142,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default ReactiveSeq<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default ReactiveSeq<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
        
         return (ReactiveSeq<T>)ExtendedTraversable.super.combine(combiner, app);
     }

@@ -23,7 +23,7 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
@@ -322,7 +322,7 @@ public interface Eval<T>
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default Eval<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default Eval<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
         return (Eval)MonadicValue1.super.combine(combiner, app);
     }
 

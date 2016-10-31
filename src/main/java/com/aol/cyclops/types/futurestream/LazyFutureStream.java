@@ -77,7 +77,7 @@ import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFoldable;
@@ -158,7 +158,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @see com.aol.cyclops.control.ReactiveSeq#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default LazyFutureStream<U> combine(BinaryOperator<Applicative<U>> combiner, Applicative<U> app) {
+    default LazyFutureStream<U> combine(BinaryOperator<Combiner<U>> combiner, Combiner<U> app) {
         
         return (LazyFutureStream<U>)ReactiveSeq.super.combine(combiner, app);
     }

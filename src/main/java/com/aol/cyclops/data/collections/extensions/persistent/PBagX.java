@@ -32,7 +32,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
@@ -209,7 +209,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default  PBagX<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default  PBagX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
       
         return ( PBagX<T>)PersistentCollectionX.super.combine(combiner, app);
     }

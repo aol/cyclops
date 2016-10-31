@@ -13,4 +13,5 @@ package com.aol.cyclops.types.higherkindedtypes;
  */
 public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{
 
+    
 }

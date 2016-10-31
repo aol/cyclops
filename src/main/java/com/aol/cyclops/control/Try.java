@@ -24,7 +24,7 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
@@ -331,7 +331,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default Applicative<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default Combiner<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
         return (Try<T,X>)MonadicValue.super.combine(combiner, app);
     }
 

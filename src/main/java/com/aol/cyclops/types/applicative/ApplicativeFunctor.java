@@ -8,7 +8,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
@@ -37,7 +37,7 @@ import lombok.experimental.Wither;
  *
  * @param <T> Data type of element/s inside this Applicative Functo
  */
-public interface ApplicativeFunctor<T> extends Applicative<T>,ConvertableFunctor<T>, Unit<T> {
+public interface ApplicativeFunctor<T> extends Combiner<T>,ConvertableFunctor<T>, Unit<T> {
 
     public static class Applicatives {
         public static <T, R> ApplyingApplicativeBuilder<T, R, ApplicativeFunctor<R>> applicatives(final Unit unit, final Functor functor) {

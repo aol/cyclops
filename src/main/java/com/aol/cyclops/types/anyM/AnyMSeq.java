@@ -38,7 +38,7 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMonads;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFoldable;
@@ -107,7 +107,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @see com.aol.cyclops.control.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default AnyMSeq<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default AnyMSeq<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
         
         return ( AnyMSeq<T>)AnyM.super.combine(combiner, app);
     }

@@ -32,7 +32,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
@@ -308,7 +308,7 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default  PStackX<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default  PStackX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
       
         return ( PStackX<T>)PersistentCollectionX.super.combine(combiner, app);
     }

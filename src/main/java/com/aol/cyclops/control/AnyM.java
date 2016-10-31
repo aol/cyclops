@@ -55,7 +55,7 @@ import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
-import com.aol.cyclops.types.Applicative;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.Foldable;
@@ -101,7 +101,7 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Applicative<T>,Functor<T>, FlatMap<T>, ToStream<T> {
+public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Combiner<T>,Functor<T>, FlatMap<T>, ToStream<T> {
    
     
     
@@ -118,9 +118,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default  AnyM<T> combine(BinaryOperator<Applicative<T>> combiner, Applicative<T> app) {
+    default  AnyM<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
         
-        return (AnyM<T>)Applicative.super.combine(combiner, app);
+        return (AnyM<T>)Combiner.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)

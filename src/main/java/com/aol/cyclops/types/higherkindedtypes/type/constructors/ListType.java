@@ -38,7 +38,7 @@ public final class ListType<T> implements  Higher<ListType.listx,T>{
      * @return ListX from Higher Kinded Type
      */
     public static <T> ListX<T> narrow(Higher<ListType.listx, T> list){
-        return ((ListType<T>)list).narrow();
+        return (ListX<T>)list;
     }
     
     
