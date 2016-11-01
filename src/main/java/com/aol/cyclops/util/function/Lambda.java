@@ -1,7 +1,12 @@
 package com.aol.cyclops.util.function;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.jooq.lambda.function.Function6;
+import org.jooq.lambda.function.Function7;
+import org.jooq.lambda.function.Function8;
 
 /**
  * Lambda type inferencing helper / curried function creation helper
@@ -73,7 +78,104 @@ public class Lambda {
     public static <T1, R> Function<T1, R> l1(final Function<T1, R> func) {
         return func;
     }
-
+    /**
+     * Create a curried function with arity of 2
+     * 
+     * e.g. with Lombok val 
+     * 
+     * <pre>{@code
+     *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
+     * }</pre>
+     * @param biFunc
+     * @return supplied function
+     */
+    public static <T1, T2, R> BiFunction<T1,T2, R> λ(final BiFunction<T1,T2, R> biFunc) {
+        return biFunc;
+    }
+    /**
+     * Create a curried function with arity of 3
+     * 
+     * e.g. with Lombok val 
+     * 
+     * <pre>{@code
+     *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
+     * }</pre>
+     * @param triFunc
+     * @return supplied function
+     */
+    public static <T1, T2, T3,R> TriFunction<T1,T2,T3, R> λ(final TriFunction<T1,T2,T3, R> triFunc) {
+        return triFunc;
+    }
+    /**
+     * Create a curried function with arity of 4
+     * 
+     * e.g. with Lombok val 
+     * 
+     * <pre>{@code
+     *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
+     * }</pre>
+     * @param quadFunc
+     * @return supplied function
+     */
+    public static <T1, T2, T3, T4,R> QuadFunction<T1,T2,T3, T4,R> λ(final QuadFunction<T1,T2,T3,T4, R> quadFunc) {
+        return quadFunc;
+    }
+    /**
+     * Create a curried function with arity of 5
+     * 
+     * e.g. with Lombok val 
+     * 
+     * <pre>{@code
+     *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
+     * }</pre>
+     * @param quintFunc
+     * @return supplied function
+     */
+    public static <T1, T2, T3, T4, T5,R> QuintFunction<T1,T2,T3, T4, T5,R> λ(final QuintFunction<T1,T2,T3,T4,T5, R> quintFunc) {
+        return quintFunc;
+    }
+    /**
+     * Create a curried function with arity of 6
+     * 
+     * e.g. with Lombok val 
+     * 
+     * <pre>{@code
+     *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
+     * }</pre>
+     * @param func6
+     * @return supplied function
+     */
+    public static <T1, T2, T3, T4, T5, T6,R> Function6<T1,T2,T3, T4, T5,T6,R> λ(final Function6<T1,T2,T3,T4,T5,T6, R> func6) {
+        return func6;
+    }
+    /**
+     * Create a curried function with arity of 7
+     * 
+     * e.g. with Lombok val 
+     * 
+     * <pre>{@code
+     *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
+     * }</pre>
+     * @param quadFunc
+     * @return supplied function
+     */
+    public static <T1, T2, T3, T4, T5, T6,T7,R> Function7<T1,T2,T3, T4, T5,T6,T7,R> λ(final Function7<T1,T2,T3,T4,T5,T6,T7, R> func7) {
+        return func7;
+    }
+    /**
+     * Create a curried function with arity of 8
+     * 
+     * e.g. with Lombok val 
+     * 
+     * <pre>{@code
+     *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
+     * }</pre>
+     * @param quadFunc
+     * @return supplied function
+     */
+    public static <T1, T2, T3, T4, T5, T6,T7,T8,R> Function8<T1,T2,T3, T4, T5,T6,T7,T8,R> λ(final Function8<T1,T2,T3,T4,T5,T6,T7,T8, R> func8) {
+        return func8;
+    }
     /**
      * Create a curried function with arity of 2
      * 
