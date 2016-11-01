@@ -1,4 +1,4 @@
-package com.aol.cyclops.types.higherkindedtypes;
+package org.derive4j.hkt;
 
 /**
  * 
@@ -13,7 +13,7 @@ package com.aol.cyclops.types.higherkindedtypes;
  * @param <T2> First data type of the Core Type
  * @param <T3> Second data type of the Core type
  */
-public interface Higher2<T1,T2,T3> extends Convert<Higher2<T1,T2,T3>> {
+public interface Higher2<T1,T2,T3> extends Convert<Higher2<T1,T2,T3>>,__2<T1,T2, T3> {
     
    
 }

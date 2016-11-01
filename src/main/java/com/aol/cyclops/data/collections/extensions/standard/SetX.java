@@ -34,10 +34,9 @@ import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.higherkindedtypes.Higher;
 import com.aol.cyclops.types.higherkindedtypes.type.constructors.SetType;
 
-public interface SetX<T> extends To<SetX<T>>,Higher<SetType.setx,T>,Set<T>, MutableCollectionX<T>, OnEmptySwitch<T, Set<T>> {
+public interface SetX<T> extends To<SetX<T>>,SetType<T>,Set<T>, MutableCollectionX<T>, OnEmptySwitch<T, Set<T>> {
 
     /**
      * Create a SetX that contains the Integers between start and end

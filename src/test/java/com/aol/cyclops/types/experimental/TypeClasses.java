@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.derive4j.hkt.Higher;
 import org.derive4j.hkt.__;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.types.higherkindedtypes.Higher;
 import com.aol.cyclops.types.higherkindedtypes.type.constructors.ListType;
 import com.aol.cyclops.types.higherkindedtypes.type.constructors.SetType;
 import com.aol.cyclops.util.function.PartialApplicator;
@@ -57,6 +57,9 @@ public interface TypeClasses {
          * @return
          */
         public <T,R> Higher<CRE,R> map(Function<? super T,? extends R> fn, Higher<CRE,T> ds);
+        default <T,R> Higher<CRE,R> mapInv( Higher<CRE,T> ds,Function<? super T,? extends R> fn){
+            return map(fn,ds);
+        }
         
         default <T,R> Function<Function<? super T,? extends R>,Higher<CRE,R>> partialMap(Higher<CRE,T> ds){
             return PartialApplicator.partial2b(ds, this::map);
@@ -81,36 +84,36 @@ public interface TypeClasses {
     
     
     static interface Lists {
-        static interface ListFunctor extends _Functor<ListType.listx>{
+        static interface ListFunctor extends _Functor<ListType.µ>{
            
             @Override
-            default <T, R> ListType<R> map(Function<? super T,? extends R> fn, Higher<ListType.listx, T> functor){
+            default <T, R> ListType<R> map(Function<? super T,? extends R> fn, Higher<ListType.µ, T> functor){
                 return ListType.widen(ListType.narrow(functor).map(fn));
             }
         }
-        static interface ListUnit extends _Unit<ListType.listx>{
+        static interface ListUnit extends _Unit<ListType.µ>{
            
             @Override
-            default <T> ListType<T> unit(T value,Higher<ListType.listx, T> ds){
+            default <T> ListType<T> unit(T value,Higher<ListType.µ, T> ds){
                 return ListType.widen(narrow(ds).unit(value));
             }
         }
-        static interface ListMonad extends _Monad<ListType.listx>, ListFunctor,ListUnit{
+        static interface ListMonad extends _Monad<ListType.µ>, ListFunctor,ListUnit{
            
             @Override
-            default <T,R> ListType<R> bind(Function<? super T,? extends Higher<ListType.listx,R>> fn,Higher<ListType.listx,T> ds){
+            default <T,R> ListType<R> bind(Function<? super T,? extends Higher<ListType.µ,R>> fn,Higher<ListType.µ,T> ds){
                 return ListType.widen(narrow(ds).flatMap(fn.andThen(ListType::narrow)));
             }
         }
-        static interface ListApply extends _Apply<ListType.listx>{
+        static interface ListApply extends _Apply<ListType.µ>{
             
             @Override
-            default <T,R> ListType<R> ap(Higher<ListType.listx, Function<? super T, ? extends R>> fn, 
-                                        Higher<ListType.listx,T> apply){
+            default <T,R> ListType<R> ap(Higher<ListType.µ, Function<? super T, ? extends R>> fn, 
+                                        Higher<ListType.µ,T> apply){
                 return ListType.widen(narrow(fn).zip(narrow(apply), (fn1,data)->fn1.apply(data)));
             }
         }
-        static interface ListApplicative extends _Applicative<ListType.listx>, ListApply, ListUnit, ListFunctor{
+        static interface ListApplicative extends _Applicative<ListType.µ>, ListApply, ListUnit, ListFunctor{
 
             
             
@@ -136,7 +139,7 @@ public interface TypeClasses {
         
         default void test(){
             ListX<Integer> listx = ListX.of(1,2,3);
-            Higher<ListType.listx,Integer> mapped1 =listFunctor().map(a->a+1, widen(listx));
+            Higher<ListType.µ,Integer> mapped1 =listFunctor().map(a->a+1, widen(listx));
             mapped1.convert(ListType::narrow)
                    .map(x->x*2)
                    .add(1);

@@ -29,7 +29,38 @@ public class Lambda {
     public static <T> Supplier<T> s(final Supplier<T> supplier) {
         return supplier;
     }
-
+    /**
+     * E.g. to use a supplier to embed additional code inisde a ternary operator
+     * 
+     * <pre>
+     * {@code 
+     * return pos >= values.length ? tuple(true, split) : Lambda.s(() -> {
+                action.accept(values[pos++]);
+                return tuple(true, this);
+            }).get();
+     * 
+     * }
+     * </pre>
+     * 
+     * @param supplier Lambda / method to assign type of Supplier to  
+     * @return Supplier
+     */
+    public static <T> Supplier<T> λ(final Supplier<T> supplier) {
+        return supplier;
+    }
+    /**
+     * Alias for l1
+     * e.g. with Lombok val 
+     * 
+     * <pre>{@code
+     *      val fn  = λ((Integer i)->"hello")
+     * }</pre>
+     * @param func
+     * @return supplied function
+     */
+    public static <T1, R> Function<T1, R> λ(final Function<T1, R> func) {
+        return func;
+    }
     /**
      * e.g. with Lombok val 
      * 

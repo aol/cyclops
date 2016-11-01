@@ -1,4 +1,4 @@
-package com.aol.cyclops.types.higherkindedtypes;
+package org.derive4j.hkt;
 
 import java.util.function.Function;
 
