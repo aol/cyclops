@@ -35,7 +35,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.derive4j.hkt.Higher;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -67,8 +66,6 @@ import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.higherkindedtypes.type.constructors.StreamOldType;
-import com.aol.cyclops.types.higherkindedtypes.type.constructors.StreamType;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;

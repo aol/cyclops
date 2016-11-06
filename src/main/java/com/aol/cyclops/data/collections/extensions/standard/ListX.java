@@ -20,8 +20,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.derive4j.hkt.Higher;
-import org.derive4j.hkt.__;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -38,7 +36,6 @@ import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.higherkindedtypes.type.constructors.ListType;
 
 /**
  * An eXtended List type, that offers additional eagerly executed functional style operators such as bimap, filter and more
@@ -47,8 +44,7 @@ import com.aol.cyclops.types.higherkindedtypes.type.constructors.ListType;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface ListX<T> extends ListType<T>,
-                                 List<T>, 
+public interface ListX<T> extends List<T>, 
                                  MutableCollectionX<T>, 
                                  MutableSequenceX<T>, 
                                  Comparable<T>, 

@@ -10,8 +10,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import org.derive4j.hkt.Higher;
-import org.derive4j.hkt.__;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -31,8 +29,6 @@ import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
-import com.aol.cyclops.types.higherkindedtypes.type.constructors.OptionalType;
-import com.aol.cyclops.types.higherkindedtypes.type.constructors.OptionalType.Box;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
 

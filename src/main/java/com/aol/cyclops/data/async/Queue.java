@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,7 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.async.AdaptersModule.ClosingSpliterator;
 import com.aol.cyclops.data.async.AdaptersModule.QueueToBlockingQueueWrapper;
@@ -182,7 +180,59 @@ public class Queue<T> implements Adapter<T> {
         listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
         return ReactiveSeq.fromStream(closingStream(this::get, new AlwaysContinue()));
     }
-
+    /**
+     * Return a standard (unextended) JDK Stream connected to this Queue
+     * To disconnect cleanly close the queue
+     * 
+     * <pre>
+     * {@code 
+     *        use queue.stream().parallel() to convert to a parallel Stream
+     *  }
+     * </pre>
+     * 
+     * @param closeScalingFactor Scaling factor for Queue closed messages to propagate to connected parallel Streams
+     * 
+     * @return Java 8 Stream connnected to this Queue
+     */
+    public Stream<T> jdkStream(int closeScalingFactor){
+        int cores = Runtime.getRuntime().availableProcessors();
+        String par = System.getProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
+        int connected = par !=null ? Integer.valueOf(par) : cores;
+        for(int i=0;i<connected*closeScalingFactor;i++){
+            listeningStreams.incrementAndGet();
+        }
+        return closingStream(this::get, new AlwaysContinue());
+    }
+    /**
+     * Return a standard (unextended) JDK Stream connected to this Queue
+     * To disconnect cleanly close the queue
+     * 
+     * This method synchronizes access to the Queue to ensure there is only ever a single consumer.
+     * Parallel Streams can parallelize the data extracted sequentially from
+     * 
+     * <pre>
+     * {@code 
+     *        use queue.stream().parallel() to convert to a parallel Stream
+     *  }
+     * </pre>
+     * 
+     * 
+     * @return Java 8 Stream connnected to this Queue
+     */
+    public Stream<T> jdkStreamSync(){
+        int cores = Runtime.getRuntime().availableProcessors();
+        String par = System.getProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
+        int connected = par !=null ? Integer.valueOf(par) : cores;
+        for(int i=0;i<connected*2;i++){
+            listeningStreams.incrementAndGet();
+        }
+        Object lock = new Object();
+        return closingStream(()-> {
+            synchronized(lock){
+                return get();
+            }
+        }, new AlwaysContinue());
+    }
     /**
      * Return a standard (unextended) JDK Stream connected to this Queue
      * To disconnect cleanly close the queue
@@ -196,13 +246,7 @@ public class Queue<T> implements Adapter<T> {
      * @return Java 8 Stream connnected to this Queue
      */
     public Stream<T> jdkStream() {
-        int cores = Runtime.getRuntime().availableProcessors();
-        String par = System.getProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
-        int connected = par !=null ? Integer.valueOf(par) : cores;
-        for(int i=0;i<connected*2;i++){
-            listeningStreams.incrementAndGet();
-        }
-        return closingStream(this::get, new AlwaysContinue());
+       return jdkStream(2);
     }
 
     @Override
