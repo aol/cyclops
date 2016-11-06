@@ -20,7 +20,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.derive4j.hkt.__;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -37,8 +36,6 @@ import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.higherkindedtypes.Higher;
-import com.aol.cyclops.types.higherkindedtypes.type.constructors.ListType;
 
 /**
  * An eXtended List type, that offers additional eagerly executed functional style operators such as bimap, filter and more
@@ -47,9 +44,7 @@ import com.aol.cyclops.types.higherkindedtypes.type.constructors.ListType;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface ListX<T> extends __<ListX.µ,T>,
-                                 Higher<ListType.listx,T>,
-                                 List<T>, 
+public interface ListX<T> extends List<T>, 
                                  MutableCollectionX<T>, 
                                  MutableSequenceX<T>, 
                                  Comparable<T>, 
@@ -144,24 +139,50 @@ public interface ListX<T> extends __<ListX.µ,T>,
         return this;
     }
 
+    /**
+     * @return A JDK 8 Collector for converting Streams into ListX instances
+     */
     static <T> Collector<T, ?, ListX<T>> listXCollector() {
         return Collectors.toCollection(() -> ListX.of());
     }
 
+    /**
+     * @return An Array List Collector
+     */
     static <T> Collector<T, ?, List<T>> defaultCollector() {
         return Collectors.toCollection(() -> new ArrayList<>());
     }
 
+    /**
+     * @return Unmodifiable array list collector
+     */
     static <T> Collector<T, ?, List<T>> immutableCollector() {
         return Collectors.collectingAndThen(defaultCollector(), (final List<T> d) -> Collections.unmodifiableList(d));
 
     }
 
+    /**
+     * @return Construct an empty ListX
+     */
     public static <T> ListX<T> empty() {
         return fromIterable((List<T>) defaultCollector().supplier()
                                                         .get());
     }
 
+    /**
+     * Construct a ListX from the provided values
+     * 
+     * <pre>
+     * {@code 
+     *     ListX<Integer> deque = ListX.of(1,2,3,4);
+     * 
+     * }</pre>
+     *
+     * 
+     * 
+     * @param values to construct a Deque from
+     * @return DequeX
+     */
     @SafeVarargs
     public static <T> ListX<T> of(final T... values) {
         final List<T> res = (List<T>) defaultCollector().supplier()

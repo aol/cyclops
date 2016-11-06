@@ -66,8 +66,6 @@ import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.higherkindedtypes.Higher;
-import com.aol.cyclops.types.higherkindedtypes.type.constructors.StreamType;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -121,7 +119,7 @@ import lombok.val;
  * @param <T> Data type of elements within the Stream
  */
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
-                                        Higher<StreamType.stream,T>,
+                                        StreamType<T>, 
                                         Unwrapable, 
                                         Stream<T>, 
                                         OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
