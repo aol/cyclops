@@ -33,3 +33,6 @@ com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.OptionalT
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.EvalTSeqComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.TryTSeqComprehender
 com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.XorTSeqComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.DequeComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.QueueComprehender
+com.aol.cyclops.internal.comprehensions.comprehenders.SortedSetComprehender
