@@ -117,6 +117,11 @@ public class Queue<T> implements Adapter<T> {
         this(new LinkedBlockingQueue<>());
     }
 
+    /**
+     * Construct an async.Queue backed by a JDK Queue from the provided QueueFactory
+     * 
+     * @param factory QueueFactory to extract JDK Queue from
+     */
     public Queue(final QueueFactory<T> factory) {
         final Queue<T> q = factory.build();
         this.queue = q.queue;
