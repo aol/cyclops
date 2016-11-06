@@ -203,36 +203,7 @@ public class Queue<T> implements Adapter<T> {
         }
         return closingStream(this::get, new AlwaysContinue());
     }
-    /**
-     * Return a standard (unextended) JDK Stream connected to this Queue
-     * To disconnect cleanly close the queue
-     * 
-     * This method synchronizes access to the Queue to ensure there is only ever a single consumer.
-     * Parallel Streams can parallelize the data extracted sequentially from
-     * 
-     * <pre>
-     * {@code 
-     *        use queue.stream().parallel() to convert to a parallel Stream
-     *  }
-     * </pre>
-     * 
-     * 
-     * @return Java 8 Stream connnected to this Queue
-     */
-    public Stream<T> jdkStreamSync(){
-        int cores = Runtime.getRuntime().availableProcessors();
-        String par = System.getProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
-        int connected = par !=null ? Integer.valueOf(par) : cores;
-        for(int i=0;i<connected*2;i++){
-            listeningStreams.incrementAndGet();
-        }
-        Object lock = new Object();
-        return closingStream(()-> {
-            synchronized(lock){
-                return get();
-            }
-        }, new AlwaysContinue());
-    }
+    
     /**
      * Return a standard (unextended) JDK Stream connected to this Queue
      * To disconnect cleanly close the queue
@@ -246,7 +217,7 @@ public class Queue<T> implements Adapter<T> {
      * @return Java 8 Stream connnected to this Queue
      */
     public Stream<T> jdkStream() {
-       return jdkStream(2);
+       return jdkStream(8);
     }
 
     @Override
