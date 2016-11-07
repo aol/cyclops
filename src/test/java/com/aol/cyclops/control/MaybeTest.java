@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -46,6 +47,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import com.aol.cyclops.types.mixins.Printable;
 
@@ -61,6 +63,13 @@ public class MaybeTest implements Printable {
         just = Maybe.of(10);
         none = Maybe.none();
 
+    }
+    
+    @Test
+    public void testCombine(){
+        BinaryOperator<Combiner<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
+        assertThat(Maybe.just(1).combine(sumMaybes, Maybe.just(5)),equalTo(Maybe.just(6)));
+        
     }
 
     @Test

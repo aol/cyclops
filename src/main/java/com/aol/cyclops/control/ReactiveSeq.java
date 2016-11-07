@@ -126,23 +126,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {
 
     
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> ReactiveSeq<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return ( ReactiveSeq<R>)ZippingApplicativable.super.combine(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default ReactiveSeq<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-       
-        return (ReactiveSeq<T>)ExtendedTraversable.super.combine(combiner, app);
-    }
+   
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
@@ -289,11 +273,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * thread-safe.
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Tuple2&lt;ReactiveSeq&lt;Integer&gt;, ReactiveSeq&lt;Integer&gt;&gt; copies = of(1, 2, 3, 4, 5, 6).duplicate();
-     * 	assertTrue(copies.v1.anyMatch(i -&gt; i == 2));
-     * 	assertTrue(copies.v2.anyMatch(i -&gt; i == 2));
+     * {@code
+     * 
+     * 	Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies = of(1, 2, 3, 4, 5, 6)
+     *                                                                  .duplicate();
+     * 	assertTrue(copies.v1.anyMatch(i > i == 2));
+     * 	assertTrue(copies.v2.anyMatch(i > i == 2));
      * 
      * }
      * </pre>
@@ -308,9 +293,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * thread-safe.
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Tuple3&lt;ReactiveSeq&lt;Tuple3&lt;T1, T2, T3&gt;&gt;, ReactiveSeq&lt;Tuple3&lt;T1, T2, T3&gt;&gt;, ReactiveSeq&lt;Tuple3&lt;T1, T2, T3&gt;&gt;&gt; Tuple3 = sequence.triplicate();
+     * {@code
+     * 	Tuple3<ReactiveSeq<Tuple3<T1, T2, T3>>, ReactiveSeq<Tuple3<T1, T2, T3>>, ReactiveSeq<Tuple3<T1, T2, T3>>> Tuple3 = sequence.triplicate();
      * 
      * }
      * </pre>
@@ -324,10 +308,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Not thread-safe.
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Tuple4&lt;ReactiveSeq&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, ReactiveSeq&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, ReactiveSeq&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;, ReactiveSeq&lt;Tuple4&lt;T1, T2, T3, T4&gt;&gt;&gt; quad = sequence
-     * 			.quadruplicate();
+     * {@code
+     * 	Tuple4<ReactiveSeq<Tuple4<T1, T2, T3, T4>>, 
+     *          ReactiveSeq<Tuple4<T1, T2, T3, T4>>, 
+     *          ReactiveSeq<Tuple4<T1, T2, T3, T4>>, 
+     *          ReactiveSeq<Tuple4<T1, T2, T3, T4>>> quad = sequence.quadruplicate();
      * 
      * }
      * </pre>
@@ -342,7 +327,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * <pre>
      * {@code 
-     * ReactiveSeq.of(1,2,3).splitAtHead()
+     * ReactiveSeq.of(1,2,3)
+     *            .splitAtHead()
      * 
      *  //Optional[1], ReactiveSeq[2,3]
      * }
@@ -358,7 +344,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * <pre>
      * {@code 
-     * ReactiveSeq.of(1,2,3).splitAt(1)
+     * ReactiveSeq.of(1,2,3)
+     *            .splitAt(1)
      * 
      *  //ReactiveSeq[1], ReactiveSeq[2,3]
      * }
@@ -421,10 +408,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Repeat in a Stream while specified predicate holds
      * 
      * <pre>
-     * {
-     * 	&#064;code
+     * {@code
+     * 	
      * 	MutableInt count = MutableInt.of(0);
-     * 	ReactiveSeq.of(1, 2, 2).cycleWhile(next -&gt; count++ &lt; 6).collect(Collectors.toList());
+     * 	ReactiveSeq.of(1, 2, 2).cycleWhile(next -> count++ < 6)
+     *             .collect(Collectors.toList());
      * 
      * 	// List(1,2,2,1,2,2)
      * }
@@ -463,10 +451,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Zip 2 streams into one
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;Tuple2&lt;Integer, String&gt;&gt; list = of(1, 2).zip(of(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)).toList();
-     * 	// [[1,&quot;a&quot;],[2,&quot;b&quot;]]
+     * {@code 
+     *  List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+     *  // [[1,"a"],[2,"b"]]
      * }
      * </pre>
      * 
@@ -485,10 +472,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Zip 2 streams into one
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;Tuple2&lt;Integer, String&gt;&gt; list = of(1, 2).zip(of(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)).toList();
-     * 	// [[1,&quot;a&quot;],[2,&quot;b&quot;]]
+     * {@code 
+     *  List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+     *  // [[1,"a"],[2,"b"]]
      * }
      * </pre>
      * 
@@ -502,11 +488,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * zip 3 Streams into one
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;Tuple3&lt;Integer, Integer, Character&gt;&gt; list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(Collectors.toList());
+     * {@code
+     *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(Collectors.toList());
      * 
-     * 	// [[1,100,'a'],[2,200,'b'],[3,300,'c']]
+     *  // [[1,100,'a'],[2,200,'b'],[3,300,'c']]
      * }
      * 
      * </pre>
@@ -518,13 +503,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * zip 4 Streams into 1
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;Tuple4&lt;Integer, Integer, Character, String&gt;&gt; list = of(1, 2, 3, 4, 5, 6).zip4(of(100, 200, 300, 400), of('a', 'b', 'c'), of(&quot;hello&quot;, &quot;world&quot;))
-     * 			.collect(Collectors.toList());
+     * {@code
+     *  List<Tuple4<Integer, Integer, Character, String>> list = of(1, 2, 3, 4, 5, 6).zip4(of(100, 200, 300, 400), of('a', 'b', 'c'), of("hello", "world"))
+     *          .collect(Collectors.toList());
      * 
      * }
-     * // [[1,100,'a',&quot;hello&quot;],[2,200,'b',&quot;world&quot;]]
+     * // [[1,100,'a',"hello"],[2,200,'b',"world"]]
      * </pre>
      */
     @Override
@@ -545,14 +529,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Zip this Monad with a Stream
+     * Zip this Stream with another
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Stream&lt;List&lt;Integer&gt;&gt; zipped = asMonad(Stream.of(1, 2, 3)).zip(Stream.of(2, 3, 4), (a, b) -&gt; Arrays.asList(a, b));
+     * {@code
+     *  Stream<List<Integer>> zipped = ReactiveSeq.of(1, 2, 3)).zipStream(Stream.of(2, 3, 4), (a, b) -> Arrays.asList(a, b));
      * 
-     * 	// [[1,2][2,3][3,4]]
+     *  // [[1,2][2,3][3,4]]     
      * }
      * </pre>
      * 
@@ -569,12 +552,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Create a sliding view over this Sequence
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+     * {@code
+     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
      * 
-     * 	assertThat(list.get(0), hasItems(1, 2));
-     * 	assertThat(list.get(1), hasItems(2, 3));
+     *  assertThat(list.get(0), hasItems(1, 2));
+     *  assertThat(list.get(1), hasItems(2, 3));
      * 
      * }
      * 
@@ -591,12 +573,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Create a sliding view over this Sequence
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+     * {@code
+     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
      * 
-     * 	assertThat(list.get(0), hasItems(1, 2, 3));
-     * 	assertThat(list.get(1), hasItems(3, 4, 5));
+     *  assertThat(list.get(0), hasItems(1, 2, 3));
+     *  assertThat(list.get(1), hasItems(3, 4, 5));
      * 
      * }
      * 
@@ -615,12 +596,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Group elements in a Stream
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+     * {@code
+     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
      * 
-     * 	assertThat(list.get(0), hasItems(1, 2, 3));
-     * 	assertThat(list.get(1), hasItems(4, 5, 6));
+     *  assertThat(list.get(0), hasItems(1, 2, 3));
+     *  assertThat(list.get(1), hasItems(4, 5, 6));
      * 
      * }
      * </pre>
@@ -641,9 +621,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * <pre>
      * {@code 
-     * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .groupedStatefullyUntil((s,i)-> s.contains(4) ? true : false)
-     *              .toList().size(),equalTo(5));
+     *    ReactiveSeq.of(1,2,3,4,5,6)
+     *               .groupedStatefullyUntil((s,i)-> s.contains(4) ? true : false)
+     *               .toList()
+     *               .size()
+     *     //5
      * }
      * </pre>
      * 
@@ -660,11 +642,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      * ReactiveSeq.of(1,2,3,4,5,6)
-     *              .batchBySizeAndTime(3,10,TimeUnit.SECONDS)
+     *              .groupedBySizeAndTime(3,10,TimeUnit.SECONDS)
      *              .toList();
      *          
      * //[[1,2,3],[4,5,6]] 
      * }
+     * </pre>
      * 
      * @param size Max size of a batch
      * @param time (Max) time period to build a single batch in
@@ -677,9 +660,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Batch elements by size into a collection created by the supplied factory
      * 
      * <pre>
-     * {
-     *  &#064;code
-     *  List&lt;ArrayList&lt;Integer&gt;&gt; list = of(1, 2, 3, 4, 5, 6).batchBySizeAndTime(10, 1, TimeUnit.MICROSECONDS, () -&gt; new ArrayList&lt;&gt;()).toList();
+     * {@code
+     * ReactiveSeq.of(1,2,3,4,5,6)
+     *              .groupedBySizeAndTime(3,10,TimeUnit.SECONDS,()->SetX.empty())
+     *              .toList();
+     *          
+     * //[[1,2,3],[4,5,6]] 
      * }
      * </pre>
      * 
@@ -864,12 +850,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Use classifier function to group elements in this Sequence into a Map
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Map&lt;Integer, List&lt;Integer&gt;&gt; map1 = of(1, 2, 3, 4).groupBy(i -&gt; i % 2);
-     * 	assertEquals(asList(2, 4), map1.get(0));
-     * 	assertEquals(asList(1, 3), map1.get(1));
-     * 	assertEquals(2, map1.size());
+     * {@code 
+     *  Map<Integer, List<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -> i % 2);
+     *  assertEquals(asList(2, 4), map1.get(0));
+     *  assertEquals(asList(1, 3), map1.get(1));
+     *  assertEquals(2, map1.size());
      * 
      * }
      * 
@@ -1252,31 +1237,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     String join(String sep, String start, String end);
 
-    /**
-     * extract head and tail together, where head is expected to be present
-     * 
-     * <pre>
-     * {
-     * 	&#064;code
-     * 	ReactiveSeq&lt;String&gt; helloWorld = ReactiveSeq.of(&quot;hello&quot;, &quot;world&quot;, &quot;last&quot;);
-     * 	HeadAndTail&lt;String&gt; headAndTail = helloWorld.headAndTail();
-     * 	String head = headAndTail.head();
-     * 	assertThat(head, equalTo(&quot;hello&quot;));
-     * 
-     * 	ReactiveSeq&lt;String&gt; tail = headAndTail.tail();
-     * 	assertThat(tail.headAndTail().head(), equalTo(&quot;world&quot;));
-     * }
-     * </pre>
-     * 
-     * @return HeadAndTail
-     */
+   
     @Override
     HeadAndTail<T> headAndTail();
 
     /**
      * @return First matching element in sequential order
      * 
-     *         <pre>
+     * <pre>
      * {@code
      * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
      * 
@@ -1284,7 +1252,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      * 
-     *         (deterministic)
+     * (deterministic)
      * 
      */
     @Override
@@ -1446,13 +1414,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Monoid&lt;Integer&gt; sum = Monoid.of(0, (a, b) -&gt; a + b);
-     * 	Monoid&lt;Integer&gt; mult = Monoid.of(1, (a, b) -&gt; a * b);
-     * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).stream());
+     * {@code
+     *  Monoid<Integer> sum = Monoid.of(0, (a, b) -> a + b);
+     *  Monoid<Integer> mult = Monoid.of(1, (a, b) -> a * b);
+     *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).stream());
      * 
-     * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
+     *  assertThat(result, equalTo(Arrays.asList(10, 24)));
      * 
      * }
      * </pre>
@@ -1769,14 +1736,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * the Stream. E.g. Collection is not thread safe on the first iteration.
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
+     * {@code
+     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
+     *                                       .peek(System.out::println)
+     *                                       .toLazyCollection();
      * 
-     * 	col.forEach(System.out::println);
+     *  col.forEach(System.out::println);
      * }
      * 
-     * // Will print out &quot;first!&quot; before anything else
+     * // Will print out "first!" before anything else
      * </pre>
      * 
      * @return
@@ -1789,14 +1757,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * the Stream. E.g.
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
+     * {@code
+     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
      * 
-     * 	col.forEach(System.out::println);
+     *  col.forEach(System.out::println);
      * }
      * 
-     * // Will print out &quot;first!&quot; before anything else
+     * // Will print out "first!" before anything else
      * </pre>
      * 
      * @return
@@ -1806,12 +1773,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Streamable&lt;Integer&gt; repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -&gt; i + 2).toConcurrentLazyStreamable();
+     * {@code
+     *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -> i + 2).toConcurrentLazyStreamable();
      * 
-     * 	assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     * 	assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     *  assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     *  assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
      * }
      * </pre>
      * 
@@ -1855,12 +1821,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Append Stream to this ReactiveSeq
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3).appendStream(ReactiveSeq.of(100, 200, 300)).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).appendStream(ReactiveSeq.of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
      * 
-     * 	assertThat(result, equalTo(Arrays.asList(&quot;1!!&quot;, &quot;2!!&quot;, &quot;3!!&quot;, &quot;100!!&quot;, &quot;200!!&quot;, &quot;300!!&quot;)));
-     * }
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
      * </pre>
      * 
      * @param stream
@@ -1873,12 +1837,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Prepend Stream to this ReactiveSeq
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3).prependStream(of(100, 200, 300)).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3)
+     *                                   .prependStream(of(100, 200, 300))
+     *                                   .map(it -> it + "!!")
+     *                                   .collect(Collectors.toList());
      * 
-     * 	assertThat(result, equalTo(Arrays.asList(&quot;100!!&quot;, &quot;200!!&quot;, &quot;300!!&quot;, &quot;1!!&quot;, &quot;2!!&quot;, &quot;3!!&quot;)));
-     * 
+     *  assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!", "1!!", "2!!", "3!!")));
      * }
      * </pre>
      * 
@@ -1892,12 +1857,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Append values to the end of this ReactiveSeq
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+     * {@code 
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -> it + "!!").collect(Collectors.toList());
      * 
-     * 	assertThat(result, equalTo(Arrays.asList(&quot;1!!&quot;, &quot;2!!&quot;, &quot;3!!&quot;, &quot;100!!&quot;, &quot;200!!&quot;, &quot;300!!&quot;)));
-     * }
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
      * </pre>
      * 
      * @param values
@@ -1935,12 +1898,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Insert data into a stream at given position
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -> it + "!!").collect(Collectors.toList());
      * 
-     * 	assertThat(result, equalTo(Arrays.asList(&quot;1!!&quot;, &quot;100!!&quot;, &quot;200!!&quot;, &quot;300!!&quot;, &quot;2!!&quot;, &quot;3!!&quot;)));
-     * 
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));     * 
      * }
      * </pre>
      * 
@@ -1956,12 +1917,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Delete elements between given indexes in a Stream
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -> it + "!!").collect(Collectors.toList());
      * 
-     * 	assertThat(result, equalTo(Arrays.asList(&quot;1!!&quot;, &quot;2!!&quot;, &quot;5!!&quot;, &quot;6!!&quot;)));
-     * }
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "5!!", "6!!")));     * }
      * </pre>
      * 
      * @param start
@@ -1976,11 +1935,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Insert a Stream into the middle of this stream at the specified position
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;String&gt; result = ReactiveSeq.of(1, 2, 3).insertStreamAt(1, of(100, 200, 300)).map(it -&gt; it + &quot;!!&quot;).collect(Collectors.toList());
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertStreamAt(1, of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
      * 
-     * 	assertThat(result, equalTo(Arrays.asList(&quot;1!!&quot;, &quot;100!!&quot;, &quot;200!!&quot;, &quot;300!!&quot;, &quot;2!!&quot;, &quot;3!!&quot;)));
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }
      * </pre>
      * 
@@ -2035,11 +1993,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Skip all elements until specified time period has passed
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -&gt; sleep(i * 100)).skip(1000, TimeUnit.MILLISECONDS).toList();
+     * {@code
+     *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -> sleep(i * 100)).skip(1000, TimeUnit.MILLISECONDS).toList();
      * 
-     * 	// [4,5,6]
+     *  // [4,5,6]
+
      * 
      * }
      * </pre>
@@ -2056,11 +2014,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Return all elements until specified time period has elapsed
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -&gt; sleep(i * 100)).limit(1000, TimeUnit.MILLISECONDS).toList();
+     * {@code
+     *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -> sleep(i * 100)).limit(1000, TimeUnit.MILLISECONDS).toList();
      * 
-     * 	// [1,2,3,4]
+     *  // [1,2,3,4]
+
      * }
      * </pre>
      * 
@@ -3267,12 +3225,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Connect to the Scheduled Stream
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	HotStream&lt;Data&gt; dataStream = ReactiveSeq.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-     * 			.schedule(&quot;0 20 * * *&quot;, Executors.newScheduledThreadPool(1));
+     * {@code
+     
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *                                          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
      * 
-     * 	data.connect().forEach(this::logToDB);
+     *  data.connect().forEach(this::logToDB);
      * }
      * </pre>
      * 
@@ -3302,12 +3260,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Connect to the Scheduled Stream
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	HotStream&lt;Data&gt; dataStream = ReactiveSeq.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-     * 			.scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
+     * {@code
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
      * 
-     * 	data.connect().forEach(this::logToDB);
+     *  data.connect().forEach(this::logToDB);
+
      * }
      * </pre>
      * 
@@ -3337,12 +3295,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Connect to the Scheduled Stream
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	HotStream&lt;Data&gt; dataStream = ReactiveSeq.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-     * 			.scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
+     * {@code
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
      * 
-     * 	data.connect().forEach(this::logToDB);
+     *  data.connect().forEach(this::logToDB);
      * }
      * </pre>
      * 

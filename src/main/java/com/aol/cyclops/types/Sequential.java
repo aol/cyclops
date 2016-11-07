@@ -22,10 +22,14 @@ public interface Sequential<T> {
      * emit x elements per time period
      * 
      * <pre>
-     * {
-     *  &#064;code
+     * {@code
      *  SimpleTimer timer = new SimpleTimer();
-     *  assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).xPer(6, 100000000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
+        ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+                  .xPer(6, 100000000, TimeUnit.NANOSECONDS)
+                  .collect(Collectors.toList())
+                  .size()
+                  
+       //6           
      * 
      * }
      * </pre>
@@ -36,7 +40,7 @@ public interface Sequential<T> {
      *            period
      * @param t
      *            Time unit
-     * @return SequenceM that emits x elements per time period
+     * @return ReactiveSeq that emits x elements per time period
      */
     default ReactiveSeq<T> xPer(final int x, final long time, final TimeUnit t) {
         return stream().xPer(x, time, t);
@@ -70,11 +74,14 @@ public interface Sequential<T> {
      * emit elements after a fixed delay
      * 
      * <pre>
-     * {
-     *  &#064;code
+     * {@code
      *  SimpleTimer timer = new SimpleTimer();
-     *  assertThat(ReactiveSeq.of(1, 2, 3, 4, 5, 6).fixedDelay(10000, TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(), is(6));
-     *  assertThat(timer.getElapsedNanoseconds(), greaterThan(60000l));
+     *  ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+     *             .fixedDelay(10000, TimeUnit.NANOSECONDS)
+     *             .collect(Collectors.toList())
+     *             .size()
+     *  //6           
+     *  //timer.getElapsedNanoseconds() > greaterThan(60000l)
      * }
      * </pre>
      * 

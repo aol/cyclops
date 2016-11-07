@@ -332,7 +332,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      */
     @Override
     default Combiner<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (Try<T,X>)MonadicValue.super.combine(combiner, app);
+        return (Try<T,X>)ApplicativeFunctor.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)

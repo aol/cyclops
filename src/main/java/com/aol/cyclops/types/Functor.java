@@ -1,16 +1,12 @@
 package com.aol.cyclops.types;
 
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.jooq.lambda.tuple.Tuple;
-
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.util.function.Curry;
 
 /** 
  * An interface that represents a type that can transform a value from one type to another
@@ -52,32 +48,7 @@ public interface Functor<T> {
      * @return Transformed Functor
      */
     <R> Functor<R> map(Function<? super T, ? extends R> fn);
-    /**
-     * Lazily combine this ApplicativeFunctor with the supplied value via the supplied BiFunction
-     * 
-     * Example
-     * <pre>
-     * {@code 
-     *   Maybe<Integer> some = Maybe.just(10);
-     *   just.combine(Eval.now(20), this::add);
-     *   //Some[30]
-     *   
-     *   Maybe<Integer> none = Maybe.none();
-     *   none.combine(Eval.now(20), this::add);
-     *   //None
-     *   
-     * }
-     * </pre>
-     * 
-     * @param app Value to combine with this one.
-     * @param fn BiFunction to combine them
-     * @return New Applicativefunctor that represents the combined values
-     */
-    default <T2, R> Functor<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-        return (Functor<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                                                                    .apply(v))).map(tuple -> app.visit(i -> tuple.v2.apply(i), () -> tuple.v1));
-    }
+ 
     /**
      * Peek at the current value of this Functor, without transforming it
      * 

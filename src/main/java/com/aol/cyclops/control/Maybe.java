@@ -497,7 +497,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      */
     @Override
     default  Maybe<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (Maybe<T>)MonadicValue1.super.combine(combiner, app);
+        return (Maybe<T>)ApplicativeFunctor.super.combine(combiner, app);
     }
 
 

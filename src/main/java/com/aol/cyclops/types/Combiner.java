@@ -1,6 +1,16 @@
 package com.aol.cyclops.types;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
+
+import org.jooq.lambda.tuple.Tuple;
+
+import com.aol.cyclops.Semigroups;
+import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.util.function.Curry;
 
 /**
  * Combinable type via BiFunctions / Monoids / Semigroups
@@ -9,8 +19,33 @@ import java.util.function.BinaryOperator;
  *
  * @param <T> Data type of the element/s inside this Applicative
  */
-public interface Combiner<T>{
-    
+public interface Combiner<T> extends Functor<T>, Value<T>{
+    /**
+     * Lazily combine this ApplicativeFunctor with the supplied value via the supplied BiFunction
+     * 
+     * Example
+     * <pre>
+     * {@code 
+     *   Maybe<Integer> some = Maybe.just(10);
+     *   just.combine(Eval.now(20), this::add);
+     *   //Some[30]
+     *   
+     *   Maybe<Integer> none = Maybe.none();
+     *   none.combine(Eval.now(20), this::add);
+     *   //None
+     *   
+     * }
+     * </pre>
+     * 
+     * @param app Value to combine with this one.
+     * @param fn BiFunction to combine them
+     * @return New Applicativefunctor that represents the combined values
+     */
+    default <T2, R> Functor<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+
+        return (Functor<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
+                                                                    .apply(v))).map(tuple -> app.visit(i -> tuple.v2.apply(i), () -> tuple.v1));
+    }
 
    
     /**
@@ -31,7 +66,11 @@ public interface Combiner<T>{
      * <pre>
      * {@code 
      * 
-     *   Monoid<Maybe<Integer>> sumMaybes = Semigroups.combineApplicatives(Semigroups.intSum);
+     *   
+     *  BinaryOperator<Combiner<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
+        Maybe.just(1)
+            .combine(sumMaybes, Maybe.just(5))
+        //Maybe.just(6));
      * }
      * </pre>
      * 

@@ -47,7 +47,7 @@ public interface FeatureToggle<F>
     @Override
     default  FeatureToggle<F> combine(BinaryOperator<Combiner<F>> combiner, Combiner<F> app) {
        
-        return (FeatureToggle<F>)MonadicValue1.super.combine(combiner, app);
+        return (FeatureToggle<F>)ApplicativeFunctor.super.combine(combiner, app);
     }
 
     /**

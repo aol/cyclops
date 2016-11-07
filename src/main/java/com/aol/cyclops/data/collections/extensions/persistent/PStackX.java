@@ -295,23 +295,7 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
         return (PStackX<T>) PersistentCollectionX.super.combine(predicate, op);
     }
     
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> PStackX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return ( PStackX<R>)PersistentCollectionX.super.combine(app, fn);
-    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default  PStackX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-      
-        return ( PStackX<T>)PersistentCollectionX.super.combine(combiner, app);
-    }
 
     @Override
     default <R> PStackX<R> unit(final Collection<R> col) {

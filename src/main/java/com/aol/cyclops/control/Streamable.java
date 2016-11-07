@@ -651,22 +651,7 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
         return reactiveSeq().toCollection(collectionFactory);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> Streamable<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (Streamable<R>)ZippingApplicativable.super.combine(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default Streamable<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-       
-        return (Streamable<T>)ZippingApplicativable.super.combine(combiner, app);
-    }
+  
 
     /**
      * Generate the permutations based on values in the Streamable
@@ -1110,12 +1095,12 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * Zip this Monad with a Stream
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Stream&lt;List&lt;Integer&gt;&gt; zipped = asMonad(Stream.of(1, 2, 3)).zip(
-     * 			Stream.of(2, 3, 4), (a, b) -&gt; Arrays.asList(a, b));
+     * {@code
+
+     *  Stream<List<Integer>> zipped = Streamable.of(1, 2, 3).zipStream(
+     *          Stream.of(2, 3, 4), (a, b) -> Arrays.asList(a, b));
      * 
-     * 	// [[1,2][2,3][3,4]]
+     *  // [[1,2][2,3][3,4]]
      * }
      * </pre>
      * 
@@ -1186,13 +1171,12 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * Group elements in a Stream
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;List&lt;Integer&gt;&gt; list = monad(Stream.of(1, 2, 3, 4, 5, 6)).grouped(3)
-     * 			.collect(Collectors.toList());
+     * {@code
+     *  List<List<Integer>> list = monad(Stream.of(1, 2, 3, 4, 5, 6)).grouped(3)
+     *          .collect(Collectors.toList());
      * 
-     * 	assertThat(list.get(0), hasItems(1, 2, 3));
-     * 	assertThat(list.get(1), hasItems(4, 5, 6));
+     *  assertThat(list.get(0), hasItems(1, 2, 3));
+     *  assertThat(list.get(1), hasItems(4, 5, 6));
      * 
      * }
      * </pre>

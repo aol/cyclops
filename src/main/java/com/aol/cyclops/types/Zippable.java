@@ -17,7 +17,7 @@ import com.aol.cyclops.control.ReactiveSeq;
  *
  * @param <T> Data type of element(s) of this Zippable
  */
-public interface Zippable<T> extends Iterable<T>, Combiner<T> {
+public interface Zippable<T> extends Iterable<T>{
     /**
      * Zip (combine) this Zippable with the supplied Iterable using the supplied combining function
      * 

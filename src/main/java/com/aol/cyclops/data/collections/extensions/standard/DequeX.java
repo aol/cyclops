@@ -270,23 +270,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX<T>) MutableCollectionX.super.combine(predicate, op);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> DequeX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return ( DequeX<R>)MutableCollectionX.super.combine(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default  DequeX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-      
-        return ( DequeX<T>)MutableCollectionX.super.combine(combiner, app);
-    }
+   
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)

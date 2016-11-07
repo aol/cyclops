@@ -174,11 +174,12 @@ public interface Foldable<T> {
      * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	Monoid&lt;Integer&gt; sum = Monoid.of(0, (a, b) -&gt; a + b);
-     * 	Monoid&lt;Integer&gt; mult = Monoid.of(1, (a, b) -&gt; a * b);
-     * 	List&lt;Integer&gt; result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).foldable());
+     * {@code 
+     * 	Monoid<Integer> sum = Monoid.of(0, (a, b) -&gt; a + b);
+     * 	Monoid<Integer> mult = Monoid.of(1, (a, b) -&gt; a * b);
+     * 	List<Integer> result = ReactiveSeq.of(1, 2, 3, 4)
+     *                                    .reduce(Arrays.asList(sum, mult)
+     *                                    .foldable());
      * 
      * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
      * 
@@ -363,9 +364,9 @@ public interface Foldable<T> {
      * Use classifier function to group elements in this Sequence into a Map
      * 
      * <pre>
-     * {
-     *  &#064;code
-     *  Map&lt;Integer, List&lt;Integer&gt;&gt; map1 = of(1, 2, 3, 4).groupBy(i -&gt; i % 2);
+     * {@code
+     * 
+     *  Map<Integer, List<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -&gt; i % 2);
      *  assertEquals(asList(2, 4), map1.get(0));
      *  assertEquals(asList(1, 3), map1.get(1));
      *  assertEquals(2, map1.size());
@@ -381,7 +382,7 @@ public interface Foldable<T> {
     /**
      * @return First matching element in sequential order
      * 
-     *         <pre>
+     * <pre>
      * {@code
      * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
      * 
@@ -478,9 +479,9 @@ public interface Foldable<T> {
      * the Stream. E.g. Collection is not thread safe on the first iteration.
      * 
      * <pre>
-     * {
-     *  &#064;code
-     *  Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
+     * {@code 
+     *  
+     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
      * 
      *  col.forEach(System.out::println);
      * }
@@ -499,14 +500,15 @@ public interface Foldable<T> {
      * the Stream. E.g.
      * 
      * <pre>
-     * {
-     *  &#064;code
-     *  Collection&lt;Integer&gt; col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
+     * {@code
+     *  
+     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
+     *                                       .peek(System.out::println).toConcurrentLazyCollection();
      * 
      *  col.forEach(System.out::println);
      * }
      * 
-     * // Will print out &quot;first!&quot; before anything else
+     * // Will print out "first!" before anything else
      * </pre>
      * 
      * @return Concurrent Lazy Collection
@@ -517,9 +519,11 @@ public interface Foldable<T> {
 
     /**
      * <pre>
-     * {
-     *  &#064;code
-     *  Streamable&lt;Integer&gt; repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -&gt; i + 2).toConcurrentLazyStreamable();
+     * {@code
+     *  
+     *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+     *                                          .map(i ->; i + 2)
+     *                                          .toConcurrentLazyStreamable();
      * 
      *  assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
      *  assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
@@ -622,19 +626,19 @@ public interface Foldable<T> {
      * <pre>
      * {@code
      *  //run at 8PM every night
-     *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
-     *            .map(this::processJob)
-     *            .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
+     *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
+     *             .map(this::processJob)
+     *             .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
      * }
      * </pre>
      * 
      * Connect to the Scheduled Stream
      * 
      * <pre>
-     * {
-     *  &#064;code
-     *  HotStream&lt;Data&gt; dataStream = ReactiveSeq.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-     *          .schedule(&quot;0 20 * * *&quot;, Executors.newScheduledThreadPool(1));
+     * {@code
+     *  
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);
      * }
@@ -658,19 +662,18 @@ public interface Foldable<T> {
      * <pre>
      * {@code
      *  //run every 60 seconds after last job completes
-     *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
-     *            .map(this::processJob)
-     *            .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
+     *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
+     *             .map(this::processJob)
+     *             .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
      * 
      * Connect to the Scheduled Stream
      * 
      * <pre>
-     * {
-     *  &#064;code
-     *  HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-     *          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
+     * {@code 
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *                                          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);
      * }
@@ -703,10 +706,10 @@ public interface Foldable<T> {
      * Connect to the Scheduled Stream
      * 
      * <pre>
-     * {
-     *  &#064;code
-     *  HotStream&lt;Data&gt; dataStream = SequenceeM.generate(() -&gt; &quot;next job:&quot; + formatDate(new Date())).map(this::processJob)
-     *          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
+     * {@code
+     *  
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -&gt; "next job:" + formatDate(new Date())).map(this::processJob)
+     *                                          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);
      * }
