@@ -275,7 +275,7 @@ public interface AdaptersModule {
         final Supplier<T> s;
         private final Continueable subscription;
         private final Queue queue;
-        static AtomicInteger count = new AtomicInteger(0);
+        
 
         public ClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription, final Queue queue) {
             super(estimate,IMMUTABLE);
@@ -322,8 +322,9 @@ public interface AdaptersModule {
             Objects.requireNonNull(action);
 
             try {
-                if(closed.get())
-                    return false;
+                if(closed.get()){
+                   return false;
+                }
                 action.accept(s.get());
                 subscription.closeQueueIfFinished(queue);
                 return true;
@@ -333,6 +334,7 @@ public interface AdaptersModule {
                     e.getCurrentData()
                      .forEach(action);
                 }
+                
                 closed.set(true);
                 return false;
             } catch (final Exception e) {
