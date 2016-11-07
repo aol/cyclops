@@ -203,9 +203,11 @@ public class Queue<T> implements Adapter<T> {
         int cores = Runtime.getRuntime().availableProcessors();
         String par = System.getProperty("java.util.concurrent.ForkJoinPool.common.parallelism");
         int connected = par !=null ? Integer.valueOf(par) : cores;
-        for(int i=0;i<connected*closeScalingFactor;i++){
-            listeningStreams.incrementAndGet();
-        }
+        int update = 0;
+        do{
+            update = listeningStreams.get()+ connected*closeScalingFactor;
+        }while(!listeningStreams.compareAndSet(listeningStreams.get(), update));
+        
         return closingStream(this::get, new AlwaysContinue());
     }
     
@@ -222,7 +224,7 @@ public class Queue<T> implements Adapter<T> {
      * @return Java 8 Stream connnected to this Queue
      */
     public Stream<T> jdkStream() {
-       return jdkStream(8);
+       return jdkStream(100);
     }
 
     @Override

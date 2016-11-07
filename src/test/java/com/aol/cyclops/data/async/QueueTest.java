@@ -47,8 +47,8 @@ public class QueueTest {
         
         for(int k=0; k < 1000;k++) {
             System.out.println(k);
-            com.aol.cyclops.data.async.Queue<Integer> queue = QueueFactories.<Integer>boundedQueue(5000).build();
-            for(int z=0;z<1000;z++){
+            com.aol.cyclops.data.async.Queue<Integer> queue = QueueFactories.<Integer>boundedQueue(500).build();
+            for(int z=0;z<6_00;z++){
                 queue.add(z);
             }
             new Thread(() -> {
@@ -68,6 +68,32 @@ public class QueueTest {
             System.out.println("done " + k);
         }
 	}
+	   @Test
+	    public void parallelStreamCloseNoData(){
+	        int cores = Runtime.getRuntime().availableProcessors();
+	        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(cores*16));
+	        
+	        for(int k=0; k < 1000;k++) {
+	            System.out.println(k);
+	            com.aol.cyclops.data.async.Queue<Integer> queue = QueueFactories.<Integer>boundedQueue(5000).build();
+	            
+	            new Thread(() -> {
+	                while(!queue.isOpen()){
+	                    System.out.println("Queue isn't open yet!");
+	                }
+	                System.err.println("Closing " + queue.close());
+	            }).start();
+	            
+	            Stream<Integer> stream = queue.jdkStream();
+
+	            stream = stream.parallel();
+	            stream.forEach(e ->
+	            {
+	                System.out.println(e);
+	            });
+	            System.out.println("done " + k);
+	        }
+	    }
 	@Test
 	public void closedParallelStream(){
 	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();
