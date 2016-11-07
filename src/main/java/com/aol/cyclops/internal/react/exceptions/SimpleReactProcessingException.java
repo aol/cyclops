@@ -33,4 +33,5 @@ public class SimpleReactProcessingException extends RuntimeException {
     public Throwable fillInStackTrace() {
         return this;
     }
+
 }

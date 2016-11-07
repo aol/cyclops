@@ -224,7 +224,7 @@ public class Queue<T> implements Adapter<T> {
      * @return Java 8 Stream connnected to this Queue
      */
     public Stream<T> jdkStream() {
-       return jdkStream(1);
+       return jdkStream(2);
     }
 
     @Override
@@ -312,6 +312,7 @@ public class Queue<T> implements Adapter<T> {
     private T ensureOpen(final long timeout, final TimeUnit timeUnit) {
         if (!open && queue.size() == 0)
             throw new ClosedQueueException();
+        
         final SimpleTimer timer = new SimpleTimer();
         final long timeoutNanos = timeUnit.toNanos(timeout);
         T data = null;
@@ -382,7 +383,6 @@ public class Queue<T> implements Adapter<T> {
     private T ensureNotPoisonPill(final T data) {
         if (data instanceof PoisonPill) {
             throw new ClosedQueueException();
-
         }
         return data;
     }
@@ -517,25 +517,47 @@ public class Queue<T> implements Adapter<T> {
             return data;
     }
 
+   
     /**
      * Close this Queue
+     * Poison Pills are used to communicate closure to connected Streams
+     * A Poison Pill is added per connected Stream to the Queue
+     * If a BlockingQueue is backing this async.Queue it will block until
+     * able to add to the Queue.
      * 
      * @return true if closed
      */
     @Override
     public boolean close() {
         this.open = false;
-
-        if (this.queue.remainingCapacity() > 0) {
-            for (int i = 0; i < Math.min(maxPoisonPills, listeningStreams.get()); i++) {
-                add((T) POISON_PILL);
-
-            }
+        
+        for (int i = 0; i < listeningStreams.get(); i++) {
+           try{
+              this.queue.offer((T) POISON_PILL);
+           }catch(Exception e){
+                    
+           }
+            
         }
-
+        
         return true;
     }
 
+    /**
+     * 
+     * @param pillsToSend Number of poison pills to send to connected Streams
+     */
+    public void disconnectStreams(int pillsToSend){
+        for (int i = 0; i < pillsToSend; i++) {
+            try{
+               this.queue.offer((T) POISON_PILL);
+            }catch(Exception e){
+                     
+            }
+             
+         }
+    }
+    
     public void closeAndClear() {
 
         this.open = false;

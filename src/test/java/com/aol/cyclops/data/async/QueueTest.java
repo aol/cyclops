@@ -47,10 +47,11 @@ public class QueueTest {
 	    
         System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(cores*2));
         
-        for(int k=0; k < 10_000;k++) {
+        for(int k=0; k < 100;k++) {
+            System.gc();
             System.out.println(k);
-            com.aol.cyclops.data.async.Queue<Integer> queue = QueueFactories.<Integer>boundedQueue(500).build();
-            for(int z=0;z<6_00;z++){
+            com.aol.cyclops.data.async.Queue<Integer> queue = QueueFactories.<Integer>boundedQueue(5).build();
+            for(int z=0;z<10;z++){
                 queue.add(z);
             }
             new Thread(() -> {
@@ -58,9 +59,19 @@ public class QueueTest {
                     System.out.println("Queue isn't open yet!");
                 }
                 System.err.println("Closing " + queue.close());
+               for(int i=0;i<100;i++){
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                
+                queue.disconnectStreams(1000);
+               }
             }).start();
             
-            Stream<Integer> stream = queue.jdkStream(10);
+            Stream<Integer> stream = queue.jdkStream(100);
 
             stream = stream.parallel();
             stream.forEach(e ->
