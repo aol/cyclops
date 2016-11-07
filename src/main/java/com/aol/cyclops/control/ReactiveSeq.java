@@ -119,7 +119,6 @@ import lombok.val;
  * @param <T> Data type of elements within the Stream
  */
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
-                                        StreamType<T>, 
                                         Unwrapable, 
                                         Stream<T>, 
                                         OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
