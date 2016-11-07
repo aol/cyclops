@@ -49,6 +49,17 @@ public class ListXTest extends CollectionXTestsWithNulls {
     }
 
     @Test
+    public void toTest(){
+        ListX<Integer> list = ListX.of(1,2,3)
+                                   .to(l->l.stream())
+                                   .map(i->i*2)
+                                   .to(r->r.toSetX())
+                                   .to(s->s.toMaybe())
+                                   .get();
+        
+        assertThat(list,equalTo(ListX.of(2,4,6)));
+    }
+    @Test
     public void zipSemigroup(){
         BinaryOperator<Zippable<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
         assertThat(sumInts.apply(ListX.of(1,2,3), ListX.of(4,5,6)),equalTo(ListX.of(5,7,9)));
