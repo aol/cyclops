@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -13,6 +14,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -21,6 +23,7 @@ import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
+import com.aol.cyclops.types.Zippable;
 
 public class ListXTest extends CollectionXTestsWithNulls {
 
@@ -45,6 +48,12 @@ public class ListXTest extends CollectionXTestsWithNulls {
         return ListX.of(values);
     }
 
+    @Test
+    public void zipSemigroup(){
+        BinaryOperator<Zippable<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
+        assertThat(sumInts.apply(ListX.of(1,2,3), ListX.of(4,5,6)),equalTo(ListX.of(5,7,9)));
+        
+    }
     /*
      * (non-Javadoc)
      * 

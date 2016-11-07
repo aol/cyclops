@@ -192,23 +192,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     default PSetX<T> toPSetX() {
         return this;
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> PSetX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return ( PSetX<R>)PersistentCollectionX.super.combine(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default  PSetX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-      
-        return ( PSetX<T>)PersistentCollectionX.super.combine(combiner, app);
-    }
+  
     /**
     * Combine two adjacent elements in a PSetX using the supplied BinaryOperator
     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

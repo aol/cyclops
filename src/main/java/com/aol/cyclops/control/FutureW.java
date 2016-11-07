@@ -1243,7 +1243,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public FutureW<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (FutureW<T>)MonadicValue1.super.combine(combiner, app);
+        return (FutureW<T>)ApplicativeFunctor.super.combine(combiner, app);
     }
 
    

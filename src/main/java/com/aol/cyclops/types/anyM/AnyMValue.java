@@ -46,7 +46,7 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> Data types of elements managed by wrapped scalar Monad.
  */
-public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, ApplicativeFunctor<T>, MonadicValue<T>, Matchable.ValueAndOptionalMatcher<T> {
+public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Matchable.ValueAndOptionalMatcher<T> {
 
     /**
      * Equivalence test, returns true if this Monad is equivalent to the supplied monad
@@ -73,7 +73,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
     @Override
     default AnyMValue<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
         
-        return (AnyMValue<T>)AnyM.super.combine(combiner, app);
+        return (AnyMValue<T>)ApplicativeFunctor.super.combine(combiner, app);
     }
 
 
@@ -93,7 +93,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>, Applicat
      */
     @Override
     default <T2, R> AnyMValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (AnyMValue<R>) AnyM.super.combine(app, fn);
+        return (AnyMValue<R>) ApplicativeFunctor.super.combine(app, fn);
     }
 
     /* (non-Javadoc)

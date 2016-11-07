@@ -175,23 +175,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
     default QueueX<T> toQueueX() {
         return this;
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> QueueX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return ( QueueX<R>)MutableCollectionX.super.combine(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default  QueueX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-      
-        return ( QueueX<T>)MutableCollectionX.super.combine(combiner, app);
-    }
+  
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#from(java.util.Collection)

@@ -4,17 +4,23 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
+import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Try;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
@@ -27,7 +33,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
@@ -226,7 +232,7 @@ public interface Monoids {
      * @param monoid Monoid to combine the values inside the Scalar Functors
      * @return Combination of two Scalar Functors
      */
-    static <T,A extends MonadicValue<T>> Monoid<A> combineScalarFunctors(Function<T,A> zeroFn,Monoid<T> monoid) {
+    static <T,A extends Combiner<T>> Monoid<A> combineScalarFunctors(Function<T,A> zeroFn,Monoid<T> monoid) {
        
         return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineScalarFunctors(monoid));
     }
@@ -292,7 +298,96 @@ public interface Monoids {
     static <T> Monoid<T> firstNonNull() {
          return Monoid.of(null, Semigroups.firstNonNull());
     }
-
+    /**
+     * @return Combine two CompletableFuture's by taking the first present
+     */
+    static <T> Monoid<CompletableFuture<T>> firstCompleteCompletableFuture() {
+        return Monoid.of(new CompletableFuture<T>(), Semigroups.firstCompleteCompletableFuture());
+    }
+    /**
+     * @return Combine two FutureW's by taking the first result
+     */
+    static <T> Monoid<FutureW<T>> firstCompleteFuture() {
+       return Monoid.of(FutureW.future(), Semigroups.firstCompleteFuture());
+    }
+    /**
+     * @return Combine two FutureW's by taking the first successful
+     */
+    static <T> Monoid<FutureW<T>> firstSuccessfulFuture() {
+        return Monoid.of(FutureW.future(), Semigroups.firstSuccessfulFuture());
+    }
+    /**
+     * @return Combine two Xor's by taking the first primary
+     */
+    static <ST,PT> Monoid<Xor<ST,PT>> firstPrimaryXor(ST zero) {
+        return Monoid.of(Xor.secondary(zero), Semigroups.firstPrimaryXor());
+    }
+    /**
+     * @return Combine two Xor's by taking the first secondary
+     */
+    static <ST,PT> Monoid<Xor<ST,PT>> firstSecondaryXor(PT zero) {
+        return Monoid.of(Xor.primary(zero), Semigroups.firstSecondaryXor());
+    }
+    /**
+     * @return Combine two Xor's by taking the last primary
+     */
+    static <ST,PT> Monoid<Xor<ST,PT>> lastPrimaryXor(ST zero) {
+        return Monoid.of(Xor.secondary(zero), Semigroups.lastPrimaryXor());
+    }
+    /**
+     * @return Combine two Xor's by taking the last secondary
+     */
+    static <ST,PT> Monoid<Xor<ST,PT>> lastSecondaryXor(PT zero) {
+        return Monoid.of(Xor.primary(zero), Semigroups.lastSecondaryXor());
+    }
+    /**
+     * @return Combine two Try's by taking the first primary
+     */
+    static <T,X extends Throwable> Monoid<Try<T,X>> firstTrySuccess(X zero) {
+        return Monoid.of(Try.failure(zero), Semigroups.firstTrySuccess());
+    }
+    /**
+     * @return Combine two Try's by taking the first secondary
+     */
+    static <T,X extends Throwable> Monoid<Try<T,X>> firstTryFailure(T zero) {
+        return Monoid.of(Try.success(zero), Semigroups.firstTryFailure());
+    }
+    /**
+     * @return Combine two Tryr's by taking the last primary
+     */
+    static<T,X extends Throwable> Monoid<Try<T,X>> lastTrySuccess(X zero) {
+        return Monoid.of(Try.failure(zero), Semigroups.lastTrySuccess());
+    }
+    /**
+     * @return Combine two Try's by taking the last secondary
+     */
+    static <T,X extends Throwable> Monoid<Try<T,X>>lastTryFailure(T zero) {
+        return Monoid.of(Try.success(zero), Semigroups.lastTryFailure());
+    }
+    /**
+     * @return Combine two Ior's by taking the first primary
+     */
+    static <ST,PT> Monoid<Ior<ST,PT>> firstPrimaryIor(ST zero) {
+        return Monoid.of(Ior.secondary(zero), Semigroups.firstPrimaryIor());
+    }
+    /**
+     * @return Combine two Ior's by taking the first secondary
+     */
+    static <ST,PT> Monoid<Ior<ST,PT>> firstSecondaryIor(PT zero) {
+        return Monoid.of(Ior.primary(zero), Semigroups.firstSecondaryIor());
+    }
+    /**
+     * @return Combine two Ior's by taking the last primary
+     */
+    static <ST,PT> Monoid<Ior<ST,PT>> lastPrimaryIor(ST zero) {
+        return Monoid.of(Ior.secondary(zero), Semigroups.lastPrimaryIor());
+    }
+    /**
+     * @return Combine two Ior's by taking the last secondary
+     */
+    static <ST,PT> Monoid<Ior<ST,PT>> lastSecondaryIor(PT zero) {
+        return Monoid.of(Ior.primary(zero), Semigroups.lastSecondaryIor());
+    }
     /**
      * @return Combine two Maybe's by taking the first present
      */

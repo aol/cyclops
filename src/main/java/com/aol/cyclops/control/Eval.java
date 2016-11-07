@@ -323,7 +323,7 @@ public interface Eval<T>
      */
     @Override
     default Eval<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (Eval)MonadicValue1.super.combine(combiner, app);
+        return (Eval)ApplicativeFunctor.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)

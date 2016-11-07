@@ -704,7 +704,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue2
     @Override
     default  Ior<ST,PT> combine(BinaryOperator<Combiner<PT>> combiner, Combiner<PT> app) {
        
-        return (Ior<ST,PT>)MonadicValue2.super.combine(combiner, app);
+        return (Ior<ST,PT>)ApplicativeFunctor.super.combine(combiner, app);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)

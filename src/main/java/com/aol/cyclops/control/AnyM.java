@@ -101,28 +101,11 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Combiner<T>,Functor<T>, FlatMap<T>, ToStream<T> {
+public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, FlatMap<T>, ToStream<T> {
    
     
     
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> AnyM<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return (AnyM<R>)FlatMap.super.combine(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default  AnyM<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        
-        return (AnyM<T>)Combiner.super.combine(combiner, app);
-    }
-
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
      */

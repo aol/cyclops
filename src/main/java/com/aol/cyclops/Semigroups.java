@@ -1,5 +1,8 @@
 package com.aol.cyclops;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Deque;
@@ -10,6 +13,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -34,6 +38,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
@@ -240,6 +245,16 @@ public interface Semigroups {
         };
     }
     /**
+     * <pre>
+     * {@code 
+     *  BinaryOperator<Zippable<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
+        sumInts.apply(ListX.of(1,2,3), ListX.of(4,5,6));
+        
+        //List[5,7,9];
+     * 
+     * }
+     * </pre>
+     * 
      * @param semigroup Semigroup to combine the values inside the zippables
      * @return Combination of two Zippables
      */
@@ -247,10 +262,23 @@ public interface Semigroups {
         return (a, b) -> (A) a.zip(b, semigroup);
     }
     /**
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  BinaryOperator<Combiner<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
+     *  Maybe.just(1)
+     *       .combine(sumMaybes, Maybe.just(5))
+     *       
+     *  //Maybe[6]     
+     * }
+     * </pre>
+     * 
+     * 
      * @param semigroup Semigroup to combine the values inside the Scalar Functors (Maybe, Xor, Ior, Try, Eva, FeatureToggle etc)
      * @return Combination of two Scalar Functors
      */
-    static <T,A extends MonadicValue<T>> Semigroup<A> combineScalarFunctors(BiFunction<T,T,T> semigroup) {
+    static <T,A extends Combiner<T>> Semigroup<A> combineScalarFunctors(BiFunction<T,T,T> semigroup) {
         return (a, b) -> (A) a.combine(b, semigroup);
     }
     /**

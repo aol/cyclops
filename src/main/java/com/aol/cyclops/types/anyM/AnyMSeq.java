@@ -94,23 +94,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
 
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.AnyM#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> AnyMSeq<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return (AnyMSeq<R>)AnyM.super.combine(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default AnyMSeq<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        
-        return ( AnyMSeq<T>)AnyM.super.combine(combiner, app);
-    }
+   
 
     /**
      * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 

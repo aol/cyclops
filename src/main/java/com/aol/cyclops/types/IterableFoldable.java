@@ -1,9 +1,13 @@
 package com.aol.cyclops.types;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
@@ -58,20 +62,22 @@ public interface IterableFoldable<T> extends Foldable<T>, Iterable<T> {
 
     /**
      * extract head and tail together, where head is expected to be present
+     * Example : 
      * 
      * <pre>
-     * {
-     *  &#064;code
-     *  SequenceM&lt;String&gt; helloWorld = ReactiveSeq.of(&quot;hello&quot;, &quot;world&quot;, &quot;last&quot;);
-     *  HeadAndTail&lt;String&gt; headAndTail = helloWorld.headAndTail();
-     *  String head = headAndTail.head();
-     *  assertThat(head, equalTo(&quot;hello&quot;));
-     * 
-     *  SequenceM&lt;String&gt; tail = headAndTail.tail();
-     *  assertThat(tail.headAndTail().head(), equalTo(&quot;world&quot;));
-     * }
-     * </pre>
-     * 
+     * {@code 
+     *  ReactiveSeq<String> helloWorld = ReactiveSeq.Of("hello","world","last");
+        HeadAndTail<String> headAndTail = helloWorld.headAndTail();
+        String head = headAndTail.head();
+        
+         //head == "hello"
+        
+        ReactiveSeq<String> tail =  headAndTail.tail();
+        //["world","last]
+        
+        }
+     *  </pre>
+     *  
      * @return
      */
     default HeadAndTail<T> headAndTail() {

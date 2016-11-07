@@ -120,12 +120,11 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * Repeat in a Stream while specified predicate holds
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	MutableInt count = MutableInt.of(0);
-     * 	ReactiveSeq.of(1, 2, 2).cycleWhile(next -&gt; count++ &lt; 6).collect(Collectors.toList());
+     * {@code
+     *  MutableInt count = MutableInt.of(0);
+     *  ReactiveSeq.of(1, 2, 2).cycleWhile(next -> count++ < 6).collect(Collectors.toList());
      * 
-     * 	// List(1,2,2,1,2,2)
+     *  // List(1,2,2,1,2,2)
      * }
      * </pre>
      * 
@@ -188,10 +187,10 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * Zip 2 streams into one
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;Tuple2&lt;Integer, String&gt;&gt; list = of(1, 2).zip(of(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)).toList();
-     * 	// [[1,&quot;a&quot;],[2,&quot;b&quot;]]
+     * {@code
+
+     *  List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+     *  // [[1,"a"],[2,"b"]]
      * }
      * </pre>
      * 
@@ -221,11 +220,10 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * zip 3 Streams into one
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;Tuple3&lt;Integer, Integer, Character&gt;&gt; list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(Collectors.toList());
+     * {@code
+     *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(Collectors.toList());
      * 
-     * 	// [[1,100,'a'],[2,200,'b'],[3,300,'c']]
+     *  // [[1,100,'a'],[2,200,'b'],[3,300,'c']]
      * }
      * 
      * </pre>
@@ -238,13 +236,12 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * zip 4 Streams into 1
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;Tuple4&lt;Integer, Integer, Character, String&gt;&gt; list = of(1, 2, 3, 4, 5, 6).zip4(of(100, 200, 300, 400), of('a', 'b', 'c'), of(&quot;hello&quot;, &quot;world&quot;))
-     * 			.collect(Collectors.toList());
+     * {@code
+     *  List<Tuple4<Integer, Integer, Character, String>> list = of(1, 2, 3, 4, 5, 6).zip4(of(100, 200, 300, 400), of('a', 'b', 'c'), of("hello", "world"))
+     *          .collect(Collectors.toList());
      * 
      * }
-     * // [[1,100,'a',&quot;hello&quot;],[2,200,'b',&quot;world&quot;]]
+     * // [[1,100,'a',"hello"],[2,200,'b',"world"]]
      * </pre>
      */
     default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
@@ -269,12 +266,11 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * Create a sliding view over this Sequence
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+     * {@code
+     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
      * 
-     * 	assertThat(list.get(0), hasItems(1, 2));
-     * 	assertThat(list.get(1), hasItems(2, 3));
+     *  assertThat(list.get(0), hasItems(1, 2));
+     *  assertThat(list.get(1), hasItems(2, 3));
      * 
      * }
      * 
@@ -292,12 +288,12 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * Create a sliding view over this Sequence
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+     * {@code
+     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
      * 
-     * 	assertThat(list.get(0), hasItems(1, 2, 3));
-     * 	assertThat(list.get(1), hasItems(3, 4, 5));
+     *  assertThat(list.get(0), hasItems(1, 2, 3));
+     *  assertThat(list.get(1), hasItems(3, 4, 5));     
+     * 
      * 
      * }
      * 
@@ -424,15 +420,16 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
     }
 
     /**
-     * Create a SequenceM batched by a Collection, where each batch is populated
+     * Create a ReactiveSeq batched by a Collection, where each batch is populated
      * until the predicate holds
      * 
      * <pre>
      * {@code 
-     * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .batchUntil(i->i%3!=0)
-     *              .toList()
-     *              .size(),equalTo(2));
+     *  ReactiveSeq.of(1,2,3,4,5,6)
+     *             .groupedUntil(i->i%3!=0)
+     *             .toList()
+     *             
+     *  //2
      * }
      * </pre>
      * 
@@ -452,12 +449,11 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * Group elements in a Stream
      * 
      * <pre>
-     * {
-     * 	&#064;code
-     * 	List&lt;List&lt;Integer&gt;&gt; list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+     * {@code
+     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
      * 
-     * 	assertThat(list.get(0), hasItems(1, 2, 3));
-     * 	assertThat(list.get(1), hasItems(4, 5, 6));
+     *  assertThat(list.get(0), hasItems(1, 2, 3));
+     *  assertThat(list.get(1), hasItems(4, 5, 6));
      * 
      * }
      * </pre>

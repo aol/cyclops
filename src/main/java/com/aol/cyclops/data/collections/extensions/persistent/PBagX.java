@@ -196,23 +196,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
         return Reducers.<T> toPBagX()
                        .mapReduce(stream);
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> PBagX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return ( PBagX<R>)PersistentCollectionX.super.combine(app, fn);
-    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default  PBagX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-      
-        return ( PBagX<T>)PersistentCollectionX.super.combine(combiner, app);
-    }
     /**
     * Combine two adjacent elements in a PBagX using the supplied BinaryOperator
     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

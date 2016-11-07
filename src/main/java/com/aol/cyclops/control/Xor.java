@@ -223,7 +223,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     @Override
     default Xor<ST,PT> combine(BinaryOperator<Combiner<PT>> combiner, Combiner<PT> app) {
        
-        return (Xor<ST,PT>)MonadicValue2.super.combine(combiner, app);
+        return (Xor<ST,PT>)ApplicativeFunctor.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)

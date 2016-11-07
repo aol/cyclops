@@ -202,23 +202,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     default SetX<T> toSetX() {
         return this;
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> SetX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return ( SetX<R>)MutableCollectionX.super.combine(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default  SetX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-      
-        return ( SetX<T>)MutableCollectionX.super.combine(combiner, app);
-    }
+ 
     @Override
     default ReactiveSeq<T> stream() {
 

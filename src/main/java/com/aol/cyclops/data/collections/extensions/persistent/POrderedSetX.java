@@ -263,23 +263,7 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     default POrderedSetX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (POrderedSetX<T>) PersistentCollectionX.super.combine(predicate, op);
     }  
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> POrderedSetX<R> combine(Value<? extends T2> app, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return ( POrderedSetX<R>)PersistentCollectionX.super.combine(app, fn);
-    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default  POrderedSetX<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-      
-        return ( POrderedSetX<T>)PersistentCollectionX.super.combine(combiner, app);
-    }
 
     @Override
     default <X> POrderedSetX<X> from(final Collection<X> col) {

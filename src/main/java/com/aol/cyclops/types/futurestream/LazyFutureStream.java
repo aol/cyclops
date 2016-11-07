@@ -144,24 +144,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
 
     }
    
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.ReactiveSeq#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> LazyFutureStream<R> combine(Value<? extends T2> app, BiFunction<? super U, ? super T2, ? extends R> fn) {
-        
-        return (LazyFutureStream<R>)ReactiveSeq.super.combine(app, fn);
-    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.ReactiveSeq#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
-    @Override
-    default LazyFutureStream<U> combine(BinaryOperator<Combiner<U>> combiner, Combiner<U> app) {
-        
-        return (LazyFutureStream<U>)ReactiveSeq.super.combine(combiner, app);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
