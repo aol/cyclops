@@ -1,16 +1,24 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.BaseStream;
+import java.util.stream.Collectors;
 
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class QueueComprehender implements Comprehender<Queue> {
-
+    @Override
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final Queue apply) {
+        final List list = (List) apply.stream()
+                                      .collect(Collectors.toCollection(MaterializedList::new));
+        return list.size() > 0 ? comp.of(list) : comp.empty();
+    }
     @Override
     public Object map(Queue q, Function fn) {
         return QueueX.fromIterable(q).map(fn);

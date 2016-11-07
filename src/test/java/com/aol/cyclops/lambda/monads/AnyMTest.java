@@ -103,6 +103,14 @@ public class AnyMTest {
        assertThat(l,equalTo(Maybe.of(10)));
     }
     @Test
+    public void flatMapValueFirstSet(){
+     
+       Maybe l= AnyM.fromMaybe(Maybe.of(1))
+            .flatMapFirst(i->SetX.of(10,i))
+            .unwrap();
+       assertThat(l.get(),instanceOf(Integer.class));
+    }
+    @Test
     public void flatMapValueFirstQueue(){
      
         Maybe l= AnyM.fromMaybe(Maybe.of(1))

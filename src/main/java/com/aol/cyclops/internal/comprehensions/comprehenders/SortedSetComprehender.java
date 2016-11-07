@@ -2,16 +2,24 @@ package com.aol.cyclops.internal.comprehensions.comprehenders;
 
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.Function;
 import java.util.stream.BaseStream;
+import java.util.stream.Collectors;
 
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SortedSetComprehender implements Comprehender<SortedSet> {
-
+    @Override
+    public Object resolveForCrossTypeFlatMap(final Comprehender comp, final SortedSet apply) {
+        final List list = (List) apply.stream()
+                                      .collect(Collectors.toCollection(MaterializedList::new));
+        return list.size() > 0 ? comp.of(list) : comp.empty();
+    }
     @Override
     public Object map(SortedSet t, Function fn) {
         return SortedSetX.fromIterable(t).map(fn);
