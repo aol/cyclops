@@ -224,7 +224,7 @@ public class Queue<T> implements Adapter<T> {
      * @return Java 8 Stream connnected to this Queue
      */
     public Stream<T> jdkStream() {
-       return jdkStream(100);
+       return jdkStream(1);
     }
 
     @Override

@@ -1,13 +1,8 @@
 package com.aol.cyclops.types;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 

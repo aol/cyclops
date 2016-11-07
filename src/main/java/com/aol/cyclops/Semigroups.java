@@ -1,8 +1,5 @@
 package com.aol.cyclops;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Deque;
@@ -13,7 +10,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -39,7 +35,6 @@ import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 

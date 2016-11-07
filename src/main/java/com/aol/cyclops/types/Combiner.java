@@ -1,15 +1,10 @@
 package com.aol.cyclops.types;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 
 import org.jooq.lambda.tuple.Tuple;
 
-import com.aol.cyclops.Semigroups;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.util.function.Curry;
 
 /**

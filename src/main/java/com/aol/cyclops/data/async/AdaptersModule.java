@@ -12,6 +12,8 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -273,6 +275,7 @@ public interface AdaptersModule {
         final Supplier<T> s;
         private final Continueable subscription;
         private final Queue queue;
+        static AtomicInteger count = new AtomicInteger(0);
 
         public ClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription, final Queue queue) {
             super(estimate,IMMUTABLE);
@@ -281,6 +284,17 @@ public interface AdaptersModule {
             this.subscription = subscription;
             this.queue = queue;
             this.subscription.addQueue(queue);
+            this.closed = new AtomicBoolean(false);
+        }
+        public ClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription, final Queue queue,AtomicBoolean closed) {
+            super(estimate,IMMUTABLE);
+            this.estimate = estimate;
+            this.s = s;
+            this.subscription = subscription;
+            this.queue = queue;
+            this.subscription.addQueue(queue);
+            this.closed =closed;
+            
         }
 
         public ClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription) {
@@ -289,6 +303,8 @@ public interface AdaptersModule {
             this.s = s;
             this.subscription = subscription;
             this.queue = null;
+            this.closed =  new AtomicBoolean(false);
+            
         }
 
         @Override
@@ -300,12 +316,14 @@ public interface AdaptersModule {
         public int characteristics() {
             return IMMUTABLE;
         }
-
+       final AtomicBoolean closed ;
         @Override
         public boolean tryAdvance(final Consumer<? super T> action) {
             Objects.requireNonNull(action);
 
             try {
+                if(closed.get())
+                    return false;
                 action.accept(s.get());
                 subscription.closeQueueIfFinished(queue);
                 return true;
@@ -315,9 +333,10 @@ public interface AdaptersModule {
                     e.getCurrentData()
                      .forEach(action);
                 }
+                closed.set(true);
                 return false;
             } catch (final Exception e) {
-
+                closed.set(true);
                 return false;
             } finally {
 
@@ -327,8 +346,9 @@ public interface AdaptersModule {
 
         @Override
         public Spliterator<T> trySplit() {
-            return new ClosingSpliterator(
-                                          estimate >>>= 1, s, subscription, queue);
+            
+            return new ClosingSpliterator<T>(
+                    estimate >>>= 1, s, subscription, queue,closed);
           
         }
         

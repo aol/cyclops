@@ -43,9 +43,10 @@ public class QueueTest {
 	@Test
 	public void parallelStreamClose(){
 	    int cores = Runtime.getRuntime().availableProcessors();
-        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(cores*16));
+	    
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(cores*2));
         
-        for(int k=0; k < 1000;k++) {
+        for(int k=0; k < 1_000;k++) {
             System.out.println(k);
             com.aol.cyclops.data.async.Queue<Integer> queue = QueueFactories.<Integer>boundedQueue(500).build();
             for(int z=0;z<6_00;z++){
