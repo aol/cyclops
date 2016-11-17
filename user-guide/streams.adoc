@@ -369,7 +369,7 @@ s.request(1);
 
 ==== forEachXEvents 
 
-since cyclops-react 7.2.0
+
 
 forEachXEvents allows users to consume only a specified amount of data from the Stream, returning a reactive-streams Subscription object that in turn allows more data to be consumed as needed. The forEachXEvents operator is similar to forEachXWithErrors but also accepts a Runnable that is run when the Stream has been completely consumed.
 
