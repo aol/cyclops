@@ -1,9 +1,19 @@
-# cyclops-react User Guide Files
-
 * [User Guide is here](https://github.com/aol/cyclops-react/wiki)
 
 
-* To view ascii doc files defined here use the links below for correct formatting
+
+
+
+
+
+
+
+
+
+
+
+
+To view ascii doc files defined here ( [User Guide is here](https://github.com/aol/cyclops-react/wiki)) use the links below for correct formatting
 
 * [working with collections user guide](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/Collections.adoc)
 * [working with streams user guide](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc)
