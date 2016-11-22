@@ -8,6 +8,10 @@ Future & functional based programming via JDK compatible extensions for Java 8 a
 
 * Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
 
+# Documentation
+
+* [User Guide](https://github.com/aol/cyclops-react/wiki)
+* [javadoc](http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/)
 
 ## Gradle
 
@@ -51,12 +55,6 @@ Used in Aol to build robust, performant & scalable asynchronous systems : featur
 
 * Very Extensible & integration with other projects via cyclops-integration modules.
 
-# Documentation
-
-* [user-guide : work in progress](https://github.com/aol/cyclops-react/tree/master/user-guide)
-* [simple-react wiki](https://github.com/aol/simple-react/wiki)
-* [cyclops wiki](https://github.com/aol/cyclops/wiki)
-* [javadoc](http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/)
 
 # Articles
 
