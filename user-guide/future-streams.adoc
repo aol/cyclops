@@ -1,5 +1,0 @@
-# FutureStreams
-
-(work in progress)
-
-cyclops-react provides two implementations of FutureStreams. These are essential Streams of Futures that are manipulatable and usable as if they were simple Streams of data elements. This makes them well suited for highly concurrent operations involving I/O. For example, loading and then processing large numbers of files in memory.
