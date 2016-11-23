@@ -1,5 +1,6 @@
 This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/wiki/Home/) may not always be up-to-date.
 - [Getting Started](#gettingStarted)
+- [Project Goals](#projectGoals)
 - [Some common features](#common)
 - [Collections](#collections)
 - [Functions](#functions)
@@ -28,7 +29,11 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 	- [Futures : Asynchronous execution](#asyncExec)
 	- [Eval : Lazy Evaluation](#lazyEval)
 	- [Trampoline : Recursion](#recursion)
-	- [Sum Types (Try, Xor, Maybe, FeatureToggle, Optionals)](#sum)
+	- [Sum Types (Optionals & Eithers)](#sum)
+		- [Maybe](#sumMaybe)
+		- [Try](#sumTry)
+		- [FeatureToggle](#sumFeatureToggle)
+		- [Xor](#sumXor)
 	- [Product types (Tuples)](#product)
 	- [Product & Sum types (Ior)](#productAndSum)
 	- [AnyM - a functor for Monads](#anyM)
@@ -41,7 +46,7 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 	- [An Introduction](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc)
 		- [to StreamUtils](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_streamutils)
 		- [to Streamable](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_streamable)
-		- [to Streamable](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_reactiveseq)
+		- [to ReactiveSeq](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_reactiveseq)
 		- [to HotStreams](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_hotstreams)
 		- [to Reactive Streams](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_reactive_streams)
 		- [to sliding and grouping](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_batching_windowing_and_sliding_views)
@@ -92,6 +97,11 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 
 * [Adding cyclops-react dependency](https://github.com/aol/cyclops-react/wiki/Adding-cyclops-react-as-a-dependency)
 * [Adding the legacy cyclops-modules](https://github.com/aol/cyclops/wiki/A-guide-to-using-cyclops-as-independent-modules)
+
+# <a name="projectGoals">Project Goals
+
+* [Project Goals](https://github.com/aol/cyclops-react/wiki/Project-goals)
+* [Interoperability](https://github.com/aol/cyclops-react/wiki/Interoperability)
 
 # <a name="common">Some common features
 
@@ -147,16 +157,29 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 * [Trampoline](https://github.com/aol/cyclops/wiki/Trampoline-:-Stackless-Recursion-for-Java-8)
 * [Trampolining: a practical guide for awesome Java Developers](https://medium.com/@johnmcclean/trampolining-a-practical-guide-for-awesome-java-developers-4b657d9c3076#.ecg7agr07)
 
-## <a name="sum">Sum Types (Try, Xor, Maybe, FeatureToggle)
+## <a name="sum">Sum Types
+
+* [Working with Optionals](https://github.com/aol/cyclops-react/wiki/Optionals)
+
+## <a name="sumMaybe">Maybe
+
+* [Maybe: just (like Haskell) / none](https://github.com/aol/cyclops-react/wiki/Maybe)
+* [Maybe: Future Java Today](https://medium.com/@johnmcclean/future-java-today-9eef0e4dd126#.7274sd23t)
+
+## <a name="sumTry">Try
 
 * [Try functional exception handling for Java 8](https://github.com/aol/cyclops/wiki/Try-:-functional-exception-handling-for-Java-8)
 * [Why cyclops-react Try](http://softwareengineering.stackexchange.com/a/319440/229756)
 * [Try examples](https://github.com/aol/cyclops/wiki/Try-examples)
 * [When Functional Try outperforms Try / Catch](https://medium.com/@johnmcclean/when-functional-try-outperforms-try-catch-c44e83ec7939#.mkmc0ihgq)
+
+## <a name="sumFeatureToggle">Feature Toggle
+
 * [Feature Toggling](https://github.com/aol/cyclops/wiki/Enable-and-disable-production-features)
 * [Feature Toggling with cyclops](https://medium.com/@johnmcclean/feature-toggling-with-cyclops-a29d1eead62c#.gqc0z6b2h) Blog post
-* [Maybe: A lazy tail-recursive version of Optional](https://medium.com/@johnmcclean/future-java-today-9eef0e4dd126#.7274sd23t)
-* [Working with Optionals](https://github.com/aol/cyclops-react/wiki/Optionals)
+
+## <a name="sumXor">Xor
+
 * [Validator : lazy active validator, works with Xor](https://github.com/aol/cyclops-react/wiki/Validator)
 * [Xor : exclusive Or, a right biased Either type](https://github.com/aol/cyclops-react/wiki/Xor)
 
@@ -198,6 +221,12 @@ Compose your own
 
 # <a name="reactiveStreams">Reactive Streams
 
+See also 
+
+* [ReactiveTask](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-ReactiveTask)
+* [HotStream](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-HotStream)
+* [PausableHotStream](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-PausableHotStream)
+
 ## <a name="rsSubscribers">Reactive Streams Publishers
 
 All cyclops-react data types implement Reactive Streams Publisher (e.g. extended collections, AnyM, Xor, Ior, Try, Maybe, FutureW, ReactiveSeq, LazyFutureStream and more).
@@ -206,7 +235,9 @@ All cyclops-react data types implement Reactive Streams Publisher (e.g. extended
 
 ## <a name="rsSubscribers">Reactive Streams Subscribers
 
+* [SeqSubscriber - subscribe to sequences / streams](https://github.com/aol/cyclops-react/wiki/ReactiveStreams-:-SeqSubscriber)
 * [ValueSubscriber - subscribe for a single value](https://github.com/aol/cyclops-react/wiki/Reactive-Streams-:-ValueSubscriber)
+* [QueueBasedSubscriber](https://github.com/aol/cyclops-react/wiki/ReactiveStreams-:-QueueBasedSubscriber)
 
 # <a name="streaming">Streaming
 
@@ -363,18 +394,26 @@ ReactiveSeq & LazyFutureStream extend jooλ's Seq. Extended Collections implemen
 
 cyclops-react Types are defined in the [types](http://static.javadoc.io/com.aol.simplereact/cyclops-react/1.0.2/com/aol/cyclops/types/package-frame.html) package and sub-packages
 
+
+
 * [ApplicativeFunctor](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-ApplicativeFunctor)
+* [BiFunctor](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-BiFunctor)
+* [Combiner](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Combiner)
+* [EmptyUnit](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-EmptyUnit)
 * [Filterable](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Filterable)
 * [Foldable](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Foldable)
 * [Functor](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Functor)
+* [HotStream](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-HotStream)
 * [MonadicValue](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-MonadicValue)
 * [MonadicValue1](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-MonadicValue1)
 * [MonadicValue2](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-MonadicValue2)
 * [PausableHotStream](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-PausableHotStream)
+* [ReactiveTask](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-ReactiveTask)
 * [To](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-To)
 * [Traversable](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Traversable)
 * [Value](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Value)
 * [Visitable](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Visitable)
+* [Unit](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Unit)
 * [Zippable](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Zippable)
 
 # <a name="forComp">For Comprehension Mechanics
