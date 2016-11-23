@@ -370,6 +370,7 @@ cyclops-react Types are defined in the [types](http://static.javadoc.io/com.aol.
 * [MonadicValue](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-MonadicValue)
 * [MonadicValue1](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-MonadicValue1)
 * [MonadicValue2](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-MonadicValue2)
+* [PausableHotStream](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-PausableHotStream)
 * [To](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-To)
 * [Traversable](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Traversable)
 * [Value](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Value)
