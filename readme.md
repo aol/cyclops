@@ -75,7 +75,6 @@ Used in Aol to build robust, performant & scalable asynchronous systems : featur
 * [JDBC Processing Options with cyclops-react](https://medium.com/@johnmcclean/jdbc-processing-options-with-cyclops-react-49d62b02f775#.1dh1ziaxv)
 * [Deterministic and Non-Deterministic Finite State Machines with Cyclops](http://sebastian-millies.blogspot.de/2015/11/deterministic-and-non-deterministic.html)
 
-[Old simple-react landing page](https://github.com/aol/simple-react/wiki/1.-simple-react-overview)
 
 [OSCON 2016 slides](http://cdn.oreillystatic.com/en/assets/1/event/154/AOL_s%20return%20to%20open%20source_%20An%20overview%20of%20Java%208%20library%20cyclops-react%20Presentation.pdf)
 
