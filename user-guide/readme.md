@@ -6,67 +6,57 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 - [Functions](#functions)
 	- [An Introduction](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc)
 		- [to FluentFunctions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_fluentfunctions)
-		- [to Mutable](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_mutable)
-		- [to LazyMutable](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_lazyimmutable)
-		- [to ExceptionSoftener](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_exceptionsoftener)
+		- [to Mutable, LazyImmutable & ExceptionSoftener](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_mutable)
 		- [to Memoization](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_memoization)
-		- [to Currying and Uncurrying](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_currying_uncurrying)
-		- [to Partial Application](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_partial_application)
+		- [to Currying, Uncurrying & Partial Application](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_currying_uncurrying)
 		- [to Type Inferencing](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_type_inferencing)
-	- [More Functions](#functions)
+	- [Read on more articles on functions ..](#functions)
 - [Control Structures](#control)
-	- [Structural Pattern matching and the visitor pattern](#patternMatching)
-		- [An introduction](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc)
-			- [to is/has](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_is_has)
-			- [to when/then/otherwise](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_when_then_otherwise_syntax)
-			- [to compositional predicates](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_compositional_predicates)
-			- [to recursive matching of data types](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_recursive_matching_of_datatypes)
-			- [to guard based recursive matching](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_guard_based_recursive_matching)
-			- [to structural based recursive matching](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_structural_recursive_matching)
-			- [to structural matching on JDK classes](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_structural_matching_on_jdk_classes)
-		- [More Pattern matching and the visitor pattern](#patternMatching)
 	- [Combiners (Monoids & Semigroups)](#combiners)
-	- [Futures : Asynchronous execution](#asyncExec)
+	- [Asynchronous execution](#asyncExec)
+		- [Futures](#asyncExecFutures)
+		- [SimpleReact : Bulk ops on Futures](#asyncExecBulk)
 	- [Eval : Lazy Evaluation](#lazyEval)
-	- [Trampoline : Recursion](#recursion)
-	- [Sum Types (Optionals & Eithers)](#sum)
+		- [Trampoline : Recursion](#recursion)
+	- [Sum & Product types (Optionals & Tuples)](#sum)
 		- [Maybe](#sumMaybe)
 		- [Try](#sumTry)
 		- [FeatureToggle](#sumFeatureToggle)
 		- [Xor](#sumXor)
-	- [Product types (Tuples)](#product)
-	- [Product & Sum types (Ior)](#productAndSum)
-	- [AnyM - a functor for Monads](#anyM)
-	- [For : for comprehensions api](#forApi)
-	- [Reader : Functional Dependency Injection](#reader)
+		- [Tuples : Product Types](#product)
+		- [Ior : both](#productAndSum)
+	- [Monads](#monads)
+		- [AnyM - a functor for Monads](#anyM)
+		- [Monad transformers via AnyM](#monadTransformers)
+		- [For : for comprehensions api](#forApi)
+		- [Reader : Functional Dependency Injection](#reader)
+	- [Structural Pattern matching](#patternMatching)
+		- [Visitor pattern](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/visitor-pattern.adoc)
+		- [An introduction](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc)
+			- [to the matching dsl](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_is_has)
+			- [to compositional predicates](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_compositional_predicates)
+			- [to recursive matching](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_recursive_matching_of_datatypes)
+			- [to structural matching on JDK classes](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_structural_matching_on_jdk_classes)
+		- [More Pattern matching and the visitor pattern](#patternMatching)
 - [Reactive Streams](#reactiveStreams)
 	- [Reactive Streams Publishers](#rsPublishers)
 	- [Reactive Streams Subscribers](#rsSubscribers)
 - [Streaming](#streaming)
 	- [An Introduction](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc)
-		- [to StreamUtils](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_streamutils)
-		- [to Streamable](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_streamable)
-		- [to ReactiveSeq](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_reactiveseq)
-		- [to HotStreams](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_hotstreams)
-		- [to Reactive Streams](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_reactive_streams)
+		- [to StreamUtils, Streamable & ReactiveSeq](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_streamutils)
+		- [to HotStreams and Reactive Streams](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_hotstreams)
 		- [to sliding and grouping](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_batching_windowing_and_sliding_views)
 		- [to value extraction](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_value_extraction)
 		- [to error handling](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_error_handling)
 		- [to scheduling](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_scheduling)
-		- [to time ops / onePer / debounce](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_time_based_operators)
+		- [to time based ops / onePer / debounce](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_time_based_operators)
 		- [to zipping](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_zipping)
 		- [to efficient reversal](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_efficient_reversal)
 		- [to take / drop / cycle](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_limit_skip_take_drop_cycle)
-		- [to flatMap ops](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_flatmap_operators_flatten)
-		- [to map ops](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_map_operators_map_cast)
-		- [to for comprehensions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_for_comprehensions)
-		- [to empty stream handling](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_empty_stream_handling)
-		- [to stream with a single value](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_stream_with_a_single_value)
-		- [to alt filter ops](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_filtering_filter_remove_oftype)
-		- [to scanLeft / scanRight](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_scanleft_scanright)
-		- [to assertions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_assertions)
-		- [to folds](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_foldleft_foldright_join_reduce)
-		- [to conversions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_conversions)
+		- [to flatMap / map and for comprehensions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_flatmap_operators_flatten)
+		- [to empty stream and single value handling](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_empty_stream_handling)
+		- [to filtering and scanning](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_filtering_filter_remove_oftype)
+		- [to assertions, folds & conversions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_assertions)
 		- [to async ops](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_async_terminal_operations)
 	- [Performance](#performance)
 	- [Pushing data into Streams](#pushing)
@@ -77,6 +67,7 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 		- [Backpressure](#backpressure)
 	- [SQL Window functions (and more) inherited from jooλ](#jooλ) 
 	- [ReactiveSeq (powerful sequential Streaming)](#reactiveSeq)
+	 	- [ReactiveSeq examples](https://github.com/aol/cyclops/wiki/ReactiveSeq-:-Examples)
 	- [FutureStreams](#futureStreams)
 		- [Operators](#fsOperators)
 			- [The tutorial (with videos)](#fsTutorial)
@@ -85,7 +76,6 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 			- [Performance](#fsPerformance)
 			- [Acting on Futures or Acting on Results](#fsActingOnFutures)
 			- [Configuration](#fsConfiguration)
-- [Monad transformers via AnyM](#monadTransformers)
 - [Type Interfaces in cyclops-react](#typeInterfaces)
 - [Low level For Comprehensions](#forComp)
 - [Higher Kinded Types](#hkt)
@@ -144,8 +134,18 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 
 ## <a name="asyncExec">Asynchronous execution
 
-* [CompletableFutures for working with CompletableFutues](https://github.com/aol/cyclops-react/wiki/CompletableFutures)
+## <a name="asyncExecFutures">Futures
+
 * [FutureW - a better CompletableFuture API](https://github.com/aol/cyclops-react/wiki/FutureW)
+* [CompletableFutures for working with CompletableFutues](https://github.com/aol/cyclops-react/wiki/CompletableFutures)
+
+## <a name="asyncExecBulk">SimpleReact : Future Bulk Ops
+
+* [SimpleReact : Stream of Futures](https://github.com/aol/cyclops-react/wiki/SimpleReact-overview)
+* [Let the illusion die : roll your own](https://medium.com/@johnmcclean/let-the-illusion-die-ad2318282bf8#.jkww8pmmp)
+* [SimpleReact : DataFlow](https://github.com/aol/cyclops-react/wiki/What-does-SimpleReact-do%3F)
+
+See FutureStreams below for more advanced - infinite lazy Streams of Futures with a huge range of extended operators
 
 ## <a name="lazyEval">Lazy Evaluation
 
@@ -192,7 +192,9 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 
 * [Ior](https://github.com/aol/cyclops-react/wiki/Ior)
 
-## <a name="anyM">Abstract over monads (AnyM)
+## <a name="monads">Monads
+
+## <a name="anyM">A Functor for monads (AnyM)
 
 AnyM is a functor for Monads, with two monadic sub-types. AnyMValue a monad for monadic values. AnyMSeq a monad for non-scalar monads.
 
@@ -201,6 +203,16 @@ AnyM is a functor for Monads, with two monadic sub-types. AnyMValue a monad for 
 * [AnyM for comprehensions](https://github.com/aol/cyclops/wiki/cyclops-monad-api-:---AnyM---for-comprehension-operators-(forEach2,-forEach3))
 * [Introduction to the cyclops-monad API](https://medium.com/@johnmcclean/introducing-the-cyclops-monad-api-a7a6b7967f4d#.7r6hyotds)
 * [cyclops-react organizes the cambrian expolsion of Java 8 libraries](https://blog.jooq.org/2016/05/12/cyclops-react-organises-the-cambrian-explosion-of-java-8-libraries/)
+
+#  <a name="monadTransformers">Monad transformers via AnyM
+
+[AnyM Refresher](https://github.com/aol/cyclops-react/wiki/AnyM)
+
+* [ListT example](https://github.com/aol/cyclops-react/wiki/ListT)
+* [OptionalT example](https://github.com/aol/cyclops-react/wiki/OptionalT)
+* [MaybeT example](https://github.com/aol/cyclops-react/wiki/MaybeT)
+* [FutureWT example](https://github.com/aol/cyclops-react/wiki/FutureWT)
+* [CompletableFutureT](https://github.com/aol/cyclops-react/wiki/CompletableFutureT)
 
 ## <a name="forApi">For comprehension API
 
@@ -283,7 +295,7 @@ All cyclops-react data types implement Reactive Streams Publisher (e.g. extended
 
 * [Applying Backpressure across Streams](https://medium.com/@johnmcclean/applying-back-pressure-across-streams-f8185ad57f3a#.szymzi9nj)
 
-## <a name="jooλ">Features inherited from jooλ 
+## <a name="jooλ">SQL Style Streaming : Features inherited from jooλ 
 
 ReactiveSeq & LazyFutureStream extend jooλ's Seq. Extended Collections implement jooλ Collection API.
 
@@ -302,12 +314,13 @@ ReactiveSeq & LazyFutureStream extend jooλ's Seq. Extended Collections implemen
 * [Scheduling Streams example](https://medium.com/@johnmcclean/how-to-schedule-emission-from-a-stream-in-java-aa2dafda7c07#.6se0q2fpw) blog post
 * [Asynchronous execution](https://github.com/aol/cyclops/wiki/cyclops-streams-:-Asynchronous-Terminal-Operations)
 * [For comprehensions](https://github.com/aol/cyclops/wiki/cyclops-streams---ReactiveSeq---for-comprehension-operators-(forEach2,-forEach3))
-* [ReactiveSeq examples](https://github.com/aol/cyclops/wiki/cyclops-streams-%3A-Streaming-examples/_edit)
+* [ReactiveSeq examples](https://github.com/aol/cyclops/wiki/ReactiveSeq-:-Examples)
 
 ## <a name="futureStreams">FutureStreams
 
 * [LazyFutureStream overview](https://github.com/aol/cyclops-react/wiki/LazyFutureStream) : A powerful API for infinite parallel Streaming
-* [SimpleReactStream overview](https://github.com/aol/cyclops-react/wiki/1.-simple-react-overview) : an easy to use API for finite eager parellel Streaming
+* [SimpleReactStream overview](https://github.com/aol/cyclops-react/wiki/simple-react-streams-overview) : an easy to use API for finite eager parellel Streaming
+* [Stream type overview](https://github.com/aol/cyclops-react/wiki/simple-react-streams-overview)
 * [LazyFutureStream & reactive-streams](https://github.com/aol/cyclops-react/wiki/A-Reactive-Streams-Publisher-or-Subscriber)
 * [A simple API (simple-react) and a rich api (LazyFutureStream](https://github.com/aol/cyclops-react/wiki/A-simple-API,-and-a-Rich-API)
 * [Asynchronous terminal operations](https://github.com/aol/cyclops-react/wiki/Asynchronous-terminal-operations)
@@ -380,15 +393,6 @@ ReactiveSeq & LazyFutureStream extend jooλ's Seq. Extended Collections implemen
 * [Separating task executors](https://github.com/aol/cyclops-react/wiki/Separating-Task-Executors)
 
 
-#  <a name="monadTransformers">Monad transformers via AnyM
-
-[AnyM Refresher](https://github.com/aol/cyclops-react/wiki/AnyM)
-
-* [ListT example](https://github.com/aol/cyclops-react/wiki/ListT)
-* [OptionalT example](https://github.com/aol/cyclops-react/wiki/OptionalT)
-* [MaybeT example](https://github.com/aol/cyclops-react/wiki/MaybeT)
-* [FutureWT example](https://github.com/aol/cyclops-react/wiki/FutureWT)
-* [CompletableFutureT](https://github.com/aol/cyclops-react/wiki/CompletableFutureT)
 
 #  <a name="typeInterfaces">Type Interfaces in cyclops-react
 
