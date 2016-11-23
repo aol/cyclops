@@ -1,5 +1,4 @@
 This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/wiki/Home/) may not always be up-to-date.
-
 - [Getting Started](#gettingStarted)
 - [Some common features](#common)
 - [Collections](#collections)
@@ -16,13 +15,43 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 	- [AnyM - a functor for Monads](#anyM)
 	- [For : for comprehensions api](#forApi)
 	- [Reader : Functional Dependency Injection](#reader)
+- [Reactive Streams](#reactiveStreams)
+	- [Reactive Streams Publishers](#rsPublishers)
+	- [Reactive Streams Subscribers](#rsSubscribers)
 - [Streaming](#streaming)
+	- [An Introduction](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc)
+		- [to StreamUtils](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_streamutils)
+		- [to Streamable](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_streamable)
+		- [to Streamable](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_introduction_to_reactiveseq)
+		- [to HotStreams](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_hotstreams)
+		- [to Reactive Streams](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_reactive_streams)
+		- [to sliding and grouping](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_batching_windowing_and_sliding_views)
+		- [to value extraction](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_value_extraction)
+		- [to error handling](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_error_handling)
+		- [to scheduling](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_scheduling)
+		- [to time ops / onePer / debounce](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_time_based_operators)
+		- [to zipping](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_zipping)
+		- [to efficient reversal](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_efficient_reversal)
+		- [to take / drop / cycle](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_limit_skip_take_drop_cycle)
+		- [to flatMap ops](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_flatmap_operators_flatten)
+		- [to map ops](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_map_operators_map_cast)
+		- [to for comprehensions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_for_comprehensions)
+		- [to empty stream handling](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_empty_stream_handling)
+		- [to stream with a single value](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_stream_with_a_single_value)
+		- [to alt filter ops](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_filtering_filter_remove_oftype)
+		- [to scanLeft / scanRight](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_scanleft_scanright)
+		- [to assertions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_assertions)
+		- [to folds](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_foldleft_foldright_join_reduce)
+		- [to conversions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_conversions)
+		- [to async ops](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_async_terminal_operations)
 	- [Performance](#performance)
 	- [Pushing data into Streams](#pushing)
+		- [StreamSource](#streamSource)
+		- [Pipes](#pipes)
 	- [Repeatable Streams (Streamable)](#repeating)
 	- [Plumbing Streams](#plumbing)
 		- [Backpressure](#backpressure)
-	- [Features inherited from jooλ](#jooλ) 
+	- [SQL Window functions (and more) inherited from jooλ](#jooλ) 
 	- [ReactiveSeq (powerful sequential Streaming)](#reactiveSeq)
 	- [FutureStreams](#futureStreams)
 		- [Operators](#fsOperators)
@@ -31,7 +60,7 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 		- [FutureStream concepts](#fsConcepts)
 			- [Performance](#fsPerformance)
 			- [Acting on Futures or Acting on Results](#fsActingOnFutures)
-			- [Configuration](#fsConfigruation)
+			- [Configuration](#fsConfiguration)
 - [Monad transformers via AnyM](#monadTransformers)
 - [Type Interfaces in cyclops-react](#typeInterfaces)
 - [Low level For Comprehensions](#forComp)
@@ -127,7 +156,7 @@ AnyM is a functor for Monads, with two monadic sub-types. AnyMValue a monad for 
 
 * [AnyM intro](https://github.com/aol/cyclops-react/wiki/AnyM)
 * [AnyM creational methods](https://github.com/aol/cyclops/wiki/cyclops-moand-api-:-Creating-an-instanceof-AnyM)
-* [AnyM for comprehensions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/visitor-pattern.adoc)
+* [AnyM for comprehensions](https://github.com/aol/cyclops/wiki/cyclops-monad-api-:---AnyM---for-comprehension-operators-(forEach2,-forEach3))
 * [Introduction to the cyclops-monad API](https://medium.com/@johnmcclean/introducing-the-cyclops-monad-api-a7a6b7967f4d#.7r6hyotds)
 * [cyclops-react organizes the cambrian expolsion of Java 8 libraries](https://blog.jooq.org/2016/05/12/cyclops-react-organises-the-cambrian-explosion-of-java-8-libraries/)
 
@@ -148,8 +177,22 @@ Compose your own
 
 * [Reader functional dependency injection](https://github.com/aol/cyclops-react/wiki/Reader-:-functional-dependency-injection)
 
+# <a name="reactiveStreams">Reactive Streams
+
+## <a name="rsSubscribers">Reactive Streams Publishers
+
+All cyclops-react data types implement Reactive Streams Publisher (e.g. extended collections, AnyM, Xor, Ior, Try, Maybe, FutureW, ReactiveSeq, LazyFutureStream and more).
+
+* [Example : Reactive Streams Publisher & Subscriber](https://github.com/aol/cyclops-react/wiki/A-Reactive-Streams-Publisher-or-Subscriber)
+
+## <a name="rsSubscribers">Reactive Streams Subscribers
+
+* [ValueSubscriber - subscribe for a single value](https://github.com/aol/cyclops-react/wiki/Reactive-Streams-:-ValueSubscriber)
+
 # <a name="streaming">Streaming
 
+
+* [Introduction to cyclops-react Streams](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc))
 * [Streaming overview](https://github.com/aol/cyclops/wiki/Streams-in-cyclops-overview) : ReactiveSeq, Streamable and more
 * [A rational : Java 8 Streams 10 missing features](https://medium.com/@johnmcclean/java-8-streams-10-missing-features-ec82ee90b6c0)
 
@@ -161,10 +204,16 @@ Compose your own
 
 ## <a name="pushing">Pushing data into Streams
 
-* [StreamSource](https://github.com/aol/cyclops-react/wiki/StreamSource) for pushable Streams
-* [Pipes event bus](https://github.com/aol/cyclops-react/wiki/Pipes-:-an-event-bus)
-* [Pushing data into Java 8 Streams](http://jroller.com/ie/entry/pushing_data_into_java_8) - blog entry
 * [Stackoverflow answer showing how to do it with Queues](http://stackoverflow.com/a/28967294)
+
+## <a name="streamSource">StreamSource
+
+* [StreamSource](https://github.com/aol/cyclops-react/wiki/StreamSource) for pushable Streams
+* [Pushing data into Java 8 Streams](http://jroller.com/ie/entry/pushing_data_into_java_8) - blog entry
+
+## <a name="streamSource">Pipes
+
+* [Pipes event bus](https://github.com/aol/cyclops-react/wiki/Pipes-:-an-event-bus)
 
 ## <a name="repeatable">Repeatable Streams (Streamable)
 
@@ -297,6 +346,7 @@ cyclops-react Types are defined in the [types](http://static.javadoc.io/com.aol.
 
 * [ApplicativeFunctor](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-ApplicativeFunctor)
 * [Filterable](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Filterable)
+* [Foldable](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Foldable)
 * [Functor](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-Functor)
 * [MonadicValue](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-MonadicValue)
 * [MonadicValue1](https://github.com/aol/cyclops-react/wiki/Type-Interfaces-:-MonadicValue1)
