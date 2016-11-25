@@ -10,13 +10,14 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 		- [to Memoization](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_memoization)
 		- [to Currying, Uncurrying & Partial Application](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_currying_uncurrying)
 		- [to Type Inferencing](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_type_inferencing)
-	- [Read on more articles on functions ..](#functions)
+	- [Read on more articles on functions..](#functions)
 - [Control Structures](#control)
 	- [Combiners (Monoids & Semigroups)](#combiners)
 	- [Asynchronous execution](#asyncExec)
 		- [Futures](#asyncExecFutures)
 		- [SimpleReact : Bulk ops on Futures](#asyncExecBulk)
-	- [Eval : Lazy Evaluation](#lazyEval)
+	- [Lazy Evaluation](#lazy)
+		- [Eval](#lazyEval)
 		- [Trampoline : Recursion](#recursion)
 	- [Sum & Product types (Optionals & Tuples)](#sum)
 		- [Maybe](#sumMaybe)
@@ -37,7 +38,7 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 			- [to compositional predicates](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_compositional_predicates)
 			- [to recursive matching](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_recursive_matching_of_datatypes)
 			- [to structural matching on JDK classes](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/pattern-matching.adoc#_structural_matching_on_jdk_classes)
-		- [More Pattern matching and the visitor pattern](#patternMatching)
+		- [Read more articles on pattern matching..](#patternMatching)
 - [Reactive Streams](#reactiveStreams)
 	- [Reactive Streams Publishers](#rsPublishers)
 	- [Reactive Streams Subscribers](#rsSubscribers)
@@ -134,12 +135,12 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 
 ## <a name="asyncExec">Asynchronous execution
 
-## <a name="asyncExecFutures">Futures
+### <a name="asyncExecFutures">Futures
 
 * [FutureW - a better CompletableFuture API](https://github.com/aol/cyclops-react/wiki/FutureW)
 * [CompletableFutures for working with CompletableFutues](https://github.com/aol/cyclops-react/wiki/CompletableFutures)
 
-## <a name="asyncExecBulk">SimpleReact : Future Bulk Ops
+### <a name="asyncExecBulk">SimpleReact : Future Bulk Ops
 
 * [SimpleReact : Stream of Futures](https://github.com/aol/cyclops-react/wiki/SimpleReact-overview)
 * [Let the illusion die : roll your own](https://medium.com/@johnmcclean/let-the-illusion-die-ad2318282bf8#.jkww8pmmp)
@@ -147,12 +148,14 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 
 See FutureStreams below for more advanced - infinite lazy Streams of Futures with a huge range of extended operators
 
-## <a name="lazyEval">Lazy Evaluation
+## <a name="lazy">Lazy Evaluation
+
+### <a name="lazyEval">Eval
 
 * [Eval - monadic, tail recursive, lazy evaluation with caching](https://github.com/aol/cyclops-react/wiki/Eval)
 * [Brief introduction to Eval](https://docs.google.com/presentation/d/1vqaangBCl9ibzewE7KXzMhevjmMWBrAgJixi5cOqb_A/edit?usp=sharing)
 
-## <a name="recursion">Recursion
+### <a name="recursion">Recursion
 
 * [Trampoline](https://github.com/aol/cyclops/wiki/Trampoline-:-Stackless-Recursion-for-Java-8)
 * [Trampolining: a practical guide for awesome Java Developers](https://medium.com/@johnmcclean/trampolining-a-practical-guide-for-awesome-java-developers-4b657d9c3076#.ecg7agr07)
@@ -161,40 +164,40 @@ See FutureStreams below for more advanced - infinite lazy Streams of Futures wit
 
 * [Working with Optionals](https://github.com/aol/cyclops-react/wiki/Optionals)
 
-## <a name="sumMaybe">Maybe
+### <a name="sumMaybe">Maybe
 
 * [Maybe: just (like Haskell) / none](https://github.com/aol/cyclops-react/wiki/Maybe)
 * [Maybe: Future Java Today](https://medium.com/@johnmcclean/future-java-today-9eef0e4dd126#.7274sd23t)
 
-## <a name="sumTry">Try
+### <a name="sumTry">Try
 
 * [Try functional exception handling for Java 8](https://github.com/aol/cyclops/wiki/Try-:-functional-exception-handling-for-Java-8)
 * [Why cyclops-react Try](http://softwareengineering.stackexchange.com/a/319440/229756)
 * [Try examples](https://github.com/aol/cyclops/wiki/Try-examples)
 * [When Functional Try outperforms Try / Catch](https://medium.com/@johnmcclean/when-functional-try-outperforms-try-catch-c44e83ec7939#.mkmc0ihgq)
 
-## <a name="sumFeatureToggle">Feature Toggle
+### <a name="sumFeatureToggle">Feature Toggle
 
 * [Feature Toggling](https://github.com/aol/cyclops/wiki/Enable-and-disable-production-features)
 * [Feature Toggling with cyclops](https://medium.com/@johnmcclean/feature-toggling-with-cyclops-a29d1eead62c#.gqc0z6b2h) Blog post
 
-## <a name="sumXor">Xor
+### <a name="sumXor">Xor
 
 * [Validator : lazy active validator, works with Xor](https://github.com/aol/cyclops-react/wiki/Validator)
 * [Xor : exclusive Or, a right biased Either type](https://github.com/aol/cyclops-react/wiki/Xor)
 
-## <a name="product">Product types (Tuples)
+### <a name="product">Product types (Tuples)
 
 * [Tuples from jOOλ](http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.11/org/jooq/lambda/tuple/package-frame.html): Javadoc link. cyclops-react extends jooλ
 * [Power Tuples independent cyclops module](https://github.com/aol/cyclops/wiki/Power-Tuples)
 
-## <a name="productAndSum">Product & Sum types
+### <a name="productAndSum">Product & Sum types
 
 * [Ior](https://github.com/aol/cyclops-react/wiki/Ior)
 
 ## <a name="monads">Monads
 
-## <a name="anyM">A Functor for monads (AnyM)
+### <a name="anyM">A Functor for monads (AnyM)
 
 AnyM is a functor for Monads, with two monadic sub-types. AnyMValue a monad for monadic values. AnyMSeq a monad for non-scalar monads.
 
@@ -204,7 +207,7 @@ AnyM is a functor for Monads, with two monadic sub-types. AnyMValue a monad for 
 * [Introduction to the cyclops-monad API](https://medium.com/@johnmcclean/introducing-the-cyclops-monad-api-a7a6b7967f4d#.7r6hyotds)
 * [cyclops-react organizes the cambrian expolsion of Java 8 libraries](https://blog.jooq.org/2016/05/12/cyclops-react-organises-the-cambrian-explosion-of-java-8-libraries/)
 
-#  <a name="monadTransformers">Monad transformers via AnyM
+###  <a name="monadTransformers">Monad transformers via AnyM
 
 [AnyM Refresher](https://github.com/aol/cyclops-react/wiki/AnyM)
 
@@ -214,7 +217,7 @@ AnyM is a functor for Monads, with two monadic sub-types. AnyMValue a monad for 
 * [FutureWT example](https://github.com/aol/cyclops-react/wiki/FutureWT)
 * [CompletableFutureT](https://github.com/aol/cyclops-react/wiki/CompletableFutureT)
 
-## <a name="forApi">For comprehension API
+### <a name="forApi">For comprehension API
 
 * [For intro](https://github.com/aol/cyclops-react/wiki/For)
 
@@ -227,7 +230,7 @@ Compose your own
 
 * [Low level For Comprehensions](#forComp)
 
-## <a name="reader">Reader monad
+### <a name="reader">Reader monad
 
 * [Reader functional dependency injection](https://github.com/aol/cyclops-react/wiki/Reader-:-functional-dependency-injection)
 
@@ -254,7 +257,7 @@ All cyclops-react data types implement Reactive Streams Publisher (e.g. extended
 # <a name="streaming">Streaming
 
 
-* [Introduction to cyclops-react Streams](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc))
+* [Introduction to cyclops-react Streams](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc)
 * [Streaming overview](https://github.com/aol/cyclops/wiki/Streams-in-cyclops-overview) : ReactiveSeq, Streamable and more
 * [A rational : Java 8 Streams 10 missing features](https://medium.com/@johnmcclean/java-8-streams-10-missing-features-ec82ee90b6c0)
 
@@ -438,6 +441,8 @@ Using the cyclops-react Do builder. In general prefer using com.aol.cyclops.cont
 [monad,applicative, functor, unit, monadPlus based on HKT]
 
 * [Type classes](https://github.com/aol/cyclops/wiki/Type-classes)
+
+* [Applicative Type Class](https://github.com/aol/cyclops/wiki/Type-Classes-:-Applicative)
 
 # <a name="integrations">Integrations
 
