@@ -3,6 +3,11 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 - [Project Goals](#projectGoals)
 - [Some common features](#common)
 - [Collections](#collections)
+	- [Collection eXtentions](#collectionsX)
+	- [Scala](#collectionsScala)
+	- [Clojure](#collectionsClojure)
+	- [Dexx](#collectionsDexx)
+	- [JavaSlang](#collectionsJavaSlang)
 - [Functions](#functions)
 	- [An Introduction](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc)
 		- [to FluentFunctions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/lambdas.adoc#_fluentfunctions)
@@ -101,9 +106,28 @@ This is a mirror of the [wiki user guide](https://github.com/aol/cyclops-react/w
 
 # <a name="collections">Collections
 
+## <a name="collectionsX">Collections eXtensions
+
 * [Working with persistent and mutable collections](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/Collections.adoc)
 * [Lazy Extended Collections](https://medium.com/@johnmcclean/faster-lazy-extended-powerful-jdk-collections-5a519ab582ae#.m6cbebjs5) - Fast and powerful
 * [Extending JDK 8 Collections](https://medium.com/@johnmcclean/extending-jdk-8-collections-8ae8d43dd75e#.3grjedpnb)
+
+## <a name="collectionsScala">Scala
+
+* [Scala Persistent Collection Bindings](https://github.com/aol/cyclops-react/wiki/Scala-&-cyclops-collections)
+
+## <a name="collectionsClojure">Clojure
+
+* [Clojure Persistent Collection Bindings](https://github.com/aol/cyclops-react/wiki/Clojure-and-cyclops-collections)
+
+## <a name="collectionsDexx">Dexx
+
+* [Dexx Persistent Collection Bindings](https://github.com/aol/cyclops-react/wiki/Dexx-and-cyclops-collections)
+
+
+## <a name="collectionsJavaSlang">JavaSlang
+
+* [JavaSlang Persistent Collection Bindings](https://github.com/aol/cyclops-react/wiki/JavaSlang-and-cyclops-collections)
 
 # <a name="functions">Functions
 
