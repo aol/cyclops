@@ -39,9 +39,9 @@ public class MemoiseTest {
 	@Test
     public void testNullPredicate(){
        Predicate<String> str = memoizePredicate(a->{++called; return true;});
-       assertThat(str.test(null),equalTo("hello"));
-       assertThat(str.test(null),equalTo("hello"));
-       assertThat(str.test(null),equalTo("hello"));
+       assertThat(str.test(null),equalTo(true));
+       assertThat(str.test(null),equalTo(true));
+       assertThat(str.test(null),equalTo(true));
        assertThat(called,equalTo(1));
     }
 	@Test
