@@ -29,6 +29,22 @@ public class MemoiseTest {
 		called = 0;
 	}
 	@Test
+	public void testNullFunction(){
+	   Function<String,String> str = memoizeFunction(a->{++called; return "hello";});
+	   assertThat(str.apply(null),equalTo("hello"));
+	   assertThat(str.apply(null),equalTo("hello"));
+	   assertThat(str.apply(null),equalTo("hello"));
+	   assertThat(called,equalTo(1));
+	}
+	@Test
+    public void testNullPredicate(){
+       Predicate<String> str = memoizePredicate(a->{++called; return true;});
+       assertThat(str.test(null),equalTo("hello"));
+       assertThat(str.test(null),equalTo("hello"));
+       assertThat(str.test(null),equalTo("hello"));
+       assertThat(called,equalTo(1));
+    }
+	@Test
 	public void testMemoiseSupplier() {
 		
 		Supplier<Integer> s = memoizeSupplier(()->++called);
