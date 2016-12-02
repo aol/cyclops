@@ -223,7 +223,16 @@ public interface ListX<T> extends To<ListX<T>>,
                                            .collect(collector),
                                 collector);
     }
+    @Override
+    default ListX<T> take(final long num) {
 
+        return (ListX<T>) MutableCollectionX.super.limit(num);
+    }
+    @Override
+    default DequeX<T> drop(final long num) {
+
+        return (DequeX<T>) MutableCollectionX.super.skip(num);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
      */

@@ -193,6 +193,17 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
                        .mapReduce(stream);
     }
 
+    @Override
+    default PQueueX<T> take(final long num) {
+
+        return limit(num);
+    }
+    @Override
+    default PQueueX<T> drop(final long num) {
+
+        return skip(num);
+    }
+    
     /**
      * Combine two adjacent elements in a PQueueX using the supplied
      * BinaryOperator This is a stateful grouping & reduction operation. The

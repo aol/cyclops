@@ -32,7 +32,7 @@ public class ClojureOrJava8 {
         
         
         
-        ListX<Integer> org = ListX.of(10,20,30);
+        ListX<Integer> org = ListX.of(10,20,30).limit(num);
         List<Integer> mapped = org.map(i->i*2);
     
     }

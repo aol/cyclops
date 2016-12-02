@@ -677,7 +677,20 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
     default Traversable<T> takeRight(final int num) {
         return limitLast(num);
     }
-
+    /**
+     * <pre>
+     * {@code assertThat(ReactiveSeq.of(4,3,6,7).drop(2).toList(),equalTo(Arrays.asList(6,7))); }
+     * </pre>
+     * 
+     * 
+     * 
+     * @param num
+     *            Number of elemenets to drop
+     * @return Traversable with specified number of elements skipped
+     */
+    default Traversable<T> drop(final long num) {
+        return traversable().skip(num);
+    }
     /**
      * <pre>
      * {@code assertThat(ReactiveSeq.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
@@ -727,6 +740,20 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      */
     default Traversable<T> skipUntil(final Predicate<? super T> p) {
         return traversable().skipUntil(p);
+    }
+    /**
+     * 
+     * 
+     * <pre>
+     * {@code assertThat(ReactiveSeq.of(4,3,6,7).take(2).toList(),equalTo(Arrays.asList(4,3));}
+     * </pre>
+     * 
+     * @param num
+     *            Limit element size to num
+     * @return Monad converted to Stream with elements up to num
+     */
+    default Traversable<T> take(final long num) {
+        return traversable().limit(num);
     }
 
     /**

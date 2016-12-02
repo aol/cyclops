@@ -30,10 +30,8 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
 
 public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEmptySwitch<T, Set<T>> {
 
@@ -171,6 +169,17 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
                                StreamUtils.stream(it)
                                           .collect(collector),
                                collector);
+    }
+    
+    @Override
+    default SetX<T> take(final long num) {
+
+        return (SetX<T>) MutableCollectionX.super.limit(num);
+    }
+    @Override
+    default SetX<T> drop(final long num) {
+
+        return (SetX<T>) MutableCollectionX.super.skip(num);
     }
 
     /**

@@ -31,10 +31,8 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
 
 public interface PVectorX<T> extends To<PVectorX<T>>,PVector<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PVector<T>> {
 
@@ -284,6 +282,16 @@ public interface PVectorX<T> extends To<PVectorX<T>>,PVector<T>, PersistentColle
         return (PVectorX<T>) PersistentCollectionX.super.combine(predicate, op);
     }
  
+    @Override
+    default PVectorX<T> take(final long num) {
+
+        return limit(num);
+    }
+    @Override
+    default PVectorX<T> drop(final long num) {
+
+        return skip(num);
+    }
     default PVector<T> toPVector() {
         return this;
     }

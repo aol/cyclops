@@ -31,10 +31,8 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
 
 public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
     /**
@@ -187,7 +185,16 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         return Reducers.<T> toPSetX()
                        .mapReduce(stream);
     }
+    @Override
+    default PSetX<T> take(final long num) {
 
+        return limit(num);
+    }
+    @Override
+    default PSetX<T> drop(final long num) {
+
+        return skip(num);
+    }
     @Override
     default PSetX<T> toPSetX() {
         return this;

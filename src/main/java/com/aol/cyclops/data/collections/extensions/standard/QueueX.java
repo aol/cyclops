@@ -168,6 +168,16 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
 
     public <T> Collector<T, ?, Queue<T>> getCollector();
 
+    @Override
+    default QueueX<T> take(final long num) {
+
+        return (QueueX<T>) MutableCollectionX.super.limit(num);
+    }
+    @Override
+    default QueueX<T> drop(final long num) {
+
+        return (QueueX<T>) MutableCollectionX.super.skip(num);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
      */

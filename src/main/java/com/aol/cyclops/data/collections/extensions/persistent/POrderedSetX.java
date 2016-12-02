@@ -206,7 +206,16 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
         return Reducers.<T> toPOrderedSetX()
                        .mapReduce(stream);
     }
+    @Override
+    default POrderedSetX<T> take(final long num) {
 
+        return limit(num);
+    }
+    @Override
+    default POrderedSetX<T> drop(final long num) {
+
+        return skip(num);
+    }
     @Override
     default POrderedSetX<T> toPOrderedSetX() {
         return this;
