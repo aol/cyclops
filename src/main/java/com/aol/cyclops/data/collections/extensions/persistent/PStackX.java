@@ -272,7 +272,28 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
     default PStackX<T> toPStackX() {
         return this;
     }
-
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     PStackX.of(1,2,3)
+     *          .map(i->i*2)
+     *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *     //PStackX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed PStackX
+     */
+    default <R> PStackX<R> coflatMap(Function<? super PStackX<T>, ? extends R> fn){
+       return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
     /**
     * Combine two adjacent elements in a PStackX using the supplied BinaryOperator
     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

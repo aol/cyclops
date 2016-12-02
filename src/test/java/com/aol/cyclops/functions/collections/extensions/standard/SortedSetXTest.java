@@ -11,6 +11,7 @@ import java.util.function.UnaryOperator;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
@@ -20,6 +21,13 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     @Override
     public <T> FluentCollectionX<T> of(T... values) {
         return SortedSetX.of(values);
+    }
+    @Test
+    public void coflatMap(){
+       assertThat(SortedSetX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
     }
     @Test
     public void onEmptySwitch(){

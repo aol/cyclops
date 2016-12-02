@@ -22,6 +22,13 @@ public class PVectorXTest extends CollectionXTestsWithNulls{
 		return PVectorX.of(values);
 	}
 	@Test
+    public void coflatMap(){
+       assertThat(PVectorX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
+    }
+	@Test
     public void onEmptySwitch(){
             assertThat(PVectorX.empty().onEmptySwitch(()->PVectorX.of(1,2,3)),equalTo(PVectorX.of(1,2,3)));
     }

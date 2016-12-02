@@ -10,9 +10,18 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 
 import org.junit.Test;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class ReactiveSeqTest {
 
+    @Test
+    public void coflatMap(){
+       assertThat(ReactiveSeq.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
+    }
 	@Test
 	public void test1() {
 		ReactiveSeq.of(1, 2, 3).filter(anyOf(not(in(2, 3, 4)), in(1, 10, 20)));

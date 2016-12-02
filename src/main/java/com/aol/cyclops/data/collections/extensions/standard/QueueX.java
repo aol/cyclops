@@ -176,7 +176,28 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
         return this;
     }
   
-
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     QueueX.of(1,2,3)
+     *           .map(i->i*2)
+     *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //QueueX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed Queue
+     */
+    default <R> QueueX<R> coflatMap(Function<? super QueueX<T>, ? extends R> fn){
+        return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#from(java.util.Collection)
      */

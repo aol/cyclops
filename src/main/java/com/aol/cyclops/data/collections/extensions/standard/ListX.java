@@ -53,7 +53,7 @@ public interface ListX<T> extends To<ListX<T>>,
                                  OnEmptySwitch<T, List<T>> {
 
    
-    public static final class µ {}
+  
     /**
      * Create a ListX that contains the Integers between start and end
      * 
@@ -224,6 +224,29 @@ public interface ListX<T> extends To<ListX<T>>,
                                 collector);
     }
 
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *      ListX.of(1,2,3)
+     *           .map(i->i*2)
+     *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //ListX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed List
+     */
+    default <R> ListX<R> coflatMap(Function<? super ListX<T>, ? extends R> fn){
+        return fn.andThen(r ->  this.<R>unit(r))
+                 .apply(this);
+    }
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
      */

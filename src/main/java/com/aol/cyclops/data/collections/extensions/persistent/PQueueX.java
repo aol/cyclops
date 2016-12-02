@@ -192,6 +192,28 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
         return Reducers.<T> toPQueueX()
                        .mapReduce(stream);
     }
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     PQueueX.of(1,2,3)
+     *            .map(i->i*2)
+     *            .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *     //PQueueX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed PQueueX
+     */
+    default <R> PQueueX<R> coflatMap(Function<? super PQueueX<T>, ? extends R> fn){
+       return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
 
     /**
      * Combine two adjacent elements in a PQueueX using the supplied

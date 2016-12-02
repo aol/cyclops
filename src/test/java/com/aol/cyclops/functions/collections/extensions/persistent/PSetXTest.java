@@ -25,6 +25,13 @@ public class PSetXTest extends AbstractCollectionXTest{
     public void onEmptySwitch(){
             assertThat(PSetX.empty().onEmptySwitch(()->PSetX.of(1,2,3)),equalTo(PSetX.of(1,2,3)));
     }
+	@Test
+    public void coflatMap(){
+       assertThat(PSetX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
 	 */

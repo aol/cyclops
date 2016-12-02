@@ -60,6 +60,7 @@ import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.Value;
@@ -127,6 +128,28 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     
    
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *      ReactiveSeq.of(1,2,3)
+     *                 .map(i->i*2)
+     *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //ReactiveSeq[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @return
+     */
+    default <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
+        return ReactiveSeq.<R>generate(()->fn.apply(this))
+                          .limit(1);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)

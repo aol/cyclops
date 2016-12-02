@@ -84,6 +84,7 @@ public abstract class AbstractCollectionXTest {
 	
 	int captured=-1;
    
+	
 	@Test
 	public void testRange(){
 	    assertThat(range(0,2).size(),equalTo(2));
