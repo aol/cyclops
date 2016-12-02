@@ -20,6 +20,7 @@ import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
@@ -35,7 +36,7 @@ import com.aol.cyclops.types.stream.ToStream;
  *
  * @param <A> Data type of the nested FutureW
  */
-public interface FutureWT<A> extends To<FutureWT<A>>,Unit<A>, Publisher<A>, Functor<A>, Filterable<A>, ToStream<A> {
+public interface FutureWT<A> extends To<FutureWT<A>>,Unit<A>, Publisher<A>, Functor<A>, Foldable<A>,Filterable<A>, ToStream<A> {
 
     @Override
     MaybeT<A> filter(Predicate<? super A> test);

@@ -16,10 +16,12 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
@@ -38,8 +40,10 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> The type contained on the Optional within
  */
-public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>, Filterable<T> {
+public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>, Foldable<T> ,Filterable<T> {
 
+    
+    
     public ReactiveSeq<T> stream();
 
     public <R> OptionalT<R> unit(R value);
