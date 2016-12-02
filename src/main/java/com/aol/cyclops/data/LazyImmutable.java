@@ -68,7 +68,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
      * @return unitialised ImmutableClosedValue
      */
     public static <T> LazyImmutable<T> unbound() {
-        return new LazyImmutable();
+        return new LazyImmutable<>();
     }
 
     /**
@@ -76,7 +76,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
      * @return Initialised ImmutableClosedValue
      */
     public static <T> LazyImmutable<T> of(final T value) {
-        final LazyImmutable v = new LazyImmutable();
+        final LazyImmutable<T> v = new LazyImmutable<>();
         v.setOnce(value);
         return v;
     }
@@ -99,7 +99,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     public <R> LazyImmutable<R> map(final Function<? super T, ? extends R> fn) {
         final T val = get();
         if (val == UNSET)
-            return (LazyImmutable) this;
+            return (LazyImmutable<R>) this;
         else
             return LazyImmutable.of(fn.apply(val));
     }
@@ -124,7 +124,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
 
         final T val = get();
         if (val == UNSET)
-            return (LazyImmutable) this;
+            return (LazyImmutable<R>) this;
         else
             return fn.apply(val);
     }
