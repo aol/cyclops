@@ -573,7 +573,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      */
     @Override
     default <R> Maybe<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
-        return (Maybe<R>) MonadicValue1.super.coflatMap(mapper);
+        return  (Maybe<R>) MonadicValue1.super.coflatMap(mapper);
     }
 
     /*
@@ -733,7 +733,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return new Just<>(
                               lazy.map(t -> mapper.apply(t)));
         }
-
+        
         @Override
         public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
             return new Lazy(

@@ -209,12 +209,20 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     public static <T> ListX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+        if (it instanceof ListX)
+            return (ListX<T>) it;
+        if (it instanceof List)
+            return new ListXImpl<T>(
+                                    (List<T>) it, defaultCollector());
+        return new ListXImpl<T>(
+                                StreamUtils.stream(it)
+                                           .collect(defaultCollector()),
+                                           defaultCollector());
     }
 
     public static <T> ListX<T> fromIterable(final Collector<T, ?, List<T>> collector, final Iterable<T> it) {
         if (it instanceof ListX)
-            return (ListX<T>) it;
+            return ((ListX<T>) it).withCollector(collector);
         if (it instanceof List)
             return new ListXImpl<T>(
                                     (List<T>) it, collector);
@@ -223,6 +231,8 @@ public interface ListX<T> extends To<ListX<T>>,
                                            .collect(collector),
                                 collector);
     }
+
+    ListX<T> withCollector(Collector<T, ?, List<T>> collector);
 
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations

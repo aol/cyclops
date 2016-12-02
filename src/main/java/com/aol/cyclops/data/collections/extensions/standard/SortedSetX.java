@@ -157,12 +157,20 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     public static <T> SortedSetX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+        if (it instanceof SortedSetX)
+            return (SortedSetX<T>) it;
+        if (it instanceof SortedSet)
+            return new SortedSetXImpl<T>(
+                                         (SortedSet) it, defaultCollector());
+        return new SortedSetXImpl<T>(
+                                     StreamUtils.stream(it)
+                                                .collect(defaultCollector()),
+                                                defaultCollector());
     }
 
     public static <T> SortedSetX<T> fromIterable(final Collector<T, ?, SortedSet<T>> collector, final Iterable<T> it) {
         if (it instanceof SortedSetX)
-            return (SortedSetX<T>) it;
+            return ((SortedSetX<T>) it).withCollector(collector);
         if (it instanceof SortedSet)
             return new SortedSetXImpl<T>(
                                          (SortedSet) it, collector);
@@ -172,6 +180,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
                                      collector);
     }
     
+    SortedSetX<T> withCollector(Collector<T, ?, SortedSet<T>> collector);
+
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
      * 

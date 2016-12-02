@@ -196,7 +196,16 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      * @return DequeX
      */
     public static <T> DequeX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+    
+        if (it instanceof DequeX)
+            return (DequeX) it;
+        if (it instanceof Deque)
+            return new DequeXImpl<T>(
+                                     (Deque) it, defaultCollector());
+        return new DequeXImpl<T>(
+                                 StreamUtils.stream(it)
+                                            .collect(defaultCollector()),
+                                            defaultCollector());
     }
 
     /**
@@ -208,7 +217,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      */
     public static <T> DequeX<T> fromIterable(final Collector<T, ?, Deque<T>> collector, final Iterable<T> it) {
         if (it instanceof DequeX)
-            return (DequeX) it;
+            return ((DequeX) it).withCollector(collector);
         if (it instanceof Deque)
             return new DequeXImpl<T>(
                                      (Deque) it, collector);
@@ -217,6 +226,8 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
                                             .collect(collector),
                                  collector);
     }
+
+    DequeX<T> withCollector(Collector<T, ?, Deque<T>> collector);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
