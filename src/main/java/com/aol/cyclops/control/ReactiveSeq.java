@@ -145,7 +145,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return
      */
     default <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
-        return ReactiveSeq.fromStream(StreamSupport.<R>stream(new LazySingleSpliterator<R>(()->fn.apply(this)), false));
+        return ReactiveSeq.fromStream(StreamSupport.<R>stream(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(this,fn), false));
 
     }
 
