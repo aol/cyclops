@@ -32,18 +32,17 @@ public abstract class AbstractLazyTest {
 	@Test
 	public void testMax(){
 		assertThat(of(1,2,3,4,5).lazyOperations().max((t1,t2) -> t1-t2)
-				.get().get(),is(5));
+				.get(),is(5));
 	}
 	@Test
 	public void testMin(){
 		assertThat(of(1,2,3,4,5).lazyOperations().min((t1,t2) -> t1-t2)
-				.get().get(),is(1));
+				.get(),is(1));
 	}
 	@Test
 	public void testMapReduce(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100).lazyOperations()
 					.reduce( (acc,next) -> acc+next)
-					.get()
 					.get(),is(1500));
 	}
 	@Test
@@ -67,12 +66,12 @@ public abstract class AbstractLazyTest {
 	@Test
 	public void testFindFirst(){
 		assertThat(Arrays.asList(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3).lazyOperations()
-				.findFirst().get().get()));
+				.findFirst().get()));
 	}
 	@Test
 	public void testFindAny(){
 		assertThat(Arrays.asList(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3)
-							.lazyOperations().findAny().get().get()));
+							.lazyOperations().findAny().get()));
 	}
 	@Test
 	public void testAnyMatch(){
@@ -211,11 +210,11 @@ public abstract class AbstractLazyTest {
 	    public void testMinByMaxBy() {
 	        Supplier<CollectionX<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-	        assertEquals(1, (int) s.get().lazyOperations().maxBy(t -> Math.abs(t - 5)).get().get());
-	        assertEquals(5, (int) s.get().lazyOperations().minBy(t -> Math.abs(t - 5)).get().get());
+	        assertEquals(1, (int) s.get().lazyOperations().maxBy(t -> Math.abs(t - 5)).get());
+	        assertEquals(5, (int) s.get().lazyOperations().minBy(t -> Math.abs(t - 5)).get());
 
-	        assertEquals(6, (int) s.get().lazyOperations().maxBy(t -> "" + t).get().get());
-	        assertEquals(1, (int) s.get().lazyOperations().minBy(t -> "" + t).get().get());
+	        assertEquals(6, (int) s.get().lazyOperations().maxBy(t -> "" + t).get());
+	        assertEquals(1, (int) s.get().lazyOperations().minBy(t -> "" + t).get());
 	    }
 
 	  

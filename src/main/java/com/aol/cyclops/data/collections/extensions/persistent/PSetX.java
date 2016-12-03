@@ -31,10 +31,10 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
     /**
@@ -188,6 +188,75 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
                        .mapReduce(stream);
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <R1, R2, R3, R> PSetX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (PSetX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <R1, R2, R3, R> PSetX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (PSetX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <R1, R2, R> PSetX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (PSetX)PersistentCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <R1, R2, R> PSetX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (PSetX)PersistentCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> PSetX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (PSetX)PersistentCollectionX.super.forEach2(stream1, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> PSetX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (PSetX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+    }
+    
     @Override
     default PSetX<T> toPSetX() {
         return this;

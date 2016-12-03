@@ -37,6 +37,8 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 /**
  * An interface that extends JDK Collection interface with a significant number of new operators
@@ -594,6 +596,95 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      */
     @Override
     <R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper);
+    /**
+     * Perform a three level nested internal iteration over this Stream and the
+     * supplied streams
+     *
+     * <pre>
+     * {@code 
+     *   
+     *   //collectionX [1,2]
+     *   
+     *   collectionX.forEach4(a->ListX.range(10,13),
+     *                        (a,b)->ListX.of(""+(a+b),"hello world"),
+     *                        (a,b,c)->ListX.of(a,b,c)),
+     *                        (a,b,c,d)->c+":"a+":"+b);
+     *                                  
+
+     * }
+     * </pre>
+     * 
+     * @param stream1
+     *            Nested Stream to iterate over
+     * @param stream2
+     *            Nested Stream to iterate over
+     * @param stream3
+     *            Nested Stream to iterate over
+     * @param yieldingFunction
+     *            Function with pointers to the current element from both
+     *            Streams that generates the new elements
+     * @return CollectionX with elements generated via nested iteration
+     */
+    default <R1, R2, R3,R> CollectionX<R> forEach4(final Function<? super T, ? extends Iterable<R1>> stream1,
+                        final BiFunction<? super T,? super R1, ? extends Iterable<R2>> stream2,
+                            final TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+                            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return For.iterable(this)
+                  .iterable((Function<? super T,Iterable<R1>>)stream1)
+                  .iterable(a->b->stream2.apply(a, b))
+                  .iterable(a->b->c->stream3.apply(a, b,c))
+                  .yield4(yieldingFunction)
+                  .unwrap();
+    }
+
+
+    /**
+     * Perform a three level nested internal iteration over this Stream and the
+     * supplied streams
+     * 
+     * <pre>
+     * {@code 
+     *  //collectionX [1,2,3]
+     *  
+     * collectionX.forEach4(a->ListX.range(10,13),
+     *                     (a,b)->ListX.of(""+(a+b),"hello world"),
+     *                     (a,b,c)->ListX.of(a,b,c),
+     *                     (a,b,c,d)-> c!=3,
+     *                      (a,b,c)->c+":"a+":"+b);
+     *                                  
+     * 
+     *  
+     * }
+     * </pre>
+     * 
+     * 
+     * @param stream1
+     *            Nested Stream to iterate over
+     * @param stream2
+     *            Nested Stream to iterate over
+     * @param stream3
+     *            Nested Stream to iterate over
+     * @param filterFunction
+     *            Filter to apply over elements before passing non-filtered
+     *            values to the yielding function
+     * @param yieldingFunction
+     *            Function with pointers to the current element from both
+     *            Streams that generates the new elements
+     * @return CollectionX with elements generated via nested iteration
+     */
+    default <R1, R2, R3, R> CollectionX<R> forEach4(final Function<? super T, ? extends Iterable<R1>> stream1,
+            final BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            final TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return For.iterable(this)
+                  .iterable((Function<? super T, Iterable<R1>>) stream1)
+                  .iterable(a -> b -> stream2.apply(a, b))
+                  .iterable(a -> b -> c -> stream3.apply(a, b, c))
+                  .filter(a -> b -> c -> d -> filterFunction.apply(a, b, c, d))
+                  .yield4(yieldingFunction)
+                  .unwrap();
+    }
 
     /**
      * Perform a three level nested internal iteration over this Stream and the
@@ -605,8 +696,8 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      *   //collectionX [1,2]
      *   
      *   collectionX.forEach3(a->IntStream.range(10,13),
-     *                              a->b->Stream.of(""+(a+b),"hello world"),
-     *                                  a->b->c->c+":"a+":"+b);
+     *                        (a,b)->Stream.of(""+(a+b),"hello world"),
+     *                        (a,b,c)->c+":"a+":"+b);
      *                                  
      * 
      *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
@@ -622,16 +713,16 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    default <R1, R2, R> ReactiveSeq<R> forEach3(final Function<? super T, Iterable<R1>> stream1,
-            final Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-        return For.iterable(stream())
-                  .iterable(stream1)
-                  .iterable(stream2)
-                  .yield(yieldingFunction)
+    default <R1, R2, R> CollectionX<R> forEach3(final Function<? super T, ? extends Iterable<R1>> stream1,
+                                                final BiFunction<? super T,? super R1, ? extends Iterable<R2>> stream2,
+                                                final TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        return For.iterable(this)
+                  .iterable((Function<? super T,Iterable<R1>>)stream1)
+                  .iterable(a->b->stream2.apply(a, b))
+                  .yield3(yieldingFunction)
                   .unwrap();
-
     }
+
 
     /**
      * Perform a three level nested internal iteration over this Stream and the
@@ -641,13 +732,13 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * {@code 
      *  //collectionX [1,2,3]
      *  
-     * collectionX.forEach3(a->IntStream.range(10,13),
-     *                            a->b->Stream.of(""+(a+b),"hello world"),
-     *                               a->b->c-> c!=3,
-     *                                  a->b->c->c+":"a+":"+b);
+     * collectionX.forEach3(a->ListX.range(10,13),
+     *                     (a,b)->Stream.of(""+(a+b),"hello world"),
+     *                     (a,b,c)-> c!=3,
+     *                      (a,b,c)->c+":"a+":"+b);
      *                                  
      * 
-     *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+     *  //CollectionX[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
      * }
      * </pre>
      * 
@@ -664,15 +755,15 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    default <R1, R2, R> ReactiveSeq<R> forEach3(final Function<? super T, Iterable<R1>> stream1,
-            final Function<? super T, Function<? super R1, Iterable<R2>>> stream2,
-            final Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-        return For.iterable(stream())
-                  .iterable(stream1)
-                  .iterable(stream2)
-                  .filter(filterFunction)
-                  .yield(yieldingFunction)
+    default <R1, R2, R> CollectionX<R> forEach3(final Function<? super T, ? extends Iterable<R1>> stream1,
+            final BiFunction<? super T,? super R1, ? extends Iterable<R2>> stream2,
+                    final TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                    final TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        return For.iterable(this)
+                  .iterable((Function<? super T,Iterable<R1>>)stream1)
+                  .iterable(a->b->stream2.apply(a, b))
+                  .filter(a->b->c->filterFunction.apply(a,b,c))
+                  .yield3(yieldingFunction)
                   .unwrap();
     }
 
@@ -684,8 +775,8 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * {@code 
      *  //collectionX [1,2,3]
      *  
-     * collectionX.of(1,2,3).forEach2(a->IntStream.range(10,13),
-     *                                  a->b->a+b);
+     * collectionX.of(1,2,3).forEach2(a->ListX.range(10,13),
+     *                                (a,b)->a+b);
      *                                  
      * 
      *  //ReactiveSeq[11,14,12,15,13,16]
@@ -700,12 +791,12 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    default <R1, R> ReactiveSeq<R> forEach2(final Function<? super T, Iterable<R1>> stream1,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
+    default <R1, R> CollectionX<R> forEach2(final Function<? super T,? extends Iterable<R1>> stream1,
+            final BiFunction<? super T,? super R1, ? extends R> yieldingFunction) {
 
-        return For.iterable(stream())
-                  .iterable(stream1)
-                  .yield(yieldingFunction)
+        return For.iterable(this)
+                  .iterable((Function<? super T,Iterable<R1>>)stream1)
+                  .yield2(yieldingFunction)
                   .unwrap();
     }
 
@@ -718,12 +809,12 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * 
      * //collectionX [1,2,3]
      *  
-     * collectionX.of(1,2,3).forEach2(a->IntStream.range(10,13),
-     *                                  a->b-> a<3 && b>10,
-     *                                  a->b->a+b);
+     * collectionX.of(1,2,3).forEach2(a->ListX.range(10,13),
+     *                                  (a,b)-> a<3 && b>10,
+     *                                  (a,b)->a+b);
      *                                  
      * 
-     *  //ReactiveSeq[14,15]
+     *  //CollectionX[14,15]
      * }
      * </pre>
      * 
@@ -737,13 +828,13 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    default <R1, R> ReactiveSeq<R> forEach2(final Function<? super T, Iterable<R1>> stream1,
-            final Function<? super T, Function<? super R1, Boolean>> filterFunction,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return For.iterable(stream())
-                  .iterable(stream1)
-                  .filter(filterFunction)
-                  .yield(yieldingFunction)
+    default <R1, R> CollectionX<R> forEach2(final Function<? super T, ? extends Iterable<R1>> stream1,
+            final BiFunction<? super T,? super R1,  Boolean> filterFunction,
+                    final BiFunction<? super T,? super R1, ? extends R> yieldingFunction) {
+        return For.iterable(this)
+                  .iterable((Function<? super T,Iterable<R1>>)stream1)
+                  .filter(a->b->filterFunction.apply(a, b))
+                  .yield2(yieldingFunction)
                   .unwrap();
 
     }

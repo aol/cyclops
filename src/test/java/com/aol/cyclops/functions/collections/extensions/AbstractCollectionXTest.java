@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -49,6 +51,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.CyclopsCollectors;
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Monoids;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
@@ -83,7 +86,19 @@ public abstract class AbstractCollectionXTest {
 	public static final LazyReact r = new LazyReact(10,10);
 	
 	int captured=-1;
-   
+	static Executor ex = Executors.newFixedThreadPool(1);
+    @Test
+    public void foldFuture(){
+        assertThat(of(1,2,3).foldFuture(l->l.reduce(Monoids.intSum), ex).get(),equalTo(6));
+    }
+    @Test
+    public void foldLazy(){
+        assertThat(of(1,2,3).foldLazy(l->l.reduce(Monoids.intSum), ex).get(),equalTo(6));
+    }
+    @Test
+    public void foldTry(){
+        assertThat(of(1,2,3).foldTry(l->l.reduce(Monoids.intSum), Throwable.class).get(),equalTo(6));
+    }
 	@Test
 	public void testRange(){
 	    assertThat(range(0,2).size(),equalTo(2));
@@ -828,7 +843,7 @@ public abstract class AbstractCollectionXTest {
 	@Test
 	public void forEach2() {
 
-		assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), a -> b -> a + b).toList(),
+		assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a , b) -> a + b).toList(),
 				equalTo(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 3, 4, 5, 6, 7, 8,
 						9, 10, 11, 12)));
 	}
@@ -836,8 +851,8 @@ public abstract class AbstractCollectionXTest {
 	@Test
 	public void forEach2Filter() {
 
-		assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), a -> b -> a > 2 && b < 8,
-				a -> b -> a + b).toList(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10)));
+		assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), (a , b) -> a > 2 && b < 8,
+				(a ,b) -> a + b).toList(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10)));
 	}
 	    
   

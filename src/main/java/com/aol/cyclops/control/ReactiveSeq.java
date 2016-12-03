@@ -77,6 +77,8 @@ import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.val;
 
@@ -140,6 +142,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     public <T> ReactiveSeq<T> unit(T unit);
 
+   
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#foldRight(java.lang.Object, java.util.function.BiFunction)
      */
@@ -3321,7 +3324,78 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return this.toList()
                    .size();
     }
+    /**
+     * Perform a four level nested internal iteration over this Stream and the
+     * supplied streams
+     *
+     * <pre>
+     * {@code 
+     *   
+     *   //ReactiveSeq [1,2]
+     *   
+     *   reactiveSeq.forEach4(a->ListX.range(10,13),
+     *                        (a,b)->ListX.of(""+(a+b),"hello world"),
+     *                        (a,b,c)->ListX.of(a,b,c)),
+     *                        (a,b,c,d)->c+":"a+":"+b);
+     *                                  
 
+     * }
+     * </pre>
+     * 
+     * @param stream1
+     *            Nested Stream to iterate over
+     * @param stream2
+     *            Nested Stream to iterate over
+     * @param stream3
+     *            Nested Stream to iterate over
+     * @param yieldingFunction
+     *            Function with pointers to the current element from both
+     *            Streams that generates the new elements
+     * @return ReactiveSeq with elements generated via nested iteration
+     */
+    <R1, R2, R3,R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+                        final BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
+                            final TriFunction<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+                            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction);
+    /**
+     * Perform a four level nested internal iteration over this Stream and the
+     * supplied streams
+     * 
+     * <pre>
+     * {@code 
+     *  //ReactiveSeq [1,2,3]
+     *  
+     * seq.forEach4(a->ReactiveSeq.range(10,13),
+     *                     (a,b)->Stream.of(""+(a+b),"hello world"),
+     *                     (a,b,c)->Stream.of(a,b,c),
+     *                     (a,b,c,d)-> c!=3,
+     *                      (a,b,c)->c+":"a+":"+b);
+     *                                  
+     * 
+     *  
+     * }
+     * </pre>
+     * 
+     * 
+     * @param stream1
+     *            Nested Stream to iterate over
+     * @param stream2
+     *            Nested Stream to iterate over
+     * @param stream3
+     *            Nested Stream to iterate over
+     * @param filterFunction
+     *            Filter to apply over elements before passing non-filtered
+     *            values to the yielding function
+     * @param yieldingFunction
+     *            Function with pointers to the current element from both
+     *            Streams that generates the new elements
+     * @return ReactiveSeq with elements generated via nested iteration
+     */
+    <R1, R2, R3, R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+            final BiFunction<? super T, ? super R1, ? extends BaseStream<R2, ?>> stream2,
+            final TriFunction<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction);
     /**
      * Perform a three level nested internal iteration over this Stream and the
      * supplied streams
@@ -3330,8 +3404,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code 
      * ReactiveSeq.of(1,2)
      * 						.forEach3(a->IntStream.range(10,13),
-     * 						        a->b->Stream.of(""+(a+b),"hello world"),
-     * 									a->b->c->c+":"a+":"+b);
+     * 						         (a,b)->Stream.of(""+(a+b),"hello world"),
+     * 							     (a,b,c)->c+":"a+":"+b);
      * 									
      * 
      *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
@@ -3348,8 +3422,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with elements generated via nested iteration
      */
     <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
-            Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
+            BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction);
 
     /**
      * Perform a three level nested internal iteration over this Stream and the
@@ -3359,9 +3433,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code 
      * ReactiveSeq.of(1,2,3)
      * 						.forEach3(a->IntStream.range(10,13),
-     * 						      a->b->Stream.of(""+(a+b),"hello world"),
-     * 						         a->b->c-> c!=3,
-     * 									a->b->c->c+":"a+":"+b);
+     * 						          (a,b)->Stream.of(""+(a+b),"hello world"),
+     * 						          (a,b,c)-> c!=3,
+     * 								  (a,b,c)->c+":"a+":"+b);
      * 									
      * 
      *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
@@ -3382,9 +3456,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with elements generated via nested iteration
      */
     <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
-            Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
+            BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction);
 
     /**
      * Perform a two level nested internal iteration over this Stream and the
@@ -3394,7 +3468,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code 
      * ReactiveSeq.of(1,2,3)
      * 						.forEach2(a->IntStream.range(10,13),
-     * 									a->b->a+b);
+     * 							      (a,b)->a+b);
      * 									
      * 
      *  //ReactiveSeq[11,14,12,15,13,16]
@@ -3410,7 +3484,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with elements generated via nested iteration
      */
     <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
+            BiFunction<? super T,? super R1, ? extends R> yieldingFunction);
 
     /**
      * Perform a two level nested internal iteration over this Stream and the
@@ -3420,8 +3494,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code 
      * ReactiveSeq.of(1,2,3)
      * 						.forEach2(a->IntStream.range(10,13),
-     * 						            a->b-> a<3 && b>10,
-     * 									a->b->a+b);
+     * 						          (a,b)-> a<3 && b>10,
+     * 							      (a,b)->a+b);
      * 									
      * 
      *  //ReactiveSeq[14,15]
@@ -3439,8 +3513,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with elements generated via nested iteration
      */
     <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            Function<? super T, Function<? super R1, Boolean>> filterFunction,
-            Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
+            BiFunction<? super T,? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction);
 
     @Override
     default long count() {

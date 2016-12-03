@@ -166,54 +166,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
         return with(super.flattenInternal());
     }
 
-    @Override
-    public <R1, R> AnyMValue<R> forEach2(final Function<? super T, ? extends AnyMValue<R1>> monad,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return AnyM.ofValue(For.anyM((AnyM<T>) this)
-                               .anyM(u -> monad.apply(u))
-                               .yield(yieldingFunction)
-                               .unwrap());
-    }
-
-    @Override
-    public <R1, R> AnyMValue<R> forEach2(final Function<? super T, ? extends AnyMValue<R1>> monad,
-            final Function<? super T, Function<? super R1, Boolean>> filterFunction,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return AnyM.ofValue(For.anyM((AnyM<T>) this)
-                               .anyM(u -> monad.apply(u))
-                               .filter(filterFunction)
-                               .yield(yieldingFunction)
-                               .unwrap());
-
-    }
-
-    @Override
-    public <R1, R2, R> AnyMValue<R> forEach3(final Function<? super T, ? extends AnyMValue<R1>> monad1,
-            final Function<? super T, Function<? super R1, ? extends AnyMValue<R2>>> monad2,
-            final Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-
-        return AnyM.ofValue(For.anyM((AnyM<T>) this)
-                               .anyM(u -> monad1.apply(u))
-                               .anyM(a -> b -> monad2.apply(a)
-                                                     .apply(b))
-                               .filter(filterFunction)
-                               .yield(yieldingFunction)
-                               .unwrap());
-    }
-
-    @Override
-    public <R1, R2, R> AnyMValue<R> forEach3(final Function<? super T, ? extends AnyMValue<R1>> monad1,
-            final Function<? super T, Function<? super R1, ? extends AnyMValue<R2>>> monad2,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-        return AnyM.ofValue(For.anyM((AnyM<T>) this)
-                               .anyM(u -> monad1.apply(u))
-                               .anyM(a -> b -> monad2.apply(a)
-                                                     .apply(b))
-                               .yield(yieldingFunction)
-                               .unwrap());
-    }
-
+   
     @Override
     public <R> AnyMValue<R> flatMap(final Function<? super T, ? extends AnyMValue<? extends R>> fn) {
         return with(super.flatMapInternal(fn));

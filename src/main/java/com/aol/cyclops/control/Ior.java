@@ -24,8 +24,8 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Matchable.CheckValue2;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.BiFunctor;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
@@ -36,6 +36,8 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -172,6 +174,73 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue2
                                 Ior.secondary(secondary), Ior.primary(primary));
     }
     
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <T2, R1, R2, R3, R> Ior<ST,R> forEach4(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return (Ior<ST,R>)MonadicValue2.super.forEach4(value1, value2, value3, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <T2, R1, R2, R3, R> Ior<ST,R> forEach4(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super PT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (Ior<ST,R>)MonadicValue2.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <T2, R1, R2, R> Ior<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+      
+        return (Ior<ST,R>)MonadicValue2.super.forEach3(value1, value2, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <T2, R1, R2, R> Ior<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super PT, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
+        return (Ior<ST,R>)MonadicValue2.super.forEach3(value1, value2, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> Ior<ST,R> forEach2(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, ? extends R> yieldingFunction) {
+
+        return (Ior<ST,R>)MonadicValue2.super.forEach2(value1, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> Ior<ST,R> forEach2(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, Boolean> filterFunction,
+            BiFunction<? super PT, ? super R1, ? extends R> yieldingFunction) {
+        return (Ior<ST,R>)MonadicValue2.super.forEach2(value1, filterFunction, yieldingFunction);
+    }
+
     
 
     /* (non-Javadoc)
