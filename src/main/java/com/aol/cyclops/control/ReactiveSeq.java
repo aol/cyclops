@@ -49,6 +49,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.internal.stream.spliterators.FillSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.LazySingleSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
@@ -126,6 +127,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     
    
+    /**
+     * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc to
+     * switch to a finite Stream)
+     * 
+     * @param t Value to fill Stream with
+     * @return Infinite ReactiveSeq consisting of a single value
+     */
+    public static <T> ReactiveSeq<T> fill(T t){
+        return ReactiveSeq.fromStream(StreamSupport.stream(new FillSpliterator<>(t), false));
+    }
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
      * 

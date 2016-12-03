@@ -115,6 +115,20 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
                           .limit(limit)
                           .toPQueueX();
     }
+    
+    /**
+     * Generate a PQueueX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for PQueueX elements
+     * @return PQueueX generated from the provided Supplier
+     */
+    public static <T> PQueueX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toPQueueX();
+    }
 
     /**
      * Create a PQueueX by iterative application of a function to an initial element up to the supplied limit number of times

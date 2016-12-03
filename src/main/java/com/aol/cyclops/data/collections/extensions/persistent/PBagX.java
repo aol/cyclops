@@ -116,7 +116,19 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
                           .limit(limit)
                           .toPBagX();
     }
+    /**
+     * Generate a PBagX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for PBagX elements
+     * @return PBagX generated from the provided Supplier
+     */
+    public static <T> PBagX<T> fill(final long limit, final T s) {
 
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toPBagX();
+    }
     /**
      * Create a PBagX by iterative application of a function to an initial element up to the supplied limit number of times
      * 

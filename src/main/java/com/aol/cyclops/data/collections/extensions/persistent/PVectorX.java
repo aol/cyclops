@@ -116,6 +116,19 @@ public interface PVectorX<T> extends To<PVectorX<T>>,PVector<T>, PersistentColle
         return ReactiveSeq.generate(s)
                           .limit(limit)
                           .toPVectorX();
+    }  
+    /**
+     * Generate a PVectorX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for PVectorX elements
+     * @return PVectorX generated from the provided Supplier
+     */
+    public static <T> PVectorX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toPVectorX();
     }
 
     /**

@@ -119,6 +119,20 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
     }
 
     /**
+     * Generate a PStackX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for PStackX elements
+     * @return PStackX generated from the provided Supplier
+     */
+    public static <T> PStackX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toPStackX();
+    }
+    
+    /**
      * Create a PStackX by iterative application of a function to an initial element up to the supplied limit number of times
      * 
      * @param limit Max number of elements to generate

@@ -104,7 +104,19 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
                           .limit(limit)
                           .toQueueX();
     }
+    /**
+     * Generate a QueueX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for QueueX elements
+     * @return QueueX generated from the provided Supplier
+     */
+    public static <T> QueueX<T> fill(final long limit, final T s) {
 
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toQueueX();
+    }
     /**
      * Create a QueueX by iterative application of a function to an initial element up to the supplied limit number of times
      * 

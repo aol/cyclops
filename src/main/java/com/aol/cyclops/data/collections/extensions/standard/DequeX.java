@@ -92,6 +92,19 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return ReactiveSeq.unfold(seed, unfolder)
                           .toDequeX();
     }
+    /**
+     * Generate a DequeX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for DequeX elements
+     * @return DequeX generated from the provided Supplier
+     */
+    public static <T> DequeX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toDequeX();
+    }
 
     /**
      * Generate a DequeX from the provided Supplier up to the provided limit number of times
