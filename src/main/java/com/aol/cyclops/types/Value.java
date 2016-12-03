@@ -101,6 +101,7 @@ public interface Value<T> extends Supplier<T>,
 
             AtomicBoolean running = new AtomicBoolean(
                                                       true);
+            AtomicBoolean canncelled = new AtomicBoolean(false);
 
             @Override
             public void request(final long n) {
@@ -115,8 +116,9 @@ public interface Value<T> extends Supplier<T>,
                     return;
                 }
                 try {
-
-                    sub.onNext(get());
+                    T value = get();
+                    if(!canncelled.get())
+                        sub.onNext(get());
 
                 } catch (final Throwable t) {
                     sub.onError(t);
@@ -134,7 +136,7 @@ public interface Value<T> extends Supplier<T>,
             @Override
             public void cancel() {
 
-                running.set(false);
+                cancelled.set(true);
 
             }
 

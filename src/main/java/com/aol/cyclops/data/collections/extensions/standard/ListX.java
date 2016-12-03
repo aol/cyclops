@@ -670,7 +670,6 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     @Override
     default ListX<T> cycleUntil(final Predicate<? super T> predicate) {
-
         return (ListX<T>) MutableCollectionX.super.cycleUntil(predicate);
     }
 
