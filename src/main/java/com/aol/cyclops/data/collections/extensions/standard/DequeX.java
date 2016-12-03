@@ -27,14 +27,11 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
 
 /**
  * An eXtended Deque type, that offers additional eagerly executed functional style operators such as bimap, filter and more
