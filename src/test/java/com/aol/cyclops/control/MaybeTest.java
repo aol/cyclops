@@ -65,6 +65,18 @@ public class MaybeTest implements Printable {
 
     }
     
+    boolean lazy = true;
+    @Test
+    public void lazyTest() {
+        Maybe.just(10)
+             .flatMap(i -> { lazy=false; return Maybe.just(15);})
+             .map(i -> { lazy=false; return   Maybe.just(15);})
+             .map(i -> Maybe.of(20));
+             
+        
+        assertTrue(lazy);
+            
+    }
     @Test
     public void testCombine(){
         BinaryOperator<Combiner<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);

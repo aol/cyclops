@@ -736,8 +736,13 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
         @Override
         public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-            return new Lazy(
-                            Eval.later(() -> this)).flatMap(mapper);
+            Eval<? extends Maybe<? extends R>> ret = lazy.map(mapper.andThen(v->v.toMaybe()));
+            
+            
+            final Eval<Maybe<R>> e3 =  (Eval<Maybe<R>>)ret;
+            return new Lazy<>(
+                              e3);
+          
 
         }
 
@@ -836,16 +841,20 @@ public interface Maybe<T> extends To<Maybe<T>>,
         public <R> Maybe<R> map(final Function<? super T, ? extends R> mapper) {
             return flatMap(t -> Maybe.just(mapper.apply(t)));
         }
-
+        private static <T> Lazy<T> lazy(Eval<Maybe<T>> lazy) {
+            return new Lazy<>(
+                              lazy);
+        }
+        
+       
+        public Maybe<T> resolve() {
+          return lazy.get()
+                       .visit(Maybe::just,Maybe::none);
+        }
         @Override
         public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-            final Supplier<Eval<Maybe<R>>> s = () -> Eval.later(() -> Maybe.none());
-            final Eval<Maybe<R>> eval = lazy.get()
-                                            .visit(some -> Eval.later(() -> narrow(mapper.apply(some)
-                                                                                         .toMaybe())),
-                                                   s);
-            return new Lazy<R>(
-                               eval);
+            return lazy(Eval.later( () -> resolve().flatMap(mapper)));
+            
 
         }
 
