@@ -607,6 +607,53 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Getter
     private final CompletableFuture<T> future;
 
+    /**
+     * Non-blocking visit on the state of this Future
+     * 
+     * <pre>
+     * {@code 
+     * FutureW.ofResult(10)
+              .visitAsync(i->i*2, e->-1);
+       //FutureW[20]
+        
+       FutureW.<Integer>ofError(new RuntimeException())
+              .visitAsync(i->i*2, e->-1)
+       //FutureW[-1]       
+     * 
+     * }
+     * </pre>
+     * 
+     * @param success Function to execute if the previous stage completes successfully
+     * @param failure Function to execute if this Future fails
+     * @return Future with the eventual result of the executed Function
+     */
+    public <R> FutureW<R> visitAsync(Function<T,R> success, Function<Throwable,R> failure){
+        return map(success).recover(failure);
+                
+    }
+    /**
+     * Blocking analogue to visitAsync. Visit the state of this Future, block until ready.
+     * 
+     * <pre>
+     * {@code 
+     *  FutureW.ofResult(10)
+               .visit(i->i*2, e->-1);
+        //20
+        
+        FutureW.<Integer>ofError(new RuntimeException())
+               .visit(i->i*2, e->-1)
+        //[-1]       
+     * 
+     * }
+     * </pre>
+     * @param success Function to execute if the previous stage completes successfully
+     * @param failure  Function to execute if this Future fails
+     * @return Result of the executed Function
+     */
+    public <R> R visit(Function<T,R> success, Function<Throwable,R> failure){
+        return visitAsync(success,failure).get();
+                
+    }
     /*
      * (non-Javadoc)
      * 
