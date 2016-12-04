@@ -46,6 +46,8 @@ compile 'com.aol.simplereact:cyclops-react:x.y.z'
 
 # Libraries that make the platform
 
+When we add a dependency to cyclops, we don't just try and make it easy to convert between one type and another. We look for synergies how can we use library X and Y together to build something more powerful than each used independently.
+
 ## Core libraries
 
 * Agrona - for wait-free Queues for cross-thread data transfer
