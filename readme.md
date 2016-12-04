@@ -8,10 +8,6 @@ As a platform Cylops offers powerful sequential and parallel Streaming with comm
 * Cyclops integrates best of breed libraries for the Java Platform to produce something more powerful than the sum of the parts.
 * By leveraging high quality existing technology where possible the breadth, scope and quality of the cyclops platform increases all the time.
 
-# Contributing 
-
-Contributions are very welcome! We make heavy use of Lombok, to cut down Java boilerplate - so please do install the appropriate Lombok plugin to your IDE.
-
 
 # User Guide
 
@@ -42,7 +38,9 @@ compile 'com.aol.simplereact:cyclops-react:x.y.z'
 </dependency>
 ```
 
+# Contributing 
 
+Contributions are very welcome! We make heavy use of Lombok, to cut down Java boilerplate - so please do install the appropriate Lombok plugin to your IDE.
 
 # Libraries that make the platform
 
