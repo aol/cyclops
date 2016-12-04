@@ -4,9 +4,14 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.reactivestreams.Publisher;
+
+import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.For;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
@@ -120,8 +125,19 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
                                                     final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                                     final TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                     final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R>  yieldingFunction){
-        return For.Values.each4(this, value1, value2, value3,yieldingFunction)
-                .unwrap();
+        return this.flatMap(in-> { 
+            
+            MonadicValue<R1> a = value1.apply(in);
+            return a.flatMap(ina-> {
+                MonadicValue<R2> b = value2.apply(in,ina);
+               return b.flatMap(inb-> {
+                   MonadicValue<R3> c= value3.apply(in,ina,inb);
+                   return c.map(in2->yieldingFunction.apply(in,ina,inb,in2));
+               });
+                
+            });
+            
+        });
     }
 
     /**
@@ -161,8 +177,19 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
             final TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
             final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R>  yieldingFunction){
-        return For.Values.each4(this, value1, value2, value3,filterFunction,yieldingFunction)
-                .unwrap();
+        return this.flatMap(in-> { 
+            
+            MonadicValue<R1> a = value1.apply(in);
+            return a.flatMap(ina-> {
+                MonadicValue<R2> b = value2.apply(in,ina);
+               return b.flatMap(inb-> {
+                   MonadicValue<R3> c= value3.apply(in,ina,inb);
+                   return c.filter(in2-> filterFunction.apply(in,ina,inb,in2)).map(in2->yieldingFunction.apply(in,ina,inb,in2));
+               });
+                
+            });
+            
+        });
     }
     /**
      * Perform a three level nested internal iteration over this MonadicValue and the
@@ -193,8 +220,15 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
     default < T2, R1, R2, R>  MonadicValue<R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
                                                     final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                     final TriFunction<? super T, ? super R1, ? super R2, ? extends R>  yieldingFunction){
-        return For.Values.each3(this, value1, value2, yieldingFunction)
-                .unwrap();
+        return this.flatMap(in-> { 
+            
+            MonadicValue<R1> a = value1.apply(in);
+            return a.flatMap(ina-> {
+                MonadicValue<R2> b = value2.apply(in,ina);
+                return b.map(in2->yieldingFunction.apply(in,ina, in2));
+            });
+            
+        });
     }
 
     /**
@@ -231,8 +265,16 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
             final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                     final TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                     final TriFunction<? super T, ? super R1, ? super R2, ? extends R>  yieldingFunction){
-        return For.Values.each3(this, value1, value2, filterFunction,yieldingFunction)
-                .unwrap();
+        return this.flatMap(in-> { 
+            
+            MonadicValue<R1> a = value1.apply(in);
+            return a.flatMap(ina-> {
+                MonadicValue<R2> b = value2.apply(in,ina);
+                return b.filter(in2-> filterFunction.apply(in,ina,in2)).map(in2->yieldingFunction.apply(in,ina, in2));
+            });
+            
+        });
+       
     }
 
     /**
@@ -300,6 +342,103 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
            
             MonadicValue<R1> b = value1.apply(in);
             return b.filter(in2-> filterFunction.apply(in,in2)).map(in2->yieldingFunction.apply(in, in2));
+        });
+    }
+    
+    
+
+    /**
+     * Eagerly combine two MonadicValues using the supplied monoid (@see ApplicativeFunctor for type appropraite i.e. lazy / async alternatives)
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *  Monoid<Integer> add = Monoid.of(1,Semigroups.intSum);
+     *  Maybe.of(10).combineEager(add,Maybe.none());
+     *  //Maybe[10]
+     *  
+     *  Maybe.none().combineEager(add,Maybe.of(10));
+     *  //Maybe[10]
+     *  
+     *  Maybe.none().combineEager(add,Maybe.none());
+     *  //Maybe.none()
+     *  
+     *  Maybe.of(10).combineEager(add,Maybe.of(10));
+     *  //Maybe[20]
+     *  
+     *  Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+     *  Maybe.of(10).combineEager(firstNonNull,Maybe.of(10));
+     *  //Maybe[10]
+     * }</pre>
+     * 
+     * @param monoid
+     * @param v2
+     * @return
+     */
+    default MonadicValue<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
+        return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid
+                                                              .apply(t1, t2)))
+                        .orElseGet(() -> orElseGet(() -> monoid.zero())));
+    }
+
+    /**
+     * A flattening transformation operation (@see {@link java.util.Optional#flatMap(Function)}
+     * 
+     * <pre>
+     * {@code 
+     *   Eval.now(1).map(i->i+2).flatMap(i->Eval.later(()->i*3);
+     *   //Eval[9]
+     * 
+     * }</pre>
+     * 
+     * 
+     * @param mapper transformation function
+     * @return MonadicValue
+     
+    <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);*/
+
+    /**
+     * A flattening transformation operation that takes the first value from the returned Iterable.
+     * 
+     * <pre>
+     * {@code 
+     *   Maybe.just(1).map(i->i+2).flatMapIterable(i->Arrays.asList(()->i*3,20);
+     *   //Maybe[9]
+     * 
+     * }</pre>
+     * 
+     * 
+     * @param mapper  transformation function
+     * @return  MonadicValue
+     */
+    default <R> MonadicValue<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return this.flatMap(a -> {
+            return Maybe.fromIterable(mapper.apply(a));
+        });
+    }
+
+    /**
+     * A flattening transformation operation that takes the first value from the returned Publisher.
+     * <pre>
+     * {@code 
+     *   FutureW.ofResult(1).map(i->i+2).flatMapPublisher(i->Flux.just(()->i*3,20);
+     *   //FutureW[9]
+     * 
+     * }</pre>
+     * 
+     * @param mapper transformation function
+     * @return  MonadicValue
+     */
+    default <R> MonadicValue<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+
+        return this.flatMap(a -> {
+            final Publisher<? extends R> publisher = mapper.apply(a);
+            final ValueSubscriber<R> sub = ValueSubscriber.subscriber();
+            publisher.subscribe(sub);
+
+            final Maybe<R> maybe = sub.toMaybe();
+            return unit(maybe.get());
+
         });
     }
 

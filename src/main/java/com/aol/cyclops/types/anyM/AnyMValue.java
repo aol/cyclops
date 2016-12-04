@@ -175,7 +175,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     @Override
     default <U> AnyMValue<U> ofType(final Class<? extends U> type) {
 
-        return (AnyMValue<U>) Filterable.super.ofType(type);
+        return (AnyMValue<U>) MonadicValue.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -184,7 +184,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     @Override
     default AnyMValue<T> filterNot(final Predicate<? super T> fn) {
 
-        return (AnyMValue<T>) Filterable.super.filterNot(fn);
+        return (AnyMValue<T>) MonadicValue.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
@@ -193,7 +193,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     @Override
     default AnyMValue<T> notNull() {
 
-        return (AnyMValue<T>) Filterable.super.notNull();
+        return (AnyMValue<T>) MonadicValue.super.notNull();
     }
 
     /* (non-Javadoc)

@@ -17,6 +17,7 @@ import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -34,7 +35,11 @@ public abstract class BaseAnyMImpl<T> {
 
     protected final Monad<T> monad;
     protected final Class initialType;
+    protected final Comprehender<T> adapter;
 
+    public Comprehender<T> adapter(){
+        return adapter;
+    }
     public <R> R unwrap() {
         return (R) monad.unwrap();
 

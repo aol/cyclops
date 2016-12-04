@@ -32,7 +32,7 @@ import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
@@ -62,7 +62,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Slf4j
-public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, ApplicativeFunctor<T>, MonadicValue1<T>, FlatMap<T>, Filterable<T> {
+public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, ApplicativeFunctor<T>, MonadicValue<T>, FlatMap<T>, Filterable<T> {
 
     /**
      * An empty FutureW
@@ -614,7 +614,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
             TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
             QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        return (FutureW<R>)MonadicValue1.super.forEach4(value1, value2, value3, yieldingFunction);
+        return (FutureW<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -627,7 +627,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
             QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
-        return (FutureW<R>)MonadicValue1.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
+        return (FutureW<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -638,7 +638,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
             TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
       
-        return (FutureW<R>)MonadicValue1.super.forEach3(value1, value2, yieldingFunction);
+        return (FutureW<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -650,7 +650,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
             TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
             TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return (FutureW<R>)MonadicValue1.super.forEach3(value1, value2, filterFunction, yieldingFunction);
+        return (FutureW<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -660,7 +660,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     public <R1, R> FutureW<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-        return (FutureW<R>)MonadicValue1.super.forEach2(value1, yieldingFunction);
+        return (FutureW<R>)MonadicValue.super.forEach2(value1, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -670,13 +670,60 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     public <R1, R> FutureW<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, Boolean> filterFunction,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        return (FutureW<R>)MonadicValue1.super.forEach2(value1, filterFunction, yieldingFunction);
+        return (FutureW<R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
 
     @Getter
     private final CompletableFuture<T> future;
 
+    /**
+     * Non-blocking visit on the state of this Future
+     * 
+     * <pre>
+     * {@code 
+     * FutureW.ofResult(10)
+              .visitAsync(i->i*2, e->-1);
+       //FutureW[20]
+        
+       FutureW.<Integer>ofError(new RuntimeException())
+              .visitAsync(i->i*2, e->-1)
+       //FutureW[-1]       
+     * 
+     * }
+     * </pre>
+     * 
+     * @param success Function to execute if the previous stage completes successfully
+     * @param failure Function to execute if this Future fails
+     * @return Future with the eventual result of the executed Function
+     */
+    public <R> FutureW<R> visitAsync(Function<T,R> success, Function<Throwable,R> failure){
+        return map(success).recover(failure);
+                
+    }
+    /**
+     * Blocking analogue to visitAsync. Visit the state of this Future, block until ready.
+     * 
+     * <pre>
+     * {@code 
+     *  FutureW.ofResult(10)
+               .visit(i->i*2, e->-1);
+        //20
+        
+        FutureW.<Integer>ofError(new RuntimeException())
+               .visit(i->i*2, e->-1)
+        //[-1]       
+     * 
+     * }
+     * </pre>
+     * @param success Function to execute if the previous stage completes successfully
+     * @param failure  Function to execute if this Future fails
+     * @return Result of the executed Function
+     */
+    public <R> R visit(Function<T,R> success, Function<Throwable,R> failure){
+        return visitAsync(success,failure).get();
+                
+    }
     /*
      * (non-Javadoc)
      * 
@@ -685,7 +732,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public <R> FutureW<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
-        return (FutureW<R>) MonadicValue1.super.coflatMap(mapper);
+        return (FutureW<R>) MonadicValue.super.coflatMap(mapper);
     }
 
     /*
@@ -695,7 +742,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public FutureW<MonadicValue<T>> nest() {
-        return (FutureW<MonadicValue<T>>) MonadicValue1.super.nest();
+        return (FutureW<MonadicValue<T>>) MonadicValue.super.nest();
     }
 
     /*
@@ -706,7 +753,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public FutureW<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
-        return (FutureW<T>) MonadicValue1.super.combineEager(monoid, v2);
+        return (FutureW<T>) MonadicValue.super.combineEager(monoid, v2);
     }
 
     /*
@@ -856,7 +903,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      * (non-Javadoc)
      * 
      * @see
-     * com.aol.cyclops.types.MonadicValue1#flatMap(java.util.function.Function)
+     * com.aol.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
      */
     @Override
     public <R> FutureW<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
@@ -1104,7 +1151,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public <U> Maybe<U> ofType(final Class<? extends U> type) {
 
-        return (Maybe<U>) Filterable.super.ofType(type);
+        return (Maybe<U>) MonadicValue.super.ofType(type);
     }
 
     /*
@@ -1116,7 +1163,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public Maybe<T> filterNot(final Predicate<? super T> fn) {
 
-        return (Maybe<T>) Filterable.super.filterNot(fn);
+        return (Maybe<T>) MonadicValue.super.filterNot(fn);
     }
 
     /*
@@ -1127,7 +1174,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public Maybe<T> notNull() {
 
-        return (Maybe<T>) Filterable.super.notNull();
+        return (Maybe<T>) MonadicValue.super.notNull();
     }
 
     /*
@@ -1293,20 +1340,20 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
 
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue1#flatMapIterable(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapIterable(java.util.function.Function)
      */
     @Override
     public <R> FutureW<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (FutureW<R>) MonadicValue1.super.flatMapIterable(mapper);
+        return (FutureW<R>) MonadicValue.super.flatMapIterable(mapper);
     }
 
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue1#flatMapPublisher(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapPublisher(java.util.function.Function)
      */
     @Override
     public <R> FutureW<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return (FutureW<R>) MonadicValue1.super.flatMapPublisher(mapper);
+        return (FutureW<R>) MonadicValue.super.flatMapPublisher(mapper);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)

@@ -110,10 +110,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
      */
     @Override
-    default <T> Unit<T> emptyUnit() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    <T> Unit<T> emptyUnit() ;
 
     /**
      * Tests for equivalency between two AnyM types

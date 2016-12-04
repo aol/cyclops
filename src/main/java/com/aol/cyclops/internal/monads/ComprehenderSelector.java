@@ -15,8 +15,10 @@ public class ComprehenderSelector {
     private final ConcurrentMap<Class, Comprehender> cache = new ConcurrentHashMap<>();
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Comprehender selectComprehender(final Class structure) {
+    public Comprehender selectComprehender(final Class structure, Comprehender comp) {
 
+        return comp;
+        /**
         return cache.computeIfAbsent(structure, st -> comprehenders.getRegisteredComprehenders()
                                                                    .stream()
                                                                    .filter(e -> e.getKey()
@@ -25,11 +27,13 @@ public class ComprehenderSelector {
                                                                    .findFirst()
                                                                    .orElse(new InvokeDynamicComprehender(
                                                                                                          Optional.of(structure))));
+                                                                                                         **/
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Comprehender selectComprehender(final Object structure) {
-
+    public Comprehender selectComprehender(final Object structure, Comprehender comp) {
+        return comp;
+/**
         return cache.computeIfAbsent(structure.getClass(), st -> comprehenders.getRegisteredComprehenders()
                                                                               .stream()
                                                                               .filter(e -> e.getKey()
@@ -40,6 +44,7 @@ public class ComprehenderSelector {
                                                                                                                     Optional.ofNullable(structure)
                                                                                                                             .map(Object::getClass))));
 
-    }
+   **/
+        }
 
 }

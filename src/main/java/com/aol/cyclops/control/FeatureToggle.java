@@ -22,7 +22,7 @@ import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -40,7 +40,7 @@ import com.aol.cyclops.util.function.TriFunction;
  * @param <T> Type of value storable in this FeatureToggle
  */
 public interface FeatureToggle<T>
-        extends To<FeatureToggle<T>>,Supplier<T>, MonadicValue1<T>, Filterable<T>, Functor<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
+        extends To<FeatureToggle<T>>,Supplier<T>, MonadicValue<T>, Filterable<T>, Functor<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 
     
     /* (non-Javadoc)
@@ -60,7 +60,7 @@ public interface FeatureToggle<T>
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
             TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
             QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        return (FeatureToggle<R>)MonadicValue1.super.forEach4(value1, value2, value3, yieldingFunction);
+        return (FeatureToggle<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -73,7 +73,7 @@ public interface FeatureToggle<T>
             QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
-        return (FeatureToggle<R>)MonadicValue1.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
+        return (FeatureToggle<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -84,7 +84,7 @@ public interface FeatureToggle<T>
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
             TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
       
-        return (FeatureToggle<R>)MonadicValue1.super.forEach3(value1, value2, yieldingFunction);
+        return (FeatureToggle<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -96,7 +96,7 @@ public interface FeatureToggle<T>
             TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
             TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return (FeatureToggle<R>)MonadicValue1.super.forEach3(value1, value2, filterFunction, yieldingFunction);
+        return (FeatureToggle<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -106,7 +106,7 @@ public interface FeatureToggle<T>
     default <R1, R> FeatureToggle<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-        return (FeatureToggle<R>)MonadicValue1.super.forEach2(value1, yieldingFunction);
+        return (FeatureToggle<R>)MonadicValue.super.forEach2(value1, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -116,7 +116,7 @@ public interface FeatureToggle<T>
     default <R1, R> FeatureToggle<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, Boolean> filterFunction,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        return (FeatureToggle<R>)MonadicValue1.super.forEach2(value1, filterFunction, yieldingFunction);
+        return (FeatureToggle<R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
     /**
@@ -163,7 +163,7 @@ public interface FeatureToggle<T>
     @Override
     default <U> FeatureToggle<U> ofType(final Class<? extends U> type) {
 
-        return (FeatureToggle<U>) Filterable.super.ofType(type);
+        return (FeatureToggle<U>) MonadicValue.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -172,7 +172,7 @@ public interface FeatureToggle<T>
     @Override
     default FeatureToggle<T> filterNot(final Predicate<? super T> fn) {
 
-        return (FeatureToggle<T>) Filterable.super.filterNot(fn);
+        return (FeatureToggle<T>) MonadicValue.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
@@ -181,7 +181,7 @@ public interface FeatureToggle<T>
     @Override
     default FeatureToggle<T> notNull() {
 
-        return (FeatureToggle<T>) Filterable.super.notNull();
+        return (FeatureToggle<T>) MonadicValue.super.notNull();
     }
 
     /* (non-Javadoc)
@@ -244,21 +244,21 @@ public interface FeatureToggle<T>
     
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue1#flatMapIterable(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapIterable(java.util.function.Function)
      */
     @Override
     default <R> FeatureToggle<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
         
-        return (FeatureToggle<R> )MonadicValue1.super.flatMapIterable(mapper);
+        return (FeatureToggle<R> )MonadicValue.super.flatMapIterable(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue1#flatMapPublisher(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapPublisher(java.util.function.Function)
      */
     @Override
     default <R> FeatureToggle<R>  flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
        
-        return (FeatureToggle<R> )MonadicValue1.super.flatMapPublisher(mapper);
+        return (FeatureToggle<R> )MonadicValue.super.flatMapPublisher(mapper);
     }
 
     /**
@@ -315,25 +315,25 @@ public interface FeatureToggle<T>
     @Override
     default FeatureToggle<MonadicValue<T>> nest() {
 
-        return (FeatureToggle<MonadicValue<T>>) MonadicValue1.super.nest();
+        return (FeatureToggle<MonadicValue<T>>) MonadicValue.super.nest();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue1#coflatMap(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     default <R> FeatureToggle<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
 
-        return (FeatureToggle<R>) MonadicValue1.super.coflatMap(mapper);
+        return (FeatureToggle<R>) MonadicValue.super.coflatMap(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue1#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
+     * @see com.aol.cyclops.types.MonadicValue#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
      */
     @Override
     default FeatureToggle<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
 
-        return (FeatureToggle<T>) MonadicValue1.super.combineEager(monoid, v2);
+        return (FeatureToggle<T>) MonadicValue.super.combineEager(monoid, v2);
     }
 
     /**
@@ -775,7 +775,7 @@ public interface FeatureToggle<T>
     @Override
     default <U, R> FeatureToggle<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (FeatureToggle<R>) MonadicValue1.super.zip(other, zipper);
+        return (FeatureToggle<R>) MonadicValue.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -784,7 +784,7 @@ public interface FeatureToggle<T>
     @Override
     default <U, R> FeatureToggle<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (FeatureToggle<R>) MonadicValue1.super.zip(other, zipper);
+        return (FeatureToggle<R>) MonadicValue.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -793,7 +793,7 @@ public interface FeatureToggle<T>
     @Override
     default <U> FeatureToggle<Tuple2<T, U>> zip(final Stream<? extends U> other) {
 
-        return (FeatureToggle) MonadicValue1.super.zip(other);
+        return (FeatureToggle) MonadicValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -802,7 +802,7 @@ public interface FeatureToggle<T>
     @Override
     default <U> FeatureToggle<Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
-        return (FeatureToggle) MonadicValue1.super.zip(other);
+        return (FeatureToggle) MonadicValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -811,7 +811,7 @@ public interface FeatureToggle<T>
     @Override
     default <U> FeatureToggle<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
-        return (FeatureToggle) MonadicValue1.super.zip(other);
+        return (FeatureToggle) MonadicValue.super.zip(other);
     }
 
 }

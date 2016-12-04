@@ -168,7 +168,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
 
    
     @Override
-    public <R> AnyMValue<R> flatMap(final Function<? super T, ? extends AnyMValue<? extends R>> fn) {
+    public <R> AnyMValue<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> fn) {
         return with(super.flatMapInternal(fn));
     }
 
