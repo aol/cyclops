@@ -262,9 +262,9 @@ public class XorTValue<ST, T> implements XorT<ST, T>, MonadicValue2<ST, T>, Tran
     }
 
     @Override
-    public <ST2, B> XorTValue<ST2, B> flatMap(final Function<? super T, ? extends MonadicValue2<? extends ST2, ? extends B>> f) {
+    public <B> XorTValue<ST, B> flatMap(final Function<? super T, ? extends MonadicValue2<? extends ST, ? extends B>> f) {
 
-        return new XorTValue<ST2, B>(
+        return new XorTValue<ST, B>(
                                      run.map(o -> o.flatMap(f)));
 
     }

@@ -152,6 +152,7 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
      * @param values To add to PStack
      * @return new PStack
      */
+    @SafeVarargs
     public static <T> PStackX<T> of(final T... values) {
         return new PStackXImpl<>(
                                  ConsPStack.from(Arrays.asList(values)), true);

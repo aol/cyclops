@@ -44,7 +44,7 @@ public interface XorT<ST, T> extends To<XorT<ST,T>>,Publisher<T>, Functor<T>, Fi
 
     public <R> XorT<ST, R> empty();
 
-    <ST2, B> XorT<ST2, B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST2, ? extends B>> f);
+    <B> XorT<ST,B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST, ? extends B>> f);
 
     /**
      * @return The wrapped AnyM

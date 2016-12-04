@@ -187,9 +187,9 @@ public class XorTSeq<ST, T>
     }
 
     @Override
-    public <ST2, B> XorTSeq<ST2, B> flatMap(final Function<? super T, ? extends MonadicValue2<? extends ST2, ? extends B>> f) {
+    public <B> XorTSeq<ST, B> flatMap(final Function<? super T, ? extends MonadicValue2<? extends ST, ? extends B>> f) {
 
-        return new XorTSeq<ST2, B>(
+        return new XorTSeq<ST, B>(
                                    run.map(o -> o.flatMap(f)));
 
     }
