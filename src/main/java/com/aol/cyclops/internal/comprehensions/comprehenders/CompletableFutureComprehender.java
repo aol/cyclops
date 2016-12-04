@@ -9,7 +9,8 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class CompletableFutureComprehender implements ValueComprehender<CompletableFuture> {
+public enum CompletableFutureComprehender implements ValueComprehender<CompletableFuture> {
+    INSTANCE;
     @Override
     public Class getTargetClass() {
         return CompletableFuture.class;

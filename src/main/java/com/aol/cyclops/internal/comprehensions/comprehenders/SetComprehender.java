@@ -15,7 +15,8 @@ import java.util.stream.Stream;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class SetComprehender implements Comprehender<Set> {
+public enum SetComprehender implements Comprehender<Set> {
+    INSTANCE;
 
     @Override
     public Object resolveForCrossTypeFlatMap(final Comprehender comp, final Set apply) {

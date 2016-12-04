@@ -7,7 +7,8 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class MaybeComprehender implements ValueComprehender<Maybe> {
+public enum MaybeComprehender implements ValueComprehender<Maybe> {
+    INSTANCE;
     @Override
     public Class getTargetClass() {
         return Maybe.class;

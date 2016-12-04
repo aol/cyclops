@@ -256,7 +256,7 @@ public class Reducers {
      * @return Reducer for PMap
      */
     public static <K, V> Reducer<PMap<K, V>> toPMap() {
-        return Reducer.<PMap<K, V>> of(HashTreePMap.empty(), (final PMap<K, V> a) -> b -> a.plusAll(b), (in) -> {
+        return Reducer.<PMap<K, V>> of(HashTreePMap.empty(), (final PMap<K, V> a) -> b -> a.plusAll(b), (in) -> {  
             final List w = ((TupleWrapper) () -> in).values();
             return HashTreePMap.singleton((K) w.get(0), (V) w.get(1));
         });

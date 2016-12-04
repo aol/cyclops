@@ -17,13 +17,19 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class AnyMSeqImpl<T> extends BaseAnyMImpl<T>implements AnyMSeq<T> {
+public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>implements AnyMSeq<W,T> {
 
     protected AnyMSeqImpl(final Monad<T> monad, final Class initialType, Comprehender<T> adapter) {
         super(monad, initialType,adapter);
 
+    }
+    
+    @Override
+    public AnyMSeq<W,T> fromIterable(Iterable<T> t){
+        return new MonadWrapper(adapter().fromIterator(t.iterator()),initialType,adapter).anyMSeq();
     }
 
     public static <T> AnyMSeqImpl<T> from(final AnyMValue<T> value) {

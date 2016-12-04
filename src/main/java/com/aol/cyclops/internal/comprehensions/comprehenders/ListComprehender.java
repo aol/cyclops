@@ -13,7 +13,8 @@ import java.util.stream.Stream;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class ListComprehender implements Comprehender<List> {
+public enum ListComprehender implements Comprehender<List> {
+    INSTANCE;
     @Override
     public Object resolveForCrossTypeFlatMap(Comprehender comp, List apply) {
         final List list = (List) apply.stream().collect(Collectors.toCollection(MaterializedList::new));

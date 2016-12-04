@@ -21,8 +21,7 @@ public interface TupleWrapper {
 
                                           return f.get(getInstance());
                                       } catch (final Exception e) {
-                                          ExceptionSoftener.throwSoftenedException(e);
-                                          return null;
+                                          throw ExceptionSoftener.throwSoftenedException(e);
                                       }
                                   })
                                   .collect(Collectors.toList());

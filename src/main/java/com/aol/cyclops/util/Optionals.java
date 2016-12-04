@@ -1,6 +1,9 @@
 package com.aol.cyclops.util;
 
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -26,6 +29,16 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class Optionals {
+    
+    public static Optional<Double> optional(OptionalDouble d){
+        return d.isPresent() ? Optional.of(d.getAsDouble()) : Optional.empty();
+    }
+    public static Optional<Long> optional(OptionalLong l){
+        return l.isPresent() ? Optional.of(l.getAsLong()) : Optional.empty();
+    }
+    public static Optional<Integer> optional(OptionalInt l){
+        return l.isPresent() ? Optional.of(l.getAsInt()) : Optional.empty();
+    }
     /**
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
      * By constrast with {@link Optionals#sequencePresent(CollectionX)}, if any Optionals are empty the result

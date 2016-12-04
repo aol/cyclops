@@ -13,7 +13,8 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class StreamComprehender implements Comprehender<Stream> {
+public enum StreamComprehender implements Comprehender<Stream> {
+    INSTANCE;
     @Override
     public Class getTargetClass() {
         return Stream.class;

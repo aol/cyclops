@@ -49,6 +49,7 @@ import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
@@ -66,7 +67,7 @@ import lombok.val;
  *
  * @param <T> Data types of elements managed by wrapped non-scalar Monad.
  */
-public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSequence<T>, ExtendedTraversable<T>, Sequential<T>,
+public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFoldable<T>, ConvertableSequence<T>, ExtendedTraversable<T>, Sequential<T>,
         CyclopsCollectable<T>, FilterableFunctor<T>, ZippingApplicativable<T>, ReactiveStreamsTerminalOperations<T>, Publisher<T> {
 
     /**
@@ -82,7 +83,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param t Monad to compare to
      * @return true if equivalent
      */
-    default boolean eqv(final AnyMSeq<T> t) {
+    default boolean eqv(final AnyMSeq<?,T> t) {
         return Predicates.eqvIterable(t)
                          .test(this);
     }
@@ -106,7 +107,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @return AnyM with flattening transformation
      */
     @Override
-    <R> AnyMSeq<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> AnyMSeq<W,R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn);
 
     /**
      * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
@@ -116,7 +117,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @return AnyM with flattening transformation
      */
     @Override
-    <R> AnyMSeq<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> AnyMSeq<W,R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#traversable()
@@ -146,62 +147,62 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @see com.aol.cyclops.types.Traversable#limit(long)
      */
     @Override
-    default AnyMSeq<T> limit(final long num) {
+    default AnyMSeq<W,T> limit(final long num) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.limit(num));
+        return fromIterable(ExtendedTraversable.super.limit(num));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#limitWhile(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> limitWhile(final Predicate<? super T> p) {
+    default AnyMSeq<W,T> limitWhile(final Predicate<? super T> p) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.limitWhile(p));
+        return fromIterable(ExtendedTraversable.super.limitWhile(p));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#limitUntil(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> limitUntil(final Predicate<? super T> p) {
+    default AnyMSeq<W,T> limitUntil(final Predicate<? super T> p) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.limitUntil(p));
+        return fromIterable(ExtendedTraversable.super.limitUntil(p));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#limitLast(int)
      */
     @Override
-    default AnyMSeq<T> limitLast(final int num) {
+    default AnyMSeq<W,T> limitLast(final int num) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.limitLast(num));
+        return fromIterable(ExtendedTraversable.super.limitLast(num));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#onEmpty(java.lang.Object)
      */
     @Override
-    default AnyMSeq<T> onEmpty(final T value) {
-        return AnyM.ofSeq(ExtendedTraversable.super.onEmpty(value));
+    default AnyMSeq<W,T> onEmpty(final T value) {
+        return fromIterable(ExtendedTraversable.super.onEmpty(value));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    default AnyMSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
+    default AnyMSeq<W,T> onEmptyGet(final Supplier<? extends T> supplier) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.onEmptyGet(supplier));
+        return fromIterable(ExtendedTraversable.super.onEmptyGet(supplier));
     }
-
+    Comprehender<T> adapter();
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> AnyMSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    default <X extends Throwable> AnyMSeq<W,T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return AnyM.ofSeq(ExtendedTraversable.super.onEmptyThrow(supplier));
+        return fromIterable(ExtendedTraversable.super.onEmptyThrow(supplier));
     }
 
     /* (non-Javadoc)
@@ -277,517 +278,518 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> AnyMSeq<U> cast(final Class<? extends U> type) {
+    default <U> AnyMSeq<W,U> cast(final Class<? extends U> type) {
 
-        return (AnyMSeq<U>) ZippingApplicativable.super.cast(type);
+        return (AnyMSeq<W,U>) ZippingApplicativable.super.cast(type);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> AnyMSeq<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+    default <R> AnyMSeq<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (AnyMSeq<R>) ZippingApplicativable.super.trampoline(mapper);
+        return (AnyMSeq<W,R>) ZippingApplicativable.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#patternMatch(java.lang.Object, java.util.function.Function)
      */
     @Override
-    default <R> AnyMSeq<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
+    default <R> AnyMSeq<W,R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (AnyMSeq<R>) ZippingApplicativable.super.patternMatch(case1, otherwise);
+        return (AnyMSeq<W,R>) ZippingApplicativable.super.patternMatch(case1, otherwise);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#cycle(int)
      */
     @Override
-    default AnyMSeq<T> cycle(final int times) {
+    default AnyMSeq<W,T> cycle(final int times) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.cycle(times));
+        return fromIterable(ZippingApplicativable.super.cycle(times));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#cycle(com.aol.cyclops.Monoid, int)
      */
     @Override
-    default AnyMSeq<T> cycle(final Monoid<T> m, final int times) {
+    default AnyMSeq<W,T> cycle(final Monoid<T> m, final int times) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.cycle(m, times));
+        return fromIterable(ZippingApplicativable.super.cycle(m, times));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#cycleWhile(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> cycleWhile(final Predicate<? super T> predicate) {
-
-        return AnyM.fromIterable(ZippingApplicativable.super.cycleWhile(predicate));
+    default AnyMSeq<W,T> cycleWhile(final Predicate<? super T> predicate) {
+        
+        return fromIterable(ZippingApplicativable.super.cycleWhile(predicate));
     }
-
+    <T> AnyMSeq<W,T> fromIterable(Iterable<T> t);
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#cycleUntil(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> cycleUntil(final Predicate<? super T> predicate) {
+    default AnyMSeq<W,T> cycleUntil(final Predicate<? super T> predicate) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.cycleUntil(predicate));
+        return fromIterable(ZippingApplicativable.super.cycleUntil(predicate));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> AnyMSeq<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> AnyMSeq<W,R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.zip(other, zipper));
+        return fromIterable(ZippingApplicativable.super.zip(other, zipper));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> AnyMSeq<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> AnyMSeq<W,R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.zip(other, zipper));
+        return fromIterable(ZippingApplicativable.super.zip(other, zipper));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> AnyMSeq<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> AnyMSeq<W,R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.zip(other, zipper));
+        return fromIterable(ZippingApplicativable.super.zip(other, zipper));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> AnyMSeq<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> AnyMSeq<W,Tuple2<T, U>> zip(final Stream<? extends U> other) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.zip(other));
+        return fromIterable(ZippingApplicativable.super.zip(other));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable)
      */
     @Override
-    default <U> AnyMSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
+    default <U> AnyMSeq<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.zip(other));
+        return fromIterable(ZippingApplicativable.super.zip(other));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    default <U> AnyMSeq<Tuple2<T, U>> zip(final Seq<? extends U> other) {
+    default <U> AnyMSeq<W,Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.zip(other));
+        return fromIterable(ZippingApplicativable.super.zip(other));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> AnyMSeq<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> AnyMSeq<W,Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.zip3(second, third));
+        return fromIterable(ZippingApplicativable.super.zip3(second, third));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> AnyMSeq<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
+    default <T2, T3, T4> AnyMSeq<W,Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
             final Stream<? extends T4> fourth) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.zip4(second, third, fourth));
+        return fromIterable(ZippingApplicativable.super.zip4(second, third, fourth));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zipWithIndex()
      */
     @Override
-    default AnyMSeq<Tuple2<T, Long>> zipWithIndex() {
+    default AnyMSeq<W,Tuple2<T, Long>> zipWithIndex() {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.zipWithIndex());
+        return fromIterable(ZippingApplicativable.super.zipWithIndex());
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#sliding(int)
      */
     @Override
-    default AnyMSeq<ListX<T>> sliding(final int windowSize) {
+    default AnyMSeq<W,ListX<T>> sliding(final int windowSize) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.sliding(windowSize));
+        return fromIterable(ZippingApplicativable.super.sliding(windowSize));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#sliding(int, int)
      */
     @Override
-    default AnyMSeq<ListX<T>> sliding(final int windowSize, final int increment) {
+    default AnyMSeq<W,ListX<T>> sliding(final int windowSize, final int increment) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.sliding(windowSize, increment));
+        return fromIterable(ZippingApplicativable.super.sliding(windowSize, increment));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#grouped(int, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> AnyMSeq<C> grouped(final int size, final Supplier<C> supplier) {
+    default <C extends Collection<? super T>> AnyMSeq<W,C> grouped(final int size, final Supplier<C> supplier) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.grouped(size, supplier));
+        return fromIterable(ZippingApplicativable.super.grouped(size, supplier));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default AnyMSeq<W,ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.groupedUntil(predicate));
+        return fromIterable(ZippingApplicativable.super.groupedUntil(predicate));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default AnyMSeq<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default AnyMSeq<W,ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.groupedStatefullyUntil(predicate));
+        return fromIterable(ZippingApplicativable.super.groupedStatefullyUntil(predicate));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
-    default AnyMSeq<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
+    default AnyMSeq<W,T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.combine(predicate, op));
+        return fromIterable(ZippingApplicativable.super.combine(predicate, op));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default AnyMSeq<W,ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.groupedWhile(predicate));
+        return fromIterable(ZippingApplicativable.super.groupedWhile(predicate));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> AnyMSeq<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends Collection<? super T>> AnyMSeq<W,C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.groupedWhile(predicate, factory));
+        return fromIterable(ZippingApplicativable.super.groupedWhile(predicate, factory));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> AnyMSeq<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends Collection<? super T>> AnyMSeq<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.groupedUntil(predicate, factory));
+        return fromIterable(ZippingApplicativable.super.groupedUntil(predicate, factory));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#grouped(int)
      */
     @Override
-    default AnyMSeq<ListX<T>> grouped(final int groupSize) {
+    default AnyMSeq<W,ListX<T>> grouped(final int groupSize) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.grouped(groupSize));
+        return fromIterable(ZippingApplicativable.super.grouped(groupSize));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
-    default <K, A, D> AnyMSeq<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
+    default <K, A, D> AnyMSeq<W,Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.grouped(classifier, downstream));
+        return fromIterable(ZippingApplicativable.super.grouped(classifier, downstream));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function)
      */
     @Override
-    default <K> AnyMSeq<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> AnyMSeq<W,Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.grouped(classifier));
+        return fromIterable(ZippingApplicativable.super.grouped(classifier));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> takeWhile(final Predicate<? super T> p) {
+    default AnyMSeq<W,T> takeWhile(final Predicate<? super T> p) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.takeWhile(p));
+        return fromIterable(ZippingApplicativable.super.takeWhile(p));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> dropWhile(final Predicate<? super T> p) {
+    default AnyMSeq<W,T> dropWhile(final Predicate<? super T> p) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.dropWhile(p));
+        return fromIterable(ZippingApplicativable.super.dropWhile(p));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> takeUntil(final Predicate<? super T> p) {
+    default AnyMSeq<W,T> takeUntil(final Predicate<? super T> p) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.takeUntil(p));
+        return fromIterable(ZippingApplicativable.super.takeUntil(p));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> dropUntil(final Predicate<? super T> p) {
+    default AnyMSeq<W,T> dropUntil(final Predicate<? super T> p) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.dropUntil(p));
+        return fromIterable(ZippingApplicativable.super.dropUntil(p));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#dropRight(int)
      */
     @Override
-    default AnyMSeq<T> dropRight(final int num) {
+    default AnyMSeq<W,T> dropRight(final int num) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.dropRight(num));
+        return fromIterable(ZippingApplicativable.super.dropRight(num));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#takeRight(int)
      */
     @Override
-    default AnyMSeq<T> takeRight(final int num) {
+    default AnyMSeq<W,T> takeRight(final int num) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.takeRight(num));
+        return fromIterable(ZippingApplicativable.super.takeRight(num));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#reverse()
      */
     @Override
-    default AnyMSeq<T> reverse() {
+    default AnyMSeq<W,T> reverse() {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.reverse());
+        return fromIterable(ZippingApplicativable.super.reverse());
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#shuffle()
      */
     @Override
-    default AnyMSeq<T> shuffle() {
+    default AnyMSeq<W,T> shuffle() {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.shuffle());
+        return fromIterable(ZippingApplicativable.super.shuffle());
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#shuffle(java.util.Random)
      */
     @Override
-    default AnyMSeq<T> shuffle(final Random random) {
+    default AnyMSeq<W,T> shuffle(final Random random) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.shuffle(random));
+        return fromIterable(ZippingApplicativable.super.shuffle(random));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#distinct()
      */
     @Override
-    default AnyMSeq<T> distinct() {
+    default AnyMSeq<W,T> distinct() {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.distinct());
+        return fromIterable(ZippingApplicativable.super.distinct());
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#scanLeft(com.aol.cyclops.Monoid)
      */
     @Override
-    default AnyMSeq<T> scanLeft(final Monoid<T> monoid) {
+    default AnyMSeq<W,T> scanLeft(final Monoid<T> monoid) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.scanLeft(monoid));
+        return fromIterable(ZippingApplicativable.super.scanLeft(monoid));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> AnyMSeq<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
+    default <U> AnyMSeq<W,U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.scanLeft(seed, function));
+        return fromIterable(ZippingApplicativable.super.scanLeft(seed, function));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#scanRight(com.aol.cyclops.Monoid)
      */
     @Override
-    default AnyMSeq<T> scanRight(final Monoid<T> monoid) {
+    default AnyMSeq<W,T> scanRight(final Monoid<T> monoid) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.scanRight(monoid));
+        return fromIterable(ZippingApplicativable.super.scanRight(monoid));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> AnyMSeq<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
+    default <U> AnyMSeq<W,U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.scanRight(identity, combiner));
+        return fromIterable(ZippingApplicativable.super.scanRight(identity, combiner));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#sorted()
      */
     @Override
-    default AnyMSeq<T> sorted() {
+    default AnyMSeq<W,T> sorted() {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.sorted());
+        return fromIterable(ZippingApplicativable.super.sorted());
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#sorted(java.util.Comparator)
      */
     @Override
-    default AnyMSeq<T> sorted(final Comparator<? super T> c) {
+    default AnyMSeq<W,T> sorted(final Comparator<? super T> c) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.sorted(c));
+        return fromIterable(ZippingApplicativable.super.sorted(c));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#skip(long)
      */
     @Override
-    default AnyMSeq<T> skip(final long num) {
+    default AnyMSeq<W,T> skip(final long num) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.skip(num));
+        return fromIterable(ZippingApplicativable.super.skip(num));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#skipWhile(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> skipWhile(final Predicate<? super T> p) {
+    default AnyMSeq<W,T> skipWhile(final Predicate<? super T> p) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.skipWhile(p));
+        return fromIterable(ZippingApplicativable.super.skipWhile(p));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#skipUntil(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> skipUntil(final Predicate<? super T> p) {
+    default AnyMSeq<W,T> skipUntil(final Predicate<? super T> p) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.skipUntil(p));
+        return fromIterable(ZippingApplicativable.super.skipUntil(p));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#intersperse(java.lang.Object)
      */
     @Override
-    default AnyMSeq<T> intersperse(final T value) {
+    default AnyMSeq<W,T> intersperse(final T value) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.intersperse(value));
+        return fromIterable(ZippingApplicativable.super.intersperse(value));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#skipLast(int)
      */
     @Override
-    default AnyMSeq<T> skipLast(final int num) {
+    default AnyMSeq<W,T> skipLast(final int num) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.skipLast(num));
+        return fromIterable(ZippingApplicativable.super.skipLast(num));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#slice(long, long)
      */
     @Override
-    default AnyMSeq<T> slice(final long from, final long to) {
+    default AnyMSeq<W,T> slice(final long from, final long to) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.slice(from, to));
+        return fromIterable(ZippingApplicativable.super.slice(from, to));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#sorted(java.util.function.Function)
      */
     @Override
-    default <U extends Comparable<? super U>> AnyMSeq<T> sorted(final Function<? super T, ? extends U> function) {
+    default <U extends Comparable<? super U>> AnyMSeq<W,T> sorted(final Function<? super T, ? extends U> function) {
 
-        return AnyM.fromIterable(ZippingApplicativable.super.sorted(function));
+        return fromIterable(ZippingApplicativable.super.sorted(function));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.ExtendedTraversable#permutations()
      */
     @Override
-    default AnyMSeq<ReactiveSeq<T>> permutations() {
+    default AnyMSeq<W,ReactiveSeq<T>> permutations() {
 
-        return AnyM.fromIterable(ExtendedTraversable.super.permutations());
+        return fromIterable(ExtendedTraversable.super.permutations());
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.ExtendedTraversable#combinations(int)
      */
     @Override
-    default AnyMSeq<ReactiveSeq<T>> combinations(final int size) {
+    default AnyMSeq<W,ReactiveSeq<T>> combinations(final int size) {
 
-        return AnyM.fromIterable(ExtendedTraversable.super.combinations(size));
+        return fromIterable(ExtendedTraversable.super.combinations(size));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.ExtendedTraversable#combinations()
      */
     @Override
-    default AnyMSeq<ReactiveSeq<T>> combinations() {
+    default AnyMSeq<W,ReactiveSeq<T>> combinations() {
 
-        return AnyM.fromIterable(ExtendedTraversable.super.combinations());
+        return fromIterable(ExtendedTraversable.super.combinations());
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> AnyMSeq<U> ofType(final Class<? extends U> type) {
+    default <U> AnyMSeq<W,U> ofType(final Class<? extends U> type) {
 
-        return (AnyMSeq<U>) FilterableFunctor.super.ofType(type);
+        return (AnyMSeq<W,U>) FilterableFunctor.super.ofType(type);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<T> filterNot(final Predicate<? super T> fn) {
-        return (AnyMSeq<T>) FilterableFunctor.super.filterNot(fn);
+    default AnyMSeq<W,T> filterNot(final Predicate<? super T> fn) {
+        return (AnyMSeq<W,T>) FilterableFunctor.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    <U> AnyMSeq<U> unitIterator(Iterator<U> U);
+    <U> AnyMSeq<W,U> unitIterator(Iterator<U> U);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
      */
     @Override
-    <T> AnyMSeq<T> emptyUnit();
+    <T> AnyMSeq<W,T> emptyUnit();
 
     /* (non-Javadoc)
     * @see com.aol.cyclops.monad.AnyM#stream()
@@ -805,19 +807,19 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @see com.aol.cyclops.monad.AnyM#filter(java.util.function.Predicate)
      */
     @Override
-    AnyMSeq<T> filter(Predicate<? super T> p);
+    AnyMSeq<W,T> filter(Predicate<? super T> p);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#map(java.util.function.Function)
      */
     @Override
-    <R> AnyMSeq<R> map(Function<? super T, ? extends R> fn);
+    <R> AnyMSeq<W,R> map(Function<? super T, ? extends R> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#peek(java.util.function.Consumer)
      */
     @Override
-    default AnyMSeq<T> peek(final Consumer<? super T> c) {
+    default AnyMSeq<W,T> peek(final Consumer<? super T> c) {
 
         return map(i -> {
             c.accept(i);
@@ -829,13 +831,13 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @see com.aol.cyclops.monad.AnyM#flatten()
      */
     @Override
-    <T1> AnyMSeq<T1> flatten();
+    <T1> AnyMSeq<W,T1> flatten();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#aggregate(com.aol.cyclops.monad.AnyM)
      */
     @Override
-    AnyMSeq<List<T>> aggregate(AnyM<T> next);
+    AnyMSeq<W,List<T>> aggregate(AnyM<W,T> next);
     
     /**
      * Perform a four level nested internal iteration over this monad and the
@@ -853,9 +855,9 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      *            Monad that generates the new elements
      * @return AnyMSeq with elements generated via nested iteration
      */
-    default <R1, R2, R3,R> AnyMSeq<R> forEach4(final Function<? super T, ? extends AnyM<R1>> monad1,
-                        final BiFunction<? super T,? super R1, ? extends AnyM<R2>> monad2,
-                            final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<R3>> monad3,
+    default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
+                        final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
+                            final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
                             final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
         return For.Publishers.each4(this,monad1,monad2,monad3,yieldingFunction);
     }
@@ -879,9 +881,9 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    default <R1, R2, R3,R> AnyMSeq<R> forEach4(final Function<? super T, ? extends AnyM<R1>> monad1,
-            final BiFunction<? super T,? super R1, ? extends AnyM<R2>> monad2,
-                    final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<R3>> monad3,
+    default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
+            final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
+                    final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
                         final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                 final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
 
@@ -909,7 +911,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
      * @return LazyFutureStream with elements generated via nested iteration
      */
-    default <R1, R> AnyMSeq<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad,
+    default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad,
             BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
 
         return For.Publishers.each2(this,monad,yieldingFunction);
@@ -937,7 +939,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
      * @return
      */
-   default <R1, R> AnyMSeq<R> forEach2(Function<? super T, ? extends AnyM<R1>> monad, 
+   default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad, 
             BiFunction<? super T,? super R1, Boolean> filterFunction,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
 
@@ -966,8 +968,8 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
-    default <R1, R2, R> AnyMSeq<R> forEach3(Function<? super T, ? extends AnyM<R1>> monad1,
-            BiFunction<? super T, ? super R1, ? extends AnyM<R2>> monad2,
+    default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
+            BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
             TriFunction<? super T,? super R1, ? super R2, Boolean> filterFunction,
             TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
 
@@ -996,8 +998,8 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
-    default <R1, R2, R> AnyMSeq<R> forEach3(Function<? super T, ? extends AnyM<R1>> monad1,
-            BiFunction<? super T, ? super R1, ? extends AnyM<R2>> monad2,
+    default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
+            BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
             TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
         return For.Publishers.each3(this, monad1,monad2,yieldingFunction);
     
@@ -1031,7 +1033,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn flatMap function
      * @return  flatMapped AnyM
      */
-    <R> AnyMSeq<R> flatMap(Function<? super T, ? extends AnyM<? extends R>> fn);
+    <R> AnyMSeq<W,R> flatMap(Function<? super T, ? extends AnyM<? extends R>> fn);
 
     /**
      * Apply function/s inside supplied Monad to data in current Monad
@@ -1058,34 +1060,34 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn
      * @return
      */
-    <R> AnyMSeq<R> applyM(AnyM<Function<? super T, ? extends R>> fn);
+    <R> AnyMSeq<W,R> applyM(AnyM<W,Function<? super T, ? extends R>> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#unit(java.lang.Object)
      */
     @Override
-    <T> AnyMSeq<T> unit(T value);
+    <T> AnyMSeq<W,T> unit(T value);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#empty()
      */
     @Override
-    <T> AnyMSeq<T> empty();
+    <T> AnyMSeq<W,T> empty();
 
-    AnyMSeq<T> replicateM(int times);
+    AnyMSeq<W,T> replicateM(int times);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.AnyM#bind(java.util.function.Function)
      */
     @Override
-    <R> AnyMSeq<R> bind(Function<? super T, ?> fn);
+    <R> AnyMSeq<W,R> bind(Function<? super T, ?> fn);
 
     /**
      * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process
      * 
     <pre>{@code 
        Stream<CompletableFuture<Integer>> futures = createFutures();
-       AnyMSeq<List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
+       AnyMSeq<W,List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
         }
         </pre>
      * 
@@ -1093,7 +1095,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Function to apply 
      * @return Monad with a list
      */
-    public static <T, R> AnyMSeq<ListX<R>> traverse(final Collection<? extends AnyMSeq<T>> seq, final Function<? super T, ? extends R> fn) {
+    public static <W extends WitnessType,T, R> AnyMSeq<W,ListX<R>> traverse(final Collection<? extends AnyMSeq<W,T>> seq, final Function<? super T, ? extends R> fn) {
 
         return AnyMSeqImpl.from(new AnyMonads().traverse(seq, fn));
     }
@@ -1104,7 +1106,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * <pre>
      * {@code
         List<CompletableFuture<Integer>> futures = createFutures();
-        AnyMSeq<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
+        AnyMSeq<W,List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
     
        //where AnyM wraps  CompletableFuture<List<Integer>>
       }</pre>
@@ -1112,7 +1114,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */
-    public static <T1> AnyMSeq<ListX<T1>> sequence(final Collection<? extends AnyMSeq<T1>> seq) {
+    public static <W extends WitnessType,T1> AnyMSeq<W,ListX<T1>> sequence(final Collection<? extends AnyMSeq<W,T1>> seq) {
         return AnyMSeqImpl.from(new AnyMonads().sequence(seq));
     }
 
@@ -1120,7 +1122,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
      *
      */
-    public static <T, R> AnyMSeq<Stream<R>> traverse(final Stream<AnyMSeq<T>> source, final Supplier<AnyMSeq<Stream<T>>> unitEmpty,
+    public static <W extends WitnessType,T, R> AnyMSeq<W,Stream<R>> traverse(final Stream<AnyMSeq<W,T>> source, final Supplier<AnyMSeq<W,Stream<T>>> unitEmpty,
             final Function<? super T, ? extends R> fn) {
         return sequence(source, unitEmpty).map(s -> s.map(fn));
     }
@@ -1129,7 +1131,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * Convert a Stream of Monads to a Monad with a Stream
      *
      */
-    public static <T> AnyMSeq<Stream<T>> sequence(final Stream<AnyMSeq<T>> source, final Supplier<AnyMSeq<Stream<T>>> unitEmpty) {
+    public static <W extends WitnessType,T> AnyMSeq<W,Stream<T>> sequence(final Stream<AnyMSeq<W,T>> source, final Supplier<AnyMSeq<W,Stream<T>>> unitEmpty) {
 
         return Matchables.anyM(AnyM.sequence(source, unitEmpty))
                          .visit(s -> {
@@ -1145,7 +1147,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn
      * @return
      */
-    public static <U, R> Function<AnyMSeq<U>, AnyMSeq<R>> liftM(final Function<? super U, ? extends R> fn) {
+    public static <W extends WitnessType,U, R> Function<AnyMSeq<W,U>, AnyMSeq<W,R>> liftM(final Function<? super U, ? extends R> fn) {
         return u -> u.map(input -> fn.apply(input));
     }
 
@@ -1170,7 +1172,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn BiFunction to lift
      * @return Lifted BiFunction
      */
-    public static <U1, U2, R> BiFunction<AnyMSeq<U1>, AnyMSeq<U2>, AnyMSeq<R>> liftM2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
+    public static <W extends WitnessType,U1, U2, R> BiFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,R>> liftM2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
 
         return (u1, u2) -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1, input2))
                                                .unwrap());
@@ -1181,7 +1183,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * 
      * <pre>
      * {@code
-     * Function3 <AnyMSeq<Double>,AnyMSeq<Entity>,AnyMSeq<String>,AnyMSeq<Integer>> fn = liftM3(this::myMethod);
+     * Function3 <AnyMSeq<Double>,AnyMSeq<Entity>,AnyMSeq<W,String>,AnyMSeq<Integer>> fn = liftM3(this::myMethod);
      *    
      * }
      * </pre>
@@ -1191,7 +1193,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <U1, U2, U3, R> Function3<AnyMSeq<U1>, AnyMSeq<U2>, AnyMSeq<U3>, AnyMSeq<R>> liftM3(
+    public static <W extends WitnessType,U1, U2, U3, R> Function3<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,R>> liftM3(
             final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
         return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
                                                    .unwrap());
@@ -1202,7 +1204,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * 
      * <pre>
      * {@code
-     * TriFunction<AnyMSeq<Double>,AnyMSeq<Entity>,AnyMSeq<String>,AnyMSeq<Integer>> fn = liftM3(this::myMethod);
+     * TriFunction<AnyMSeq<Double>,AnyMSeq<Entity>,AnyMSeq<W,String>,AnyMSeq<Integer>> fn = liftM3(this::myMethod);
      *    
      * }
      * </pre>
@@ -1212,7 +1214,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <U1, U2, U3, R> TriFunction<AnyMSeq<U1>, AnyMSeq<U2>, AnyMSeq<U3>, AnyMSeq<R>> liftM3Cyclops(
+    public static <W extends WitnessType,U1, U2, U3, R> TriFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,R>> liftM3Cyclops(
             final TriFunction<? super U1, ? super U2, ? super U3, ? extends R> fn) {
         return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))
                                                                      .unwrap())
@@ -1225,7 +1227,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <U1, U2, U3, U4, R> Function4<AnyMSeq<U1>, AnyMSeq<U2>, AnyMSeq<U3>, AnyMSeq<U4>, AnyMSeq<R>> liftM4(
+    public static <W extends WitnessType,U1, U2, U3, U4, R> Function4<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,R>> liftM4(
             final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))))
@@ -1238,7 +1240,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <U1, U2, U3, U4, R> QuadFunction<AnyMSeq<U1>, AnyMSeq<U2>, AnyMSeq<U3>, AnyMSeq<U4>, AnyMSeq<R>> liftM4Cyclops(
+    public static <W extends WitnessType,U1, U2, U3, U4, R> QuadFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,R>> liftM4Cyclops(
             final QuadFunction<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))
@@ -1253,7 +1255,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <U1, U2, U3, U4, U5, R> Function5<AnyMSeq<U1>, AnyMSeq<U2>, AnyMSeq<U3>, AnyMSeq<U4>, AnyMSeq<U5>, AnyMSeq<R>> liftM5(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function5<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,U5>, AnyMSeq<W,R>> liftM5(
             final Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
@@ -1268,7 +1270,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <U1, U2, U3, U4, U5, R> QuintFunction<AnyMSeq<U1>, AnyMSeq<U2>, AnyMSeq<U3>, AnyMSeq<U4>, AnyMSeq<U5>, AnyMSeq<R>> liftM5Cyclops(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> QuintFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,U5>, AnyMSeq<W,R>> liftM5Cyclops(
             final QuintFunction<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
@@ -1286,7 +1288,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, R> Function<AnyMSeq<U1>, Function<AnyMSeq<U2>, AnyMSeq<R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
+    public static <W extends WitnessType,U1, U2, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, AnyMSeq<W,R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
         return u1 -> u2 -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1)
                                                                 .apply(input2))
                                                .unwrap());
@@ -1299,7 +1301,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, R> Function<AnyMSeq<U1>, Function<AnyMSeq<U2>, Function<AnyMSeq<U3>, AnyMSeq<R>>>> liftM3(
+    public static <W extends WitnessType,U1, U2, U3, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, AnyMSeq<W,R>>>> liftM3(
             final Function<? super U1, Function<? super U2, Function<? super U3, ? extends R>>> fn) {
         return u1 -> u2 -> u3 -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1)
                                                                                         .apply(input2)
@@ -1313,7 +1315,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, U4, R> Function<AnyMSeq<U1>, Function<AnyMSeq<U2>, Function<AnyMSeq<U3>, Function<AnyMSeq<U4>, AnyMSeq<R>>>>> liftM4(
+    public static <W extends WitnessType,U1, U2, U3, U4, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, Function<AnyMSeq<W,U4>, AnyMSeq<W,R>>>>> liftM4(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, ? extends R>>>> fn) {
 
         return u1 -> u2 -> u3 -> u4 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1)
@@ -1329,7 +1331,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, U4, U5, R> Function<AnyMSeq<U1>, Function<AnyMSeq<U2>, Function<AnyMSeq<U3>, Function<AnyMSeq<U4>, Function<AnyMSeq<U5>, AnyMSeq<R>>>>>> liftM5(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, Function<AnyMSeq<W,U4>, Function<AnyMSeq<W,U5>, AnyMSeq<W,R>>>>>> liftM5(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, Function<? super U5, ? extends R>>>>> fn) {
 
         return u1 -> u2 -> u3 -> u4 -> u5 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1)

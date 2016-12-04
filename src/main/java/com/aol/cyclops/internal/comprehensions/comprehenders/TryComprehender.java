@@ -15,8 +15,8 @@ import com.aol.cyclops.types.extensability.ValueComprehender;
  * @author johnmcclean
  *
  */
-public class TryComprehender implements ValueComprehender<Try> {
-
+public enum TryComprehender implements ValueComprehender<Try> {
+    INSTANCE;
     /* 
      * @see com.aol.cyclops.lambda.api.Comprehender#filter(java.lang.Object, java.util.function.Predicate)
      */

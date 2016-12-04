@@ -9,7 +9,8 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class FutureFunctorComprehender implements ValueComprehender<FutureW> {
+public enum FutureFunctorComprehender implements ValueComprehender<FutureW> {
+    INSTANCE;
     @Override
     public Class getTargetClass() {
         return FutureW.class;

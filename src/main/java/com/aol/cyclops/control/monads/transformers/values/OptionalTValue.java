@@ -27,6 +27,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.util.Optionals;
 
@@ -40,12 +41,12 @@ import com.aol.cyclops.util.Optionals;
  *
  * @param <T> The type contained on the Optional within
  */
-public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, MonadicValue<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,
+public class OptionalTValue<W extends WitnessType,T> implements OptionalT<W,T>, TransformerValue<T>, MonadicValue<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,
         ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 
-    private final AnyMValue<Optional<T>> run;
+    private final AnyMValue<W,Optional<T>> run;
 
-    private OptionalTValue(final AnyMValue<Optional<T>> run) {
+    private OptionalTValue(final AnyMValue<W,Optional<T>> run) {
         this.run = run;
     }
 
@@ -63,7 +64,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @return The wrapped AnyM
      */
     @Override
-    public AnyMValue<Optional<T>> unwrap() {
+    public AnyMValue<W,Optional<T>> unwrap() {
         return run;
     }
 
@@ -82,7 +83,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @return OptionalT with peek call
      */
     @Override
-    public OptionalTValue<T> peek(final Consumer<? super T> peek) {
+    public OptionalTValue<W,T> peek(final Consumer<? super T> peek) {
         return of(run.peek(opt -> opt.map(a -> {
             peek.accept(a);
             return a;
@@ -103,7 +104,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @return OptionalT that applies the provided filter
      */
     @Override
-    public OptionalTValue<T> filter(final Predicate<? super T> test) {
+    public OptionalTValue<W,T> filter(final Predicate<? super T> test) {
         return of(run.map(opt -> opt.filter(test)));
     }
 
@@ -124,8 +125,8 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @return OptionalT that applies the map function to the wrapped Optional
      */
     @Override
-    public <B> OptionalTValue<B> map(final Function<? super T, ? extends B> f) {
-        return new OptionalTValue<B>(
+    public <B> OptionalTValue<W,B> map(final Function<? super T, ? extends B> f) {
+        return new OptionalTValue<W,B>(
                                      run.map(o -> o.map(f)));
     }
 
@@ -133,7 +134,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> OptionalTValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+    public <T2, R> OptionalTValue<W,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return new OptionalTValue<>(
                                     run.map(o -> Optionals.combine(o, app, fn)));
     }
@@ -142,7 +143,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> OptionalTValue<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+    public <T2, R> OptionalTValue<W,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return new OptionalTValue<>(
                                     run.map(o -> Optionals.zip(o, app, fn)));
     }
@@ -151,7 +152,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> OptionalTValue<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+    public <T2, R> OptionalTValue<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         return new OptionalTValue<>(
                                     run.map(o -> Optionals.zip(app, o, fn)));
     }
@@ -160,7 +161,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> OptionalTValue<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> OptionalTValue<W,R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (OptionalTValue<R>) TransformerValue.super.zip(other, zipper);
     }
@@ -169,7 +170,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> OptionalTValue<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> OptionalTValue<W,R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (OptionalTValue<R>) TransformerValue.super.zip(other, zipper);
     }
@@ -178,7 +179,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    public <U> OptionalTValue<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    public <U> OptionalTValue<W,Tuple2<T, U>> zip(final Stream<? extends U> other) {
 
         return (OptionalTValue) TransformerValue.super.zip(other);
     }
@@ -187,7 +188,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> OptionalTValue<Tuple2<T, U>> zip(final Seq<? extends U> other) {
+    public <U> OptionalTValue<W,Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
         return (OptionalTValue) TransformerValue.super.zip(other);
     }
@@ -196,7 +197,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
-    public <U> OptionalTValue<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
+    public <U> OptionalTValue<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
         return (OptionalTValue) TransformerValue.super.zip(other);
     }
@@ -215,7 +216,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @param f FlatMap function
      * @return OptionalT that applies the flatMap function to the wrapped Optional
      */
-    public <B> OptionalTValue<B> flatMapT(final Function<? super T, OptionalTValue<? extends B>> f) {
+    public <B> OptionalTValue<W,B> flatMapT(final Function<? super T, OptionalTValue<? extends B>> f) {
 
         return of(run.bind(opt -> {
             if (opt.isPresent())
@@ -231,7 +232,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
     }
 
     @Override
-    public <B> OptionalTValue<B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
+    public <B> OptionalTValue<W,B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
         final AnyMValue<Optional<? extends B>> mapped = run.map(o -> Maybe.fromOptional(o)
                                                                           .flatMap(f)
                                                                           .toOptional());
@@ -267,7 +268,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @param fn Function to enhance with functionality from Optional and another monad type
      * @return Function that accepts and returns an OptionalT
      */
-    public static <U, R> Function<OptionalTValue<U>, OptionalTValue<R>> lift(final Function<U, R> fn) {
+    public static <U, R> Function<OptionalTValue<W,U>, OptionalTValue<R>> lift(final Function<U, R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -301,7 +302,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @param fn BiFunction to enhance with functionality from Optional and another monad type
      * @return Function that accepts and returns an OptionalT
      */
-    public static <U1, U2, R> BiFunction<OptionalTValue<U1>, OptionalTValue<U2>, OptionalTValue<R>> lift2(
+    public static <U1, U2, R> BiFunction<OptionalTValue<W,U1>, OptionalTValue<W,U2>, OptionalTValue<R>> lift2(
             final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
@@ -393,7 +394,7 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
         return of(run.unit(Optional.empty()));
     }
 
-    public static <T> OptionalTValue<T> emptyOptional() {
+    public static <T> OptionalTValue<W,T> emptyOptional() {
         return fromValue(Maybe.none());
     }
 
@@ -401,9 +402,9 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    public <U> OptionalTValue<U> cast(final Class<? extends U> type) {
+    public <U> OptionalTValue<W,U> cast(final Class<? extends U> type) {
 
-        return (OptionalTValue<U>) TransformerValue.super.cast(type);
+        return (OptionalTValue<W,U>) TransformerValue.super.cast(type);
     }
 
     /* (non-Javadoc)
@@ -428,27 +429,27 @@ public class OptionalTValue<T> implements OptionalT<T>, TransformerValue<T>, Mon
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    public <U> OptionalTValue<U> ofType(final Class<? extends U> type) {
+    public <U> OptionalTValue<W,U> ofType(final Class<? extends U> type) {
 
-        return (OptionalTValue<U>) OptionalT.super.ofType(type);
+        return (OptionalTValue<W,U>) OptionalT.super.ofType(type);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    public OptionalTValue<T> filterNot(final Predicate<? super T> fn) {
+    public OptionalTValue<W,T> filterNot(final Predicate<? super T> fn) {
 
-        return (OptionalTValue<T>) OptionalT.super.filterNot(fn);
+        return (OptionalTValue<W,T>) OptionalT.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
      */
     @Override
-    public OptionalTValue<T> notNull() {
+    public OptionalTValue<W,T> notNull() {
 
-        return (OptionalTValue<T>) OptionalT.super.notNull();
+        return (OptionalTValue<W,T>) OptionalT.super.notNull();
     }
 
     @Override

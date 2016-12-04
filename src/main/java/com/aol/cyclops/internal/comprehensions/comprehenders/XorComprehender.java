@@ -7,7 +7,8 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class XorComprehender implements ValueComprehender<Xor> {
+public enum XorComprehender implements ValueComprehender<Xor> {
+    INSTANCE;
 
     @Override
     public Object filter(final Xor t, final Predicate p) {

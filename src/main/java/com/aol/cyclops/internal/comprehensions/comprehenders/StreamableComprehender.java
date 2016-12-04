@@ -9,7 +9,9 @@ import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class StreamableComprehender implements Comprehender {
+public enum StreamableComprehender implements Comprehender{
+    INSTANCE;
+
     @Override
     public Class getTargetClass() {
         return Streamable.class;

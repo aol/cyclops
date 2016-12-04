@@ -5,12 +5,13 @@ import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 import lombok.experimental.Wither;
 
 //@AllArgsConstructor
-public class MonadWrapper<T> implements Monad<T>, Decomposable {
+public class MonadWrapper<W extends WitnessType,T> implements Monad<T>, Decomposable {
     @Wither
     private final Object monad;
     private final Class orgType;
@@ -31,6 +32,8 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
                                 of,comp);
 
     }
+    
+    
 
     @Override
     public Object unwrap() {
@@ -38,7 +41,7 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
     }
 
     @Override
-    public <X> AnyMValue<X> anyMValue() {
+    public <X> AnyMValue<W,X> anyMValue() {
         if (monad instanceof AnyMValue)
             return (AnyMValue<X>) monad;
         return new AnyMValueImpl(
@@ -46,7 +49,7 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
     }
 
     @Override
-    public <X> AnyMSeq<X> anyMSeq() {
+    public <X> AnyMSeq<W,X> anyMSeq() {
         if (monad instanceof AnyMSeq)
             return (AnyMSeq<X>) monad;
         return new AnyMSeqImpl(

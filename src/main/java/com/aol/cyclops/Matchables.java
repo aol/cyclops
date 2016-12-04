@@ -87,6 +87,7 @@ import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.ExceptionSoftener;
 
@@ -98,6 +99,7 @@ import com.aol.cyclops.util.ExceptionSoftener;
  */
 public class Matchables {
 
+   
     /**
      * Match on a single value 
      * 
@@ -408,8 +410,8 @@ public class Matchables {
         return Maybe.fromOptional(opt);
     }
 
-    public static <T> MXor<AnyMValue<T>, AnyMSeq<T>> anyM(final AnyM<T> anyM) {
-        return () -> anyM instanceof AnyMValue ? Xor.secondary((AnyMValue<T>) anyM) : Xor.primary((AnyMSeq<T>) anyM);
+    public static <W extends WitnessType,T> MXor<AnyMValue<W,T>, AnyMSeq<W,T>> anyM(final AnyM<W,T> anyM) {
+        return () -> anyM instanceof AnyMValue ? Xor.secondary((AnyMValue<W,T>) anyM) : Xor.primary((AnyMSeq<W,T>) anyM);
     }
 
     public static <T> MXor<MaybeTValue<T>, MaybeTSeq<T>> maybeT(final MaybeT<T> transformer) {

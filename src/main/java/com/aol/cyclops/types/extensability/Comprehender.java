@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
-import com.aol.cyclops.internal.monads.ComprehenderSelector;
+import com.aol.cyclops.types.anyM.WitnessType;
 
 /**
  * Interface for defining how Comprehensions should work for a type
@@ -41,6 +41,10 @@ import com.aol.cyclops.internal.monads.ComprehenderSelector;
  * @param <T> Monadic Type being wrapped
  */
 public interface Comprehender<T> {
+    
+    default Comprehender<T> adapter(){
+        return this;
+    }
 
     default int priority() {
         return 5;

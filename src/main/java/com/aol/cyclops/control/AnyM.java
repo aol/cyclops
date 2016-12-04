@@ -1,5 +1,8 @@
 package com.aol.cyclops.control;
 
+import static com.aol.cyclops.Matchables.listT;
+import static com.aol.cyclops.Matchables.streamT;
+import static com.aol.cyclops.types.anyM.Witness.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.stream.StreamSupport;
 
 import org.reactivestreams.Publisher;
 
+import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
@@ -64,15 +68,23 @@ import com.aol.cyclops.internal.comprehensions.comprehenders.TryComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.XorComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.CompletableFutureTValueComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.EvalTValueComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.ListTValueComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.MaybeTValueComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.OptionalTValueComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.SetTValueComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.StreamTValueComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.StreamableTValueComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.TryTValueComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.XorTValueComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.CompletableFutureTSeqComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.EvalTSeqComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.FutureWTSeqComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.ListTSeqComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.MaybeTSeqComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.OptionalTSeqComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.SetTSeqComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.StreamTSeqComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.StreamableTSeqComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.TryTSeqComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.XorTSeqComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
@@ -88,9 +100,13 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.Witness;
+import com.aol.cyclops.types.anyM.Witness.optional;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ToStream;
+import com.aol.cyclops.util.Optionals;
 import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
@@ -124,7 +140,7 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, FlatMap<T>, ToStream<T>,Publisher<T> {
+public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, FlatMap<T>, ToStream<T>,Publisher<T> {
    
     
     
@@ -150,7 +166,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param t AnyM to check for equivalence with this AnyM
      * @return true if monads are equivalent
      */
-    default boolean eqv(final AnyM<T> t) {
+    default boolean eqv(final AnyM<?,T> t) {
         return Predicates.eqvIterable(t)
                          .test(this);
     }
@@ -171,7 +187,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * 
      * @return An Xor for pattern matching either an AnyMValue or AnyMSeq
      */
-    Xor<AnyMValue<T>, AnyMSeq<T>> matchable();
+    Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
 
     /**
      * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
@@ -180,7 +196,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn FlatMaping function
      * @return AnyM with flattening transformation
      */
-    <R> AnyM<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> AnyM<W,R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn);
 
     /**
      * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
@@ -189,7 +205,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn FlatMaping function
      * @return AnyM with flattening transformation
      */
-    <R> AnyM<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> AnyM<W,R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
@@ -286,7 +302,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param p Filtering predicate
      * @return Filtered AnyM
      */
-    AnyM<T> filter(Predicate<? super T> p);
+    AnyM<W,T> filter(Predicate<? super T> p);
 
     /**
      * Perform a map operation on the wrapped monad instance e.g. 
@@ -306,7 +322,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @return AnyM transformed by the mapping function
      */
     @Override
-    <R> AnyM<R> map(Function<? super T, ? extends R> fn);
+    <R> AnyM<W,R> map(Function<? super T, ? extends R> fn);
 
     /**
      * Perform a peek operation on the wrapped monad e.g.
@@ -322,7 +338,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @return AnyM after peek operation
      */
     @Override
-    AnyM<T> peek(Consumer<? super T> c);
+    AnyM<W,T> peek(Consumer<? super T> c);
 
     /**
      * Perform a looser typed flatMap / bind operation
@@ -341,7 +357,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn flatMap function
      * @return flatMapped monad
     */
-    <R> AnyM<R> bind(Function<? super T, ?> fn);
+    <R> AnyM<W,R> bind(Function<? super T, ?> fn);
 
     /**
      * join / flatten one level of a nested hierarchy
@@ -349,7 +365,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @return Flattened / joined one level
      */
     @Override
-    <T1> AnyM<T1> flatten();
+    <T1> AnyM<W,T1> flatten();
 
     /**
      * Aggregate the contents of this Monad and the supplied Monad 
@@ -373,7 +389,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param next Monad to aggregate content with
      * @return Aggregated Monad
      */
-    AnyM<List<T>> aggregate(AnyM<T> next);
+    AnyM<W,List<T>> aggregate(AnyM<W,T> next);
 
     /**
      * Construct a new instanceof AnyM using the type of the underlying wrapped monad
@@ -389,7 +405,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @return Newly instantated AnyM
      */
     @Override
-    public <T> AnyM<T> unit(T value);
+    public <T> AnyM<W,T> unit(T value);
 
     /**
      * Construct an AnyM wrapping a new empty instance of the wrapped type 
@@ -403,7 +419,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * </pre>
      * @return Empty AnyM
      */
-    public <T> AnyM<T> empty();
+    public <T> AnyM<W,T> empty();
 
     /**
      * Perform a monadic reduction using a Monoid that combines AnyM types.
@@ -425,7 +441,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
     * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
     * @return Reduced AnyM
     */
-    AnyMValue<T> reduceMValue(Monoid<AnyMValue<T>> reducer);
+    AnyMValue<W,T> reduceMValue(Monoid<AnyMValue<W,T>> reducer);
 
     /**
      * Perform a monadic reduction using a Monoid that combines AnyM types.
@@ -447,7 +463,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
     * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
     * @return Reduced AnyM
     */
-    AnyMSeq<T> reduceMSeq(Monoid<AnyMSeq<T>> reducer);
+    AnyMSeq<W,T> reduceMSeq(Monoid<AnyMSeq<W,T>> reducer);
 
     /**
      * @return String representation of this AnyM
@@ -464,7 +480,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param end Exclusive end of the range
      * @return AnyM range
      */
-    public static AnyMSeq<Integer> fromRange(final int start, final int end) {
+    public static AnyMSeq<stream,Integer> fromRange(final int start, final int end) {
 
         return AnyM.fromStream(ReactiveSeq.range(start, end));
     }
@@ -478,7 +494,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param end Exclusive end of the range
      * @return AnyM range
      */
-    public static AnyMSeq<Long> fromRangeLong(final long start, final long end) {
+    public static AnyMSeq<stream,Long> fromRangeLong(final long start, final long end) {
 
         return AnyM.fromStream(ReactiveSeq.rangeLong(start, end));
     }
@@ -489,9 +505,10 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param streamable wrap
      * @return AnyMSeq generated from a ToStream type
      */
-    public static <T> AnyMSeq<T> fromStreamable(final ToStream<T> streamable) {
+    public static <T> AnyMSeq<streamable,T> fromStreamable(final ToStream<T> streamable) {
         Objects.requireNonNull(streamable);
-        return AnyMFactory.instance.convertSeq(streamable);
+        
+        return AnyMFactory.instance.seq(Streamable.fromIterable(streamable),Witness.streamable.INSTANCE);
     }
 
     /**
@@ -504,9 +521,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param list to wrap inside an AnyM
      * @return AnyM wrapping a list
      */
-    public static <T> AnyMSeq<T> fromList(final List<T> list) {
+    public static <T> AnyMSeq<list,T> fromList(final List<T> list) {
         Objects.requireNonNull(list);
-        return AnyMFactory.instance.seq(list, new ListComprehender());
+        return AnyMFactory.instance.seq(list,Witness.list.INSTANCE);
     }
 
     /**
@@ -519,9 +536,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param set to wrap inside an AnyM
      * @return AnyM wrapping a Set
      */
-    public static <T> AnyMSeq<T> fromSet(final Set<T> set) {
+    public static <T> AnyMSeq<set,T> fromSet(final Set<T> set) {
         Objects.requireNonNull(set);
-        return AnyMFactory.instance.seq(set, new SetComprehender());
+        return AnyMFactory.instance.seq(set, Witness.set.INSTANCE);
     }
 
     /**
@@ -530,8 +547,8 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param streamData values to populate a Stream
      * @return AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
-    public static <T> AnyMSeq<T> fromArray(final T... streamData) {
-        return AnyMFactory.instance.seq(Stream.of(streamData),new StreamComprehender());
+    public static <T> AnyMSeq<stream,T> fromArray(final T... streamData) {
+        return AnyMFactory.instance.seq(Stream.of(streamData),Witness.stream.INSTANCE);
     }
 
     /**
@@ -542,8 +559,8 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param streamData values to populate a Stream
      * @return  AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
-    public static <T> AnyMSeq<T> streamOf(final T... streamData) {
-        return AnyMFactory.instance.seq(Stream.of(streamData),new StreamComprehender());
+    public static <T> AnyMSeq<stream,T> streamOf(final T... streamData) {
+        return AnyMFactory.instance.seq(Stream.of(streamData),Witness.streamable.INSTANCE);
     }
 
     /**
@@ -567,8 +584,8 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param publisher Publisher to wrap inside an AnyM
      * @return AnyMSeq that wraps a Publisher
      */
-    public static <T> AnyMSeq<T> fromPublisher(final Publisher<T> publisher) {
-        return AnyMFactory.instance.convertSeq(publisher);
+    public static <T> AnyMSeq<stream,T> fromPublisher(final Publisher<T> publisher) {
+        return AnyMFactory.instance.seq(ReactiveSeq.fromPublisher(publisher),Witness.stream.INSTANCE);
     }
 
     /**
@@ -577,9 +594,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param stream Stream to wrap
      * @return AnyM that wraps the provided Stream
      */
-    public static <T> AnyMSeq<T> fromStream(final Stream<T> stream) {
+    public static <T> AnyMSeq<stream,T> fromStream(final Stream<T> stream) {
         Objects.requireNonNull(stream);
-        return AnyMFactory.instance.seq(stream,new StreamComprehender());
+        return AnyMFactory.instance.seq(stream,Witness.stream.INSTANCE);
     }
 
     /**
@@ -588,9 +605,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param stream IntStream to wrap
      * @return AnyM that wraps the provided IntStream
      */
-    public static AnyMSeq<Integer> fromIntStream(final IntStream stream) {
+    public static AnyMSeq<stream,Integer> fromIntStream(final IntStream stream) {
         Objects.requireNonNull(stream);
-        return AnyMFactory.instance.seq(stream.boxed(),new StreamComprehender());
+        return AnyMFactory.instance.seq(stream.boxed(),Witness.stream.INSTANCE);
     }
 
     /**
@@ -599,9 +616,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param stream DoubleStream to wrap
      * @return AnyM that wraps the provided DoubleStream
      */
-    public static AnyMSeq<Double> fromDoubleStream(final DoubleStream stream) {
+    public static AnyMSeq<stream,Double> fromDoubleStream(final DoubleStream stream) {
         Objects.requireNonNull(stream);
-        return AnyMFactory.instance.seq(stream.boxed(),new StreamComprehender());
+        return AnyMFactory.instance.seq(stream.boxed(),Witness.stream.INSTANCE);
     }
 
     /**
@@ -610,9 +627,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param stream LongStream to wrap
      * @return AnyM that wraps the provided LongStream
      */
-    public static AnyMSeq<Long> fromLongStream(final LongStream stream) {
+    public static AnyMSeq<stream,Long> fromLongStream(final LongStream stream) {
         Objects.requireNonNull(stream);
-        return AnyMFactory.instance.seq(stream.boxed(),new StreamComprehender());
+        return AnyMFactory.instance.seq(stream.boxed(),Witness.stream.INSTANCE);
     }
 
     /**
@@ -621,9 +638,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param optional Optional to wrap
      * @return AnyM that wraps the provided Optonal
      */
-    public static <T> AnyMValue<T> fromOptional(final Optional<T> optional) {
-        Objects.requireNonNull(optional);
-        return AnyMFactory.instance.value(optional, new OptionalComprehender());
+    public static <T> AnyMValue<optional,T> fromOptional(final Optional<T> opt) {
+        Objects.requireNonNull(opt);
+        return AnyMFactory.instance.value(opt, Witness.optional.INSTANCE);
     }
 
     /**
@@ -632,9 +649,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param optional Optional to wrap
      * @return AnyM that wraps the provided OptonalDouble
      */
-    public static AnyMValue<Double> fromOptionalDouble(final OptionalDouble optional) {
+    public static AnyMValue<optional,Double> fromOptionalDouble(final OptionalDouble optional) {
         Objects.requireNonNull(optional);
-        return AnyMFactory.instance.convertValue(optional, new OptionalComprehender());
+        return AnyMFactory.instance.value(Optionals.optional(optional), Witness.optional.INSTANCE);
     }
 
     /**
@@ -643,9 +660,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param optional OptionalLong to wrap
      * @return AnyM that wraps the provided OptonalLong
      */
-    public static AnyMValue<Long> fromOptionalLong(final OptionalLong optional) {
+    public static AnyMValue<optional,Long> fromOptionalLong(final OptionalLong optional) {
         Objects.requireNonNull(optional);
-        return AnyMFactory.instance.convertValue(optional, new OptionalComprehender());
+        return AnyMFactory.instance.value(Optionals.optional(optional), Witness.optional.INSTANCE);
     }
 
     /**
@@ -654,9 +671,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param optional OptionalInt to wrap
      * @return AnyM that wraps the provided OptonalInt
      */
-    public static AnyMValue<Integer> fromOptionalInt(final OptionalInt optional) {
+    public static AnyMValue<optional,Integer> fromOptionalInt(final OptionalInt optional) {
         Objects.requireNonNull(optional);
-        return AnyMFactory.instance.convertValue(optional, new OptionalComprehender());
+        return AnyMFactory.instance.value(Optionals.optional(optional), Witness.optional.INSTANCE);
     }
 
     /**
@@ -665,9 +682,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param future CompletableFuture to wrap
      * @return AnyM that wraps the provided CompletableFuture
      */
-    public static <T> AnyMValue<T> fromCompletableFuture(final CompletableFuture<T> future) {
+    public static <T> AnyMValue<completableFuture,T> fromCompletableFuture(final CompletableFuture<T> future) {
         Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future, new CompletableFutureComprehender());
+        return AnyMFactory.instance.value(future, Witness.completableFuture.INSTANCE);
     }
 
     /**
@@ -676,9 +693,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param xor Xor to wrap inside an AnyM
      * @return AnyM instance that wraps the provided Xor
      */
-    public static <T> AnyMValue<T> fromXor(final Xor<?, T> xor) {
+    public static <T> AnyMValue<xor,T> fromXor(final Xor<?, T> xor) {
         Objects.requireNonNull(xor);
-        return AnyMFactory.instance.value(xor,new XorComprehender());
+        return AnyMFactory.instance.value(xor,Witness.xor.INSTANCE);
     }
 
     /**
@@ -687,9 +704,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param featureToggle to wrap inside an AnyM
      * @return AnyM instance that wraps the provided FeatureToggle
      */
-    public static <T> AnyMValue<T> fromFeatureToggle(final FeatureToggle<T> featureToggle) {
+    public static <T> AnyMValue<featureToggle,T> fromFeatureToggle(final FeatureToggle<T> featureToggle) {
         Objects.requireNonNull(featureToggle);
-        return AnyMFactory.instance.value(featureToggle,new FeatureToggleComprehender());
+        return AnyMFactory.instance.value(featureToggle,Witness.featureToggle.INSTANCE);
     }
 
     /**
@@ -698,9 +715,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param trySomething to wrap inside an AnyM
      * @return AnyM instance that wraps the provided Try
      */
-    public static <T> AnyMValue<T> fromTry(final Try<T, ?> trySomething) {
+    public static <T> AnyMValue<tryType,T> fromTry(final Try<T, ?> trySomething) {
         Objects.requireNonNull(trySomething);
-        return AnyMFactory.instance.value(trySomething, new TryComprehender());
+        return AnyMFactory.instance.value(trySomething, Witness.tryType.INSTANCE);
     }
 
     /**
@@ -709,9 +726,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param ior to wrap inside an AnyM
      * @return AnyM instance that wraps the provided Ior
      */
-    public static <T> AnyMValue<T> fromIor(final Ior<?, T> ior) {
+    public static <T> AnyMValue<ior,T> fromIor(final Ior<?, T> ior) {
         Objects.requireNonNull(ior);
-        return AnyMFactory.instance.value(ior, new IorComprehender());
+        return AnyMFactory.instance.value(ior, Witness.ior.INSTANCE);
     }
 
     /**
@@ -720,9 +737,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param eval to wrap inside an AnyM
      * @return AnyM instance that wraps the provided Eval
      */
-    public static <T> AnyMValue<T> fromEval(final Eval<T> eval) {
+    public static <T> AnyMValue<eval,T> fromEval(final Eval<T> eval) {
         Objects.requireNonNull(eval);
-        return AnyMFactory.instance.value(eval, new EvalComprehender());
+        return AnyMFactory.instance.value(eval, Witness.eval.INSTANCE);
     }
 
     /**
@@ -731,9 +748,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param future to wrap inside an AnyM
      * @return AnyM instance that wraps the provided future
      */
-    public static <T> AnyMValue<T> fromFutureW(final FutureW<T> future) {
+    public static <T> AnyMValue<futureW,T> fromFutureW(final FutureW<T> future) {
         Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future, new FutureFunctorComprehender());
+        return AnyMFactory.instance.value(future, Witness.futureW.INSTANCE);
     }
 
     /**
@@ -742,9 +759,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param maybe to wrap inside an AnyM
      * @return instance that wraps the provided Maybe
      */
-    public static <T> AnyMValue<T> fromMaybe(final Maybe<T> maybe) {
+    public static <T> AnyMValue<maybe,T> fromMaybe(final Maybe<T> maybe) {
         Objects.requireNonNull(maybe);
-        return AnyMFactory.instance.value(maybe, new MaybeComprehender());
+        return AnyMFactory.instance.value(maybe, Witness.maybe.INSTANCE);
     }
 
     /**
@@ -753,9 +770,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param evalT  to wrap inside an AnyM
      * @return instance that wraps the provided EvalTransformer
      */
-    public static <T> AnyMValue<T> fromEvalTValue(final EvalTValue<T> evalT) {
+    public static <T> AnyMValue<eval,T> fromEvalTValue(final EvalTValue<T> evalT) {
         Objects.requireNonNull(evalT);
-        return AnyMFactory.instance.value(evalT, new EvalTValueComprehender());
+        return AnyMFactory.instance.value(evalT, Witness.eval.INSTANCE);
     }
 
     /**
@@ -909,7 +926,8 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromListT(final ListT<T> listT) {
         Objects.requireNonNull(listT);
-        return AnyMFactory.instance.seq(listT);
+        return AnyMFactory.instance.seq(listT,listT(listT).visit(v->new ListTValueComprehender(),
+                                                                            s->new ListTSeqComprehender()));
     }
 
     /**
@@ -920,7 +938,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromStreamT(final StreamT<T> streamT) {
         Objects.requireNonNull(streamT);
-        return AnyMFactory.instance.seq(streamT);
+        return AnyMFactory.instance.seq(streamT,streamT(streamT).visit(v->new StreamTValueComprehender(),
+                                                                 s->new StreamTSeqComprehender()));
+       
     }
 
     /**
@@ -931,7 +951,8 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromStreamableT(final StreamableT<T> streamT) {
         Objects.requireNonNull(streamT);
-        return AnyMFactory.instance.seq(streamT, new StreamableT);
+        return AnyMFactory.instance.seq(streamT,Matchables.streamableT(streamT).visit(v->new StreamableTValueComprehender(),
+                                                                          s->new StreamableTSeqComprehender()));
     }
 
     /**
@@ -942,7 +963,8 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromSetT(final SetT<T> setT) {
         Objects.requireNonNull(setT);
-        return AnyMFactory.instance.seq(setT);
+        return AnyMFactory.instance.seq(setT,Matchables.setT(setT).visit(v->new SetTValueComprehender(),
+                                                                       s->new SetTSeqComprehender()));
     }
 
     /**
@@ -1014,9 +1036,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param monad to wrap inside an AnyM
      * @return AnyMSeq that wraps the supplied monad
      */
-    public static <T> AnyMSeq<T> ofSeq(final Object monad) {
+    public static <T> AnyMSeq<T> ofSeq(final Object monad, Comprehender<T> adapter) {
         Objects.requireNonNull(monad);
-        return AnyMFactory.instance.seq(monad);
+        return AnyMFactory.instance.seq(monad,adapter);
     }
 
     /**
@@ -1025,8 +1047,8 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param nullable - Nullable object to generate an optional from
      * @return AnyM wrapping an Optional created with the supplied nullable
      */
-    public static <T> AnyMValue<T> ofNullable(final Object nullable) {
-        return AnyMFactory.instance.value(Optional.ofNullable(nullable));
+    public static <T> AnyMValue<optional,T> ofNullable(final Object nullable) {
+        return AnyMFactory.instance.value(Optional.ofNullable(nullable),Witness.optional.INSTANCE);
     }
 
     /**
@@ -1059,7 +1081,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param anyM Iterable containing Streams
      * @return List of AnyMs
      */
-    public static <T> ListX<AnyMSeq<T>> listFromStream(final Iterable<Stream<T>> anyM) {
+    public static <T> ListX<AnyMSeq<stream,T>> listFromStream(final Iterable<Stream<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromStream(i))
                             .collect(ListX.listXCollector());
@@ -1077,7 +1099,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param anyM Iterable containing Optional
      * @return List of AnyMs
      */
-    public static <T> ListX<AnyMValue<T>> listFromOptional(final Iterable<Optional<T>> anyM) {
+    public static <T> ListX<AnyMValue<optional,T>> listFromOptional(final Iterable<Optional<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromOptional(i))
                             .collect(ListX.listXCollector());
@@ -1095,7 +1117,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param anyM Iterable containing CompletableFuture
      * @return List of AnyMs
      */
-    public static <T> ListX<AnyMValue<T>> listFromCompletableFuture(final Iterable<CompletableFuture<T>> anyM) {
+    public static <T> ListX<AnyMValue<completableFuture,T>> listFromCompletableFuture(final Iterable<CompletableFuture<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromCompletableFuture(i))
                             .collect(ListX.listXCollector());
@@ -1131,7 +1153,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param anyM Iterable containing Xors
      * @return List of AnyMs
      */
-    public static <ST, T> ListX<AnyMValue<T>> listFromXor(final Iterable<Xor<ST, T>> anyM) {
+    public static <ST, T> ListX<AnyMValue<xor,T>> listFromXor(final Iterable<Xor<ST, T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromXor(i))
                             .collect(ListX.listXCollector());
@@ -1149,7 +1171,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param anyM Iterable containing Iors
      * @return List of AnyMs
      */
-    public static <ST, T> ListX<AnyMValue<T>> listFromIor(final Iterable<Ior<ST, T>> anyM) {
+    public static <ST, T> ListX<AnyMValue<ior,T>> listFromIor(final Iterable<Ior<ST, T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromIor(i))
                             .collect(ListX.listXCollector());
@@ -1167,7 +1189,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param anyM Iterable containing Maybes
      * @return List of AnyMs
      */
-    public static <T> ListX<AnyMValue<T>> listFromMaybe(final Iterable<Maybe<T>> anyM) {
+    public static <T> ListX<AnyMValue<maybe,T>> listFromMaybe(final Iterable<Maybe<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromMaybe(i))
                             .collect(ListX.listXCollector());
@@ -1185,7 +1207,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param anyM Iterable containing Maybes
      * @return List of AnyMs
      */
-    public static <T> ListX<AnyMValue<T>> listFromEval(final Iterable<Eval<T>> anyM) {
+    public static <T> ListX<AnyMValue<eval,T>> listFromEval(final Iterable<Eval<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromEval(i))
                             .collect(ListX.listXCollector());
@@ -1203,7 +1225,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param anyM Iterable containing Maybes
      * @return List of AnyMs
      */
-    public static <T> ListX<AnyMValue<T>> listFromFutureW(final Iterable<FutureW<T>> anyM) {
+    public static <T> ListX<AnyMValue<futureW,T>> listFromFutureW(final Iterable<FutureW<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromFutureW(i))
                             .collect(ListX.listXCollector());
@@ -1260,7 +1282,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn Function to apply 
      * @return Monad with a list
      */
-    public static <T, R> AnyMValue<ListX<R>> traverse(final Collection<? extends AnyM<T>> seq, final Function<? super T, ? extends R> fn) {
+    public static <W extends WitnessType,T, R> AnyMValue<W,ListX<R>> traverse(final Collection<? extends AnyM<W,T>> seq, final Function<? super T, ? extends R> fn) {
         return new AnyMonads().traverse(seq, fn);
     }
 
@@ -1273,7 +1295,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @return AnyM wrapping a Monad with a Stream transformed by the supplied mapping function
      *
      */
-    public static <T, R> AnyM<Stream<R>> traverse(final Stream<AnyM<T>> source, final Supplier<AnyM<Stream<T>>> unitEmpty,
+    public static <W extends WitnessType, T, R> AnyM<W,Stream<R>> traverse(final Stream<AnyM<W,T>> source, final Supplier<AnyM<W,Stream<T>>> unitEmpty,
             final Function<? super T, ? extends R> fn) {
         return sequence(source, unitEmpty).map(s -> s.map(fn));
     }
@@ -1299,9 +1321,9 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param unitEmpty Supplier to generate an AnyM with an Empty Stream
      * @return  AnyM wrapping a Monad with a Stream
      */
-    public static <T> AnyM<Stream<T>> sequence(final Stream<? extends AnyM<T>> source, final Supplier<? extends AnyM<Stream<T>>> unitEmpty) {
-        final Stream<AnyM<T>> narrowed = (Stream<AnyM<T>>) source;
-        return narrowed.reduce((AnyM<Stream<T>>) unitEmpty.get(), (fl, fo) -> fl.flatMapFirst(a -> {
+    public static <W extends WitnessType,T> AnyM<W,Stream<T>> sequence(final Stream<? extends AnyM<W,T>> source, final Supplier<? extends AnyM<W,Stream<T>>> unitEmpty) {
+        final Stream<AnyM<W,T>> narrowed = (Stream<AnyM<W,T>>) source;
+        return narrowed.reduce((AnyM<W,Stream<T>>) unitEmpty.get(), (fl, fo) -> fl.flatMapFirst(a -> {
             final Streamable<T> streamable = Streamable.fromStream(a);
             return fo.map(b -> Stream.concat(streamable.stream(), Stream.of(b)));
         }), (fa, fb) -> fa.flatMapFirst(a -> fb.map(b -> Stream.concat(a, b))));
@@ -1314,7 +1336,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn Function to Lift into monadic form
      * @return A monadic function
      */
-    public static <U, R> Function<AnyM<U>, AnyM<R>> liftM(final Function<? super U, ? extends R> fn) {
+    public static <W extends WitnessType,U, R> Function<AnyM<W,U>, AnyM<W,R>> liftM(final Function<? super U, ? extends R> fn) {
         return u -> u.map(input -> fn.apply(input));
     }
 
@@ -1339,7 +1361,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn BiFunction to lift
      * @return Lifted BiFunction
      */
-    public static <U1, U2, R> BiFunction<AnyM<U1>, AnyM<U2>, AnyM<R>> liftM2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
+    public static <W extends WitnessType,U1, U2, R> BiFunction<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,R>> liftM2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
 
         return (u1, u2) -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1, input2))
                                                .unwrap());
@@ -1360,7 +1382,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <U1, U2, U3, R> TriFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<R>> liftM3(
+    public static <W extends WitnessType,U1, U2, U3, R> TriFunction<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,R>> liftM3(
             final TriFunction<? super U1, ? super U2, ? super U3, ? extends R> fn) {
         return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
                                                    .unwrap());
@@ -1372,7 +1394,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <U1, U2, U3, U4, R> QuadFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<R>> liftM4(
+    public static <W extends WitnessType,U1, U2, U3, U4, R> QuadFunction<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,R>> liftM4(
             final QuadFunction<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))
@@ -1387,7 +1409,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <U1, U2, U3, U4, U5, R> QuintFunction<AnyM<U1>, AnyM<U2>, AnyM<U3>, AnyM<U4>, AnyM<U5>, AnyM<R>> liftM5(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> QuintFunction<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,U5>, AnyM<W,R>> liftM5(
             final QuintFunction<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
@@ -1405,7 +1427,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, R> Function<AnyM<U1>, Function<AnyM<U2>, AnyM<R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
+    public static <W extends WitnessType,U1, U2, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, AnyM<W,R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
         return u1 -> u2 -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1)
                                                                 .apply(input2))
                                                .unwrap());
@@ -1418,7 +1440,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, R> Function<AnyM<U1>, Function<AnyM<U2>, Function<AnyM<U3>, AnyM<R>>>> liftM3(
+    public static <W extends WitnessType,U1, U2, U3, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, AnyM<W,R>>>> liftM3(
             final Function<? super U1, Function<? super U2, Function<? super U3, ? extends R>>> fn) {
         return u1 -> u2 -> u3 -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1)
                                                                                         .apply(input2)
@@ -1432,7 +1454,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, U4, R> Function<AnyM<U1>, Function<AnyM<U2>, Function<AnyM<U3>, Function<AnyM<U4>, AnyM<R>>>>> liftM4(
+    public static <W extends WitnessType,U1, U2, U3, U4, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, Function<AnyM<W,U4>, AnyM<W,R>>>>> liftM4(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, ? extends R>>>> fn) {
 
         return u1 -> u2 -> u3 -> u4 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1)
@@ -1448,7 +1470,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, U4, U5, R> Function<AnyM<U1>, Function<AnyM<U2>, Function<AnyM<U3>, Function<AnyM<U4>, Function<AnyM<U5>, AnyM<R>>>>>> liftM5(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, Function<AnyM<W,U4>, Function<AnyM<W,U5>, AnyM<W,R>>>>>> liftM5(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, Function<? super U5, ? extends R>>>>> fn) {
 
         return u1 -> u2 -> u3 -> u4 -> u5 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1)
@@ -1534,12 +1556,12 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
          * @param o Monad to wrap
          * @return AnyMValue wrapping supplied monad
          */
-        public <T> AnyMValue<T> value(final Object o,Comprehender<?> comp) {
+        public <W extends WitnessType,T> AnyMValue<W,T> value(final Object o,WitnessType comp) {
             if (o instanceof AnyMValue)
-                return (AnyMValue<T>) o;
+                return (AnyMValue<W,T>) o;
             
             return new MonadWrapper<>(
-                                      o,comp).anyMValue();
+                                      o,comp.adapter()).anyMValue();
         }
 
         /**
@@ -1548,11 +1570,11 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
          * @param o Monad to wrap
          * @return AnyMValue wrapping supplied monad
          */
-        public <T> AnyMSeq<T> seq(final Object o, Comprehender<?> comp) {
+        public <W extends WitnessType,T> AnyMSeq<W,T> seq(final Object o, WitnessType comp) {
             if (o instanceof AnyMSeq)
-                return (AnyMSeq<T>) o;
+                return (AnyMSeq<W,T>) o;
             return new MonadWrapper<>(
-                                      o,comp).anyMSeq();
+                                      o,comp.adapter()).anyMSeq();
         }
 
     }

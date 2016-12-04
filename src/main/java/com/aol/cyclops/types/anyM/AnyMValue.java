@@ -47,8 +47,10 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> Data types of elements managed by wrapped scalar Monad.
  */
-public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Matchable.ValueAndOptionalMatcher<T> {
+public interface AnyMValue<W extends WitnessType,T> extends AnyM<W,T>, 
+Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Matchable.ValueAndOptionalMatcher<T> {
 
+    
     /**
      * Equivalence test, returns true if this Monad is equivalent to the supplied monad
      * e.g.
@@ -62,7 +64,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param t Monad to compare to
      * @return true if equivalent
      */
-    default boolean eqv(final AnyMValue<T> t) {
+    default boolean eqv(final AnyMValue<?,T> t) {
         return Predicates.eqv(t)
                          .test(this);
     }
@@ -72,9 +74,9 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @see com.aol.cyclops.control.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default AnyMValue<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+    default AnyMValue<W,T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
         
-        return (AnyMValue<T>)ApplicativeFunctor.super.combine(combiner, app);
+        return (AnyMValue<W,T>)ApplicativeFunctor.super.combine(combiner, app);
     }
 
 
@@ -93,45 +95,45 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> AnyMValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (AnyMValue<R>) ApplicativeFunctor.super.combine(app, fn);
+    default <T2, R> AnyMValue<W,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (AnyMValue<W,R>) ApplicativeFunctor.super.combine(app, fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> AnyMValue<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> AnyMValue<W,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return (AnyMValue<R>) ApplicativeFunctor.super.zip(app, fn);
+        return (AnyMValue<W,R>) ApplicativeFunctor.super.zip(app, fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> AnyMValue<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+    default <T2, R> AnyMValue<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
 
-        return (AnyMValue<R>) ApplicativeFunctor.super.zip(fn, app);
+        return (AnyMValue<W,R>) ApplicativeFunctor.super.zip(fn, app);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.AnyM#flatMapFirst(java.util.function.Function)
      */
     @Override
-    <R> AnyMValue<R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> AnyMValue<W,R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.AnyM#flatMapFirstPublisher(java.util.function.Function)
      */
     @Override
-    <R> AnyMValue<R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> AnyMValue<W,R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
-    default <R> AnyMValue<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
+    default <R> AnyMValue<W,R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
         return mapper.andThen(r -> unit(r))
                      .apply(this);
     }
@@ -141,14 +143,14 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @see com.aol.cyclops.types.MonadicValue#nest()
      */
     @Override
-    default AnyMValue<MonadicValue<T>> nest() {
+    default AnyMValue<W,MonadicValue<T>> nest() {
         return unit(this);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
      */
-    default AnyMValue<T> combine(final Monoid<T> monoid, final AnyMValue<? extends T> v2) {
+    default AnyMValue<W,T> combine(final Monoid<T> monoid, final AnyMValue<?,? extends T> v2) {
         return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.apply(t1, t2)))
                         .orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
@@ -173,61 +175,61 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> AnyMValue<U> ofType(final Class<? extends U> type) {
+    default <U> AnyMValue<W,U> ofType(final Class<? extends U> type) {
 
-        return (AnyMValue<U>) MonadicValue.super.ofType(type);
+        return (AnyMValue<W,U>) MonadicValue.super.ofType(type);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default AnyMValue<T> filterNot(final Predicate<? super T> fn) {
+    default AnyMValue<W,T> filterNot(final Predicate<? super T> fn) {
 
-        return (AnyMValue<T>) MonadicValue.super.filterNot(fn);
+        return (AnyMValue<W,T>) MonadicValue.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
      */
     @Override
-    default AnyMValue<T> notNull() {
+    default AnyMValue<W,T> notNull() {
 
-        return (AnyMValue<T>) MonadicValue.super.notNull();
+        return (AnyMValue<W,T>) MonadicValue.super.notNull();
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> AnyMValue<U> cast(final Class<? extends U> type) {
+    default <U> AnyMValue<W,U> cast(final Class<? extends U> type) {
 
-        return (AnyMValue<U>) AnyM.super.cast(type);
+        return (AnyMValue<W,U>) AnyM.super.cast(type);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> AnyMValue<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+    default <R> AnyMValue<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (AnyMValue<R>) AnyM.super.trampoline(mapper);
+        return (AnyMValue<W,R>) AnyM.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> AnyMValue<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
+    default <R> AnyMValue<W,R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (AnyMValue<R>) AnyM.super.patternMatch(case1, otherwise);
+        return (AnyMValue<W,R>) AnyM.super.patternMatch(case1, otherwise);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
      */
     @Override
-    <T> AnyMValue<T> emptyUnit();
+    <T> AnyMValue<W,T> emptyUnit();
 
     /**
     * 
@@ -245,7 +247,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     * @param times number of times to replicate
     * @return Replicated Monad
     */
-    AnyM<List<T>> replicateM(int times);
+    AnyM<W,List<T>> replicateM(int times);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#stream()
@@ -257,37 +259,37 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @see com.aol.cyclops.monad.AnyM#filter(java.util.function.Predicate)
      */
     @Override
-    AnyMValue<T> filter(Predicate<? super T> p);
+    AnyMValue<W,T> filter(Predicate<? super T> p);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#map(java.util.function.Function)
      */
     @Override
-    <R> AnyMValue<R> map(Function<? super T, ? extends R> fn);
+    <R> AnyMValue<W,R> map(Function<? super T, ? extends R> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#peek(java.util.function.Consumer)
      */
     @Override
-    AnyMValue<T> peek(Consumer<? super T> c);
+    AnyMValue<W,T> peek(Consumer<? super T> c);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#bind(java.util.function.Function)
      */
     @Override
-    <R> AnyMValue<R> bind(Function<? super T, ?> fn);
+    <R> AnyMValue<W,R> bind(Function<? super T, ?> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#flatten()
      */
     @Override
-    <T1> AnyMValue<T1> flatten();
+    <T1> AnyMValue<W,T1> flatten();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#aggregate(com.aol.cyclops.monad.AnyM)
      */
     @Override
-    AnyMValue<List<T>> aggregate(AnyM<T> next);
+    AnyMValue<W,List<T>> aggregate(AnyM<W,T> next);
 
     /**
     * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process
@@ -302,7 +304,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     * @param fn Function to apply 
     * @return Monad with a list
     */
-    public static <T, R> AnyMValue<ListX<R>> traverse(final Collection<? extends AnyMValue<T>> seq, final Function<? super T, ? extends R> fn) {
+    public static <W extends WitnessType,T, R> AnyMValue<W,ListX<R>> traverse(final Collection<? extends AnyMValue<W,T>> seq, final Function<? super T, ? extends R> fn) {
 
         return new AnyMonads().traverse(seq, fn);
     }
@@ -311,7 +313,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
      *
      */
-    public static <T, R> AnyMValue<Stream<R>> traverse(final Stream<AnyMValue<T>> source, final Supplier<AnyMValue<Stream<T>>> unitEmpty,
+    public static <T, R> AnyMValue<Stream<R>> traverse(final Stream<AnyMValue<W,T>> source, final Supplier<AnyMValue<Stream<T>>> unitEmpty,
             final Function<? super T, ? extends R> fn) {
         return sequence(source, unitEmpty).map(s -> s.map(fn));
     }
@@ -320,7 +322,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * Convert a Stream of Monads to a Monad with a Stream
      *
      */
-    public static <T> AnyMValue<Stream<T>> sequence(final Stream<AnyMValue<T>> source, final Supplier<AnyMValue<Stream<T>>> unitEmpty) {
+    public static <T> AnyMValue<Stream<T>> sequence(final Stream<AnyMValue<W,T>> source, final Supplier<AnyMValue<Stream<T>>> unitEmpty) {
 
         return Matchables.anyM(AnyM.sequence(source, unitEmpty))
                          .visit(v -> v, s -> {
@@ -348,7 +350,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     }
 
     @Override
-    default <R1, R> AnyMValue<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
+    default <R1, R> AnyMValue<W,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
         return For.Values.each2(this, value1,yieldingFunction);
     }
@@ -361,7 +363,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     }
 
     @Override
-    default < T2, R1, R2, R>  AnyMValue<R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
+    default < T2, R1, R2, R>  AnyMValue<W,R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                     final TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                     final TriFunction<? super T, ? super R1, ? super R2, ? extends R>  yieldingFunction){
@@ -369,13 +371,13 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     }
 
     @Override
-    default <T2, R1, R2, R> AnyMValue<R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
+    default <T2, R1, R2, R> AnyMValue<W,R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
             final TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return For.Values.each3(this, value1, value2, yieldingFunction);
     }
     @Override
-    default < T2, R1, R2,R3, R>  AnyMValue<R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1,
+    default < T2, R1, R2,R3, R>  AnyMValue<W,R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
             final TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
             final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
@@ -419,7 +421,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn flatMap function
      * @return  flatMapped AnyM
      */
-    <R> AnyMValue<R> flatMap(Function<? super T, ? extends AnyMValue<? extends R>> fn);
+    <R> AnyMValue<W,R> flatMap(Function<? super T, ? extends AnyMValue<? extends R>> fn);
 
     /**
      * Apply function/s inside supplied Monad to data in current Monad
@@ -443,7 +445,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn
      * @return
      */
-    <R> AnyMValue<R> applyM(AnyMValue<Function<? super T, ? extends R>> fn);
+    <R> AnyMValue<W,R> applyM(AnyMValue<Function<? super T, ? extends R>> fn);
 
     /**
      * Sequence the contents of a Monad.  e.g.
@@ -494,13 +496,13 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @see com.aol.cyclops.monad.AnyM#unit(java.lang.Object)
      */
     @Override
-    <T> AnyMValue<T> unit(T value);
+    <T> AnyMValue<W,T> unit(T value);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#empty()
      */
     @Override
-    <T> AnyMValue<T> empty();
+    <T> AnyMValue<W,T> empty();
 
     @Override
     default Iterator<T> iterator() {
@@ -515,7 +517,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn
      * @return
      */
-    public static <U, R> Function<AnyMValue<U>, AnyMValue<R>> liftM(final Function<? super U, ? extends R> fn) {
+    public static <U, R> Function<AnyMValue<U>, AnyMValue<W,R>> liftM(final Function<? super U, ? extends R> fn) {
         return u -> u.map(input -> fn.apply(input));
     }
 
@@ -540,7 +542,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn BiFunction to lift
      * @return Lifted BiFunction
      */
-    public static <U1, U2, R> BiFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<R>> liftM2(
+    public static <U1, U2, R> BiFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<W,R>> liftM2(
             final BiFunction<? super U1, ? super U2, ? extends R> fn) {
 
         return (u1, u2) -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1, input2))
@@ -562,7 +564,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <U1, U2, U3, R> Function3<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<R>> liftM3(
+    public static <U1, U2, U3, R> Function3<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<W,R>> liftM3(
             final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
         return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
                                                    .unwrap());
@@ -583,7 +585,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <U1, U2, U3, R> TriFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<R>> liftM3Cyclops(
+    public static <U1, U2, U3, R> TriFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<W,R>> liftM3Cyclops(
             final TriFunction<? super U1, ? super U2, ? super U3, ? extends R> fn) {
         return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))
                                                                      .unwrap())
@@ -596,7 +598,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <U1, U2, U3, U4, R> Function4<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<R>> liftM4(
+    public static <U1, U2, U3, U4, R> Function4<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<W,R>> liftM4(
             final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))))
@@ -609,7 +611,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <U1, U2, U3, U4, R> QuadFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<R>> liftM4Cyclops(
+    public static <U1, U2, U3, U4, R> QuadFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<W,R>> liftM4Cyclops(
             final QuadFunction<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))
@@ -624,7 +626,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <U1, U2, U3, U4, U5, R> Function5<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<U5>, AnyMValue<R>> liftM5(
+    public static <U1, U2, U3, U4, U5, R> Function5<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<U5>, AnyMValue<W,R>> liftM5(
             final Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
@@ -639,7 +641,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <U1, U2, U3, U4, U5, R> QuintFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<U5>, AnyMValue<R>> liftM5Cyclops(
+    public static <U1, U2, U3, U4, U5, R> QuintFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<U5>, AnyMValue<W,R>> liftM5Cyclops(
             final QuintFunction<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
@@ -657,7 +659,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, AnyMValue<R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
+    public static <U1, U2, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, AnyMValue<W,R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
         return u1 -> u2 -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1)
                                                                 .apply(input2))
                                                .unwrap());
@@ -670,7 +672,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, Function<AnyMValue<U3>, AnyMValue<R>>>> liftM3(
+    public static <U1, U2, U3, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, Function<AnyMValue<U3>, AnyMValue<W,R>>>> liftM3(
             final Function<? super U1, Function<? super U2, Function<? super U3, ? extends R>>> fn) {
         return u1 -> u2 -> u3 -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1)
                                                                                         .apply(input2)
@@ -684,7 +686,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, U4, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, Function<AnyMValue<U3>, Function<AnyMValue<U4>, AnyMValue<R>>>>> liftM4(
+    public static <U1, U2, U3, U4, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, Function<AnyMValue<U3>, Function<AnyMValue<U4>, AnyMValue<W,R>>>>> liftM4(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, ? extends R>>>> fn) {
 
         return u1 -> u2 -> u3 -> u4 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1)
@@ -700,7 +702,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, U4, U5, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, Function<AnyMValue<U3>, Function<AnyMValue<U4>, Function<AnyMValue<U5>, AnyMValue<R>>>>>> liftM5(
+    public static <U1, U2, U3, U4, U5, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, Function<AnyMValue<U3>, Function<AnyMValue<U4>, Function<AnyMValue<U5>, AnyMValue<W,R>>>>>> liftM5(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, Function<? super U5, ? extends R>>>>> fn) {
 
         return u1 -> u2 -> u3 -> u4 -> u5 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1)

@@ -25,6 +25,7 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.WitnessType;
 
 /**
  * Monad transformer for JDK Optional
@@ -38,18 +39,18 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> The type contained on the Optional within
  */
-public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>, Filterable<T> {
+public interface OptionalT<W extends WitnessType,T> extends To<OptionalT<W,T>>,Publisher<T>, Functor<T>, Filterable<T> {
 
     public ReactiveSeq<T> stream();
 
-    public <R> OptionalT<R> unit(R value);
+    public <R> OptionalT<W,R> unit(R value);
 
-    public <R> OptionalT<R> empty();
+    public <R> OptionalT<W,R> empty();
 
     /**
      * @return The wrapped AnyM
      */
-    public AnyM<Optional<T>> unwrap();
+    public AnyM<W,Optional<T>> unwrap();
 
     /**
      * Peek at the current value of the Optional
@@ -66,7 +67,7 @@ public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>,
      * @return OptionalT with peek call
      */
     @Override
-    public OptionalT<T> peek(Consumer<? super T> peek);
+    public OptionalT<W,T> peek(Consumer<? super T> peek);
 
     /**
      * Filter the wrapped Optional
@@ -82,7 +83,7 @@ public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>,
      * @return OptionalT that applies the provided filter
      */
     @Override
-    public OptionalT<T> filter(Predicate<? super T> test);
+    public OptionalT<W,T> filter(Predicate<? super T> test);
 
     /**
      * Map the wrapped Optional
@@ -101,7 +102,7 @@ public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>,
      * @return OptionalT that applies the map function to the wrapped Optional
      */
     @Override
-    public <B> OptionalT<B> map(Function<? super T, ? extends B> f);
+    public <B> OptionalT<W,B> map(Function<? super T, ? extends B> f);
 
     /**
      * Flat Map the wrapped Optional
@@ -117,7 +118,7 @@ public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>,
      * @param f FlatMap function
      * @return OptionalT that applies the flatMap function to the wrapped Optional
      */
-    default <B> OptionalT<B> bind(final Function<? super T, OptionalT<? extends B>> f) {
+    default <B> OptionalT<W,B> bind(final Function<? super T, OptionalT<W,? extends B>> f) {
 
         return of(unwrap().bind(opt -> {
             if (opt.isPresent())
@@ -130,7 +131,7 @@ public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>,
 
     }
 
-    public <B> OptionalT<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
+    public <B> OptionalT<W,B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
 
     /**
      * Lift a function into one that accepts and returns an OptionalT
@@ -161,7 +162,7 @@ public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>,
      * @param fn Function to enhance with functionality from Optional and another monad type
      * @return Function that accepts and returns an OptionalT
      */
-    public static <U, R> Function<OptionalT<U>, OptionalT<R>> lift(final Function<U, R> fn) {
+    public static <W extends WitnessType,U, R> Function<OptionalT<W,U>, OptionalT<W,R>> lift(final Function<U, R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -195,7 +196,7 @@ public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>,
      * @param fn BiFunction to enhance with functionality from Optional and another monad type
      * @return Function that accepts and returns an OptionalT
      */
-    public static <U1, U2, R> BiFunction<OptionalT<U1>, OptionalT<U2>, OptionalT<R>> lift2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
+    public static <W extends WitnessType,U1, U2, R> BiFunction<OptionalT<W,U1>, OptionalT<W,U2>, OptionalT<W,R>> lift2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.bind(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -206,7 +207,7 @@ public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>,
      * @param anyM AnyM that doesn't contain a monad wrapping an Optional
      * @return OptionalT
      */
-    public static <A> OptionalT<A> fromAnyM(final AnyM<A> anyM) {
+    public static <W extends WitnessType,A> OptionalT<W,A> fromAnyM(final AnyM<W,A> anyM) {
         return of(anyM.map(Optional::ofNullable));
     }
 
@@ -216,16 +217,16 @@ public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>,
      * @param monads AnyM that contains a monad wrapping an Optional
      * @return OptionalT
      */
-    public static <A> OptionalT<A> of(final AnyM<Optional<A>> monads) {
+    public static <W extends WitnessType,A> OptionalT<W,A> of(final AnyM<W,Optional<A>> monads) {
         return Matchables.anyM(monads)
                          .visit(v -> OptionalTValue.of(v), s -> OptionalTSeq.of(s));
     }
 
-    public static <A> OptionalTValue<A> fromAnyMValue(final AnyMValue<A> anyM) {
+    public static <W extends WitnessType,A> OptionalTValue<A> fromAnyMValue(final AnyMValue<W,A> anyM) {
         return OptionalTValue.fromAnyM(anyM);
     }
 
-    public static <A> OptionalTSeq<A> fromAnyMSeq(final AnyMSeq<A> anyM) {
+    public static <W extends WitnessType,A> OptionalTSeq<A> fromAnyMSeq(final AnyMSeq<W extends WitnessType,A> anyM) {
         return OptionalTSeq.fromAnyM(anyM);
     }
 
@@ -269,50 +270,50 @@ public interface OptionalT<T> extends To<OptionalT<T>>,Publisher<T>, Functor<T>,
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> OptionalT<U> cast(final Class<? extends U> type) {
-        return (OptionalT<U>) Functor.super.cast(type);
+    default <U> OptionalT<W,U> cast(final Class<? extends U> type) {
+        return (OptionalT<W,U>) Functor.super.cast(type);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> OptionalT<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (OptionalT<R>) Functor.super.trampoline(mapper);
+    default <R> OptionalT<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (OptionalT<W,R>) Functor.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> OptionalT<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-        return (OptionalT<R>) Functor.super.patternMatch(case1, otherwise);
+    default <R> OptionalT<W,R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
+        return (OptionalT<W,R>) Functor.super.patternMatch(case1, otherwise);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
      */
     @Override
-    default <U> OptionalT<U> ofType(final Class<? extends U> type) {
+    default <U> OptionalT<W,U> ofType(final Class<? extends U> type) {
 
-        return (OptionalT<U>) Filterable.super.ofType(type);
+        return (OptionalT<W,U>) Filterable.super.ofType(type);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
      */
     @Override
-    default OptionalT<T> filterNot(final Predicate<? super T> fn) {
+    default OptionalT<W,T> filterNot(final Predicate<? super T> fn) {
 
-        return (OptionalT<T>) Filterable.super.filterNot(fn);
+        return (OptionalT<W,T>) Filterable.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#notNull()
      */
     @Override
-    default OptionalT<T> notNull() {
+    default OptionalT<W,T> notNull() {
 
-        return (OptionalT<T>) Filterable.super.notNull();
+        return (OptionalT<W,T>) Filterable.super.notNull();
     }
 }

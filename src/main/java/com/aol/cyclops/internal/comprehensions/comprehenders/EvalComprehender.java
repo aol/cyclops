@@ -8,8 +8,8 @@ import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class EvalComprehender implements ValueComprehender<Eval> {
-
+public enum EvalComprehender implements ValueComprehender<Eval> {
+    INSTANCE;
     @Override
     public Object resolveForCrossTypeFlatMap(final Comprehender comp, final Eval apply) {
         final Maybe m = apply.toMaybe();

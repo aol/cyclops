@@ -1,7 +1,6 @@
 package com.aol.cyclops.internal;
 
 import java.util.NoSuchElementException;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -19,9 +18,9 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
-import com.aol.cyclops.types.mixins.WrappingFunctor;
 
 /**
  * An interoperability Trait that encapsulates java Monad implementations.
@@ -234,7 +233,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
     @Override
     Object unwrap();
 
-    public <T> AnyMValue<T> anyMValue();
+    public <W extends WitnessType,T> AnyMValue<W,T> anyMValue();
 
     public <T> AnyMSeq<T> anyMSeq();
 

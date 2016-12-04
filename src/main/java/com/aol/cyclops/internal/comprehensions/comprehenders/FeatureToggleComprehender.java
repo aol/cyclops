@@ -13,8 +13,8 @@ import com.aol.cyclops.types.extensability.ValueComprehender;
  *
  *  Behaviour in cross-type flatMap is to create an empty instance for Disabled Switches, but always pass Enabled values on
  */
-public class FeatureToggleComprehender implements ValueComprehender<FeatureToggle<Object>> {
-
+public enum FeatureToggleComprehender implements ValueComprehender<FeatureToggle<Object>> {
+    INSTANCE;
     @Override
     public Object filter(final FeatureToggle t, final Predicate p) {
         return t.filter(p);

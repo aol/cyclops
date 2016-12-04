@@ -4,10 +4,13 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
 
-public class OptionalComprehender implements ValueComprehender<Optional> {
+public enum OptionalComprehender implements ValueComprehender<Optional> {
+    INSTANCE;
+   
     @Override
     public Class getTargetClass() {
         return Optional.class;

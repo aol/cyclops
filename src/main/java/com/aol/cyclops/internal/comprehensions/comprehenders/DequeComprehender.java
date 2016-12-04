@@ -11,7 +11,8 @@ import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class DequeComprehender implements Comprehender<Deque> {
+public enum DequeComprehender implements Comprehender<Deque> {
+    INSTANCE;
     @Override
     public Object resolveForCrossTypeFlatMap(final Comprehender comp, final Deque apply) {
         final List list = (List) apply.stream()

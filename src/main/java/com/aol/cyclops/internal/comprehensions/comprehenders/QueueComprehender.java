@@ -3,7 +3,6 @@ package com.aol.cyclops.internal.comprehensions.comprehenders;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
@@ -12,7 +11,8 @@ import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class QueueComprehender implements Comprehender<Queue> {
+public enum QueueComprehender implements Comprehender<Queue> {
+    INSTANCE;
     @Override
     public Object resolveForCrossTypeFlatMap(final Comprehender comp, final Queue apply) {
         final List list = (List) apply.stream()
