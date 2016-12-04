@@ -2,7 +2,7 @@
 
 Cyclops is a platform that aims to bring much of the power of languages such as Scala to Java, while retaining it's ease of use.
 
-As a platform Cylops offers powerful sequential and parallel Streaming with common 'reactive' functionality, fast and powerful colleciton extensions, a large range of extened persistent collections, , straightforward structural pattern matching, true for comprehensions, utilities for working with JDK types, enhanced APIs for working with Futures, an advanced Try implementation, Xor & Ior, PushableStreams, lazy data types (Maybe, Eval, Either1-5) and even compiler enforced Higher Kinded Types and type classes.
+As a platform Cylops offers powerful sequential and parallel Streaming with common reactive functionality, fast and powerful colleciton extensions, a large range of extened persistent collections, , straightforward structural pattern matching, true for comprehensions, utilities for working with JDK types, enhanced APIs for working with Futures, an advanced Try implementation, Xor & Ior, PushableStreams, lazy data types (Maybe, Eval, Either1-5) and even compiler enforced Higher Kinded Types and type classes.
 
 * Cyclops is **not** a foundational library, the end goal is the primary focus and the technology used is a means to that end
 * Cyclops integrates best of breed libraries for the Java Platform to produce something more powerful than the sum of the parts.
