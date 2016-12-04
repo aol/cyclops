@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+
+import static com.aol.cyclops.data.collections.extensions.persistent.PStackX.range;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import lombok.val;
@@ -22,7 +24,7 @@ public class NQueensPStackTest {
         if (k == 0)
             return PStackX.of(PStackX.empty());
         else {
-            return placeQueens(k - 1).forEach2(queens -> PStackX.range(1, num + 1),
+            return placeQueens(k - 1).forEach2(queens -> range(1, num + 1),
                                                (queens, column) -> isSafe(column, queens, 1),
                                                (queens, column) -> queens.plus(column));
         }
