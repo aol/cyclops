@@ -143,7 +143,7 @@ public interface Comprehender<T> {
             }
         }
 
-        return (T) new ComprehenderSelector().selectComprehender(apply)
+        return (T) new ComprehenderSelector().selectComprehender(apply,--?)
                                              .resolveForCrossTypeFlatMap(comp, apply);
 
     }

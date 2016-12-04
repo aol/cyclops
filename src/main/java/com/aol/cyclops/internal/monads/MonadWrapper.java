@@ -5,6 +5,7 @@ import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 import lombok.experimental.Wither;
 
@@ -13,20 +14,21 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
     @Wither
     private final Object monad;
     private final Class orgType;
+    private final Comprehender<?> comp;
 
-    public MonadWrapper(final Object monad) {
+    public MonadWrapper(final Object monad,Comprehender<T> comp) {
         this.monad = monad;
         orgType = monad.getClass();
+        this.comp  = comp;
     }
 
-    /**
-    public MonadWrapper<T> withMonad(Object o ){
-        return new MonadWrapper(monad,orgType);
-    }**/
+    public Comprehender<?> adapter(){
+        return comp;
+    }
 
-    public static <T> Monad<T> of(final Object of) {
+    public static <T> Monad<T> of(final Object of,Comprehender<?> comp) {
         return new MonadWrapper(
-                                of);
+                                of,comp);
 
     }
 
@@ -39,16 +41,16 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
     public <X> AnyMValue<X> anyMValue() {
         if (monad instanceof AnyMValue)
             return (AnyMValue<X>) monad;
-        return new AnyMValueImpl<X>(
-                                    (Monad) this, orgType);
+        return new AnyMValueImpl(
+                                    (Monad) this, orgType,comp);
     }
 
     @Override
     public <X> AnyMSeq<X> anyMSeq() {
         if (monad instanceof AnyMSeq)
             return (AnyMSeq<X>) monad;
-        return new AnyMSeqImpl<X>(
-                                  (Monad) this, orgType);
+        return new AnyMSeqImpl(
+                                  (Monad) this, orgType,comp);
     }
 
     @Override
@@ -63,9 +65,10 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
         return monad.toString();
     }
 
-    public MonadWrapper(final Object monad, final Class orgType) {
+    public MonadWrapper(final Object monad, final Class orgType, Comprehender<?> comp) {
         super();
         this.monad = monad;
         this.orgType = orgType;
+        this.comp = comp;
     }
 }

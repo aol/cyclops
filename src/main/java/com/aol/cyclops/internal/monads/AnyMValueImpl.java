@@ -15,10 +15,12 @@ import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
 
@@ -27,15 +29,15 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
         return Xor.secondary(this);
     }
 
-    public AnyMValueImpl(final Monad<T> monad, final Class initialType) {
-        super(monad, initialType);
+    public AnyMValueImpl(final Monad<T> monad, final Class initialType, Comprehender<T> adapter) {
+        super(monad, initialType,adapter);
 
     }
 
     private <T> AnyMValueImpl<T> with(final Monad<T> anyM) {
 
-        return new AnyMValueImpl<T>(
-                                    anyM, initialType);
+        return new AnyMValueImpl(
+                                    anyM, initialType,adapter);
     }
 
     private <T> AnyMValueImpl<T> with(final AnyM<T> anyM) {
@@ -104,7 +106,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
     @Override
     public <T> AnyMValue<T> emptyUnit() {
         return new AnyMValueImpl(
-                                 monad.empty(), initialType);
+                                 monad.empty(), initialType,(Comprehender)adapter);
     }
 
     @Override
@@ -137,7 +139,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
     @Override
     public <T> AnyMValue<T> empty() {
         return with(new AnyMValueImpl(
-                                      monad.empty(), initialType));
+                                      monad.empty(), initialType,adapter));
     }
 
     @Override

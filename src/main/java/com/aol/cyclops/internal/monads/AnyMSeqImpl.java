@@ -12,17 +12,17 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 public class AnyMSeqImpl<T> extends BaseAnyMImpl<T>implements AnyMSeq<T> {
 
-    protected AnyMSeqImpl(final Monad<T> monad, final Class initialType) {
-        super(monad, initialType);
+    protected AnyMSeqImpl(final Monad<T> monad, final Class initialType, Comprehender<T> adapter) {
+        super(monad, initialType,adapter);
 
     }
 

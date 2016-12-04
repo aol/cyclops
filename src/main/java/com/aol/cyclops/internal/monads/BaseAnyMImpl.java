@@ -76,7 +76,7 @@ public abstract class BaseAnyMImpl<T> {
      * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
      */
     protected Monad<T> peekInternal(final Consumer<? super T> c) {
-        return monad.peek(c);
+        return (Monad<T>)monad.peek(c);
     }
 
     /**
