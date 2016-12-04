@@ -854,7 +854,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @return AnyMSeq with elements generated via nested iteration
      */
     default <R1, R2, R3,R> AnyMSeq<R> forEach4(final Function<? super T, ? extends AnyM<R1>> monad1,
-                        final BiFunction<? super T,? super R1, ? extends AnyM<R>> monad2,
+                        final BiFunction<? super T,? super R1, ? extends AnyM<R2>> monad2,
                             final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<R3>> monad3,
                             final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
         return For.Publishers.each4(this,monad1,monad2,monad3,yieldingFunction);
@@ -880,7 +880,7 @@ public interface AnyMSeq<T> extends AnyM<T>, IterableFoldable<T>, ConvertableSeq
      * @return ReactiveSeq with elements generated via nested iteration
      */
     default <R1, R2, R3,R> AnyMSeq<R> forEach4(final Function<? super T, ? extends AnyM<R1>> monad1,
-            final BiFunction<? super T,? super R1, ? extends AnyM<R>> monad2,
+            final BiFunction<? super T,? super R1, ? extends AnyM<R2>> monad2,
                     final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<R3>> monad3,
                         final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                 final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){

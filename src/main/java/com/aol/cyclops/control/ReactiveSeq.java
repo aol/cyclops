@@ -3353,10 +3353,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    <R1, R2, R3,R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+    default <R1, R2, R3,R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
                         final BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
                             final TriFunction<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-                            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction);
+                            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+        return For.stream(this)
+                .stream(a-> stream1.apply(a))
+                .stream(a -> b -> stream2.apply(a, b))
+                .stream(a -> b -> c -> stream3.apply(a, b, c))
+                .yield4(yieldingFunction)
+                .unwrap();
+    }
     /**
      * Perform a four level nested internal iteration over this Stream and the
      * supplied streams
@@ -3391,11 +3398,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    <R1, R2, R3, R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+    default <R1, R2, R3, R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             final BiFunction<? super T, ? super R1, ? extends BaseStream<R2, ?>> stream2,
             final TriFunction<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
             final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction);
+            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+        return For.stream(this)
+                .stream(a-> stream1.apply(a))
+                .stream(a -> b -> stream2.apply(a, b))
+                .stream(a -> b -> c -> stream3.apply(a, b, c))
+                .filter(a -> b -> c -> d -> filterFunction.apply(a, b, c, d))
+                .yield4(yieldingFunction)
+                .unwrap();
+    }
     /**
      * Perform a three level nested internal iteration over this Stream and the
      * supplied streams
@@ -3421,9 +3436,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+    default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction);
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+        return For.stream(this)
+                .stream(u -> stream1.apply(u))
+                .stream(u -> r1 -> stream2.apply(u,r1))
+                .yield3(yieldingFunction)
+                .unwrap();
+    }
 
     /**
      * Perform a three level nested internal iteration over this Stream and the
@@ -3455,10 +3476,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+   default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
             TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction);
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+        return For.stream(this)
+                .stream(u -> stream1.apply(u))
+                .stream(u -> r1 -> stream2.apply(u,r1))
+                .filter(a->b->c->filterFunction.apply(a,b,c))
+                .yield3(yieldingFunction)
+                .unwrap();
+    }
 
     /**
      * Perform a two level nested internal iteration over this Stream and the
@@ -3483,8 +3511,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            BiFunction<? super T,? super R1, ? extends R> yieldingFunction);
+    default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
+        return For.stream(this)
+                .stream(u -> stream1.apply(u))
+                .yield2(yieldingFunction)
+                .unwrap();
+    }
 
     /**
      * Perform a two level nested internal iteration over this Stream and the
@@ -3512,9 +3545,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+    default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, Boolean> filterFunction,
-            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction);
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
+        return For.stream(this)
+                .stream(u -> stream1.apply(u))
+                .filter(a->b->filterFunction.apply(a,b))
+                .yield2(yieldingFunction)
+                .unwrap();
+    }
 
     @Override
     default long count() {
