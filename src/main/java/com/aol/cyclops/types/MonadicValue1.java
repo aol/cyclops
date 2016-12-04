@@ -97,8 +97,8 @@ public interface MonadicValue1<T> extends MonadicValue<T> {
      * 
      * @param mapper transformation function
      * @return MonadicValue
-     */
-    <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
+     
+    <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);*/
 
     /**
      * A flattening transformation operation that takes the first value from the returned Iterable.

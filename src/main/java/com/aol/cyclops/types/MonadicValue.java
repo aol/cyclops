@@ -2,11 +2,10 @@ package com.aol.cyclops.types;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.BaseStream;
+import java.util.function.Predicate;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.For;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
@@ -18,7 +17,14 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> Data type of element stored inside this Monad
  */
-public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T> {
+public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterable<T>{
+
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     */
+    @Override
+     MonadicValue<T> filter(Predicate<? super T> predicate) ;
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
@@ -67,6 +73,21 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T> {
     default MonadicValue<MonadicValue<T>> nest() {
         return this.map(t -> unit(t));
     }
+    /**
+     * A flattening transformation operation (@see {@link java.util.Optional#flatMap(Function)}
+     * 
+     * <pre>
+     * {@code 
+     *   Eval.now(1).map(i->i+2).flatMap(i->Eval.later(()->i*3);
+     *   //Eval[9]
+     * 
+     * }</pre>
+     * 
+     * 
+     * @param mapper transformation function
+     * @return MonadicValue
+     */
+    <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
     /**
      * Perform a four level nested internal iteration over this MonadicValue and the
      * supplied MonadicValues
@@ -239,8 +260,11 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T> {
      */
     default <R1, R> MonadicValue<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
-        return For.Values.each2(this, value1,yieldingFunction)
-                .unwrap();
+        return this.flatMap(in-> { 
+            MonadicValue<R1> b = value1.apply(in);
+            return b.map(in2->yieldingFunction.apply(in, in2));
+        });
+       
     }
 
     /**
@@ -272,8 +296,11 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T> {
     default <R1, R> MonadicValue<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, Boolean> filterFunction,
             final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
-        return For.Values.each2(this, value1, filterFunction,yieldingFunction)
-                    .unwrap();
+        return this.flatMap(in-> { 
+           
+            MonadicValue<R1> b = value1.apply(in);
+            return b.filter(in2-> filterFunction.apply(in,in2)).map(in2->yieldingFunction.apply(in, in2));
+        });
     }
 
 
