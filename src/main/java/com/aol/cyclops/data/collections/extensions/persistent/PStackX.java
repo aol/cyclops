@@ -34,8 +34,10 @@ import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
+
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
+
 
 public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>, OnEmptySwitch<T, PStack<T>> {
 
@@ -352,6 +354,16 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
         return (PStackX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     
+    @Override
+    default PStackX<T> take(final long num) {
+
+        return limit(num);
+    }
+    @Override
+    default PStackX<T> drop(final long num) {
+
+        return skip(num);
+    }
     @Override
     default PStackX<T> toPStackX() {
         return this;

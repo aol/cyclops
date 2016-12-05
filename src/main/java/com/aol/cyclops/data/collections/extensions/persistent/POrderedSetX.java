@@ -206,6 +206,8 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
         return Reducers.<T> toPOrderedSetX()
                        .mapReduce(stream);
     }
+
+
     
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
@@ -299,6 +301,16 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
 
     }
 
+    @Override
+    default POrderedSetX<T> take(final long num) {
+
+        return limit(num);
+    }
+    @Override
+    default POrderedSetX<T> drop(final long num) {
+
+        return skip(num);
+    }
     @Override
     default POrderedSetX<T> toPOrderedSetX() {
         return this;

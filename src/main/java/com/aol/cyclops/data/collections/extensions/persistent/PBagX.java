@@ -31,6 +31,7 @@ import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.OnEmptySwitch;
@@ -217,6 +218,16 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
         return (PBagX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     
+    @Override
+    default PBagX<T> take(final long num) {
+
+        return limit(num);
+    }
+    @Override
+    default PBagX<T> drop(final long num) {
+
+        return skip(num);
+    }
     @Override
     default ReactiveSeq<T> stream() {
 

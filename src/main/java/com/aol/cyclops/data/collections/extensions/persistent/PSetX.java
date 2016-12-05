@@ -36,6 +36,7 @@ import com.aol.cyclops.types.To;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
+
 public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
     /**
      * Narrow a covariant PSetX
@@ -187,7 +188,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         return Reducers.<T> toPSetX()
                        .mapReduce(stream);
     }
-
+   
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
      */
@@ -257,6 +258,15 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         return (PSetX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     
+    @Override
+    default PSetX<T> take(final long num) {
+        return limit(num);
+    }
+    @Override
+    default PSetX<T> drop(final long num) {
+
+        return skip(num);
+    }
     @Override
     default PSetX<T> toPSetX() {
         return this;

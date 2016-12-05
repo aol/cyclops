@@ -36,6 +36,7 @@ import com.aol.cyclops.types.To;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
+
 public interface PVectorX<T> extends To<PVectorX<T>>,PVector<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PVector<T>> {
 
     /**
@@ -298,6 +299,18 @@ public interface PVectorX<T> extends To<PVectorX<T>>,PVector<T>, PersistentColle
     }
 
  
+
+    @Override
+    default PVectorX<T> take(final long num) {
+
+        return limit(num);
+    }
+    @Override
+    default PVectorX<T> drop(final long num) {
+
+        return skip(num);
+    }
+
     
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)

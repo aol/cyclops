@@ -463,6 +463,16 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX<T>) MutableCollectionX.super.limit(num);
     }
 
+    @Override
+    default DequeX<T> take(final long num) {
+
+        return (DequeX<T>) MutableCollectionX.super.limit(num);
+    }
+    @Override
+    default DequeX<T> drop(final long num) {
+
+        return (DequeX<T>) MutableCollectionX.super.skip(num);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#skip(long)
      */

@@ -35,6 +35,7 @@ import com.aol.cyclops.types.To;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
+
 public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEmptySwitch<T, Set<T>> {
 
     /**
@@ -182,6 +183,17 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
     
 
+    @Override
+    default SetX<T> take(final long num) {
+
+        return (SetX<T>) MutableCollectionX.super.limit(num);
+    }
+    @Override
+    default SetX<T> drop(final long num) {
+
+        return (SetX<T>) MutableCollectionX.super.skip(num);    
+    }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
      */
@@ -273,7 +285,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
      */
     default <R> SetX<R> coflatMap(Function<? super SetX<T>, ? extends R> fn){
         return fn.andThen(r ->  this.<R>unit(r))
-                .apply(this);
+                  .apply(this);
     }
 
     /**

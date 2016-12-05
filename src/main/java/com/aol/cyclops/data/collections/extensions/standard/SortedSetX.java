@@ -143,6 +143,16 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         return of(value);
     }
 
+    @Override
+    default SortedSetX<T> take(final long num) {
+
+        return (SortedSetX<T>) MutableCollectionX.super.limit(num);
+    }
+    @Override
+    default SortedSetX<T> drop(final long num) {
+
+        return (SortedSetX<T>) MutableCollectionX.super.skip(num);
+    }
     /**
      * Construct a SortedSetX from an Publisher
      * 

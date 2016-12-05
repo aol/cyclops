@@ -17,6 +17,7 @@ public class ReactiveSeqTest {
 
     @Test
     public void coflatMap(){
+        
        assertThat(ReactiveSeq.of(1,2,3)
                    .coflatMap(s->s.sum().get())
                    .single(),equalTo(6));

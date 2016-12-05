@@ -368,6 +368,14 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      */
     @Override
     CollectionX<T> limit(long num);
+    @Override
+    default CollectionX<T> take(long num){
+        return limit(num);
+    }
+    @Override
+    default CollectionX<T> drop(long num){
+        return skip(num);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#skip(long)

@@ -469,6 +469,18 @@ public abstract class AbstractCollectionXTest {
     public void testLimit(){
         assertThat(of(1,2,3,4,5).limit(2).collect(Collectors.toList()).size(),is(2));
     }
+	@Test
+    public void testTake(){
+        assertThat(of(1,2,3,4,5).take(2).collect(Collectors.toList()).size(),is(2));
+    }
+
+    @Test
+    public void testDrop() {
+        assertThat(of(1, 2, 3, 4, 5).drop(2)
+                                    .collect(Collectors.toList())
+                                    .size(),
+                   is(3));
+    }
     @Test
     public void testSkip(){
         assertThat(of(1,2,3,4,5).skip(2).collect(Collectors.toList()).size(),is(3));

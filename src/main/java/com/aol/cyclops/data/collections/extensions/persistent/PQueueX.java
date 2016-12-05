@@ -241,6 +241,9 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
         return (PQueueX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
 
+
+
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
      */
@@ -296,6 +299,17 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
         return (PQueueX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+
+    }
+    @Override
+    default PQueueX<T> take(final long num) {
+
+        return limit(num);
+    }
+    @Override
+    default PQueueX<T> drop(final long num) {
+
+        return skip(num);
     }
     
     /**

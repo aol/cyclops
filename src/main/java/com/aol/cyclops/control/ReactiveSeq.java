@@ -4017,5 +4017,156 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         JoolWindowing.super.print(stream);
     }
+    
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#crossApply(java.util.function.Function)
+     */
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> crossApply(Function<? super T, ? extends Iterable<? extends U>> function) {
+        
+        return (ReactiveSeq)JoolManipulation.super.crossApply(function);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#outerApply(java.util.function.Function)
+     */
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> outerApply(Function<? super T, ? extends Iterable<? extends U>> function) {
+        
+        return (ReactiveSeq)JoolManipulation.super.outerApply(function);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(java.lang.Iterable)
+     */
+    @Override
+    default ReactiveSeq<T> concat(Iterable<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.concat(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(org.jooq.lambda.Seq)
+     */
+    @Override
+    default ReactiveSeq<T> concat(Seq<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.concat(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(java.util.Optional)
+     */
+    @Override
+    default ReactiveSeq<T> concat(Optional<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.concat(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
+     */
+    @Override
+    default ReactiveSeq<T> append(Stream<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
+     */
+    @Override
+    default ReactiveSeq<T> append(Iterable<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(org.jooq.lambda.Seq)
+     */
+    @Override
+    default ReactiveSeq<T> append(Seq<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.util.Optional)
+     */
+    @Override
+    default ReactiveSeq<T> append(Optional<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.util.stream.Stream)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Stream<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.lang.Iterable)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Iterable<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(org.jooq.lambda.Seq)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Seq<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.util.Optional)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Optional<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+    }
+  
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#cycle(long)
+     */
+    @Override
+    default ReactiveSeq<T> cycle(long times) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.cycle(times);
+    }
+  
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#skipWhileClosed(java.util.function.Predicate)
+     */
+    @Override
+    default ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.skipWhileClosed(predicate);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#limitWhileClosed(java.util.function.Predicate)
+     */
+    @Override
+    default ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.limitWhileClosed(predicate);
+    }
 
+ 
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#sorted(java.util.function.Function, java.util.Comparator)
+     */
+    @Override
+    default <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.sorted(function, comparator);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#sliding(long)
+     */
+    @Override
+    default ReactiveSeq<Seq<T>> sliding(long size) {
+        
+        return (ReactiveSeq<Seq<T>>)JoolManipulation.super.sliding(size);
+    }
+  
+
+    
 }

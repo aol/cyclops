@@ -107,6 +107,144 @@ import lombok.val;
 public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimpleReactStream<U>, LazyStream<U>, ReactiveSeq<U>, LazyToQueue<U>,
         ConfigurableStream<U, FastFuture<U>>, FutureStreamSynchronousPublisher<U> {
 
+    
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#crossApply(java.util.function.Function)
+     */
+    @Override
+    default <U1> LazyFutureStream<Tuple2<U, U1>> crossApply(Function<? super U, ? extends Iterable<? extends U1>> function) {
+        return fromStream(ReactiveSeq.fromStream(stream()).crossApply(function));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#outerApply(java.util.function.Function)
+     */
+    @Override
+    default <U1> LazyFutureStream<Tuple2<U, U1>> outerApply(Function<? super U, ? extends Iterable<? extends U1>> function) {
+        return fromStream(ReactiveSeq.fromStream(stream()).outerApply(function));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(java.lang.Iterable)
+     */
+    @Override
+    default LazyFutureStream<U> concat(Iterable<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).concat(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(org.jooq.lambda.Seq)
+     */
+    @Override
+    default LazyFutureStream<U> concat(Seq<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).concat(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(java.util.Optional)
+     */
+    @Override
+    default LazyFutureStream<U> concat(Optional<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).append(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
+     */
+    @Override
+    default LazyFutureStream<U> append(Stream<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).append(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
+     */
+    @Override
+    default LazyFutureStream<U> append(Iterable<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).append(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(org.jooq.lambda.Seq)
+     */
+    @Override
+    default LazyFutureStream<U> append(Seq<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).append(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.util.Optional)
+     */
+    @Override
+    default LazyFutureStream<U> append(Optional<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).append(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.util.stream.Stream)
+     */
+    @Override
+    default LazyFutureStream<U> prepend(Stream<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).prepend(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.lang.Iterable)
+     */
+    @Override
+    default LazyFutureStream<U> prepend(Iterable<? extends U> other) {
+        
+        return fromStream(ReactiveSeq.fromStream(stream()).prepend(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(org.jooq.lambda.Seq)
+     */
+    @Override
+    default LazyFutureStream<U> prepend(Seq<? extends U> other) {
+        
+        return fromStream(ReactiveSeq.fromStream(stream()).prepend(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.util.Optional)
+     */
+    @Override
+    default LazyFutureStream<U> prepend(Optional<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).prepend(other));
+        
+    }
+  
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#cycle(long)
+     */
+    @Override
+    default LazyFutureStream<U> cycle(long times) {
+        return fromStream(ReactiveSeq.fromStream(stream()).cycle(times));
+    }
+  
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#skipWhileClosed(java.util.function.Predicate)
+     */
+    @Override
+    default LazyFutureStream<U> skipWhileClosed(Predicate<? super U> predicate) {
+        return fromStream(ReactiveSeq.fromStream(stream()).skipWhileClosed(predicate));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#limitWhileClosed(java.util.function.Predicate)
+     */
+    @Override
+    default LazyFutureStream<U> limitWhileClosed(Predicate<? super U> predicate) {
+        return fromStream(ReactiveSeq.fromStream(stream()).limitWhileClosed(predicate));
+        
+    }
+
+ 
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#sorted(java.util.function.Function, java.util.Comparator)
+     */
+    @Override
+    default <U1> LazyFutureStream<U> sorted(Function<? super U, ? extends U1> function, Comparator<? super U1> comparator) {
+        return fromStream(ReactiveSeq.fromStream(stream()).sorted(function,comparator));
+        
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#sliding(long)
+     */
+    @Override
+    default LazyFutureStream<Seq<U>> sliding(long size) {
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                   .sliding(size));
+    }
+    
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
      * 
