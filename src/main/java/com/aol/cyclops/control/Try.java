@@ -2,6 +2,7 @@
 package com.aol.cyclops.control;
 
 import static com.aol.cyclops.control.For.Values.each2;
+import static com.aol.cyclops.types.anyM.Witness.*;
 
 import java.io.Closeable;
 import java.util.Iterator;
@@ -533,17 +534,17 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      * @return This monad, wrapped as AnyM of Success
      */
     @Override
-    public AnyMValue<T> anyM();
+    public AnyMValue<tryType,T> anyM();
 
     /**
      * @return This monad, wrapped as AnyM of Failure
      */
-    public AnyM<X> anyMFailure();
+    public AnyM<tryType,X> anyMFailure();
 
     /**
      * @return This monad, wrapped as AnyM of Success
      */
-    public AnyM<T> anyMSuccess();
+    public AnyM<tryType,T> anyMSuccess();
 
     /**
      * @return Successful value or will throw Throwable (X) if Failire
@@ -1107,7 +1108,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
          * @param value Successful value
          * @return new Success with value
          */
-        public static <T, X extends Throwable> AnyM<T> anyMOf(final T value) {
+        public static <T, X extends Throwable> AnyM<tryType,T> anyMOf(final T value) {
             return new Success<>(
                                  value, new Class[0]).anyM();
         }
@@ -1425,7 +1426,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
          * @return This monad, wrapped as AnyM of Success
          */
         @Override
-        public AnyMValue<T> anyM() {
+        public AnyMValue<tryType,T> anyM() {
             return this.anyMSuccess();
         }
 
@@ -1433,15 +1434,15 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
          * @return This monad, wrapped as AnyM of Failure
          */
         @Override
-        public AnyMValue<X> anyMFailure() {
-            return AnyM.ofValue(this);
+        public AnyMValue<tryType,X> anyMFailure() {
+            return AnyM.fromTry(this);
         }
 
         /**
          * @return This monad, wrapped as AnyM of Success
          */
         @Override
-        public AnyMValue<T> anyMSuccess() {
+        public AnyMValue<optional,T> anyMSuccess() {
             return AnyM.fromOptional(Optional.empty());
         }
 

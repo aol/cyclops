@@ -20,7 +20,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>implements AnyMSeq<W,T> {
+public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>implements AnyMSeq<W,T> {
 
     protected AnyMSeqImpl(final Monad<T> monad, final Class initialType, Comprehender<T> adapter) {
         super(monad, initialType,adapter);
@@ -32,25 +32,27 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
         return new MonadWrapper(adapter().fromIterator(t.iterator()),initialType,adapter).anyMSeq();
     }
 
-    public static <T> AnyMSeqImpl<T> from(final AnyMValue<T> value) {
+    /**
+    public static <W extends WitnessType,T> AnyMSeqImpl<W,T> from(final AnyMValue<W,T> value) {
         final AnyMValueImpl<T> impl = (AnyMValueImpl<T>) value;
-        return new AnyMSeqImpl<T>(
+        return new AnyMSeqImpl<W,T>(
                                   impl.monad, impl.initialType);
     }
 
-    private <T> AnyMSeqImpl<T> with(final Monad<T> anyM) {
+**/
+    private <T> AnyMSeqImpl<W,T> with(final Monad<T> anyM) {
 
         return new AnyMSeqImpl<>(
                                  anyM, initialType);
     }
 
-    private <T> AnyMSeqImpl<T> with(final AnyM<T> anyM) {
+    private <T> AnyMSeqImpl<W,T> with(final AnyM<W,T> anyM) {
 
-        return (AnyMSeqImpl<T>) anyM;
+        return (AnyMSeqImpl<W,T>) anyM;
     }
 
     @Override
-    public AnyMSeq<T> peek(final Consumer<? super T> c) {
+    public AnyMSeq<W,T> peek(final Consumer<? super T> c) {
         return with(super.peekInternal(c));
     }
 
@@ -58,17 +60,17 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    public <U> AnyMSeq<U> unitIterator(final Iterator<U> it) {
-        return AnyM.fromIterable(() -> it);
+    public <U> AnyMSeq<W,U> unitIterator(final Iterator<U> it) {
+        return fromIterable(() -> it);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.super.AnyMSeq#emptyUnit()
      */
     @Override
-    public <T> AnyMSeq<T> emptyUnit() {
+    public <T> AnyMSeq<W,T> emptyUnit() {
         return new AnyMSeqImpl(
-                               monad.empty(), initialType);
+                               monad.empty(), initialType,adapter);
     }
 
     /* (non-Javadoc)
@@ -91,7 +93,7 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
      * @see com.aol.cyclops.types.super.AnyMSeq#filter(java.util.function.Predicate)
      */
     @Override
-    public AnyMSeq<T> filter(final Predicate<? super T> p) {
+    public AnyMSeq<W,T> filter(final Predicate<? super T> p) {
         return with(super.filterInternal(p));
     }
 
@@ -99,7 +101,7 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
      * @see com.aol.cyclops.types.super.AnyMSeq#map(java.util.function.Function)
      */
     @Override
-    public <R> AnyMSeq<R> map(final Function<? super T, ? extends R> fn) {
+    public <R> AnyMSeq<W,R> map(final Function<? super T, ? extends R> fn) {
         return with(super.mapInternal(fn));
     }
 
@@ -107,7 +109,7 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
      * @see com.aol.cyclops.types.super.AnyMSeq#bind(java.util.function.Function)
      */
     @Override
-    public <R> AnyMSeq<R> bind(final Function<? super T, ?> fn) {
+    public <R> AnyMSeq<W,R> bind(final Function<? super T, ?> fn) {
         return with(super.bindInternal(fn));
     }
 
@@ -115,7 +117,7 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
      * @see com.aol.cyclops.types.super.AnyMSeq#flatten()
      */
     @Override
-    public <T1> AnyMSeq<T1> flatten() {
+    public <T1> AnyMSeq<W,T1> flatten() {
         return with(super.flattenInternal());
     }
 
@@ -123,7 +125,7 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
      * @see com.aol.cyclops.types.super.AnyMSeq#aggregate(com.aol.cyclops.control.AnyM)
      */
     @Override
-    public AnyMSeq<List<T>> aggregate(final AnyM<T> next) {
+    public AnyMSeq<W,List<T>> aggregate(final AnyM<W,T> next) {
         return with(super.aggregate(next));
     }
 
@@ -132,25 +134,25 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
      * @see com.aol.cyclops.types.super.AnyMSeq#flatMap(java.util.function.Function)
      */
     @Override
-    public <R> AnyMSeq<R> flatMap(final Function<? super T, ? extends AnyM<? extends R>> fn) {
+    public <R> AnyMSeq<W,R> flatMap(final Function<? super T, ? extends AnyM<? extends R>> fn) {
         return with(super.flatMapInternal(fn));
 
     }
 
     @Override
-    public <R> AnyMSeq<R> flatMapFirst(final Function<? super T, ? extends Iterable<? extends R>> fn) {
+    public <R> AnyMSeq<W,R> flatMapFirst(final Function<? super T, ? extends Iterable<? extends R>> fn) {
         return with(super.flatMapInternal(fn.andThen(it -> fromIterable(it))));
 
     }
 
     @Override
-    public <R> AnyMSeq<R> flatMapFirstPublisher(final Function<? super T, ? extends Publisher<? extends R>> fn) {
+    public <R> AnyMSeq<W,R> flatMapFirstPublisher(final Function<? super T, ? extends Publisher<? extends R>> fn) {
         return with(super.flatMapInternal(fn.andThen(it -> fromPublisher(it))));
 
     }
 
     @Override
-    public Xor<AnyMValue<T>, AnyMSeq<T>> matchable() {
+    public Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
         return Xor.primary(this);
     }
 
@@ -158,7 +160,7 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
      * @see com.aol.cyclops.types.super.AnyMSeq#unit(java.lang.Object)
      */
     @Override
-    public <T> AnyMSeq<T> unit(final T value) {
+    public <T> AnyMSeq<W,T> unit(final T value) {
         return AnyM.ofSeq(monad.unit(value));
     }
 
@@ -166,7 +168,7 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
      * @see com.aol.cyclops.types.super.AnyMSeq#empty()
      */
     @Override
-    public <T> AnyMSeq<T> empty() {
+    public <T> AnyMSeq<W,T> empty() {
         return with(new AnyMSeqImpl(
                                     monad.empty(), initialType));
     }
@@ -175,14 +177,14 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<T>impleme
      * @see com.aol.cyclops.types.super.AnyMSeq#replicateM(int)
      */
     @Override
-    public AnyMSeq<T> replicateM(final int times) {
+    public AnyMSeq<W,T> replicateM(final int times) {
         return monad.replicateM(times)
                     .anyMSeq();
     }
 
     @Override
-    public <R> AnyMSeq<R> applyM(final AnyM<Function<? super T, ? extends R>> fn) {
-        return monad.applyM(((AnyMSeqImpl<Function<? super T, ? extends R>>) fn).monad())
+    public <R> AnyMSeq<W,R> applyM(final AnyM<W,Function<? super T, ? extends R>> fn) {
+        return monad.applyM(((AnyMSeqImpl<W,Function<? super T, ? extends R>>) fn).monad())
                     .anyMSeq();
 
     }

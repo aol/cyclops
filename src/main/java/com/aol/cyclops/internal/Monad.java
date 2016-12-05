@@ -11,6 +11,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.internal.comprehensions.comprehenders.StreamComprehender;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.internal.stream.SeqUtils;
@@ -91,7 +92,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
      */
     default Monad<T> cycle(final int times) {
 
-        return fromStream(SeqUtils.cycle(times, Streamable.fromStream(stream())));
+        return fromStream(SeqUtils.cycle(times, Streamable.fromStream(stream())),adapter());
 
     }
 
@@ -227,31 +228,29 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
         return captured.get();
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#unwrap()
-     */
-    @Override
+
     Object unwrap();
 
     public <W extends WitnessType,T> AnyMValue<W,T> anyMValue();
 
-    public <T> AnyMSeq<T> anyMSeq();
+    public <W extends WitnessType,T> AnyMSeq<W,T> anyMSeq();
 
     public <T> ReactiveSeq<T> sequence();
 
+    /**
     public static <T> Monad<T> of(final Object o) {
         return new MonadWrapper(
                                 o);
     }
-
+**/
     default Monad<T> empty() {
         return (Monad) new ComprehenderSelector().selectComprehender(unwrap(),adapter())
                                                  .empty();
     }
 
     static <T> Monad<T> fromStream(final Stream<T> monad) {
-        return new MonadWrapper<>(
-                                  monad);
+        return new MonadWrapper<Witness.stream,T>(
+                                  monad,StreamComprehender.INSTANCE);
     }
 
     /**
@@ -305,7 +304,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
     default <R> Monad<R> replicateM(final int times) {
 
         return (Monad) new MonadWrapper<>(
-                                          unit(1)).flatten()
+                                          unit(1),adapter()).flatten()
                                                   .bind(v -> cycle(times).unwrap());
     }
 
@@ -330,7 +329,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
                                                                                                           .getClass(),adapter())
                                                                                .of(value))
                                        .sequence()
-                                       .reduce((Monoid) reducer));
+                                       .reduce((Monoid) reducer),adapter());
     }
 
 }

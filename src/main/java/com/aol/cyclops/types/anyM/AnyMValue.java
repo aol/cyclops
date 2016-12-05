@@ -150,7 +150,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
      */
-    default AnyMValue<W,T> combine(final Monoid<T> monoid, final AnyMValue<?,? extends T> v2) {
+    default AnyMValue<W,T> combine(final Monoid<T> monoid, final AnyMValue<W,? extends T> v2) {
         return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.apply(t1, t2)))
                         .orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
@@ -296,7 +296,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
     * 
     <pre>{@code 
     Stream<CompletableFuture<Integer>> futures = createFutures();
-    AnyMValue<List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
+    AnyMValue<W,List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
      }
      </pre>
     * 
@@ -313,7 +313,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
      *
      */
-    public static <T, R> AnyMValue<Stream<R>> traverse(final Stream<AnyMValue<W,T>> source, final Supplier<AnyMValue<Stream<T>>> unitEmpty,
+    public static <W extends WitnessType,T, R> AnyMValue<W,Stream<R>> traverse(final Stream<AnyMValue<W,T>> source, final Supplier<AnyMValue<W,Stream<T>>> unitEmpty,
             final Function<? super T, ? extends R> fn) {
         return sequence(source, unitEmpty).map(s -> s.map(fn));
     }
@@ -322,7 +322,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * Convert a Stream of Monads to a Monad with a Stream
      *
      */
-    public static <T> AnyMValue<Stream<T>> sequence(final Stream<AnyMValue<W,T>> source, final Supplier<AnyMValue<Stream<T>>> unitEmpty) {
+    public static <W extends WitnessType,T> AnyMValue<W,Stream<T>> sequence(final Stream<AnyMValue<W,T>> source, final Supplier<AnyMValue<W,Stream<T>>> unitEmpty) {
 
         return Matchables.anyM(AnyM.sequence(source, unitEmpty))
                          .visit(v -> v, s -> {
@@ -337,7 +337,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * <pre>
      * {@code
         List<CompletableFuture<Integer>> futures = createFutures();
-        AnyMValue<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
+        AnyMValue<W,List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
     
        //where AnyM wraps  CompletableFuture<List<Integer>>
       }</pre>
@@ -345,53 +345,81 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */
-    public static <T1> AnyMValue<ListX<T1>> sequence(final Collection<? extends AnyMValue<T1>> seq) {
+    public static <W extends WitnessType,T1> AnyMValue<W,ListX<T1>> sequence(final Collection<? extends AnyMValue<W,T1>> seq) {
         return new AnyMonads().sequence(seq);
     }
 
     @Override
     default <R1, R> AnyMValue<W,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
-        return For.Values.each2(this, value1,yieldingFunction);
+        return (AnyMValue<W,R>) MonadicValue.super.forEach2(value1, yieldingFunction);
     }
 
+   
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
     @Override
-    default <R1, R> MonadicValue<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
-            final BiFunction<? super T, ? super R1, Boolean> filterFunction,
-            final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
-        return For.Values.each2(this, value1, filterFunction,yieldingFunction);
+    default <T2, R1, R2, R3, R> AnyMValue<W,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (AnyMValue<W,R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
     @Override
-    default < T2, R1, R2, R>  AnyMValue<W,R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
-            final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                    final TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                    final TriFunction<? super T, ? super R1, ? super R2, ? extends R>  yieldingFunction){
-        return For.Values.each3(this, value1, value2, filterFunction,yieldingFunction);
+    default <T2, R1, R2, R3, R> AnyMValue<W,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (AnyMValue<W,R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
     @Override
-    default <T2, R1, R2, R> AnyMValue<W,R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
-            final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            final TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        return For.Values.each3(this, value1, value2, yieldingFunction);
-    }
-    @Override
-    default < T2, R1, R2,R3, R>  AnyMValue<W,R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1,
-            final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            final TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R>  yieldingFunction){
-        return For.Values.each4(this, value1, value2, value3,filterFunction,yieldingFunction);
+    default <T2, R1, R2, R> AnyMValue<W,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (AnyMValue<W,R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
     @Override
-    default <T2, R1, R2, R3, R> MonadicValue<R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1,
-            final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            final TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        return For.Values.each4(this, value1, value2, value3, yieldingFunction);
+    default <T2, R1, R2, R> AnyMValue<W,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (AnyMValue<W,R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> AnyMValue<W,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (AnyMValue<W,R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
+    }
+
 
     /**
      * flatMap operation
@@ -421,7 +449,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn flatMap function
      * @return  flatMapped AnyM
      */
-    <R> AnyMValue<W,R> flatMap(Function<? super T, ? extends AnyMValue<? extends R>> fn);
+    <R> AnyMValue<W,R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn);
 
     /**
      * Apply function/s inside supplied Monad to data in current Monad
@@ -445,7 +473,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn
      * @return
      */
-    <R> AnyMValue<W,R> applyM(AnyMValue<Function<? super T, ? extends R>> fn);
+    <R> AnyMValue<W,R> applyM(AnyMValue<W,Function<? super T, ? extends R>> fn);
 
     /**
      * Sequence the contents of a Monad.  e.g.
@@ -517,7 +545,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn
      * @return
      */
-    public static <U, R> Function<AnyMValue<U>, AnyMValue<W,R>> liftM(final Function<? super U, ? extends R> fn) {
+    public static <W extends WitnessType,U, R> Function<AnyMValue<W,U>, AnyMValue<W,R>> liftM(final Function<? super U, ? extends R> fn) {
         return u -> u.map(input -> fn.apply(input));
     }
 
@@ -542,7 +570,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn BiFunction to lift
      * @return Lifted BiFunction
      */
-    public static <U1, U2, R> BiFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<W,R>> liftM2(
+    public static <W extends WitnessType,U1, U2, R> BiFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,R>> liftM2(
             final BiFunction<? super U1, ? super U2, ? extends R> fn) {
 
         return (u1, u2) -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1, input2))
@@ -554,7 +582,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * 
      * <pre>
      * {@code
-     * Function3 <AnyMValue<Double>,AnyMValue<Entity>,AnyMValue<String>,AnyMValue<Integer>> fn = liftM3(this::myMethod);
+     * Function3 <AnyMValue<Double>,AnyMValue<Entity>,AnyMValue<W,String>,AnyMValue<Integer>> fn = liftM3(this::myMethod);
      *    
      * }
      * </pre>
@@ -564,7 +592,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <U1, U2, U3, R> Function3<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<W,R>> liftM3(
+    public static <W extends WitnessType,U1, U2, U3, R> Function3<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,R>> liftM3(
             final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
         return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
                                                    .unwrap());
@@ -575,7 +603,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * 
      * <pre>
      * {@code
-     * TriFunction<AnyMValue<Double>,AnyMValue<Entity>,AnyMValue<String>,AnyMValue<Integer>> fn = liftM3(this::myMethod);
+     * TriFunction<AnyMValue<Double>,AnyMValue<Entity>,AnyMValue<W,String>,AnyMValue<Integer>> fn = liftM3(this::myMethod);
      *    
      * }
      * </pre>
@@ -585,7 +613,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <U1, U2, U3, R> TriFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<W,R>> liftM3Cyclops(
+    public static <W extends WitnessType,U1, U2, U3, R> TriFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,R>> liftM3Cyclops(
             final TriFunction<? super U1, ? super U2, ? super U3, ? extends R> fn) {
         return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))
                                                                      .unwrap())
@@ -598,7 +626,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <U1, U2, U3, U4, R> Function4<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<W,R>> liftM4(
+    public static <W extends WitnessType,U1, U2, U3, U4, R> Function4<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,U4>, AnyMValue<W,R>> liftM4(
             final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))))
@@ -611,7 +639,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <U1, U2, U3, U4, R> QuadFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<W,R>> liftM4Cyclops(
+    public static <W extends WitnessType,U1, U2, U3, U4, R> QuadFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,U4>, AnyMValue<W,R>> liftM4Cyclops(
             final QuadFunction<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))
@@ -626,7 +654,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <U1, U2, U3, U4, U5, R> Function5<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<U5>, AnyMValue<W,R>> liftM5(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function5<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,U4>, AnyMValue<W,U5>, AnyMValue<W,R>> liftM5(
             final Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
@@ -641,7 +669,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <U1, U2, U3, U4, U5, R> QuintFunction<AnyMValue<U1>, AnyMValue<U2>, AnyMValue<U3>, AnyMValue<U4>, AnyMValue<U5>, AnyMValue<W,R>> liftM5Cyclops(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> QuintFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,U4>, AnyMValue<W,U5>, AnyMValue<W,R>> liftM5Cyclops(
             final QuintFunction<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
@@ -659,7 +687,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, AnyMValue<W,R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
+    public static <W extends WitnessType,U1, U2, R> Function<AnyMValue<W,U1>, Function<AnyMValue<W,U2>, AnyMValue<W,R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
         return u1 -> u2 -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1)
                                                                 .apply(input2))
                                                .unwrap());
@@ -672,7 +700,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, Function<AnyMValue<U3>, AnyMValue<W,R>>>> liftM3(
+    public static <W extends WitnessType,U1, U2, U3, R> Function<AnyMValue<W,U1>, Function<AnyMValue<W,U2>, Function<AnyMValue<W,U3>, AnyMValue<W,R>>>> liftM3(
             final Function<? super U1, Function<? super U2, Function<? super U3, ? extends R>>> fn) {
         return u1 -> u2 -> u3 -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1)
                                                                                         .apply(input2)
@@ -686,7 +714,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, U4, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, Function<AnyMValue<U3>, Function<AnyMValue<U4>, AnyMValue<W,R>>>>> liftM4(
+    public static <W extends WitnessType,U1, U2, U3, U4, R> Function<AnyMValue<W,U1>, Function<AnyMValue<W,U2>, Function<AnyMValue<W,U3>, Function<AnyMValue<W,U4>, AnyMValue<W,R>>>>> liftM4(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, ? extends R>>>> fn) {
 
         return u1 -> u2 -> u3 -> u4 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1)
@@ -702,7 +730,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <U1, U2, U3, U4, U5, R> Function<AnyMValue<U1>, Function<AnyMValue<U2>, Function<AnyMValue<U3>, Function<AnyMValue<U4>, Function<AnyMValue<U5>, AnyMValue<W,R>>>>>> liftM5(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function<AnyMValue<W,U1>, Function<AnyMValue<W,U2>, Function<AnyMValue<W,U3>, Function<AnyMValue<W,U4>, Function<AnyMValue<W,U5>, AnyMValue<W,R>>>>>> liftM5(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, Function<? super U5, ? extends R>>>>> fn) {
 
         return u1 -> u2 -> u3 -> u4 -> u5 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1)

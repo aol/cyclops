@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
@@ -19,13 +18,14 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.extensability.Comprehender;
 
-public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
+public class AnyMValueImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>implements AnyMValue<W,T> {
 
     @Override
-    public Xor<AnyMValue<T>, AnyMSeq<T>> matchable() {
+    public Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
         return Xor.secondary(this);
     }
 
@@ -34,22 +34,22 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
 
     }
 
-    private <T> AnyMValueImpl<T> with(final Monad<T> anyM) {
+    private <T> AnyMValueImpl<W,T> with(final Monad<T> anyM) {
 
         return new AnyMValueImpl(
                                     anyM, initialType,adapter);
     }
 
-    private <T> AnyMValueImpl<T> with(final AnyM<T> anyM) {
+    private <T> AnyMValueImpl<W,T> with(final AnyM<W,T> anyM) {
 
-        return (AnyMValueImpl<T>) anyM;
+        return (AnyMValueImpl<W,T>) anyM;
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.anyM.AnyMValue#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
-    public <T2, R> AnyMValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+    public <T2, R> AnyMValue<W,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         if (this.unwrap() instanceof ApplicativeFunctor) {
             return AnyM.<R> ofValue(((ApplicativeFunctor) unwrap()).combine(app, fn));
         }
@@ -57,31 +57,31 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
     }
 
     @Override
-    public <T2, R> AnyMValue<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+    public <T2, R> AnyMValue<W,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         if (this.unwrap() instanceof ApplicativeFunctor) {
             return AnyM.<R> ofValue(((ApplicativeFunctor) unwrap()).zip(app, fn));
         }
-        return (AnyMValue<R>) AnyMValue.super.zip(app, fn);
+        return (AnyMValue<W,R>) AnyMValue.super.zip(app, fn);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> AnyMValue<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+    public <T2, R> AnyMValue<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         if (this.unwrap() instanceof ApplicativeFunctor) {
             return AnyM.<R> ofValue(((ApplicativeFunctor) unwrap()).zip(fn, app));
         }
-        return (AnyMValue<R>) AnyMValue.super.zip(fn, app);
+        return (AnyMValue<W,R>) AnyMValue.super.zip(fn, app);
     }
 
     @Override
-    public <R> AnyMValue<R> flatMapFirst(final Function<? super T, ? extends Iterable<? extends R>> fn) {
+    public <R> AnyMValue<W,R> flatMapFirst(final Function<? super T, ? extends Iterable<? extends R>> fn) {
         return with(super.flatMapInternal(fn.andThen(it -> fromIterable(it))));
     }
 
     @Override
-    public <R> AnyMValue<R> flatMapFirstPublisher(final Function<? super T, ? extends Publisher<? extends R>> fn) {
+    public <R> AnyMValue<W,R> flatMapFirstPublisher(final Function<? super T, ? extends Publisher<? extends R>> fn) {
         return with(super.flatMapInternal(fn.andThen(it -> fromPublisher(it))));
     }
 
@@ -104,40 +104,40 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
     }
 
     @Override
-    public <T> AnyMValue<T> emptyUnit() {
+    public <T> AnyMValue<W,T> emptyUnit() {
         return new AnyMValueImpl(
                                  monad.empty(), initialType,(Comprehender)adapter);
     }
 
     @Override
-    public AnyMValue<List<T>> replicateM(final int times) {
+    public AnyMValue<W,List<T>> replicateM(final int times) {
 
         return monad.replicateM(times)
                     .anyMValue();
     }
 
     @Override
-    public AnyMValue<T> filter(final Predicate<? super T> p) {
+    public AnyMValue<W,T> filter(final Predicate<? super T> p) {
         return with(super.filterInternal(p));
     }
 
     @Override
-    public AnyMValue<T> peek(final Consumer<? super T> c) {
+    public AnyMValue<W,T> peek(final Consumer<? super T> c) {
         return with(super.peekInternal(c));
     }
 
     @Override
-    public AnyMValue<List<T>> aggregate(final AnyM<T> next) {
-        return (AnyMValue<List<T>>) super.aggregate(next);
+    public AnyMValue<W,List<T>> aggregate(final AnyM<W,T> next) {
+        return (AnyMValue<W,List<T>>) super.aggregate(next);
     }
 
     @Override
-    public <T> AnyMValue<T> unit(final T value) {
+    public <T> AnyMValue<W,T> unit(final T value) {
         return AnyM.ofValue(monad.unit(value));
     }
 
     @Override
-    public <T> AnyMValue<T> empty() {
+    public <T> AnyMValue<W,T> empty() {
         return with(new AnyMValueImpl(
                                       monad.empty(), initialType,adapter));
     }
@@ -153,24 +153,24 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
     }
 
     @Override
-    public <R> AnyMValue<R> map(final Function<? super T, ? extends R> fn) {
+    public <R> AnyMValue<W,R> map(final Function<? super T, ? extends R> fn) {
         return with(super.mapInternal(fn));
     }
 
     @Override
-    public <R> AnyMValue<R> bind(final Function<? super T, ?> fn) {
+    public <R> AnyMValue<W,R> bind(final Function<? super T, ?> fn) {
 
         return with(super.bindInternal(fn));
     }
 
     @Override
-    public <T1> AnyMValue<T1> flatten() {
+    public <T1> AnyMValue<W,T1> flatten() {
         return with(super.flattenInternal());
     }
 
    
     @Override
-    public <R> AnyMValue<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> fn) {
+    public <R> AnyMValue<W,R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> fn) {
         return with(super.flatMapInternal(fn));
     }
 
@@ -199,7 +199,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
     }
 
     @Override
-    public <R> AnyMValue<R> applyM(final AnyMValue<Function<? super T, ? extends R>> fn) {
+    public <R> AnyMValue<W,R> applyM(final AnyMValue<Function<? super T, ? extends R>> fn) {
         return monad.applyM(((AnyMValueImpl<Function<? super T, ? extends R>>) fn).monad)
                     .anyMValue();
 

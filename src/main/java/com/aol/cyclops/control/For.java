@@ -254,18 +254,13 @@ public class For {
          *            Streams that generates the new elements
          * @returnAnyM with elements generated via nested iteration
          */
-        static <T1, T2, T3, R1, R2, R3, R> AnyMValue<R> each4(final MonadicValue<? extends T1> monadicValue,
+        static <T1, T2, T3, R1, R2, R3, R> MonadicValue<R> each4(final MonadicValue<? extends T1> monadicValue,
                 final Function<? super T1, ? extends MonadicValue<R1>> value2,
                 final BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
                 final TriFunction<? super T1, ? super R1, ? super R2, ? extends MonadicValue<R3>> value4,
                 final QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
-            return AnyM.ofValue(For.iterable(monadicValue)
-                                   .iterable(a -> value2.apply(a))
-                                   .iterable(a -> b -> value3.apply(a, b))
-                                   .iterable(a -> b -> c -> value4.apply(a, b, c))
-                                   .yield4(yieldingFunction)
-                                   .unwrap());
+            return monadicValue.forEach4(value2, value3, value4, yieldingFunction);
 
         }
 
@@ -282,20 +277,14 @@ public class For {
          *            Streams that generates the new elements
          * @returnAnyM with elements generated via nested iteration
          */
-        static <T1, T2, T3, R1, R2, R3, R> AnyMValue<R> each4(final MonadicValue<? extends T1> monadicValue,
+        static <T1, T2, T3, R1, R2, R3, R> MonadicValue<R> each4(final MonadicValue<? extends T1> monadicValue,
                 final Function<? super T1, ? extends MonadicValue<R1>> value2,
                 final BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
                 final TriFunction<? super T1, ? super R1, ? super R2, ? extends MonadicValue<R3>> value4,
                 final QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                 final QuadFunction<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
-            return AnyM.ofValue(For.iterable(monadicValue)
-                                   .iterable(a -> value2.apply(a))
-                                   .iterable(a -> b -> value3.apply(a, b))
-                                   .iterable(a -> b -> c -> value4.apply(a, b, c))
-                                   .filter(a -> b -> c -> d -> filterFunction.apply(a, b, c, d))
-                                   .yield4(yieldingFunction)
-                                   .unwrap());
+            return monadicValue.forEach4(value2, value3, value4, filterFunction,yieldingFunction);
 
         }
 
@@ -310,16 +299,12 @@ public class For {
          *            Streams that generates the new elements
          * @returnAnyM with elements generated via nested iteration
          */
-        static <T1, T2, R1, R2, R> AnyMValue<R> each3(final MonadicValue<? extends T1> monadicValue,
+        static <T1, T2, R1, R2, R> MonadicValue<R> each3(final MonadicValue<? extends T1> monadicValue,
                 final Function<? super T1, ? extends MonadicValue<R1>> value2,
                 final BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
                 final TriFunction<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-            return AnyM.ofValue(For.iterable(monadicValue)
-                                   .iterable(a -> value2.apply(a))
-                                   .iterable(a -> b -> value3.apply(a, b))
-                                   .yield3(yieldingFunction)
-                                   .unwrap());
+            return monadicValue.forEach3(value2, value3, yieldingFunction);
 
         }
 
@@ -336,18 +321,13 @@ public class For {
          *            Streams that generates the new elements
          * @return AnyM with elements generated via nested iteration
          */
-        static <T1, T2, R1, R2, R> AnyMValue<R> each3(final MonadicValue<? extends T1> monadicValue,
+        static <T1, T2, R1, R2, R> MonadicValue<R> each3(final MonadicValue<? extends T1> monadicValue,
                 final Function<? super T1, ? extends MonadicValue<R1>> value2,
                 final BiFunction<? super T1, ? super R1, ? extends MonadicValue<R2>> value3,
                 final TriFunction<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
                 final TriFunction<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-            return AnyM.ofValue(For.iterable(monadicValue)
-                                   .iterable(a -> value2.apply(a))
-                                   .iterable(a -> b -> value3.apply(a, b))
-                                   .filter(a -> b -> c -> filterFunction.apply(a, b, c))
-                                   .yield3(yieldingFunction)
-                                   .unwrap());
+            return monadicValue.forEach3(value2, value3,filterFunction, yieldingFunction);
 
         }
 
@@ -362,14 +342,11 @@ public class For {
          * @return AnyM with elements generated via nested iteration
          */
 
-        static <T, R1, R> AnyMValue<R> each2(final MonadicValue<? extends T> monadicValue, 
+        static <T, R1, R> MonadicValue<R> each2(final MonadicValue<? extends T> monadicValue, 
                 final Function<? super T, ? extends MonadicValue<R1>> value2,
                 final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
            
-            return AnyM.ofValue(For.iterable(monadicValue)
-                                   .iterable(a -> value2.apply(a))
-                                   .yield2(yieldingFunction)
-                                   .unwrap());
+            return monadicValue.forEach2(value2, yieldingFunction);
 
         }
 
@@ -386,16 +363,12 @@ public class For {
          *            Streams that generates the new elements
          * @return AnyM with elements generated via nested iteration
          */
-        static <T, R1, R> AnyMValue<R> each2(final MonadicValue<? extends T> monadicValue,
+        static <T, R1, R> MonadicValue<R> each2(final MonadicValue<? extends T> monadicValue,
                 final Function<? super T, ? extends MonadicValue<R1>> value2, 
                   final BiFunction<? super T, ? super R1, Boolean> filterFunction,
                 final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-            return AnyM.ofValue(For.iterable(monadicValue)
-                                   .iterable(a -> value2.apply(a))
-                                   .filter(a -> b -> filterFunction.apply(a, b))
-                                   .yield2(yieldingFunction)
-                                   .unwrap());
+            return monadicValue.forEach2(value2, filterFunction,yieldingFunction);
 
         }
 

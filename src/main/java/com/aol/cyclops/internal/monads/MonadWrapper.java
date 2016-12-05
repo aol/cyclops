@@ -41,17 +41,17 @@ public class MonadWrapper<W extends WitnessType,T> implements Monad<T>, Decompos
     }
 
     @Override
-    public <X> AnyMValue<W,X> anyMValue() {
+    public <W extends WitnessType,X> AnyMValue<W,X> anyMValue() {
         if (monad instanceof AnyMValue)
-            return (AnyMValue<X>) monad;
+            return (AnyMValue<W,X>) monad;
         return new AnyMValueImpl(
                                     (Monad) this, orgType,comp);
     }
 
     @Override
-    public <X> AnyMSeq<W,X> anyMSeq() {
+    public <W extends WitnessType,X> AnyMSeq<W,X> anyMSeq() {
         if (monad instanceof AnyMSeq)
-            return (AnyMSeq<X>) monad;
+            return (AnyMSeq<W,X>) monad;
         return new AnyMSeqImpl(
                                   (Monad) this, orgType,comp);
     }

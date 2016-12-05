@@ -17,6 +17,7 @@ import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 import lombok.AccessLevel;
@@ -31,7 +32,7 @@ import lombok.AllArgsConstructor;
  *
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BaseAnyMImpl<T> {
+public abstract class BaseAnyMImpl<W extends WitnessType,T> {
 
     protected final Monad<T> monad;
     protected final Class initialType;
@@ -44,7 +45,7 @@ public abstract class BaseAnyMImpl<T> {
         return (R) monad.unwrap();
 
     }
-
+/**
     protected <R> AnyM<R> fromIterable(final Iterable<R> it) {
         if (it instanceof AnyM)
             return (AnyM<R>) it;
@@ -56,7 +57,7 @@ public abstract class BaseAnyMImpl<T> {
             return (AnyM<R>) it;
         return AnyM.fromPublisher(it);
     }
-
+**/
     public Monad monad() {
         return monad;
     }
@@ -91,7 +92,7 @@ public abstract class BaseAnyMImpl<T> {
 
     }
 
-    protected <R> Monad<R> flatMapInternal(final Function<? super T, ? extends AnyM<? extends R>> fn) {
+    protected <R> Monad<R> flatMapInternal(final Function<? super T, ? extends AnyM<W,? extends R>> fn) {
         try {
             return monad.bind(in -> fn.apply(in)
                                       .unwrap())
@@ -134,7 +135,7 @@ public abstract class BaseAnyMImpl<T> {
 
     }
 
-    abstract Xor<AnyMValue<T>, AnyMSeq<T>> matchable();
+    abstract Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
 
     /**
      * Aggregate the contents of this Monad and the supplied Monad 
@@ -152,7 +153,7 @@ public abstract class BaseAnyMImpl<T> {
      * @param next Monad to aggregate content with
      * @return Aggregated Monad
      */
-    protected AnyM<List<T>> aggregate(final AnyM<T> next) {
+    protected AnyM<W,List<T>> aggregate(final AnyM<W,T> next) {
 
         return unit(Stream.concat(matchable().visit(value -> value.toSequence(), seq -> seq.stream()), next.matchable()
                                                                                                            .visit(value -> value.toSequence(),
@@ -228,11 +229,11 @@ public abstract class BaseAnyMImpl<T> {
     //List(List(3), Nil, List(2, 3), List(2), List(3),
     //	  Nil, List(2, 3), List(2))												
 
-    public abstract <T> AnyM<T> unit(T value);
+    public abstract <T> AnyM<W,T> unit(T value);
 
-    public abstract <T> AnyM<T> empty();
+    public abstract <T> AnyM<W,T> empty();
 
-    public AnyMValue<T> reduceMValue(final Monoid<AnyMValue<T>> reducer) {
+    public AnyMValue<W,T> reduceMValue(final Monoid<AnyMValue<W,T>> reducer) {
         //  List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
         //  convert to list Optionals
         return monad.reduceM(Monoid.of(reducer.zero()
@@ -242,7 +243,7 @@ public abstract class BaseAnyMImpl<T> {
                     .anyMValue();
     }
 
-    public AnyMSeq<T> reduceMSeq(final Monoid<AnyMSeq<T>> reducer) {
+    public AnyMSeq<W,T> reduceMSeq(final Monoid<AnyMSeq<W,T>> reducer) {
         //	List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
         //	convert to list Optionals
         return monad.reduceM(Monoid.of(reducer.zero()

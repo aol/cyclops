@@ -64,6 +64,7 @@ import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
@@ -1588,7 +1589,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * @return this ReactiveSeq converted to AnyM format
      */
-    public AnyMSeq<T> anyM();
+    public AnyMSeq<Witness.stream,T> anyM();
 
     /*
      * (non-Javadoc)
@@ -1640,7 +1641,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to be applied
      * @return new stage in Sequence with flatMap operation to be lazily applied
      */
-    <R> ReactiveSeq<R> flatMapAnyM(Function<? super T, AnyM<? extends R>> fn);
+    <R> ReactiveSeq<R> flatMapAnyM(Function<? super T, AnyM<Witness.stream,? extends R>> fn);
 
     /**
      * FlatMap where the result is a Collection, flattens the resultant
