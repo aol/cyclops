@@ -28,6 +28,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
@@ -35,6 +36,8 @@ import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 /**
  * An eXtended List type, that offers additional eagerly executed functional style operators such as bimap, filter and more
@@ -53,7 +56,7 @@ public interface ListX<T> extends To<ListX<T>>,
                                  OnEmptySwitch<T, List<T>> {
 
    
-    public static final class µ {}
+
     /**
      * Create a ListX that contains the Integers between start and end
      * 
@@ -101,6 +104,19 @@ public interface ListX<T> extends To<ListX<T>>,
         return ReactiveSeq.unfold(seed, unfolder)
                           .toListX();
     }
+    /**
+     * Generate a ListX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for ListX elements
+     * @return ListX generated from the provided Supplier
+     */
+    public static <T> ListX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toListX();
+    }
 
     /**
      * Generate a ListX from the provided Supplier up to the provided limit number of times
@@ -131,6 +147,76 @@ public interface ListX<T> extends To<ListX<T>>,
 
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <R1, R2, R3, R> ListX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (ListX)MutableCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <R1, R2, R3, R> ListX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (ListX)MutableCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <R1, R2, R> ListX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (ListX)MutableCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <R1, R2, R> ListX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (ListX)MutableCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> ListX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (ListX)MutableCollectionX.super.forEach2(stream1, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> ListX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (ListX)MutableCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+    }
+    
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
      */
@@ -209,12 +295,20 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     public static <T> ListX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+        if (it instanceof ListX)
+            return (ListX<T>) it;
+        if (it instanceof List)
+            return new ListXImpl<T>(
+                                    (List<T>) it, defaultCollector());
+        return new ListXImpl<T>(
+                                StreamUtils.stream(it)
+                                           .collect(defaultCollector()),
+                                           defaultCollector());
     }
 
     public static <T> ListX<T> fromIterable(final Collector<T, ?, List<T>> collector, final Iterable<T> it) {
         if (it instanceof ListX)
-            return (ListX<T>) it;
+            return ((ListX<T>) it).withCollector(collector);
         if (it instanceof List)
             return new ListXImpl<T>(
                                     (List<T>) it, collector);
@@ -233,6 +327,32 @@ public interface ListX<T> extends To<ListX<T>>,
 
         return (DequeX<T>) MutableCollectionX.super.skip(num);
     }
+    ListX<T> withCollector(Collector<T, ?, List<T>> collector);
+
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *      ListX.of(1,2,3)
+     *           .map(i->i*2)
+     *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //ListX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed List
+     */
+    default <R> ListX<R> coflatMap(Function<? super ListX<T>, ? extends R> fn){
+        return fn.andThen(r ->  this.<R>unit(r))
+                 .apply(this);
+    }
+    
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
      */
@@ -679,7 +799,6 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     @Override
     default ListX<T> cycleUntil(final Predicate<? super T> predicate) {
-
         return (ListX<T>) MutableCollectionX.super.cycleUntil(predicate);
     }
 

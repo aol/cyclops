@@ -33,10 +33,13 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Combiner;
+import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.To;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
+
 
 public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PBag<T>> {
     
@@ -118,7 +121,19 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
                           .limit(limit)
                           .toPBagX();
     }
+    /**
+     * Generate a PBagX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for PBagX elements
+     * @return PBagX generated from the provided Supplier
+     */
+    public static <T> PBagX<T> fill(final long limit, final T s) {
 
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toPBagX();
+    }
     /**
      * Create a PBagX by iterative application of a function to an initial element up to the supplied limit number of times
      * 
@@ -134,6 +149,75 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
 
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <R1, R2, R3, R> PBagX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (PBagX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <R1, R2, R3, R> PBagX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (PBagX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <R1, R2, R> PBagX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (PBagX)PersistentCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <R1, R2, R> PBagX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (PBagX)PersistentCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> PBagX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (PBagX)PersistentCollectionX.super.forEach2(stream1, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> PBagX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (PBagX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+    }
+    
     @Override
     default PBagX<T> take(final long num) {
 
@@ -206,6 +290,28 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     public static <T> PBagX<T> fromStream(final Stream<T> stream) {
         return Reducers.<T> toPBagX()
                        .mapReduce(stream);
+    }
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     PBagX.of(1,2,3)
+     *          .map(i->i*2)
+     *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //PBagX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed PBagX
+     */
+    default <R> PBagX<R> coflatMap(Function<? super PBagX<T>, ? extends R> fn){
+       return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
     }
 
     /**

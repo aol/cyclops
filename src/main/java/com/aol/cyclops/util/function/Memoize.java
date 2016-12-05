@@ -15,6 +15,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
+import com.aol.cyclops.data.LazyImmutable;
+import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.val;
@@ -103,8 +105,10 @@ public class Memoize {
      */
     public static <T, R> Function<T, R> memoizeFunction(final Function<T, R> fn) {
         final Map<T, R> lazy = new ConcurrentHashMap<>();
-        return t -> lazy.computeIfAbsent(t, fn);
+        LazyImmutable<R> nullR = LazyImmutable.def();
+        return t -> t==null? nullR.computeIfAbsent(()->fn.apply(null)) : lazy.computeIfAbsent(t, fn);
     }
+ 
 
     /**
      * Convert a Function into one that caches it's result
@@ -114,7 +118,8 @@ public class Memoize {
      * @return Memoised Function
      */
     public static <T, R> Function<T, R> memoizeFunction(final Function<T, R> fn, final Cacheable<R> cache) {
-        return t -> (R)cache.soften()
+        LazyImmutable<R> nullR = LazyImmutable.def();
+        return t -> t==null? nullR.computeIfAbsent(()->fn.apply(null)) : (R)cache.soften()
                          .computeIfAbsent(t, (Function) fn);
     }
 
@@ -196,7 +201,8 @@ public class Memoize {
      */
     public static <T> Predicate<T> memoizePredicate(final Predicate<T> p) {
         final Function<T, Boolean> memoised = memoizeFunction((Function<T, Boolean>) t -> p.test(t));
-        return (t) -> memoised.apply(t);
+        LazyImmutable<Boolean> nullR = LazyImmutable.def();
+        return (t) ->  t==null? nullR.computeIfAbsent(()->p.test(null)) : memoised.apply(t);
     }
 
     /**
@@ -208,7 +214,8 @@ public class Memoize {
      */
     public static <T> Predicate<T> memoizePredicate(final Predicate<T> p, final Cacheable<Boolean> cache) {
         final Function<T, Boolean> memoised = memoizeFunction((Function<T, Boolean>) t -> p.test(t), cache);
-        return (t) -> memoised.apply(t);
+        LazyImmutable<Boolean> nullR = LazyImmutable.def();
+        return (t) -> t==null? nullR.computeIfAbsent(()->p.test(null)) : memoised.apply(t);
     }
 
 }

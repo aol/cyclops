@@ -49,11 +49,12 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.internal.stream.spliterators.FillSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.LazySingleSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFilterable;
@@ -62,7 +63,6 @@ import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
-import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -77,6 +77,8 @@ import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.val;
 
@@ -127,6 +129,38 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     
    
+    /**
+     * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc to
+     * switch to a finite Stream)
+     * 
+     * @param t Value to fill Stream with
+     * @return Infinite ReactiveSeq consisting of a single value
+     */
+    public static <T> ReactiveSeq<T> fill(T t){
+        return ReactiveSeq.fromStream(StreamSupport.stream(new FillSpliterator<T>(t), false));
+    }
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *      ReactiveSeq.of(1,2,3)
+     *                 .map(i->i*2)
+     *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //ReactiveSeq[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @return
+     */
+    default <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
+        return ReactiveSeq.fromStream(StreamSupport.<R>stream(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(this,fn), false));
+
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
@@ -140,6 +174,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     public <T> ReactiveSeq<T> unit(T unit);
 
+   
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#foldRight(java.lang.Object, java.util.function.BiFunction)
      */
@@ -3321,7 +3356,107 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return this.toList()
                    .size();
     }
+    /**
+     * Perform a four level nested internal iteration over this Stream and the
+     * supplied streams
+     *
+     * <pre>
+     * {@code 
+     *   
+     *   //ReactiveSeq [1,2]
+     *   
+     *   reactiveSeq.forEach4(a->ListX.range(10,13),
+     *                        (a,b)->ListX.of(""+(a+b),"hello world"),
+     *                        (a,b,c)->ListX.of(a,b,c)),
+     *                        (a,b,c,d)->c+":"a+":"+b);
+     *                                  
 
+     * }
+     * </pre>
+     * 
+     * @param stream1
+     *            Nested Stream to iterate over
+     * @param stream2
+     *            Nested Stream to iterate over
+     * @param stream3
+     *            Nested Stream to iterate over
+     * @param yieldingFunction
+     *            Function with pointers to the current element from both
+     *            Streams that generates the new elements
+     * @return ReactiveSeq with elements generated via nested iteration
+     */
+    default <R1, R2, R3,R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+                        final BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
+                            final TriFunction<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+                            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+        return this.flatMap(in -> {
+
+            ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            return a.flatMap(ina -> {
+                ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+                return b.flatMap(inb -> {
+                    ReactiveSeq<R3> c = ReactiveSeq.fromIterable(()->stream3.apply(in, ina, inb).iterator());
+                    return c.map(in2 -> yieldingFunction.apply(in, ina, inb, in2));
+                });
+
+            });
+
+        });
+    }
+    /**
+     * Perform a four level nested internal iteration over this Stream and the
+     * supplied streams
+     * 
+     * <pre>
+     * {@code 
+     *  //ReactiveSeq [1,2,3]
+     *  
+     * seq.forEach4(a->ReactiveSeq.range(10,13),
+     *                     (a,b)->Stream.of(""+(a+b),"hello world"),
+     *                     (a,b,c)->Stream.of(a,b,c),
+     *                     (a,b,c,d)-> c!=3,
+     *                      (a,b,c)->c+":"a+":"+b);
+     *                                  
+     * 
+     *  
+     * }
+     * </pre>
+     * 
+     * 
+     * @param stream1
+     *            Nested Stream to iterate over
+     * @param stream2
+     *            Nested Stream to iterate over
+     * @param stream3
+     *            Nested Stream to iterate over
+     * @param filterFunction
+     *            Filter to apply over elements before passing non-filtered
+     *            values to the yielding function
+     * @param yieldingFunction
+     *            Function with pointers to the current element from both
+     *            Streams that generates the new elements
+     * @return ReactiveSeq with elements generated via nested iteration
+     */
+    default <R1, R2, R3, R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+            final BiFunction<? super T, ? super R1, ? extends BaseStream<R2, ?>> stream2,
+            final TriFunction<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+        return this.flatMap(in -> {
+
+            ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            return a.flatMap(ina -> {
+                ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+                return b.flatMap(inb -> {
+                    ReactiveSeq<R3> c = ReactiveSeq.fromIterable(()->stream3.apply(in, ina, inb).iterator());
+                    return c.filter(in2 -> filterFunction.apply(in, ina, inb, in2))
+                            .map(in2 -> yieldingFunction.apply(in, ina, inb, in2));
+                });
+
+            });
+
+        });
+    }
     /**
      * Perform a three level nested internal iteration over this Stream and the
      * supplied streams
@@ -3330,8 +3465,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code 
      * ReactiveSeq.of(1,2)
      * 						.forEach3(a->IntStream.range(10,13),
-     * 						        a->b->Stream.of(""+(a+b),"hello world"),
-     * 									a->b->c->c+":"a+":"+b);
+     * 						         (a,b)->Stream.of(""+(a+b),"hello world"),
+     * 							     (a,b,c)->c+":"a+":"+b);
      * 									
      * 
      *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
@@ -3347,9 +3482,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
-            Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
+    default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+        return this.flatMap(in -> {
+
+            ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            return ReactiveSeq.fromIterable(a)
+                              .flatMap(ina -> {
+                ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+                return b.map(in2 -> yieldingFunction.apply(in, ina, in2));
+            });
+
+        });
+    }
 
     /**
      * Perform a three level nested internal iteration over this Stream and the
@@ -3359,9 +3505,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code 
      * ReactiveSeq.of(1,2,3)
      * 						.forEach3(a->IntStream.range(10,13),
-     * 						      a->b->Stream.of(""+(a+b),"hello world"),
-     * 						         a->b->c-> c!=3,
-     * 									a->b->c->c+":"a+":"+b);
+     * 						          (a,b)->Stream.of(""+(a+b),"hello world"),
+     * 						          (a,b,c)-> c!=3,
+     * 								  (a,b,c)->c+":"a+":"+b);
      * 									
      * 
      *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
@@ -3381,10 +3527,22 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
-            Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
+   default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+       return this.flatMap(in -> {
+
+           ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+           return ReactiveSeq.fromIterable(a)
+                             .flatMap(ina -> {
+               ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+               return b.filter(in2 -> filterFunction.apply(in, ina, in2))
+                       .map(in2 -> yieldingFunction.apply(in, ina, in2));
+           });
+
+       });
+    }
 
     /**
      * Perform a two level nested internal iteration over this Stream and the
@@ -3394,7 +3552,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code 
      * ReactiveSeq.of(1,2,3)
      * 						.forEach2(a->IntStream.range(10,13),
-     * 									a->b->a+b);
+     * 							      (a,b)->a+b);
      * 									
      * 
      *  //ReactiveSeq[11,14,12,15,13,16]
@@ -3409,8 +3567,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
+    default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
+        return this.flatMap(in-> { 
+            
+            
+            ReactiveSeq<R1> b = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            return b.map(in2->yieldingFunction.apply(in, in2));
+        });
+    }
 
     /**
      * Perform a two level nested internal iteration over this Stream and the
@@ -3420,8 +3585,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code 
      * ReactiveSeq.of(1,2,3)
      * 						.forEach2(a->IntStream.range(10,13),
-     * 						            a->b-> a<3 && b>10,
-     * 									a->b->a+b);
+     * 						          (a,b)-> a<3 && b>10,
+     * 							      (a,b)->a+b);
      * 									
      * 
      *  //ReactiveSeq[14,15]
@@ -3438,9 +3603,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
-    <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            Function<? super T, Function<? super R1, Boolean>> filterFunction,
-            Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
+    default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super T,? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
+        return this.flatMap(in-> { 
+            
+            
+            ReactiveSeq<R1> b = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            return b.filter(in2-> filterFunction.apply(in,in2))
+                    .map(in2->yieldingFunction.apply(in, in2));
+        });
+    }
 
     @Override
     default long count() {
@@ -3844,5 +4017,156 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         JoolWindowing.super.print(stream);
     }
+    
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#crossApply(java.util.function.Function)
+     */
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> crossApply(Function<? super T, ? extends Iterable<? extends U>> function) {
+        
+        return (ReactiveSeq)JoolManipulation.super.crossApply(function);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#outerApply(java.util.function.Function)
+     */
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> outerApply(Function<? super T, ? extends Iterable<? extends U>> function) {
+        
+        return (ReactiveSeq)JoolManipulation.super.outerApply(function);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(java.lang.Iterable)
+     */
+    @Override
+    default ReactiveSeq<T> concat(Iterable<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.concat(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(org.jooq.lambda.Seq)
+     */
+    @Override
+    default ReactiveSeq<T> concat(Seq<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.concat(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(java.util.Optional)
+     */
+    @Override
+    default ReactiveSeq<T> concat(Optional<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.concat(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
+     */
+    @Override
+    default ReactiveSeq<T> append(Stream<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
+     */
+    @Override
+    default ReactiveSeq<T> append(Iterable<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(org.jooq.lambda.Seq)
+     */
+    @Override
+    default ReactiveSeq<T> append(Seq<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.util.Optional)
+     */
+    @Override
+    default ReactiveSeq<T> append(Optional<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.util.stream.Stream)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Stream<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.lang.Iterable)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Iterable<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(org.jooq.lambda.Seq)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Seq<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.util.Optional)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Optional<? extends T> other) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+    }
+  
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#cycle(long)
+     */
+    @Override
+    default ReactiveSeq<T> cycle(long times) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.cycle(times);
+    }
+  
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#skipWhileClosed(java.util.function.Predicate)
+     */
+    @Override
+    default ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.skipWhileClosed(predicate);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#limitWhileClosed(java.util.function.Predicate)
+     */
+    @Override
+    default ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.limitWhileClosed(predicate);
+    }
 
+ 
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#sorted(java.util.function.Function, java.util.Comparator)
+     */
+    @Override
+    default <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.sorted(function, comparator);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#sliding(long)
+     */
+    @Override
+    default ReactiveSeq<Seq<T>> sliding(long size) {
+        
+        return (ReactiveSeq<Seq<T>>)JoolManipulation.super.sliding(size);
+    }
+  
+
+    
 }

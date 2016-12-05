@@ -12,12 +12,12 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 public class AnyMSeqImpl<T> extends BaseAnyMImpl<T>implements AnyMSeq<T> {
 
@@ -121,60 +121,6 @@ public class AnyMSeqImpl<T> extends BaseAnyMImpl<T>implements AnyMSeq<T> {
         return with(super.aggregate(next));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.super.AnyMSeq#forEach2(java.util.function.Function, java.util.function.Function)
-     */
-    @Override
-    public <R1, R> AnyMSeq<R> forEach2(final Function<? super T, ? extends AnyM<R1>> monad,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return For.anyM((AnyM<T>) this)
-                  .anyM(u -> monad.apply(u))
-                  .yield(yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.super.AnyMSeq#forEach2(java.util.function.Function, java.util.function.Function, java.util.function.Function)
-     */
-    @Override
-    public <R1, R> AnyMSeq<R> forEach2(final Function<? super T, ? extends AnyM<R1>> monad,
-            final Function<? super T, Function<? super R1, Boolean>> filterFunction,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return For.anyM((AnyM<T>) this)
-                  .anyM(u -> monad.apply(u))
-                  .filter(filterFunction)
-                  .yield(yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.super.AnyMSeq#forEach3(java.util.function.Function, java.util.function.Function, java.util.function.Function, java.util.function.Function)
-     */
-    @Override
-    public <R1, R2, R> AnyMSeq<R> forEach3(final Function<? super T, ? extends AnyM<R1>> monad1,
-            final Function<? super T, Function<? super R1, ? extends AnyM<R2>>> monad2,
-            final Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-        return For.anyM((AnyM<T>) this)
-                  .anyM(u -> monad1.apply(u))
-                  .anyM(a -> b -> monad2.apply(a)
-                                        .apply(b))
-                  .filter(filterFunction)
-                  .yield(yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.super.AnyMSeq#forEach3(java.util.function.Function, java.util.function.Function, java.util.function.Function)
-     */
-    @Override
-    public <R1, R2, R> AnyMSeq<R> forEach3(final Function<? super T, ? extends AnyM<R1>> monad1,
-            final Function<? super T, Function<? super R1, ? extends AnyM<R2>>> monad2,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-        return For.anyM((AnyM<T>) this)
-                  .anyM(u -> monad1.apply(u))
-                  .anyM(a -> b -> monad2.apply(a)
-                                        .apply(b))
-                  .yield(yieldingFunction);
-
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.super.AnyMSeq#flatMap(java.util.function.Function)

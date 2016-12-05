@@ -20,6 +20,7 @@ import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
 import com.aol.cyclops.control.monads.transformers.values.TryTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
@@ -36,13 +37,13 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  *
  * @param <T> The type contained on the nested Try within
  */
-public interface TryT<T, X extends Throwable> extends To<TryT<T,X>>,Publisher<T>, Functor<T>, Filterable<T> {
+public interface TryT<T, X extends Throwable> extends To<TryT<T,X>>,Publisher<T>, Foldable<T>, Functor<T>, Filterable<T> {
 
     public <R> TryT<R, X> unit(R value);
 
     public <R> TryT<R, X> empty();
 
-    public <B> TryT<B, X> flatMap(Function<? super T, ? extends Try<B, X>> f);
+    public <B> TryT<B, X> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
 
     /**
      * @return The wrapped AnyM

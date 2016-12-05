@@ -32,6 +32,13 @@ public class ListXTest extends CollectionXTestsWithNulls {
         assertThat(ListX.empty().onEmptySwitch(()->ListX.of(1,2,3)),equalTo(ListX.of(1,2,3)));
     }
     @Test
+    public void coflatMap(){
+       assertThat(ListX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
+    }
+    @Test
     public void multipaths() {
 
         ListX<Integer> list = ListX.of(1, 2, 3);

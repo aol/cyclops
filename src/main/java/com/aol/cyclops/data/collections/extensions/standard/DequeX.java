@@ -27,14 +27,14 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
+
 
 /**
  * An eXtended Deque type, that offers additional eagerly executed functional style operators such as bimap, filter and more
@@ -90,6 +90,19 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      */
     static <U, T> DequeX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
+                          .toDequeX();
+    }
+    /**
+     * Generate a DequeX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for DequeX elements
+     * @return DequeX generated from the provided Supplier
+     */
+    public static <T> DequeX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
                           .toDequeX();
     }
 
@@ -196,7 +209,16 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      * @return DequeX
      */
     public static <T> DequeX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+    
+        if (it instanceof DequeX)
+            return (DequeX) it;
+        if (it instanceof Deque)
+            return new DequeXImpl<T>(
+                                     (Deque) it, defaultCollector());
+        return new DequeXImpl<T>(
+                                 StreamUtils.stream(it)
+                                            .collect(defaultCollector()),
+                                            defaultCollector());
     }
 
     /**
@@ -208,7 +230,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      */
     public static <T> DequeX<T> fromIterable(final Collector<T, ?, Deque<T>> collector, final Iterable<T> it) {
         if (it instanceof DequeX)
-            return (DequeX) it;
+            return ((DequeX) it).withCollector(collector);
         if (it instanceof Deque)
             return new DequeXImpl<T>(
                                      (Deque) it, collector);
@@ -218,6 +240,76 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
                                  collector);
     }
 
+    DequeX<T> withCollector(Collector<T, ?, Deque<T>> collector);
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <R1, R2, R3, R> DequeX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (DequeX)MutableCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <R1, R2, R3, R> DequeX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (DequeX)MutableCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <R1, R2, R> DequeX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (DequeX)MutableCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <R1, R2, R> DequeX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (DequeX)MutableCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> DequeX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (DequeX)MutableCollectionX.super.forEach2(stream1, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> DequeX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (DequeX)MutableCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
      */
@@ -270,7 +362,28 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX<T>) MutableCollectionX.super.combine(predicate, op);
     }
 
-   
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     DequeX.of(1,2,3)
+     *           .map(i->i*2)
+     *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //DequeX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed Deque
+     */
+    default <R> DequeX<R> coflatMap(Function<? super DequeX<T>, ? extends R> fn){
+        return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)

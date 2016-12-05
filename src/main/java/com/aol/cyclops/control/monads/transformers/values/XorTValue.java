@@ -26,7 +26,6 @@ import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
@@ -43,7 +42,7 @@ import com.aol.cyclops.types.applicative.ApplicativeFunctor;
  * @param <T>
  *            The type contained on the Xor within
  */
-public class XorTValue<ST, T> implements XorT<ST, T>, MonadicValue2<ST, T>, TransformerValue<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,
+public class XorTValue<ST, T> implements XorT<ST, T>, MonadicValue<T>, TransformerValue<T>, Supplier<T>, ConvertableFunctor<T>, Filterable<T>,
         ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 
     private final AnyMValue<Xor<ST, T>> run;
@@ -179,7 +178,7 @@ public class XorTValue<ST, T> implements XorT<ST, T>, MonadicValue2<ST, T>, Tran
     @Override
     public <U, R> XorTValue<ST, R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (XorTValue<ST, R>) MonadicValue2.super.zip(other, zipper);
+        return (XorTValue<ST, R>) TransformerValue.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -188,7 +187,7 @@ public class XorTValue<ST, T> implements XorT<ST, T>, MonadicValue2<ST, T>, Tran
     @Override
     public <U, R> XorTValue<ST, R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (XorTValue<ST, R>) MonadicValue2.super.zip(other, zipper);
+        return (XorTValue<ST, R>) TransformerValue.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -197,7 +196,7 @@ public class XorTValue<ST, T> implements XorT<ST, T>, MonadicValue2<ST, T>, Tran
     @Override
     public <U> XorTValue<ST, Tuple2<T, U>> zip(final Stream<? extends U> other) {
 
-        return (XorTValue) MonadicValue2.super.zip(other);
+        return (XorTValue) TransformerValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -206,7 +205,7 @@ public class XorTValue<ST, T> implements XorT<ST, T>, MonadicValue2<ST, T>, Tran
     @Override
     public <U> XorTValue<ST, Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
-        return (XorTValue) MonadicValue2.super.zip(other);
+        return (XorTValue) TransformerValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -215,7 +214,7 @@ public class XorTValue<ST, T> implements XorT<ST, T>, MonadicValue2<ST, T>, Tran
     @Override
     public <U> XorTValue<ST, Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
-        return (XorTValue) MonadicValue2.super.zip(other);
+        return (XorTValue) TransformerValue.super.zip(other);
     }
 
     public XorTValue<PStackX<ST>, T> list() {
@@ -261,13 +260,16 @@ public class XorTValue<ST, T> implements XorT<ST, T>, MonadicValue2<ST, T>, Tran
 
     }
 
+   
     @Override
-    public <ST2, B> XorTValue<ST2, B> flatMap(final Function<? super T, ? extends MonadicValue2<? extends ST2, ? extends B>> f) {
+    public <B> XorTValue<ST, B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
 
-        return new XorTValue<ST2, B>(
+        return new XorTValue<ST, B>(
                                      run.map(o -> o.flatMap(f)));
 
     }
+
+
 
     /**
      * Lift a function into one that accepts and returns an XorT This allows

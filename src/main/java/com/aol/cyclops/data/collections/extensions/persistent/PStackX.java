@@ -35,6 +35,10 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
+
+
 public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>, OnEmptySwitch<T, PStack<T>> {
 
     /**
@@ -117,6 +121,20 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
     }
 
     /**
+     * Generate a PStackX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for PStackX elements
+     * @return PStackX generated from the provided Supplier
+     */
+    public static <T> PStackX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toPStackX();
+    }
+    
+    /**
      * Create a PStackX by iterative application of a function to an initial element up to the supplied limit number of times
      * 
      * @param limit Max number of elements to generate
@@ -150,6 +168,7 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
      * @param values To add to PStack
      * @return new PStack
      */
+    @SafeVarargs
     public static <T> PStackX<T> of(final T... values) {
         return new PStackXImpl<>(
                                  ConsPStack.from(Arrays.asList(values)), true);
@@ -266,6 +285,75 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
                        .efficientOpsOff();
     }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <R1, R2, R3, R> PStackX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (PStackX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <R1, R2, R3, R> PStackX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (PStackX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <R1, R2, R> PStackX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (PStackX)PersistentCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <R1, R2, R> PStackX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (PStackX)PersistentCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> PStackX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (PStackX)PersistentCollectionX.super.forEach2(stream1, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> PStackX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
+            BiFunction<? super T, ? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (PStackX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+    }
+    
     @Override
     default PStackX<T> take(final long num) {
 
@@ -280,7 +368,28 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
     default PStackX<T> toPStackX() {
         return this;
     }
-
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     PStackX.of(1,2,3)
+     *          .map(i->i*2)
+     *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *     //PStackX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed PStackX
+     */
+    default <R> PStackX<R> coflatMap(Function<? super PStackX<T>, ? extends R> fn){
+       return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
     /**
     * Combine two adjacent elements in a PStackX using the supplied BinaryOperator
     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

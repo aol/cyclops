@@ -23,6 +23,7 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -174,7 +175,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     @Override
     default <U> AnyMValue<U> ofType(final Class<? extends U> type) {
 
-        return (AnyMValue<U>) Filterable.super.ofType(type);
+        return (AnyMValue<U>) MonadicValue.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -183,7 +184,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     @Override
     default AnyMValue<T> filterNot(final Predicate<? super T> fn) {
 
-        return (AnyMValue<T>) Filterable.super.filterNot(fn);
+        return (AnyMValue<T>) MonadicValue.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
@@ -192,7 +193,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
     @Override
     default AnyMValue<T> notNull() {
 
-        return (AnyMValue<T>) Filterable.super.notNull();
+        return (AnyMValue<T>) MonadicValue.super.notNull();
     }
 
     /* (non-Javadoc)
@@ -346,100 +347,49 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
         return new AnyMonads().sequence(seq);
     }
 
-    /**
-     * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-     * etc to be injected, for example)
-     * 
-     * <pre>
-     * {@code 
-     * AnyM.fromArray(1,2,3)
-    					.forEachAnyM2(a->AnyM.fromIntStream(IntStream.range(10,13)),
-    								a->b->a+b);
-    								
-     * 
-     *  //AnyM[11,14,12,15,13,16]
-     * }
-     * </pre>
-     * 
-     * 
-     * @param monad Nested Monad to iterate over
-     * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
-     * @return LazyFutureStream with elements generated via nested iteration
-     */
-    <R1, R> AnyMValue<R> forEach2(Function<? super T, ? extends AnyMValue<R1>> monad,
-            Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
+    @Override
+    default <R1, R> AnyMValue<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
+            final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
+        return For.Values.each2(this, value1,yieldingFunction);
+    }
 
-    /**
-     * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-     * etc to be injected, for example)
-     * 
-     * <pre>
-     * {@code 
-     * AnyM.fromArray(1,2,3)
-    					.forEach2(a->AnyM.fromIntStream(IntStream.range(10,13)),
-    					            a->b-> a<3 && b>10,
-    								a->b->a+b);
-    								
-     * 
-     *  //AnyM[14,15]
-     * }
-     * </pre>
-     * @param monad Nested Monad to iterate over
-     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
-     * @return
-     */
-    <R1, R> AnyMValue<R> forEach2(Function<? super T, ? extends AnyMValue<R1>> monad,
-            Function<? super T, Function<? super R1, Boolean>> filterFunction,
-            Function<? super T, Function<? super R1, ? extends R>> yieldingFunction);
+    @Override
+    default <R1, R> MonadicValue<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
+            final BiFunction<? super T, ? super R1, Boolean> filterFunction,
+            final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
+        return For.Values.each2(this, value1, filterFunction,yieldingFunction);
+    }
 
-    /** 
-     * Perform a three level nested internal iteration over this Stream and the supplied streams
-      *<pre>
-     * {@code 
-     * AnyM.fromArray(1,2)
-    					.forEach2(a->AnyM.fromIntStream(IntStream.range(10,13)),
-    					(a->b->AnyM.fromArray(""+(a+b),"hello world"),
-    								a->b->c->c+":"a+":"+b);
-    								
-     * 
-     *  //AnyM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
-     * }
-     * </pre> 
-     * @param monad1 Nested monad to flatMap over
-     * @param stream2 Nested monad to flatMap over
-     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
-     * @return AnyM with elements generated via nested iteration
-     */
-    <R1, R2, R> AnyMValue<R> forEach3(Function<? super T, ? extends AnyMValue<R1>> monad1,
-            Function<? super T, Function<? super R1, ? extends AnyMValue<R2>>> monad2,
-            Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
+    @Override
+    default < T2, R1, R2, R>  AnyMValue<R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
+            final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+                    final TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                    final TriFunction<? super T, ? super R1, ? super R2, ? extends R>  yieldingFunction){
+        return For.Values.each3(this, value1, value2, filterFunction,yieldingFunction);
+    }
 
-    /**
-     * Perform a three level nested internal iteration over this AnyM and the supplied monads
-     *<pre>
-     * {@code 
-     * AnyM.fromArray(1,2,3)
-    				.forEach3(a->AnyM.fromStream(IntStream.range(10,13)),
-    					 a->b->AnyM.fromArray(""+(a+b),"hello world"),
-    				         a->b->c-> c!=3,
-    							a->b->c->c+":"a+":"+b);
-    							
-     * 
-     *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
-     * }
-    * </pre> 
-     * 
-     * @param monad1 Nested Stream to iterate over
-     * @param monad2 Nested Stream to iterate over
-     * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
-     * @return AnyM with elements generated via nested iteration
-     */
-    <R1, R2, R> AnyMValue<R> forEach3(Function<? super T, ? extends AnyMValue<R1>> monad1,
-            Function<? super T, Function<? super R1, ? extends AnyMValue<R2>>> monad2,
-            Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction);
+    @Override
+    default <T2, R1, R2, R> AnyMValue<R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
+            final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            final TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        return For.Values.each3(this, value1, value2, yieldingFunction);
+    }
+    @Override
+    default < T2, R1, R2,R3, R>  AnyMValue<R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1,
+            final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            final TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R>  yieldingFunction){
+        return For.Values.each4(this, value1, value2, value3,filterFunction,yieldingFunction);
+    }
+
+    @Override
+    default <T2, R1, R2, R3, R> MonadicValue<R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1,
+            final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            final TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return For.Values.each4(this, value1, value2, value3, yieldingFunction);
+    }
 
     /**
      * flatMap operation
@@ -469,7 +419,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn flatMap function
      * @return  flatMapped AnyM
      */
-    <R> AnyMValue<R> flatMap(Function<? super T, ? extends AnyMValue<? extends R>> fn);
+    <R> AnyMValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn);
 
     /**
      * Apply function/s inside supplied Monad to data in current Monad

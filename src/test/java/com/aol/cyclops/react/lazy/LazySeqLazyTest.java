@@ -39,7 +39,7 @@ public class LazySeqLazyTest extends BaseSeqLazyTest{
 	        assertEquals(asList(),of().zipWithIndex().lazyOperations().toList().get());
 	   
 	       
-	      assertThat( of("a").zipWithIndex().map(t->t.v2).lazyOperations().findFirst().get().get(),is(0l));
+	      assertThat( of("a").zipWithIndex().map(t->t.v2).lazyOperations().findFirst().get(),is(0l));
 	      assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().lazyOperations().toList().get());
 	    }
 

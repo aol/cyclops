@@ -15,10 +15,12 @@ import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.Monad;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
 
@@ -34,7 +36,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
 
     private <T> AnyMValueImpl<T> with(final Monad<T> anyM) {
 
-        return new AnyMValueImpl<T>(
+        return new AnyMValueImpl(
                                     anyM, initialType);
     }
 
@@ -166,57 +168,10 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
         return with(super.flattenInternal());
     }
 
+   
     @Override
-    public <R1, R> AnyMValue<R> forEach2(final Function<? super T, ? extends AnyMValue<R1>> monad,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return AnyM.ofValue(For.anyM((AnyM<T>) this)
-                               .anyM(u -> monad.apply(u))
-                               .yield(yieldingFunction)
-                               .unwrap());
-    }
-
-    @Override
-    public <R1, R> AnyMValue<R> forEach2(final Function<? super T, ? extends AnyMValue<R1>> monad,
-            final Function<? super T, Function<? super R1, Boolean>> filterFunction,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return AnyM.ofValue(For.anyM((AnyM<T>) this)
-                               .anyM(u -> monad.apply(u))
-                               .filter(filterFunction)
-                               .yield(yieldingFunction)
-                               .unwrap());
-
-    }
-
-    @Override
-    public <R1, R2, R> AnyMValue<R> forEach3(final Function<? super T, ? extends AnyMValue<R1>> monad1,
-            final Function<? super T, Function<? super R1, ? extends AnyMValue<R2>>> monad2,
-            final Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-
-        return AnyM.ofValue(For.anyM((AnyM<T>) this)
-                               .anyM(u -> monad1.apply(u))
-                               .anyM(a -> b -> monad2.apply(a)
-                                                     .apply(b))
-                               .filter(filterFunction)
-                               .yield(yieldingFunction)
-                               .unwrap());
-    }
-
-    @Override
-    public <R1, R2, R> AnyMValue<R> forEach3(final Function<? super T, ? extends AnyMValue<R1>> monad1,
-            final Function<? super T, Function<? super R1, ? extends AnyMValue<R2>>> monad2,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-        return AnyM.ofValue(For.anyM((AnyM<T>) this)
-                               .anyM(u -> monad1.apply(u))
-                               .anyM(a -> b -> monad2.apply(a)
-                                                     .apply(b))
-                               .yield(yieldingFunction)
-                               .unwrap());
-    }
-
-    @Override
-    public <R> AnyMValue<R> flatMap(final Function<? super T, ? extends AnyMValue<? extends R>> fn) {
-        return with(super.flatMapInternal(fn));
+    public <R> AnyMValue<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> fn) {
+        return with(super.flatMapInternal(fn.andThen(AnyM::ofValue)));
     }
 
     @Override

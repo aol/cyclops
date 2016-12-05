@@ -7,7 +7,6 @@ import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
-import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
@@ -26,6 +25,7 @@ import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 
@@ -109,8 +109,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * @see org.jooq.lambda.Seq#minBy(Function)
      */
     @Override
-    public <U extends Comparable<? super U>> Eval<Optional<T>> minBy(final Function<? super T, ? extends U> function) {
-        return Eval.later(() -> stream.minBy(function));
+    public <U extends Comparable<? super U>> Maybe<T> minBy(final Function<? super T, ? extends U> function) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.minBy(function)));
     }
 
     /**
@@ -119,8 +119,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      *  @see org.jooq.lambda.Seq#maxBy(Function)
      */
     @Override
-    public <U extends Comparable<? super U>> Eval<Optional<T>> maxBy(final Function<? super T, ? extends U> function) {
-        return Eval.later(() -> stream.maxBy(function));
+    public <U extends Comparable<? super U>> Maybe<T> maxBy(final Function<? super T, ? extends U> function) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.maxBy(function)));
     }
 
     /**
@@ -214,8 +214,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      *  @see java.util.stream.Stream#min(Comparator)
      */
     @Override
-    public Eval<Optional<T>> min(final Comparator<? super T> comparator) {
-        return Eval.later(() -> stream.min(comparator));
+    public Maybe<T> min(final Comparator<? super T> comparator) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.min(comparator)));
     }
 
     /**
@@ -223,9 +223,9 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      *  @see java.util.stream.Stream#max(Comparator)
      */
     @Override
-    public Eval<Optional<T>> max(final Comparator<? super T> comparator) {
+    public Maybe<T> max(final Comparator<? super T> comparator) {
 
-        return Eval.later(() -> stream.max(comparator));
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.max(comparator)));
     }
 
     /**
@@ -257,9 +257,9 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * 
      */
     @Override
-    public Eval<Optional<T>> reduce(final BinaryOperator<T> accumulator) {
+    public Maybe<T> reduce(final BinaryOperator<T> accumulator) {
 
-        return Eval.later(() -> stream.reduce(accumulator));
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.reduce(accumulator)));
 
     }
 
@@ -313,8 +313,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * 	 @see java.util.stream.Stream#findAny()
      * */
     @Override
-    public Eval<Optional<T>> findAny() {
-        return Eval.later(() -> stream.findAny());
+    public Maybe<T> findAny() {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.findAny()));
     }
 
     /**
@@ -322,8 +322,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      * 	 @see java.util.stream.Stream#findFirst()
      * */
     @Override
-    public Eval<Optional<T>> findFirst() {
-        return Eval.later(() -> stream.findFirst());
+    public Maybe<T> findFirst() {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.findFirst()));
     }
 
     /**
@@ -378,8 +378,8 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
     }
 
     @Override
-    public Eval<Optional<T>> singleOptional() {
-        return Eval.later(() -> stream.singleOptional());
+    public Maybe<T> singleOptional() {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.singleOptional()));
     }
 
     @Override
@@ -393,110 +393,110 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
     }
 
     @Override
-    public Eval<Optional<T>> mode() {
-        return Eval.later(() -> stream.mode());
+    public Maybe<T> mode() {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.mode()));
     }
 
     @Override
-    public Eval<Optional<T>> sum() {
-        return Eval.later(() -> stream.sum());
+    public Maybe<T> sum() {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.sum()));
     }
 
     @Override
-    public <U> Eval<Optional<U>> sum(final Function<? super T, ? extends U> function) {
-        return Eval.later(() -> stream.sum(function));
+    public <U> Maybe<U> sum(final Function<? super T, ? extends U> function) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.sum(function)));
     }
 
     @Override
-    public Eval<Optional<T>> avg() {
-        return Eval.later(() -> stream.avg());
+    public Maybe<T> avg() {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.avg()));
     }
 
     @Override
-    public <U> Eval<Optional<U>> avg(final Function<? super T, ? extends U> function) {
-        return Eval.later(() -> stream.avg(function));
+    public <U> Maybe<U> avg(final Function<? super T, ? extends U> function) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.avg(function)));
     }
 
     @Override
-    public Eval<Optional<T>> min() {
-        return Eval.later(() -> stream.min());
+    public Maybe<T> min() {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.min()));
     }
 
     @Override
-    public <U extends Comparable<? super U>> Eval<Optional<U>> min(final Function<? super T, ? extends U> function) {
-        return Eval.later(() -> stream.min(function));
+    public <U extends Comparable<? super U>> Maybe<U> min(final Function<? super T, ? extends U> function) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.min(function)));
     }
 
     @Override
-    public <U> Eval<Optional<U>> min(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
-        return Eval.later(() -> stream.min(function, comparator));
+    public <U> Maybe<U> min(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.min(function, comparator)));
     }
 
     @Override
-    public <U> Eval<Optional<T>> minBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
-        return Eval.later(() -> stream.minBy(function, comparator));
+    public <U> Maybe<T> minBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.minBy(function, comparator)));
     }
 
     @Override
-    public Eval<Optional<T>> max() {
-        return Eval.later(() -> stream.max());
+    public Maybe<T> max() {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.max()));
     }
 
     @Override
-    public <U extends Comparable<? super U>> Eval<Optional<U>> max(final Function<? super T, ? extends U> function) {
-        return Eval.later(() -> stream.max(function));
+    public <U extends Comparable<? super U>> Maybe<U> max(final Function<? super T, ? extends U> function) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.max(function)));
     }
 
     @Override
-    public <U> Eval<Optional<U>> max(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
-        return Eval.later(() -> stream.max(function, comparator));
+    public <U> Maybe<U> max(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.max(function, comparator)));
     }
 
     @Override
-    public <U> Eval<Optional<T>> maxBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
-        return Eval.later(() -> stream.maxBy(function, comparator));
+    public <U> Maybe<T> maxBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.maxBy(function, comparator)));
     }
 
     @Override
-    public Eval<Optional<T>> median() {
-        return Eval.later(() -> stream.median());
+    public Maybe<T> median() {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.median()));
     }
 
     @Override
-    public Eval<Optional<T>> median(final Comparator<? super T> comparator) {
-        return Eval.later(() -> stream.median(comparator));
+    public Maybe<T> median(final Comparator<? super T> comparator) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.median(comparator)));
     }
 
     @Override
-    public <U extends Comparable<? super U>> Eval<Optional<T>> medianBy(final Function<? super T, ? extends U> function) {
-        return Eval.later(() -> stream.medianBy(function));
+    public <U extends Comparable<? super U>> Maybe<T> medianBy(final Function<? super T, ? extends U> function) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.medianBy(function)));
     }
 
     @Override
-    public <U> Eval<Optional<T>> medianBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
-        return Eval.later(() -> stream.medianBy(function, comparator));
+    public <U> Maybe<T> medianBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.medianBy(function, comparator)));
     }
 
     @Override
-    public Eval<Optional<T>> percentile(final double percentile) {
-        return Eval.later(() -> stream.percentile(percentile));
+    public Maybe<T> percentile(final double percentile) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.percentile(percentile)));
     }
 
     @Override
-    public Eval<Optional<T>> percentile(final double percentile, final Comparator<? super T> comparator) {
-        return Eval.later(() -> stream.percentile(percentile, comparator));
+    public Maybe<T> percentile(final double percentile, final Comparator<? super T> comparator) {
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.percentile(percentile, comparator)));
     }
 
     @Override
-    public <U extends Comparable<? super U>> Eval<Optional<T>> percentileBy(final double percentile,
+    public <U extends Comparable<? super U>> Maybe<T> percentileBy(final double percentile,
             final Function<? super T, ? extends U> function) {
-        return Eval.later(() -> stream.percentileBy(percentile, function));
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.percentileBy(percentile, function)));
     }
 
     @Override
-    public <U> Eval<Optional<T>> percentileBy(final double percentile, final Function<? super T, ? extends U> function,
+    public <U> Maybe<T> percentileBy(final double percentile, final Function<? super T, ? extends U> function,
             final Comparator<? super U> comparator) {
-        return Eval.later(() -> stream.percentileBy(percentile, function, comparator));
+        return Maybe.fromEvalOptional(Eval.later(() -> stream.percentileBy(percentile, function, comparator)));
     }
 
     @Override
@@ -527,7 +527,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<Long> sumLong(final ToLongFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return LongOperatorsMixin.super.sumLong(fn);
     }
 
@@ -536,7 +536,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<OptionalLong> maxLong(final ToLongFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return LongOperatorsMixin.super.maxLong(fn);
     }
 
@@ -545,7 +545,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<OptionalLong> minLong(final ToLongFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return LongOperatorsMixin.super.minLong(fn);
     }
 
@@ -554,7 +554,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<OptionalDouble> averageLong(final ToLongFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return LongOperatorsMixin.super.averageLong(fn);
     }
 
@@ -563,7 +563,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<LongSummaryStatistics> summaryStatisticsLong(final ToLongFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return LongOperatorsMixin.super.summaryStatisticsLong(fn);
     }
 
@@ -572,7 +572,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<Integer> sumInt(final ToIntFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return IntOperatorsMixin.super.sumInt(fn);
     }
 
@@ -581,7 +581,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<OptionalInt> maxInt(final ToIntFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return IntOperatorsMixin.super.maxInt(fn);
     }
 
@@ -590,7 +590,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<OptionalInt> minInt(final ToIntFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return IntOperatorsMixin.super.minInt(fn);
     }
 
@@ -599,7 +599,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<OptionalDouble> averageInt(final ToIntFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return IntOperatorsMixin.super.averageInt(fn);
     }
 
@@ -608,7 +608,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<IntSummaryStatistics> summaryStatisticsInt(final ToIntFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return IntOperatorsMixin.super.summaryStatisticsInt(fn);
     }
 
@@ -617,7 +617,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<OptionalDouble> maxDouble(final ToDoubleFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return DoubleOperatorsMixin.super.maxDouble(fn);
     }
 
@@ -626,7 +626,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<OptionalDouble> minDouble(final ToDoubleFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return DoubleOperatorsMixin.super.minDouble(fn);
     }
 
@@ -635,7 +635,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<OptionalDouble> averageDouble(final ToDoubleFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return DoubleOperatorsMixin.super.averageDouble(fn);
     }
 
@@ -644,7 +644,7 @@ public class LazyOperations<T> implements DoubleOperatorsMixin<T>, IntOperatorsM
      */
     @Override
     public Eval<DoubleSummaryStatistics> summaryStatisticsDouble(final ToDoubleFunction<? super T> fn) {
-        // TODO Auto-generated method stub
+        
         return DoubleOperatorsMixin.super.summaryStatisticsDouble(fn);
     }
 

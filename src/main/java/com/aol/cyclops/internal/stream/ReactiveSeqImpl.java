@@ -55,6 +55,7 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
+import com.aol.cyclops.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -62,6 +63,8 @@ import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T> {
     private final Seq<T> stream;
@@ -204,11 +207,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     }
 
-    public final <R> ReactiveSeq<R> cycle(final Class<R> monadC, final int times) {
-        return (ReactiveSeqImpl) cycle(times).map(r -> new ComprehenderSelector().selectComprehender(monadC)
-                                                                                 .of(r));
-    }
-
+    
     @Override
     public final ReactiveSeq<T> cycleWhile(final Predicate<? super T> predicate) {
 
@@ -840,66 +839,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public void subscribe(final Subscriber<? super T> sub) {
-        final Iterator<T> it = stream.iterator();
-        sub.onSubscribe(new Subscription() {
-
-            volatile boolean running = true;
-            boolean active = false;
-            final LinkedList<Long> requests = new LinkedList<Long>();
-
-            @Override
-            public void request(final long n) {
-                if (!running)
-                    return;
-                if (n < 1) {
-                    sub.onError(new IllegalArgumentException(
-                                                             "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
-                }
-                requests.push(n);
-                if (active)
-                    return;
-                active = true;//assume single thread calls to request
-                while (requests.size() > 0) {
-
-                    final long num = requests.pop();
-                    for (int i = 0; i < num && running; i++) {
-                        boolean progressing = false;
-                        boolean progressed = false;
-                        try {
-
-                            if (it.hasNext()) {
-                                progressing = true;
-                                sub.onNext(it.next());
-                                progressed = true;
-                            } else {
-                                try {
-                                    sub.onComplete();
-
-                                } finally {
-                                    running = false;
-                                    break;
-                                }
-                            }
-                        } catch (final Throwable t) {
-                            sub.onError(t);
-                            if (progressing && !progressed)
-                                break;
-
-                        }
-
-                    }
-                }
-                active = false;
-            }
-
-            @Override
-            public void cancel() {
-                running = false;
-
-            }
-
-        });
-
+       new PublisherIterable<>(this).subscribe(sub);
     }
 
     @Override
@@ -1098,75 +1038,11 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     public <EX extends Throwable> ReactiveSeq<T> recover(final Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
         return StreamUtils.reactiveSeq(StreamUtils.recover(stream, exceptionClass, fn), this.reversable);
     }
+    
 
-    /** 
-     * Perform a three level nested internal iteration over this Stream and the supplied streams
-      *<pre>
-     * {@code 
-     * ReactiveSeq.of(1,2)
-    					.forEach3(a->IntStream.range(10,13),
-    					.a->b->Stream.of(""+(a+b),"hello world"),
-    								a->b->c->c+":"a+":"+b);
-    								
-     * 
-     *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
-     * }
-     * </pre> 
-     * @param stream1 Nested Stream to iterate over
-     * @param stream2 Nested Stream to iterate over
-     * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
-     * @return SequenceM with elements generated via nested iteration
-     */
-    @Override
-    public <R1, R2, R> ReactiveSeq<R> forEach3(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-        return For.stream(this)
-                  .stream(u -> stream1.apply(u))
-                  .stream(u -> r1 -> stream2.apply(u)
-                                            .apply(r1))
-                  .yield(yieldingFunction)
-                  .unwrap();
-
-    }
-
-    @Override
-    public <R1, R2, R> ReactiveSeq<R> forEach3(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
-            final Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-
-        return For.stream(this)
-                  .stream(u -> stream1.apply(u))
-                  .stream(u -> r1 -> stream2.apply(u)
-                                            .apply(r1))
-                  .filter(filterFunction)
-                  .yield(yieldingFunction)
-                  .unwrap();
-
-    }
-
-    @Override
-    public <R1, R> ReactiveSeq<R> forEach2(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return For.stream(this)
-                  .stream(u -> stream1.apply(u))
-                  .yield(yieldingFunction)
-                  .unwrap();
-
-    }
-
-    @Override
-    public <R1, R> ReactiveSeq<R> forEach2(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super T, Function<? super R1, Boolean>> filterFunction,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return For.stream(this)
-                  .stream(u -> stream1.apply(u))
-                  .filter(filterFunction)
-                  .yield(yieldingFunction)
-                  .unwrap();
-
-    }
+  
+ 
+    
 
     @Override
     public <X extends Throwable> Subscription forEachX(final long numberOfElements, final Consumer<? super T> consumer) {

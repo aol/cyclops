@@ -229,7 +229,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
     }
 
     @Override
-    public <B> EvalTValue<B> flatMap(final Function<? super T, ? extends Eval<? extends B>> f) {
+    public <B> EvalTValue<B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
 
         return new EvalTValue<B>(
                                  run.map(o -> o.flatMap(f)));

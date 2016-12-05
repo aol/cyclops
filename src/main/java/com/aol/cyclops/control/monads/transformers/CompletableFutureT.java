@@ -13,6 +13,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
@@ -20,6 +21,7 @@ import com.aol.cyclops.control.monads.transformers.values.CompletableFutureTValu
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
@@ -37,7 +39,7 @@ import com.aol.cyclops.types.stream.ToStream;
  *
  * @param <A> Type of data stored inside the nested CompletableFutures
  */
-public interface CompletableFutureT<A> extends To<CompletableFutureT<A>>,Unit<A>, Publisher<A>, Functor<A>, Filterable<A>, ToStream<A> {
+public interface CompletableFutureT<A> extends To<CompletableFutureT<A>>,Unit<A>, Publisher<A>, Functor<A>, Foldable<A>,Filterable<A>, ToStream<A> {
 
     public <R> CompletableFutureT<R> empty();
 
@@ -278,6 +280,10 @@ public interface CompletableFutureT<A> extends To<CompletableFutureT<A>>,Unit<A>
     default MaybeT<A> notNull() {
 
         return (MaybeT<A>) Filterable.super.notNull();
+    }
+    @Override
+    default ReactiveSeq<A> stream() {
+        return ToStream.super.stream();
     }
 
 }

@@ -20,6 +20,7 @@ import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
@@ -42,7 +43,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Maybe within
  */
-public interface MaybeT<T> extends To<MaybeT<T>>,Publisher<T>, Functor<T>, Filterable<T> {
+public interface MaybeT<T> extends To<MaybeT<T>>,Publisher<T>, Functor<T>,Foldable<T>, Filterable<T> {
 
     public <R> MaybeT<R> unit(R value);
 

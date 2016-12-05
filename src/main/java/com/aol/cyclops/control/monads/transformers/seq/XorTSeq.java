@@ -28,7 +28,7 @@ import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.control.monads.transformers.values.ValueTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.IterableFoldable;
-import com.aol.cyclops.types.MonadicValue2;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -187,9 +187,9 @@ public class XorTSeq<ST, T>
     }
 
     @Override
-    public <ST2, B> XorTSeq<ST2, B> flatMap(final Function<? super T, ? extends MonadicValue2<? extends ST2, ? extends B>> f) {
+    public <B> XorTSeq<ST, B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
 
-        return new XorTSeq<ST2, B>(
+        return new XorTSeq<ST, B>(
                                    run.map(o -> o.flatMap(f)));
 
     }

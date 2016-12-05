@@ -12,13 +12,14 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.Wither;
 
 @AllArgsConstructor
 @EqualsAndHashCode(of = { "deque" })
 public class DequeXImpl<T> implements DequeX<T> {
 
     private final Deque<T> deque;
-    @Getter
+    @Getter @Wither
     private final Collector<T, ?, Deque<T>> collector;
 
     public DequeXImpl(final Deque<T> list) {

@@ -11,12 +11,13 @@ import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.Wither;
 
 @AllArgsConstructor
 public class QueueXImpl<T> implements QueueX<T> {
 
     private final Queue<T> list;
-    @Getter
+    @Getter @Wither
     private final Collector<T, ?, Queue<T>> collector;
 
     public QueueXImpl(final Queue<T> list) {

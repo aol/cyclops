@@ -224,7 +224,7 @@ public class TryTValue<T, X extends Throwable> implements TryT<T, X>, Transforme
     }
 
     @Override
-    public <B> TryTValue<B, X> flatMap(final Function<? super T, ? extends Try<B, X>> f) {
+    public <B> TryTValue<B, X> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
 
         return new TryTValue<B, X>(
                                    run.map(o -> o.flatMap(f)));

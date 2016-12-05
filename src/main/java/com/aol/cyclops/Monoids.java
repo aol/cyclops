@@ -489,7 +489,7 @@ public interface Monoids {
     /**
      * Combine two Integers by multiplying them
      */
-    static Monoid<Integer> intMult =  Monoid.of(1, Semigroups.intSum);
+    static Monoid<Integer> intMult =  Monoid.of(1, Semigroups.intMult);
     /**
      * Combine two Longs by multiplying them
      */
