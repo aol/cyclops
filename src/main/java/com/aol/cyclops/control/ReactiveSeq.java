@@ -4040,7 +4040,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> concat(Iterable<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.concat(other);
+        return fromStream(JoolManipulation.super.concat(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#concat(org.jooq.lambda.Seq)
@@ -4048,7 +4048,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> concat(Seq<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.concat(other);
+        return fromStream(JoolManipulation.super.concat(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#concat(java.util.Optional)
@@ -4056,7 +4056,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> concat(Optional<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.concat(other);
+        return fromStream(JoolManipulation.super.concat(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
@@ -4064,7 +4064,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> append(Stream<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+        return fromStream(JoolManipulation.super.append(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
@@ -4072,7 +4072,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> append(Iterable<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+        return fromStream(JoolManipulation.super.append(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(org.jooq.lambda.Seq)
@@ -4080,7 +4080,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> append(Seq<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+        return fromStream(JoolManipulation.super.append(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.util.Optional)
@@ -4088,7 +4088,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> append(Optional<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.append(other);
+        return fromStream(JoolManipulation.super.append(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#prepend(java.util.stream.Stream)
@@ -4096,7 +4096,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> prepend(Stream<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+        return fromStream(JoolManipulation.super.prepend(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#prepend(java.lang.Iterable)
@@ -4104,7 +4104,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> prepend(Iterable<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+        return fromStream(JoolManipulation.super.prepend(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#prepend(org.jooq.lambda.Seq)
@@ -4112,7 +4112,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> prepend(Seq<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+        return fromStream(JoolManipulation.super.prepend(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#prepend(java.util.Optional)
@@ -4120,7 +4120,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> prepend(Optional<? extends T> other) {
         
-        return (ReactiveSeq<T>)JoolManipulation.super.prepend(other);
+        return fromStream(JoolManipulation.super.prepend(other));
     }
   
     /* (non-Javadoc)

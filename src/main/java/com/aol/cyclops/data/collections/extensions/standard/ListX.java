@@ -323,9 +323,9 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>) MutableCollectionX.super.limit(num);
     }
     @Override
-    default DequeX<T> drop(final long num) {
+    default ListX<T> drop(final long num) {
 
-        return (DequeX<T>) MutableCollectionX.super.skip(num);
+        return (ListX<T>) MutableCollectionX.super.skip(num);
     }
     ListX<T> withCollector(Collector<T, ?, List<T>> collector);
 
