@@ -32,15 +32,15 @@ public class AnyMonads<W extends WitnessType> {
     public <T, R> Maybe<AnyMValue<W,ListX<R>>> traverse(final Collection<? extends AnyM<W,T>> seq, final Function<? super T, ? extends R> fn) {
         if (seq.size() == 0)
             return Maybe.none();
-        
-        
-        return new MonadWrapper<>(
+        AnyM<W,T> first = seq.iterator()
+                .next();
+        return Maybe.just(new MonadWrapper<W,ListX<R>>(
                                   comprehender2(seq).of(1)).bind(in -> new MonadWrapper<>(
                                                                                           seq.stream()
                                                                                              .map(it -> it.unwrap())).flatten()
                                                                                                                      .bind((Function) fn)
-                                                                                                                     .unwrap())
-                                                           .anyMValue();
+                                                                                                                     .unwrap(,first.adapter()))
+                                                           .anyMValue(),first.adapter());
     }
 
     private <T> Comprehender<T> comprehender2(final Collection<? extends AnyM<W,T>> seq) {

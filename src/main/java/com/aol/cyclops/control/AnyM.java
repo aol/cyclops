@@ -1281,11 +1281,12 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      * @param seq Collection of Monads
      * @param fn Function to apply 
      * @return Monad with a list
-     */
+     
     public static <W extends WitnessType,T, R> AnyMValue<W,ListX<R>> traverse(final Collection<? extends AnyM<W,T>> seq, final Function<? super T, ? extends R> fn) {
-        return new AnyMonads().traverse(seq, fn);
+        return new AnyMonads().traverse(seq, fn)
+                              .visit(s->s, ()->unit(ListX.empty()));
     }
-
+*/
     /**
      * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
      * 
