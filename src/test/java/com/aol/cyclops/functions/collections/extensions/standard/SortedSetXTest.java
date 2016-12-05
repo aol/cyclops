@@ -30,6 +30,14 @@ public class SortedSetXTest extends AbstractCollectionXTest {
                    equalTo(SortedSetX.of(1, 2, 3)));
     }
 
+    public void coflatMap(){
+       assertThat(SortedSetX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
+    }
+   
+
     /*
      * (non-Javadoc)
      * 

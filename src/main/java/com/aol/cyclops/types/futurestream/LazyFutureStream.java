@@ -107,12 +107,35 @@ import lombok.val;
 public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimpleReactStream<U>, LazyStream<U>, ReactiveSeq<U>, LazyToQueue<U>,
         ConfigurableStream<U, FastFuture<U>>, FutureStreamSynchronousPublisher<U> {
 
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *      LazyFutureStream.of(1,2,3)
+     *                      .map(i->i*2)
+     *                      .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //LazyFutureStream[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @return
+     */
+    default <R> LazyFutureStream<R> coflatMap(Function<? super ReactiveSeq<U>, ? extends R> fn){
+        
+        return this.getSimpleReact().<R>generate(()->fn.apply(this))
+                                    .limit(1);
+    }
+    
     @Override
     default LazyFutureStream<U> filterNot(final Predicate<? super U> fn) {
 
         return (LazyFutureStream<U>) ReactiveSeq.super.filterNot(fn);
     }
-
     @Override
     default LazyFutureStream<U> notNull() {
 

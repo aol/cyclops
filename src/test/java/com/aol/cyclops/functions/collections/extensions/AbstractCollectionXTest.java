@@ -86,6 +86,7 @@ public abstract class AbstractCollectionXTest {
 	public static final LazyReact r = new LazyReact(10,10);
 	
 	int captured=-1;
+
 	static Executor ex = Executors.newFixedThreadPool(1);
     @Test
     public void foldFuture(){
@@ -99,6 +100,7 @@ public abstract class AbstractCollectionXTest {
     public void foldTry(){
         assertThat(of(1,2,3).foldTry(l->l.reduce(Monoids.intSum), Throwable.class).get(),equalTo(6));
     }
+
 	@Test
 	public void testRange(){
 	    assertThat(range(0,2).size(),equalTo(2));

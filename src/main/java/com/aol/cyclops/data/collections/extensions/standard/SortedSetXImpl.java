@@ -14,12 +14,13 @@ import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.Wither;
 
 @AllArgsConstructor
 public class SortedSetXImpl<T> implements SortedSetX<T> {
 
     private final SortedSet<T> set;
-    @Getter
+    @Getter @Wither
     private final Collector<T, ?, SortedSet<T>> collector;
 
     public SortedSetXImpl(final SortedSet<T> set) {

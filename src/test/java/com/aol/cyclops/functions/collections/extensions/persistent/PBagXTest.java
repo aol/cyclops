@@ -11,6 +11,7 @@ import java.util.function.UnaryOperator;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
@@ -24,6 +25,13 @@ public class PBagXTest extends AbstractCollectionXTest{
 	@Test
     public void onEmptySwitch(){
             assertThat(PBagX.empty().onEmptySwitch(()->PBagX.of(1,2,3)),equalTo(PBagX.of(1,2,3)));
+    }
+	@Test
+    public void coflatMap(){
+       assertThat(PBagX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
     }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()

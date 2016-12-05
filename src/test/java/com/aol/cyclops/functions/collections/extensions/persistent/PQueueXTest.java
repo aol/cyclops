@@ -25,6 +25,14 @@ public class PQueueXTest extends AbstractCollectionXTest{
     public void onEmptySwitch(){
             assertThat(PQueueX.empty().onEmptySwitch(()->PQueueX.of(1,2,3)).toList(), equalTo(PQueueX.of(1,2,3).toList()));
     }
+	
+	@Test
+    public void coflatMap(){
+       assertThat(PQueueX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
+    }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
 	 */

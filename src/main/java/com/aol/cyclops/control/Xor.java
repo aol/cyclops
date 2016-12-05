@@ -976,7 +976,6 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    @EqualsAndHashCode(of = { "value" })
     static class Primary<ST, PT> implements Xor<ST, PT> {
         private final PT value;
 
@@ -1115,10 +1114,42 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
                       .visit(s -> Xor.secondary(null), f -> Xor.primary(fn.apply(get(), app.get())));
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (!(obj instanceof Xor))
+                return false;
+            Xor other = (Xor) obj;
+            if(!other.isPrimary())
+                return false;
+            if (value == null) {
+                if (other.get() != null)
+                    return false;
+            } else if (!value.equals(other.get()))
+                return false;
+            return true;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            return result;
+        }
+
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    @EqualsAndHashCode(of = { "value" })
     static class Secondary<ST, PT> implements Xor<ST, PT> {
         private final ST value;
 
@@ -1269,6 +1300,38 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
         @Override
         public <T2, R> Xor<ST, R> combine(final Value<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
             return (Xor<ST, R>) this;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            return result;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            Xor other = (Xor) obj;
+            if(other.isPrimary())
+                return false;
+            if (value == null) {
+                if (other.secondaryGet() != null)
+                    return false;
+            } else if (!value.equals(other.secondaryGet()))
+                return false;
+            
+            return true;
         }
 
     }

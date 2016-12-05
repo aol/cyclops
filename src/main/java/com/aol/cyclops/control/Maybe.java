@@ -811,7 +811,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return new Just<>(
                               lazy.map(t -> mapper.apply(t)));
         }
-
+        
         @Override
         public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
             Eval<? extends Maybe<? extends R>> ret = lazy.map(mapper.andThen(v->v.toMaybe()));

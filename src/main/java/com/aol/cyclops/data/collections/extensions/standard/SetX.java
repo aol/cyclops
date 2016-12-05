@@ -158,12 +158,20 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
 
     public static <T> SetX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+        if (it instanceof SetX)
+            return (SetX) it;
+        if (it instanceof Set)
+            return new SetXImpl<T>(
+                                   (Set) it, defaultCollector());
+        return new SetXImpl<T>(
+                               StreamUtils.stream(it)
+                                          .collect(defaultCollector()),
+                                          defaultCollector());
     }
 
     public static <T> SetX<T> fromIterable(final Collector<T, ?, Set<T>> collector, final Iterable<T> it) {
         if (it instanceof SetX)
-            return (SetX) it;
+            return ((SetX) it).withCollector(collector);
         if (it instanceof Set)
             return new SetXImpl<T>(
                                    (Set) it, collector);
@@ -173,6 +181,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
                                collector);
     }
     
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
      */
@@ -240,6 +249,31 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
         return (SetX)MutableCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+    }
+
+    SetX<T> withCollector(Collector<T, ?, Set<T>> collector);
+
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     SetX.of(1,2,3)
+     *           .map(i->i*2)
+     *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //SetX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed Set
+     */
+    default <R> SetX<R> coflatMap(Function<? super SetX<T>, ? extends R> fn){
+        return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
     }
 
     /**

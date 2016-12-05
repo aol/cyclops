@@ -14,12 +14,13 @@ import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.Wither;
 
 @AllArgsConstructor
 public class ListXImpl<T> implements ListX<T> {
 
     private final List<T> list;
-    @Getter
+    @Getter @Wither
     private final Collector<T, ?, List<T>> collector;
 
     public ListXImpl(final List<T> list) {

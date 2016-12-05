@@ -261,6 +261,28 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     default PSetX<T> toPSetX() {
         return this;
     }
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     PSetX.of(1,2,3)
+     *          .map(i->i*2)
+     *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *     //PSetX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed PSetX
+     */
+    default <R> PSetX<R> coflatMap(Function<? super PSetX<T>, ? extends R> fn){
+       return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
   
     /**
     * Combine two adjacent elements in a PSetX using the supplied BinaryOperator

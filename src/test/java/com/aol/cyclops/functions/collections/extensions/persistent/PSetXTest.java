@@ -51,7 +51,13 @@ public class PSetXTest extends AbstractCollectionXTest {
                               .size(),
                    equalTo(12));
     }
-
+    @Test
+    public void coflatMap(){
+       assertThat(PSetX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
+    }
     @Override
     public FluentCollectionX<Integer> range(int start, int end) {
         return PSetX.range(start, end);
@@ -76,4 +82,5 @@ public class PSetXTest extends AbstractCollectionXTest {
     public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return PSetX.unfold(seed, unfolder);
     }
+
 }
