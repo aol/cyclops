@@ -11,6 +11,7 @@ import java.util.function.UnaryOperator;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
@@ -21,7 +22,13 @@ public class SetXTest extends AbstractCollectionXTest{
 	public <T> FluentCollectionX<T> of(T... values) {
 		return SetX.of(values);
 	}
-
+	@Test
+    public void coflatMap(){
+       assertThat(SetX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
+    }
 	@Test
 	public void onEmptySwitch(){
 	        assertThat(SetX.empty().onEmptySwitch(()->SetX.of(1,2,3)),equalTo(SetX.of(1,2,3)));

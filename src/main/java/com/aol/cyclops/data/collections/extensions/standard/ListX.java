@@ -53,7 +53,7 @@ public interface ListX<T> extends To<ListX<T>>,
                                  OnEmptySwitch<T, List<T>> {
 
    
-    public static final class µ {}
+  
     /**
      * Create a ListX that contains the Integers between start and end
      * 
@@ -99,6 +99,19 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     static <U, T> ListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
+                          .toListX();
+    }
+    /**
+     * Generate a ListX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for ListX elements
+     * @return ListX generated from the provided Supplier
+     */
+    public static <T> ListX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
                           .toListX();
     }
 
@@ -224,6 +237,29 @@ public interface ListX<T> extends To<ListX<T>>,
                                 collector);
     }
 
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *      ListX.of(1,2,3)
+     *           .map(i->i*2)
+     *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //ListX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed List
+     */
+    default <R> ListX<R> coflatMap(Function<? super ListX<T>, ? extends R> fn){
+        return fn.andThen(r ->  this.<R>unit(r))
+                 .apply(this);
+    }
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
      */

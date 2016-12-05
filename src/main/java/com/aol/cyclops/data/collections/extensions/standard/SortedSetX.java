@@ -171,6 +171,30 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
                                                 .collect(collector),
                                      collector);
     }
+    
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     SortedSetX.of(1,2,3)
+     *               .map(i->i*2)
+     *               .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //SortedSetX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed SortedSet
+     */
+    default <R> SortedSetX<R> coflatMap(Function<? super SortedSetX<T>, ? extends R> fn){
+        return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()

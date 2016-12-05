@@ -49,11 +49,12 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.internal.stream.spliterators.FillSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.LazySingleSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFilterable;
@@ -62,7 +63,6 @@ import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
-import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -127,6 +127,38 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     
    
+    /**
+     * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc to
+     * switch to a finite Stream)
+     * 
+     * @param t Value to fill Stream with
+     * @return Infinite ReactiveSeq consisting of a single value
+     */
+    public static <T> ReactiveSeq<T> fill(T t){
+        return ReactiveSeq.fromStream(StreamSupport.stream(new FillSpliterator<>(t), false));
+    }
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *      ReactiveSeq.of(1,2,3)
+     *                 .map(i->i*2)
+     *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //ReactiveSeq[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @return
+     */
+    default <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
+        return ReactiveSeq.fromStream(StreamSupport.<R>stream(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(this,fn), false));
+
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)

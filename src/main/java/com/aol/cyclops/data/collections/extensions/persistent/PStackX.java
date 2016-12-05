@@ -119,6 +119,20 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
     }
 
     /**
+     * Generate a PStackX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for PStackX elements
+     * @return PStackX generated from the provided Supplier
+     */
+    public static <T> PStackX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toPStackX();
+    }
+    
+    /**
      * Create a PStackX by iterative application of a function to an initial element up to the supplied limit number of times
      * 
      * @param limit Max number of elements to generate
@@ -273,7 +287,28 @@ public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollecti
     default PStackX<T> toPStackX() {
         return this;
     }
-
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     PStackX.of(1,2,3)
+     *          .map(i->i*2)
+     *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *     //PStackX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed PStackX
+     */
+    default <R> PStackX<R> coflatMap(Function<? super PStackX<T>, ? extends R> fn){
+       return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
     /**
     * Combine two adjacent elements in a PStackX using the supplied BinaryOperator
     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined

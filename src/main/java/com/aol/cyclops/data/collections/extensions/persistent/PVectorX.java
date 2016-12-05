@@ -116,6 +116,19 @@ public interface PVectorX<T> extends To<PVectorX<T>>,PVector<T>, PersistentColle
         return ReactiveSeq.generate(s)
                           .limit(limit)
                           .toPVectorX();
+    }  
+    /**
+     * Generate a PVectorX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for PVectorX elements
+     * @return PVectorX generated from the provided Supplier
+     */
+    public static <T> PVectorX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toPVectorX();
     }
 
     /**
@@ -283,7 +296,28 @@ public interface PVectorX<T> extends To<PVectorX<T>>,PVector<T>, PersistentColle
     default PVectorX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (PVectorX<T>) PersistentCollectionX.super.combine(predicate, op);
     }
- 
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     PVectorX.of(1,2,3)
+     *          .map(i->i*2)
+     *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *     //PVectorX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed PVectorX
+     */
+    default <R> PVectorX<R> coflatMap(Function<? super PVectorX<T>, ? extends R> fn){
+       return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
     default PVector<T> toPVector() {
         return this;
     }

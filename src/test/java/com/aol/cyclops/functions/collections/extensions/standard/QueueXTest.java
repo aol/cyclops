@@ -11,6 +11,7 @@ import java.util.function.UnaryOperator;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
@@ -25,6 +26,13 @@ public class QueueXTest extends CollectionXTestsWithNulls {
     @Test
     public void onEmptySwitch(){
         assertThat(QueueX.empty().onEmptySwitch(()->QueueX.of(1,2,3)).toList(),equalTo(ListX.of(1,2,3)));
+    }
+    @Test
+    public void coflatMap(){
+       assertThat(QueueX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
     }
     /*
      * (non-Javadoc)

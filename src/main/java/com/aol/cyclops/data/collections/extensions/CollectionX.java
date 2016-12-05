@@ -33,6 +33,7 @@ import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -59,6 +60,8 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
         return new CollectionXImpl<>(
                                      col);
     }
+    <R> CollectionX<R> unit(R r);
+  
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
