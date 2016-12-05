@@ -20,6 +20,7 @@ import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue2;
@@ -39,7 +40,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
  * @param <T>
  *            The type contained on the Xor within
  */
-public interface XorT<ST, T> extends To<XorT<ST,T>>,Publisher<T>, Functor<T>, Filterable<T> {
+public interface XorT<ST, T> extends To<XorT<ST,T>>,Publisher<T>, Functor<T>,Foldable<T>, Filterable<T> {
     public <R> XorT<ST, R> unit(R value);
 
     public <R> XorT<ST, R> empty();
