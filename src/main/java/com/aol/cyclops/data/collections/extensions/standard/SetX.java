@@ -158,12 +158,20 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
 
     public static <T> SetX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+        if (it instanceof SetX)
+            return (SetX) it;
+        if (it instanceof Set)
+            return new SetXImpl<T>(
+                                   (Set) it, defaultCollector());
+        return new SetXImpl<T>(
+                               StreamUtils.stream(it)
+                                          .collect(defaultCollector()),
+                                          defaultCollector());
     }
 
     public static <T> SetX<T> fromIterable(final Collector<T, ?, Set<T>> collector, final Iterable<T> it) {
         if (it instanceof SetX)
-            return (SetX) it;
+            return ((SetX) it).withCollector(collector);
         if (it instanceof Set)
             return new SetXImpl<T>(
                                    (Set) it, collector);
@@ -173,6 +181,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
                                collector);
     }
     
+    SetX<T> withCollector(Collector<T, ?, Set<T>> collector);
+
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
      * 

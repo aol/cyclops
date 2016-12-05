@@ -27,14 +27,11 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
 
 /**
  * An eXtended Deque type, that offers additional eagerly executed functional style operators such as bimap, filter and more
@@ -209,7 +206,16 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      * @return DequeX
      */
     public static <T> DequeX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+    
+        if (it instanceof DequeX)
+            return (DequeX) it;
+        if (it instanceof Deque)
+            return new DequeXImpl<T>(
+                                     (Deque) it, defaultCollector());
+        return new DequeXImpl<T>(
+                                 StreamUtils.stream(it)
+                                            .collect(defaultCollector()),
+                                            defaultCollector());
     }
 
     /**
@@ -221,7 +227,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      */
     public static <T> DequeX<T> fromIterable(final Collector<T, ?, Deque<T>> collector, final Iterable<T> it) {
         if (it instanceof DequeX)
-            return (DequeX) it;
+            return ((DequeX) it).withCollector(collector);
         if (it instanceof Deque)
             return new DequeXImpl<T>(
                                      (Deque) it, collector);
@@ -230,6 +236,8 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
                                             .collect(collector),
                                  collector);
     }
+
+    DequeX<T> withCollector(Collector<T, ?, Deque<T>> collector);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()

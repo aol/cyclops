@@ -163,12 +163,21 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
     }
 
     public static <T> QueueX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+        
+        if (it instanceof QueueX)
+            return (QueueX) it;
+        if (it instanceof Deque)
+            return new QueueXImpl<T>(
+                                     (Queue) it, defaultCollector());
+        return new QueueXImpl<T>(
+                                 StreamUtils.stream(it)
+                                            .collect(defaultCollector()),
+                                            defaultCollector());
     }
 
     public static <T> QueueX<T> fromIterable(final Collector<T, ?, Queue<T>> collector, final Iterable<T> it) {
         if (it instanceof QueueX)
-            return (QueueX) it;
+            return ((QueueX) it).withCollector(collector);
         if (it instanceof Deque)
             return new QueueXImpl<T>(
                                      (Queue) it, collector);
@@ -177,6 +186,8 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
                                             .collect(collector),
                                  collector);
     }
+
+    QueueX<T> withCollector(Collector<T, ?, Queue<T>> collector);
 
     public <T> Collector<T, ?, Queue<T>> getCollector();
 
