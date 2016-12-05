@@ -47,7 +47,6 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Streamable;
@@ -58,12 +57,11 @@ import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
 
 public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T> {
     private final Seq<T> stream;
@@ -585,7 +583,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     }
 
     @Override
-    public final <R> ReactiveSeq<R> flatMapAnyM(final Function<? super T, AnyM<? extends R>> fn) {
+    public final <R> ReactiveSeq<R> flatMapAnyM(final Function<? super T, AnyM<Witness.stream,? extends R>> fn) {
         return StreamUtils.reactiveSeq(StreamUtils.flatMapAnyM(stream, fn), reversable);
     }
 

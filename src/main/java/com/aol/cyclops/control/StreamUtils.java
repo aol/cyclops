@@ -71,6 +71,8 @@ import com.aol.cyclops.internal.stream.operators.SkipWhileOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileTimeOperator;
 import com.aol.cyclops.internal.stream.operators.WindowStatefullyWhileOperator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
+import com.aol.cyclops.types.anyM.Witness;
+import com.aol.cyclops.types.anyM.Witness.stream;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.NonPausableHotStream;
@@ -1821,7 +1823,7 @@ public class StreamUtils {
         return stream.flatMap(fn);
     }
 
-    public final static <T, R> Stream<R> flatMapAnyM(final Stream<T> stream, final Function<? super T, AnyM<? extends R>> fn) {
+    public final static <T, R> Stream<R> flatMapAnyM(final Stream<T> stream, final Function<? super T, AnyM<Witness,stream,? extends R>> fn) {
         return AnyM.fromStream(stream)
                    .flatMap(fn)
                    .stream();

@@ -53,7 +53,6 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFilterable;
@@ -62,7 +61,6 @@ import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
-import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
@@ -3514,10 +3512,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
-        return For.stream(this)
-                .stream(u -> stream1.apply(u))
-                .yield2(yieldingFunction)
-                .unwrap();
+        return this.flatMap(in-> { 
+            val b = stream1.apply(in);
+            return b.map(in2->yieldingFunction.apply(in, in2));
+        });
     }
 
     /**
