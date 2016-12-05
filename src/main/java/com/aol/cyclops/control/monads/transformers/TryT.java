@@ -43,7 +43,7 @@ public interface TryT<T, X extends Throwable> extends To<TryT<T,X>>,Publisher<T>
 
     public <R> TryT<R, X> empty();
 
-    public <B> TryT<B, X> flatMap(Function<? super T, ? extends Try<B, X>> f);
+    public <B> TryT<B, X> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
 
     /**
      * @return The wrapped AnyM

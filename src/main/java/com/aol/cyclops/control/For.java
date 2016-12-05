@@ -240,6 +240,7 @@ public class For {
         }
     }
 
+    @Deprecated
     public interface Values {
 
         /**
@@ -361,9 +362,10 @@ public class For {
          * @return AnyM with elements generated via nested iteration
          */
 
-        static <T, R1, R> AnyMValue<R> each2(final MonadicValue<? extends T> monadicValue, final Function<? super T, MonadicValue<R1>> value2,
+        static <T, R1, R> AnyMValue<R> each2(final MonadicValue<? extends T> monadicValue, 
+                final Function<? super T, ? extends MonadicValue<R1>> value2,
                 final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-
+           
             return AnyM.ofValue(For.iterable(monadicValue)
                                    .iterable(a -> value2.apply(a))
                                    .yield2(yieldingFunction)
@@ -385,7 +387,8 @@ public class For {
          * @return AnyM with elements generated via nested iteration
          */
         static <T, R1, R> AnyMValue<R> each2(final MonadicValue<? extends T> monadicValue,
-                final Function<? super T, ? extends MonadicValue<R1>> value2, final BiFunction<? super T, ? super R1, Boolean> filterFunction,
+                final Function<? super T, ? extends MonadicValue<R1>> value2, 
+                  final BiFunction<? super T, ? super R1, Boolean> filterFunction,
                 final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
             return AnyM.ofValue(For.iterable(monadicValue)

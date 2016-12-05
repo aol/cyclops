@@ -50,6 +50,7 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -89,6 +90,8 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.FutureStreamSynchronousPublisher;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -227,143 +230,74 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
                                      .onEmptySwitch(switchTo));
     }
 
-    /**
-     * Perform a three level nested internal iteration over this Stream and the
-     * supplied streams
-     *
-     * <pre>
-     * {@code
-     * LazyFutureStream.of(1,2)
-     * 						.forEach2(a->IntStream.range(10,13),
-     * 						.forEach2(a->b->Stream.of(""+(a+b),"hello world"),
-     * 									a->b->c->c+":"a+":"+b);
-     *
-     *
-     *  //LFS[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
-     * }
-     * </pre>
-     *
-     * @param stream1
-     *            Nested Stream to iterate over
-     * @param stream2
-     *            Nested Stream to iterate over
-     * @param yieldingFunction
-     *            Function with pointers to the current element from both
-     *            Streams that generates the new elements
-     * @return LazyFutureStream with elements generated via nested iteration
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
      */
     @Override
-    default <R1, R2, R> LazyFutureStream<R> forEach3(final Function<? super U, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super U, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
-            final Function<? super U, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-        return fromStream(ReactiveSeq.fromStream(stream())
-                                     .forEach3(stream1, stream2, yieldingFunction));
-
+    default <R1, R2, R3, R> LazyFutureStream<R> forEach4(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
+            TriFunction<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+            QuadFunction<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (LazyFutureStream<R>)ReactiveSeq.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
 
-    /**
-     * Perform a three level nested internal iteration over this Stream and the
-     * supplied streams
-     *<pre>
-     * {@code
-     * LazyFutureStream.of(1,2,3)
-                        .forEach3(a->IntStream.range(10,13),
-                              a->b->Stream.of(""+(a+b),"hello world"),
-                                 a->b->c-> c!=3,
-                                    a->b->c->c+":"a+":"+b);
-    
-     *
-     *  //LazyFutureStream[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
-     * }
-     * </pre>
-     *
-     * @param stream1
-     *            Nested Stream to iterate over
-     * @param stream2
-     *            Nested Stream to iterate over
-     * @param filterFunction
-     *            Filter to apply over elements before passing non-filtered
-     *            values to the yielding function
-     * @param yieldingFunction
-     *            Function with pointers to the current element from both
-     *            Streams that generates the new elements
-     * @return LazyFutureStream with elements generated via nested iteration
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
      */
     @Override
-    default <R1, R2, R> LazyFutureStream<R> forEach3(final Function<? super U, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super U, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
-            final Function<? super U, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            final Function<? super U, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-
-        return fromStream(ReactiveSeq.fromStream(stream())
-                                     .forEach3(stream1, stream2, filterFunction, yieldingFunction));
-
+    default <R1, R2, R3, R> LazyFutureStream<R> forEach4(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
+            TriFunction<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+            QuadFunction<? super U, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (LazyFutureStream<R>)ReactiveSeq.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
 
-    /**
-     * Perform a two level nested internal iteration over this Stream and the
-     * supplied stream
-     *
-     * <pre>
-     * {@code
-     * LazyFutureStream.of(1,2,3)
-     * 						.forEach2(a->IntStream.range(10,13),
-     * 									a->b->a+b);
-     *
-     *
-     *  //LFS[11,14,12,15,13,16]
-     * }
-     * </pre>
-     *
-     *
-     * @param stream1
-     *            Nested Stream to iterate over
-     * @param yieldingFunction
-     *            Function with pointers to the current element from both
-     *            Streams that generates the new elements
-     * @return LazyFutureStream with elements generated via nested iteration
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
      */
     @Override
-    default <R1, R> LazyFutureStream<R> forEach2(final Function<? super U, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super U, Function<? super R1, ? extends R>> yieldingFunction) {
-        return fromStream(ReactiveSeq.fromStream(stream())
-                                     .forEach2(stream1, yieldingFunction));
-
+    default <R1, R2, R> LazyFutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
+            TriFunction<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (LazyFutureStream<R>)ReactiveSeq.super.forEach3(stream1, stream2, yieldingFunction);
     }
 
-    /**
-     * Perform a two level nested internal iteration over this Stream and the
-     * supplied stream
-     *
-     * <pre>
-     * {@code
-     * LazyFutureStream.of(1,2,3)
-     * 						.forEach2(a->IntStream.range(10,13),
-     * 						            a->b-> a<3 && b>10,
-     * 									a->b->a+b);
-     *
-     *
-     *  //LFS[14,15]
-     * }
-     * </pre>
-     *
-     * @param stream1
-     *            Nested Stream to iterate over
-     * @param filterFunction
-     *            Filter to apply over elements before passing non-filtered
-     *            values to the yielding function
-     * @param yieldingFunction
-     *            Function with pointers to the current element from both
-     *            Streams that generates the new elements
-     * @return
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
      */
     @Override
-    default <R1, R> LazyFutureStream<R> forEach2(final Function<? super U, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super U, Function<? super R1, Boolean>> filterFunction,
-            final Function<? super U, Function<? super R1, ? extends R>> yieldingFunction) {
-        return fromStream(ReactiveSeq.fromStream(stream())
-                                     .forEach2(stream1, filterFunction, yieldingFunction));
+    default <R1, R2, R> LazyFutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
+            TriFunction<? super U, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return (LazyFutureStream<R>)ReactiveSeq.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
+    }
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> LazyFutureStream<R> forEach2(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super U, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (LazyFutureStream<R>)ReactiveSeq.super.forEach2(stream1, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.control.ReactiveSeq#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> LazyFutureStream<R> forEach2(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
+            BiFunction<? super U, ? super R1, Boolean> filterFunction,
+            BiFunction<? super U, ? super R1, ? extends R> yieldingFunction) {
+        
+        return (LazyFutureStream<R>)ReactiveSeq.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
 
     /**

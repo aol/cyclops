@@ -8,12 +8,17 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 
 
-@AllArgsConstructor
+
 public class FillSpliterator<T> implements Spliterator<T> {
 
     private final T value;
     
  
+
+    public FillSpliterator(T value) {
+        super();
+        this.value = value;
+    }
 
     @Override
     public long estimateSize() {
@@ -26,11 +31,13 @@ public class FillSpliterator<T> implements Spliterator<T> {
     }
 
 
+    private boolean open = true;
     @Override
     public boolean tryAdvance(final Consumer<? super T> action) {
-       
+       if(open)
         action.accept(value);
         
+       return open =false;
 
     }
 

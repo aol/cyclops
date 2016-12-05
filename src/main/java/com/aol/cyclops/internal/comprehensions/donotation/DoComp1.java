@@ -35,7 +35,7 @@ public class DoComp1<T1> extends DoComp {
 
     }
 
-    public <T2> DoComp2<T1, T2> publisher(final Function<? super T1, Publisher<T2>> f) {
+    public <T2> DoComp2<T1, T2> publisher(final Function<? super T1, ? extends Publisher<T2>> f) {
         return new DoComp2<>(
                              addToAssigned(f), getOrgType());
     }

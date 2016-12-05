@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -28,6 +27,7 @@ import org.jooq.lambda.tuple.Tuple7;
 import org.jooq.lambda.tuple.Tuple8;
 
 import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 
 public interface LazyCollectable<T> {
@@ -102,11 +102,11 @@ public interface LazyCollectable<T> {
 
     public <U> Eval<Long> countDistinctBy(Function<? super T, ? extends U> function);
 
-    public Eval<Optional<T>> mode();
+    public Maybe<T> mode();
 
-    public Eval<Optional<T>> sum();
+    public Maybe<T> sum();
 
-    public <U> Eval<Optional<U>> sum(Function<? super T, ? extends U> function);
+    public <U> Maybe<U> sum(Function<? super T, ? extends U> function);
 
     public Eval<Integer> sumInt(ToIntFunction<? super T> function);
 
@@ -114,41 +114,41 @@ public interface LazyCollectable<T> {
 
     public Eval<Double> sumDouble(ToDoubleFunction<? super T> function);
 
-    public Eval<Optional<T>> avg();
+    public Maybe<T> avg();
 
-    public <U> Eval<Optional<U>> avg(Function<? super T, ? extends U> function);
+    public <U> Maybe<U> avg(Function<? super T, ? extends U> function);
 
-    public Eval<Optional<T>> min();
+    public Maybe<T> min();
 
-    public <U extends Comparable<? super U>> Eval<Optional<U>> min(Function<? super T, ? extends U> function);
+    public <U extends Comparable<? super U>> Maybe<U> min(Function<? super T, ? extends U> function);
 
-    public <U> Eval<Optional<U>> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
+    public <U> Maybe<U> min(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
 
-    public <U> Eval<Optional<T>> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
+    public <U> Maybe<T> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
 
-    public Eval<Optional<T>> max();
+    public Maybe<T> max();
 
-    public <U extends Comparable<? super U>> Eval<Optional<U>> max(Function<? super T, ? extends U> function);
+    public <U extends Comparable<? super U>> Maybe<U> max(Function<? super T, ? extends U> function);
 
-    public <U> Eval<Optional<U>> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
+    public <U> Maybe<U> max(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
 
-    public <U> Eval<Optional<T>> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
+    public <U> Maybe<T> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
 
-    public Eval<Optional<T>> median();
+    public Maybe<T> median();
 
-    public Eval<Optional<T>> median(Comparator<? super T> comparator);
+    public Maybe<T> median(Comparator<? super T> comparator);
 
-    public <U extends Comparable<? super U>> Eval<Optional<T>> medianBy(Function<? super T, ? extends U> function);
+    public <U extends Comparable<? super U>> Maybe<T> medianBy(Function<? super T, ? extends U> function);
+    
+    public <U> Maybe<T> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
 
-    public <U> Eval<Optional<T>> medianBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
+    public Maybe<T> percentile(double percentile);
 
-    public Eval<Optional<T>> percentile(double percentile);
+    public Maybe<T> percentile(double percentile, Comparator<? super T> comparator);
 
-    public Eval<Optional<T>> percentile(double percentile, Comparator<? super T> comparator);
+    public <U extends Comparable<? super U>> Maybe<T> percentileBy(double percentile, Function<? super T, ? extends U> function);
 
-    public <U extends Comparable<? super U>> Eval<Optional<T>> percentileBy(double percentile, Function<? super T, ? extends U> function);
-
-    public <U> Eval<Optional<T>> percentileBy(double percentile, Function<? super T, ? extends U> function, Comparator<? super U> comparator);
+    public <U> Maybe<T> percentileBy(double percentile, Function<? super T, ? extends U> function, Comparator<? super U> comparator);
 
     public Eval<Boolean> allMatch(Predicate<? super T> predicate);
 
@@ -199,7 +199,7 @@ public interface LazyCollectable<T> {
      * @return the only entry in this Stream if it is a single entry Stream,
      *         otherwise throws an UnsupportedOperationException
      */
-    public Eval<Optional<T>> singleOptional();
+    public Maybe<T> singleOptional();
 
     /**
      * Lazyly convert  this Stream into a List
@@ -222,14 +222,14 @@ public interface LazyCollectable<T> {
      * 
      * @see org.jooq.lambda.Seq#minBy(Function)
      */
-    public <U extends Comparable<? super U>> Eval<Optional<T>> minBy(Function<? super T, ? extends U> function);
+    public <U extends Comparable<? super U>> Maybe<T> minBy(Function<? super T, ? extends U> function);
 
     /**
      * Lazyly capture the maximum value in this stream using the provided function
      * 
      *  @see org.jooq.lambda.Seq#maxBy(Function)
      */
-    public <U extends Comparable<? super U>> Eval<Optional<T>> maxBy(Function<? super T, ? extends U> function);
+    public <U extends Comparable<? super U>> Maybe<T> maxBy(Function<? super T, ? extends U> function);
 
     /**
      * Lazyly perform a Stream collection
@@ -294,13 +294,13 @@ public interface LazyCollectable<T> {
      * Perform an Lazy min operation
      *  @see java.util.stream.Stream#min(Comparator)
      */
-    public Eval<Optional<T>> min(Comparator<? super T> comparator);
+    public Maybe<T> min(Comparator<? super T> comparator);
 
     /**
      * Perform an Lazy min operation
      *  @see java.util.stream.Stream#max(Comparator)
      */
-    public Eval<Optional<T>> max(Comparator<? super T> comparator);
+    public Maybe<T> max(Comparator<? super T> comparator);
 
     /**
      * Lazyly perform a Stream collection
@@ -324,7 +324,7 @@ public interface LazyCollectable<T> {
      * @see java.util.stream.Stream#reduce(BinaryOperator)
      * 
      */
-    public Eval<Optional<T>> reduce(BinaryOperator<T> accumulator);
+    public Maybe<T> reduce(BinaryOperator<T> accumulator);
 
     /**
      * Lazyly perform a Stream reduction
@@ -360,13 +360,13 @@ public interface LazyCollectable<T> {
      * Perform an Lazy findAny operation
      * 	 @see java.util.stream.Stream#findAny()
      * */
-    public Eval<Optional<T>> findAny();
+    public Maybe<T> findAny();
 
     /**
      * Perform an Lazy findAny operation
      * 	 @see java.util.stream.Stream#findFirst()
      * */
-    public Eval<Optional<T>> findFirst();
+    public Maybe<T> findFirst();
 
     /**
      * Perform an Lazy findAny operation

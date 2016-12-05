@@ -63,6 +63,8 @@ import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T> {
     private final Seq<T> stream;
@@ -205,11 +207,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     }
 
-    public final <R> ReactiveSeq<R> cycle(final Class<R> monadC, final int times) {
-        return (ReactiveSeqImpl) cycle(times).map(r -> new ComprehenderSelector().selectComprehender(monadC)
-                                                                                 .of(r));
-    }
-
+    
     @Override
     public final ReactiveSeq<T> cycleWhile(final Predicate<? super T> predicate) {
 
@@ -1040,75 +1038,11 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     public <EX extends Throwable> ReactiveSeq<T> recover(final Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
         return StreamUtils.reactiveSeq(StreamUtils.recover(stream, exceptionClass, fn), this.reversable);
     }
+    
 
-    /** 
-     * Perform a three level nested internal iteration over this Stream and the supplied streams
-      *<pre>
-     * {@code 
-     * ReactiveSeq.of(1,2)
-    					.forEach3(a->IntStream.range(10,13),
-    					.a->b->Stream.of(""+(a+b),"hello world"),
-    								a->b->c->c+":"a+":"+b);
-    								
-     * 
-     *  //SequenceM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
-     * }
-     * </pre> 
-     * @param stream1 Nested Stream to iterate over
-     * @param stream2 Nested Stream to iterate over
-     * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
-     * @return SequenceM with elements generated via nested iteration
-     */
-    @Override
-    public <R1, R2, R> ReactiveSeq<R> forEach3(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-        return For.stream(this)
-                  .stream(u -> stream1.apply(u))
-                  .stream(u -> r1 -> stream2.apply(u)
-                                            .apply(r1))
-                  .yield(yieldingFunction)
-                  .unwrap();
-
-    }
-
-    @Override
-    public <R1, R2, R> ReactiveSeq<R> forEach3(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super T, Function<? super R1, ? extends BaseStream<R2, ?>>> stream2,
-            final Function<? super T, Function<? super R1, Function<? super R2, Boolean>>> filterFunction,
-            final Function<? super T, Function<? super R1, Function<? super R2, ? extends R>>> yieldingFunction) {
-
-        return For.stream(this)
-                  .stream(u -> stream1.apply(u))
-                  .stream(u -> r1 -> stream2.apply(u)
-                                            .apply(r1))
-                  .filter(filterFunction)
-                  .yield(yieldingFunction)
-                  .unwrap();
-
-    }
-
-    @Override
-    public <R1, R> ReactiveSeq<R> forEach2(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return For.stream(this)
-                  .stream(u -> stream1.apply(u))
-                  .yield(yieldingFunction)
-                  .unwrap();
-
-    }
-
-    @Override
-    public <R1, R> ReactiveSeq<R> forEach2(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
-            final Function<? super T, Function<? super R1, Boolean>> filterFunction,
-            final Function<? super T, Function<? super R1, ? extends R>> yieldingFunction) {
-        return For.stream(this)
-                  .stream(u -> stream1.apply(u))
-                  .filter(filterFunction)
-                  .yield(yieldingFunction)
-                  .unwrap();
-
-    }
+  
+ 
+    
 
     @Override
     public <X extends Throwable> Subscription forEachX(final long numberOfElements, final Consumer<? super T> consumer) {

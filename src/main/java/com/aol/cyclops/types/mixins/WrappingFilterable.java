@@ -1,5 +1,6 @@
 package com.aol.cyclops.types.mixins;
 
+
 import java.util.function.Predicate;
 
 import com.aol.cyclops.internal.monads.ComprehenderSelector;

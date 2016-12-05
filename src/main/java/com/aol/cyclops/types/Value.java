@@ -101,7 +101,7 @@ public interface Value<T> extends Supplier<T>,
 
             AtomicBoolean running = new AtomicBoolean(
                                                       true);
-            AtomicBoolean canncelled = new AtomicBoolean(false);
+            AtomicBoolean cancelled = new AtomicBoolean(false);
 
             @Override
             public void request(final long n) {
@@ -117,7 +117,7 @@ public interface Value<T> extends Supplier<T>,
                 }
                 try {
                     T value = get();
-                    if(!canncelled.get())
+                    if(!cancelled.get())
                         sub.onNext(get());
 
                 } catch (final Throwable t) {
@@ -255,7 +255,7 @@ public interface Value<T> extends Supplier<T>,
     /**
      * @return Primary Xor that has the same value as this Value
      */
-    default <ST> Xor<ST, T> toXor() {
+    default  Xor<?, T> toXor() {
         if (this instanceof Xor)
             return (Xor) this;
         final Optional<T> o = toOptional();
@@ -306,7 +306,7 @@ public interface Value<T> extends Supplier<T>,
      * Return an Ior that can be this object or a Ior.primary or Ior.secondary
      * @return new Ior 
      */
-    default <ST> Ior<ST, T> toIor() {
+    default  Ior<?, T> toIor() {
         if (this instanceof Ior)
             return (Ior) this;
         final Optional<T> o = toOptional();

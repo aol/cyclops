@@ -24,7 +24,7 @@ public class DoTest {
     public void doGen2(){
        
         ReactiveSeq.range(1,10)
-                   .forEach2(i->range(0, i), i->j->tuple(i,j));
+                   .forEach2(i->range(0, i), (i,j)->tuple(i,j));
                 
         //  .forEach(System.out::println);
         

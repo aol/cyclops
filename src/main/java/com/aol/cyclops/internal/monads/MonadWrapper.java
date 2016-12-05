@@ -5,6 +5,7 @@ import com.aol.cyclops.internal.Monad;
 import com.aol.cyclops.types.Decomposable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.extensability.Comprehender;
 
 import lombok.experimental.Wither;
 
@@ -13,16 +14,15 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
     @Wither
     private final Object monad;
     private final Class orgType;
+   
 
     public MonadWrapper(final Object monad) {
         this.monad = monad;
         orgType = monad.getClass();
+        
     }
 
-    /**
-    public MonadWrapper<T> withMonad(Object o ){
-        return new MonadWrapper(monad,orgType);
-    }**/
+    
 
     public static <T> Monad<T> of(final Object of) {
         return new MonadWrapper(
@@ -39,7 +39,7 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
     public <X> AnyMValue<X> anyMValue() {
         if (monad instanceof AnyMValue)
             return (AnyMValue<X>) monad;
-        return new AnyMValueImpl<X>(
+        return new AnyMValueImpl(
                                     (Monad) this, orgType);
     }
 
@@ -47,7 +47,7 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
     public <X> AnyMSeq<X> anyMSeq() {
         if (monad instanceof AnyMSeq)
             return (AnyMSeq<X>) monad;
-        return new AnyMSeqImpl<X>(
+        return new AnyMSeqImpl(
                                   (Monad) this, orgType);
     }
 
@@ -67,5 +67,6 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
         super();
         this.monad = monad;
         this.orgType = orgType;
+     
     }
 }

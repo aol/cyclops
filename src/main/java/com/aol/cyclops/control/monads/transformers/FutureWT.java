@@ -14,6 +14,7 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
@@ -272,6 +273,10 @@ public interface FutureWT<A> extends To<FutureWT<A>>,Unit<A>, Publisher<A>, Func
     default MaybeT<A> notNull() {
 
         return (MaybeT<A>) Filterable.super.notNull();
+    }
+    @Override
+    default ReactiveSeq<A> stream() {
+        return ToStream.super.stream();
     }
 
 }

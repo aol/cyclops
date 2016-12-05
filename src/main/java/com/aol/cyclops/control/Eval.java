@@ -27,12 +27,14 @@ import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue1;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Memoize;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 /**
  * Represents a computation that can be defered (always), cached (later) or immediate(now).
@@ -64,7 +66,7 @@ import com.aol.cyclops.util.function.Memoize;
  * @param <T> Type of value storable in this Eval
  */
 public interface Eval<T>
-        extends  To<Eval<T>>,Supplier<T>, MonadicValue1<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
+        extends  To<Eval<T>>,Supplier<T>, MonadicValue<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
 
    
     /**
@@ -137,7 +139,6 @@ public interface Eval<T>
      * @return Eval with specified value
      */
     public static <T> Eval<T> later(final Supplier<T> value) {
-
         return new Module.Later<T>(
                                    in -> value.get());
     }
@@ -261,6 +262,11 @@ public interface Eval<T>
     public static <T> Eval<T> accumulate(final Monoid<T> reducer,final CollectionX<Eval<T>> evals) {
         return sequence(evals).map(s -> s.reduce(reducer));
     }
+   
+    @Override
+    default Maybe<T> toMaybe(){
+        return Maybe.fromEvalNullable(this);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
@@ -275,7 +281,7 @@ public interface Eval<T>
     public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue1#flatMap(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
      */
     @Override
     public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
@@ -289,11 +295,11 @@ public interface Eval<T>
      */
     @Override
     default <R> Eval<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
-        return (Eval<R>) MonadicValue1.super.coflatMap(mapper);
+        return (Eval<R>) MonadicValue.super.coflatMap(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue1#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
+     * @see com.aol.cyclops.types.MonadicValue#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
      */
     @Override
     default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
@@ -303,19 +309,19 @@ public interface Eval<T>
 
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue1#flatMapIterable(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapIterable(java.util.function.Function)
      */
     @Override
     default <R> Eval<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (Eval<R>)MonadicValue1.super.flatMapIterable(mapper);
+        return (Eval<R>)MonadicValue.super.flatMapIterable(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue1#flatMapPublisher(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapPublisher(java.util.function.Function)
      */
     @Override
     default <R> Eval<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return (Eval<R>)MonadicValue1.super.flatMapPublisher(mapper);
+        return (Eval<R>)MonadicValue.super.flatMapPublisher(mapper);
     }
 
     /* (non-Javadoc)
@@ -331,7 +337,7 @@ public interface Eval<T>
      */
     @Override
     default Eval<MonadicValue<T>> nest() {
-        return (Eval<MonadicValue<T>>) MonadicValue1.super.nest();
+        return (Eval<MonadicValue<T>>) MonadicValue.super.nest();
     }
 
     /* (non-Javadoc)
@@ -346,7 +352,7 @@ public interface Eval<T>
     @Override
     default <U> Maybe<U> ofType(final Class<? extends U> type) {
 
-        return (Maybe<U>) Filterable.super.ofType(type);
+        return (Maybe<U>) MonadicValue.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -355,7 +361,7 @@ public interface Eval<T>
     @Override
     default Maybe<T> filterNot(final Predicate<? super T> fn) {
 
-        return (Maybe<T>) Filterable.super.filterNot(fn);
+        return (Maybe<T>) MonadicValue.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
@@ -364,7 +370,7 @@ public interface Eval<T>
     @Override
     default Maybe<T> notNull() {
 
-        return (Maybe<T>) Filterable.super.notNull();
+        return (Maybe<T>) MonadicValue.super.notNull();
     }
 
     /* (non-Javadoc)
@@ -456,7 +462,7 @@ public interface Eval<T>
      */
     @Override
     default <U, R> Eval<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (Eval<R>) MonadicValue1.super.zip(other, zipper);
+        return (Eval<R>) MonadicValue.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -465,7 +471,7 @@ public interface Eval<T>
     @Override
     default <U, R> Eval<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (Eval<R>) MonadicValue1.super.zip(other, zipper);
+        return (Eval<R>) MonadicValue.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -473,7 +479,7 @@ public interface Eval<T>
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zip(final Stream<? extends U> other) {
-        return (Eval) MonadicValue1.super.zip(other);
+        return (Eval) MonadicValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -481,7 +487,7 @@ public interface Eval<T>
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-        return (Eval) MonadicValue1.super.zip(other);
+        return (Eval) MonadicValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -489,8 +495,81 @@ public interface Eval<T>
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return (Eval) MonadicValue1.super.zip(other);
+        return (Eval) MonadicValue.super.zip(other);
     }
+
+    
+    
+    
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <T2, R1, R2, R3, R> Eval<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return (Eval<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <T2, R1, R2, R3, R> Eval<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (Eval<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+      
+        return (Eval<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
+        return (Eval<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> Eval<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+
+        return (Eval<R>)MonadicValue.super.forEach2(value1, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> Eval<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        return (Eval<R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
+    }
+
+
+
 
     static class Module {
 

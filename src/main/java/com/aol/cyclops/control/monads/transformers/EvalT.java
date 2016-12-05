@@ -16,6 +16,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
 import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
@@ -137,7 +138,7 @@ public interface EvalT<T> extends To<EvalT<T>>,Publisher<T>, Functor<T>, Filtera
 
     }
 
-    public <B> EvalT<B> flatMap(Function<? super T, ? extends Eval<? extends B>> f);
+    public <B> EvalT<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
 
     /**
      * Lift a function into one that accepts and returns an MaybeT This allows
@@ -311,6 +312,11 @@ public interface EvalT<T> extends To<EvalT<T>>,Publisher<T>, Functor<T>, Filtera
     default MaybeT<T> notNull() {
 
         return (MaybeT<T>) Filterable.super.notNull();
+    }
+
+    @Override
+    default ReactiveSeq<T> stream() {
+        return ToStream.super.stream();
     }
 
 }

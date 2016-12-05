@@ -101,7 +101,7 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, FlatMap<T>, ToStream<T> {
+public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, FlatMap<T>, ToStream<T>,Publisher<T> {
    
     
     
@@ -110,10 +110,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
      */
     @Override
-    default <T> Unit<T> emptyUnit() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    <T> Unit<T> emptyUnit() ;
 
     /**
      * Tests for equivalency between two AnyM types

@@ -23,18 +23,19 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.BiFunctor;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -118,7 +119,7 @@ import lombok.EqualsAndHashCode;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<ST, PT>, Functor<PT>, BiFunctor<ST,PT>,Filterable<PT>, ApplicativeFunctor<PT> {
+public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<PT>, Functor<PT>, BiFunctor<ST,PT>,Filterable<PT>, ApplicativeFunctor<PT> {
 
     /**
      * Construct a Primary Xor from the supplied publisher
@@ -206,6 +207,73 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
         return new Primary<>(
                              value);
     }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <T2, R1, R2, R3, R> Xor<ST,R> forEach4(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return (Xor<ST,R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <T2, R1, R2, R3, R> Xor<ST,R> forEach4(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super PT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (Xor<ST,R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <T2, R1, R2, R> Xor<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+      
+        return (Xor<ST,R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <T2, R1, R2, R> Xor<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super PT, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
+        return (Xor<ST,R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> Xor<ST,R> forEach2(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, ? extends R> yieldingFunction) {
+
+        return (Xor<ST,R>)MonadicValue.super.forEach2(value1, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> Xor<ST,R> forEach2(Function<? super PT, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super PT, ? super R1, Boolean> filterFunction,
+            BiFunction<? super PT, ? super R1, ? extends R> yieldingFunction) {
+        return (Xor<ST,R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
+    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#anyM()
@@ -227,19 +295,19 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue2#flatMapIterable(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapIterable(java.util.function.Function)
      */
     @Override
     default <R> Xor<ST, R> flatMapIterable(Function<? super PT, ? extends Iterable<? extends R>> mapper) {
-        return (Xor<ST, R>)MonadicValue2.super.flatMapIterable(mapper);
+        return (Xor<ST, R>)MonadicValue.super.flatMapIterable(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue2#flatMapPublisher(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapPublisher(java.util.function.Function)
      */
     @Override
     default <R> Xor<ST, R> flatMapPublisher(Function<? super PT, ? extends Publisher<? extends R>> mapper) {
-        return (Xor<ST, R>)MonadicValue2.super.flatMapPublisher(mapper);
+        return (Xor<ST, R>)MonadicValue.super.flatMapPublisher(mapper);
     }
 
     /* (non-Javadoc)
@@ -247,7 +315,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     */
     @Override
     default <R> Xor<ST, R> coflatMap(final Function<? super MonadicValue<PT>, R> mapper) {
-        return (Xor<ST, R>) MonadicValue2.super.coflatMap(mapper);
+        return (Xor<ST, R>) MonadicValue.super.coflatMap(mapper);
     }
 
     //cojoin
@@ -260,15 +328,15 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+     * @see com.aol.cyclops.types.MonadicValue#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
      */
     @Override
-    default Xor<ST, PT> combineEager(final Monoid<PT> monoid, final MonadicValue2<? extends ST, ? extends PT> v2) {
-        return (Xor<ST, PT>) MonadicValue2.super.combineEager(monoid, v2);
+    default Xor<ST, PT> combineEager(final Monoid<PT> monoid, final MonadicValue<? extends PT> v2) {
+        return (Xor<ST, PT>) MonadicValue.super.combineEager(monoid, v2);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue2#unit(java.lang.Object)
+     * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
     default <T> Xor<ST, T> unit(final T unit) {
@@ -307,7 +375,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     <R> Xor<R, PT> secondaryMap(Function<? super ST, ? extends R> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue2#map(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#map(java.util.function.Function)
      */
     @Override
     <R> Xor<ST, R> map(Function<? super PT, ? extends R> fn);
@@ -717,10 +785,10 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     ReactiveSeq<ST> secondaryToStream();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue2#flatMap(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
      */
     @Override
-    <RT1> Xor<ST, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends ST, ? extends RT1>> mapper);
+    <RT1> Xor<ST, RT1> flatMap(Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper);
     /**
      * Perform a flatMap operation on the Secondary type
      * 
@@ -823,7 +891,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     @Override
     default <U, R> Xor<ST, R> zip(final Seq<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
 
-        return (Xor<ST, R>) MonadicValue2.super.zip(other, zipper);
+        return (Xor<ST, R>) MonadicValue.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -832,7 +900,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     @Override
     default <U, R> Xor<ST, R> zip(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
 
-        return (Xor<ST, R>) MonadicValue2.super.zip(other, zipper);
+        return (Xor<ST, R>) MonadicValue.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -841,7 +909,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     @Override
     default <U> Xor<ST, Tuple2<PT, U>> zip(final Stream<? extends U> other) {
 
-        return (Xor) MonadicValue2.super.zip(other);
+        return (Xor) MonadicValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -850,7 +918,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     @Override
     default <U> Xor<ST, Tuple2<PT, U>> zip(final Seq<? extends U> other) {
 
-        return (Xor) MonadicValue2.super.zip(other);
+        return (Xor) MonadicValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -859,7 +927,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     @Override
     default <U> Xor<ST, Tuple2<PT, U>> zip(final Iterable<? extends U> other) {
 
-        return (Xor) MonadicValue2.super.zip(other);
+        return (Xor) MonadicValue.super.zip(other);
     }
 
     /* (non-Javadoc)
@@ -868,7 +936,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     @Override
     default <U> Xor<ST, U> ofType(final Class<? extends U> type) {
 
-        return (Xor<ST, U>) Filterable.super.ofType(type);
+        return (Xor<ST, U>) MonadicValue.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -877,7 +945,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     @Override
     default Xor<ST, PT> filterNot(final Predicate<? super PT> fn) {
 
-        return (Xor<ST, PT>) Filterable.super.filterNot(fn);
+        return (Xor<ST, PT>) MonadicValue.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
@@ -886,7 +954,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
     @Override
     default Xor<ST, PT> notNull() {
 
-        return (Xor<ST, PT>) Filterable.super.notNull();
+        return (Xor<ST, PT>) MonadicValue.super.notNull();
     }
 
     /* (non-Javadoc)
@@ -972,7 +1040,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
         }
 
         @Override
-        public <RT1> Xor<ST, RT1> flatMap(Function<? super PT, ? extends MonadicValue2<? extends ST, ? extends RT1>> mapper){
+        public <RT1> Xor<ST, RT1> flatMap(Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper){
             return (Xor<ST, RT1>) mapper.apply(value)
                                          .toXor();
         }
@@ -1163,7 +1231,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue2<
         }
 
         @Override
-        public < RT1> Xor<ST, RT1> flatMap(final Function<? super PT, ? extends MonadicValue2<? extends ST, ? extends RT1>> mapper) {
+        public < RT1> Xor<ST, RT1> flatMap(final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
             return (Xor<ST, RT1>) this;
         }
 

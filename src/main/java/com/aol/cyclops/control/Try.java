@@ -36,6 +36,8 @@ import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.function.Curry;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -163,6 +165,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      * @param pub Publisher to extract value from
      * @return Try populated with first value from Publisher 
      */
+    @SafeVarargs
     public static <T, X extends Throwable> Try<T, X> fromPublisher(final Publisher<T> pub, final Class<X>... classes) {
        
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
@@ -212,6 +215,73 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     public static <T, X extends Throwable> Try<T, X> fromIterable(final Iterable<T> iterable) {
         final Iterator<T> it = iterable.iterator();
         return Try.success(it.hasNext() ? it.next() : null);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return (Try<R,X>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+    @Override
+    default <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return (Try<R,X>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+      
+        return (Try<R,X>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+    @Override
+    default <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
+        return (Try<R,X>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> Try<R,X> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+
+        return (Try<R,X>)MonadicValue.super.forEach2(value1, yieldingFunction);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+    @Override
+    default <R1, R> Try<R,X> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        return (Try<R,X>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -357,7 +427,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     @Override
     default <U> Maybe<U> ofType(final Class<? extends U> type) {
 
-        return (Maybe<U>) Filterable.super.ofType(type);
+        return (Maybe<U>) MonadicValue.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -366,7 +436,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     @Override
     default Maybe<T> filterNot(final Predicate<? super T> fn) {
 
-        return (Maybe<T>) Filterable.super.filterNot(fn);
+        return (Maybe<T>) MonadicValue.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
@@ -375,7 +445,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     @Override
     default Maybe<T> notNull() {
 
-        return (Maybe<T>) Filterable.super.notNull();
+        return (Maybe<T>) MonadicValue.super.notNull();
     }
 
     /**
@@ -513,7 +583,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      * @param fn FlatMap success value or Do nothing if Failure (return this)
      * @return Try returned from FlatMap fn
      */
-    public <R> Try<R, X> flatMap(Function<? super T, ? extends Try<R, X>> fn);
+    public <R> Try<R, X> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn);
 
     /**
      * @param p Convert a Success to a Failure (with a null value for Exception) if predicate does not hold.
@@ -1061,7 +1131,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
             return safeApply(() -> success(fn.apply(get())));
         }
 
-        private <R> R safeApply(final Supplier<R> s) {
+        private <R> R safeApply(final Supplier<? extends R> s) {
             try {
                 return s.get();
             } catch (final Throwable t) {
@@ -1087,8 +1157,8 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
          * @see com.aol.cyclops.trycatch.Try#flatMap(java.util.function.Function)
          */
         @Override
-        public <R> Try<R, X> flatMap(final Function<? super T, ? extends Try<R, X>> fn) {
-            return safeApply(() -> fn.apply(get()));
+        public <R> Try<R, X> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> fn) {
+            return safeApply(() -> fn.apply(get()).toTry( (Class[]) classes ));
 
         }
 
@@ -1415,7 +1485,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
          * @see com.aol.cyclops.trycatch.Try#flatMap(java.util.function.Function)
          */
         @Override
-        public <R> Try<R, X> flatMap(final Function<? super T, ? extends Try<R, X>> fn) {
+        public <R> Try<R, X> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> fn) {
             return (Try) this;
         }
 

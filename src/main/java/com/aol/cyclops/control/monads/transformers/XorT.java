@@ -23,7 +23,6 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue2;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
@@ -45,7 +44,7 @@ public interface XorT<ST, T> extends To<XorT<ST,T>>,Publisher<T>, Functor<T>,Fol
 
     public <R> XorT<ST, R> empty();
 
-    <B> XorT<ST,B> flatMap(Function<? super T, ? extends MonadicValue2<? extends ST, ? extends B>> f);
+    <B> XorT<ST,B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
 
     /**
      * @return The wrapped AnyM

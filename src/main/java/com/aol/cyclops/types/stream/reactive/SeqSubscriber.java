@@ -15,6 +15,10 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.util.ExceptionSoftener;
 
+import lombok.AllArgsConstructor;
+import lombok.experimental.Wither;
+import lombok.AccessLevel;
+
 /**
  * A reactive-streams Subscriber that can generate various forms of sequences from a publisher
  * 
@@ -32,6 +36,7 @@ import com.aol.cyclops.util.ExceptionSoftener;
  *
  * @param <T> Subscriber type
  */
+@AllArgsConstructor(access=AccessLevel.PRIVATE)
 public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, ConvertableSequence<T> {
 
     private final Object UNSET = new Object();
@@ -43,15 +48,20 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
     private volatile boolean complete = false;
     private volatile boolean unread = false;
     private volatile Subscription s;
+    
+    @Wither
+    private final long spinNanos;
 
     protected SeqSubscriber() {
         this.onComplete = () -> {
         };
+        this.spinNanos = 1000000l;
     }
 
     private SeqSubscriber(final Runnable onComplete) {
         super();
         this.onComplete = onComplete;
+        this.spinNanos =1000000l;
     }
 
     public static <T> SeqSubscriber<T> subscriber(final Runnable onComplete) {
@@ -101,7 +111,7 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
     public T get() {
         try {
             while (lastValue.get() == UNSET && lastError.get() == UNSET)
-                LockSupport.parkNanos(1000000l);
+                LockSupport.parkNanos(this.spinNanos);
             if (lastError.get() != UNSET) {
                 final Throwable toThrow = (Throwable) lastError.get();
                 reset();

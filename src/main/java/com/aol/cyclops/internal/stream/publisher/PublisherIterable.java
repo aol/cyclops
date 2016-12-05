@@ -177,7 +177,8 @@ public final class PublisherIterable<T>  implements Publisher<T> {
         @Override
         public void request(long n) {
             if (n < 1) {
-                throw new IllegalArgumentException("request amount > 0 required but it was " + n);
+                actual.onError( new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0 but it was " + n));
+                return;
                 
             }
            
@@ -200,6 +201,23 @@ public final class PublisherIterable<T>  implements Publisher<T> {
             for (; ; ) {
 
                 while (e != n) {
+                    boolean b;
+
+                    try {
+                        b = a.hasNext();
+                    } catch (Throwable ex) {
+                        s.onError(ex);
+                        return;
+                    }
+
+                    if (cancelled) {
+                        return;
+                    }
+
+                    if (!b) {
+                        s.onComplete();
+                        return;
+                    }
                     T t;
 
                     try {
@@ -224,23 +242,7 @@ public final class PublisherIterable<T>  implements Publisher<T> {
                         return;
                     }
 
-                    boolean b;
-
-                    try {
-                        b = a.hasNext();
-                    } catch (Throwable ex) {
-                        s.onError(ex);
-                        return;
-                    }
-
-                    if (cancelled) {
-                        return;
-                    }
-
-                    if (!b) {
-                        s.onComplete();
-                        return;
-                    }
+                   
 
                     e++;
                 }
