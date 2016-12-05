@@ -27,7 +27,7 @@ public class ComprehenderSelector {
                                                                                                          Optional.of(structure))));
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked", "rawtypes" }) 
     public Comprehender selectComprehender(final Object structure) {
 
         return cache.computeIfAbsent(structure.getClass(), st -> comprehenders.getRegisteredComprehenders()
