@@ -3357,12 +3357,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                         final BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
                             final TriFunction<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
                             final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
-        return For.stream(this)
-                .stream(a-> stream1.apply(a))
-                .stream(a -> b -> stream2.apply(a, b))
-                .stream(a -> b -> c -> stream3.apply(a, b, c))
-                .yield4(yieldingFunction)
-                .unwrap();
+        return this.flatMap(in -> {
+
+            ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            return a.flatMap(ina -> {
+                ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+                return b.flatMap(inb -> {
+                    ReactiveSeq<R3> c = ReactiveSeq.fromIterable(()->stream3.apply(in, ina, inb).iterator());
+                    return c.map(in2 -> yieldingFunction.apply(in, ina, inb, in2));
+                });
+
+            });
+
+        });
     }
     /**
      * Perform a four level nested internal iteration over this Stream and the
@@ -3403,13 +3410,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             final TriFunction<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
             final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
-        return For.stream(this)
-                .stream(a-> stream1.apply(a))
-                .stream(a -> b -> stream2.apply(a, b))
-                .stream(a -> b -> c -> stream3.apply(a, b, c))
-                .filter(a -> b -> c -> d -> filterFunction.apply(a, b, c, d))
-                .yield4(yieldingFunction)
-                .unwrap();
+        return this.flatMap(in -> {
+
+            ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            return a.flatMap(ina -> {
+                ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+                return b.flatMap(inb -> {
+                    ReactiveSeq<R3> c = ReactiveSeq.fromIterable(()->stream3.apply(in, ina, inb).iterator());
+                    return c.filter(in2 -> filterFunction.apply(in, ina, inb, in2))
+                            .map(in2 -> yieldingFunction.apply(in, ina, inb, in2));
+                });
+
+            });
+
+        });
     }
     /**
      * Perform a three level nested internal iteration over this Stream and the
@@ -3439,11 +3453,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
             TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
-        return For.stream(this)
-                .stream(u -> stream1.apply(u))
-                .stream(u -> r1 -> stream2.apply(u,r1))
-                .yield3(yieldingFunction)
-                .unwrap();
+        return this.flatMap(in -> {
+
+            ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            return ReactiveSeq.fromIterable(a)
+                              .flatMap(ina -> {
+                ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+                return b.map(in2 -> yieldingFunction.apply(in, ina, in2));
+            });
+
+        });
     }
 
     /**
@@ -3480,12 +3499,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
             TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
             TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
-        return For.stream(this)
-                .stream(u -> stream1.apply(u))
-                .stream(u -> r1 -> stream2.apply(u,r1))
-                .filter(a->b->c->filterFunction.apply(a,b,c))
-                .yield3(yieldingFunction)
-                .unwrap();
+       return this.flatMap(in -> {
+
+           ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+           return ReactiveSeq.fromIterable(a)
+                             .flatMap(ina -> {
+               ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+               return b.filter(in2 -> filterFunction.apply(in, ina, in2))
+                       .map(in2 -> yieldingFunction.apply(in, ina, in2));
+           });
+
+       });
     }
 
     /**
@@ -3513,10 +3537,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
-        return For.stream(this)
-                .stream(u -> stream1.apply(u))
-                .yield2(yieldingFunction)
-                .unwrap();
+        return this.flatMap(in-> { 
+            
+            
+            ReactiveSeq<R1> b = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            return b.map(in2->yieldingFunction.apply(in, in2));
+        });
     }
 
     /**
@@ -3548,11 +3574,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, Boolean> filterFunction,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
-        return For.stream(this)
-                .stream(u -> stream1.apply(u))
-                .filter(a->b->filterFunction.apply(a,b))
-                .yield2(yieldingFunction)
-                .unwrap();
+        return this.flatMap(in-> { 
+            
+            
+            ReactiveSeq<R1> b = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            return b.filter(in2-> filterFunction.apply(in,in2))
+                    .map(in2->yieldingFunction.apply(in, in2));
+        });
     }
 
     @Override

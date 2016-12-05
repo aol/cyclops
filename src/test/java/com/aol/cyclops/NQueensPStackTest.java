@@ -16,7 +16,7 @@ public class NQueensPStackTest {
     @Test
     public void run(){
         val queens = placeQueens(num);
-        assertThat(queens.size(),equalTo(4));
+        assertThat(queens.size(),equalTo(82));
         show(placeQueens(num));
     }
     

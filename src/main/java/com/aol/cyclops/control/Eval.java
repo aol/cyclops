@@ -265,7 +265,7 @@ public interface Eval<T>
    
     @Override
     default Maybe<T> toMaybe(){
-        return Maybe.fromEval(this);
+        return Maybe.fromEvalNullable(this);
     }
 
     /* (non-Javadoc)
