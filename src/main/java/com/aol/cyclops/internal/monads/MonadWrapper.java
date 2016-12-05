@@ -14,21 +14,19 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
     @Wither
     private final Object monad;
     private final Class orgType;
-    private final Comprehender<?> comp;
+   
 
-    public MonadWrapper(final Object monad,Comprehender<T> comp) {
+    public MonadWrapper(final Object monad) {
         this.monad = monad;
         orgType = monad.getClass();
-        this.comp  = comp;
+        
     }
 
-    public Comprehender<?> adapter(){
-        return comp;
-    }
+    
 
-    public static <T> Monad<T> of(final Object of,Comprehender<?> comp) {
+    public static <T> Monad<T> of(final Object of) {
         return new MonadWrapper(
-                                of,comp);
+                                of);
 
     }
 
@@ -42,7 +40,7 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
         if (monad instanceof AnyMValue)
             return (AnyMValue<X>) monad;
         return new AnyMValueImpl(
-                                    (Monad) this, orgType,comp);
+                                    (Monad) this, orgType);
     }
 
     @Override
@@ -50,7 +48,7 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
         if (monad instanceof AnyMSeq)
             return (AnyMSeq<X>) monad;
         return new AnyMSeqImpl(
-                                  (Monad) this, orgType,comp);
+                                  (Monad) this, orgType);
     }
 
     @Override
@@ -65,10 +63,10 @@ public class MonadWrapper<T> implements Monad<T>, Decomposable {
         return monad.toString();
     }
 
-    public MonadWrapper(final Object monad, final Class orgType, Comprehender<?> comp) {
+    public MonadWrapper(final Object monad, final Class orgType) {
         super();
         this.monad = monad;
         this.orgType = orgType;
-        this.comp = comp;
+     
     }
 }

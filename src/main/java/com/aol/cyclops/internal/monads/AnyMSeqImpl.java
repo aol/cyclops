@@ -21,8 +21,8 @@ import com.aol.cyclops.types.extensability.Comprehender;
 
 public class AnyMSeqImpl<T> extends BaseAnyMImpl<T>implements AnyMSeq<T> {
 
-    protected AnyMSeqImpl(final Monad<T> monad, final Class initialType, Comprehender<T> adapter) {
-        super(monad, initialType,adapter);
+    protected AnyMSeqImpl(final Monad<T> monad, final Class initialType) {
+        super(monad, initialType);
 
     }
 

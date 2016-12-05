@@ -35,11 +35,9 @@ public abstract class BaseAnyMImpl<T> {
 
     protected final Monad<T> monad;
     protected final Class initialType;
-    protected final Comprehender<T> adapter;
+    
 
-    public Comprehender<T> adapter(){
-        return adapter;
-    }
+   
     public <R> R unwrap() {
         return (R) monad.unwrap();
 

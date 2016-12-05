@@ -15,12 +15,11 @@ import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
 import com.aol.cyclops.internal.stream.SeqUtils;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
+import com.aol.cyclops.types.mixins.WrappingFilterable;
 import com.aol.cyclops.types.mixins.WrappingFunctor;
 
 /**
@@ -36,11 +35,19 @@ import com.aol.cyclops.types.mixins.WrappingFunctor;
  *
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public interface Monad<T> extends Functor<T>, Filterable<T> {
+public interface Monad<T> extends WrappingFunctor<T>, WrappingFilterable<T> {
 
     public <T> Monad<T> withMonad(Object invoke);
 
-    
+    @Override
+    default <T> Monad<T> withFunctor(final T functor) {
+        return withMonad(functor);
+    }
+
+    @Override
+    default Object getFunctor() {
+        return unwrap();
+    }
 
     /**
      * Transform the contents of a Monad into a Monad wrapping a Stream e.g.
@@ -63,7 +70,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
      */
     default <NT> Monad<NT> streamedMonad() {
         final Stream stream = Stream.of(1);
-        final Monad r = this.<T> withMonad((Stream) new ComprehenderSelector().selectComprehender(stream,adapter())
+        final Monad r = this.<T> withMonad((Stream) new ComprehenderSelector().selectComprehender(stream)
                                                                               .executeflatMap(stream, i -> unwrap()));
         return r.bind(e -> e);
     }
@@ -79,7 +86,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
         if (unwrap() instanceof Iterable)
             return StreamSupport.stream(((Iterable) unwrap()).spliterator(), false);
         final Stream stream = Stream.of(1);
-        return (Stream) withMonad((Stream) new ComprehenderSelector().selectComprehender(stream,adapter())
+        return (Stream) withMonad((Stream) new ComprehenderSelector().selectComprehender(stream)
                                                                      .executeflatMap(stream, i -> unwrap())).unwrap();
 
     }
@@ -96,38 +103,39 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
 
     }
 
+    @Override
+    default WrappingFilterable<T> withFilterable(final T filter) {
+        return withMonad(filter);
+    }
+
+    @Override
+    default Object getFilterable() {
+        return unwrap();
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
      */
+    @Override
     default Monad<T> filter(final Predicate<? super T> fn) {
-        
-        final Object filterable = unwrap();
-        if (filterable instanceof Filterable) {
-            return withMonad((T) ((Filterable) filterable).filter(fn));
-        }
-        final T result = (T) new ComprehenderSelector().selectComprehender(unwrap(),adapter())
-                                                       .filter(filterable, fn);
-        return withMonad(result);
+        return (Monad) WrappingFilterable.super.filter(fn);
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
      */
     @Override
     default <R> Monad<R> map(final Function<? super T, ? extends R> fn) {
-        final Object functor = unwrap();
-        if (functor instanceof Functor) {
-            final Functor f = (Functor) functor;
-
-            return withMonad((R) f.map(fn));
-        }
-        final Object value = new ComprehenderSelector().selectComprehender(unwrap(),adapter())
-                                                       .map(unwrap(), fn);
-
-        return withMonad((R) value);
-
+        return (Monad) WrappingFunctor.super.map(fn);
     }
-   
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
+     */
+    @Override
+    default Monad<T> peek(final Consumer<? super T> c) {
+        return (Monad) WrappingFunctor.super.peek(c);
+    }
 
     /**
      * Perform a looser typed flatMap / bind operation
@@ -137,11 +145,11 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
      * @return flatMapped monad
      */
     default <R> Monad<R> bind(final Function<? super T, ?> fn) {
-        return withMonad(new ComprehenderSelector().selectComprehender(unwrap(),adapter())
+        return withMonad(new ComprehenderSelector().selectComprehender(unwrap())
                                                    .executeflatMap(unwrap(), fn));
 
     }
-    public Comprehender<?> adapter();
+
     /**
      * Perform a bind operation (@see #bind) but also lift the return value into a Monad using configured
      * MonadicConverters
@@ -150,7 +158,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
      * @return flatMapped monad
      */
     default <R> Monad<R> liftAndBind(final Function<? super T, ?> fn) {
-        return withMonad(new ComprehenderSelector().selectComprehender(unwrap(),adapter())
+        return withMonad(new ComprehenderSelector().selectComprehender(unwrap())
                                                    .liftAndFlatMap(unwrap(), fn));
 
     }
@@ -167,7 +175,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
     default <R> Monad<R> flatMapToStream(final Function<Object, ? extends Stream<? extends R>> fn) {
 
         final Stream stream = Stream.of(1);
-        final Monad r = this.<T> withMonad((Stream) new ComprehenderSelector().selectComprehender(stream,adapter())
+        final Monad r = this.<T> withMonad((Stream) new ComprehenderSelector().selectComprehender(stream)
                                                                               .executeflatMap(stream, i -> unwrap()));
         return r.bind(e -> e);
 
@@ -180,14 +188,14 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
      * @return new instance of underlying Monad
      */
     default <T> Object unit(final T value) {
-        return new ComprehenderSelector().selectComprehender(unwrap(),adapter())
+        return new ComprehenderSelector().selectComprehender(unwrap())
                                          .of(value);
     }
 
     default T get() {
         final Mutable<T> captured = Mutable.of(null);
 
-        final Comprehender c = new ComprehenderSelector().selectComprehender(unwrap(),adapter());
+        final Comprehender c = new ComprehenderSelector().selectComprehender(unwrap());
         c.resolveForCrossTypeFlatMap(new ValueComprehender() {
 
             /* (non-Javadoc)
@@ -246,7 +254,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
     }
 
     default Monad<T> empty() {
-        return (Monad) new ComprehenderSelector().selectComprehender(unwrap(),adapter())
+        return (Monad) new ComprehenderSelector().selectComprehender(unwrap())
                                                  .empty();
     }
 
@@ -328,7 +336,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
         return new MonadWrapper<>(
                                   Monad.fromStream(stream())
                                        .map(value -> new ComprehenderSelector().selectComprehender(reducer.zero()
-                                                                                                          .getClass(),adapter())
+                                                                                                          .getClass())
                                                                                .of(value))
                                        .sequence()
                                        .reduce((Monoid) reducer));

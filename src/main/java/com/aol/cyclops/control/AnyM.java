@@ -11,6 +11,7 @@ import java.util.OptionalLong;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -49,36 +50,12 @@ import com.aol.cyclops.control.monads.transformers.values.TryTValue;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.internal.comprehensions.comprehenders.CompletableFutureComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.EvalComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.FeatureToggleComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.FutureFunctorComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.IorComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.ListComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.MaybeComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.OptionalComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.SetComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.StreamComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.TryComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.XorComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.CompletableFutureTValueComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.EvalTValueComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.MaybeTValueComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.OptionalTValueComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.TryTValueComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.XorTValueComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.CompletableFutureTSeqComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.EvalTSeqComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.FutureWTSeqComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.MaybeTSeqComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.OptionalTSeqComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.TryTSeqComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.transformers.seq.XorTSeqComprehender;
 import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
 import com.aol.cyclops.internal.monads.AnyMonads;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.monads.MonadWrapper;
+import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.Foldable;
@@ -86,9 +63,9 @@ import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.function.Predicates;
@@ -506,7 +483,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromList(final List<T> list) {
         Objects.requireNonNull(list);
-        return AnyMFactory.instance.seq(list, new ListComprehender());
+        return AnyMFactory.instance.seq(list);
     }
 
     /**
@@ -521,7 +498,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromSet(final Set<T> set) {
         Objects.requireNonNull(set);
-        return AnyMFactory.instance.seq(set, new SetComprehender());
+        return AnyMFactory.instance.seq(set);
     }
 
     /**
@@ -531,7 +508,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @return AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
     public static <T> AnyMSeq<T> fromArray(final T... streamData) {
-        return AnyMFactory.instance.seq(Stream.of(streamData),new StreamComprehender());
+        return AnyMFactory.instance.seq(Stream.of(streamData));
     }
 
     /**
@@ -543,7 +520,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      * @return  AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
     public static <T> AnyMSeq<T> streamOf(final T... streamData) {
-        return AnyMFactory.instance.seq(Stream.of(streamData),new StreamComprehender());
+        return AnyMFactory.instance.seq(Stream.of(streamData));
     }
 
     /**
@@ -579,7 +556,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromStream(final Stream<T> stream) {
         Objects.requireNonNull(stream);
-        return AnyMFactory.instance.seq(stream,new StreamComprehender());
+        return AnyMFactory.instance.seq(stream);
     }
 
     /**
@@ -590,7 +567,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static AnyMSeq<Integer> fromIntStream(final IntStream stream) {
         Objects.requireNonNull(stream);
-        return AnyMFactory.instance.seq(stream.boxed(),new StreamComprehender());
+        return AnyMFactory.instance.seq(stream.boxed());
     }
 
     /**
@@ -601,7 +578,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static AnyMSeq<Double> fromDoubleStream(final DoubleStream stream) {
         Objects.requireNonNull(stream);
-        return AnyMFactory.instance.seq(stream.boxed(),new StreamComprehender());
+        return AnyMFactory.instance.seq(stream.boxed());
     }
 
     /**
@@ -612,7 +589,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static AnyMSeq<Long> fromLongStream(final LongStream stream) {
         Objects.requireNonNull(stream);
-        return AnyMFactory.instance.seq(stream.boxed(),new StreamComprehender());
+        return AnyMFactory.instance.seq(stream.boxed());
     }
 
     /**
@@ -623,7 +600,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromOptional(final Optional<T> optional) {
         Objects.requireNonNull(optional);
-        return AnyMFactory.instance.value(optional, new OptionalComprehender());
+        return AnyMFactory.instance.value(optional);
     }
 
     /**
@@ -634,7 +611,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static AnyMValue<Double> fromOptionalDouble(final OptionalDouble optional) {
         Objects.requireNonNull(optional);
-        return AnyMFactory.instance.convertValue(optional, new OptionalComprehender());
+        return AnyMFactory.instance.convertValue(optional);
     }
 
     /**
@@ -645,7 +622,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static AnyMValue<Long> fromOptionalLong(final OptionalLong optional) {
         Objects.requireNonNull(optional);
-        return AnyMFactory.instance.convertValue(optional, new OptionalComprehender());
+        return AnyMFactory.instance.convertValue(optional);
     }
 
     /**
@@ -656,7 +633,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static AnyMValue<Integer> fromOptionalInt(final OptionalInt optional) {
         Objects.requireNonNull(optional);
-        return AnyMFactory.instance.convertValue(optional, new OptionalComprehender());
+        return AnyMFactory.instance.convertValue(optional);
     }
 
     /**
@@ -667,7 +644,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromCompletableFuture(final CompletableFuture<T> future) {
         Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future, new CompletableFutureComprehender());
+        return AnyMFactory.instance.value(future);
     }
 
     /**
@@ -678,7 +655,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromXor(final Xor<?, T> xor) {
         Objects.requireNonNull(xor);
-        return AnyMFactory.instance.value(xor,new XorComprehender());
+        return AnyMFactory.instance.value(xor);
     }
 
     /**
@@ -689,7 +666,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromFeatureToggle(final FeatureToggle<T> featureToggle) {
         Objects.requireNonNull(featureToggle);
-        return AnyMFactory.instance.value(featureToggle,new FeatureToggleComprehender());
+        return AnyMFactory.instance.value(featureToggle);
     }
 
     /**
@@ -700,7 +677,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromTry(final Try<T, ?> trySomething) {
         Objects.requireNonNull(trySomething);
-        return AnyMFactory.instance.value(trySomething, new TryComprehender());
+        return AnyMFactory.instance.value(trySomething);
     }
 
     /**
@@ -711,7 +688,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromIor(final Ior<?, T> ior) {
         Objects.requireNonNull(ior);
-        return AnyMFactory.instance.value(ior, new IorComprehender());
+        return AnyMFactory.instance.value(ior);
     }
 
     /**
@@ -722,7 +699,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromEval(final Eval<T> eval) {
         Objects.requireNonNull(eval);
-        return AnyMFactory.instance.value(eval, new EvalComprehender());
+        return AnyMFactory.instance.value(eval);
     }
 
     /**
@@ -733,7 +710,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromFutureW(final FutureW<T> future) {
         Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future, new FutureFunctorComprehender());
+        return AnyMFactory.instance.value(future);
     }
 
     /**
@@ -744,7 +721,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromMaybe(final Maybe<T> maybe) {
         Objects.requireNonNull(maybe);
-        return AnyMFactory.instance.value(maybe, new MaybeComprehender());
+        return AnyMFactory.instance.value(maybe);
     }
 
     /**
@@ -755,7 +732,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromEvalTValue(final EvalTValue<T> evalT) {
         Objects.requireNonNull(evalT);
-        return AnyMFactory.instance.value(evalT, new EvalTValueComprehender());
+        return AnyMFactory.instance.value(evalT);
     }
 
     /**
@@ -766,7 +743,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromMaybeTValue(final MaybeTValue<T> maybeT) {
         Objects.requireNonNull(maybeT);
-        return AnyMFactory.instance.value(maybeT,new MaybeTValueComprehender());
+        return AnyMFactory.instance.value(maybeT);
     }
 
     /**
@@ -777,7 +754,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromOptionalTValue(final OptionalTValue<T> optionalT) {
         Objects.requireNonNull(optionalT);
-        return AnyMFactory.instance.value(optionalT,new OptionalTValueComprehender());
+        return AnyMFactory.instance.value(optionalT);
     }
 
     /**
@@ -788,7 +765,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromCompletableFutureTValue(final CompletableFutureTValue<T> futureT) {
         Objects.requireNonNull(futureT);
-        return AnyMFactory.instance.value(futureT,new CompletableFutureTValueComprehender());
+        return AnyMFactory.instance.value(futureT);
     }
 
     /**
@@ -799,7 +776,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <ST, PT> AnyMValue<PT> fromXorTValue(final XorTValue<ST, PT> xorT) {
         Objects.requireNonNull(xorT);
-        return AnyMFactory.instance.value(xorT,new XorTValueComprehender());
+        return AnyMFactory.instance.value(xorT);
     }
 
     /**
@@ -810,7 +787,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T, X extends Throwable> AnyMValue<T> fromTryTValue(final TryTValue<T, X> tryT) {
         Objects.requireNonNull(tryT);
-        return AnyMFactory.instance.value(tryT,new TryTValueComprehender());
+        return AnyMFactory.instance.value(tryT);
     }
 
     /**
@@ -821,7 +798,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <ST, PT> AnyMSeq<PT> fromXorTSeq(final XorTSeq<ST, PT> xorT) {
         Objects.requireNonNull(xorT);
-        return AnyMFactory.instance.seq(xorT, new XorTSeqComprehender());
+        return AnyMFactory.instance.seq(xorT);
     }
 
     /**
@@ -832,7 +809,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T, X extends Throwable> AnyMSeq<T> fromTryTSeq(final TryTSeq<T, X> tryT) {
         Objects.requireNonNull(tryT);
-        return AnyMFactory.instance.seq(tryT,new TryTSeqComprehender());
+        return AnyMFactory.instance.seq(tryT);
     }
 
     /**
@@ -843,7 +820,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromEvalTSeq(final EvalTSeq<T> evalT) {
         Objects.requireNonNull(evalT);
-        return AnyMFactory.instance.seq(evalT,new EvalTSeqComprehender());
+        return AnyMFactory.instance.seq(evalT);
     }
 
     /**
@@ -854,7 +831,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromMaybeTSeq(final MaybeTSeq<T> maybeT) {
         Objects.requireNonNull(maybeT);
-        return AnyMFactory.instance.seq(maybeT,new MaybeTSeqComprehender());
+        return AnyMFactory.instance.seq(maybeT);
     }
 
     /**
@@ -865,7 +842,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromOptionalTSeq(final OptionalTSeq<T> optionalT) {
         Objects.requireNonNull(optionalT);
-        return AnyMFactory.instance.seq(optionalT,new OptionalTSeqComprehender());
+        return AnyMFactory.instance.seq(optionalT);
     }
 
     /**
@@ -876,7 +853,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromCompletableFutureTSeq(final CompletableFutureTSeq<T> futureT) {
         Objects.requireNonNull(futureT);
-        return AnyMFactory.instance.seq(futureT,new CompletableFutureTSeqComprehender());
+        return AnyMFactory.instance.seq(futureT);
     }
 
     /**
@@ -887,7 +864,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMValue<T> fromFutureWTValue(final FutureWTValue<T> futureT) {
         Objects.requireNonNull(futureT);
-        return AnyMFactory.instance.value(futureT,new FutureWTSeqComprehender());
+        return AnyMFactory.instance.value(futureT);
     }
 
     /**
@@ -931,7 +908,7 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
      */
     public static <T> AnyMSeq<T> fromStreamableT(final StreamableT<T> streamT) {
         Objects.requireNonNull(streamT);
-        return AnyMFactory.instance.seq(streamT, new StreamableT);
+        return AnyMFactory.instance.seq(streamT);
     }
 
     /**
@@ -1534,12 +1511,11 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
          * @param o Monad to wrap
          * @return AnyMValue wrapping supplied monad
          */
-        public <T> AnyMValue<T> value(final Object o,Comprehender<?> comp) {
+        public <T> AnyMValue<T> value(final Object o) {
             if (o instanceof AnyMValue)
                 return (AnyMValue<T>) o;
-            
             return new MonadWrapper<>(
-                                      o,comp).anyMValue();
+                                      o).anyMValue();
         }
 
         /**
@@ -1548,11 +1524,11 @@ public interface AnyM<T> extends Unwrapable, To<AnyM<T>>, EmptyUnit<T>, Unit<T>,
          * @param o Monad to wrap
          * @return AnyMValue wrapping supplied monad
          */
-        public <T> AnyMSeq<T> seq(final Object o, Comprehender<?> comp) {
+        public <T> AnyMSeq<T> seq(final Object o) {
             if (o instanceof AnyMSeq)
                 return (AnyMSeq<T>) o;
             return new MonadWrapper<>(
-                                      o,comp).anyMSeq();
+                                      o).anyMSeq();
         }
 
     }

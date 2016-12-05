@@ -29,15 +29,15 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
         return Xor.secondary(this);
     }
 
-    public AnyMValueImpl(final Monad<T> monad, final Class initialType, Comprehender<T> adapter) {
-        super(monad, initialType,adapter);
+    public AnyMValueImpl(final Monad<T> monad, final Class initialType) {
+        super(monad, initialType);
 
     }
 
     private <T> AnyMValueImpl<T> with(final Monad<T> anyM) {
 
         return new AnyMValueImpl(
-                                    anyM, initialType,adapter);
+                                    anyM, initialType);
     }
 
     private <T> AnyMValueImpl<T> with(final AnyM<T> anyM) {
@@ -106,7 +106,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
     @Override
     public <T> AnyMValue<T> emptyUnit() {
         return new AnyMValueImpl(
-                                 monad.empty(), initialType,(Comprehender)adapter);
+                                 monad.empty(), initialType);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
     @Override
     public <T> AnyMValue<T> empty() {
         return with(new AnyMValueImpl(
-                                      monad.empty(), initialType,adapter));
+                                      monad.empty(), initialType));
     }
 
     @Override
@@ -171,7 +171,7 @@ public class AnyMValueImpl<T> extends BaseAnyMImpl<T>implements AnyMValue<T> {
    
     @Override
     public <R> AnyMValue<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> fn) {
-        return with(super.flatMapInternal(fn));
+        return with(super.flatMapInternal(fn.andThen(AnyM::ofValue)));
     }
 
     @Override

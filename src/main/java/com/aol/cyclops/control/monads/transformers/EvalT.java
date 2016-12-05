@@ -136,7 +136,7 @@ public interface EvalT<T> extends To<EvalT<T>>,Publisher<T>, Functor<T>, Filtera
 
     }
 
-    public <B> EvalT<B> flatMap(Function<? super T, ? extends Eval<? extends B>> f);
+    public <B> EvalT<B> flatMap(Function<? super T, ? extends MonadicValue<? extends B>> f);
 
     /**
      * Lift a function into one that accepts and returns an MaybeT This allows

@@ -419,7 +419,7 @@ public interface AnyMValue<T> extends AnyM<T>, Value<T>, Filterable<T>,Combiner<
      * @param fn flatMap function
      * @return  flatMapped AnyM
      */
-    <R> AnyMValue<R> flatMap(Function<? super T, ? extends AnyMValue<? extends R>> fn);
+    <R> AnyMValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn);
 
     /**
      * Apply function/s inside supplied Monad to data in current Monad
