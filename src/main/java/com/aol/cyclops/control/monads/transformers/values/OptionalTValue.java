@@ -227,13 +227,13 @@ public class OptionalTValue<W extends WitnessType,T> implements OptionalT<W,T>, 
 
     }
 
-    private static <B> AnyMValue<Optional<B>> narrow(final AnyMValue<Optional<? extends B>> run) {
+    private static <W extends WitnessType,B> AnyMValue<W,Optional<B>> narrow(final AnyMValue<W,Optional<? extends B>> run) {
         return (AnyMValue) run;
     }
 
     @Override
     public <B> OptionalTValue<W,B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
-        final AnyMValue<Optional<? extends B>> mapped = run.map(o -> Maybe.fromOptional(o)
+        final AnyMValue<W,Optional<? extends B>> mapped = run.map(o -> Maybe.fromOptional(o)
                                                                           .flatMap(f)
                                                                           .toOptional());
         return of(narrow(mapped));

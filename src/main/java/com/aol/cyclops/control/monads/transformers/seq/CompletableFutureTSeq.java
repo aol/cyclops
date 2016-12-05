@@ -47,17 +47,17 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
 public class CompletableFutureTSeq<A>
         implements CompletableFutureT<A>, ValueTransformerSeq<A>, IterableFoldable<A>, ConvertableSequence<A>, CyclopsCollectable<A>, Sequential<A> {
 
-    private final AnyMSeq<CompletableFuture<A>> run;
+    private final AnyMSeq<?,CompletableFuture<A>> run;
 
     /**
      * @return The wrapped AnyM
      */
     @Override
-    public AnyMSeq<CompletableFuture<A>> unwrap() {
+    public AnyMSeq<?,CompletableFuture<A>> unwrap() {
         return run;
     }
 
-    private CompletableFutureTSeq(final AnyMSeq<CompletableFuture<A>> run) {
+    private CompletableFutureTSeq(final AnyMSeq<?,CompletableFuture<A>> run) {
         this.run = run;
     }
 
@@ -149,14 +149,14 @@ public class CompletableFutureTSeq<A>
                                                                           .get(0))));
     }
 
-    private static <B> AnyMSeq<CompletableFuture<B>> narrow(final AnyMSeq<CompletableFuture<? extends B>> run) {
+    private static <B> AnyMSeq<?,CompletableFuture<B>> narrow(final AnyMSeq<?,CompletableFuture<? extends B>> run) {
         return (AnyMSeq) run;
     }
 
     @Override
     public <B> CompletableFutureTSeq<B> flatMap(final Function<? super A, ? extends MonadicValue<? extends B>> f) {
 
-        final AnyMSeq<CompletableFuture<? extends B>> mapped = run.map(o -> FutureW.of(o)
+        final AnyMSeq<?,CompletableFuture<? extends B>> mapped = run.map(o -> FutureW.of(o)
                                                                                    .flatMap(f)
                                                                                    .getFuture());
         return of(narrow(mapped));
@@ -248,7 +248,7 @@ public class CompletableFutureTSeq<A>
      * @param monads AnyM that contains a monad wrapping an CompletableFuture
      * @return CompletableFutureT
      */
-    public static <A> CompletableFutureTSeq<A> of(final AnyMSeq<CompletableFuture<A>> monads) {
+    public static <A> CompletableFutureTSeq<A> of(final AnyMSeq<?,CompletableFuture<A>> monads) {
         return new CompletableFutureTSeq<>(
                                            monads);
     }
@@ -285,14 +285,14 @@ public class CompletableFutureTSeq<A>
     }
 
     @Override
-    public <T> CompletableFutureTSeq<T> unitAnyM(final AnyM<Traversable<T>> traversable) {
+    public <T> CompletableFutureTSeq<T> unitAnyM(final AnyM<?,Traversable<T>> traversable) {
 
         return of((AnyMSeq) traversable.map(t -> FutureW.fromIterable(t)
                                                         .toCompletableFuture()));
     }
 
     @Override
-    public AnyMSeq<? extends Traversable<A>> transformerStream() {
+    public AnyMSeq<?,? extends Traversable<A>> transformerStream() {
 
         return run.map(cf -> FutureW.of(cf)
                                     .toListX());

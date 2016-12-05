@@ -62,7 +62,7 @@ public interface CompletableFutureT<A> extends To<CompletableFutureT<A>>,Unit<A>
     *            AnyM that contains a monad wrapping an Maybe
     * @return MaybeT
     */
-    public static <A> CompletableFutureT<A> of(final AnyM<CompletableFuture<A>> monads) {
+    public static <A> CompletableFutureT<A> of(final AnyM<?,CompletableFuture<A>> monads) {
 
         return Matchables.anyM(monads)
                          .visit(v -> CompletableFutureTValue.of(v), s -> CompletableFutureTSeq.of(s));
@@ -72,7 +72,7 @@ public interface CompletableFutureT<A> extends To<CompletableFutureT<A>>,Unit<A>
     /**
      * @return The wrapped AnyM
      */
-    public AnyM<CompletableFuture<A>> unwrap();
+    public AnyM<?,CompletableFuture<A>> unwrap();
 
     /**
      * Peek at the current value of the CompletableFuture
