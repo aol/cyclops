@@ -3,6 +3,7 @@ package com.aol.cyclops.functions.collections.extensions.persistent;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,6 +33,17 @@ public class POrderedSetXTest extends AbstractCollectionXTest{
 	public <T> FluentCollectionX<T> empty() {
 		return POrderedSetX.empty();
 	}
+	
+    @Test
+    @Override
+    public void forEach2() {
+
+        assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a, b) -> a + b)
+                              .toList()
+                              .size(),
+                   equalTo(12));
+    }
+	
 	 @Override
 	    public FluentCollectionX<Integer> range(int start, int end) {
 	        return POrderedSetX.range(start, end);
