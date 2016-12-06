@@ -52,6 +52,7 @@ import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.Zippable;
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -1799,7 +1800,7 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
     /**
      * @return this Streamable converted to AnyM format
      */
-    default AnyM<T> anyM() {
+    default AnyM<Witness.streamable,T> anyM() {
         return AnyM.fromStreamable(this);
     }
 

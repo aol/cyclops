@@ -43,12 +43,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
     @Override
     <R> MonadicValue<R> map(Function<? super T, ? extends R> fn);
 
-    /**
-     * @return This monad wrapped as an AnyMValue
-     */
-    default AnyMValue<T> anyM() {
-        return AnyM.ofValue(this);
-    }
+    
 
     /**
      * Perform a coflatMap operation. The mapping function accepts this MonadicValue and returns

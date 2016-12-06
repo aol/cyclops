@@ -2,7 +2,10 @@ package com.aol.cyclops.control;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +34,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -73,6 +77,7 @@ import com.aol.cyclops.internal.stream.operators.WindowStatefullyWhileOperator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.Witness.stream;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.NonPausableHotStream;
@@ -1216,9 +1221,9 @@ public class StreamUtils {
      * </pre>
      
      */
-    public final static <T, S, R> Stream<R> zipAnyM(final Stream<T> stream, final AnyM<? extends S> second,
+    public final static <T, S, R> Stream<R> zipAnyM(final Stream<T> stream, final AnyM<stream,? extends S> second,
             final BiFunction<? super T, ? super S, ? extends R> zipper) {
-        return zipSequence(stream, second.stream(), zipper);
+        return zipSequence(stream, second.to(Witness::stream), zipper);
     }
 
     /**
@@ -1822,11 +1827,14 @@ public class StreamUtils {
     public final static <T, R> Stream<R> flatMapSequenceM(final Stream<T> stream, final Function<? super T, ReactiveSeq<? extends R>> fn) {
         return stream.flatMap(fn);
     }
+    
+    public final static <T> Stream<T> narrow(Stream<? extends T> stream){
+        return (Stream<T>)stream;
+    }
 
-    public final static <T, R> Stream<R> flatMapAnyM(final Stream<T> stream, final Function<? super T, AnyM<Witness,stream,? extends R>> fn) {
-        return AnyM.fromStream(stream)
-                   .flatMap(fn)
-                   .stream();
+    public final static <T, R> Stream<R> flatMapAnyM(final Stream<T> stream, final Function<? super T, AnyM<Witness.stream,? extends R>> fn) {
+        return stream.flatMap(fn.<Stream<R>>andThen(anyM->narrow(Witness.stream(anyM))));
+       
 
     }
 
@@ -1887,10 +1895,8 @@ public class StreamUtils {
 
     }
 
-    public final static <T, R> ReactiveSeq<R> flatten(final Stream<T> stream) {
-        return new MonadWrapper<>(
-                                  stream).flatten()
-                                         .sequence();
+    public final static <T> Stream<T> flatten(final Stream<Stream<T>> stream) {
+       return stream.flatMap(Function.identity());
     }
 
     /**
@@ -1928,9 +1934,8 @@ public class StreamUtils {
      * @return
      *///rename -flatMapCharSequence
     public final static <T> Stream<Character> flatMapCharSequence(final Stream<T> stream, final Function<? super T, CharSequence> fn) {
-        return new MonadWrapper<T>(
-                                   stream).liftAndBind(fn)
-                                          .sequence();
+        return stream.flatMap(fn.andThen(CharSequence::chars)
+                                .andThen(s->s.mapToObj(i->Character.toChars(i)[0])));
     }
 
     /**
@@ -1957,9 +1962,7 @@ public class StreamUtils {
      * @return
      */
     public final static <T> Stream<String> flatMapFile(final Stream<T> stream, final Function<? super T, File> fn) {
-        return new MonadWrapper<T>(
-                                   stream).liftAndBind(fn)
-                                          .sequence();
+        return stream.flatMap(fn.andThen(f->ExceptionSoftener.softenSupplier(()->Files.lines(Paths.get(f.getAbsolutePath()) ) ).get()));
     }
 
     /**
@@ -1981,9 +1984,15 @@ public class StreamUtils {
      * @return
      */
     public final static <T> Stream<String> flatMapURL(final Stream<T> stream, final Function<? super T, URL> fn) {
-        return new MonadWrapper<T>(
-                                   stream).liftAndBind(fn)
-                                          .sequence();
+        return stream.flatMap(fn.andThen(url -> ExceptionSoftener.softenSupplier(() -> {
+            final BufferedReader in = new BufferedReader(
+                                                         new InputStreamReader(
+                                                                               url.openStream()));
+
+            return in.lines();
+        })
+                                                                 .get()));
+
     }
 
     /**
@@ -2006,9 +2015,12 @@ public class StreamUtils {
      * @return
      */
     public final static <T> Stream<String> flatMapBufferedReader(final Stream<T> stream, final Function<? super T, BufferedReader> fn) {
-        return new MonadWrapper<T>(
-                                   stream).liftAndBind(fn)
-                                          .sequence();
+        return stream.flatMap(fn.andThen(in -> ExceptionSoftener.softenSupplier(() -> {
+       
+
+            return in.lines();
+        })
+                                         .get()));
     }
 
     public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator) {

@@ -13,7 +13,8 @@ import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class SortedSetComprehender implements Comprehender<SortedSet> {
+public enum SortedSetComprehender implements Comprehender<SortedSet> {
+    INSTANCE;
     @Override
     public Object resolveForCrossTypeFlatMap(final Comprehender comp, final SortedSet apply) {
         final List list = (List) apply.stream()

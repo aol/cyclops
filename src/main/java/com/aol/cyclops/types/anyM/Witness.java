@@ -29,6 +29,7 @@ import com.aol.cyclops.internal.comprehensions.comprehenders.MaybeComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.OptionalComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.QueueComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.SetComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.SortedSetComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.StreamComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.StreamableComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.TryComprehender;
@@ -52,7 +53,7 @@ public interface Witness {
     public static <T> Set<T>set(AnyM<set,T> anyM){
         return anyM.unwrap();
     }
-    public static <T> Queue<T> queue(AnyM<queue,,T> anyM){
+    public static <T> Queue<T> queue(AnyM<queue,T> anyM){
         return anyM.unwrap();
     }
     public static <T> SortedSet<T> sortedSet(AnyM<sortedSet,T> anyM){
@@ -91,6 +92,15 @@ public interface Witness {
         @Override
         public <T> Comprehender<T> adapter() {
             return (Comprehender<T>) StreamComprehender.INSTANCE;
+        }
+        
+    }
+    public static enum sortedSet implements WitnessType{
+        INSTANCE;
+
+        @Override
+        public <T> Comprehender<T> adapter() {
+            return (Comprehender<T>) SortedSetComprehender.INSTANCE;
         }
         
     }

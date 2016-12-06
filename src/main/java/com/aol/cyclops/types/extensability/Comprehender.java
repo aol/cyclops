@@ -40,6 +40,7 @@ import com.aol.cyclops.types.anyM.WitnessType;
  *
  * @param <T> Monadic Type being wrapped
  */
+//TODO rename MonadAdapter
 public interface Comprehender<T> {
     
     default Comprehender<T> adapter(){
@@ -119,7 +120,8 @@ public interface Comprehender<T> {
     }
 
     static <T> T unwrapOtherMonadTypes(final Comprehender<T> comp, final Object apply) {
-
+        return null; //remove this
+        /**
         if (comp.instanceOfT(apply))
             return (T) apply;
 
@@ -149,6 +151,7 @@ public interface Comprehender<T> {
 
         return (T) new ComprehenderSelector().selectComprehender(apply,--?)
                                              .resolveForCrossTypeFlatMap(comp, apply);
+                                             **/
 
     }
 

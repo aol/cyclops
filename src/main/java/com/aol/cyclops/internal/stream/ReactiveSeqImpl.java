@@ -116,9 +116,9 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
         return (R) this;
     }
 
-    @Override
-    public final <T1> ReactiveSeq<T1> flatten() {
-        return StreamUtils.flatten(stream);
+   
+    public final <T> ReactiveSeq<T> flatten(ReactiveSeq<ReactiveSeq<T>> s) {
+        return s.flatMap(Function.identity());
 
     }
 
@@ -560,7 +560,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     }
 
     @Override
-    public AnyMSeq<T> anyM() {
+    public AnyMSeq<Witness.stream,T> anyM() {
         return AnyM.fromStream(stream);
 
     }

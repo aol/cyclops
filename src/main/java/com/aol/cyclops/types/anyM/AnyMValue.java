@@ -23,7 +23,6 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -39,6 +38,7 @@ import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.types.anyM.WitnessType;
 
 /**
  * Wrapper around 'Any' scalar 'M'onad
