@@ -349,77 +349,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
         return new AnyMonads().sequence(seq);
     }
 
-    @Override
-    default <R1, R> AnyMValue<W,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
-            final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
-        return (AnyMValue<W,R>) MonadicValue.super.forEach2(value1, yieldingFunction);
-    }
-
-   
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
-     */
-    @Override
-    default <T2, R1, R2, R3, R> AnyMValue<W,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
-        return (AnyMValue<W,R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
-    }
-
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
-     */
-    @Override
-    default <T2, R1, R2, R3, R> AnyMValue<W,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
-        return (AnyMValue<W,R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
-    }
-
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
-     */
-    @Override
-    default <T2, R1, R2, R> AnyMValue<W,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
-        return (AnyMValue<W,R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
-    }
-
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
-     */
-    @Override
-    default <T2, R1, R2, R> AnyMValue<W,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
-        return (AnyMValue<W,R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
-    }
-
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
-     */
-    @Override
-    default <R1, R> AnyMValue<W,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, Boolean> filterFunction,
-            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
-        return (AnyMValue<W,R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
-    }
-
+    
 
     /**
      * flatMap operation

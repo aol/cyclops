@@ -46,7 +46,8 @@ public class AnyMonads<W extends WitnessType> {
     private <T> Comprehender<T> comprehender2(final Collection<? extends AnyM<W,T>> seq) {
         AnyM<W,T> first = seq.iterator()
                 .next();
-        return new ComprehenderSelector().selectComprehender(first,first.adapter());
+        return first.adapter();
+        
     }
 
     /**
@@ -93,12 +94,9 @@ public class AnyMonads<W extends WitnessType> {
     }
 
     private <T1> Comprehender comprehender(final Collection<? extends AnyM<W,T1>> seq) {
-        seq.iterator()
-           .next();
-        return new ComprehenderSelector().selectComprehender(seq.iterator()
-                                                                .next()
-                                                                .unwrap()
-                                                                .getClass());
+        AnyM<W,T1> first = seq.iterator()
+                .next();
+        return first.adapter();
     }
 
     /**

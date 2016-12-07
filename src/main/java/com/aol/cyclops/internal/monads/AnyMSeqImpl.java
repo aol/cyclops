@@ -134,7 +134,7 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>imple
      * @see com.aol.cyclops.types.super.AnyMSeq#flatMap(java.util.function.Function)
      */
     @Override
-    public <R> AnyMSeq<W,R> flatMap(final Function<? super T, ? extends AnyM<? extends R>> fn) {
+    public <R> AnyMSeq<W,R> flatMap(final Function<? super T, ? extends AnyM<W,? extends R>> fn) {
         return with(super.flatMapInternal(fn));
 
     }
@@ -161,16 +161,15 @@ public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>imple
      */
     @Override
     public <T> AnyMSeq<W,T> unit(final T value) {
-        return AnyM.ofSeq(monad.unit(value));
+        
+        return AnyM.ofSeq(monad.unit(value),adapter);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.super.AnyMSeq#empty()
      */
-    @Override
     public <T> AnyMSeq<W,T> empty() {
-        return with(new AnyMSeqImpl(
-                                    monad.empty(), initialType));
+        return  new AnyMSeqImpl(monad.empty(), initialType,adapter);
     }
 
     /* (non-Javadoc)

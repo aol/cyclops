@@ -1,6 +1,7 @@
 package com.aol.cyclops.control;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,12 +35,12 @@ import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.Witness.completableFuture;
 import com.aol.cyclops.types.anyM.Witness.eval;
-import com.aol.cyclops.types.anyM.Witness.featureToggle;
 import com.aol.cyclops.types.anyM.Witness.futureW;
 import com.aol.cyclops.types.anyM.Witness.ior;
 import com.aol.cyclops.types.anyM.Witness.list;
@@ -51,9 +52,11 @@ import com.aol.cyclops.types.anyM.Witness.streamable;
 import com.aol.cyclops.types.anyM.Witness.tryType;
 import com.aol.cyclops.types.anyM.Witness.xor;
 import com.aol.cyclops.types.anyM.WitnessType;
+import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.Optionals;
+import com.aol.cyclops.util.function.Lambda;
 import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
@@ -88,9 +91,266 @@ import com.aol.cyclops.util.function.TriFunction;
  * @param <T> type data wrapped by the underlying monad
  */
 public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, FlatMap<T>, ToStream<T>,Publisher<T> {
+    <R> AnyMSeq<W,R> flatMap(Function<? super T, ? extends AnyM<W,? extends R>> fn);
    
+    1. remove filterable
+    2. create filterableAnyM sub class
+    3. remove AnyMValue / AnyMseq ?
+    4. Add combine iterable / zip
+    5. traverse / sequence methods
+    
+    /**
+     * Perform a four level nested internal iteration over this monad and the
+     * supplied monads
+     *
+     * 
+     * @param monad1
+     *            Nested Monad to iterate over
+     * @param monad2
+     *            Nested Monad to iterate over
+     * @param monad3
+     *            Nested Monad to iterate over
+     * @param yieldingFunction
+     *            Function with pointers to the current element from both
+     *            Monad that generates the new elements
+     * @return AnyMSeq with elements generated via nested iteration
+     */
+    default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
+                        final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
+                            final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
+                            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+       
+        return this.flatMap(in -> {
+
+            AnyM<W,R1> a = monad1.apply(in);
+            return a.flatMap(ina -> {
+                AnyM<W,R2> b = monad2.apply(in, ina);
+                return b.flatMap(inb -> {
+                    AnyM<W,R3> c = monad3.apply(in, ina,inb);
+                    return c.map(in2 -> yieldingFunction.apply(in, ina, inb, in2));
+                });
+
+            });
+
+        });
+    }
+    /**
+     * Perform a four level nested internal iteration over this monad and the
+     * supplied monads
+     * 
+
+     * 
+     * @param monad1
+     *            Nested Monad to iterate over
+     * @param monad2
+     *            Nested Monad to iterate over
+     * @param monad3
+     *            Nested Monad to iterate over
+     * @param filterFunction
+     *            Filter to apply over elements before passing non-filtered
+     *            values to the yielding function
+     * @param yieldingFunction
+     *            Function with pointers to the current element from both
+     *            Streams that generates the new elements
+     * @return ReactiveSeq with elements generated via nested iteration
+     */
+    default <R1, R2, R3,R> AnyM<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
+            final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
+                    final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
+                        final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+
+        return this.flatMap(in -> {
+
+            AnyM<W,R1> a = monad1.apply(in);
+            return a.flatMap(ina -> {
+                AnyM<W,R2> b = monad2.apply(in, ina);
+                return b.flatMap(inb -> {
+                    AnyM<W,R3> c = monad3.apply(in, ina,inb);
+                    return c.filter(in2 -> filterFunction.apply(in, ina, inb, in2))
+                            .map(in2 -> yieldingFunction.apply(in, ina, inb, in2));
+                });
+
+            });
+
+        });
+        
+           
+    }
+    /**
+     * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
+     * etc to be injected, for example)
+     * 
+     * <pre>
+     * {@code 
+     * AnyM.fromArray(1,2,3)
+                        .forEachAnyM2(a->AnyM.fromIntStream(IntStream.range(10,13)),
+                                    (a,b)->a+b);
+                                    
+     * 
+     *  //AnyM[11,14,12,15,13,16]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param monad Nested Monad to iterate over
+     * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+     * @return LazyFutureStream with elements generated via nested iteration
+     */
+    default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad,
+            BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
+
+        
+        return this.flatMap(in-> { 
+            
+            
+            AnyM<W,R1> b = monad.apply(in);
+            return b.map(in2->yieldingFunction.apply(in, in2));
+        });
+      
+
+    }
+
+    /**
+     * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
+     * etc to be injected, for example)
+     * 
+     * <pre>
+     * {@code 
+     * AnyM.fromArray(1,2,3)
+                        .forEach2(a->AnyM.fromIntStream(IntStream.range(10,13)),
+                                  (a,b)-> a<3 && b>10,
+                                  (a,b)->a+b);
+                                    
+     * 
+     *  //AnyM[14,15]
+     * }
+     * </pre>
+     * @param monad Nested Monad to iterate over
+     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
+     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
+     * @return
+     */
+   default <R1, R> AnyM<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad, 
+            BiFunction<? super T,? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
+
+       return this.flatMap(in-> { 
+           
+           
+           AnyM<W,R1> b = monad.apply(in);
+           return b.filter(in2-> filterFunction.apply(in,in2))
+                   .map(in2->yieldingFunction.apply(in, in2));
+       });
+        
+        
+    }
+
+    /** 
+     * Perform a three level nested internal iteration over this Stream and the supplied streams
+      *<pre>
+     * {@code 
+     * AnyM.fromArray(1,2)
+                        .forEach3(a->AnyM.fromIntStream(IntStream.range(10,13)),
+                                 (a,b)->AnyM.fromArray(""+(a+b),"hello world"),
+                                 (a,b,c)->AnyM.fromArray(""+(a+b),"hello world"),
+                                 (a,b,c,d)->c+":"a+":"+b);
+                                    
+     * 
+     *  
+     * }
+     * </pre> 
+     * @param monad1 Nested monad to flatMap over
+     * @param monad2 Nested monad to flatMap over
+     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
+     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
+     * @return AnyM with elements generated via nested iteration
+     */
+    default <R1, R2, R> AnyM<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
+            BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
+            TriFunction<? super T,? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+
+        return this.flatMap(in -> {
+
+            AnyM<W,R1> a = monad1.apply(in);
+            return a.flatMap(ina -> {
+                AnyM<W,R2> b = monad2.apply(in, ina);
+                return b.filter(in2 -> filterFunction.apply(in, ina, in2))
+                        .map(in2 -> yieldingFunction.apply(in, ina, in2));
+            });
+
+        });
+        
+        
+    }
+    
+    /**
+     * Perform a three level nested internal iteration over this AnyM and the supplied monads
+     *<pre>
+     * {@code 
+     * AnyM.fromArray(1,2,3)
+                    .forEach3(a->AnyM.fromStream(IntStream.range(10,13)),
+                             (a,b)->AnyM.fromArray(""+(a+b),"hello world"),
+                             (a,b,c)-> c!=3,
+                             (a,b,c)->c+":"a+":"+b);
+                                
+     * 
+     *  //AnyM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+     * }
+    * </pre> 
+     * 
+     * @param monad1 Nested Stream to iterate over
+     * @param monad2 Nested Stream to iterate over
+     * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
+     * @return AnyM with elements generated via nested iteration
+     */
+    default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
+            BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+        return this.flatMap(in -> {
+
+            AnyM<W,R1> a = monad1.apply(in);
+            return a.flatMap(ina -> {
+                AnyM<W,R2> b = monad2.apply(in, ina);
+                return b.map(in2 -> yieldingFunction.apply(in, ina, in2));
+            });
+
+        });
+    
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> AnyM<W,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (AnyM<W,R>) ApplicativeFunctor.super.combine(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> AnyM<W,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        Iterator<? extends T2> it= app.iterator();
+        return this.map(t->fn.apply(t, it.next()).limit(t->it.hasNext()));
+     //   return (AnyM<W,R>) ApplicativeFunctor.super.zip(app, fn);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+    default <R> AnyM<W,R> coflatMap(final Function<? super AnyM<W,T>, R> mapper) {
+        return unit(Lambda.λ(()->mapper.apply(this))).map(Supplier::get);
+    }
     
     
+    /* cojoin
+     * (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+    default AnyM<W,AnyM<W,T>> nest() {
+        return unit(this);
+    }
     
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
@@ -311,8 +571,10 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      * 
      * @return Flattened / joined one level
      */
-    @Override
-    <T1> AnyM<W,T1> flatten();
+    
+    static <W extends WitnessType,T1> AnyM<W,T1> flatten(AnyM<W,AnyM<W,T1>> nested){
+        return nested.flatMap(Function.identity());
+    }
 
     /**
      * Aggregate the contents of this Monad and the supplied Monad 
@@ -645,16 +907,6 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
         return AnyMFactory.instance.value(xor,Witness.xor.INSTANCE);
     }
 
-    /**
-     * Create an AnyMValue instance that wraps an FeatureToggle
-     * 
-     * @param featureToggle to wrap inside an AnyM
-     * @return AnyM instance that wraps the provided FeatureToggle
-     */
-    public static <T> AnyMValue<featureToggle,T> fromFeatureToggle(final FeatureToggle<T> featureToggle) {
-        Objects.requireNonNull(featureToggle);
-        return AnyMFactory.instance.value(featureToggle,Witness.featureToggle.INSTANCE);
-    }
 
     /**
      * Create an AnyMValue instance that wraps a Try
@@ -975,6 +1227,10 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
     public static <W extends WitnessType,T> AnyMValue<W,T> ofValue(final Object monad, W witness) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.value(monad,witness);
+    } 
+    public static <W extends WitnessType,T> AnyMValue<W,T> ofValue(final Object monad,Comprehender<?> adapter) {
+        Objects.requireNonNull(monad);
+        return AnyMFactory.instance.value(monad,adapter);
     } 
 
     /**
@@ -1498,6 +1754,14 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
                                       o).anyMSeq();
         }
 */
+        public <W extends WitnessType,T> AnyMValue<W,T> value(final Object o,Comprehender<?> adapter) {
+            if (o instanceof AnyMValue)
+                return (AnyMValue<W,T>) o;
+            
+            return new MonadWrapper<>(
+                                      o,adapter).anyMValue();
+        }
+
         /**
          * Non-type safe way to wrap a supported monad type in an AnyMValue
          * 
@@ -1526,5 +1790,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
         }
 
     }
+
+    Comprehender<T> adapter();
 
 }

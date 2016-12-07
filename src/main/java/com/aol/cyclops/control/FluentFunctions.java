@@ -22,6 +22,8 @@ import org.jooq.lambda.tuple.Tuple3;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.MutableInt;
 import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
+import com.aol.cyclops.types.anyM.Witness;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.function.Cacheable;
 import com.aol.cyclops.util.function.Curry;
@@ -529,9 +531,9 @@ public class FluentFunctions {
         /**
          * @return A Supplier that returns it's value wrapped in an Optional inside an AnyM
          */
-        public FluentSupplier<AnyM<R>> liftM() {
+        public   FluentSupplier<AnyM<Witness.maybe,R>> liftM() {
             return new FluentSupplier<>(
-                                        () -> AnyM.ofNullable(fn.get()));
+                                        () -> AnyM.fromMaybe(Maybe.ofNullable(get())));
         }
 
         /**
@@ -850,7 +852,7 @@ public class FluentFunctions {
         /**
          * @return A function that accepts and reurns an AnyM type
          */
-        public FluentFunction<AnyM<T>, AnyM<R>> liftM() {
+        public  <W extends WitnessType> FluentFunction<AnyM<W,T>, AnyM<W,R>> liftM() {
             return FluentFunctions.of(AnyM.liftM(fn));
         }
 
@@ -1263,7 +1265,7 @@ public class FluentFunctions {
         /**
          * @return A BiFunction that accepts and returns a generic Monad instance
          */
-        public FluentBiFunction<AnyM<T1>, AnyM<T2>, AnyM<R>> liftM() {
+        public <W extends WitnessType> FluentBiFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,R>> liftM() {
             return FluentFunctions.of(AnyM.liftM2(fn));
         }
 
@@ -1672,7 +1674,7 @@ public class FluentFunctions {
         /**
          * @return Lift this TriFunction into one that accepts and returns generic monad types (AnyM)
          */
-        public FluentTriFunction<AnyM<T1>, AnyM<T2>, AnyM<T3>, AnyM<R>> liftM() {
+        public  <W extends WitnessType> FluentTriFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,T3>, AnyM<W,R>> liftM() {
             return FluentFunctions.of(AnyM.liftM3(fn));
         }
 

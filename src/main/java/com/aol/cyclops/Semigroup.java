@@ -20,15 +20,5 @@ public interface Semigroup<T> extends BinaryOperator<T> {
     @Override
     T apply(T t, T u);
    
-    
-    @Deprecated
-    default BiFunction<T, T, T> combiner() {
-        return this;
-    }
-   
-    @Deprecated
-    default BinaryOperator<T> reducer() {
-        return (a, b) -> combiner().apply(a, b);
-    }
 
 }

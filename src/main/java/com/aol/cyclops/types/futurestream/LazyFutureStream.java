@@ -50,7 +50,6 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -78,13 +77,11 @@ import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFoldable;
-import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
@@ -1492,9 +1489,9 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     }
 
     @Override
-    default <R> LazyFutureStream<R> flatMapAnyM(final Function<? super U, AnyM<? extends R>> flatFn) {
+    default <R> LazyFutureStream<R> flatMapAnyM(final Function<? super U, AnyM<Witness.stream,? extends R>> flatFn) {
 
-        return (LazyFutureStream) LazySimpleReactStream.super.flatMap(flatFn.andThen(anyM -> anyM.stream()));
+        return (LazyFutureStream<R>) LazySimpleReactStream.super.flatMap(flatFn.andThen(anyM -> Witness.stream(anyM)));
     }
 
     /**
@@ -2817,7 +2814,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @see com.aol.cyclops.control.ReactiveSeq#anyM()
      */
     @Override
-    default AnyMSeq<U> anyM() {
+    default AnyMSeq<Witness.stream,U> anyM() {
         return AnyM.fromStream(this);
     }
 

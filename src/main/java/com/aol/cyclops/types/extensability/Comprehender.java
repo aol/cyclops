@@ -1,18 +1,8 @@
 package com.aol.cyclops.types.extensability;
 
 import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
-
-import com.aol.cyclops.internal.comprehensions.comprehenders.MaterializedList;
-import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
-import com.aol.cyclops.types.anyM.WitnessType;
 
 /**
  * Interface for defining how Comprehensions should work for a type
@@ -113,10 +103,8 @@ public interface Comprehender<T> {
     public T empty();
 
     static Object liftObject(final Comprehender comp, final Object apply) {
-        final Object o = new MonadicConverters().convertToMonadicForm(apply);
-
-        return o;
-
+        return apply;
+        
     }
 
     static <T> T unwrapOtherMonadTypes(final Comprehender<T> comp, final Object apply) {

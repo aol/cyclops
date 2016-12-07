@@ -29,7 +29,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T> Data type of the elements in the nested Monad
  */
-public interface NestedCollectable<T> {
+public interface NestedCollectable<W extends WitnessType,T> {
     public AnyM<? extends CyclopsCollectable<T>> nestedCollectables();
 
     /**
@@ -79,7 +79,7 @@ public interface NestedCollectable<T> {
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
-    default <R, A> AnyM<R> collect(final Collector<? super T, A, R> collector) {
+    default <R, A> AnyM<W,R> collect(final Collector<? super T, A, R> collector) {
         return nestedCollectables().map(s -> s.collect(collector));
     }
 
@@ -103,7 +103,7 @@ public interface NestedCollectable<T> {
      * @param c
      *            Predicate to check if all match
      */
-    default AnyM<Boolean> allMatch(final Predicate<? super T> c) {
+    default AnyM<W,Boolean> allMatch(final Predicate<? super T> c) {
         return nestedCollectables().map(s -> s.allMatch(c));
     }
 
@@ -119,7 +119,7 @@ public interface NestedCollectable<T> {
      * @param c
      *            Predicate to check if any match
      */
-    default AnyM<Boolean> anyMatch(final Predicate<? super T> c) {
+    default AnyM<W,Boolean> anyMatch(final Predicate<? super T> c) {
         return nestedCollectables().map(s -> s.anyMatch(c));
     }
 
@@ -129,7 +129,7 @@ public interface NestedCollectable<T> {
      * @param c  Predicate to check if no match
      * @return Monad of booleans wrapped inside an AnyM
      */
-    default AnyM<Boolean> noneMatch(final Predicate<? super T> c) {
+    default AnyM<W,Boolean> noneMatch(final Predicate<? super T> c) {
         return nestedCollectables().map(s -> s.noneMatch(c));
     }
 
@@ -154,14 +154,14 @@ public interface NestedCollectable<T> {
     /**
      * @return This monad transformer converted to a ListX nested in an AnyM
      */
-    default AnyM<ListX<T>> toNestedListX() {
+    default AnyM<W,ListX<T>> toNestedListX() {
         return nestedCollectables().map(s -> s.collect(ListX.listXCollector()));
     }
 
     /**
      * @return This monad transformer converted to a SetX nested in an AnyM
      */
-    default AnyM<SetX<T>> toNestedSetX() {
+    default AnyM<W,SetX<T>> toNestedSetX() {
         return nestedCollectables().map(s -> s.collect(SetX.setXCollector()));
     }
 

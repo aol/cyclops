@@ -1,7 +1,6 @@
 
 package com.aol.cyclops.control;
 
-import static com.aol.cyclops.control.For.Values.each2;
 import static com.aol.cyclops.types.anyM.Witness.*;
 
 import java.io.Closeable;
@@ -393,7 +392,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      * @return Combined Try
      */
     default Try<T, X> combine(final Monoid<T> monoid, final Try<? extends T, X> v2) {
-        return unit(each2(this, t1 -> v2, (t1, t2) -> monoid
+        return unit(this.forEach2( t1 -> v2, (t1, t2) -> monoid
                                                             .apply(t1, t2)).orElseGet(() -> this.orElseGet(() -> monoid.zero())));
     }
     
@@ -533,18 +532,10 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     /**
      * @return This monad, wrapped as AnyM of Success
      */
-    @Override
-    public AnyMValue<tryType,T> anyM();
+    default AnyMValue<tryType,T> anyM(){
+        return AnyM.fromTry(this);
+    }
 
-    /**
-     * @return This monad, wrapped as AnyM of Failure
-     */
-    public AnyM<tryType,X> anyMFailure();
-
-    /**
-     * @return This monad, wrapped as AnyM of Success
-     */
-    public AnyM<tryType,T> anyMSuccess();
 
     /**
      * @return Successful value or will throw Throwable (X) if Failire
@@ -639,11 +630,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      */
     public Try<T, X> recoverWithFor(Class<? extends X> t, Function<? super X, ? extends Success<T, X>> fn);
 
-    /**
-     * Flatten a nested Try Structure
-     * @return Lowest nested Try
-     */
-    public Try<T, X> flatten();
+    
 
     /**
      * @return Optional present if Success, Optional empty if failure
@@ -1029,6 +1016,15 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     public static interface CheckedRunnable<X extends Throwable> {
         public void run() throws X;
     }
+    /* 
+     * Flatten a nested Try Structure
+     * @return Lowest nested Try
+     * @see com.aol.cyclops.trycatch.Try#flatten()
+     */
+  
+    public static <T,X extends Throwable> Try<T, X> flatten(Try<Try<T,X>,X> nested) {
+        return nested.flatMap(Function.identity());
+    }
 
     /**
      * Class that represents a Successful Try
@@ -1071,47 +1067,8 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
             return value;
         }
 
-        /**
-         * @return This monad wrapped as AnyM
-         */
-        @Override
-        public AnyMValue<T> anyM() {
-            return AnyM.fromTry(this);
-        }
+       
 
-        /**
-         * @return This monad, wrapped as AnyM of Failure
-         */
-        @Override
-        public AnyM<X> anyMFailure() {
-            return AnyM.fromOptional(Optional.empty());
-        }
-
-        /**
-         * @return This monad, wrapped as AnyM of Success
-         */
-        @Override
-        public AnyM<T> anyMSuccess() {
-            return anyM();
-        }
-
-        /**
-         * @param value Successful value
-         * @return new Success with value
-         */
-        public static <T, X extends Throwable> AnyM<T> anyMOf(final T value, final Class<? extends Throwable>[] classes) {
-            return new Success<>(
-                                 value, classes).anyM();
-        }
-
-        /**
-         * @param value Successful value
-         * @return new Success with value
-         */
-        public static <T, X extends Throwable> AnyM<tryType,T> anyMOf(final T value) {
-            return new Success<>(
-                                 value, new Class[0]).anyM();
-        }
 
         /**
          * @param value Successful value
@@ -1213,17 +1170,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
             return this;
         }
 
-        /* 
-         * Flatten a nested Try Structure
-         * @return Lowest nested Try
-         * @see com.aol.cyclops.trycatch.Try#flatten()
-         */
-        @Override
-        public Try<T, X> flatten() {
-            if (value instanceof Try)
-                return ((Try) value).flatten();
-            return this;
-        }
+        
 
         /* 
          *	
@@ -1422,45 +1369,14 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
             return Ior.secondary(error);
         }
 
-        /**
-         * @return This monad, wrapped as AnyM of Success
-         */
-        @Override
-        public AnyMValue<tryType,T> anyM() {
-            return this.anyMSuccess();
-        }
-
-        /**
-         * @return This monad, wrapped as AnyM of Failure
-         */
-        @Override
-        public AnyMValue<tryType,X> anyMFailure() {
-            return AnyM.fromTry(this);
-        }
-
-        /**
-         * @return This monad, wrapped as AnyM of Success
-         */
-        @Override
-        public AnyMValue<optional,T> anyMSuccess() {
-            return AnyM.fromOptional(Optional.empty());
-        }
+       
 
         @Override
         public X failureGet() {
             return error;
         }
 
-        /**
-         * Construct a Failure instance from a throwable
-         * 
-         * @param error for Failure
-         * @return new Failure with error
-         */
-        public static <T, X extends Throwable> AnyM<X> anyMOf(final X error) {
-            return new Failure<>(
-                                 error).anyMFailure();
-        }
+       
 
         /* 
          *	@return throws an Exception
@@ -1550,15 +1466,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
             return fn.apply(error);
         }
 
-        /* 
-         * Flatten a nested Try Structure
-         * @return Lowest nested Try
-         * @see com.aol.cyclops.trycatch.Try#flatten()
-         */
-        @Override
-        public Try<T, X> flatten() {
-            return this;
-        }
+       
 
         /* 
          *  @param value Return value supplied 

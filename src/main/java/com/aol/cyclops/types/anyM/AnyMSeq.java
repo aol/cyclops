@@ -31,7 +31,6 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
@@ -943,7 +942,13 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
             BiFunction<? super T,? super R1, Boolean> filterFunction,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
 
-            return For.Publishers.each2(this,monad,filterFunction,yieldingFunction);
+       return this.flatMap(in-> { 
+           
+           
+           AnyM<W,R1> b = monad.apply(in);
+           return b.filter(in2-> filterFunction.apply(in,in2))
+                   .map(in2->yieldingFunction.apply(in, in2));
+       });
         
         
     }
@@ -973,7 +978,7 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
             TriFunction<? super T,? super R1, ? super R2, Boolean> filterFunction,
             TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
 
-            return For.Publishers.each3(this, monad1,monad2,filterFunction,yieldingFunction);
+        return AnyM.super.forEach3(monad1, monad2, filterFunction, yieldingFunction);
         
         
     }
@@ -1001,7 +1006,7 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
             BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
             TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
-        return For.Publishers.each3(this, monad1,monad2,yieldingFunction);
+        return AnyM.super.forEach3(monad1, monad2, yieldingFunction);
     
     }
 
@@ -1033,7 +1038,7 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
      * @param fn flatMap function
      * @return  flatMapped AnyM
      */
-    <R> AnyMSeq<W,R> flatMap(Function<? super T, ? extends AnyM<? extends R>> fn);
+    <R> AnyMSeq<W,R> flatMap(Function<? super T, ? extends AnyM<W,? extends R>> fn);
 
     /**
      * Apply function/s inside supplied Monad to data in current Monad

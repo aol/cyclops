@@ -6,7 +6,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
@@ -19,6 +18,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.extensability.Comprehender;
 import com.aol.cyclops.types.extensability.ValueComprehender;
@@ -92,7 +92,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
      */
     default Monad<T> cycle(final int times) {
 
-        return fromStream(SeqUtils.cycle(times, Streamable.fromStream(stream())),adapter());
+        return fromStream(SeqUtils.cycle(times, Streamable.fromStream(stream())));
 
     }
 
@@ -250,7 +250,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
 
     static <T> Monad<T> fromStream(final Stream<T> monad) {
         return new MonadWrapper<Witness.stream,T>(
-                                  monad,StreamComprehender.INSTANCE);
+                                  monad,(Comprehender<T>)StreamComprehender.INSTANCE);
     }
 
     /**
@@ -303,6 +303,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
      */
     default <R> Monad<R> replicateM(final int times) {
 
+        //This only works because of cross-type resolution which we are removing
         return (Monad) new MonadWrapper<>(
                                           unit(1),adapter()).flatten()
                                                   .bind(v -> cycle(times).unwrap());
@@ -318,7 +319,7 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
         }</pre>
      * 
      * 
-     */
+    
     default <R> Monad<R> reduceM(final Monoid<R> reducer) {
         //  List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
         //  convert to list Optionals
@@ -331,5 +332,5 @@ public interface Monad<T> extends Functor<T>, Filterable<T> {
                                        .sequence()
                                        .reduce((Monoid) reducer),adapter());
     }
-
+ */
 }

@@ -18,7 +18,6 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Maybe;
@@ -311,14 +310,7 @@ public interface Value<T> extends Supplier<T>,
         return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(new NoSuchElementException());
     }
 
-    /**
-     * Returns a enabled FeatureToggle in case there is an Optional in this object, otherwise returns a disabled FeatureToogle
-     * @return new FeatureToogle
-     */
-    default FeatureToggle<T> toFeatureToggle() {
-        final Optional<T> opt = toOptional();
-        return opt.isPresent() ? FeatureToggle.enable(opt.get()) : FeatureToggle.disable(null);
-    }
+    
 
     /**
      * Return the value, evaluated right now.

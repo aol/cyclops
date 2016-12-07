@@ -1,7 +1,5 @@
 package com.aol.cyclops.control;
 
-import static com.aol.cyclops.control.For.Values.each2;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +24,6 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
@@ -303,7 +300,7 @@ public interface Eval<T>
      */
     @Override
     default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
-        return unit(each2(this, t1 -> v2, (t1, t2) -> monoid
+        return unit(this.forEach2( t1 -> v2, (t1, t2) -> monoid
                                                             .apply(t1, t2)).orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 

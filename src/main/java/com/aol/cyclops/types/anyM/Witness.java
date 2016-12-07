@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FeatureToggle;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
@@ -21,7 +20,6 @@ import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.internal.comprehensions.comprehenders.CompletableFutureComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.DequeComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.EvalComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.FeatureToggleComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.FutureFunctorComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.IorComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.ListComprehender;
@@ -71,9 +69,7 @@ public interface Witness {
     public static <T> FutureW<T> futureW(AnyM<futureW,T> anyM){
         return anyM.unwrap();
     }
-    public static <T> FeatureToggle<T> featureToggle(AnyM<featureToggle,T> anyM){
-        return anyM.unwrap();
-    }
+    
     public static <T> CompletableFuture<T> completableFuture(AnyM<completableFuture,T> anyM){
         return anyM.unwrap();
     }
@@ -194,15 +190,7 @@ public interface Witness {
         }
         
     }
-    public static enum featureToggle implements WitnessType{
-        INSTANCE;
-
-        @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) FeatureToggleComprehender.INSTANCE;
-        }
-        
-    }
+    
     public static enum futureW implements WitnessType{
         INSTANCE;
 

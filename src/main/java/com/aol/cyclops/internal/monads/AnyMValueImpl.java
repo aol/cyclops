@@ -51,7 +51,7 @@ public class AnyMValueImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>imp
     @Override
     public <T2, R> AnyMValue<W,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         if (this.unwrap() instanceof ApplicativeFunctor) {
-            return AnyM.<R> ofValue(((ApplicativeFunctor) unwrap()).combine(app, fn));
+            return AnyM.<W,R> ofValue(((ApplicativeFunctor) unwrap()).combine(app, fn),adapter());
         }
         return with((AnyM) AnyMValue.super.combine(app, fn));
     }
@@ -59,7 +59,7 @@ public class AnyMValueImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>imp
     @Override
     public <T2, R> AnyMValue<W,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         if (this.unwrap() instanceof ApplicativeFunctor) {
-            return AnyM.<R> ofValue(((ApplicativeFunctor) unwrap()).zip(app, fn));
+            return AnyM.<W,R> ofValue(((ApplicativeFunctor) unwrap()).zip(app, fn),adapter);
         }
         return (AnyMValue<W,R>) AnyMValue.super.zip(app, fn);
     }
@@ -70,7 +70,7 @@ public class AnyMValueImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>imp
     @Override
     public <T2, R> AnyMValue<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         if (this.unwrap() instanceof ApplicativeFunctor) {
-            return AnyM.<R> ofValue(((ApplicativeFunctor) unwrap()).zip(fn, app));
+            return AnyM.<W,R> ofValue(((ApplicativeFunctor) unwrap()).zip(fn, app),adapter);
         }
         return (AnyMValue<W,R>) AnyMValue.super.zip(fn, app);
     }
@@ -133,7 +133,7 @@ public class AnyMValueImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>imp
 
     @Override
     public <T> AnyMValue<W,T> unit(final T value) {
-        return AnyM.ofValue(monad.unit(value));
+        return AnyM.<W,T>ofValue(monad.unit(value),adapter);
     }
 
     @Override
@@ -198,13 +198,7 @@ public class AnyMValueImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>imp
 
     }
 
-    @Override
-    public <R> AnyMValue<W,R> applyM(final AnyMValue<Function<? super T, ? extends R>> fn) {
-        return monad.applyM(((AnyMValueImpl<Function<? super T, ? extends R>>) fn).monad)
-                    .anyMValue();
-
-    }
-
+    
     @Override
     public <NT> ReactiveSeq<NT> toSequence() {
         return super.toSequence();

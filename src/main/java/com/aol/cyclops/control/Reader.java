@@ -64,11 +64,6 @@ public interface Reader<T, R> extends Function<T, R>, Functor<R> {
                                         .apply(a));
     }
 
-    /**
-     * @return This Reader instance wrapped inside an AnyM (monad wrapper)
-     */
-    default AnyM<R> anyM() {
-        return AnyM.ofValue(this);
-    }
+    
 
 }

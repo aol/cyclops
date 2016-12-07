@@ -33,6 +33,7 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
@@ -262,9 +263,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#anyM()
      */
-    @Override
-    default AnyMValue<PT> anyM() {
-        return AnyM.ofValue(this);
+    default AnyMValue<Witness.ior,PT> anyM() {
+        return AnyM.fromIor(this);
     }
 
     /* (non-Javadoc)

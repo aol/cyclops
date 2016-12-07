@@ -7,9 +7,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.reactivestreams.Publisher;
-
-import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
@@ -225,33 +222,13 @@ public abstract class BaseAnyMImpl<W extends WitnessType,T> {
 
     }
 
-    //	filterM((a: Int) => List(a > 2, a % 2 == 0), List(1, 2, 3), ListMonad),
-    //List(List(3), Nil, List(2, 3), List(2), List(3),
-    //	  Nil, List(2, 3), List(2))												
+   										
 
     public abstract <T> AnyM<W,T> unit(T value);
 
     public abstract <T> AnyM<W,T> empty();
 
-    public AnyMValue<W,T> reduceMValue(final Monoid<AnyMValue<W,T>> reducer) {
-        //  List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
-        //  convert to list Optionals
-        return monad.reduceM(Monoid.of(reducer.zero()
-                                              .unwrap(),
-                                       (a, b) -> reducer
-                                                        .apply(AnyM.ofValue(a), AnyM.ofValue(b))))
-                    .anyMValue();
-    }
-
-    public AnyMSeq<W,T> reduceMSeq(final Monoid<AnyMSeq<W,T>> reducer) {
-        //	List(2, 8, 3, 1).foldLeftM(0) {binSmalls} -> Optional(14)
-        //	convert to list Optionals
-        return monad.reduceM(Monoid.of(reducer.zero()
-                                              .unwrap(),
-                                       (a, b) -> reducer
-                                                        .apply(AnyM.ofSeq(a), AnyM.ofSeq(b))))
-                    .anyMSeq();
-    }
+  
 
     public ReactiveSeq<T> stream() {
         //	if(this.monad.unwrap() instanceof Stream){

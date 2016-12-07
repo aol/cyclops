@@ -7,10 +7,7 @@ import java.util.function.Predicate;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;

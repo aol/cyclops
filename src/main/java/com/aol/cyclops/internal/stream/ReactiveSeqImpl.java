@@ -204,10 +204,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     }
 
-    public final <R> ReactiveSeq<R> cycle(final Class<R> monadC, final int times) {
-        return (ReactiveSeqImpl) cycle(times).map(r -> new ComprehenderSelector().selectComprehender(monadC)
-                                                                                 .of(r));
-    }
+   
 
     @Override
     public final ReactiveSeq<T> cycleWhile(final Predicate<? super T> predicate) {
