@@ -16,6 +16,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -24,11 +25,10 @@ import java.util.stream.StreamSupport;
 
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.Monoid;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.monads.MonadWrapper;
+import com.aol.cyclops.internal.monads.AnyMSeqImpl;
+import com.aol.cyclops.internal.monads.AnyMValueImpl;
 import com.aol.cyclops.types.EmptyUnit;
-import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.To;
@@ -56,9 +56,8 @@ import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.Optionals;
 import com.aol.cyclops.util.function.Lambda;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.QuintFunction;
-import com.aol.cyclops.util.function.TriFunction;
+
+import lombok.val;
 
 /**
  * 
@@ -88,12 +87,33 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, FlatMap<T>, ToStream<T>,Publisher<T> {
+public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, ToStream<T>,Publisher<T> {
+   
     default <R> AnyM<W,R> flatMapA(Function<? super T, ? extends AnyM<W,? extends R>> fn){
         return adapter().flatMap(this, fn);
     }
     default <R> AnyM<W,R> map(Function<? super T,? extends R> fn){
         return adapter().map(this, fn);
+    }
+    default <T> AnyM<W,T> fromIterable(Iterable<T> t){
+        return  (AnyM<W,T>)adapter().unitIterator(t.iterator());
+    }
+    /**
+     * Construct a new instanceof AnyM using the type of the underlying wrapped monad
+     * 
+     * <pre>
+     * {@code
+     *   AnyM<Integer> ints = AnyM.fromList(Arrays.asList(1,2,3);
+     *   AnyM<String> string = ints.unit("hello");
+     * }
+     * </pre>
+     * 
+     * @param value to embed inside the monad wrapped by AnyM
+     * @return Newly instantated AnyM
+     */
+    @Override
+    default <T> AnyM<W,T> unit(T t){
+        return adapter().unit(t);
     }
     
     /**
@@ -113,7 +133,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      * @param fn Function inside an Applicative
      * @return Function to apply an Applicative's value to function
      */
-    public static <W extends WitnessType,T,R> Function<AnyM<W,T>,AnyM<W,R>> ap(AnyM<W, Function<? super T,? extends R>> fn){
+    public static <W extends WitnessType,T,R> Function<AnyM<W,T>,AnyM<W,R>> ap(AnyM<W, Function<T,R>> fn){
         return apply->apply.adapter().ap(fn,apply);
     }
     /**
@@ -131,7 +151,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      * @param fn Curried function inside an Applicative
      * @return Function to apply two Applicative's values to a function
      */
-    public static <W extends WitnessType,T,T2,R> BiFunction<AnyM<W,T>,AnyM<W,T2>,AnyM<W,R>> ap2(AnyM<W, Function<? super T,? extends Function<? super T2,? extends R>>> fn){
+    public static <W extends WitnessType,T,T2,R> BiFunction<AnyM<W,T>,AnyM<W,T2>,AnyM<W,R>> ap2(AnyM<W, Function<T,Function<T2,R>>> fn){
         return (apply1,apply2)->apply1.adapter().ap2(fn,apply1,apply2);
     }
 
@@ -171,9 +191,6 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
     2. map / filter (if filterable) / flatMap / flatMapT / zip - combine / fold - reduce operations
        on nested data structures (reduce etc all via map)
     3.  **/
-    
-  
-   
     default <R> AnyM<W,R> coflatMapA(final Function<? super AnyM<W,T>, R> mapper) {
         return unit(Lambda.λ(()->mapper.apply(this))).map(Supplier::get);
     }
@@ -187,7 +204,9 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
      */
     @Override
-    <T> Unit<T> emptyUnit() ;
+    default <T> Unit<T> emptyUnit(){
+        return adapter().empty();
+    }
 
     /**
      * Tests for equivalency between two AnyM types
@@ -227,23 +246,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      */
     Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
 
-    /**
-     * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
-     * will take the first value from the Iterable returned.
-     * 
-     * @param fn FlatMaping function
-     * @return AnyM with flattening transformation
-     */
-    <R> AnyM<W,R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn);
 
-    /**
-     * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
-     * will take the first value from the Publisher returned.
-     * 
-     * @param fn FlatMaping function
-     * @return AnyM with flattening transformation
-     */
-    <R> AnyM<W,R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
@@ -264,7 +267,9 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      * @param collector JDK collector to perform mutable reduction
      * @return Reduced value
      */
-    <R, A> R collect(Collector<? super T, A, R> collector);
+    default <R, A> R collect(Collector<? super T, A, R> collector){
+        return stream().collect(collector);   
+    }
 
     /* 
      * Convert this AnyM to an extended Stream (ReactiveSeq)
@@ -280,49 +285,11 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      * 
      */
     @Override
-    public ReactiveSeq<T> stream();
-
-    /**
-     * Sequence the contents of a Monad.  e.g.
-     * Turn an <pre>
-     *  {@code Optional<List<Integer>>  into Stream<Integer> }</pre>
-     * 
-     * <pre>{@code
-     * List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-                                            .<Integer>toSequence(c->c.stream())
-                                            .collect(Collectors.toList());
-        
-        
-        assertThat(list,hasItems(1,2,3,4,5,6));
-        
-     * 
-     * }</pre>
-     * @param fn Function used to convert contents to Stream
-     * 
-     * @return A Sequence that wraps a Stream
-     */
-    <NT> ReactiveSeq<NT> toReactiveSeq(Function<? super T, ? extends Stream<? extends NT>> fn);
-
-    /* 
-     * Unwraps the wrapped monad
-     * 
-     * <pre>
-     * {@code 
-     *    AnyM<Integer> monad = AnyM.fromStream(Stream.of(1,2,3));
-     *    
-     *    Stream<Integer> stream = monad.unwrap();
-     * }
-     * </pre>
-     * 
-     * (non-Javadoc)
-    * @see com.aol.cyclops.sequence.Unwrapable#unwrap()
-    */
-    @Override
-    <R> R unwrap();
+    default ReactiveSeq<T> stream(){
+        return ReactiveSeq.fromIterable(this);
+    }
 
     
-
- 
 
     /**
      * Perform a peek operation on the wrapped monad e.g.
@@ -338,26 +305,11 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      * @return AnyM after peek operation
      */
     @Override
-    AnyM<W,T> peek(Consumer<? super T> c);
+    default AnyM<W,T> peek(Consumer<? super T> c){
+        return (AnyM<W, T>) Functor.super.peek(c);
+    }
 
-    /**
-     * Perform a looser typed flatMap / bind operation
-     * The return type can be another type other than the host type
-     * 
-     * Note the modified javaslang monad laws are not applied during the looser typed bind operation
-     * The modification being used to work around the limits of the Java type system.
-     * 
-     * <pre>
-     * {@code 
-     * AnyM<List<Integer>> m  = AnyM.fromStream(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
-       AnyM<Integer> intM = m.bind(Collection::stream);
-     * }
-     * </pre>
-     * 
-     * @param fn flatMap function
-     * @return flatMapped monad
-    */
-    <R> AnyM<W,R> bind(Function<? super T, ?> fn);
+
 
     /**
      * join / flatten one level of a nested hierarchy
@@ -368,6 +320,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
         return nested.flatMapA(Function.identity());
     }
 
+   
     /**
      * Aggregate the contents of this Monad and the supplied Monad 
      * 
@@ -390,23 +343,15 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      * @param next Monad to aggregate content with
      * @return Aggregated Monad
      */
-    AnyM<W,List<T>> aggregate(AnyM<W,T> next);
+    default AnyM<W,List<T>> aggregate(AnyM<W,T> next){
+        return unit(Stream.concat(matchable().visit(value -> value.stream(), seq -> seq.stream()), next.matchable()
+                                  .visit(value -> value.stream(),
+                                         seq -> seq.stream()))
+                    .collect(Collectors.toList()));
+    }
 
-    /**
-     * Construct a new instanceof AnyM using the type of the underlying wrapped monad
-     * 
-     * <pre>
-     * {@code
-     *   AnyM<Integer> ints = AnyM.fromList(Arrays.asList(1,2,3);
-     *   AnyM<String> string = ints.unit("hello");
-     * }
-     * </pre>
-     * 
-     * @param value to embed inside the monad wrapped by AnyM
-     * @return Newly instantated AnyM
-     */
-    @Override
-    public <T> AnyM<W,T> unit(T value);
+   
+    
 
     /**
      * Construct an AnyM wrapping a new empty instance of the wrapped type 
@@ -420,52 +365,11 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
      * </pre>
      * @return Empty AnyM
      */
-    public <T> AnyM<W,T> empty();
+    default <T> AnyM<W,T> empty(){
+        return adapter().empty();
+    }
 
-    /**
-     * Perform a monadic reduction using a Monoid that combines AnyM types.
-     * 
-     * 
-     * e.g. 
-     * <pre>{@code 
-     *   Monoid<AnyMValue<Integer>> optionalAdd = Monoid.of(AnyM.fromOptional(Optional.of(0)), (a,b)-> AnyM.fromOptional(Optional.of(a.get()+b.get())));
-    	
-    	AnyM.fromStream(Stream.of(2,8,3,1)).reduceM(optionalAdd);
-    	
-    	//AnyM[Optional(14)];
-    	  
-    	 	 
-    	}</pre>
-    * 
-    * 
-    * 
-    * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
-    * @return Reduced AnyM
-    */
-    AnyMValue<W,T> reduceMValue(Monoid<AnyMValue<W,T>> reducer);
-
-    /**
-     * Perform a monadic reduction using a Monoid that combines AnyM types.
-     * 
-     * 
-     * e.g. 
-     * <pre>{@code 
-     *   Monoid<AnyMSeq<Integer>> listAddFirst = Monoid.of(AnyM.fromList(Arrays.asList(0)), (a,b)-> AnyM.fromList(Arrays.asList(a.get(0)+b.get(0))));
-        
-        AnyM.fromStream(Stream.of(2,8,3,1)).reduceM(listAddFirst);
-        
-        //AnyM[Optional(14)];
-          
-             
-        }</pre>
-    * 
-    * 
-    * 
-    * @param reducer An identity value (approx. a seed) and BiFunction with a single type to reduce this anyM
-    * @return Reduced AnyM
-    */
-    AnyMSeq<W,T> reduceMSeq(Monoid<AnyMSeq<W,T>> reducer);
-
+    
     /**
      * @return String representation of this AnyM
      */
@@ -1283,233 +1187,15 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
 
     
 
-    /**
-     * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
-     * 
-     * 
-     * @param fn Function to Lift into monadic form
-     * @return A monadic function
-     */
-    public static <W extends WitnessType,U, R> Function<AnyM<W,U>, AnyM<W,R>> liftM(final Function<? super U, ? extends R> fn) {
-        return u -> u.map(input -> fn.apply(input));
-    }
-
-    /**
-     * Lift a function so it accepts an AnyM wrapped Monad and returns an AnyMwrapped Monad.
-     * 
-     * e.g.
-     * 
-     * <pre>
-     * {@code
-     * 	BiFunction<AnyM<Integer>,AnyM<Integer>,AnyM<Integer>> add = Monads.liftM2(this::add);
-     *   
-     *  Optional<Integer> result = add.apply(getBase(),getIncrease());
-     *  
-     *   private Integer add(Integer a, Integer b){
-    			return a+b;
-    	}
-     * }</pre>
-     * The add method has no null handling, but we can lift the method to Monadic form, and use Optionals to automatically handle null / empty value cases.
-     * 
-     * 
-     * @param fn BiFunction to lift
-     * @return Lifted BiFunction
-     */
-    public static <W extends WitnessType,U1, U2, R> BiFunction<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,R>> liftM2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
-
-        return (u1, u2) -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1, input2))
-                                               .unwrap());
-    }
-
-    /**
-     * Lift a TriFunction  into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
-     * 
-     * <pre>
-     * {@code
-     * TriFunction<AnyM<Double>,AnyM<Entity>,AnyM<String>,AnyM<Integer>> fn = liftM3(this::myMethod);
-     *    
-     * }
-     * </pre>
-     * 
-     * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
-     * 
-     * @param fn Function to lift
-     * @return Lifted function
-     */
-    public static <W extends WitnessType,U1, U2, U3, R> TriFunction<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,R>> liftM3(
-            final TriFunction<? super U1, ? super U2, ? super U3, ? extends R> fn) {
-        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
-                                                   .unwrap());
-    }
-
-    /**
-     * Lift a QuadFunction into Monadic form.
-     * 
-     * @param fn Quad funciton to lift
-     * @return Lifted Quad function
-     */
-    public static <W extends WitnessType,U1, U2, U3, U4, R> QuadFunction<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,R>> liftM4(
-            final QuadFunction<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
-
-        return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))
-                                                                                           .unwrap())
-                                                                         .unwrap())
-                                                       .unwrap());
-    }
-
-    /**
-     * Lift a QuintFunction (5 parameters) into Monadic form
-     * 
-     * @param fn Function to lift
-     * @return Lifted Function
-     */
-    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> QuintFunction<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,U5>, AnyM<W,R>> liftM5(
-            final QuintFunction<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
-
-        return (u1, u2, u3, u4,
-                u5) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,
-                                                                                                                         input4, input5))
-                                                                                                 .unwrap())
-                                                                               .unwrap())
-                                                             .unwrap())
-                                           .unwrap());
-    }
-
-    /**
-     * Lift a Curried Function {@code(2 levels a->b->fn.apply(a,b) )} into Monadic form
-     * 
-     * @param fn Function to lift
-     * @return Lifted function 
-     */
-    public static <W extends WitnessType,U1, U2, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, AnyM<W,R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
-        return u1 -> u2 -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1)
-                                                                .apply(input2))
-                                               .unwrap());
-
-    }
-
-    /**
-     * Lift a Curried Function {@code(3 levels a->b->c->fn.apply(a,b,c) )} into Monadic form
-     * 
-     * @param fn Function to lift
-     * @return Lifted function 
-     */
-    public static <W extends WitnessType,U1, U2, U3, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, AnyM<W,R>>>> liftM3(
-            final Function<? super U1, Function<? super U2, Function<? super U3, ? extends R>>> fn) {
-        return u1 -> u2 -> u3 -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1)
-                                                                                        .apply(input2)
-                                                                                        .apply(input3)))
-                                                     .unwrap());
-    }
-
-    /**
-     * Lift a Curried Function {@code(4 levels a->b->c->d->fn.apply(a,b,c,d) )} into Monadic form
-     * 
-     * @param fn Function to lift
-     * @return Lifted function 
-     */
-    public static <W extends WitnessType,U1, U2, U3, U4, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, Function<AnyM<W,U4>, AnyM<W,R>>>>> liftM4(
-            final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, ? extends R>>>> fn) {
-
-        return u1 -> u2 -> u3 -> u4 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1)
-                                                                                                                .apply(input2)
-                                                                                                                .apply(input3)
-                                                                                                                .apply(input4))))
-                                                           .unwrap());
-    }
-
-    /**
-     * Lift a Curried Function {@code (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) ) }into Monadic form
-     * 
-     * @param fn Function to lift
-     * @return Lifted function 
-     */
-    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, Function<AnyM<W,U4>, Function<AnyM<W,U5>, AnyM<W,R>>>>>> liftM5(
-            final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, Function<? super U5, ? extends R>>>>> fn) {
-
-        return u1 -> u2 -> u3 -> u4 -> u5 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1)
-                                                                                                                                        .apply(input2)
-                                                                                                                                        .apply(input3)
-                                                                                                                                        .apply(input4)
-                                                                                                                                        .apply(input5)))))
-                                                                 .unwrap());
-    }
-
     static class AnyMFactory {
         static AnyMFactory instance = new AnyMFactory();
 
-        /**
-         * Convert an object to an AnyMValue type if possible. If a registered monad comprehender exists the supplied object will
-         * be wrapped as is, otherwise it will be converted into a support type (if possible). 
-         * 
-         * <pre>
-         * {@code
-         *     //Wrapped as is 
-         *      
-         *     AnyMValue<Integer> maybe = factory.convertValue(Maybe.just(10));
-         *     //AnyMValue[Maybe[Integer]]]
-         *     
-         *     //Converted 
-         *     
-         *     AnyMValue<Integer> maybe = factory.convertValue(null);
-         *     
-         *     //AnyMValue[Optional[Integer]]
-         *     
-         * }
-         * </pre>
-         * 
-         * 
-         * @param o Object to convert
-         * @return AnyMValue wrapping supplied Object
-         
-        public <T> AnyMValue<T> convertValue(final Object o) {
-
-            if (new ComprehenderSelector().selectComprehender(o) instanceof InvokeDynamicComprehender)
-                return new MonadWrapper<>(
-                                          new MonadicConverters().convertToMonadicForm(o)).anyMValue();
-            return new MonadWrapper<>(
-                                      o).anyMValue();
-        }*/
-
-        /**
-         * Convert an object to an AnyMSeq type if possible. If a registered monad comprehender exists the supplied object will
-         * be wrapped as is, otherwise it will be converted into a support type (if possible). 
-         * 
-         * <pre>
-         * {@code
-         *     //Wrapped as is 
-         *      
-         *     AnyMSeq<Integer> maybe = factory.convertSeq(Stream.of(10));
-         *     //AnyMValue[Stream[Integer]]]
-         *     
-         *     //Converted 
-         *     BufferedReader reader;
-         *     AnyMSeq<Integer> maybe = factory.convertSeq(reader);
-         *     
-         *     //AnyMSeq[ReactiveSeq[String]]
-         *     
-         * }
-         * </pre>
-         * 
-         * 
-         * @param o Object to convert
-         * @return AnyMSeq wrapping supplied Object
-         
-        public <T> AnyMSeq<T> convertSeq(final Object o) {
-
-            if (new ComprehenderSelector().selectComprehender(o) instanceof InvokeDynamicComprehender)
-                return new MonadWrapper<>(
-                                          new MonadicConverters().convertToMonadicForm(o)).anyMSeq();
-            return new MonadWrapper<>(
-                                      o).anyMSeq();
-        }
-*/
         public <W extends WitnessType,T> AnyMValue<W,T> value(final Object o,Comprehender<?> adapter) {
             if (o instanceof AnyMValue)
                 return (AnyMValue<W,T>) o;
             
-            return new MonadWrapper<>(
-                                      o,adapter).anyMValue();
+            return new AnyMValueImpl<W,T>(
+                                        o,(Comprehender)adapter);
         }
 
         /**
@@ -1522,8 +1208,8 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
             if (o instanceof AnyMValue)
                 return (AnyMValue<W,T>) o;
             
-            return new MonadWrapper<>(
-                                      o,comp.adapter()).anyMValue();
+            return new AnyMValueImpl<W,T>(
+                                      o,comp.adapter());
         }
 
         /**
@@ -1535,16 +1221,15 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable, To<AnyM<W,T>>
         public <W extends WitnessType,T> AnyMSeq<W,T> seq(final Object o, WitnessType comp) {
             if (o instanceof AnyMSeq)
                 return (AnyMSeq<W,T>) o;
-            return new MonadWrapper<>(
-                                      o,comp.adapter()).anyMSeq();
+            return new AnyMSeqImpl<W,T>(o,comp.adapter());
         }
 
     }
     public static  <W extends WitnessType,T> AnyM<W,Stream<T>> sequence(Stream<? extends AnyM<W,T>> stream, W witness) {
         Comprehender<W> c = witness.adapter();
         AnyM<W,Stream<T>> identity = c.unit(Stream.empty());
-        
-        BiFunction<AnyM<W,Stream<T>>,AnyM<W,T>,AnyM<W,Stream<T>>> combineToStream = (acc,next) -> c.ap2(c.unit(Lambda.l2((Stream<T> a)->b->Stream.concat(a,Stream.of(b)))),acc,next);
+       
+        BiFunction<AnyM<W,Stream<T>>,AnyM<W,T>,AnyM<W,Stream<T>>> combineToStream = (acc,next) -> c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->Stream.concat(a,Stream.of(b)))),acc,next);
 
         BinaryOperator<AnyM<W,Stream<T>>> combineStreams = (a,b)->a;//a.apply(b, (s1,s2)->s1);  
 

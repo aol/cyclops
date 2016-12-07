@@ -14,6 +14,7 @@ import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
@@ -38,6 +39,9 @@ public interface Witness {
     
     public static <T> Stream<T> stream(AnyM<stream,T> anyM){
         return anyM.unwrap();
+    }
+    public static <T> ReactiveSeq<T> reactiveSeq(AnyM<stream,T> anyM){
+        return ReactiveSeq.fromStream(anyM.unwrap());
     }
     public static <T> Streamable<T> streamable(AnyM<streamable,T> anyM){
         return anyM.unwrap();
@@ -86,8 +90,8 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) StreamComprehender.INSTANCE;
+        public  Comprehender<stream> adapter() {
+            return StreamComprehender.stream;
         }
         
     }
@@ -113,8 +117,8 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) SetComprehender.INSTANCE;
+        public  Comprehender<set> adapter() {
+            return SetComprehender.INSTANCE;
         }
         
     }

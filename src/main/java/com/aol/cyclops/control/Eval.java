@@ -27,6 +27,7 @@ import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Memoize;
@@ -193,11 +194,7 @@ public interface Eval<T>
      * @return  Eval with a  list of values
      */
     public static <T> Eval<ReactiveSeq<T>> sequence(final Stream<Eval<T>> evals) {
-        return AnyM.sequence(evals.map(f -> AnyM.fromEval(f)), () -> AnyM.fromEval(Eval.now(ReactiveSeq.<T> empty())))
-                   .map(s -> ReactiveSeq.fromStream(s))
-
-                   .unwrap();
-
+        return AnyM.sequence(evals,Witness.eval).map(ReactiveSeq::fromStream);
     }
 
     /**

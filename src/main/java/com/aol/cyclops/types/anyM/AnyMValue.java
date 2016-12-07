@@ -2,7 +2,6 @@ package com.aol.cyclops.types.anyM;
 
 import static com.aol.cyclops.internal.Utils.firstOrNull;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -12,23 +11,19 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.monads.AnyMs;
+import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
@@ -38,7 +33,6 @@ import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.QuintFunction;
 import com.aol.cyclops.util.function.TriFunction;
-import com.aol.cyclops.types.anyM.WitnessType;
 
 /**
  * Wrapper around 'Any' scalar 'M'onad
@@ -55,6 +49,7 @@ public interface AnyMValue<W extends WitnessType,T> extends AnyM<W,T>,
                                                             MonadicValue<T>, 
                                                             Matchable.ValueAndOptionalMatcher<T> {
 
+    
     
     /**
      * Equivalence test, returns true if this Monad is equivalent to the supplied monad
@@ -84,55 +79,6 @@ public interface AnyMValue<W extends WitnessType,T> extends AnyM<W,T>,
         return (AnyMValue<W,T>)ApplicativeFunctor.super.combine(combiner, app);
     }
 
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.AnyM#collect(java.util.stream.Collector)
-     */
-    @Override
-    default <R, A> R collect(final Collector<? super T, A, R> collector) {
-
-        return this.<T> toSequence()
-                   .collect(collector);
-
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> AnyMValue<W,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (AnyMValue<W,R>) ApplicativeFunctor.super.combine(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> AnyMValue<W,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-        return (AnyMValue<W,R>) ApplicativeFunctor.super.zip(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
-     */
-    @Override
-    default <T2, R> AnyMValue<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
-
-        return (AnyMValue<W,R>) ApplicativeFunctor.super.zip(fn, app);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.AnyM#flatMapFirst(java.util.function.Function)
-     */
-    @Override
-    <R> AnyMValue<W,R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn);
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.AnyM#flatMapFirstPublisher(java.util.function.Function)
-     */
-    @Override
-    <R> AnyMValue<W,R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
@@ -234,240 +180,138 @@ public interface AnyMValue<W extends WitnessType,T> extends AnyM<W,T>,
      * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
      */
     @Override
-    <T> AnyMValue<W,T> emptyUnit();
+    default <T> AnyMValue<W,T> emptyUnit(){
+        return empty();
+    }
 
-    /**
-    * 
-    * Replicate given Monad
-    * 
-    * <pre>{@code 
-    *  
-    *   AnyM<Optional<Integer>> applied =AnyM.fromOptional(Optional.of(2)).replicateM(5);
-    *   
-      //AnyM[Optional[List(2,2,2,2,2)]]
-      
-      }</pre>
-    * 
-    * 
-    * @param times number of times to replicate
-    * @return Replicated Monad
-    */
-    AnyM<W,List<T>> replicateM(int times);
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.monad.AnyM#stream()
-     */
-    @Override
-    ReactiveSeq<T> stream();
+
+   
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#filter(java.util.function.Predicate)
      */
     @Override
-    AnyMValue<W,T> filter(Predicate<? super T> p);
+    default AnyMValue<W,T> filter(Predicate<? super T> p){
+        return (AnyMValue<W,T>)AnyM.super.filter(p);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#map(java.util.function.Function)
      */
     @Override
-    <R> AnyMValue<W,R> map(Function<? super T, ? extends R> fn);
+    default <R> AnyMValue<W,R> map(Function<? super T, ? extends R> fn){
+        return (AnyMValue<W,R>)AnyM.super.map(fn);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#peek(java.util.function.Consumer)
      */
     @Override
-    AnyMValue<W,T> peek(Consumer<? super T> c);
+    default AnyMValue<W,T> peek(Consumer<? super T> c){
+        return (AnyMValue<W,T>)AnyM.super.peek(c);
+    }
 
 
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.monad.AnyM#flatten()
-     */
     @Override
-    <T1> AnyMValue<W,T1> flatten();
+    default boolean isPresent() {
+        if (unwrap() instanceof Value) {
+            return ((Value<T>) unwrap()).isPresent();
+        }
+        return this.toOptional().isPresent();
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#aggregate(com.aol.cyclops.monad.AnyM)
      */
     @Override
-    AnyMValue<W,List<T>> aggregate(AnyM<W,T> next);
-
-    /**
-    * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process
-    * 
-    <pre>{@code 
-    Stream<CompletableFuture<Integer>> futures = createFutures();
-    AnyMValue<W,List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
-     }
-     </pre>
-    * 
-    * @param seq Stream of Monads
-    * @param fn Function to apply 
-    * @return Monad with a list
-    */
-    public static <W extends WitnessType,T, R> AnyMValue<W,ListX<R>> traverse(final Collection<? extends AnyMValue<W,T>> seq, final Function<? super T, ? extends R> fn) {
-
-        return new AnyMs().traverse(seq, fn);
+    default AnyMValue<W,List<T>> aggregate(AnyM<W,T> next){
+        return (AnyMValue<W,List<T>>)AnyM.super.aggregate(next);
     }
 
-    /**
-     * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
-     *
-     */
-    public static <W extends WitnessType,T, R> AnyMValue<W,Stream<R>> traverse(final Stream<AnyMValue<W,T>> source, final Supplier<AnyMValue<W,Stream<T>>> unitEmpty,
-            final Function<? super T, ? extends R> fn) {
-        return sequence(source, unitEmpty).map(s -> s.map(fn));
-    }
 
-    /**
-     * Convert a Stream of Monads to a Monad with a Stream
-     *
-     */
-    public static <W extends WitnessType,T> AnyMValue<W,Stream<T>> sequence(final Stream<AnyMValue<W,T>> source, final Supplier<AnyMValue<W,Stream<T>>> unitEmpty) {
-
-        return Matchables.anyM(AnyM.sequence(source, unitEmpty))
-                         .visit(v -> v, s -> {
-                             throw new IllegalStateException(
-                                                             "unreachable");
-                         });
-    }
-
-    /**
-     * Convert a Collection of Monads to a Monad with a List
-     * 
-     * <pre>
-     * {@code
-        List<CompletableFuture<Integer>> futures = createFutures();
-        AnyMValue<W,List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
-    
-       //where AnyM wraps  CompletableFuture<List<Integer>>
-      }</pre>
-     * 
-     * @param seq Collection of monads to convert
-     * @return Monad with a List
-     */
-    public static <W extends WitnessType,T1> AnyMValue<W,ListX<T1>> sequence(final Collection<? extends AnyMValue<W,T1>> seq) {
-        return new AnyMs().sequence(seq);
-    }
-
-    
-
-    /**
-     * flatMap operation
-      * 
-     * AnyM follows the javaslang modified 'monad' laws https://gist.github.com/danieldietrich/71be006b355d6fbc0584
-     * In particular left-identity becomes
-     * Left identity: unit(a).flatMap(f) ≡ select(f.apply(a))
-     * Or in plain English, if your flatMap function returns multiple values (such as flatMap by Stream) but the current Monad only can only hold one value,
-     * only the first value is accepted.
-     * 
-     * Example 1 : multi-values are supported (AnyM wraps a Stream, List, Set etc)
-     * <pre>
-     * {@code 
-     *   AnyM<Integer> anyM = AnyM.fromStream(Stream.of(1,2,3)).flatMap(i->AnyM.fromArray(i+1,i+2));
-     *   
-     *   //AnyM[Stream[2,3,3,4,4,5]]
-     * }
-     * </pre>
-     * Example 2 : multi-values are not supported (AnyM wraps a Stream, List, Set etc)
-     * <pre>
-     * {@code 
-     *   AnyM<Integer> anyM = AnyM.fromOptional(Optional.of(1)).flatMap(i->AnyM.fromArray(i+1,i+2));
-     *   
-     *   //AnyM[Optional[2]]
-     * }
-     * </pre>
-     * @param fn flatMap function
-     * @return  flatMapped AnyM
-     */
-    <R> AnyMValue<W,R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn);
-
-    /**
-     * Apply function/s inside supplied Monad to data in current Monad
-     * 
-     * e.g. with Streams
-     * <pre>{@code 
-     * 
-     * AnyM<Integer> applied =AnyM.fromStream(Stream.of(1,2,3))
-     * 								.applyM(AnyM.fromStreamable(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2)));
-    
-     	assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
-     }</pre>
-     * 
-     * with Optionals 
-     * <pre>{@code
-     * 
-     *  Any<Integer> applied =AnyM.fromOptional(Optional.of(2)).applyM(AnyM.fromOptional(Optional.of( (Integer a)->a+1)) );
-    	assertThat(applied.toList(),equalTo(Arrays.asList(3)));}
-    	</pre>
-     * 
-     * @param fn
-     * @return
-     */
-    <R> AnyMValue<W,R> applyM(AnyMValue<W,Function<? super T, ? extends R>> fn);
-
-    /**
-     * Sequence the contents of a Monad.  e.g.
-     * Turn an <pre>
-     *  {@code Optional<List<Integer>>  into Stream<Integer> }</pre>
-     * 
-     * <pre>{@code
-     * List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-                                            .<Integer>toSequence(c->c.stream())
-                                            .collect(Collectors.toList());
-        
-        
-        assertThat(list,hasItems(1,2,3,4,5,6));
-        
-     * 
-     * }</pre>
-     * 
-     * @return A Sequence that wraps a Stream
-     */
     @Override
-    <NT> ReactiveSeq<NT> toReactiveSeq(Function<? super T, ? extends Stream<? extends NT>> fn);
+    default <R> AnyMValue<W,R> flatMapA(Function<? super T, ? extends AnyM<W,? extends R>> fn){
+        return  (AnyMValue<W,R>)AnyM.super.flatMapA(fn);   
+        
+    }
 
-    /**
-     *  <pre>
-     *  {@code Optional<List<Integer>>  into Stream<Integer> }
-     *  </pre>
-     * Less type safe equivalent, but may be more accessible than toSequence(fn) i.e. 
-     * <pre>
-     * {@code 
-     *    toSequence(Function<T,Stream<NT>> fn)
-     *   }
-     *   </pre>
-     *  <pre>{@code
-     * List<Integer> list = anyM(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-                                            .<Integer>toSequence()
-                                            .collect(Collectors.toList());
-        
-        
-        
-     * 
-     * }</pre>
-    
-     * @return A Sequence that wraps a Stream
-     */
-    <T> ReactiveSeq<T> toSequence();
+    @Override
+    default <R> AnyMValue<W,R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn){
+        return flatMapA(fn.andThen(this::fromIterable));
+    }
+    @Override
+    default T get() {
+        return adapter().visit(e->{ throw new IllegalAccessError("misconfigured adapter : value adapter required");}
+                             , v->v.get(this));
+    }
+   
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#unit(java.lang.Object)
      */
     @Override
-    <T> AnyMValue<W,T> unit(T value);
+    default <T> AnyMValue<W,T> unit(T value){
+        return (AnyMValue<W,T>)AnyM.super.unit(value);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#empty()
      */
     @Override
-    <T> AnyMValue<W,T> empty();
+    default <T> AnyMValue<W,T> empty(){
+        return (AnyMValue<W,T>)AnyM.super.empty();
+    }
+    
+    @Override
+    default Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
+        return Xor.secondary(this);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.anyM.AnyMValue#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     */
+    @Override
+    default <T2, R> AnyMValue<W,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        if (this.unwrap() instanceof ApplicativeFunctor) {
+            
+            return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).combine(app, fn));
+        }
+        return (AnyMValue<W, R>) ApplicativeFunctor.super.combine(app, fn);
+    }
+
+    @Override
+    default <T2, R> AnyMValue<W,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        if (this.unwrap() instanceof ApplicativeFunctor) {
+            return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).zip(app, fn));
+        }
+        return (AnyMValue<W,R>) ApplicativeFunctor.super.zip(app, fn);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    default <T2, R> AnyMValue<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+        if (this.unwrap() instanceof ApplicativeFunctor) {
+            return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).zip(fn, app));
+        }
+        return (AnyMValue<W,R>) ApplicativeFunctor.super.zip(fn, app);
+    }
+
+    
 
     @Override
     default Iterator<T> iterator() {
 
         return Matchable.ValueAndOptionalMatcher.super.iterator();
     }
+
+    @Override
+    default ReactiveSeq<T> stream() {
+        return AnyM.super.stream();
+    }
+
 
     /**
      * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
@@ -612,5 +456,5 @@ public interface AnyMValue<W extends WitnessType,T> extends AnyM<W,T>,
                                                                                                                                         .apply(input4)
                                                                                                                                         .apply(input5))))));
     }
-
+    
 }

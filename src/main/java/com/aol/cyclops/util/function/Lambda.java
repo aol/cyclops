@@ -190,6 +190,9 @@ public class Lambda {
     public static <T1, T2, R> Function<T1, Function<T2, R>> l2(final Function<T1, Function<T2, R>> biFunc) {
         return biFunc;
     }
+    public static <T1, T2, R> Function<? super T1, ? extends Function<? super T2, ? extends R>> v2(final Function<? super T1, Function<? super T2, ? extends R>> biFunc) {
+        return biFunc;
+    }
 
     /**
      * Create a curried function with arity of 3

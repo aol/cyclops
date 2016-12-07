@@ -1,11 +1,14 @@
 package com.aol.cyclops.types.extensability;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.anyM.WitnessType;
+
+import lombok.AllArgsConstructor;
 
 /**
  * Interface for defining how Comprehensions should work for a type
@@ -36,10 +39,16 @@ import com.aol.cyclops.types.anyM.WitnessType;
 //TODO rename MonadAdapter
 public interface Comprehender<W extends WitnessType> {
     
-    default <T,T2,R> AnyM<W,R> ap2(AnyM<W, Function<? super T,? extends Function<? super T2,? extends R>>> fn, AnyM<W,T> apply,AnyM<W,T2> apply2){
+    
+    default <R> R visit(Function<? super Comprehender<W>,? extends R> fn1, Function<? super  ValueAdapter<W>, ? extends R> fn2){
+        return fn1.apply(this);
+    }
+    default <T,T2,R> AnyM<W,R> ap2(AnyM<W, Function<T,Function<T2,R>>> fn, AnyM<W,T> apply,AnyM<W,T2> apply2){
         return  ap(ap(fn, apply), apply2);
     }
-    public <T,R> AnyM<W,R> ap(AnyM<W, Function<? super T,? extends R>> fn, AnyM<W,T> apply);
+    
+    public <T,R> AnyM<W,R> ap(AnyM<W, Function<T,R>> fn, AnyM<W,T> apply);
+    
     default <T> AnyM<W,T> filter(AnyM<W,T> t,  Predicate<? super T> fn){
         return t;
     }
@@ -50,12 +59,35 @@ public interface Comprehender<W extends WitnessType> {
     public <T,R> AnyM<W,R> flatMap(AnyM<W,T> t, Function<? super T, ? extends AnyM<W,? extends R>> fn);
 
    
+    @AllArgsConstructor
+    static class ValueIterator<T> implements Iterator<T>{
+        private final T value;
+        int count =0;
+        @Override
+        public boolean hasNext() {
+            return count == 0;
+        }
 
-    public <T> AnyM<W,T> unit(Object o);
+        @Override
+        public T next() {
+            if(count++>0)
+                throw new NoSuchElementException();
+           return value;
+        }
+    }
+    default <T> AnyM<W,T> unit(T o){
+      
+        return unitIterator(new ValueIterator<T>(o,0));
+    }
 
+    <T> Iterable<T> toIterable(AnyM<W,T> t);
     
-
-    public <T> AnyM<W,T> empty();
+    default <T> AnyM<W,T> empty(){
+        return this.<T>unit(null)
+                   .<T>filter(t->false);
+    }
+    
+    <T> AnyM<W,T> unitIterator(Iterator<T> it);
 
   
 

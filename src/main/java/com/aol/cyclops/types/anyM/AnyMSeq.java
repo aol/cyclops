@@ -1,6 +1,7 @@
 package com.aol.cyclops.types.anyM;
 
 import static com.aol.cyclops.internal.Utils.firstOrNull;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -13,7 +14,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.BaseStream;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -27,8 +27,8 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Matchable.CheckValue1;
@@ -37,9 +37,6 @@ import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.monads.AnyMSeqImpl;
-import com.aol.cyclops.internal.monads.AnyMs;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.IterableFoldable;
@@ -168,12 +165,8 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
      * @return LazyFutureStream with elements generated via nested iteration
      */
     default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad,
-            BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
-
-        
+            BiFunction<? super T,? super R1, ? extends R> yieldingFunction){  
         return this.flatMapA(in-> { 
-            
-            
             AnyM<W,R1> b = monad.apply(in);
             return b.map(in2->yieldingFunction.apply(in, in2));
         });
@@ -316,27 +309,6 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
 
     }
 
-   
-
-    /**
-     * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
-     * will take the first value from the Iterable returned.
-     * 
-     * @param fn FlatMaping function
-     * @return AnyM with flattening transformation
-     */
-    @Override
-    <R> AnyMSeq<W,R> flatMapFirst(Function<? super T, ? extends Iterable<? extends R>> fn);
-
-    /**
-     * Perform a flatMap operation that will only work as normal for AnyMSeq types, but for AnyMValue (which can only hold a single value) 
-     * will take the first value from the Publisher returned.
-     * 
-     * @param fn FlatMaping function
-     * @return AnyM with flattening transformation
-     */
-    @Override
-    <R> AnyMSeq<W,R> flatMapFirstPublisher(Function<? super T, ? extends Publisher<? extends R>> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#traversable()
@@ -546,7 +518,13 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
         
         return fromIterable(ZippingApplicativable.super.cycleWhile(predicate));
     }
-    <T> AnyMSeq<W,T> fromIterable(Iterable<T> t);
+    @Override
+    default Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
+        return Xor.primary(this);
+    }
+    default <T> AnyMSeq<W,T> fromIterable(Iterable<T> t){
+        return  (AnyMSeq<W,T>)adapter().unitIterator(t.iterator());
+    }
     
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#cycleUntil(java.util.function.Predicate)
@@ -1002,44 +980,93 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    <U> AnyMSeq<W,U> unitIterator(Iterator<U> U);
+    default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){
+        return (AnyMSeq<W,U>)adapter().unitIterator(U);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
      */
     @Override
-    <T> AnyMSeq<W,T> emptyUnit();
+    default <T> AnyMSeq<W,T> emptyUnit(){
+        return (AnyMSeq<W,T> )empty();
+    }
 
-    /* (non-Javadoc)
-    * @see com.aol.cyclops.monad.AnyM#stream()
-    */
-    @Override
-    ReactiveSeq<T> stream();
+    
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.monad.AnyM#unwrap()
-     */
-    @Override
-    <R> R unwrap();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#filter(java.util.function.Predicate)
      */
     @Override
-    AnyMSeq<W,T> filter(Predicate<? super T> p);
+    default AnyMSeq<W,T> filter(Predicate<? super T> p){
+        return (AnyMSeq<W,T>)AnyM.super.filter(p);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#map(java.util.function.Function)
      */
     @Override
-    <R> AnyMSeq<W,R> map(Function<? super T, ? extends R> fn);
+    default <R> AnyMSeq<W,R> map(Function<? super T, ? extends R> fn){
+        return (AnyMSeq<W,R>)AnyM.super.map(fn);
+    }
+    
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations#forEachX(long, java.util.function.Consumer)
+     */
+    @Override
+    default <X extends Throwable> Subscription forEachX(final long numberOfElements, final Consumer<? super T> consumer) {
+        return this.stream()
+                   .forEachX(numberOfElements, consumer);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations#forEachXWithError(long, java.util.function.Consumer, java.util.function.Consumer)
+     */
+    @Override
+    default <X extends Throwable> Subscription forEachXWithError(final long numberOfElements, final Consumer<? super T> consumer,
+            final Consumer<? super Throwable> consumerError) {
+        return this.stream()
+                   .forEachXWithError(numberOfElements, consumer, consumerError);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations#forEachXEvents(long, java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
+     */
+    @Override
+    default <X extends Throwable> Subscription forEachXEvents(final long numberOfElements, final Consumer<? super T> consumer,
+            final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
+        return this.stream()
+                   .forEachXEvents(numberOfElements, consumer, consumerError, onComplete);
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations#forEachWithError(java.util.function.Consumer, java.util.function.Consumer)
+     */
+    @Override
+    default <X extends Throwable> void forEachWithError(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
+        this.stream()
+            .forEachWithError(consumerElement, consumerError);
+
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations#forEachEvent(java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
+     */
+    @Override
+    default <X extends Throwable> void forEachEvent(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
+            final Runnable onComplete) {
+        this.stream()
+            .forEachEvent(consumerElement, consumerError, onComplete);
+
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#peek(java.util.function.Consumer)
      */
     @Override
     default AnyMSeq<W,T> peek(final Consumer<? super T> c) {
-
         return map(i -> {
             c.accept(i);
             return i;
@@ -1049,14 +1076,18 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#flatten()
      */
-    @Override
-    <T1> AnyMSeq<W,T1> flatten();
+    
+    static <W extends WitnessType,T1> AnyMSeq<W,T1> flatten(AnyMSeq<W,AnyMSeq<W,T1>> nested){
+        return nested.flatMap(Function.identity());
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#aggregate(com.aol.cyclops.monad.AnyM)
      */
     @Override
-    AnyMSeq<W,List<T>> aggregate(AnyM<W,T> next);
+    default AnyMSeq<W,List<T>> aggregate(AnyM<W,T> next){
+        return (AnyMSeq<W,List<T>>)AnyM.super.aggregate(next);
+    }
     
   
 
@@ -1065,90 +1096,32 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
         return (AnyMSeq<W,R>)AnyM.super.flatMapA(fn);
     }
 
-    /**
-     * Apply function/s inside supplied Monad to data in current Monad
-     * 
-     * e.g. with Streams
-     * <pre>{@code 
-     * 
-     * AnyM<Integer> applied =AnyM.fromStream(Stream.of(1,2,3))
-     * 								.applyM(AnyM.fromStreamable(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2)));
     
-     	assertThat(applied.toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
-     }</pre>
-     * 
-     * with Optionals 
-     * <pre>
-     * {@code
-     * 
-     *  Any<Integer> applied =AnyM.fromOptional(Optional.of(2)).applyM(AnyM.fromOptional(Optional.of( (Integer a)->a+1)) );
-    	assertThat(applied.toList(),equalTo(Arrays.asList(3)));
-    	
-    	}
-    	</pre>
-     * 
-     * @param fn
-     * @return
-     */
-    <R> AnyMSeq<W,R> applyM(AnyM<W,Function<? super T, ? extends R>> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#unit(java.lang.Object)
      */
     @Override
-    <T> AnyMSeq<W,T> unit(T value);
+    default <T> AnyMSeq<W,T> unit(T value){
+        return (AnyMSeq<W,T>)AnyM.super.unit(value);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#empty()
      */
     @Override
-    <T> AnyMSeq<W,T> empty();
-
-    AnyMSeq<W,T> replicateM(int times);
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.AnyM#bind(java.util.function.Function)
-     */
-    @Override
-    <R> AnyMSeq<W,R> bind(Function<? super T, ?> fn);
-
-    /**
-     * Convert a Stream of Monads to a Monad with a List applying the supplied function in the process
-     * 
-    <pre>{@code 
-       Stream<CompletableFuture<Integer>> futures = createFutures();
-       AnyMSeq<W,List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
-        }
-        </pre>
-     * 
-     * @param seq Stream of Monads
-     * @param fn Function to apply 
-     * @return Monad with a list
-     */
-    public static <W extends WitnessType,T, R> AnyMSeq<W,ListX<R>> traverse(final Collection<? extends AnyMSeq<W,T>> seq, final Function<? super T, ? extends R> fn) {
-
-        return AnyMSeqImpl.from(new AnyMs().traverse(seq, fn));
+    default <T> AnyMSeq<W,T> empty(){
+        return (AnyMSeq<W,T>)AnyM.super.empty();
     }
 
-    /**
-     * Convert a Collection of Monads to a Monad with a List
-     * 
-     * <pre>
-     * {@code
-        List<CompletableFuture<Integer>> futures = createFutures();
-        AnyMSeq<W,List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
-    
-       //where AnyM wraps  CompletableFuture<List<Integer>>
-      }</pre>
-     * 
-     * @param seq Collection of monads to convert
-     * @return Monad with a List
-     */
-    public static <W extends WitnessType,T1> AnyMSeq<W,ListX<T1>> sequence(final Collection<? extends AnyMSeq<W,T1>> seq) {
-        return AnyMSeqImpl.from(new AnyMs().sequence(seq));
+    default <R> AnyMSeq<W,R> flatMap(Function<? super T, ? extends AnyM<W,? extends R>> fn){
+        return flatMapA(fn);
     }
-
    
+    @Override
+    default ReactiveSeq<T> stream() {
+        return ExtendedTraversable.super.stream();
+    }
     /**
      * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
      * AnyM view simplifies type related challenges.
@@ -1183,8 +1156,7 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
      */
     public static <W extends WitnessType,U1, U2, R> BiFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,R>> liftM2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
 
-        return (u1, u2) -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1, input2))
-                                               .unwrap());
+        return (u1, u2) -> u1.flatMapA(input1 -> u2.map(input2 -> fn.apply(input1, input2)));
     }
 
     /**
@@ -1202,61 +1174,24 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <W extends WitnessType,U1, U2, U3, R> Function3<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,R>> liftM3(
+    public static <W extends WitnessType,U1, U2, U3, R> TriFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,R>> liftM3(
             final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
-        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
-                                                   .unwrap());
+        return (u1, u2, u3) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))));
     }
 
-    /**
-     * Lift a TriFunction into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
-     * 
-     * <pre>
-     * {@code
-     * TriFunction<AnyMSeq<Double>,AnyMSeq<Entity>,AnyMSeq<W,String>,AnyMSeq<Integer>> fn = liftM3(this::myMethod);
-     *    
-     * }
-     * </pre>
-     * 
-     * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
-     * 
-     * @param fn Function to lift
-     * @return Lifted function
-     */
-    public static <W extends WitnessType,U1, U2, U3, R> TriFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,R>> liftM3Cyclops(
-            final TriFunction<? super U1, ? super U2, ? super U3, ? extends R> fn) {
-        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))
-                                                                     .unwrap())
-                                                   .unwrap());
-    }
-
+    
     /**
      * Lift a  jOOλ Function4 into Monadic form.
      * 
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <W extends WitnessType,U1, U2, U3, U4, R> Function4<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,R>> liftM4(
+    public static <W extends WitnessType,U1, U2, U3, U4, R> QuadFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,R>> liftM4(
             final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
-        return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))))
-                                                       .unwrap());
+        return (u1, u2, u3, u4) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4)))));
     }
 
-    /**
-     * Lift a QuadFunction into Monadic form.
-     * 
-     * @param fn Quad funciton to lift
-     * @return Lifted Quad function
-     */
-    public static <W extends WitnessType,U1, U2, U3, U4, R> QuadFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,R>> liftM4Cyclops(
-            final QuadFunction<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
-
-        return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))
-                                                                                           .unwrap())
-                                                                         .unwrap())
-                                                       .unwrap());
-    }
 
     /**
      * Lift a  jOOλ Function5 (5 parameters) into Monadic form
@@ -1264,32 +1199,14 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function5<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,U5>, AnyMSeq<W,R>> liftM5(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> QuintFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,U5>, AnyMSeq<W,R>> liftM5(
             final Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
-                u5) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,
-                                                                                                                         input4, input5)))))
-                                           .unwrap());
+                u5) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.flatMapA(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,
+                                                                                                                         input4, input5))))));
     }
 
-    /**
-     * Lift a QuintFunction (5 parameters) into Monadic form
-     * 
-     * @param fn Function to lift
-     * @return Lifted Function
-     */
-    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> QuintFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,U5>, AnyMSeq<W,R>> liftM5Cyclops(
-            final QuintFunction<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
-
-        return (u1, u2, u3, u4,
-                u5) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,
-                                                                                                                         input4, input5))
-                                                                                                 .unwrap())
-                                                                               .unwrap())
-                                                             .unwrap())
-                                           .unwrap());
-    }
 
     /**
      * Lift a Curried Function {@code(2 levels a->b->fn.apply(a,b) )} into Monadic form
@@ -1298,9 +1215,8 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
      * @return Lifted function 
      */
     public static <W extends WitnessType,U1, U2, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, AnyMSeq<W,R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
-        return u1 -> u2 -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1)
-                                                                .apply(input2))
-                                               .unwrap());
+        return u1 -> u2 -> u1.flatMapA(input1 -> u2.map(input2 -> fn.apply(input1)
+                                                                .apply(input2)));
 
     }
 
@@ -1312,10 +1228,9 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
      */
     public static <W extends WitnessType,U1, U2, U3, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, AnyMSeq<W,R>>>> liftM3(
             final Function<? super U1, Function<? super U2, Function<? super U3, ? extends R>>> fn) {
-        return u1 -> u2 -> u3 -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1)
+        return u1 -> u2 -> u3 -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.map(input3 -> fn.apply(input1)
                                                                                         .apply(input2)
-                                                                                        .apply(input3)))
-                                                     .unwrap());
+                                                                                        .apply(input3))));
     }
 
     /**
@@ -1327,11 +1242,10 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
     public static <W extends WitnessType,U1, U2, U3, U4, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, Function<AnyMSeq<W,U4>, AnyMSeq<W,R>>>>> liftM4(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, ? extends R>>>> fn) {
 
-        return u1 -> u2 -> u3 -> u4 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1)
+        return u1 -> u2 -> u3 -> u4 -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.map(input4 -> fn.apply(input1)
                                                                                                                 .apply(input2)
                                                                                                                 .apply(input3)
-                                                                                                                .apply(input4))))
-                                                           .unwrap());
+                                                                                                                .apply(input4)))));
     }
 
     /**
@@ -1343,12 +1257,11 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
     public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, Function<AnyMSeq<W,U4>, Function<AnyMSeq<W,U5>, AnyMSeq<W,R>>>>>> liftM5(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, Function<? super U5, ? extends R>>>>> fn) {
 
-        return u1 -> u2 -> u3 -> u4 -> u5 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1)
+        return u1 -> u2 -> u3 -> u4 -> u5 -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.flatMapA(input4 -> u5.map(input5 -> fn.apply(input1)
                                                                                                                                         .apply(input2)
                                                                                                                                         .apply(input3)
                                                                                                                                         .apply(input4)
-                                                                                                                                        .apply(input5)))))
-                                                                 .unwrap());
+                                                                                                                                        .apply(input5))))));
     }
 
 }
