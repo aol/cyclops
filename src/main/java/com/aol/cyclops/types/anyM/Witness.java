@@ -18,6 +18,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.CompletableFutureComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.DequeComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.EvalComprehender;
@@ -33,10 +34,16 @@ import com.aol.cyclops.internal.comprehensions.comprehenders.StreamComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.StreamableComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.TryComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.XorComprehender;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.extensability.Comprehender;
 
 public interface Witness {
-    
+   static interface MonadicValueWitness  extends WitnessType{
+        
+    }
+   static interface CollectionXWitness  extends WitnessType{
+       
+   }
     public static <T> Stream<T> stream(AnyM<stream,T> anyM){
         return anyM.unwrap();
     }
@@ -62,6 +69,12 @@ public interface Witness {
         return anyM.unwrap();
     }
     public static <T> Optional<T> optional(AnyM<optional,T> anyM){
+        return anyM.unwrap();
+    }
+    public static <T,W extends CollectionXWitness> CollectionX<T> collectionX(AnyM<W,T> anyM){
+        return anyM.unwrap();
+    }
+    public static <T,W extends MonadicValueWitness> MonadicValue<T> monadicValue(AnyM<W,T> anyM){
         return anyM.unwrap();
     }
     public static <T> Eval<T> eval(AnyM<eval,T> anyM){

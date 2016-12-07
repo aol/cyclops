@@ -25,12 +25,14 @@ import java.util.stream.StreamSupport;
 
 import org.reactivestreams.Publisher;
 
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMValueImpl;
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Unwrapable;
@@ -56,8 +58,6 @@ import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.Optionals;
 import com.aol.cyclops.util.function.Lambda;
 import com.aol.cyclops.util.function.Predicates;
-
-import lombok.val;
 
 /**
  * 
@@ -430,6 +430,10 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
         Objects.requireNonNull(list);
         return AnyMFactory.instance.seq(list,Witness.list.INSTANCE);
     }
+    public static <W extends Witness.CollectionXWitness,T> AnyMSeq<W,T> fromCollectionX(final CollectionX<T> collection, W witness) {
+        Objects.requireNonNull(collection);
+        return AnyMFactory.instance.seq(collection,witness);
+    }
 
     /**
      * Create an AnyM from a Set
@@ -635,6 +639,10 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
     public static <T> AnyMValue<eval,T> fromEval(final Eval<T> eval) {
         Objects.requireNonNull(eval);
         return AnyMFactory.instance.value(eval, Witness.eval.INSTANCE);
+    }
+    public static <W extends Witness.MonadicValueWitness,T> AnyMValue<W,T> fromMonadicValue(final MonadicValue<T> eval,W witness) {
+        Objects.requireNonNull(eval);
+        return AnyMFactory.instance.value(eval, witness);
     }
 
     /**
@@ -1163,7 +1171,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */
-    public static <W extends WitnessType,T1> AnyM<W,ListX<T1>> sequence(final Collection<? extends AnyM<W,T1>> seq,W w) {
+    public static <W extends WitnessType,T1> AnyM<W,ListX<T1>> sequence(final Collection<AnyM<W,T1>> seq,W w) {
         return sequence(seq.stream(),w).map(ListX::fromStreamS);
     }
 

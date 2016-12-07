@@ -8,6 +8,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
@@ -19,9 +20,11 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> Data type of element stored inside this Monad
  */
-public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterable<T>{
+public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>{
 
-    
+    default <T2, R> MonadicValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn){
+        return (MonadicValue<R>)ApplicativeFunctor.super.combine(app, fn);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
      */
