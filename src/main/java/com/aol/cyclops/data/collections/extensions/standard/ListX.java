@@ -56,6 +56,9 @@ public interface ListX<T> extends To<ListX<T>>,
                                  OnEmptySwitch<T, List<T>> {
 
    
+    public static <T> ListX<T> fromStreamS(Stream<T> s){
+        return ReactiveSeq.fromStream(s).toListX();
+    }
    
     /**
      * Create a ListX that contains the Integers between start and end

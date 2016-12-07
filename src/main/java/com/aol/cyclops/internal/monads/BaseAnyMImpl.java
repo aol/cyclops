@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 /**
  * 
  * Wrapper for Any Monad type
- * @see AnyMonads companion class for static helper methods
+ * @see AnyMs companion class for static helper methods
  * 
  * @author johnmcclean
  *

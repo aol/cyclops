@@ -28,7 +28,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.monads.AnyMonads;
+import com.aol.cyclops.internal.monads.AnyMs;
 import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
@@ -48,7 +48,12 @@ import com.aol.cyclops.types.anyM.WitnessType;
  * @param <T> Data types of elements managed by wrapped scalar Monad.
  */
 public interface AnyMValue<W extends WitnessType,T> extends AnyM<W,T>, 
-Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Matchable.ValueAndOptionalMatcher<T> {
+                                                            Value<T>, 
+                                                            Filterable<T>,
+                                                            Combiner<T>, 
+                                                            ApplicativeFunctor<T>, 
+                                                            MonadicValue<T>, 
+                                                            Matchable.ValueAndOptionalMatcher<T> {
 
     
     /**
@@ -273,11 +278,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
     @Override
     AnyMValue<W,T> peek(Consumer<? super T> c);
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.monad.AnyM#bind(java.util.function.Function)
-     */
-    @Override
-    <R> AnyMValue<W,R> bind(Function<? super T, ?> fn);
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#flatten()
@@ -306,7 +307,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
     */
     public static <W extends WitnessType,T, R> AnyMValue<W,ListX<R>> traverse(final Collection<? extends AnyMValue<W,T>> seq, final Function<? super T, ? extends R> fn) {
 
-        return new AnyMonads().traverse(seq, fn);
+        return new AnyMs().traverse(seq, fn);
     }
 
     /**
@@ -346,7 +347,7 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @return Monad with a List
      */
     public static <W extends WitnessType,T1> AnyMValue<W,ListX<T1>> sequence(final Collection<? extends AnyMValue<W,T1>> seq) {
-        return new AnyMonads().sequence(seq);
+        return new AnyMs().sequence(seq);
     }
 
     
@@ -503,30 +504,9 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
     public static <W extends WitnessType,U1, U2, R> BiFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,R>> liftM2(
             final BiFunction<? super U1, ? super U2, ? extends R> fn) {
 
-        return (u1, u2) -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1, input2))
-                                               .unwrap());
+        return (u1, u2) -> u1.flatMap(input1 -> u2.map(input2 -> fn.apply(input1, input2)));
     }
 
-    /**
-     * Lift a jOOλ Function3  into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
-     * 
-     * <pre>
-     * {@code
-     * Function3 <AnyMValue<Double>,AnyMValue<Entity>,AnyMValue<W,String>,AnyMValue<Integer>> fn = liftM3(this::myMethod);
-     *    
-     * }
-     * </pre>
-     * 
-     * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
-     * 
-     * @param fn Function to lift
-     * @return Lifted function
-     */
-    public static <W extends WitnessType,U1, U2, U3, R> Function3<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,R>> liftM3(
-            final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
-        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3)))
-                                                   .unwrap());
-    }
 
     /**
      * Lift a TriFunction into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
@@ -543,25 +523,11 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <W extends WitnessType,U1, U2, U3, R> TriFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,R>> liftM3Cyclops(
-            final TriFunction<? super U1, ? super U2, ? super U3, ? extends R> fn) {
-        return (u1, u2, u3) -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))
-                                                                     .unwrap())
-                                                   .unwrap());
+    public static <W extends WitnessType,U1, U2, U3, R> TriFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,R>> liftM3(
+            final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
+        return (u1, u2, u3) -> u1.flatMap(input1 -> u2.flatMap(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))));
     }
 
-    /**
-     * Lift a  jOOλ Function4 into Monadic form.
-     * 
-     * @param fn Quad funciton to lift
-     * @return Lifted Quad function
-     */
-    public static <W extends WitnessType,U1, U2, U3, U4, R> Function4<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,U4>, AnyMValue<W,R>> liftM4(
-            final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
-
-        return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))))
-                                                       .unwrap());
-    }
 
     /**
      * Lift a QuadFunction into Monadic form.
@@ -569,13 +535,10 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <W extends WitnessType,U1, U2, U3, U4, R> QuadFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,U4>, AnyMValue<W,R>> liftM4Cyclops(
-            final QuadFunction<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
+    public static <W extends WitnessType,U1, U2, U3, U4, R> QuadFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,U4>, AnyMValue<W,R>> liftM4(
+            final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
-        return (u1, u2, u3, u4) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4))
-                                                                                           .unwrap())
-                                                                         .unwrap())
-                                                       .unwrap());
+        return (u1, u2, u3, u4) -> u1.flatMap(input1 -> u2.flatMap(input2 -> u3.flatMap(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4)))));
     }
 
     /**
@@ -584,32 +547,15 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function5<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,U4>, AnyMValue<W,U5>, AnyMValue<W,R>> liftM5(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> QuintFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,U4>, AnyMValue<W,U5>, AnyMValue<W,R>> liftM5(
             final Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
-                u5) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,
-                                                                                                                         input4, input5)))))
-                                           .unwrap());
+                u5) -> u1.flatMap(input1 -> u2.flatMap(input2 -> u3.flatMap(input3 -> u4.flatMap(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,
+                                                                                                                         input4, input5))))));
     }
 
-    /**
-     * Lift a QuintFunction (5 parameters) into Monadic form
-     * 
-     * @param fn Function to lift
-     * @return Lifted Function
-     */
-    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> QuintFunction<AnyMValue<W,U1>, AnyMValue<W,U2>, AnyMValue<W,U3>, AnyMValue<W,U4>, AnyMValue<W,U5>, AnyMValue<W,R>> liftM5Cyclops(
-            final QuintFunction<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
-
-        return (u1, u2, u3, u4,
-                u5) -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,
-                                                                                                                         input4, input5))
-                                                                                                 .unwrap())
-                                                                               .unwrap())
-                                                             .unwrap())
-                                           .unwrap());
-    }
+    
 
     /**
      * Lift a Curried Function {@code(2 levels a->b->fn.apply(a,b) )} into Monadic form
@@ -618,9 +564,8 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      * @return Lifted function 
      */
     public static <W extends WitnessType,U1, U2, R> Function<AnyMValue<W,U1>, Function<AnyMValue<W,U2>, AnyMValue<W,R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
-        return u1 -> u2 -> u1.bind(input1 -> u2.map(input2 -> fn.apply(input1)
-                                                                .apply(input2))
-                                               .unwrap());
+        return u1 -> u2 -> u1.flatMap(input1 -> u2.map(input2 -> fn.apply(input1)
+                                                                .apply(input2)));
 
     }
 
@@ -632,10 +577,9 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
      */
     public static <W extends WitnessType,U1, U2, U3, R> Function<AnyMValue<W,U1>, Function<AnyMValue<W,U2>, Function<AnyMValue<W,U3>, AnyMValue<W,R>>>> liftM3(
             final Function<? super U1, Function<? super U2, Function<? super U3, ? extends R>>> fn) {
-        return u1 -> u2 -> u3 -> u1.bind(input1 -> u2.bind(input2 -> u3.map(input3 -> fn.apply(input1)
+        return u1 -> u2 -> u3 -> u1.flatMap(input1 -> u2.flatMap(input2 -> u3.map(input3 -> fn.apply(input1)
                                                                                         .apply(input2)
-                                                                                        .apply(input3)))
-                                                     .unwrap());
+                                                                                        .apply(input3))));
     }
 
     /**
@@ -647,11 +591,10 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
     public static <W extends WitnessType,U1, U2, U3, U4, R> Function<AnyMValue<W,U1>, Function<AnyMValue<W,U2>, Function<AnyMValue<W,U3>, Function<AnyMValue<W,U4>, AnyMValue<W,R>>>>> liftM4(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, ? extends R>>>> fn) {
 
-        return u1 -> u2 -> u3 -> u4 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.map(input4 -> fn.apply(input1)
+        return u1 -> u2 -> u3 -> u4 -> u1.flatMap(input1 -> u2.flatMap(input2 -> u3.flatMap(input3 -> u4.map(input4 -> fn.apply(input1)
                                                                                                                 .apply(input2)
                                                                                                                 .apply(input3)
-                                                                                                                .apply(input4))))
-                                                           .unwrap());
+                                                                                                                .apply(input4)))));
     }
 
     /**
@@ -663,12 +606,11 @@ Value<T>, Filterable<T>,Combiner<T>, ApplicativeFunctor<T>, MonadicValue<T>, Mat
     public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function<AnyMValue<W,U1>, Function<AnyMValue<W,U2>, Function<AnyMValue<W,U3>, Function<AnyMValue<W,U4>, Function<AnyMValue<W,U5>, AnyMValue<W,R>>>>>> liftM5(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, Function<? super U5, ? extends R>>>>> fn) {
 
-        return u1 -> u2 -> u3 -> u4 -> u5 -> u1.bind(input1 -> u2.bind(input2 -> u3.bind(input3 -> u4.bind(input4 -> u5.map(input5 -> fn.apply(input1)
+        return u1 -> u2 -> u3 -> u4 -> u5 -> u1.flatMap(input1 -> u2.flatMap(input2 -> u3.flatMap(input3 -> u4.flatMap(input4 -> u5.map(input5 -> fn.apply(input1)
                                                                                                                                         .apply(input2)
                                                                                                                                         .apply(input3)
                                                                                                                                         .apply(input4)
-                                                                                                                                        .apply(input5)))))
-                                                                 .unwrap());
+                                                                                                                                        .apply(input5))))));
     }
 
 }

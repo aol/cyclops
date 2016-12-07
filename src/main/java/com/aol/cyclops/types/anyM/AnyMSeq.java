@@ -38,7 +38,7 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
-import com.aol.cyclops.internal.monads.AnyMonads;
+import com.aol.cyclops.internal.monads.AnyMs;
 import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.FilterableFunctor;
@@ -69,6 +69,226 @@ import lombok.val;
 public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFoldable<T>, ConvertableSequence<T>, ExtendedTraversable<T>, Sequential<T>,
         CyclopsCollectable<T>, FilterableFunctor<T>, ZippingApplicativable<T>, ReactiveStreamsTerminalOperations<T>, Publisher<T> {
 
+    /**
+     * Perform a four level nested internal iteration over this monad and the
+     * supplied monads
+     *
+     * 
+     * @param monad1
+     *            Nested Monad to iterate over
+     * @param monad2
+     *            Nested Monad to iterate over
+     * @param monad3
+     *            Nested Monad to iterate over
+     * @param yieldingFunction
+     *            Function with pointers to the current element from both
+     *            Monad that generates the new elements
+     * @return AnyMSeq with elements generated via nested iteration
+     */
+    default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
+                        final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
+                            final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
+                            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+       
+        return this.flatMapA(in -> {
+
+            AnyM<W,R1> a = monad1.apply(in);
+            return a.flatMapA(ina -> {
+                AnyM<W,R2> b = monad2.apply(in, ina);
+                return b.flatMapA(inb -> {
+                    AnyM<W,R3> c = monad3.apply(in, ina,inb);
+                    return c.map(in2 -> yieldingFunction.apply(in, ina, inb, in2));
+                });
+
+            });
+
+        });
+    }
+    /**
+     * Perform a four level nested internal iteration over this monad and the
+     * supplied monads
+     * 
+
+     * 
+     * @param monad1
+     *            Nested Monad to iterate over
+     * @param monad2
+     *            Nested Monad to iterate over
+     * @param monad3
+     *            Nested Monad to iterate over
+     * @param filterFunction
+     *            Filter to apply over elements before passing non-filtered
+     *            values to the yielding function
+     * @param yieldingFunction
+     *            Function with pointers to the current element from both
+     *            Streams that generates the new elements
+     * @return ReactiveSeq with elements generated via nested iteration
+     */
+    default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
+            final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
+                    final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
+                        final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+
+        return this.flatMapA(in -> {
+
+            AnyM<W,R1> a = monad1.apply(in);
+            return a.flatMapA(ina -> {
+                AnyM<W,R2> b = monad2.apply(in, ina);
+                return b.flatMapA(inb -> {
+                    AnyM<W,R3> c = monad3.apply(in, ina,inb);
+                    return c.filter(in2 -> filterFunction.apply(in, ina, inb, in2))
+                            .map(in2 -> yieldingFunction.apply(in, ina, inb, in2));
+                });
+
+            });
+
+        });
+        
+           
+    }
+    /**
+     * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
+     * etc to be injected, for example)
+     * 
+     * <pre>
+     * {@code 
+     * AnyM.fromArray(1,2,3)
+                        .forEachAnyM2(a->AnyM.fromIntStream(IntStream.range(10,13)),
+                                    (a,b)->a+b);
+                                    
+     * 
+     *  //AnyM[11,14,12,15,13,16]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param monad Nested Monad to iterate over
+     * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+     * @return LazyFutureStream with elements generated via nested iteration
+     */
+    default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad,
+            BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
+
+        
+        return this.flatMapA(in-> { 
+            
+            
+            AnyM<W,R1> b = monad.apply(in);
+            return b.map(in2->yieldingFunction.apply(in, in2));
+        });
+      
+
+    }
+
+    /**
+     * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
+     * etc to be injected, for example)
+     * 
+     * <pre>
+     * {@code 
+     * AnyM.fromArray(1,2,3)
+                        .forEach2(a->AnyM.fromIntStream(IntStream.range(10,13)),
+                                  (a,b)-> a<3 && b>10,
+                                  (a,b)->a+b);
+                                    
+     * 
+     *  //AnyM[14,15]
+     * }
+     * </pre>
+     * @param monad Nested Monad to iterate over
+     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
+     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
+     * @return
+     */
+   default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad, 
+            BiFunction<? super T,? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
+
+       return this.flatMapA(in-> { 
+           
+           
+           AnyM<W,R1> b = monad.apply(in);
+           return b.filter(in2-> filterFunction.apply(in,in2))
+                   .map(in2->yieldingFunction.apply(in, in2));
+       });
+        
+        
+    }
+
+    /** 
+     * Perform a three level nested internal iteration over this Stream and the supplied streams
+      *<pre>
+     * {@code 
+     * AnyM.fromArray(1,2)
+                        .forEach3(a->AnyM.fromIntStream(IntStream.range(10,13)),
+                                 (a,b)->AnyM.fromArray(""+(a+b),"hello world"),
+                                 (a,b,c)->AnyM.fromArray(""+(a+b),"hello world"),
+                                 (a,b,c,d)->c+":"a+":"+b);
+                                    
+     * 
+     *  
+     * }
+     * </pre> 
+     * @param monad1 Nested monad to flatMap over
+     * @param monad2 Nested monad to flatMap over
+     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
+     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
+     * @return AnyM with elements generated via nested iteration
+     */
+    default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
+            BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
+            TriFunction<? super T,? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+
+        return this.flatMapA(in -> {
+
+            AnyM<W,R1> a = monad1.apply(in);
+            return a.flatMapA(ina -> {
+                AnyM<W,R2> b = monad2.apply(in, ina);
+                return b.filter(in2 -> filterFunction.apply(in, ina, in2))
+                        .map(in2 -> yieldingFunction.apply(in, ina, in2));
+            });
+
+        });
+        
+        
+    }
+    
+    /**
+     * Perform a three level nested internal iteration over this AnyM and the supplied monads
+     *<pre>
+     * {@code 
+     * AnyM.fromArray(1,2,3)
+                    .forEach3(a->AnyM.fromStream(IntStream.range(10,13)),
+                             (a,b)->AnyM.fromArray(""+(a+b),"hello world"),
+                             (a,b,c)-> c!=3,
+                             (a,b,c)->c+":"a+":"+b);
+                                
+     * 
+     *  //AnyM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
+     * }
+    * </pre> 
+     * 
+     * @param monad1 Nested Stream to iterate over
+     * @param monad2 Nested Stream to iterate over
+     * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
+     * @return AnyM with elements generated via nested iteration
+     */
+    default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
+            BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+        return this.flatMapA(in -> {
+
+            AnyM<W,R1> a = monad1.apply(in);
+            return a.flatMapA(ina -> {
+                AnyM<W,R2> b = monad2.apply(in, ina);
+                return b.map(in2 -> yieldingFunction.apply(in, ina, in2));
+            });
+
+        });
+    
+    }
     /**
      * Equivalence test, returns true if this Monad is equivalent to the supplied monad
      * e.g.
@@ -194,7 +414,7 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
 
         return fromIterable(ExtendedTraversable.super.onEmptyGet(supplier));
     }
-    Comprehender<T> adapter();
+    Comprehender<W> adapter();
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
@@ -838,207 +1058,12 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
     @Override
     AnyMSeq<W,List<T>> aggregate(AnyM<W,T> next);
     
-    /**
-     * Perform a four level nested internal iteration over this monad and the
-     * supplied monads
-     *
-     * 
-     * @param monad1
-     *            Nested Monad to iterate over
-     * @param monad2
-     *            Nested Monad to iterate over
-     * @param monad3
-     *            Nested Monad to iterate over
-     * @param yieldingFunction
-     *            Function with pointers to the current element from both
-     *            Monad that generates the new elements
-     * @return AnyMSeq with elements generated via nested iteration
-     */
-    default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
-                        final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
-                            final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
-                            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
-        return For.Publishers.each4(this,monad1,monad2,monad3,yieldingFunction);
+  
+
+    @Override
+    default <R> AnyMSeq<W,R> flatMapA(Function<? super T, ? extends AnyM<W,? extends R>> fn){
+        return (AnyMSeq<W,R>)AnyM.super.flatMapA(fn);
     }
-    /**
-     * Perform a four level nested internal iteration over this monad and the
-     * supplied monads
-     * 
-
-     * 
-     * @param monad1
-     *            Nested Monad to iterate over
-     * @param monad2
-     *            Nested Monad to iterate over
-     * @param monad3
-     *            Nested Monad to iterate over
-     * @param filterFunction
-     *            Filter to apply over elements before passing non-filtered
-     *            values to the yielding function
-     * @param yieldingFunction
-     *            Function with pointers to the current element from both
-     *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
-     */
-    default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
-            final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
-                    final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
-                        final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
-
-        return For.Publishers.each4(this,monad1,monad2,monad3,filterFunction,yieldingFunction);
-        
-           
-    }
-    /**
-     * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-     * etc to be injected, for example)
-     * 
-     * <pre>
-     * {@code 
-     * AnyM.fromArray(1,2,3)
-    					.forEachAnyM2(a->AnyM.fromIntStream(IntStream.range(10,13)),
-    								(a,b)->a+b);
-    								
-     * 
-     *  //AnyM[11,14,12,15,13,16]
-     * }
-     * </pre>
-     * 
-     * 
-     * @param monad Nested Monad to iterate over
-     * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
-     * @return LazyFutureStream with elements generated via nested iteration
-     */
-    default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad,
-            BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
-
-        return For.Publishers.each2(this,monad,yieldingFunction);
-      
-
-    }
-
-    /**
-     * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-     * etc to be injected, for example)
-     * 
-     * <pre>
-     * {@code 
-     * AnyM.fromArray(1,2,3)
-    					.forEach2(a->AnyM.fromIntStream(IntStream.range(10,13)),
-    					          (a,b)-> a<3 && b>10,
-    							  (a,b)->a+b);
-    								
-     * 
-     *  //AnyM[14,15]
-     * }
-     * </pre>
-     * @param monad Nested Monad to iterate over
-     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
-     * @return
-     */
-   default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad, 
-            BiFunction<? super T,? super R1, Boolean> filterFunction,
-            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
-
-       return this.flatMap(in-> { 
-           
-           
-           AnyM<W,R1> b = monad.apply(in);
-           return b.filter(in2-> filterFunction.apply(in,in2))
-                   .map(in2->yieldingFunction.apply(in, in2));
-       });
-        
-        
-    }
-
-    /** 
-     * Perform a three level nested internal iteration over this Stream and the supplied streams
-      *<pre>
-     * {@code 
-     * AnyM.fromArray(1,2)
-    					.forEach3(a->AnyM.fromIntStream(IntStream.range(10,13)),
-    					         (a,b)->AnyM.fromArray(""+(a+b),"hello world"),
-    					         (a,b,c)->AnyM.fromArray(""+(a+b),"hello world"),
-    						     (a,b,c,d)->c+":"a+":"+b);
-    								
-     * 
-     *  
-     * }
-     * </pre> 
-     * @param monad1 Nested monad to flatMap over
-     * @param monad2 Nested monad to flatMap over
-     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
-     * @return AnyM with elements generated via nested iteration
-     */
-    default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
-            BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
-            TriFunction<? super T,? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
-
-        return AnyM.super.forEach3(monad1, monad2, filterFunction, yieldingFunction);
-        
-        
-    }
-
-    /**
-     * Perform a three level nested internal iteration over this AnyM and the supplied monads
-     *<pre>
-     * {@code 
-     * AnyM.fromArray(1,2,3)
-    				.forEach3(a->AnyM.fromStream(IntStream.range(10,13)),
-    					     (a,b)->AnyM.fromArray(""+(a+b),"hello world"),
-    				         (a,b,c)-> c!=3,
-    						 (a,b,c)->c+":"a+":"+b);
-    							
-     * 
-     *  //AnyM[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
-     * }
-    * </pre> 
-     * 
-     * @param monad1 Nested Stream to iterate over
-     * @param monad2 Nested Stream to iterate over
-     * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
-     * @return AnyM with elements generated via nested iteration
-     */
-    default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
-            BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
-        return AnyM.super.forEach3(monad1, monad2, yieldingFunction);
-    
-    }
-
-    /**
-     * flatMap operation
-      * 
-     * AnyM follows the javaslang modified 'monad' laws https://gist.github.com/danieldietrich/71be006b355d6fbc0584
-     * In particular left-identity becomes
-     * Left identity: unit(a).flatMap(f) ≡ select(f.apply(a))
-     * Or in plain English, if your flatMap function returns multiple values (such as flatMap by Stream) but the current Monad only can only hold one value,
-     * only the first value is accepted.
-     * 
-     * Example 1 : multi-values are supported (AnyM wraps a Stream, List, Set etc)
-     * <pre>
-     * {@code 
-     *   AnyM<Integer> anyM = AnyM.fromStream(Stream.of(1,2,3)).flatMap(i->AnyM.fromArray(i+1,i+2));
-     *   
-     *   //AnyM[Stream[2,3,3,4,4,5]]
-     * }
-     * </pre>
-     * Example 2 : multi-values are not supported (AnyM wraps a Stream, List, Set etc)
-     * <pre>
-     * {@code 
-     *   AnyM<Integer> anyM = AnyM.fromOptional(Optional.of(1)).flatMap(i->AnyM.fromArray(i+1,i+2));
-     *   
-     *   //AnyM[Optional[2]]
-     * }
-     * </pre>
-     * @param fn flatMap function
-     * @return  flatMapped AnyM
-     */
-    <R> AnyMSeq<W,R> flatMap(Function<? super T, ? extends AnyM<W,? extends R>> fn);
 
     /**
      * Apply function/s inside supplied Monad to data in current Monad
@@ -1102,7 +1127,7 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
      */
     public static <W extends WitnessType,T, R> AnyMSeq<W,ListX<R>> traverse(final Collection<? extends AnyMSeq<W,T>> seq, final Function<? super T, ? extends R> fn) {
 
-        return AnyMSeqImpl.from(new AnyMonads().traverse(seq, fn));
+        return AnyMSeqImpl.from(new AnyMs().traverse(seq, fn));
     }
 
     /**
@@ -1120,31 +1145,10 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
      * @return Monad with a List
      */
     public static <W extends WitnessType,T1> AnyMSeq<W,ListX<T1>> sequence(final Collection<? extends AnyMSeq<W,T1>> seq) {
-        return AnyMSeqImpl.from(new AnyMonads().sequence(seq));
+        return AnyMSeqImpl.from(new AnyMs().sequence(seq));
     }
 
-    /**
-     * Convert a Stream of Monads to a Monad with a Stream applying the supplied function in the process
-     *
-     */
-    public static <W extends WitnessType,T, R> AnyMSeq<W,Stream<R>> traverse(final Stream<AnyMSeq<W,T>> source, final Supplier<AnyMSeq<W,Stream<T>>> unitEmpty,
-            final Function<? super T, ? extends R> fn) {
-        return sequence(source, unitEmpty).map(s -> s.map(fn));
-    }
-
-    /**
-     * Convert a Stream of Monads to a Monad with a Stream
-     *
-     */
-    public static <W extends WitnessType,T> AnyMSeq<W,Stream<T>> sequence(final Stream<AnyMSeq<W,T>> source, final Supplier<AnyMSeq<W,Stream<T>>> unitEmpty) {
-
-        return Matchables.anyM(AnyM.sequence(source, unitEmpty))
-                         .visit(s -> {
-                             throw new IllegalStateException(
-                                                             "unreachable");
-                         } , v -> v);
-    }
-
+   
     /**
      * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
      * AnyM view simplifies type related challenges.
