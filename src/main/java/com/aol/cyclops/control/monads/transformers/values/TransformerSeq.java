@@ -27,20 +27,22 @@ import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Sequential;
 import com.aol.cyclops.types.Traversable;
+import com.aol.cyclops.types.Unwrapable;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyOperations;
 
-public interface TransformerSeq<T> extends ConvertableSequence<T>, Traversable<T>, Sequential<T>, Iterable<T>,
+public interface TransformerSeq<W extends WitnessType,T> extends Unwrapable,ConvertableSequence<T>, Traversable<T>, Sequential<T>, Iterable<T>,
 
 ToStream<T>, Publisher<T> {
 
     public boolean isSeqPresent();
 
-    <T> TransformerSeq<T> unitAnyM(AnyM<Traversable<T>> traversable);
+    <T> TransformerSeq<W,T> unitAnyM(AnyM<W,Traversable<T>> traversable);
 
-    AnyM<? extends Traversable<T>> transformerStream();
+    AnyM<W,? extends Traversable<T>> transformerStream();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
@@ -97,7 +99,7 @@ ToStream<T>, Publisher<T> {
      */
     @Override
     default <U, R> Traversable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        final AnyM<Traversable<R>> zipped = transformerStream().map(s -> s.zip(other, zipper));
+        final AnyM<W,Traversable<R>> zipped = transformerStream().map(s -> s.zip(other, zipper));
         return unitAnyM(zipped);
 
     }
@@ -152,7 +154,7 @@ ToStream<T>, Publisher<T> {
     default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
         final Streamable<? extends S> streamable2 = Streamable.fromStream(second);
         final Streamable<? extends U> streamable3 = Streamable.fromStream(third);
-        final AnyM<Traversable<Tuple3<T, S, U>>> zipped = transformerStream().map(s -> s.zip3(streamable2.stream(), streamable3.stream()));
+        final AnyM<W,Traversable<Tuple3<T, S, U>>> zipped = transformerStream().map(s -> s.zip3(streamable2.stream(), streamable3.stream()));
         return unitAnyM(zipped);
     }
 
@@ -165,7 +167,7 @@ ToStream<T>, Publisher<T> {
         final Streamable<? extends T2> streamable2 = Streamable.fromStream(second);
         final Streamable<? extends T3> streamable3 = Streamable.fromStream(third);
         final Streamable<? extends T4> streamable4 = Streamable.fromStream(fourth);
-        final AnyM<Traversable<Tuple4<T, T2, T3, T4>>> zipped = transformerStream().map(s -> s.zip4(streamable2.stream(), streamable3.stream(),
+        final AnyM<W,Traversable<Tuple4<T, T2, T3, T4>>> zipped = transformerStream().map(s -> s.zip4(streamable2.stream(), streamable3.stream(),
                                                                                                     streamable4.stream()));
         return unitAnyM(zipped);
     }

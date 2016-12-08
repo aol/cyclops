@@ -14,7 +14,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
@@ -26,10 +25,13 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
+import com.aol.cyclops.control.monads.transformers.values.FoldableTransformerSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.IterableFoldable;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
@@ -40,19 +42,19 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T> Type of data stored inside the nested Lists
  */
-public class ListTSeq<T> implements ListT<T> {
+public class ListTSeq<W extends WitnessType,T> implements To<ListT<T>>,
+                                                          FoldableTransformerSeq<W,T> {
 
-    final AnyMSeq<ListX<T>> run;
+    final AnyM<W,ListX<T>> run;
 
-    private ListTSeq(final AnyMSeq<? extends List<T>> run) {
+    private ListTSeq(final AnyM<W,? extends List<T>> run) {
         this.run = run.map(l -> ListX.fromIterable(l));
     }
 
     /**
      * @return The wrapped AnyM
      */
-    @Override
-    public AnyMSeq<ListX<T>> unwrap() {
+    public AnyM<W,ListX<T>> unwrap() {
         return run;
     }
 
@@ -71,7 +73,7 @@ public class ListTSeq<T> implements ListT<T> {
      * @return ListT with peek call
      */
     @Override
-    public ListTSeq<T> peek(final Consumer<? super T> peek) {
+    public ListTSeq<W,T> peek(final Consumer<? super T> peek) {
         return map(a -> {
             peek.accept(a);
             return a;
@@ -93,7 +95,7 @@ public class ListTSeq<T> implements ListT<T> {
      * @return ListT that applies the provided filter
      */
     @Override
-    public ListTSeq<T> filter(final Predicate<? super T> test) {
+    public ListTSeq<W,T> filter(final Predicate<? super T> test) {
         return of(run.map(stream -> ReactiveSeq.fromList(stream)
                                                .filter(test)
                                                .toList()));
@@ -116,15 +118,15 @@ public class ListTSeq<T> implements ListT<T> {
      * @return ListT that applies the map function to the wrapped List
      */
     @Override
-    public <B> ListTSeq<B> map(final Function<? super T, ? extends B> f) {
+    public <B> ListTSeq<W,B> map(final Function<? super T, ? extends B> f) {
         return of(run.map(o -> (List<B>) ReactiveSeq.fromList(o)
                                                     .map(f)
                                                     .toList()));
     }
 
     @Override
-    public <B> ListTSeq<B> flatMap(final Function<? super T, ? extends Iterable<? extends B>> f) {
-        return new ListTSeq<B>(
+    public <B> ListTSeq<W,B> flatMap(final Function<? super T, ? extends Iterable<? extends B>> f) {
+        return new ListTSeq<W,B>(
                                run.map(o -> ListX.fromIterable(o)
                                                  .flatMap(f)));
 
@@ -144,7 +146,7 @@ public class ListTSeq<T> implements ListT<T> {
      * @param f FlatMap function
      * @return ListT that applies the flatMap function to the wrapped List
      */
-    public <B> ListTSeq<B> flatMapT(final Function<? super T, ListTSeq<B>> f) {
+    public <B> ListTSeq<W,B> flatMapT(final Function<? super T, ListTSeq<W,B>> f) {
 
         return of(run.map(list -> list.flatMap(a -> f.apply(a).run.stream())
                                       .flatMap(a -> a.stream())));
@@ -177,7 +179,7 @@ public class ListTSeq<T> implements ListT<T> {
      * @param fn Function to enhance with functionality from List and another monad type
      * @return Function that accepts and returns an ListT
      */
-    public static <U, R> Function<ListTSeq<U>, ListTSeq<R>> lift(final Function<? super U, ? extends R> fn) {
+    public static <W extends WitnessType,U, R> Function<ListTSeq<W,U>, ListTSeq<W,R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -210,7 +212,7 @@ public class ListTSeq<T> implements ListT<T> {
      * @param fn BiFunction to enhance with functionality from List and another monad type
      * @return Function that accepts and returns an ListT
      */
-    public static <U1, U2, R> BiFunction<ListTSeq<U1>, ListTSeq<U2>, ListTSeq<R>> lift2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
+    public static <W extends WitnessType,U1, U2, R> BiFunction<ListTSeq<W,U1>, ListTSeq<W,U2>, ListTSeq<W,R>> lift2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
 
@@ -221,7 +223,7 @@ public class ListTSeq<T> implements ListT<T> {
      * @param anyM AnyM that doesn't contain a monad wrapping an List
      * @return ListT
      */
-    public static <A> ListTSeq<A> fromAnyM(final AnyMSeq<A> anyM) {
+    public static <W extends WitnessType,A> ListTSeq<W,A> fromAnyM(final AnyM<W,A> anyM) {
         return of(anyM.map(Arrays::asList));
     }
 
@@ -231,24 +233,12 @@ public class ListTSeq<T> implements ListT<T> {
      * @param monads AnyM that contains a monad wrapping an List
      * @return ListT
      */
-    public static <A> ListTSeq<A> of(final AnyMSeq<? extends List<A>> monads) {
+    public static <W extends WitnessType,A> ListTSeq<W,A> of(final AnyM<W,? extends List<A>> monads) {
         return new ListTSeq<>(
                               monads);
     }
 
-    public static <A> ListTSeq<A> of(final List<A> monads) {
-        return ListT.fromIterable(ListX.of(monads));
-    }
-
-    /**
-     * Create a ListT from an AnyM that wraps a monad containing a Stream
-     * 
-     * @param monads
-     * @return
-     */
-    public static <A> ListTSeq<A> fromStream(final AnyMSeq<Stream<A>> monads) {
-        return of(monads.map(s -> s.collect(Collectors.toList())));
-    }
+    
 
     /*
      * (non-Javadoc)
@@ -257,15 +247,14 @@ public class ListTSeq<T> implements ListT<T> {
      */
     @Override
     public String toString() {
-        return String.format("ListTSeq[%s]", run);
+        return String.format("ListT[%s]", run);
 
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
      */
-    @Override
-    public <T> ListTSeq<T> unit(final T unit) {
+    public <T> ListTSeq<W,T> unit(final T unit) {
         return of(run.unit(ListX.of(unit)));
     }
 
@@ -288,42 +277,42 @@ public class ListTSeq<T> implements ListT<T> {
        return this;
     } */
     @Override
-    public <R> ListTSeq<R> unitIterator(final Iterator<R> it) {
+    public <R> ListTSeq<W,R> unitIterator(final Iterator<R> it) {  
         return of(run.unitIterator(it)
                      .map(i -> ListX.of(i)));
     }
 
     @Override
-    public <R> ListT<R> empty() {
+    public <R> ListTSeq<W,R> empty() {
         return of(run.empty());
     }
 
     @Override
-    public AnyM<? extends IterableFoldable<T>> nestedFoldables() {
+    public AnyM<W,? extends IterableFoldable<T>> nestedFoldables() {
         return run;
 
     }
 
     @Override
-    public AnyM<? extends CyclopsCollectable<T>> nestedCollectables() {
+    public AnyM<W,? extends CyclopsCollectable<T>> nestedCollectables() {
         return run;
 
     }
 
     @Override
-    public <T> ListTSeq<T> unitAnyM(final AnyM<Traversable<T>> traversable) {
+    public <T> ListTSeq<W,T> unitAnyM(final AnyM<W,Traversable<T>> traversable) {
 
         return of((AnyMSeq) traversable.map(t -> ListX.fromIterable(t)));
     }
 
     @Override
-    public AnyMSeq<? extends Traversable<T>> transformerStream() {
+    public AnyM<W,? extends Traversable<T>> transformerStream() {
 
         return run;
     }
 
-    public static <T> ListTSeq<T> emptyList() {
-        return ListT.fromIterable(ListX.empty());
+    public static <W extends WitnessType,T> ListTSeq<W,T> emptyList(W witness) { 
+        return of(witness.<W>adapter().unit(ListX.empty()));
     }
 
     @Override
@@ -335,495 +324,495 @@ public class ListTSeq<T> implements ListT<T> {
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
-    public ListTSeq<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
+    public ListTSeq<W,T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
-        return (ListTSeq<T>) ListT.super.combine(predicate, op);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.combine(predicate, op);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#cycle(int)
      */
     @Override
-    public ListTSeq<T> cycle(final int times) {
+    public ListTSeq<W,T> cycle(final int times) {
 
-        return (ListTSeq<T>) ListT.super.cycle(times);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.cycle(times);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#cycle(com.aol.cyclops.Monoid, int)
      */
     @Override
-    public ListTSeq<T> cycle(final Monoid<T> m, final int times) {
+    public ListTSeq<W,T> cycle(final Monoid<T> m, final int times) {
 
-        return (ListTSeq<T>) ListT.super.cycle(m, times);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.cycle(m, times);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#cycleWhile(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<T> cycleWhile(final Predicate<? super T> predicate) {
+    public ListTSeq<W,T> cycleWhile(final Predicate<? super T> predicate) {
 
-        return (ListTSeq<T>) ListT.super.cycleWhile(predicate);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.cycleWhile(predicate);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#cycleUntil(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<T> cycleUntil(final Predicate<? super T> predicate) {
+    public ListTSeq<W,T> cycleUntil(final Predicate<? super T> predicate) {
 
-        return (ListTSeq<T>) ListT.super.cycleUntil(predicate);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.cycleUntil(predicate);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> ListTSeq<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> ListTSeq<W,R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (ListTSeq<R>) ListT.super.zip(other, zipper);
+        return (ListTSeq<W,R>) FoldableTransformerSeq.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.ListT#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> ListTSeq<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> ListTSeq<W,R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (ListTSeq<R>) ListT.super.zip(other, zipper);
+        return (ListTSeq<W,R>) FoldableTransformerSeq.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.ListT#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> ListTSeq<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> ListTSeq<W,R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (ListTSeq<R>) ListT.super.zip(other, zipper);
+        return (ListTSeq<W,R>) FoldableTransformerSeq.super.zip(other, zipper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> ListTSeq<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    public <U> ListTSeq<W,Tuple2<T, U>> zip(final Stream<? extends U> other) {
 
-        return (ListTSeq) ListT.super.zip(other);
+        return (ListTSeq) FoldableTransformerSeq.super.zip(other);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.ListT#zip(java.lang.Iterable)
      */
     @Override
-    public <U> ListTSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
+    public <U> ListTSeq<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
-        return (ListTSeq) ListT.super.zip(other);
+        return (ListTSeq) FoldableTransformerSeq.super.zip(other);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip(org.jooq.lambda.Seq)
      */
     @Override
-    public <U> ListTSeq<Tuple2<T, U>> zip(final Seq<? extends U> other) {
+    public <U> ListTSeq<W,Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
-        return (ListTSeq) ListT.super.zip(other);
+        return (ListTSeq) FoldableTransformerSeq.super.zip(other);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <S, U> ListTSeq<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    public <S, U> ListTSeq<W,Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
 
-        return (ListTSeq) ListT.super.zip3(second, third);
+        return (ListTSeq) FoldableTransformerSeq.super.zip3(second, third);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> ListTSeq<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
+    public <T2, T3, T4> ListTSeq<W,Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
             final Stream<? extends T4> fourth) {
 
-        return (ListTSeq) ListT.super.zip4(second, third, fourth);
+        return (ListTSeq) FoldableTransformerSeq.super.zip4(second, third, fourth);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zipWithIndex()
      */
     @Override
-    public ListTSeq<Tuple2<T, Long>> zipWithIndex() {
+    public ListTSeq<W,Tuple2<T, Long>> zipWithIndex() {
 
-        return (ListTSeq<Tuple2<T, Long>>) ListT.super.zipWithIndex();
+        return (ListTSeq<W,Tuple2<T, Long>>) FoldableTransformerSeq.super.zipWithIndex();
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#sliding(int)
      */
     @Override
-    public ListTSeq<ListX<T>> sliding(final int windowSize) {
+    public ListTSeq<W,ListX<T>> sliding(final int windowSize) {
 
-        return (ListTSeq<ListX<T>>) ListT.super.sliding(windowSize);
+        return (ListTSeq<W,ListX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#sliding(int, int)
      */
     @Override
-    public ListTSeq<ListX<T>> sliding(final int windowSize, final int increment) {
+    public ListTSeq<W,ListX<T>> sliding(final int windowSize, final int increment) {
 
-        return (ListTSeq<ListX<T>>) ListT.super.sliding(windowSize, increment);
+        return (ListTSeq<W,ListX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#grouped(int, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> ListTSeq<C> grouped(final int size, final Supplier<C> supplier) {
+    public <C extends Collection<? super T>> ListTSeq<W,C> grouped(final int size, final Supplier<C> supplier) {
 
-        return (ListTSeq<C>) ListT.super.grouped(size, supplier);
+        return (ListTSeq<W,C>) FoldableTransformerSeq.super.grouped(size, supplier);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    public ListTSeq<W,ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return (ListTSeq<ListX<T>>) ListT.super.groupedUntil(predicate);
+        return (ListTSeq<W,ListX<T>>) FoldableTransformerSeq.super.groupedUntil(predicate);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    public ListTSeq<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    public ListTSeq<W,ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (ListTSeq<ListX<T>>) ListT.super.groupedStatefullyUntil(predicate);
+        return (ListTSeq<W,ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyUntil(predicate);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    public ListTSeq<W,ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return (ListTSeq<ListX<T>>) ListT.super.groupedWhile(predicate);
+        return (ListTSeq<W,ListX<T>>) FoldableTransformerSeq.super.groupedWhile(predicate);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> ListTSeq<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    public <C extends Collection<? super T>> ListTSeq<W,C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return (ListTSeq<C>) ListT.super.groupedWhile(predicate, factory);
+        return (ListTSeq<W,C>) FoldableTransformerSeq.super.groupedWhile(predicate, factory);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> ListTSeq<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    public <C extends Collection<? super T>> ListTSeq<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return (ListTSeq<C>) ListT.super.groupedUntil(predicate, factory);
+        return (ListTSeq<W,C>) FoldableTransformerSeq.super.groupedUntil(predicate, factory);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#grouped(int)
      */
     @Override
-    public ListTSeq<ListX<T>> grouped(final int groupSize) {
+    public ListTSeq<W,ListX<T>> grouped(final int groupSize) {
 
-        return (ListTSeq<ListX<T>>) ListT.super.grouped(groupSize);
+        return (ListTSeq<W,ListX<T>>) FoldableTransformerSeq.super.grouped(groupSize);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
-    public <K, A, D> ListTSeq<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
+    public <K, A, D> ListTSeq<W,Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
 
-        return (ListTSeq) ListT.super.grouped(classifier, downstream);
+        return (ListTSeq) FoldableTransformerSeq.super.grouped(classifier, downstream);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#grouped(java.util.function.Function)
      */
     @Override
-    public <K> ListTSeq<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    public <K> ListTSeq<W,Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
 
-        return (ListTSeq) ListT.super.grouped(classifier);
+        return (ListTSeq) FoldableTransformerSeq.super.grouped(classifier);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#distinct()
      */
     @Override
-    public ListTSeq<T> distinct() {
+    public ListTSeq<W,T> distinct() {
 
-        return (ListTSeq<T>) ListT.super.distinct();
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.distinct();
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#scanLeft(com.aol.cyclops.Monoid)
      */
     @Override
-    public ListTSeq<T> scanLeft(final Monoid<T> monoid) {
+    public ListTSeq<W,T> scanLeft(final Monoid<T> monoid) {
 
-        return (ListTSeq<T>) ListT.super.scanLeft(monoid);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.scanLeft(monoid);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> ListTSeq<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
+    public <U> ListTSeq<W,U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
-        return (ListTSeq<U>) ListT.super.scanLeft(seed, function);
+        return (ListTSeq<W,U>) FoldableTransformerSeq.super.scanLeft(seed, function);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#scanRight(com.aol.cyclops.Monoid)
      */
     @Override
-    public ListTSeq<T> scanRight(final Monoid<T> monoid) {
+    public ListTSeq<W,T> scanRight(final Monoid<T> monoid) {
 
-        return (ListTSeq<T>) ListT.super.scanRight(monoid);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.scanRight(monoid);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    public <U> ListTSeq<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
+    public <U> ListTSeq<W,U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
 
-        return (ListTSeq<U>) ListT.super.scanRight(identity, combiner);
+        return (ListTSeq<W,U>) FoldableTransformerSeq.super.scanRight(identity, combiner);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#sorted()
      */
     @Override
-    public ListTSeq<T> sorted() {
+    public ListTSeq<W,T> sorted() {
 
-        return (ListTSeq<T>) ListT.super.sorted();
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.sorted();
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#sorted(java.util.Comparator)
      */
     @Override
-    public ListTSeq<T> sorted(final Comparator<? super T> c) {
+    public ListTSeq<W,T> sorted(final Comparator<? super T> c) {
 
-        return (ListTSeq<T>) ListT.super.sorted(c);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.sorted(c);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#takeWhile(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<T> takeWhile(final Predicate<? super T> p) {
+    public ListTSeq<W,T> takeWhile(final Predicate<? super T> p) {
 
-        return (ListTSeq<T>) ListT.super.takeWhile(p);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#dropWhile(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<T> dropWhile(final Predicate<? super T> p) {
+    public ListTSeq<W,T> dropWhile(final Predicate<? super T> p) {
 
-        return (ListTSeq<T>) ListT.super.dropWhile(p);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#takeUntil(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<T> takeUntil(final Predicate<? super T> p) {
+    public ListTSeq<W,T> takeUntil(final Predicate<? super T> p) {
 
-        return (ListTSeq<T>) ListT.super.takeUntil(p);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#dropUntil(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<T> dropUntil(final Predicate<? super T> p) {
+    public ListTSeq<W,T> dropUntil(final Predicate<? super T> p) {
 
-        return (ListTSeq<T>) ListT.super.dropUntil(p);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.dropUntil(p);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#dropRight(int)
      */
     @Override
-    public ListTSeq<T> dropRight(final int num) {
+    public ListTSeq<W,T> dropRight(final int num) {
 
-        return (ListTSeq<T>) ListT.super.dropRight(num);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.dropRight(num);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#takeRight(int)
      */
     @Override
-    public ListTSeq<T> takeRight(final int num) {
+    public ListTSeq<W,T> takeRight(final int num) {
 
-        return (ListTSeq<T>) ListT.super.takeRight(num);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.takeRight(num);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#skip(long)
      */
     @Override
-    public ListTSeq<T> skip(final long num) {
+    public ListTSeq<W,T> skip(final long num) {
 
-        return (ListTSeq<T>) ListT.super.skip(num);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.skip(num);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#skipWhile(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<T> skipWhile(final Predicate<? super T> p) {
+    public ListTSeq<W,T> skipWhile(final Predicate<? super T> p) {
 
-        return (ListTSeq<T>) ListT.super.skipWhile(p);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.skipWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#skipUntil(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<T> skipUntil(final Predicate<? super T> p) {
+    public ListTSeq<W,T> skipUntil(final Predicate<? super T> p) {
 
-        return (ListTSeq<T>) ListT.super.skipUntil(p);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.skipUntil(p);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#limit(long)
      */
     @Override
-    public ListTSeq<T> limit(final long num) {
+    public ListTSeq<W,T> limit(final long num) {
 
-        return (ListTSeq<T>) ListT.super.limit(num);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.limit(num);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#limitWhile(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<T> limitWhile(final Predicate<? super T> p) {
+    public ListTSeq<W,T> limitWhile(final Predicate<? super T> p) {
 
-        return (ListTSeq<T>) ListT.super.limitWhile(p);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.limitWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#limitUntil(java.util.function.Predicate)
      */
     @Override
-    public ListTSeq<T> limitUntil(final Predicate<? super T> p) {
+    public ListTSeq<W,T> limitUntil(final Predicate<? super T> p) {
 
-        return (ListTSeq<T>) ListT.super.limitUntil(p);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.limitUntil(p);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#intersperse(java.lang.Object)
      */
     @Override
-    public ListTSeq<T> intersperse(final T value) {
+    public ListTSeq<W,T> intersperse(final T value) {
 
-        return (ListTSeq<T>) ListT.super.intersperse(value);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.intersperse(value);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#reverse()
      */
     @Override
-    public ListTSeq<T> reverse() {
+    public ListTSeq<W,T> reverse() {
 
-        return (ListTSeq<T>) ListT.super.reverse();
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.reverse();
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#shuffle()
      */
     @Override
-    public ListTSeq<T> shuffle() {
+    public ListTSeq<W,T> shuffle() {
 
-        return (ListTSeq<T>) ListT.super.shuffle();
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.shuffle();
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#skipLast(int)
      */
     @Override
-    public ListTSeq<T> skipLast(final int num) {
+    public ListTSeq<W,T> skipLast(final int num) {
 
-        return (ListTSeq<T>) ListT.super.skipLast(num);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.skipLast(num);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#limitLast(int)
      */
     @Override
-    public ListTSeq<T> limitLast(final int num) {
+    public ListTSeq<W,T> limitLast(final int num) {
 
-        return (ListTSeq<T>) ListT.super.limitLast(num);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.limitLast(num);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#onEmpty(java.lang.Object)
      */
     @Override
-    public ListTSeq<T> onEmpty(final T value) {
+    public ListTSeq<W,T> onEmpty(final T value) {
 
-        return (ListTSeq<T>) ListT.super.onEmpty(value);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.onEmpty(value);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    public ListTSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
+    public ListTSeq<W,T> onEmptyGet(final Supplier<? extends T> supplier) {
 
-        return (ListTSeq<T>) ListT.super.onEmptyGet(supplier);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.onEmptyGet(supplier);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    public <X extends Throwable> ListTSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    public <X extends Throwable> ListTSeq<W,T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return (ListTSeq<T>) ListT.super.onEmptyThrow(supplier);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.onEmptyThrow(supplier);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#shuffle(java.util.Random)
      */
     @Override
-    public ListTSeq<T> shuffle(final Random random) {
+    public ListTSeq<W,T> shuffle(final Random random) {
 
-        return (ListTSeq<T>) ListT.super.shuffle(random);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.shuffle(random);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#slice(long, long)
      */
     @Override
-    public ListTSeq<T> slice(final long from, final long to) {
+    public ListTSeq<W,T> slice(final long from, final long to) {
 
-        return (ListTSeq<T>) ListT.super.slice(from, to);
+        return (ListTSeq<W,T>) FoldableTransformerSeq.super.slice(from, to);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#sorted(java.util.function.Function)
      */
     @Override
-    public <U extends Comparable<? super U>> ListTSeq<T> sorted(final Function<? super T, ? extends U> function) {
-        return (ListTSeq) ListT.super.sorted(function);
+    public <U extends Comparable<? super U>> ListTSeq<W,T> sorted(final Function<? super T, ? extends U> function) {
+        return (ListTSeq) FoldableTransformerSeq.super.sorted(function);
     }
 
     @Override

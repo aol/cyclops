@@ -522,6 +522,7 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
     default Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
         return Xor.primary(this);
     }
+    @Override
     default <T> AnyMSeq<W,T> fromIterable(Iterable<T> t){
         return  (AnyMSeq<W,T>)adapter().unitIterator(t.iterator());
     }

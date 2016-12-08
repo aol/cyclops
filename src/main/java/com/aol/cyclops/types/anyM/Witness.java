@@ -30,7 +30,7 @@ import com.aol.cyclops.internal.comprehensions.comprehenders.OptionalComprehende
 import com.aol.cyclops.internal.comprehensions.comprehenders.QueueComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.SetComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.SortedSetComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.StreamComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.StreamAdapter;
 import com.aol.cyclops.internal.comprehensions.comprehenders.StreamableComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.TryComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.XorComprehender;
@@ -104,7 +104,7 @@ public interface Witness {
 
         @Override
         public  Comprehender<stream> adapter() {
-            return StreamComprehender.stream;
+            return StreamAdapter.stream;
         }
         
     }
@@ -230,7 +230,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
+        public Comprehender<optional> adapter() {
             return (Comprehender<T>) OptionalComprehender.INSTANCE;
         }
         

@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.ListComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.StreamComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.StreamAdapter;
 import com.aol.cyclops.internal.monads.ComprehenderSelector;
 public class ComprehenderSelectorTest {
 
@@ -41,23 +41,23 @@ public class ComprehenderSelectorTest {
     }
 	@Test
 	public void testSelectComprehenderClass() {
-		assertThat(new ComprehenderSelector().selectComprehender(MyStream.class),instanceOf(StreamComprehender.class));
+		assertThat(new ComprehenderSelector().selectComprehender(MyStream.class),instanceOf(StreamAdapter.class));
 	}
 
 	@Test
 	public void testSelectComprehenderClassStream() {
 		Stream stream = Arrays.asList(1,2,3).stream();
-		assertThat(new ComprehenderSelector().selectComprehender(stream.getClass()),instanceOf(StreamComprehender.class));
+		assertThat(new ComprehenderSelector().selectComprehender(stream.getClass()),instanceOf(StreamAdapter.class));
 	}
 
 	@Test
 	public void testSelectComprehenderObject() {
-		assertThat(new ComprehenderSelector().selectComprehender(new MyStream()),instanceOf(StreamComprehender.class));
+		assertThat(new ComprehenderSelector().selectComprehender(new MyStream()),instanceOf(StreamAdapter.class));
 	}
 	@Test
 	public void testSelectComprehenderClassObject() {
 		Stream stream = Arrays.asList(1,2,3).stream();
-		assertThat(new ComprehenderSelector().selectComprehender(stream),instanceOf(StreamComprehender.class));
+		assertThat(new ComprehenderSelector().selectComprehender(stream),instanceOf(StreamAdapter.class));
 	}
 	static class MyStream implements Stream{
 

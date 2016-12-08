@@ -1,493 +1,1151 @@
 package com.aol.cyclops.control.monads.transformers.values;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Random;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.Ior;
+import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.Matchable.CheckValue1;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.Streamable;
+import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.control.Try;
+import com.aol.cyclops.control.Validator;
+import com.aol.cyclops.control.Xor;
+import com.aol.cyclops.data.LazyImmutable;
+import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
+import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
+import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Traversable;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.data.collections.extensions.standard.QueueX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.types.Combiner;
+import com.aol.cyclops.types.Filterable;
+import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
+import com.aol.cyclops.types.anyM.WitnessType;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.futurestream.SimpleReactStream;
+import com.aol.cyclops.types.stream.HotStream;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops.util.function.QuadFunction;
+import com.aol.cyclops.util.function.TriFunction;
 
-public interface ValueTransformerSeq<T> extends TransformerSeq<T> {
+public interface ValueTransformerSeq<W extends WitnessType,T> extends Publisher<T> {
+    public <R> ValueTransformerSeq<W,R> empty();
+    public <R> ValueTransformerSeq<W,R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> f);
+    AnyM<W,? extends MonadicValue<T>> transformerStream();
+    
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     * @see com.aol.cyclops.types.MonadicValue#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
-    @Override
-    default Traversable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
-        return unitStream(stream().combine(predicate, op));
+    default <T2, R> AnyM<W,? extends MonadicValue<R>> combine(Value<? extends T2> app,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+       
+        return this.transformerStream().map(v->v.combine(app, fn));
     }
-
+    
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#subscribe(org.reactivestreams.Subscriber)
      */
-    @Override
+   @Override
     default void subscribe(final Subscriber<? super T> s) {
 
         stream().subscribe(s);
 
     }
 
+   
+
+   // <T> TransformerSeq<W,T> unitStream(ReactiveSeq<T> traversable);
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycle(int)
+     * @see com.aol.cyclops.types.Combiner#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Combiner)
      */
-    @Override
-    default Traversable<T> cycle(final int times) {
-        return unitStream(stream().cycle(times));
+   
+    default  AnyM<W,? extends Combiner<T>> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+        return this.transformerStream().map(v->v.combine(combiner, app));
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycle(com.aol.cyclops.Monoid, int)
+     * @see com.aol.cyclops.types.Value#iterator()
      */
-    @Override
-    default Traversable<T> cycle(final Monoid<T> m, final int times) {
-        return unitStream(stream().cycle(m, times));
+   
+    default AnyM<W,? extends Iterator<T>> iterator() {
+        
+        return this.transformerStream().map(v->v.iterator());
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycleWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#test(java.lang.Object)
      */
-    @Override
-    default Traversable<T> cycleWhile(final Predicate<? super T> predicate) {
-        return unitStream(stream().cycleWhile(predicate));
+   
+    default AnyM<W,Boolean> test(T t) {
+        
+        return this.transformerStream().map(v->v.test(t));
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycleUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#newSubscriber()
      */
-    @Override
-    default Traversable<T> cycleUntil(final Predicate<? super T> predicate) {
-        return unitStream(stream().cycleUntil(predicate));
+   
+    default AnyM<W,? extends ValueSubscriber<T>> newSubscriber() {
+        return this.transformerStream().map(v->v.newSubscriber());
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops.types.Value#stream()
      */
-    @Override
-    default <U, R> Traversable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        final ReactiveSeq<R> zipped = stream().zip(other, zipper);
-        return unitStream(zipped);
-
+   //Return StreamT
+    default AnyM<W,? extends ReactiveSeq<T>> stream() {
+        return this.transformerStream().map(v->v.stream());
     }
-
-    @Override
-    default <U, R> Traversable<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return zip((Iterable<? extends U>) other, zipper);
-
-    }
-
-    @Override
-    default <U, R> Traversable<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
-
-    }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
+     * @see com.aol.cyclops.types.Value#unapply()
      */
-    @Override
-    default <U> Traversable<Tuple2<T, U>> zip(final Stream<? extends U> other) {
-        final Streamable<? extends U> streamable = Streamable.fromStream(other);
-        return unitStream(stream().zip(streamable.stream()));
+   
+    default AnyM<W,ListX<?>> unapply() {
+        return this.transformerStream().map(v->v.unapply());
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
+     * @see com.aol.cyclops.types.Value#iterate(java.util.function.UnaryOperator)
      */
-    @Override
-    default <U> Traversable<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-        return zip((Stream<? extends U>) other);
+  //Return StreamT
+    default AnyM<W,? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn) {
+        
+        return this.transformerStream().map(v->v.iterate(fn));
     }
-
-    @Override
-    default <U> Traversable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return zip((Stream<? extends U>) ReactiveSeq.fromIterable(other));
-    }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops.types.Value#generate()
      */
-    @Override
-    default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
-        final Streamable<? extends S> streamable2 = Streamable.fromStream(second);
-        final Streamable<? extends U> streamable3 = Streamable.fromStream(third);
-        final ReactiveSeq<Tuple3<T, S, U>> zipped = stream().zip3(streamable2.stream(), streamable3.stream());
-        return unitStream(zipped);
+    //Return StreamT
+    default AnyM<W,? extends ReactiveSeq<T>> generate() {
+        
+        return this.transformerStream().map(v->v.generate());
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops.types.Value#mapReduce(com.aol.cyclops.Reducer)
      */
-    @Override
-    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
-        final Streamable<? extends T2> streamable2 = Streamable.fromStream(second);
-        final Streamable<? extends T3> streamable3 = Streamable.fromStream(third);
-        final Streamable<? extends T4> streamable4 = Streamable.fromStream(fourth);
-        final ReactiveSeq<Tuple4<T, T2, T3, T4>> zipped = stream().zip4(streamable2.stream(), streamable3.stream(), streamable4.stream());
-        return unitStream(zipped);
+   
+    default <E> AnyM<W,? extends E> mapReduce(Reducer<E> monoid) {
+        
+        return this.transformerStream().map(v->v.mapReduce(monoid));
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zipWithIndex()
+     * @see com.aol.cyclops.types.Value#fold(com.aol.cyclops.Monoid)
      */
-    @Override
-    default Traversable<Tuple2<T, Long>> zipWithIndex() {
-        return unitStream(stream().zipWithIndex());
+   
+    default AnyM<W,? extends T> fold(Monoid<T> monoid) {
+        return this.transformerStream().map(v->v.fold(monoid));
+     
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#sliding(int)
+     * @see com.aol.cyclops.types.Value#fold(java.lang.Object, java.util.function.BinaryOperator)
      */
-    @Override
-    default Traversable<ListX<T>> sliding(final int windowSize) {
-        return unitStream(stream().sliding(windowSize));
-
+   
+    default T fold(T identity, BinaryOperator<T> accumulator) {
+        
+        return MonadicValue.super.fold(identity, accumulator);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#sliding(int, int)
+     * @see com.aol.cyclops.types.Value#toLazyImmutable()
      */
-    @Override
-    default Traversable<ListX<T>> sliding(final int windowSize, final int increment) {
-        return unitStream(stream().sliding(windowSize, increment));
+   
+    default LazyImmutable<T> toLazyImmutable() {
+        
+        return MonadicValue.super.toLazyImmutable();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#grouped(int, java.util.function.Supplier)
+     * @see com.aol.cyclops.types.Value#toMutable()
      */
-    @Override
-    default <C extends Collection<? super T>> Traversable<C> grouped(final int size, final Supplier<C> supplier) {
-        return unitStream(stream().grouped(size, supplier));
-
+   
+    default Mutable<T> toMutable() {
+        
+        return MonadicValue.super.toMutable();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#toXor()
      */
-    @Override
-    default Traversable<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
-        return unitStream(stream().groupedUntil(predicate));
-
+   
+    default Xor<?, T> toXor() {
+        
+        return MonadicValue.super.toXor();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see com.aol.cyclops.types.Value#toXor(java.lang.Object)
      */
-    @Override
-    default Traversable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return unitStream(stream().groupedStatefullyUntil(predicate));
-
+   
+    default <ST> Xor<ST, T> toXor(ST secondary) {
+        
+        return MonadicValue.super.toXor(secondary);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#toTry(java.lang.Throwable)
      */
-    @Override
-    default Traversable<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
-        return unitStream(stream().groupedWhile(predicate));
+   
+    default <X extends Throwable> Try<T, X> toTry(X throwable) {
+        
+        return MonadicValue.super.toTry(throwable);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.aol.cyclops.types.Value#toTry()
      */
-    @Override
-    default <C extends Collection<? super T>> Traversable<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
-        return unitStream(stream().groupedWhile(predicate, factory));
-
+   
+    default Try<T, Throwable> toTry() {
+        
+        return MonadicValue.super.toTry();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.aol.cyclops.types.Value#toTry(java.lang.Class[])
      */
-    @Override
-    default <C extends Collection<? super T>> Traversable<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
-        return unitStream(stream().groupedUntil(predicate, factory));
+   
+    default <X extends Throwable> Try<T, X> toTry(Class<X>... classes) {
+        
+        return MonadicValue.super.toTry(classes);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#grouped(int)
+     * @see com.aol.cyclops.types.Value#toIor()
      */
-    @Override
-    default Traversable<ListX<T>> grouped(final int groupSize) {
-        return unitStream(stream().grouped(groupSize));
+   
+    default Ior<?, T> toIor() {
+        
+        return MonadicValue.super.toIor();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see com.aol.cyclops.types.Value#toEvalNow()
      */
-    @Override
-    default <K, A, D> Traversable<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
-            final Collector<? super T, A, D> downstream) {
-        return unitStream(stream().grouped(classifier, downstream));
-
+   
+    default Eval<T> toEvalNow() {
+        
+        return MonadicValue.super.toEvalNow();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function)
+     * @see com.aol.cyclops.types.Value#toEvalLater()
      */
-    @Override
-    default <K> Traversable<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return unitStream(stream().grouped(classifier));
-
+   
+    default Eval<T> toEvalLater() {
+        
+        return MonadicValue.super.toEvalLater();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#distinct()
+     * @see com.aol.cyclops.types.Value#toEvalAlways()
      */
-    @Override
-    default Traversable<T> distinct() {
-        return unitStream(stream().distinct());
+   
+    default Eval<T> toEvalAlways() {
+        
+        return MonadicValue.super.toEvalAlways();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanLeft(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.types.Value#toMaybe()
      */
-    @Override
-    default Traversable<T> scanLeft(final Monoid<T> monoid) {
-        return unitStream(stream().scanLeft(monoid));
+   
+    default Maybe<T> toMaybe() {
+        
+        return MonadicValue.super.toMaybe();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
+     * @see com.aol.cyclops.types.Value#toListX()
      */
-    @Override
-    default <U> Traversable<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
-        return unitStream(stream().scanLeft(seed, function));
+   
+    default ListX<T> toListX() {
+        
+        return MonadicValue.super.toListX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanRight(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.types.Value#toSetX()
      */
-    @Override
-    default Traversable<T> scanRight(final Monoid<T> monoid) {
-        return unitStream(stream().scanRight(monoid));
+   
+    default SetX<T> toSetX() {
+        
+        return MonadicValue.super.toSetX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol).cyclops.types.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
+     * @see com.aol.cyclops.types.Value#toSortedSetX()
      */
-    @Override
-    default <U> Traversable<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
-        return unitStream(stream().scanRight(identity, combiner));
+   
+    default SortedSetX<T> toSortedSetX() {
+        
+        return MonadicValue.super.toSortedSetX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#sorted()
+     * @see com.aol.cyclops.types.Value#toQueueX()
      */
-    @Override
-    default Traversable<T> sorted() {
-        return unitStream(stream().sorted());
+   
+    default QueueX<T> toQueueX() {
+        
+        return MonadicValue.super.toQueueX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#sorted(java.util.Comparator)
+     * @see com.aol.cyclops.types.Value#toDequeX()
      */
-    @Override
-    default Traversable<T> sorted(final Comparator<? super T> c) {
-        return unitStream(stream().sorted(c));
+   
+    default DequeX<T> toDequeX() {
+        
+        return MonadicValue.super.toDequeX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#toPStackX()
      */
-    @Override
-    default Traversable<T> takeWhile(final Predicate<? super T> p) {
-        return unitStream(stream().takeWhile(p));
+   
+    default PStackX<T> toPStackX() {
+        
+        return MonadicValue.super.toPStackX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#toPVectorX()
      */
-    @Override
-    default Traversable<T> dropWhile(final Predicate<? super T> p) {
-        return unitStream(stream().dropWhile(p));
+   
+    default PVectorX<T> toPVectorX() {
+        
+        return MonadicValue.super.toPVectorX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#toPQueueX()
      */
-    @Override
-    default Traversable<T> takeUntil(final Predicate<? super T> p) {
-        return unitStream(stream().takeUntil(p));
+   
+    default PQueueX<T> toPQueueX() {
+        
+        return MonadicValue.super.toPQueueX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#toPSetX()
      */
-    @Override
-    default Traversable<T> dropUntil(final Predicate<? super T> p) {
-        return unitStream(stream().dropUntil(p));
+   
+    default PSetX<T> toPSetX() {
+        
+        return MonadicValue.super.toPSetX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#dropRight(int)
+     * @see com.aol.cyclops.types.Value#toPOrderedSetX()
      */
-    @Override
-    default Traversable<T> dropRight(final int num) {
-        return unitStream(stream().dropRight(num));
+   
+    default POrderedSetX<T> toPOrderedSetX() {
+        
+        return MonadicValue.super.toPOrderedSetX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#takeRight(int)
+     * @see com.aol.cyclops.types.Value#toPBagX()
      */
-    @Override
-    default Traversable<T> takeRight(final int num) {
-        return unitStream(stream().takeRight(num));
+   
+    default PBagX<T> toPBagX() {
+        
+        return MonadicValue.super.toPBagX();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#skip(long)
+     * @see com.aol.cyclops.types.Value#mkString()
      */
-    @Override
-    default Traversable<T> skip(final long num) {
-        return unitStream(stream().skip(num));
+   
+    default String mkString() {
+        
+        return MonadicValue.super.mkString();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#skipWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#toFutureStream(com.aol.cyclops.control.LazyReact)
      */
-    @Override
-    default Traversable<T> skipWhile(final Predicate<? super T> p) {
-        return unitStream(stream().skipWhile(p));
+   
+    default LazyFutureStream<T> toFutureStream(LazyReact reactor) {
+        
+        return MonadicValue.super.toFutureStream(reactor);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#skipUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#toFutureStream()
      */
-    @Override
-    default Traversable<T> skipUntil(final Predicate<? super T> p) {
-        return unitStream(stream().skipUntil(p));
+   
+    default LazyFutureStream<T> toFutureStream() {
+        
+        return MonadicValue.super.toFutureStream();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#limit(long)
+     * @see com.aol.cyclops.types.Value#toSimpleReact(com.aol.cyclops.control.SimpleReact)
      */
-    @Override
-    default Traversable<T> limit(final long num) {
-        return unitStream(stream().limit(num));
+   
+    default SimpleReactStream<T> toSimpleReact(SimpleReact reactor) {
+        
+        return MonadicValue.super.toSimpleReact(reactor);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#limitWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#toSimpleReact()
      */
-    @Override
-    default Traversable<T> limitWhile(final Predicate<? super T> p) {
-        return unitStream(stream().limitWhile(p));
+   
+    default SimpleReactStream<T> toSimpleReact() {
+        
+        return MonadicValue.super.toSimpleReact();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#limitUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Value#collect(java.util.stream.Collector)
      */
-    @Override
-    default Traversable<T> limitUntil(final Predicate<? super T> p) {
-        return unitStream(stream().limitUntil(p));
+   
+    default <R, A> R collect(Collector<? super T, A, R> collector) {
+        
+        return MonadicValue.super.collect(collector);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#intersperse(java.lang.Object)
+     * @see com.aol.cyclops.types.Value#toList()
      */
-    @Override
-    default Traversable<T> intersperse(final T value) {
-        return unitStream(stream().intersperse(value));
+   
+    default List<T> toList() {
+        
+        return MonadicValue.super.toList();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#reverse()
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
-    @Override
-    default Traversable<T> reverse() {
-        return unitStream(stream().reverse());
+   
+    default <T2, R> Zippable<R> zip(Iterable<? extends T2> iterable,
+            BiFunction<? super T, ? super T2, ? extends R> fn) {
+        
+        return MonadicValue.super.zip(iterable, fn);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#shuffle()
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
-    @Override
-    default Traversable<T> shuffle() {
-        return unitStream(stream().shuffle());
+   
+    default <T2, R> Zippable<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
+            Publisher<? extends T2> publisher) {
+        
+        return MonadicValue.super.zip(fn, publisher);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#skipLast(int)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
      */
-    @Override
-    default Traversable<T> skipLast(final int num) {
-        return unitStream(stream().skipLast(num));
+   
+    default <U, R> Zippable<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return MonadicValue.super.zip(other, zipper);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#limitLast(int)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
-    @Override
-    default Traversable<T> limitLast(final int num) {
-        return unitStream(stream().limitLast(num));
+   
+    default <U, R> Zippable<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        
+        return MonadicValue.super.zip(other, zipper);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
-    @Override
-    default Traversable<T> onEmpty(final T value) {
-        return unitStream(stream().onEmpty(value));
+   
+    default <U> Zippable<Tuple2<T, U>> zip(Stream<? extends U> other) {
+        
+        return MonadicValue.super.zip(other);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
      */
-    @Override
-    default Traversable<T> onEmptyGet(final Supplier<? extends T> supplier) {
-        return unitStream(stream().onEmptyGet(supplier));
+   
+    default <U> Zippable<Tuple2<T, U>> zip(Seq<? extends U> other) {
+        
+        return MonadicValue.super.zip(other);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
-    @Override
-    default <X extends Throwable> Traversable<T> onEmptyThrow(final Supplier<? extends X> supplier) {
-        return unitStream(stream().onEmptyThrow(supplier));
-
+   
+    default <U> Zippable<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        
+        return MonadicValue.super.zip(other);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#shuffle(java.util.Random)
+     * @see java.util.function.Predicate#and(java.util.function.Predicate)
      */
-    @Override
-    default Traversable<T> shuffle(final Random random) {
-        return unitStream(stream().shuffle(random));
+   
+    default Predicate<T> and(Predicate<? super T> other) {
+        
+        return MonadicValue.super.and(other);
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#slice(long, long)
+     * @see java.util.function.Predicate#negate()
      */
-    @Override
-    default Traversable<T> slice(final long from, final long to) {
-        return unitStream(stream().slice(from, to));
+   
+    default Predicate<T> negate() {
+        
+        return MonadicValue.super.negate();
     }
-
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#sorted(java.util.function.Function)
+     * @see java.util.function.Predicate#or(java.util.function.Predicate)
      */
-    @Override
-    default <U extends Comparable<? super U>> Traversable<T> sorted(final Function<? super T, ? extends U> function) {
-        return unitStream(stream().sorted(function));
+   
+    default Predicate<T> or(Predicate<? super T> other) {
+        
+        return MonadicValue.super.or(other);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     */
+   
+    default <U> Functor<U> cast(Class<? extends U> type) {
+        
+        return MonadicValue.super.cast(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#peek(java.util.function.Consumer)
+     */
+   
+    default Functor<T> peek(Consumer<? super T> c) {
+        
+        return MonadicValue.super.peek(c);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     */
+   
+    default <R> Functor<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        
+        return MonadicValue.super.trampoline(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
+     */
+   
+    default <R> Functor<R> patternMatch(Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
+            Supplier<? extends R> otherwise) {
+        
+        return MonadicValue.super.patternMatch(case1, otherwise);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     */
+   
+    default <U> Filterable<U> ofType(Class<? extends U> type) {
+        
+        return MonadicValue.super.ofType(type);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     */
+   
+    default Filterable<T> filterNot(Predicate<? super T> predicate) {
+        
+        return MonadicValue.super.filterNot(predicate);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Filterable#notNull()
+     */
+   
+    default Filterable<T> notNull() {
+        
+        return MonadicValue.super.notNull();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#foldable()
+     */
+   
+    default Foldable<T> foldable() {
+        
+        return MonadicValue.super.foldable();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#mapReduce(java.util.function.Function, com.aol.cyclops.Monoid)
+     */
+   
+    default <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
+        
+        return MonadicValue.super.mapReduce(mapper, reducer);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#reduce(com.aol.cyclops.Monoid)
+     */
+   
+    default T reduce(Monoid<T> reducer) {
+        
+        return MonadicValue.super.reduce(reducer);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#reduce(java.util.function.BinaryOperator)
+     */
+   
+    default Optional<T> reduce(BinaryOperator<T> accumulator) {
+        
+        return MonadicValue.super.reduce(accumulator);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#reduce(java.lang.Object, java.util.function.BinaryOperator)
+     */
+   
+    default T reduce(T identity, BinaryOperator<T> accumulator) {
+        
+        return MonadicValue.super.reduce(identity, accumulator);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#reduce(java.lang.Object, java.util.function.BiFunction)
+     */
+   
+    default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator) {
+        
+        return MonadicValue.super.reduce(identity, accumulator);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
+     */
+   
+    default <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+        
+        return MonadicValue.super.reduce(identity, accumulator, combiner);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#reduce(java.util.stream.Stream)
+     */
+   
+    default ListX<T> reduce(Stream<? extends Monoid<T>> reducers) {
+        
+        return MonadicValue.super.reduce(reducers);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#reduce(java.lang.Iterable)
+     */
+   
+    default ListX<T> reduce(Iterable<? extends Monoid<T>> reducers) {
+        
+        return MonadicValue.super.reduce(reducers);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#foldRight(com.aol.cyclops.Monoid)
+     */
+   
+    default T foldRight(Monoid<T> reducer) {
+        
+        return MonadicValue.super.foldRight(reducer);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#foldRight(java.lang.Object, java.util.function.BinaryOperator)
+     */
+   
+    default T foldRight(T identity, BinaryOperator<T> accumulator) {
+        
+        return MonadicValue.super.foldRight(identity, accumulator);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#foldRight(java.lang.Object, java.util.function.BiFunction)
+     */
+   
+    default <U> U foldRight(U identity, BiFunction<? super T, ? super U, ? extends U> accumulator) {
+        
+        return MonadicValue.super.foldRight(identity, accumulator);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#foldRightMapToType(com.aol.cyclops.Reducer)
+     */
+   
+    default <T> T foldRightMapToType(Reducer<T> reducer) {
+        
+        return MonadicValue.super.foldRightMapToType(reducer);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#join()
+     */
+   
+    default String join() {
+        
+        return MonadicValue.super.join();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#join(java.lang.String)
+     */
+   
+    default String join(String sep) {
+        
+        return MonadicValue.super.join(sep);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#join(java.lang.String, java.lang.String, java.lang.String)
+     */
+   
+    default String join(String sep, String start, String end) {
+        
+        return MonadicValue.super.join(sep, start, end);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#print(java.io.PrintStream)
+     */
+   
+    default void print(PrintStream str) {
+        
+        MonadicValue.super.print(str);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#print(java.io.PrintWriter)
+     */
+   
+    default void print(PrintWriter writer) {
+        
+        MonadicValue.super.print(writer);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#printOut()
+     */
+   
+    default void printOut() {
+        
+        MonadicValue.super.printOut();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#printErr()
+     */
+   
+    default void printErr() {
+        
+        MonadicValue.super.printErr();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#groupBy(java.util.function.Function)
+     */
+   
+    default <K> MapX<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
+        
+        return MonadicValue.super.groupBy(classifier);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#findFirst()
+     */
+   
+    default Optional<T> findFirst() {
+        
+        return MonadicValue.super.findFirst();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#findAny()
+     */
+   
+    default Optional<T> findAny() {
+        
+        return MonadicValue.super.findAny();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#startsWithIterable(java.lang.Iterable)
+     */
+   
+    default boolean startsWithIterable(Iterable<T> iterable) {
+        
+        return MonadicValue.super.startsWithIterable(iterable);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#startsWith(java.util.stream.Stream)
+     */
+   
+    default boolean startsWith(Stream<T> stream) {
+        
+        return MonadicValue.super.startsWith(stream);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#endsWithIterable(java.lang.Iterable)
+     */
+   
+    default boolean endsWithIterable(Iterable<T> iterable) {
+        
+        return MonadicValue.super.endsWithIterable(iterable);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#endsWith(java.util.stream.Stream)
+     */
+   
+    default boolean endsWith(Stream<T> stream) {
+        
+        return MonadicValue.super.endsWith(stream);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#toLazyCollection()
+     */
+   
+    default CollectionX<T> toLazyCollection() {
+        
+        return MonadicValue.super.toLazyCollection();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#toConcurrentLazyCollection()
+     */
+   
+    default CollectionX<T> toConcurrentLazyCollection() {
+        
+        return MonadicValue.super.toConcurrentLazyCollection();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#toConcurrentLazyStreamable()
+     */
+   
+    default Streamable<T> toConcurrentLazyStreamable() {
+        
+        return MonadicValue.super.toConcurrentLazyStreamable();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#firstValue()
+     */
+   
+    default T firstValue() {
+        
+        return MonadicValue.super.firstValue();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#single()
+     */
+   
+    default T single() {
+        
+        return MonadicValue.super.single();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#single(java.util.function.Predicate)
+     */
+   
+    default T single(Predicate<? super T> predicate) {
+        
+        return MonadicValue.super.single(predicate);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#singleOptional()
+     */
+   
+    default Optional<T> singleOptional() {
+        
+        return MonadicValue.super.singleOptional();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#get(long)
+     */
+   
+    default Optional<T> get(long index) {
+        
+        return MonadicValue.super.get(index);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#schedule(java.lang.String, java.util.concurrent.ScheduledExecutorService)
+     */
+   
+    default HotStream<T> schedule(String cron, ScheduledExecutorService ex) {
+        
+        return MonadicValue.super.schedule(cron, ex);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#scheduleFixedDelay(long, java.util.concurrent.ScheduledExecutorService)
+     */
+   
+    default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex) {
+        
+        return MonadicValue.super.scheduleFixedDelay(delay, ex);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#scheduleFixedRate(long, java.util.concurrent.ScheduledExecutorService)
+     */
+   
+    default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex) {
+        
+        return MonadicValue.super.scheduleFixedRate(rate, ex);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#validate(com.aol.cyclops.control.Validator)
+     */
+   
+    default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(Validator<T, S, F> validator) {
+        
+        return MonadicValue.super.validate(validator);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Foldable#xMatch(int, java.util.function.Predicate)
+     */
+   
+    default boolean xMatch(int num, Predicate<? super T> c) {
+        
+        return MonadicValue.super.xMatch(num, c);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#collect(java.util.function.Supplier, java.util.function.BiConsumer, java.util.function.BiConsumer)
+     */
+   
+    default <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+        
+        return MonadicValue.super.collect(supplier, accumulator, combiner);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
+     */
+   
+    default <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
+        
+        return MonadicValue.super.visit(present, absent);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#isPresent()
+     */
+   
+    default boolean isPresent() {
+        
+        return MonadicValue.super.isPresent();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#orElseGet(java.util.function.Supplier)
+     */
+   
+    default T orElseGet(Supplier<? extends T> value) {
+        
+        return MonadicValue.super.orElseGet(value);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toOptional()
+     */
+   
+    default Optional<T> toOptional() {
+        
+        return MonadicValue.super.toOptional();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toStream()
+     */
+   
+    default Stream<T> toStream() {
+        
+        return MonadicValue.super.toStream();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toAtomicReference()
+     */
+   
+    default AtomicReference<T> toAtomicReference() {
+        
+        return MonadicValue.super.toAtomicReference();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toOptionalAtomicReference()
+     */
+   
+    default Optional<AtomicReference<T>> toOptionalAtomicReference() {
+        
+        return MonadicValue.super.toOptionalAtomicReference();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#orElse(java.lang.Object)
+     */
+   
+    default T orElse(T value) {
+        
+        return MonadicValue.super.orElse(value);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#orElseThrow(java.util.function.Supplier)
+     */
+   
+    default <X extends Throwable> T orElseThrow(Supplier<? extends X> ex) throws X {
+        
+        return MonadicValue.super.orElseThrow(ex);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toFutureW()
+     */
+   
+    default FutureW<T> toFutureW() {
+        
+        return MonadicValue.super.toFutureW();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toFutureWAsync()
+     */
+   
+    default FutureW<T> toFutureWAsync() {
+        
+        return MonadicValue.super.toFutureWAsync();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toFutureWAsync(java.util.concurrent.Executor)
+     */
+   
+    default FutureW<T> toFutureWAsync(Executor ex) {
+        
+        return MonadicValue.super.toFutureWAsync(ex);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toCompletableFuture()
+     */
+   
+    default CompletableFuture<T> toCompletableFuture() {
+        
+        return MonadicValue.super.toCompletableFuture();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toCompletableFutureAsync()
+     */
+   
+    default CompletableFuture<T> toCompletableFutureAsync() {
+        
+        return MonadicValue.super.toCompletableFutureAsync();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Convertable#toCompletableFutureAsync(java.util.concurrent.Executor)
+     */
+   
+    default CompletableFuture<T> toCompletableFutureAsync(Executor exec) {
+        
+        return MonadicValue.super.toCompletableFutureAsync(exec);
+    }
+    /* (non-Javadoc)
+     * @see java.util.function.Supplier#get()
+     */
+   
+    default T get() {
+        
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#filter(java.util.function.Predicate)
+     */
+   
+    default MonadicValue<T> filter(Predicate<? super T> predicate) {
+        
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
+     */
+   
+    default <T> MonadicValue<T> unit(T unit) {
+        
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#map(java.util.function.Function)
+     */
+   
+    default <R> MonadicValue<R> map(Function<? super T, ? extends R> fn) {
+        
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     */
+   
+    default <R> MonadicValue<R> coflatMap(Function<? super MonadicValue<T>, R> mapper) {
+        
+        return MonadicValue.super.coflatMap(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#nest()
+     */
+   
+    default MonadicValue<MonadicValue<T>> nest() {
+        
+        return MonadicValue.super.nest();
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+   
+    default <T2, R1, R2, R3, R> MonadicValue<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     */
+   
+    default <T2, R1, R2, R3, R> MonadicValue<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        
+        return MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+   
+    default <T2, R1, R2, R> MonadicValue<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return MonadicValue.super.forEach3(value1, value2, yieldingFunction);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     */
+   
+    default <T2, R1, R2, R> MonadicValue<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        
+        return MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     */
+   
+    default <R1, R> MonadicValue<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return MonadicValue.super.forEach2(value1, yieldingFunction);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     */
+   
+    default <R1, R> MonadicValue<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
+            BiFunction<? super T, ? super R1, Boolean> filterFunction,
+            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        
+        return MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
+     */
+   
+    default MonadicValue<T> combineEager(Monoid<T> monoid, MonadicValue<? extends T> v2) {
+        
+        return MonadicValue.super.combineEager(monoid, v2);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapIterable(java.util.function.Function)
+     */
+   
+    default <R> MonadicValue<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        
+        return MonadicValue.super.flatMapIterable(mapper);
+    }
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapPublisher(java.util.function.Function)
+     */
+   
+    default <R> MonadicValue<R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        
+        return MonadicValue.super.flatMapPublisher(mapper);
     }
 
-    <T> TransformerSeq<T> unitStream(ReactiveSeq<T> traversable);
+    
 
 }

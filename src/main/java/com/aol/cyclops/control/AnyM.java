@@ -1,6 +1,7 @@
 package com.aol.cyclops.control;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -89,6 +90,11 @@ import com.aol.cyclops.util.function.Predicates;
  */
 public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, ToStream<T>,Publisher<T> {
    
+    
+    default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){
+        return (AnyMSeq<W,U>)adapter().unitIterator(U);
+    }
+
     default <R> AnyM<W,R> flatMapA(Function<? super T, ? extends AnyM<W,? extends R>> fn){
         return adapter().flatMap(this, fn);
     }
