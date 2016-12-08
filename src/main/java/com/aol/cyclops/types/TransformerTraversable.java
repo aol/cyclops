@@ -5,7 +5,6 @@ import java.util.function.Predicate;
 
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 /**
@@ -44,7 +43,7 @@ public interface TransformerTraversable<T>{
      * @param groupSize Size of each batch of elements to be grouped into Lists 
      * @return List Transformer view into batched / grouped data
      */
-    default ListTSeq<T> groupedT(final int groupSize) {
+    default ListT<T> groupedT(final int groupSize) {
         return ListT.fromStream(stream().grouped(groupSize));
     }
 
@@ -69,7 +68,7 @@ public interface TransformerTraversable<T>{
      * @param increment Increment between windows
      * @return List Transformer view into the Sliding windows
      */
-    default ListTSeq<T> slidingT(final int windowSize, final int increment) {
+    default ListT<T> slidingT(final int windowSize, final int increment) {
         return ListT.fromStream(stream().sliding(windowSize, increment));
     }
 
@@ -93,7 +92,7 @@ public interface TransformerTraversable<T>{
      * @param windowSize Size of sliding window
      * @return List Transformer view into the Sliding windows
      */
-    default ListTSeq<T> slidingT(final int windowSize) {
+    default ListT<T> slidingT(final int windowSize) {
         return ListT.fromStream(stream().sliding(windowSize));
     }
 
@@ -119,7 +118,7 @@ public interface TransformerTraversable<T>{
      * @param predicate Predicate to determine batch termination point
      * @return List Transformer view into batched Traversable
      */
-    default ListTSeq<T> groupedUntilT(final Predicate<? super T> predicate) {
+    default ListT<T> groupedUntilT(final Predicate<? super T> predicate) {
         return ListT.fromStream(stream().groupedUntil(predicate));
     }
 
@@ -136,7 +135,7 @@ public interface TransformerTraversable<T>{
      * @param predicate Predicate to determine batch
      * @return List Transformer view into batched Traversable
      */
-    default ListTSeq<T> groupedStatefullyUntilT(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default ListT<T> groupedStatefullyUntilT(final BiPredicate<ListX<? super T>, ? super T> predicate) {
         return ListT.fromStream(stream().groupedStatefullyUntil(predicate));
     }
 
@@ -160,7 +159,7 @@ public interface TransformerTraversable<T>{
      * @param predicate Predicate to determine batch termination point
      * @return List Transformer view into batched Traversable
      */
-    default ListTSeq<T> groupedWhileT(final Predicate<? super T> predicate) {
+    default ListT<T> groupedWhileT(final Predicate<? super T> predicate) {
         return ListT.fromStream(stream().groupedUntil(predicate));
     }
 

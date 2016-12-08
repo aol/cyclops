@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
@@ -22,7 +21,7 @@ public class ListTListTest extends AbstractAnyMSeqOrderedDependentTest{
 	 */
 	@Override
 	public <T> AnyMSeq<T> empty() {
-		return AnyM.fromIterable(ListTSeq.emptyList());
+		return AnyM.fromIterable(ListT.emptyList());
 	}
 	
 	

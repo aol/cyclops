@@ -37,7 +37,11 @@ import com.aol.cyclops.types.To;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
-public interface PStackX<T> extends To<PStackX<T>>,PStack<T>, PersistentCollectionX<T>, FluentSequenceX<T>, OnEmptySwitch<T, PStack<T>> {
+public interface PStackX<T> extends To<PStackX<T>>,
+                                    PStack<T>, 
+                                    PersistentCollectionX<T>, 
+                                    FluentSequenceX<T>, 
+                                    OnEmptySwitch<T, PStack<T>> {
 
     /**
      * Narrow a covariant PStackX

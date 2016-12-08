@@ -23,7 +23,6 @@ import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
-import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -190,7 +189,7 @@ public interface NestedFoldable<W extends WitnessType,T> {
     default ListT<T> reduce(final Stream<? extends Monoid<T>> reducers) {
         final AnyM<ListX<T>> anyM = nestedFoldables().map(s -> s.reduce(reducers));
         return Matchables.anyM(anyM)
-                         .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListTSeq.of(s));
+                         .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListT.of(s));
 
     }
 
@@ -219,7 +218,7 @@ public interface NestedFoldable<W extends WitnessType,T> {
     default ListT<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
         final AnyM<ListX<T>> anyM = nestedFoldables().map(s -> s.reduce(reducers));
         return Matchables.anyM(anyM)
-                         .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListTSeq.of(s));
+                         .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListT.of(s));
     }
 
     /**

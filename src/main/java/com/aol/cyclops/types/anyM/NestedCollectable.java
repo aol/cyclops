@@ -14,7 +14,6 @@ import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.SetT;
 import com.aol.cyclops.control.monads.transformers.StreamT;
 import com.aol.cyclops.control.monads.transformers.StreamableT;
-import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.SetTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.StreamTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.StreamableTSeq;
@@ -51,7 +50,7 @@ public interface NestedCollectable<W extends WitnessType,T> {
             return (ListT) this;
         final AnyM<ListX<T>> anyM = nestedCollectables().map(s -> ListX.fromIterable(s));
         return Matchables.anyM(anyM)
-                         .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListTSeq.of(s));
+                         .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListT.of(s));
     }
 
     /**

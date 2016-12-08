@@ -323,7 +323,7 @@ public interface Eval<T>
      */
     @Override
     default Eval<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (Eval)ApplicativeFunctor.super.combine(combiner, app);
+        return (Eval)MonadicValue.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)
@@ -380,7 +380,7 @@ public interface Eval<T>
      */
     @Override
     default <U> Eval<U> cast(final Class<? extends U> type) {
-        return (Eval<U>) ApplicativeFunctor.super.cast(type);
+        return (Eval<U>) MonadicValue.super.cast(type);
     }
 
     /* (non-Javadoc)
@@ -388,7 +388,7 @@ public interface Eval<T>
      */
     @Override
     default Eval<T> peek(final Consumer<? super T> c) {
-        return (Eval<T>) ApplicativeFunctor.super.peek(c);
+        return (Eval<T>) MonadicValue.super.peek(c);
     }
 
     /* (non-Javadoc)
@@ -397,7 +397,7 @@ public interface Eval<T>
     @Override
     default <R> Eval<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Eval<R>) ApplicativeFunctor.super.trampoline(mapper);
+        return (Eval<R>) MonadicValue.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
@@ -427,7 +427,7 @@ public interface Eval<T>
     @Override
     default <T2, R> Eval<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return (Eval<R>) ApplicativeFunctor.super.combine(app, fn);
+        return (Eval<R>) MonadicValue.super.combine(app, fn);
     }
 
     /* Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
@@ -437,7 +437,7 @@ public interface Eval<T>
     @Override
     default <T2, R> Eval<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return (Eval<R>) ApplicativeFunctor.super.zip(app, fn);
+        return (Eval<R>) MonadicValue.super.zip(app, fn);
     }
 
     /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
@@ -447,7 +447,7 @@ public interface Eval<T>
      */
     @Override
     default <T2, R> Eval<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
-        return (Eval<R>) ApplicativeFunctor.super.zip(fn, app);
+        return (Eval<R>) MonadicValue.super.zip(fn, app);
 
     }
 

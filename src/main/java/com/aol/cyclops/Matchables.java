@@ -44,6 +44,7 @@ import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.control.monads.transformers.EvalT;
+import com.aol.cyclops.control.monads.transformers.FutureT;
 import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.control.monads.transformers.MaybeT;
@@ -56,8 +57,6 @@ import com.aol.cyclops.control.monads.transformers.TryT;
 import com.aol.cyclops.control.monads.transformers.XorT;
 import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
-import com.aol.cyclops.control.monads.transformers.seq.FutureWTSeq;
-import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.OptionalTSeq;
 import com.aol.cyclops.control.monads.transformers.seq.ReaderTSeq;
@@ -435,8 +434,8 @@ public class Matchables {
         return () -> transformer instanceof TryTValue ? Xor.secondary((TryTValue<T, X>) transformer) : Xor.primary((TryTSeq<T, X>) transformer);
     }
 
-    public static <T> MXor<FutureWTValue<T>, FutureWTSeq<T>> futureWT(final FutureWT<T> transformer) {
-        return () -> transformer instanceof FutureWTValue ? Xor.secondary((FutureWTValue<T>) transformer) : Xor.primary((FutureWTSeq<T>) transformer);
+    public static <T> MXor<FutureWTValue<T>, FutureT<T>> futureWT(final FutureWT<T> transformer) {
+        return () -> transformer instanceof FutureWTValue ? Xor.secondary((FutureWTValue<T>) transformer) : Xor.primary((FutureT<T>) transformer);
     }
 
     public static <T> MXor<CompletableFutureTValue<T>, CompletableFutureTSeq<T>> completableFutureT(final CompletableFutureT<T> transformer) {
@@ -444,8 +443,8 @@ public class Matchables {
                 : Xor.primary((CompletableFutureTSeq<T>) transformer);
     }
 
-    public static <T> MXor<ListTValue<T>, ListTSeq<T>> listT(final ListT<T> transformer) {
-        return () -> transformer instanceof ListTValue ? Xor.secondary((ListTValue<T>) transformer) : Xor.primary((ListTSeq<T>) transformer);
+    public static <T> MXor<ListTValue<T>, ListT<T>> listT(final ListT<T> transformer) {
+        return () -> transformer instanceof ListTValue ? Xor.secondary((ListTValue<T>) transformer) : Xor.primary((ListT<T>) transformer);
     }
 
     public static <T> MXor<SetTValue<T>, SetTSeq<T>> setT(final SetT<T> transformer) {

@@ -76,7 +76,7 @@ public interface AnyMValue<W extends WitnessType,T> extends AnyM<W,T>,
     @Override
     default AnyMValue<W,T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
         
-        return (AnyMValue<W,T>)ApplicativeFunctor.super.combine(combiner, app);
+        return (AnyMValue<W,T>)MonadicValue.super.combine(combiner, app);
     }
 
 
@@ -277,7 +277,7 @@ public interface AnyMValue<W extends WitnessType,T> extends AnyM<W,T>,
             
             return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).combine(app, fn));
         }
-        return (AnyMValue<W, R>) ApplicativeFunctor.super.combine(app, fn);
+        return (AnyMValue<W, R>) MonadicValue.super.combine(app, fn);
     }
 
     @Override
@@ -285,7 +285,7 @@ public interface AnyMValue<W extends WitnessType,T> extends AnyM<W,T>,
         if (this.unwrap() instanceof ApplicativeFunctor) {
             return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).zip(app, fn));
         }
-        return (AnyMValue<W,R>) ApplicativeFunctor.super.zip(app, fn);
+        return (AnyMValue<W,R>) MonadicValue.super.zip(app, fn);
     }
 
     /* (non-Javadoc)
@@ -296,7 +296,7 @@ public interface AnyMValue<W extends WitnessType,T> extends AnyM<W,T>,
         if (this.unwrap() instanceof ApplicativeFunctor) {
             return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).zip(fn, app));
         }
-        return (AnyMValue<W,R>) ApplicativeFunctor.super.zip(fn, app);
+        return (AnyMValue<W,R>) MonadicValue.super.zip(fn, app);
     }
 
     

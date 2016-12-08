@@ -30,13 +30,19 @@ import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.util.function.QuadFunction;
 import com.aol.cyclops.util.function.TriFunction;
 
-public interface PVectorX<T> extends To<PVectorX<T>>,PVector<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PVector<T>> {
+public interface PVectorX<T> extends To<PVectorX<T>>,
+                                     PVector<T>, 
+                                     FluentSequenceX<T>,
+                                     PersistentCollectionX<T>, 
+                                     OnEmptySwitch<T, 
+                                     PVector<T>> {
 
     /**
      * Narrow a covariant PVectorX

@@ -26,10 +26,10 @@ import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.control.monads.transformers.values.FutureWTValue;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
-import com.aol.cyclops.control.monads.transformers.values.TransformerValue;
 import com.aol.cyclops.control.monads.transformers.values.TryTValue;
 import com.aol.cyclops.control.monads.transformers.values.XorTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.anyM.transformers.TransformerValue;
 
 public class TransformersValuesTest {
     

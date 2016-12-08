@@ -10,14 +10,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.control.monads.transformers.values.ListTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 
 
 public class ListTSeqTest {
 
-    ListTSeq<Integer> trans;
+    ListT<Integer> trans;
     ListTValue<Integer> value;
     @Before
     public void setup(){

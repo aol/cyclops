@@ -271,7 +271,9 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      * @return FutureW populated syncrhonously from Iterable
      */
     public static <T> FutureW<T> fromIterable(final Iterable<T> iterable) {
-        iterable.iterator();
+        if(iterable instanceof FutureW){
+            return (FutureW)this;
+        }
         return FutureW.ofResult(Eval.fromIterable(iterable))
                       .map(e -> e.get());
     }
@@ -791,7 +793,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public <R> FutureW<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (FutureW<R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
+        return (FutureW<R>) MonadicValue.super.patternMatch(case1, otherwise);
     }
 
     /*
@@ -1050,7 +1052,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public <U> FutureW<U> cast(final Class<? extends U> type) {
 
-        return (FutureW<U>) ApplicativeFunctor.super.cast(type);
+        return (FutureW<U>) MonadicValue.super.cast(type);
     }
 
     /*
@@ -1062,7 +1064,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public FutureW<T> peek(final Consumer<? super T> c) {
 
-        return (FutureW<T>) ApplicativeFunctor.super.peek(c);
+        return (FutureW<T>) MonadicValue.super.peek(c);
     }
 
     /*
@@ -1074,7 +1076,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public <R> FutureW<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (FutureW<R>) ApplicativeFunctor.super.trampoline(mapper);
+        return (FutureW<R>) MonadicValue.super.trampoline(mapper);
     }
 
     /*
@@ -1229,7 +1231,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
         if (app instanceof FutureW) {
             return FutureW.of(future.thenCombine(((FutureW<T2>) app).getFuture(), fn));
         }
-        return (FutureW<R>) ApplicativeFunctor.super.zip(app, fn);
+        return (FutureW<R>) MonadicValue.super.zip(app, fn);
     }
 
     /*
@@ -1242,7 +1244,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public <T2, R> FutureW<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return (FutureW<R>) ApplicativeFunctor.super.zip(app, fn);
+        return (FutureW<R>) MonadicValue.super.zip(app, fn);
     }
 
     /*
@@ -1256,7 +1258,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public <T2, R> FutureW<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
-        return (FutureW<R>) ApplicativeFunctor.super.zip(fn, app);
+        return (FutureW<R>) MonadicValue.super.zip(fn, app);
 
     }
 
@@ -1294,7 +1296,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public <U, R> FutureW<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (FutureW<R>) ApplicativeFunctor.super.zip(other, zipper);
+        return (FutureW<R>) MonadicValue.super.zip(other, zipper);
     }
 
     /*
@@ -1305,7 +1307,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public <U, R> FutureW<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (FutureW<R>) ApplicativeFunctor.super.zip(other, zipper);
+        return (FutureW<R>) MonadicValue.super.zip(other, zipper);
     }
 
     /*
@@ -1315,7 +1317,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public <U> FutureW<Tuple2<T, U>> zip(final Stream<? extends U> other) {
-        return (FutureW) ApplicativeFunctor.super.zip(other);
+        return (FutureW) MonadicValue.super.zip(other);
     }
 
     /*
@@ -1325,7 +1327,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public <U> FutureW<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-        return (FutureW) ApplicativeFunctor.super.zip(other);
+        return (FutureW) MonadicValue.super.zip(other);
     }
 
     /*
@@ -1335,7 +1337,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public <U> FutureW<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return (FutureW) ApplicativeFunctor.super.zip(other);
+        return (FutureW) MonadicValue.super.zip(other);
     }
 
     
@@ -1360,7 +1362,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     @Override
     public FutureW<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (FutureW<T>)ApplicativeFunctor.super.combine(combiner, app);
+        return (FutureW<T>)MonadicValue.super.combine(combiner, app);
     }
 
    

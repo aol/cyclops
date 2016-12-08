@@ -27,6 +27,7 @@ import java.util.stream.StreamSupport;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMValueImpl;
@@ -1253,5 +1254,9 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
        return sequence(stream.map(h->h.map(fn)),witness);
     }
     Comprehender<W> adapter();
+
+    public static <W extends WitnessType,T> AnyM<W, T> narrow(AnyM<W, ? extends T> anyM){
+        return (AnyM<W,T>)anyM;
+    }
 
 }

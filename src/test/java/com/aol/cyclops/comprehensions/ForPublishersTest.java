@@ -7,7 +7,6 @@ import org.junit.Test;
 import com.aol.cyclops.control.For.Publishers;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.control.monads.transformers.seq.ListTSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 
@@ -19,7 +18,7 @@ public class ForPublishersTest {
     @Test
     public void groupedT(){
         
-       ListTSeq<Integer> nestedList = ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10)
+       ListT<Integer> nestedList = ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10)
                                                  .groupedT(2)
                                                  .map(i->i*2);
        
@@ -37,9 +36,9 @@ public class ForPublishersTest {
     public void listT(){
         
         
-        ListTSeq<Integer> nestedList = ListT.fromIterable(SetX.of(ListX.of(11,22),ListX.of(100,200)));
+        ListT<Integer> nestedList = ListT.fromIterable(SetX.of(ListX.of(11,22),ListX.of(100,200)));
         
-        ListTSeq<Integer> doubled = nestedList.map(i->i*2);
+        ListT<Integer> doubled = nestedList.map(i->i*2);
         System.out.println(doubled);
         
         //ListTSeq[AnyMSeq[[[22, 44], [200, 400]]]]

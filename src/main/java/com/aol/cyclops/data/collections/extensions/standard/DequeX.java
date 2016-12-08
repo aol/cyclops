@@ -42,7 +42,7 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>, OnEmptySwitch<T, Deque<T>> {
+public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableSequenceX<T>,MutableCollectionX<T>, OnEmptySwitch<T, Deque<T>> {
 
     /**
      * Create a DequeX that contains the Integers between start and end

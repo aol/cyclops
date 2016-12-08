@@ -1,6 +1,8 @@
 package com.aol.cyclops.data.collections.extensions;
 
 import java.util.Collection;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Interface that represents a FluentSequence of data
@@ -81,4 +83,26 @@ public interface FluentSequenceX<T> extends FluentCollectionX<T> {
      */
     public FluentSequenceX<T> subList(int start, int end);
 
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#filter(java.util.function.Predicate)
+     */
+    @Override
+    FluentSequenceX<T> filter(Predicate<? super T> pred);
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#map(java.util.function.Function)
+     */
+    @Override
+    <R> FluentSequenceX<R> map(Function<? super T, ? extends R> mapper);
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#flatMap(java.util.function.Function)
+     */
+    @Override
+    <R> FluentSequenceX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
+
+    
+    
+    
+    
 }
