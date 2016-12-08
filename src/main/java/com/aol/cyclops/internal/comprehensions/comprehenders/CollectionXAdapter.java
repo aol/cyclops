@@ -17,15 +17,13 @@ import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class CollectionXAdapter<W extends Witness.CollectionXWitness> extends AbstractFunctionalAdapter<W> {
+public class CollectionXAdapter<W extends Witness.CollectionXWitness<W>> extends AbstractFunctionalAdapter<W> {
    
     private final Supplier<CollectionX<?>> empty;
     private final Function<?,CollectionX<?>> unit;
     private final Function<Iterator<?>,CollectionX<?>> unitIterator;
     private final W witness;
     
-  //  public final static MonadicValueComprehender stream = new MonadicValueComprehender(()->Stream.of(),t->Stream.of(t),it->StreamUtils.stream(()->it));
-  //  public final static MonadicValueComprehender reactiveSeq = new MonadicValueComprehender(()->ReactiveSeq.of(),t->ReactiveSeq.of(t),it->ReactiveSeq.fromIterator(it));
     
     private <U> Supplier<CollectionX<U>> getEmpty(){
         return (Supplier)empty;

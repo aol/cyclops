@@ -162,7 +162,16 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
         return new PVectorXImpl<>(
                                   TreePVector.from(Arrays.asList(values)));
     }
-
+    /**
+     * 
+     * Construct a PVectorX from the provided Iterator
+     * 
+     * @param it Iterator to populate PVectorX
+     * @return Newly populated PVectorX
+     */
+    public static <T> PVectorX<T> fromIterator(final Iterator<T> it) {
+        return fromIterable(()->it);
+    }
     /**
      * <pre>
      * {@code 

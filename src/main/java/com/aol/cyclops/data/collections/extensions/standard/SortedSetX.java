@@ -158,6 +158,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     public static <T> SortedSetX<T> fromIterable(final Iterable<T> it) {
         return fromIterable(defaultCollector(), it);
     }
+    public static <T> SortedSetX<T> fromIterator(final Iterator<T> it) {
+        return fromIterable(()->it);
+    }
 
     public static <T> SortedSetX<T> fromIterable(final Collector<T, ?, SortedSet<T>> collector, final Iterable<T> it) {
         if (it instanceof SortedSetX)

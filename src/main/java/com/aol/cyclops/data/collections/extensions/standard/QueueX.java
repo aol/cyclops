@@ -132,7 +132,16 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
             res.add(v);
         return fromIterable(res);
     }
-
+    /**
+     * 
+     * Construct a QueueX from the provided Iterator
+     * 
+     * @param it Iterator to populate QueueX
+     * @return Newly populated QueueX
+     */
+    public static <T> QueueX<T> fromIterator(final Iterator<T> it) {
+        return fromIterable(()->it);
+    }
     public static <T> QueueX<T> singleton(final T value) {
         return QueueX.<T> of(value);
     }

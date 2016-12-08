@@ -62,7 +62,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Slf4j
-public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, ApplicativeFunctor<T>, MonadicValue<T>, FlatMap<T>, Filterable<T> {
+public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, ApplicativeFunctor<T>, MonadicValue<T>, Filterable<T> {
 
     /**
      * An empty FutureW
@@ -272,7 +272,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      */
     public static <T> FutureW<T> fromIterable(final Iterable<T> iterable) {
         if(iterable instanceof FutureW){
-            return (FutureW)this;
+            return (FutureW)iterable;
         }
         return FutureW.ofResult(Eval.fromIterable(iterable))
                       .map(e -> e.get());
@@ -895,10 +895,8 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      * @see com.aol.cyclops.types.FlatMap#flatten()
      */
     @Override
-    public <R> FutureW<R> flatten() {
-        return FutureW.of(AnyM.fromCompletableFuture(future)
-                              .flatten()
-                              .unwrap());
+    public static <R> FutureW<R> flatten(FutureW<FutureW<R>> nested) {
+        return nested.flatMap(Function.identity());
     }
 
     /*

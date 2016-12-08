@@ -37,10 +37,10 @@ import lombok.AllArgsConstructor;
  * @param <T> Monadic Type being wrapped
  */
 //TODO rename MonadAdapter
-public interface Comprehender<W extends WitnessType> {
+public interface FunctionalAdapter<W extends WitnessType<W>> {
     
     
-    default <R> R visit(Function<? super Comprehender<W>,? extends R> fn1, Function<? super  ValueAdapter<W>, ? extends R> fn2){
+    default <R> R visit(Function<? super FunctionalAdapter<W>,? extends R> fn1, Function<? super  ValueAdapter<W>, ? extends R> fn2){
         return fn1.apply(this);
     }
     default <T,T2,R> AnyM<W,R> ap2(AnyM<W, Function<T,Function<T2,R>>> fn, AnyM<W,T> apply,AnyM<W,T2> apply2){

@@ -7,13 +7,11 @@ import static com.aol.cyclops.util.CompletableFutures.combine;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.anyM.Witness.completableFuture;
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 import com.aol.cyclops.util.CompletableFutures;
 

@@ -28,7 +28,6 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
@@ -266,6 +265,9 @@ public interface ListX<T> extends To<ListX<T>>,
         for (final T v : values)
             res.add(v);
         return fromIterable(res);
+    }
+    public static <T> ListX<T> fromIterator(final Iterator<T> it) {
+        return fromIterable(()->it);
     }
 
     public static <T> ListX<T> singleton(final T value) {

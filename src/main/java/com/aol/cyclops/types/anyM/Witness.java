@@ -19,29 +19,28 @@ import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.internal.comprehensions.comprehenders.CompletableFutureComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.DequeComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.EvalComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.FutureFunctorComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.IorComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.ListComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.MaybeComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.OptionalComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.QueueComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.SetComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.SortedSetComprehender;
+import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
+import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import com.aol.cyclops.data.collections.extensions.standard.DequeX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.QueueX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import com.aol.cyclops.internal.comprehensions.comprehenders.CollectionXAdapter;
+import com.aol.cyclops.internal.comprehensions.comprehenders.FutureAdapter;
+import com.aol.cyclops.internal.comprehensions.comprehenders.MonadicValueAdapter;
+import com.aol.cyclops.internal.comprehensions.comprehenders.OptionalAdapter;
 import com.aol.cyclops.internal.comprehensions.comprehenders.StreamAdapter;
-import com.aol.cyclops.internal.comprehensions.comprehenders.StreamableComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.TryComprehender;
-import com.aol.cyclops.internal.comprehensions.comprehenders.XorComprehender;
+import com.aol.cyclops.internal.comprehensions.comprehenders.StreamableAdapter;
 import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.FunctionalAdapter;
 
 public interface Witness {
-   static interface MonadicValueWitness  extends WitnessType{
+   static interface MonadicValueWitness<W extends MonadicValueWitness<?>>  extends WitnessType<W>{
         
     }
-   static interface CollectionXWitness  extends WitnessType{
+   static interface CollectionXWitness<W extends CollectionXWitness<?>>  extends WitnessType<W>{
        
    }
     public static <T> Stream<T> stream(AnyM<stream,T> anyM){
@@ -53,7 +52,13 @@ public interface Witness {
     public static <T> Streamable<T> streamable(AnyM<streamable,T> anyM){
         return anyM.unwrap();
     }
-    public static <T> List<T> list(AnyM<list,T> anyM){
+    public static <T> PVectorX<T> pvector(AnyM<pvector,T> anyM){
+        return anyM.unwrap();
+    }
+    public static <T> PStackX<T> pstack(AnyM<pstack,T> anyM){
+        return anyM.unwrap();
+    }
+    public static <T> ListX<T> list(AnyM<list,T> anyM){
         return anyM.unwrap();
     }
     public static <T> Deque<T> deque(AnyM<deque,T> anyM){
@@ -83,7 +88,7 @@ public interface Witness {
     public static <T> Maybe<T> maybe(AnyM<maybe,T> anyM){
         return anyM.unwrap();
     }
-    public static <T> FutureW<T> futureW(AnyM<futureW,T> anyM){
+    public static <T> FutureW<T> future(AnyM<future,T> anyM){
         return anyM.unwrap();
     }
     
@@ -99,139 +104,186 @@ public interface Witness {
     public static <X extends Throwable,T> Try<T,X> Try(AnyM<tryType,T> anyM){
         return anyM.unwrap();
     }
-    public static enum stream implements WitnessType{
+    public static enum stream implements WitnessType<stream>{
         INSTANCE;
 
         @Override
-        public  Comprehender<stream> adapter() {
+        public  FunctionalAdapter<stream> adapter() {
             return StreamAdapter.stream;
         }
         
     }
-    public static enum sortedSet implements WitnessType{
+    public static enum reactiveSeq implements WitnessType<stream>{
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) SortedSetComprehender.INSTANCE;
+        public  FunctionalAdapter<stream> adapter() {
+            return StreamAdapter.reactiveSeq;
         }
         
     }
-    public static enum streamable implements WitnessType{
+    public static enum sortedSet implements CollectionXWitness<sortedSet>{
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) StreamableComprehender.INSTANCE;
+        public  FunctionalAdapter<sortedSet> adapter() {
+            return new CollectionXAdapter<Witness.sortedSet>(SortedSetX::empty,
+                    SortedSetX::of,SortedSetX::fromIterator,this);
         }
         
     }
-    public static enum set implements WitnessType{
+    public static enum set implements CollectionXWitness<set>{
         INSTANCE;
 
         @Override
-        public  Comprehender<set> adapter() {
-            return SetComprehender.INSTANCE;
+        public  FunctionalAdapter<set> adapter() {
+            return new CollectionXAdapter<Witness.set>(SetX::empty,
+                    SetX::of,SetX::fromIterator,this);
         }
         
     }
-    public static enum list implements WitnessType{
+    public static enum list implements CollectionXWitness<list>{
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) ListComprehender.INSTANCE;
+        public  FunctionalAdapter<list> adapter() {
+            return new CollectionXAdapter<Witness.list>(ListX::empty,
+                    ListX::of,ListX::fromIterator,this);
         }
         
     }
-    public static enum deque implements WitnessType{
+    public static enum pstack implements CollectionXWitness<pstack>{
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) DequeComprehender.INSTANCE;
+        public  FunctionalAdapter<pstack> adapter() {
+            return new CollectionXAdapter<Witness.pstack>(PStackX::empty,
+                    PStackX::of,PStackX::fromIterator,this);
         }
         
     }
-    public static enum queue implements WitnessType{
+    public static enum pvector implements CollectionXWitness<pvector>{
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) QueueComprehender.INSTANCE;
+        public  FunctionalAdapter<pvector> adapter() {
+            return new CollectionXAdapter<Witness.pvector>(PVectorX::empty,
+                    PVectorX::of,PVectorX::fromIterator,this);
         }
         
     }
-    public static enum tryType implements WitnessType{
+    public static enum deque implements CollectionXWitness<deque>{
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) TryComprehender.INSTANCE;
+        public  FunctionalAdapter<deque> adapter() {
+            return new CollectionXAdapter<Witness.deque>(DequeX::empty,
+                    DequeX::of,DequeX::fromIterator,this);
         }
         
     }
-    public static enum ior implements WitnessType{
+    public static enum queue implements CollectionXWitness<queue>{
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) IorComprehender.INSTANCE;
+        public  FunctionalAdapter<queue> adapter() {
+            return new CollectionXAdapter<Witness.queue>(QueueX::empty,
+                    QueueX::of,QueueX::fromIterator,this);
         }
         
     }
-    public static enum xor implements WitnessType{
+    public static enum streamable implements WitnessType<streamable>{
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) XorComprehender.INSTANCE;
+        public FunctionalAdapter<streamable> adapter() {
+            return StreamableAdapter.streamable;
         }
         
     }
-    public static enum completableFuture implements WitnessType{
+
+    public static enum tryType implements MonadicValueWitness<tryType>{
         INSTANCE;
 
+
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) CompletableFutureComprehender.INSTANCE;
+        public FunctionalAdapter<tryType> adapter() {
+            return new MonadicValueAdapter<Witness.tryType>(()->Try.failure(null),
+                    Try::success,false,this);
         }
         
     }
-    public static enum eval implements WitnessType{
+    public static enum ior implements MonadicValueWitness<ior>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<ior> adapter() {
+            return new MonadicValueAdapter<Witness.ior>(()->Ior.secondary(null),
+                    Ior::primary,false,this);
+        }
+        
+    }
+    public static enum xor implements MonadicValueWitness<xor>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<xor> adapter() {
+            return new MonadicValueAdapter<Witness.xor>(()->Xor.secondary(null),
+                    Xor::primary,false,this);
+        }
+        
+    }
+    public static enum eval implements MonadicValueWitness<eval>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<eval> adapter() {
+            return new MonadicValueAdapter<Witness.eval>(()->Eval.now(null),
+                    Eval::now,false,this);
+        }
+        
+    }
+    public static enum maybe implements MonadicValueWitness<maybe>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<maybe> adapter() {
+            return new MonadicValueAdapter<Witness.maybe>(()->Maybe.none(),
+                    Maybe::just,true,this);
+        }
+        
+    }
+    public static enum future implements MonadicValueWitness<future>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<future> adapter() {
+            return new MonadicValueAdapter<Witness.future>(FutureW::future,
+                    FutureW::ofResult,false,this);
+        }
+        
+    }
+    public static enum completableFuture implements WitnessType<completableFuture>{
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) EvalComprehender.INSTANCE;
+        public FunctionalAdapter<completableFuture> adapter() {
+            return FutureAdapter.completableFuture;
         }
         
     }
     
-    public static enum futureW implements WitnessType{
+    public static enum optional implements WitnessType<optional>{
         INSTANCE;
 
         @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) FutureFunctorComprehender.INSTANCE;
-        }
-        
-    }
-    public static enum maybe implements WitnessType{
-        INSTANCE;
-
-        @Override
-        public <T> Comprehender<T> adapter() {
-            return (Comprehender<T>) MaybeComprehender.INSTANCE;
-        }
-        
-    }
-    public static enum optional implements WitnessType{
-        INSTANCE;
-
-        @Override
-        public Comprehender<optional> adapter() {
-            return (Comprehender<T>) OptionalComprehender.INSTANCE;
+        public FunctionalAdapter<optional> adapter() {
+            return OptionalAdapter.optional;
         }
         
     }

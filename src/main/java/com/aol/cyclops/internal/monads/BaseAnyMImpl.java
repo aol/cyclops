@@ -1,7 +1,7 @@
 package com.aol.cyclops.internal.monads;
 
 import com.aol.cyclops.types.anyM.WitnessType;
-import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.FunctionalAdapter;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,9 +18,9 @@ import lombok.AllArgsConstructor;
 public abstract class BaseAnyMImpl<W extends WitnessType,T> {
 
     protected final Object monad;
-    protected final Comprehender<W> adapter;
+    protected final FunctionalAdapter<W> adapter;
 
-    public Comprehender<W> adapter(){
+    public FunctionalAdapter<W> adapter(){
         return adapter;
     }
  

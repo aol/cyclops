@@ -6,7 +6,7 @@ import java.util.function.Function;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.anyM.WitnessType;
 
-public abstract class  AbstractFunctionalAdapter<W extends WitnessType>  implements Comprehender<W>{
+public abstract class  AbstractFunctionalAdapter<W extends WitnessType>  implements FunctionalAdapter<W>{
 
     @Override
     public abstract <T, R> AnyM<W, R> ap(AnyM<W, Function<T,R>> fn, AnyM<W, T> apply);

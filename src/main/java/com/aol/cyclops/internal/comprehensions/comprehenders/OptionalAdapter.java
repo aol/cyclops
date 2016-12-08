@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.anyM.Witness.optional;
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 import com.aol.cyclops.util.Optionals;
 

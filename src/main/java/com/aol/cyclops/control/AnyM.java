@@ -27,7 +27,6 @@ import java.util.stream.StreamSupport;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMValueImpl;
@@ -43,7 +42,6 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.Witness.completableFuture;
 import com.aol.cyclops.types.anyM.Witness.eval;
-import com.aol.cyclops.types.anyM.Witness.futureW;
 import com.aol.cyclops.types.anyM.Witness.ior;
 import com.aol.cyclops.types.anyM.Witness.list;
 import com.aol.cyclops.types.anyM.Witness.maybe;
@@ -53,8 +51,9 @@ import com.aol.cyclops.types.anyM.Witness.stream;
 import com.aol.cyclops.types.anyM.Witness.streamable;
 import com.aol.cyclops.types.anyM.Witness.tryType;
 import com.aol.cyclops.types.anyM.Witness.xor;
+import com.aol.cyclops.types.anyM.Witness.future;
 import com.aol.cyclops.types.anyM.WitnessType;
-import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.FunctionalAdapter;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.Optionals;
@@ -89,7 +88,7 @@ import com.aol.cyclops.util.function.Predicates;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, ToStream<T>,Publisher<T> {
+public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, ToStream<T>,Publisher<T> {
    
     
     default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){
@@ -140,7 +139,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
      * @param fn Function inside an Applicative
      * @return Function to apply an Applicative's value to function
      */
-    public static <W extends WitnessType,T,R> Function<AnyM<W,T>,AnyM<W,R>> ap(AnyM<W, Function<T,R>> fn){
+    public static <W extends WitnessType<W>,T,R> Function<AnyM<W,T>,AnyM<W,R>> ap(AnyM<W, Function<T,R>> fn){
         return apply->apply.adapter().ap(fn,apply);
     }
     /**
@@ -158,7 +157,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
      * @param fn Curried function inside an Applicative
      * @return Function to apply two Applicative's values to a function
      */
-    public static <W extends WitnessType,T,T2,R> BiFunction<AnyM<W,T>,AnyM<W,T2>,AnyM<W,R>> ap2(AnyM<W, Function<T,Function<T2,R>>> fn){
+    public static <W extends WitnessType<W>,T,T2,R> BiFunction<AnyM<W,T>,AnyM<W,T2>,AnyM<W,R>> ap2(AnyM<W, Function<T,Function<T2,R>>> fn){
         return (apply1,apply2)->apply1.adapter().ap2(fn,apply1,apply2);
     }
 
@@ -323,7 +322,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
      * 
      * @return Flattened / joined one level
      */ 
-    static <W extends WitnessType,T1> AnyM<W,T1> flatten(AnyM<W,AnyM<W,T1>> nested){
+    static <W extends WitnessType<W>,T1> AnyM<W,T1> flatten(AnyM<W,AnyM<W,T1>> nested){
         return nested.flatMapA(Function.identity());
     }
 
@@ -437,7 +436,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
         Objects.requireNonNull(list);
         return AnyMFactory.instance.seq(list,Witness.list.INSTANCE);
     }
-    public static <W extends Witness.CollectionXWitness,T> AnyMSeq<W,T> fromCollectionX(final CollectionX<T> collection, W witness) {
+    public static <W extends Witness.CollectionXWitness<W>,T> AnyMSeq<W,T> fromCollectionX(final CollectionX<T> collection, W witness) {
         Objects.requireNonNull(collection);
         return AnyMFactory.instance.seq(collection,witness);
     }
@@ -647,7 +646,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
         Objects.requireNonNull(eval);
         return AnyMFactory.instance.value(eval, Witness.eval.INSTANCE);
     }
-    public static <W extends Witness.MonadicValueWitness,T> AnyMValue<W,T> fromMonadicValue(final MonadicValue<T> eval,W witness) {
+    public static <W extends Witness.MonadicValueWitness<W>,T> AnyMValue<W,T> fromMonadicValue(final MonadicValue<T> eval,W witness) {
         Objects.requireNonNull(eval);
         return AnyMFactory.instance.value(eval, witness);
     }
@@ -658,9 +657,9 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
      * @param future to wrap inside an AnyM
      * @return AnyM instance that wraps the provided future
      */
-    public static <T> AnyMValue<futureW,T> fromFutureW(final FutureW<T> future) {
+    public static <T> AnyMValue<future,T> fromFutureW(final FutureW<T> future) {
         Objects.requireNonNull(future);
-        return AnyMFactory.instance.value(future, Witness.futureW.INSTANCE);
+        return AnyMFactory.instance.value(future, Witness.future.INSTANCE);
     }
 
     /**
@@ -939,7 +938,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.value(monad,witness);
     } 
-    public static <W extends WitnessType,T> AnyMValue<W,T> ofValue(final Object monad,Comprehender<?> adapter) {
+    public static <W extends WitnessType,T> AnyMValue<W,T> ofValue(final Object monad,FunctionalAdapter<?> adapter) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.value(monad,adapter);
     } 
@@ -950,7 +949,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
      * @param monad to wrap inside an AnyM
      * @return AnyMSeq that wraps the supplied monad
      */
-    public static <W extends WitnessType,T> AnyMSeq<W,T> ofSeq(final Object monad, W witness) {
+    public static <W extends WitnessType<W>,T> AnyMSeq<W,T> ofSeq(final Object monad, W witness) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.seq(monad,witness);
     }
@@ -1139,7 +1138,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
      * @param anyM Iterable containing Maybes
      * @return List of AnyMs
      */
-    public static <T> ListX<AnyMValue<futureW,T>> listFromFutureW(final Iterable<FutureW<T>> anyM) {
+    public static <T> ListX<AnyMValue<future,T>> listFromFutureW(final Iterable<FutureW<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
                             .map(i -> AnyM.fromFutureW(i))
                             .collect(ListX.listXCollector());
@@ -1178,7 +1177,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */
-    public static <W extends WitnessType,T1> AnyM<W,ListX<T1>> sequence(final Collection<AnyM<W,T1>> seq,W w) {
+    public static <W extends WitnessType<W>,T1> AnyM<W,ListX<T1>> sequence(final Collection<AnyM<W,T1>> seq,W w) {
         return sequence(seq.stream(),w).map(ListX::fromStreamS);
     }
 
@@ -1196,8 +1195,8 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
      * @param fn Function to apply 
      * @return Monad with a list
      */
-    public static <W extends WitnessType,T, R> AnyM<W,ListX<R>> traverse(final Collection<? extends AnyM<W,T>> seq, final Function<? super T, ? extends R> fn,W w) {
-        return sequence(seq,w).map(l->l.map(fn));
+    public static <W extends WitnessType<W>,T, R> AnyM<W,ListX<R>> traverse(final Collection<? extends AnyM<W,T>> seq, final Function<? super T, ? extends R> fn,W w) {
+        return sequence((Collection<AnyM<W,T>>)seq,w).map(l->l.map(fn));
     }
 
     
@@ -1205,12 +1204,12 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
     static class AnyMFactory {
         static AnyMFactory instance = new AnyMFactory();
 
-        public <W extends WitnessType,T> AnyMValue<W,T> value(final Object o,Comprehender<?> adapter) {
+        public <W extends WitnessType<W>,T> AnyMValue<W,T> value(final Object o,FunctionalAdapter<?> adapter) {
             if (o instanceof AnyMValue)
                 return (AnyMValue<W,T>) o;
             
             return new AnyMValueImpl<W,T>(
-                                        o,(Comprehender)adapter);
+                                        o,(FunctionalAdapter)adapter);
         }
 
         /**
@@ -1219,7 +1218,7 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
          * @param o Monad to wrap
          * @return AnyMValue wrapping supplied monad
          */
-        public <W extends WitnessType,T> AnyMValue<W,T> value(final Object o,WitnessType comp) {
+        public <W extends WitnessType<W>,T> AnyMValue<W,T> value(final Object o,W comp) {
             if (o instanceof AnyMValue)
                 return (AnyMValue<W,T>) o;
             
@@ -1233,15 +1232,15 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
          * @param o Monad to wrap
          * @return AnyMValue wrapping supplied monad
          */
-        public <W extends WitnessType,T> AnyMSeq<W,T> seq(final Object o, WitnessType comp) {
+        public <W extends WitnessType<W>,T> AnyMSeq<W,T> seq(final Object o, WitnessType comp) {
             if (o instanceof AnyMSeq)
                 return (AnyMSeq<W,T>) o;
             return new AnyMSeqImpl<W,T>(o,comp.adapter());
         }
 
     }
-    public static  <W extends WitnessType,T> AnyM<W,Stream<T>> sequence(Stream<? extends AnyM<W,T>> stream, W witness) {
-        Comprehender<W> c = witness.adapter();
+    public static  <W extends WitnessType<W>,T> AnyM<W,Stream<T>> sequence(Stream<? extends AnyM<W,T>> stream, W witness) {
+        FunctionalAdapter<W> c = witness.adapter();
         AnyM<W,Stream<T>> identity = c.unit(Stream.empty());
        
         BiFunction<AnyM<W,Stream<T>>,AnyM<W,T>,AnyM<W,Stream<T>>> combineToStream = (acc,next) -> c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->Stream.concat(a,Stream.of(b)))),acc,next);
@@ -1250,12 +1249,12 @@ public interface AnyM<W extends WitnessType,T> extends Unwrapable,To<AnyM<W,T>>,
 
         return stream.reduce(identity,combineToStream,combineStreams);
     }
-    public static  <W extends WitnessType,T,R> AnyM<W,Stream<R>> traverse(Function<T,R> fn,Stream<AnyM<W,T>> stream, W witness) {
+    public static  <W extends WitnessType<W>,T,R> AnyM<W,Stream<R>> traverse(Function<T,R> fn,Stream<AnyM<W,T>> stream, W witness) {
        return sequence(stream.map(h->h.map(fn)),witness);
     }
-    Comprehender<W> adapter();
+    FunctionalAdapter<W> adapter();
 
-    public static <W extends WitnessType,T> AnyM<W, T> narrow(AnyM<W, ? extends T> anyM){
+    public static <W extends WitnessType<W>,T> AnyM<W, T> narrow(AnyM<W, ? extends T> anyM){
         return (AnyM<W,T>)anyM;
     }
 

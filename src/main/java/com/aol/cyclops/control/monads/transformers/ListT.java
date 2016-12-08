@@ -50,6 +50,7 @@ public class ListT<W extends WitnessType,T> implements To<ListT<W,T>>,
     final AnyM<W,FluentSequenceX<T>> run;
 
     
+    
     private ListT(final AnyM<W,? extends FluentSequenceX<T>> run) {
         this.run = AnyM.narrow(run);
     }

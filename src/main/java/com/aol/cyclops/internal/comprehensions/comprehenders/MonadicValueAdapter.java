@@ -16,7 +16,7 @@ import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class MonadicValueComprehender<W extends Witness.MonadicValueWitness> extends AbstractFunctionalAdapter<W> {
+public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<?>> extends AbstractFunctionalAdapter<W> {
    
     private final Supplier<MonadicValue<?>> empty;
     private final Function<?,MonadicValue<?>> unit;
@@ -24,8 +24,6 @@ public class MonadicValueComprehender<W extends Witness.MonadicValueWitness> ext
     private final boolean filter;
     private final W witness;
     
-  //  public final static MonadicValueComprehender stream = new MonadicValueComprehender(()->Stream.of(),t->Stream.of(t),it->StreamUtils.stream(()->it));
-  //  public final static MonadicValueComprehender reactiveSeq = new MonadicValueComprehender(()->ReactiveSeq.of(),t->ReactiveSeq.of(t),it->ReactiveSeq.fromIterator(it));
     
     private <U> Supplier<MonadicValue<U>> getEmpty(){
         return (Supplier)empty;

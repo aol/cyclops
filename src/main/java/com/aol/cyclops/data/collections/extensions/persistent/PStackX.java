@@ -31,6 +31,7 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
@@ -161,7 +162,16 @@ public interface PStackX<T> extends To<PStackX<T>>,
         return new PStackXImpl<>(
                                  ConsPStack.from(Arrays.asList(values)), true);
     }
-
+    /**
+     * 
+     * Construct a PStackX from the provided Iterator
+     * 
+     * @param it Iterator to populate PStackX
+     * @return Newly populated PStackX
+     */
+    public static <T> PStackX<T> fromIterator(final Iterator<T> it) {
+        return fromIterable(()->it);
+    }
     /**
      * Construct a PStackX from an Publisher
      * 

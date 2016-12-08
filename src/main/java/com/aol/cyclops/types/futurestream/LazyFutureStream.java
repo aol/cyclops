@@ -1485,7 +1485,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      */
     @Override
     default <R> LazyFutureStream<R> flatMap(final Function<? super U, ? extends Stream<? extends R>> flatFn) {
-        return map(flatFn).flatten();
+        return narrow(flatten(map(flatFn)));
     }
 
     @Override
@@ -2456,10 +2456,12 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      *
      * @see com.aol.cyclops.control.ReactiveSeq#flatten()
      */
-    @Override
-    default <T1> LazyFutureStream<T1> flatten() {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                                     .flatten());
+    public static <T1> LazyFutureStream<T1> flatten(LazyFutureStream<? extends Stream<T1>> nested){
+        return nested.flatMap(Function.identity());
+
+    }
+    public static <T1> LazyFutureStream<T1> narrow(LazyFutureStream<? extends T1> broad){
+        return (LazyFutureStream<T1>)broad;
 
     }
 

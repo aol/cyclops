@@ -140,7 +140,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
             res.add(v);
         return fromIterable(res);
     }
-
+    public static <T> SetX<T> fromIterator(final Iterator<T> it) {
+        return fromIterable(()->it);
+    }
     public static <T> SetX<T> singleton(final T value) {
         return SetX.<T> of(value);
     }

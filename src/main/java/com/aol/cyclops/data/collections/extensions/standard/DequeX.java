@@ -157,6 +157,16 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableSequenceX<T>,M
             res.add(v);
         return fromIterable(res);
     }
+    /**
+     * 
+     * Construct a Deque from the provided Iterator
+     * 
+     * @param it Iterator to populate Deque
+     * @return Newly populated DequeX
+     */
+    public static <T> DequeX<T> fromIterator(final Iterator<T> it) {
+        return fromIterable(()->it);
+    }
 
     /**
      * Construct a DequeX with a single value

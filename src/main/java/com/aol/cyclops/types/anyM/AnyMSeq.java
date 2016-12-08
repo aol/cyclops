@@ -45,7 +45,7 @@ import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.FunctionalAdapter;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
@@ -63,7 +63,7 @@ import lombok.val;
  *
  * @param <T> Data types of elements managed by wrapped non-scalar Monad.
  */
-public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFoldable<T>, ConvertableSequence<T>, ExtendedTraversable<T>, Sequential<T>,
+public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, IterableFoldable<T>, ConvertableSequence<T>, ExtendedTraversable<T>, Sequential<T>,
         CyclopsCollectable<T>, FilterableFunctor<T>, ZippingApplicativable<T>, ReactiveStreamsTerminalOperations<T>, Publisher<T> {
 
     /**
@@ -386,7 +386,7 @@ public interface AnyMSeq<W extends WitnessType,T> extends AnyM<W,T>, IterableFol
 
         return fromIterable(ExtendedTraversable.super.onEmptyGet(supplier));
     }
-    Comprehender<W> adapter();
+    FunctionalAdapter<W> adapter();
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#onEmptyThrow(java.util.function.Supplier)
      */

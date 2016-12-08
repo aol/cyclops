@@ -219,7 +219,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * <pre>
      * {@code 
-     *  ReactiveSeq.of(Arrays.asList(1,2)).flatten();
+     *  ReactiveSeq.of(Arrays.asList(1,2))
+     *             .to(ReactiveSeq::flatten));
      *  
      *  //stream of (1,  2);		
      *  
@@ -231,7 +232,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * @return Flattened / joined one level
      */
-    <T1> ReactiveSeq<T1> flatten();
+    static <T1> ReactiveSeq<T1> flatten(ReactiveSeq<ReactiveSeq<T1>> nested){
+        return nested.flatMap(Function.identity());
+    }
 
     /**
      * Convert to a Stream with the values repeated specified times

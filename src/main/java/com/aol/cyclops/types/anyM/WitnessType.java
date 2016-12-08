@@ -1,8 +1,8 @@
 package com.aol.cyclops.types.anyM;
 
-import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.FunctionalAdapter;
 
-public interface WitnessType {
+public interface WitnessType<W extends WitnessType<?>> {
     
-    <W extends WitnessType> Comprehender<W> adapter();
+     FunctionalAdapter<W> adapter();
 }

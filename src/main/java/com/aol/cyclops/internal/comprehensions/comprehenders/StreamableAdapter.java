@@ -9,10 +9,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.anyM.Witness.streamable;
+
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 
 import lombok.AllArgsConstructor;
@@ -23,7 +22,8 @@ public class StreamableAdapter extends AbstractFunctionalAdapter<Witness.streama
     private final Supplier<Streamable<?>> empty;
     private final Function<?,Streamable<?>> unit;
     private final Function<Iterator<?>,Streamable<?>> unitIterator;
-    
+    public final static StreamableAdapter streamable = new StreamableAdapter(()->Streamable.of(),t->Streamable.of(t),it->Streamable.fromIterator(it));
+ 
     
     private <U> Supplier<Streamable<U>> getEmpty(){
         return (Supplier)empty;

@@ -4,11 +4,11 @@ import java.util.Objects;
 
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.WitnessType;
-import com.aol.cyclops.types.extensability.Comprehender;
+import com.aol.cyclops.types.extensability.FunctionalAdapter;
 
 public class AnyMSeqImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>implements AnyMSeq<W,T> {
 
-    public AnyMSeqImpl(final Object monad,  Comprehender<W> adapter) {
+    public AnyMSeqImpl(final Object monad,  FunctionalAdapter<W> adapter) {
         super(monad,adapter);
 
     }
