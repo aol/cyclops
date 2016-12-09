@@ -5,9 +5,9 @@ import java.util.function.Function;
 
 import com.aol.cyclops.types.IterableFunctor;
 import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.QuintFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F5;
+import com.aol.cyclops.util.function.F3;
 
 public interface ZippingApplicativable<T> extends IterableFunctor<T>, Unit<T> {
 
@@ -28,19 +28,19 @@ public interface ZippingApplicativable<T> extends IterableFunctor<T>, Unit<T> {
                    .applicative2(fn);
     }
 
-    default <T2, T3, R> ZippingApplicative2<T2, T3, R, ?> ap3(final TriFunction<? super T, ? super T2, ? super T3, ? extends R> fn) {
+    default <T2, T3, R> ZippingApplicative2<T2, T3, R, ?> ap3(final F3<? super T, ? super T2, ? super T3, ? extends R> fn) {
         return this.<R> applicatives()
                    .applicative3(fn);
     }
 
     default <T2, T3, T4, R> ZippingApplicative3<T2, T3, T4, R, ?> ap4(
-            final QuadFunction<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+            final F4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return this.<R> applicatives()
                    .applicative4(fn);
     }
 
     default <T2, T3, T4, T5, R> ZippingApplicative4<T2, T3, T4, T5, R, ?> ap5(
-            final QuintFunction<? super T, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> fn) {
+            final F5<? super T, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> fn) {
         return this.<R> applicatives()
                    .applicative5(fn);
     }

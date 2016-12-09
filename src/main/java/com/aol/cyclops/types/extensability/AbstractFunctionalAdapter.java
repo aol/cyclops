@@ -6,10 +6,10 @@ import java.util.function.Function;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.anyM.WitnessType;
 
-public abstract class  AbstractFunctionalAdapter<W extends WitnessType>  implements FunctionalAdapter<W>{
+public abstract class  AbstractFunctionalAdapter<W extends WitnessType<W>>  implements FunctionalAdapter<W>{
 
     @Override
-    public abstract <T, R> AnyM<W, R> ap(AnyM<W, Function<T,R>> fn, AnyM<W, T> apply);
+    public abstract <T, R> AnyM<W, R> ap(AnyM<W,? extends Function<T,R>> fn, AnyM<W, T> apply);
 
     @Override
     public <T, R> AnyM<W, R> map(AnyM<W, T> t, Function<? super T, ? extends R> fn) {

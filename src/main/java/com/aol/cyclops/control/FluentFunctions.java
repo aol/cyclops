@@ -32,7 +32,7 @@ import com.aol.cyclops.util.function.Memoize;
 import com.aol.cyclops.util.function.PartialApplicator;
 import com.aol.cyclops.util.function.QuadConsumer;
 import com.aol.cyclops.util.function.TriConsumer;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F3;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -214,7 +214,7 @@ public class FluentFunctions {
      * @param fn TriFunction to convert
      * @return FluentTriFunction
      */
-    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(final TriFunction<T1, T2, T3, R> fn) {
+    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(final F3<T1, T2, T3, R> fn) {
         return new FluentTriFunction<>(
                                        fn);
     }
@@ -313,7 +313,7 @@ public class FluentFunctions {
         });
     }
 
-    private static <T1, T2, T3, R> TriFunction<T1, T2, T3, R> softenTriFunction(final CheckedTriFunction<T1, T2, T3, R> fn) {
+    private static <T1, T2, T3, R> F3<T1, T2, T3, R> softenTriFunction(final CheckedTriFunction<T1, T2, T3, R> fn) {
         return (t1, t2, t3) -> {
             try {
                 return fn.apply(t1, t2, t3);
@@ -531,7 +531,7 @@ public class FluentFunctions {
         /**
          * @return A Supplier that returns it's value wrapped in an Optional inside an AnyM
          */
-        public   FluentSupplier<AnyM<Witness.maybe,R>> liftM() {
+        public   FluentSupplier<AnyM<Witness.maybe,R>> liftF() {
             return new FluentSupplier<>(
                                         () -> AnyM.fromMaybe(Maybe.ofNullable(get())));
         }
@@ -853,7 +853,7 @@ public class FluentFunctions {
          * @return A function that accepts and reurns an AnyM type
          */
         public  <W extends WitnessType<W>> FluentFunction<AnyM<W,T>, AnyM<W,R>> liftM() {
-            return FluentFunctions.of(AnyM.liftM(fn));
+            return FluentFunctions.of(AnyM.liftF(fn));
         }
 
         /**
@@ -1265,8 +1265,8 @@ public class FluentFunctions {
         /**
          * @return A BiFunction that accepts and returns a generic Monad instance
          */
-        public <W extends WitnessType> FluentBiFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,R>> liftM() {
-            return FluentFunctions.of(AnyM.liftM2(fn));
+        public <W extends WitnessType<W>> FluentBiFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,R>> liftF() {
+            return FluentFunctions.of(AnyM.liftF2(fn));
         }
 
         /**
@@ -1308,11 +1308,11 @@ public class FluentFunctions {
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentTriFunction<T1, T2, T3, R> implements TriFunction<T1, T2, T3, R> {
-        private final TriFunction<T1, T2, T3, R> fn;
+    public static class FluentTriFunction<T1, T2, T3, R> implements F3<T1, T2, T3, R> {
+        private final F3<T1, T2, T3, R> fn;
         private final String name;
 
-        public FluentTriFunction(final TriFunction<T1, T2, T3, R> fn) {
+        public FluentTriFunction(final F3<T1, T2, T3, R> fn) {
             this.name = null;
             this.fn = fn;
         }
@@ -1433,8 +1433,8 @@ public class FluentFunctions {
          * 
          * @return Curried function 
          */
-        public FluentFunction<T1, Function<T2, Function<T3, R>>> curry() {
-            return new FluentFunction<>(
+        public FluentFunction<? super T1, Function<? super T2, Function<? super T3,? extends R>>> curry() {
+            return new FluentFunction(
                                         Curry.curry3(fn));
         }
         /**
@@ -1555,7 +1555,7 @@ public class FluentFunctions {
          * @param onError Recovery BiFunction
          * @return TriFunction capable of error recovery
          */
-        public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(final Class<X> type, final TriFunction<T1, T2, T3, R> onError) {
+        public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(final Class<X> type, final F3<T1, T2, T3, R> onError) {
             return FluentFunctions.of((t1, t2, t3) -> {
                 try {
                     return fn.apply(t1, t2, t3);
@@ -1658,7 +1658,7 @@ public class FluentFunctions {
         /**
          * @return A TriFunction that accepts and returns Optionals
          */
-        public FluentTriFunction<Optional<T1>, Optional<T2>, Optional<T3>, Optional<R>> lift() {
+        public FluentTriFunction<Optional<T1>, Optional<T2>, Optional<T3>, Optional<R>> liftOptional() {
             return new FluentTriFunction<>(
                                            (opt1, opt2, opt3) -> opt1.flatMap(t1 -> opt2.flatMap(t2 -> opt3.map(t3 -> fn.apply(t1, t2, t3)))));
         }
@@ -1674,8 +1674,8 @@ public class FluentFunctions {
         /**
          * @return Lift this TriFunction into one that accepts and returns generic monad types (AnyM)
          */
-        public  <W extends WitnessType> FluentTriFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,T3>, AnyM<W,R>> liftM() {
-            return FluentFunctions.of(AnyM.liftM3(fn));
+        public  <W extends WitnessType<W>> FluentTriFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,T3>, AnyM<W,R>> liftF() {
+            return FluentFunctions.of(AnyM.liftF3(fn));
         }
 
         /**
@@ -1804,7 +1804,7 @@ public class FluentFunctions {
         public final T1 param1;
         public final T2 param2;
         public final T3 param3;
-        private final TriFunction<T1, T2, T3, R> fn;
+        private final F3<T1, T2, T3, R> fn;
 
         /**
          * Proceed and execute wrapped TriFunction with it's input params as captured

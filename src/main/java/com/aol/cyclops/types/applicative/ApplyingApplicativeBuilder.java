@@ -6,9 +6,9 @@ import java.util.function.Function;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.util.function.CurryVariance;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.QuintFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F5;
+import com.aol.cyclops.util.function.F3;
 
 import lombok.AllArgsConstructor;
 
@@ -59,7 +59,7 @@ public class ApplyingApplicativeBuilder<T, R, A extends ApplicativeFunctor<R>> {
         return applicative3(unit(fn));
     }
 
-    public <T2, T3> Applicative2<T2, T3, R, A> applicative3(final TriFunction<? super T, ? super T2, ? super T3, ? extends R> fn) {
+    public <T2, T3> Applicative2<T2, T3, R, A> applicative3(final F3<? super T, ? super T2, ? super T3, ? extends R> fn) {
 
         return applicative3(unit(CurryVariance.curry3(fn)));
     }
@@ -77,7 +77,7 @@ public class ApplyingApplicativeBuilder<T, R, A extends ApplicativeFunctor<R>> {
     }
 
     public <T2, T3, T4> Applicative3<T2, T3, T4, R, A> applicative4(
-            final QuadFunction<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+            final F4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
 
         return applicative4(unit(CurryVariance.curry4(fn)));
     }
@@ -95,7 +95,7 @@ public class ApplyingApplicativeBuilder<T, R, A extends ApplicativeFunctor<R>> {
     }
 
     public <T2, T3, T4, T5> Applicative4<T2, T3, T4, T5, R, A> applicative5(
-            final QuintFunction<? super T, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> fn) {
+            final F5<? super T, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> fn) {
 
         return applicative5(unit(CurryVariance.curry5(fn)));
     }

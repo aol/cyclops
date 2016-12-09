@@ -43,11 +43,11 @@ public interface FunctionalAdapter<W extends WitnessType<W>> {
     default <R> R visit(Function<? super FunctionalAdapter<W>,? extends R> fn1, Function<? super  ValueAdapter<W>, ? extends R> fn2){
         return fn1.apply(this);
     }
-    default <T,T2,R> AnyM<W,R> ap2(AnyM<W, Function<T,Function<T2,R>>> fn, AnyM<W,T> apply,AnyM<W,T2> apply2){
+    default <T,T2,R> AnyM<W,R> ap2(AnyM<W,? extends Function<T,? extends Function<T2,R>>> fn, AnyM<W,T> apply,AnyM<W,T2> apply2){
         return  ap(ap(fn, apply), apply2);
     }
     
-    public <T,R> AnyM<W,R> ap(AnyM<W, Function<T,R>> fn, AnyM<W,T> apply);
+    public <T,R> AnyM<W,R> ap(AnyM<W, ? extends Function<T,R>> fn, AnyM<W,T> apply);
     
     default <T> AnyM<W,T> filter(AnyM<W,T> t,  Predicate<? super T> fn){
         return t;

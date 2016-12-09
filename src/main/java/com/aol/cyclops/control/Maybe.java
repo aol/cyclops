@@ -28,12 +28,13 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.Zippable;
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F3;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -316,9 +317,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @return Maybe with a List of values
      */
     public static <T> Maybe<ListX<T>> sequenceJust(final CollectionX<Maybe<T>> maybes) {
-        final Maybe<ListX<T>> unwrapped = AnyM.sequence(maybes.map(o -> AnyM.fromMaybe(o)))
-                                              .unwrap();
-        return unwrapped;
+        return AnyM.sequence(maybes.map(AnyM::fromMaybe),Witness.maybe.INSTANCE)
+                   .to(Witness::maybe);
     }
 
     /**
@@ -370,9 +370,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @return  Maybe with a Stream of values
      */
     public static <T> Maybe<ReactiveSeq<T>> sequence(final Stream<Maybe<T>> maybes) {
-        return AnyM.sequence(maybes.map(f -> AnyM.fromMaybe(f)), () -> AnyM.fromMaybe(Maybe.just(Stream.<T> empty())))
-                   .map(s -> ReactiveSeq.fromStream(s))
-                   .unwrap();
+        return AnyM.sequence(maybes.map(AnyM::fromMaybe),Witness.maybe.INSTANCE)
+                   .map(ReactiveSeq::fromStream)
+                   .to(Witness::maybe);
+        
 
     }
 
@@ -458,8 +459,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @Override
     default <T2, R1, R2, R3, R> Maybe<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (Maybe<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -469,9 +470,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @Override
     default <T2, R1, R2, R3, R> Maybe<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (Maybe<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -482,7 +483,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @Override
     default <T2, R1, R2, R> Maybe<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
       
         return (Maybe<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
@@ -493,8 +494,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @Override
     default <T2, R1, R2, R> Maybe<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Maybe<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }

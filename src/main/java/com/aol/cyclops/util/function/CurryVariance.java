@@ -16,32 +16,32 @@ public class CurryVariance {
     }
 
     public static <T1, T2, T3, R> Function<? super T1, Function<? super T2, Function<? super T3, ? extends R>>> curry3(
-            final TriFunction<? super T1, ? super T2, ? super T3, ? extends R> triFunc) {
+            final F3<? super T1, ? super T2, ? super T3, ? extends R> triFunc) {
         return t1 -> t2 -> t3 -> triFunc.apply(t1, t2, t3);
     }
 
     public static <T1, T2, T3, T4, R> Function<? super T1, Function<? super T2, Function<? super T3, Function<? super T4, ? extends R>>>> curry4(
-            final QuadFunction<? super T1, ? super T2, ? super T3, ? super T4, ? extends R> quadFunc) {
+            final F4<? super T1, ? super T2, ? super T3, ? super T4, ? extends R> quadFunc) {
         return t1 -> t2 -> t3 -> t4 -> quadFunc.apply(t1, t2, t3, t4);
     }
 
     public static <T1, T2, T3, T4, T5, R> Function<? super T1, Function<? super T2, Function<? super T3, Function<? super T4, Function<? super T5, ? extends R>>>>> curry5(
-            final QuintFunction<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> pentFunc) {
+            final F5<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> pentFunc) {
         return t1 -> t2 -> t3 -> t4 -> t5 -> pentFunc.apply(t1, t2, t3, t4, t5);
     }
 
     public static <T1, T2, T3, T4, T5, T6, R> Function<? super T1, Function<? super T2, Function<? super T3, Function<? super T4, Function<? super T5, Function<? super T6, ? extends R>>>>>> curry6(
-            final HexFunction<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? extends R> hexFunc) {
+            final F6<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? extends R> hexFunc) {
         return t1 -> t2 -> t3 -> t4 -> t5 -> t6 -> hexFunc.apply(t1, t2, t3, t4, t5, t6);
     }
 
     public static <T1, T2, T3, T4, T5, T6, T7, R> Function<? super T1, Function<? super T2, Function<? super T3, Function<? super T4, Function<? super T5, Function<? super T6, Function<? super T7, ? extends R>>>>>>> curry7(
-            final HeptFunction<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? extends R> heptFunc) {
+            final F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? extends R> heptFunc) {
         return t1 -> t2 -> t3 -> t4 -> t5 -> t6 -> t7 -> heptFunc.apply(t1, t2, t3, t4, t5, t6, t7);
     }
 
     public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function<? super T1, Function<? super T2, Function<? super T3, Function<? super T4, Function<? super T5, Function<? super T6, Function<? super T7, Function<? super T8, ? extends R>>>>>>>> curry8(
-            final OctFunction<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8, ? extends R> octFunc) {
+            final F8<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8, ? extends R> octFunc) {
         return t1 -> t2 -> t3 -> t4 -> t5 -> t6 -> t7 -> t8 -> octFunc.apply(t1, t2, t3, t4, t5, t6, t7, t8);
     }
 

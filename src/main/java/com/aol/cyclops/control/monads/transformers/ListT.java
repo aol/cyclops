@@ -44,7 +44,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T> Type of data stored inside the nested Lists
  */
-public class ListT<W extends WitnessType,T> implements To<ListT<W,T>>,
+public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
                                                           FoldableTransformerSeq<W,T> {
 
     final AnyM<W,FluentSequenceX<T>> run;
@@ -212,69 +212,9 @@ public class ListT<W extends WitnessType,T> implements To<ListT<W,T>>,
                                       .flatMap(a -> a.stream())));
     }
 
-    /**
-     * Lift a function into one that accepts and returns an ListT
-     * This allows multiple monad types to add functionality to existing functions and methods
-     * 
-     * e.g. to add list handling (via List) and iteration (via Stream) to an existing function
-     * <pre>
-     * {@code 
-     * Function<Integer,Integer> add2 = i -> i+2;
-    	Function<ListT<Integer>, ListT<Integer>> optTAdd2 = ListT.lift(add2);
-    	
-    	Stream<Integer> nums = Stream.of(1,2);
-    	AnyM<Stream<Integer>> stream = AnyM.ofMonad(Arrays.asList(nums));
-    	
-    	List<Integer> results = optTAdd2.apply(ListT.fromStream(stream))
-    									.unwrap()
-    									.<Optional<List<Integer>>>unwrap().get();
-    	
-    	
-    	//Arrays.asList(3,4);
-     * 
-     * 
-     * }</pre>
-     * 
-     * 
-     * @param fn Function to enhance with functionality from List and another monad type
-     * @return Function that accepts and returns an ListT
-     */
-    public static <W extends WitnessType,U, R> Function<ListT<W,U>, ListT<W,R>> lift(final Function<? super U, ? extends R> fn) {
-        return optTu -> optTu.map(input -> fn.apply(input));
-    }
+    
 
-    /**
-     * Lift a BiFunction into one that accepts and returns  ListTs
-     * This allows multiple monad types to add functionality to existing functions and methods
-     * 
-     * e.g. to add list handling (via List), iteration (via Stream)  and asynchronous execution (CompletableFuture) 
-     * to an existing function
-     * 
-     * <pre>
-     * {@code 
-     *BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
-    	BiFunction<ListT<Integer>,ListT<Integer>, ListT<Integer>> optTAdd2 = ListT.lift2(add);
-    	
-    	Streamable<Integer> threeValues = Streamable.of(1,2,3);
-    	AnyM<Integer> stream = AnyM.fromStreamable(threeValues);
-    	AnyM<List<Integer>> streamOpt = stream.map(Arrays::asList);
-    	
-    	CompletableFuture<List<Integer>> two = CompletableFuture.completedFuture(Arrays.asList(2));
-    	AnyM<List<Integer>> future=  AnyM.fromCompletableFuture(two);
-    	List<Integer> results = optTAdd2.apply(ListT.of(streamOpt),ListT.of(future))
-    									.unwrap()
-    									.<Stream<List<Integer>>>unwrap()
-    									.flatMap(i->i.stream())
-    									.collect(Collectors.toList());
-    		//Arrays.asList(3,4);							
-      }
-      </pre>
-     * @param fn BiFunction to enhance with functionality from List and another monad type
-     * @return Function that accepts and returns an ListT
-     */
-    public static <W extends WitnessType,U1, U2, R> BiFunction<ListT<W,U1>, ListT<W,U2>, ListT<W,R>> lift2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
-        return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
-    }
+   
 
     /**
      * Construct an ListT from an AnyM that contains a monad type that contains type other than List
@@ -283,21 +223,21 @@ public class ListT<W extends WitnessType,T> implements To<ListT<W,T>>,
      * @param anyM AnyM that doesn't contain a monad wrapping an List
      * @return ListT
      */
-    public static <W extends WitnessType,A> ListT<W,A> fromAnyM(final AnyM<W,A> anyM) {
+    public static <W extends WitnessType<W>,A> ListT<W,A> fromAnyM(final AnyM<W,A> anyM) {
         return of(anyM.map(ListX::of));
     }
-
+    
     /**
      * Construct an ListT from an AnyM that wraps a monad containing  Lists
      * 
      * @param monads AnyM that contains a monad wrapping an List
      * @return ListT
      */
-    public static <W extends WitnessType,A> ListT<W,A> of(final AnyM<W,? extends FluentSequenceX<A>> monads) {
+    public static <W extends WitnessType<W>,A> ListT<W,A> of(final AnyM<W,? extends FluentSequenceX<A>> monads) {
         return new ListT<>(
                               monads);
     }
-    public static <W extends WitnessType,A> ListT<W,A> ofList(final AnyM<W,? extends List<A>> monads) {
+    public static <W extends WitnessType<W>,A> ListT<W,A> ofList(final AnyM<W,? extends List<A>> monads) {
         return new ListT<>(
                               monads.map(ListX::fromIterable));
     }
@@ -375,7 +315,7 @@ public class ListT<W extends WitnessType,T> implements To<ListT<W,T>>,
         return run;
     }
 
-    public static <W extends WitnessType,T> ListT<W,T> emptyList(W witness) { 
+    public static <W extends WitnessType<W>,T> ListT<W,T> emptyList(W witness) { 
         return of(witness.<W>adapter().unit(ListX.empty()));
     }
 

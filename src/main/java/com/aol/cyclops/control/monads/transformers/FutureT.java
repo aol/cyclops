@@ -27,8 +27,8 @@ import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.anyM.transformers.ValueTransformer;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F3;
 
 /**
 * Monad Transformer for FutureW's nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
@@ -40,7 +40,7 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> Type of data stored inside the nested FutureW(s)
  */
-public final class FutureT<W extends WitnessType,T> extends ValueTransformer<W,T> 
+public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
                                                     implements To<FutureT<W,T>>,
                                                                Functor<T>, 
                                                                Filterable<T> {
@@ -148,7 +148,7 @@ public final class FutureT<W extends WitnessType,T> extends ValueTransformer<W,T
                                                                       .get(0))));
     }
 
-    private static <W extends WitnessType,B> AnyM<W,FutureW<B>> narrow(final AnyM<W,FutureW<? extends B>> run) {
+    private static <W extends WitnessType<W>,B> AnyM<W,FutureW<B>> narrow(final AnyM<W,FutureW<? extends B>> run) {
         return (AnyM) run;
     }
 
@@ -189,7 +189,7 @@ public final class FutureT<W extends WitnessType,T> extends ValueTransformer<W,T
      * @param fn Function to enhance with functionality from FutureW and another monad type
      * @return Function that accepts and returns an FutureWT
      */
-    public static <W extends WitnessType,U, R> Function<FutureT<W,U>, FutureT<W,R>> lift(final Function<? super U, ? extends R> fn) {
+    public static <W extends WitnessType<W>,U, R> Function<FutureT<W,U>, FutureT<W,R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -223,7 +223,7 @@ public final class FutureT<W extends WitnessType,T> extends ValueTransformer<W,T
      * @param fn BiFunction to enhance with functionality from FutureW and another monad type
      * @return Function that accepts and returns an FutureWT
      */
-    public static <W extends WitnessType, U1,  U2, R> BiFunction<FutureT<W,U1>, FutureT<W,U2>, FutureT<W,R>> lift2(
+    public static <W extends WitnessType<W>, U1,  U2, R> BiFunction<FutureT<W,U1>, FutureT<W,U2>, FutureT<W,R>> lift2(
             final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
@@ -235,7 +235,7 @@ public final class FutureT<W extends WitnessType,T> extends ValueTransformer<W,T
      * @param anyM AnyM that doesn't contain a monad wrapping an FutureW
      * @return FutureWT
      */
-    public static <W extends WitnessType,A> FutureT<W,A> fromAnyM(final AnyM<W,A> anyM) {
+    public static <W extends WitnessType<W>,A> FutureT<W,A> fromAnyM(final AnyM<W,A> anyM) {
         return of(anyM.map(FutureW::ofResult));
     }
 
@@ -245,7 +245,7 @@ public final class FutureT<W extends WitnessType,T> extends ValueTransformer<W,T
      * @param monads AnyM that contains a monad wrapping an FutureW
      * @return FutureWT
      */
-    public static <W extends WitnessType,A> FutureT<W,A> of(final AnyM<W,FutureW<A>> monads) {
+    public static <W extends WitnessType<W>,A> FutureT<W,A> of(final AnyM<W,FutureW<A>> monads) {
         return new FutureT<>(
                                  monads);
     }
@@ -419,8 +419,8 @@ public final class FutureT<W extends WitnessType,T> extends ValueTransformer<W,T
     @Override
     public <T2, R1, R2, R3, R> FutureT<W, R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (FutureT<W, R>)super.forEach4(value1, value2, value3, yieldingFunction);
     }
@@ -431,9 +431,9 @@ public final class FutureT<W extends WitnessType,T> extends ValueTransformer<W,T
     @Override
     public <T2, R1, R2, R3, R> FutureT<W, R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (FutureT<W, R>)super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -444,7 +444,7 @@ public final class FutureT<W extends WitnessType,T> extends ValueTransformer<W,T
     @Override
     public <T2, R1, R2, R> FutureT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (FutureT<W, R>)super.forEach3(value1, value2, yieldingFunction);
     }
@@ -455,8 +455,8 @@ public final class FutureT<W extends WitnessType,T> extends ValueTransformer<W,T
     @Override
     public <T2, R1, R2, R> FutureT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (FutureT<W, R>)super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }

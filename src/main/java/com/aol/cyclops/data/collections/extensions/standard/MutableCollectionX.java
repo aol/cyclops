@@ -24,8 +24,8 @@ import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F3;
 
 public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     

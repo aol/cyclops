@@ -32,8 +32,8 @@ import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F3;
 
 /**
  * An eXtended Deque type, that offers additional eagerly executed functional style operators such as bimap, filter and more
@@ -42,7 +42,7 @@ import com.aol.cyclops.util.function.TriFunction;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableSequenceX<T>,MutableCollectionX<T>, OnEmptySwitch<T, Deque<T>> {
+public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>,MutableCollectionX<T>, OnEmptySwitch<T, Deque<T>> {
 
     /**
      * Create a DequeX that contains the Integers between start and end
@@ -226,6 +226,8 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableSequenceX<T>,M
                                             .collect(collector),
                                  collector);
     }
+    
+   
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
@@ -233,8 +235,8 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableSequenceX<T>,M
     @Override
     default <R1, R2, R3, R> DequeX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (DequeX)MutableCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
@@ -245,9 +247,9 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableSequenceX<T>,M
     @Override
     default <R1, R2, R3, R> DequeX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (DequeX)MutableCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
@@ -258,7 +260,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableSequenceX<T>,M
     @Override
     default <R1, R2, R> DequeX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (DequeX)MutableCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
     }
@@ -269,8 +271,8 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableSequenceX<T>,M
     @Override
     default <R1, R2, R> DequeX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (DequeX)MutableCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }

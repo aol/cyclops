@@ -76,8 +76,8 @@ import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F3;
 
 import lombok.val;
 
@@ -3357,8 +3357,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default <R1, R2, R3,R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
                         final BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
-                            final TriFunction<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-                            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+                            final F3<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+                            final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
         return this.flatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
@@ -3409,9 +3409,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default <R1, R2, R3, R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             final BiFunction<? super T, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-            final TriFunction<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+            final F3<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+            final F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
         return this.flatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
@@ -3454,7 +3454,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
         return this.flatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
@@ -3499,8 +3499,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
    default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
-            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+            F3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
        return this.flatMap(in -> {
 
            ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());

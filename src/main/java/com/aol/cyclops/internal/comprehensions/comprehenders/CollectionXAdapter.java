@@ -54,7 +54,7 @@ public class CollectionXAdapter<W extends Witness.CollectionXWitness<W>> extends
     }
 
     @Override
-    public <T, R> AnyM<W, R> ap(AnyM<W, Function<T, R>> fn, AnyM<W, T> apply) {
+    public <T, R> AnyM<W, R> ap(AnyM<W, ? extends Function<T, R>> fn, AnyM<W, T> apply) {
          return fromCollectionX(collectionX(apply).zip(collectionX(fn),(a,b)->b.apply(a)),witness);
          
     }

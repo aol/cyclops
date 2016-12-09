@@ -30,7 +30,6 @@ import com.aol.cyclops.react.collectors.lazy.Blocker;
 import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.ConvertableFunctor;
 import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.FlatMap;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
@@ -40,8 +39,8 @@ import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.CompletableFutures;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F3;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -614,8 +613,8 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public <T2, R1, R2, R3, R> FutureW<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (FutureW<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -625,9 +624,9 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public <T2, R1, R2, R3, R> FutureW<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (FutureW<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -638,7 +637,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public <T2, R1, R2, R> FutureW<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
       
         return (FutureW<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
@@ -649,8 +648,8 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
     @Override
     public <T2, R1, R2, R> FutureW<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (FutureW<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }

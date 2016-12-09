@@ -16,7 +16,7 @@ import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<?>> extends AbstractFunctionalAdapter<W> {
+public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> extends AbstractFunctionalAdapter<W> {
    
     private final Supplier<MonadicValue<?>> empty;
     private final Function<?,MonadicValue<?>> unit;
@@ -55,7 +55,7 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<?>> exten
     }
 
     @Override
-    public <T, R> AnyM<W, R> ap(AnyM<W, Function<T, R>> fn, AnyM<W, T> apply) {
+    public <T, R> AnyM<W, R> ap(AnyM<W,? extends Function<T, R>> fn, AnyM<W, T> apply) {
          return fromMonadicValue(monadicValue(apply).combine(monadicValue(fn),(a,b)->b.apply(a)),witness);
          
     }

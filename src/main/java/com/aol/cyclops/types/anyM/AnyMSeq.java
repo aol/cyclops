@@ -50,9 +50,9 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.QuintFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F5;
+import com.aol.cyclops.util.function.F3;
 
 import lombok.val;
 
@@ -84,8 +84,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      */
     default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
                         final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
-                            final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
-                            final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+                            final F3<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
+                            final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
        
         return this.flatMapA(in -> {
 
@@ -123,9 +123,9 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      */
     default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
             final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
-                    final TriFunction<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
-                        final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                final QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+                    final F3<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
+                        final F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
 
         return this.flatMapA(in -> {
 
@@ -231,8 +231,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
             BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
-            TriFunction<? super T,? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+            F3<? super T,? super R1, ? super R2, Boolean> filterFunction,
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
 
         return this.flatMapA(in -> {
 
@@ -270,7 +270,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
             BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
         return this.flatMapA(in -> {
 
             AnyM<W,R1> a = monad1.apply(in);
@@ -1175,7 +1175,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <W extends WitnessType,U1, U2, U3, R> TriFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,R>> liftM3(
+    public static <W extends WitnessType,U1, U2, U3, R> F3<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,R>> liftM3(
             final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
         return (u1, u2, u3) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))));
     }
@@ -1187,7 +1187,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <W extends WitnessType,U1, U2, U3, U4, R> QuadFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,R>> liftM4(
+    public static <W extends WitnessType,U1, U2, U3, U4, R> F4<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,R>> liftM4(
             final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4)))));
@@ -1200,7 +1200,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> QuintFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,U5>, AnyMSeq<W,R>> liftM5(
+    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> F5<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,U5>, AnyMSeq<W,R>> liftM5(
             final Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,

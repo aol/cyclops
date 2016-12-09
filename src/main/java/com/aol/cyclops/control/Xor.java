@@ -35,8 +35,8 @@ import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F3;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -214,8 +214,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
     @Override
     default <T2, R1, R2, R3, R> Xor<ST,R> forEach4(Function<? super PT, ? extends MonadicValue<R1>> value1,
             BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            F4<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (Xor<ST,R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -225,9 +225,9 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
     @Override
     default <T2, R1, R2, R3, R> Xor<ST,R> forEach4(Function<? super PT, ? extends MonadicValue<R1>> value1,
             BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super PT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            QuadFunction<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            F4<? super PT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            F4<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (Xor<ST,R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -238,7 +238,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
     @Override
     default <T2, R1, R2, R> Xor<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
             BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
       
         return (Xor<ST,R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
@@ -249,8 +249,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
     @Override
     default <T2, R1, R2, R> Xor<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
             BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super PT, ? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super PT, ? super R1, ? super R2, Boolean> filterFunction,
+            F3<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Xor<ST,R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
@@ -464,8 +464,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
      * @return Xor sequenced and swapped
      */
     public static <ST, PT> Xor<ListX<PT>, ListX<ST>> sequenceSecondary(final CollectionX<Xor<ST, PT>> xors) {
-        return AnyM.sequence(AnyM.listFromXor(xors.map(Xor::swap)))
-                   .unwrap();
+        return AnyM.sequence(xors.map(i->AnyM.fromXor(i.swap())),Witness.xor.INSTANCE)
+                    .to(Witness::xor);
     }
     /**
      * Accumulate the result of the Secondary types in the Collection of Xors provided using the supplied Reducer  {@see com.aol.cyclops.Reducers}.
@@ -537,8 +537,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
      * @return Xor Sequenced
      */
     public static <ST, PT> Xor<ListX<ST>, ListX<PT>> sequencePrimary(final CollectionX<Xor<ST, PT>> xors) {
-        return AnyM.sequence(AnyM.<ST, PT> listFromXor(xors))
-                   .unwrap();
+        return AnyM.sequence(xors.map(AnyM::fromXor),Witness.xor.INSTANCE)
+                    .to(Witness::xor);
     }
     /**
      * Accumulate the result of the Primary types in the Collection of Xors provided using the supplied Reducer  {@see com.aol.cyclops.Reducers}.

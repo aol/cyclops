@@ -14,9 +14,9 @@ import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.QuintFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F5;
+import com.aol.cyclops.util.function.F3;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -170,18 +170,18 @@ public interface ApplicativeFunctor<T> extends Combiner<T>,ConvertableFunctor<T>
                                .applicative2(fn);
         }
 
-        public <T2, T3, R> Applicative2<T2, T3, R, ?> ap3(final TriFunction<? super T, ? super T2, ? super T3, ? extends R> fn) {
+        public <T2, T3, R> Applicative2<T2, T3, R, ?> ap3(final F3<? super T, ? super T2, ? super T3, ? extends R> fn) {
             return Applicatives.<T, R> applicatives(app, app)
                                .applicative3(fn);
         }
 
-        public <T2, T3, T4, R> Applicative3<T2, T3, T4, R, ?> ap4(final QuadFunction<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        public <T2, T3, T4, R> Applicative3<T2, T3, T4, R, ?> ap4(final F4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
             return Applicatives.<T, R> applicatives(app, app)
                                .applicative4(fn);
         }
 
         public <T2, T3, T4, T5, R> Applicative4<T2, T3, T4, T5, R, ?> ap5(
-                final QuintFunction<? super T, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> fn) {
+                final F5<? super T, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> fn) {
             return Applicatives.<T, R> applicatives(app, app)
                                .applicative5(fn);
         }

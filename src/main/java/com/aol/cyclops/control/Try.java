@@ -36,8 +36,8 @@ import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F3;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -223,8 +223,8 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     @Override
     default <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (Try<R,X>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -234,9 +234,9 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     @Override
     default <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            QuadFunction<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (Try<R,X>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -247,7 +247,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     @Override
     default <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
       
         return (Try<R,X>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
@@ -258,8 +258,8 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     @Override
     default <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            TriFunction<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Try<R,X>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }

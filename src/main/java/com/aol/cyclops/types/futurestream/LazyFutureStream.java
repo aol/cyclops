@@ -87,8 +87,8 @@ import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.FutureStreamSynchronousPublisher;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F3;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
@@ -211,8 +211,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     @Override
     default <R1, R2, R3, R> LazyFutureStream<R> forEach4(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-            TriFunction<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-            QuadFunction<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+            F4<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (LazyFutureStream<R>)ReactiveSeq.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
@@ -223,9 +223,9 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     @Override
     default <R1, R2, R3, R> LazyFutureStream<R> forEach4(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-            TriFunction<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-            QuadFunction<? super U, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            QuadFunction<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            F3<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+            F4<? super U, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            F4<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (LazyFutureStream<R>)ReactiveSeq.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
@@ -236,7 +236,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     @Override
     default <R1, R2, R> LazyFutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-            TriFunction<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (LazyFutureStream<R>)ReactiveSeq.super.forEach3(stream1, stream2, yieldingFunction);
     }
@@ -247,8 +247,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     @Override
     default <R1, R2, R> LazyFutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-            TriFunction<? super U, ? super R1, ? super R2, Boolean> filterFunction,
-            TriFunction<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            F3<? super U, ? super R1, ? super R2, Boolean> filterFunction,
+            F3<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (LazyFutureStream<R>)ReactiveSeq.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }

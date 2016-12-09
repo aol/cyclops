@@ -24,6 +24,9 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jooq.lambda.function.Function3;
+import org.jooq.lambda.function.Function4;
+import org.jooq.lambda.function.Function5;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -57,8 +60,11 @@ import com.aol.cyclops.types.extensability.FunctionalAdapter;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.Optionals;
+import com.aol.cyclops.util.function.F5;
 import com.aol.cyclops.util.function.Lambda;
 import com.aol.cyclops.util.function.Predicates;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F3;
 
 /**
  * 
@@ -934,11 +940,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
      * @param monad to wrap inside an AnyM
      * @return AnyMValue that wraps the supplied monad
     */
-    public static <W extends WitnessType,T> AnyMValue<W,T> ofValue(final Object monad, W witness) {
+    public static <W extends WitnessType<W>,T> AnyMValue<W,T> ofValue(final Object monad, W witness) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.value(monad,witness);
     } 
-    public static <W extends WitnessType,T> AnyMValue<W,T> ofValue(final Object monad,FunctionalAdapter<?> adapter) {
+    public static <W extends WitnessType<W>,T> AnyMValue<W,T> ofValue(final Object monad,FunctionalAdapter<?> adapter) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.value(monad,adapter);
     } 
@@ -1257,5 +1263,149 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     public static <W extends WitnessType<W>,T> AnyM<W, T> narrow(AnyM<W, ? extends T> anyM){
         return (AnyM<W,T>)anyM;
     }
+    
+    /**
+   * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
+   * AnyM view simplifies type related challenges.
+   * 
+   * @param fn
+   * @return
+   */
+  public static <W extends WitnessType<W>,U, R> Function<AnyM<W,U>, AnyM<W,R>> liftF(final Function<? super U, ? extends R> fn) {
+      return u -> u.map(input -> fn.apply(input));
+  }
+
+  /**
+   * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)
+   * AnyM view simplifies type related challenges. The actual native type is not specified here.
+   * 
+   * e.g.
+   * 
+   * <pre>{@code
+   *  BiFunction<AnyM<Integer>,AnyM<Integer>,AnyM<Integer>> add = Monads.liftF2(this::add);
+   *   
+   *  Optional<Integer> result = add.apply(getBase(),getIncrease());
+   *  
+   *   private Integer add(Integer a, Integer b){
+              return a+b;
+      }
+   * }</pre>
+   * The add method has no null handling, but we can lift the method to Monadic form, and use Optionals to automatically handle null / empty value cases.
+   * 
+   * 
+   * @param fn BiFunction to lift
+   * @return Lifted BiFunction
+   */
+  public static <W extends WitnessType<W>,U1, U2, R> BiFunction<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,R>> liftF2(
+          final BiFunction<? super U1, ? super U2, ? extends R> fn) {
+
+      return (u1, u2) -> u1.flatMapA(input1 -> u2.map(input2 -> fn.apply(input1, input2)));
+  }
+
+
+  /**
+   * Lift a TriFunction into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
+   * 
+   * <pre>
+   * {@code
+   * TriFunction<AnyM<Double>,AnyM<Entity>,AnyM<W,String>,AnyM<Integer>> fn = liftF3(this::myMethod);
+   *    
+   * }
+   * </pre>
+   * 
+   * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
+   * 
+   * @param fn Function to lift
+   * @return Lifted function
+   */
+  public static <W extends WitnessType<W>,U1, U2, U3, R> F3<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,R>> liftF3(
+          final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
+      return (u1, u2, u3) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))));
+  }
+
+
+  /**
+   * Lift a QuadFunction into Monadic form.
+   * 
+   * @param fn Quad funciton to lift
+   * @return Lifted Quad function
+   */
+  public static <W extends WitnessType<W>,U1, U2, U3, U4, R> F4<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,R>> liftF4(
+          final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
+
+      return (u1, u2, u3, u4) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4)))));
+  }
+
+  /**
+   * Lift a  jOOλ Function5 (5 parameters) into Monadic form
+   * 
+   * @param fn Function to lift
+   * @return Lifted Function
+   */
+  public static <W extends WitnessType<W>,U1, U2, U3, U4, U5, R> F5<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,U5>, AnyM<W,R>> liftF5(
+          final Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
+
+      return (u1, u2, u3, u4,
+              u5) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.flatMapA(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,
+                                                                                                                       input4, input5))))));
+  }
+
+  
+
+  /**
+   * Lift a Curried Function {@code(2 levels a->b->fn.apply(a,b) )} into Monadic form
+   * 
+   * @param fn Function to lift
+   * @return Lifted function 
+   */
+  public static <W extends WitnessType<W>,U1, U2, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, AnyM<W,R>>> liftF2(final Function<U1, Function<U2, R>> fn) {
+      return u1 -> u2 -> u1.flatMapA(input1 -> u2.map(input2 -> fn.apply(input1)
+                                                              .apply(input2)));
+
+  }
+
+  /**
+   * Lift a Curried Function {@code(3 levels a->b->c->fn.apply(a,b,c) )} into Monadic form
+   * 
+   * @param fn Function to lift
+   * @return Lifted function 
+   */
+  public static <W extends WitnessType<W>,U1, U2, U3, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, AnyM<W,R>>>> liftF3(
+          final Function<? super U1, Function<? super U2, Function<? super U3, ? extends R>>> fn) {
+      return u1 -> u2 -> u3 -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.map(input3 -> fn.apply(input1)
+                                                                                      .apply(input2)
+                                                                                      .apply(input3))));
+  }
+
+  /**
+   * Lift a Curried Function {@code(4 levels a->b->c->d->fn.apply(a,b,c,d) )} into Monadic form
+   * 
+   * @param fn Function to lift
+   * @return Lifted function 
+   */
+  public static <W extends WitnessType<W>,U1, U2, U3, U4, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, Function<AnyM<W,U4>, AnyM<W,R>>>>> liftF4(
+          final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, ? extends R>>>> fn) {
+
+      return u1 -> u2 -> u3 -> u4 -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.map(input4 -> fn.apply(input1)
+                                                                                                              .apply(input2)
+                                                                                                              .apply(input3)
+                                                                                                              .apply(input4)))));
+  }
+
+  /**
+   * Lift a Curried Function {@code (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) ) }into Monadic form
+   * 
+   * @param fn Function to lift
+   * @return Lifted function 
+   */
+  public static <W extends WitnessType<W>,U1, U2, U3, U4, U5, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, Function<AnyM<W,U4>, Function<AnyM<W,U5>, AnyM<W,R>>>>>> liftF5(
+          final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, Function<? super U5, ? extends R>>>>> fn) {
+
+      return u1 -> u2 -> u3 -> u4 -> u5 -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.flatMapA(input4 -> u5.map(input5 -> fn.apply(input1)
+                                                                                                                                      .apply(input2)
+                                                                                                                                      .apply(input3)
+                                                                                                                                      .apply(input4)
+                                                                                                                                      .apply(input5))))));
+  }
 
 }

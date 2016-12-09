@@ -1816,11 +1816,13 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * @param fn to be applied
      * @return new stage in Sequence with flatMap operation to be lazily applied
      */
-    default <R> Streamable<R> flatMapAnyM(final Function<? super T, AnyM<Witness.streamable,? extends R>> fn) {
-
-        return fromStream(reactiveSeq().flatMapAnyM(fn));
+    default <R> Streamable<R> flatMapAnyM(final Function<? super T, ? extends AnyM<Witness.streamable,? extends R>> fn) {
+        return flatMap(fn.andThen(Witness::streamable));
     }
 
+    public static <T> Streamable<T> narrow(Streamable<? extends T> broad){
+        return (Streamable<T>)broad;
+    }
     /**
      * FlatMap where the result is a Collection, flattens the resultant collections into the
      * host Streamable

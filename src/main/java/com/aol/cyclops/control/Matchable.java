@@ -28,9 +28,9 @@ import com.aol.cyclops.internal.matcher2.PatternMatcher;
 import com.aol.cyclops.internal.matcher2.SeqUtils;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.QuintFunction;
-import com.aol.cyclops.util.function.TriFunction;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.F5;
+import com.aol.cyclops.util.function.F3;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -1374,7 +1374,7 @@ public interface Matchable<TYPE> {
             return getMatchable().iterator();
         }
 
-        default <R> Eval<R> visit(final TriFunction<? super T1, ? super T2, ? super T3, ? extends R> match) {
+        default <R> Eval<R> visit(final F3<? super T1, ? super T2, ? super T3, ? extends R> match) {
             @SuppressWarnings("unchecked")
             final Tuple3<T1, T2, T3> it = getMatchable();
             return Eval.later(() -> match.apply(it.v1, it.v2, it.v3));
@@ -1488,7 +1488,7 @@ public interface Matchable<TYPE> {
             return getMatchable().iterator();
         }
 
-        default <R> Eval<R> visit(final QuadFunction<? super T1, ? super T2, ? super T3, ? super T4, ? extends R> match) {
+        default <R> Eval<R> visit(final F4<? super T1, ? super T2, ? super T3, ? super T4, ? extends R> match) {
             @SuppressWarnings("unchecked")
             final Tuple4<T1, T2, T3, T4> it = getMatchable();
             return Eval.later(() -> match.apply(it.v1, it.v2, it.v3, it.v4));
@@ -1707,7 +1707,7 @@ public interface Matchable<TYPE> {
             return getMatchable().iterator();
         }
 
-        default <R> Eval<R> visit(final QuintFunction<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> match) {
+        default <R> Eval<R> visit(final F5<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> match) {
             @SuppressWarnings("unchecked")
             final Tuple5<T1, T2, T3, T4, T5> it = getMatchable();
             return Eval.later(() -> match.apply(it.v1, it.v2, it.v3, it.v4, it.v5));

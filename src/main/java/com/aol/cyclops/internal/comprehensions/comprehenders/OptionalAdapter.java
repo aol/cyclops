@@ -56,7 +56,7 @@ public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional>
 
 
     @Override
-    public <T, R> AnyM<optional, R> ap(AnyM<optional, Function<T, R>> fn, AnyM<optional, T> apply) {
+    public <T, R> AnyM<optional, R> ap(AnyM<optional, ? extends Function<T, R>> fn, AnyM<optional, T> apply) {
          return fromOptional(combine(optional(apply), optional(fn),(a,b)->b.apply(a)));
     }
 

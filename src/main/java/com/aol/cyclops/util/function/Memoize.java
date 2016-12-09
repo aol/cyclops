@@ -29,7 +29,7 @@ public class Memoize {
      * @param s Supplier to memoise
      * @return Memoised Supplier
      */
-    public static <T> Supplier<T> memoizeSupplier(final Supplier<T> s) {
+    public static <T> F0<T> memoizeSupplier(final Supplier<T> s) {
         final Map<Object, T> lazy = new ConcurrentHashMap<>();
         return () -> lazy.computeIfAbsent("k", a -> s.get());
     }
@@ -41,7 +41,7 @@ public class Memoize {
      * @param cache Cachable to store the results
      * @return Memoised Supplier
      */
-    public static <T> Supplier<T> memoizeSupplier(final Supplier<T> s, final Cacheable<T> cache) {
+    public static <T> F0<T> memoizeSupplier(final Supplier<T> s, final Cacheable<T> cache) {
 
         return () -> cache.soften()
                           .computeIfAbsent("k", a -> s.get());
@@ -103,7 +103,7 @@ public class Memoize {
      * @param fn Function to memoise
      * @return Memoised Function
      */
-    public static <T, R> Function<T, R> memoizeFunction(final Function<T, R> fn) {
+    public static <T, R> F1<T, R> memoizeFunction(final Function<T, R> fn) {
         final Map<T, R> lazy = new ConcurrentHashMap<>();
         LazyImmutable<R> nullR = LazyImmutable.def();
         return t -> t==null? nullR.computeIfAbsent(()->fn.apply(null)) : lazy.computeIfAbsent(t, fn);
@@ -117,7 +117,7 @@ public class Memoize {
      * @param cache Cachable to store the results
      * @return Memoised Function
      */
-    public static <T, R> Function<T, R> memoizeFunction(final Function<T, R> fn, final Cacheable<R> cache) {
+    public static <T, R> F1<T, R> memoizeFunction(final Function<T, R> fn, final Cacheable<R> cache) {
         LazyImmutable<R> nullR = LazyImmutable.def();
         return t -> t==null? nullR.computeIfAbsent(()->fn.apply(null)) : (R)cache.soften()
                          .computeIfAbsent(t, (Function) fn);
@@ -129,7 +129,7 @@ public class Memoize {
      * @param fn BiFunction to memoise
      * @return Memoised BiFunction
      */
-    public static <T1, T2, R> BiFunction<T1, T2, R> memoizeBiFunction(final BiFunction<T1, T2, R> fn) {
+    public static <T1, T2, R> F2<T1, T2, R> memoizeBiFunction(final BiFunction<T1, T2, R> fn) {
         val memoise2 = memoizeFunction((final Tuple2<T1, T2> pair) -> fn.apply(pair.v1, pair.v2));
         return (t1, t2) -> memoise2.apply(tuple(t1, t2));
     }
@@ -141,7 +141,7 @@ public class Memoize {
      * @param cache Cachable to store the results
      * @return Memoised BiFunction
      */
-    public static <T1, T2, R> BiFunction<T1, T2, R> memoizeBiFunction(final BiFunction<T1, T2, R> fn, final Cacheable<R> cache) {
+    public static <T1, T2, R> F2<T1, T2, R> memoizeBiFunction(final BiFunction<T1, T2, R> fn, final Cacheable<R> cache) {
         val memoise2 = memoizeFunction((final Tuple2<T1, T2> pair) -> fn.apply(pair.v1, pair.v2), cache);
         return (t1, t2) -> memoise2.apply(tuple(t1, t2));
     }
@@ -152,7 +152,7 @@ public class Memoize {
      * @param fn TriFunction to memoise
      * @return Memoised TriFunction
      */
-    public static <T1, T2, T3, R> TriFunction<T1, T2, T3, R> memoizeTriFunction(final TriFunction<T1, T2, T3, R> fn) {
+    public static <T1, T2, T3, R> F3<T1, T2, T3, R> memoizeTriFunction(final F3<T1, T2, T3, R> fn) {
         val memoise2 = memoizeFunction((final Tuple3<T1, T2, T3> triple) -> fn.apply(triple.v1, triple.v2, triple.v3));
         return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
     }
@@ -164,7 +164,7 @@ public class Memoize {
      * @param cache Cachable to store the results
      * @return Memoised TriFunction
      */
-    public static <T1, T2, T3, R> TriFunction<T1, T2, T3, R> memoizeTriFunction(final TriFunction<T1, T2, T3, R> fn, final Cacheable<R> cache) {
+    public static <T1, T2, T3, R> F3<T1, T2, T3, R> memoizeTriFunction(final F3<T1, T2, T3, R> fn, final Cacheable<R> cache) {
         val memoise2 = memoizeFunction((final Tuple3<T1, T2, T3> triple) -> fn.apply(triple.v1, triple.v2, triple.v3), cache);
         return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
     }
@@ -175,7 +175,7 @@ public class Memoize {
      * @param fn QuadFunction to memoise
      * @return Memoised TriFunction
      */
-    public static <T1, T2, T3, T4, R> QuadFunction<T1, T2, T3, T4, R> memoizeQuadFunction(final QuadFunction<T1, T2, T3, T4, R> fn) {
+    public static <T1, T2, T3, T4, R> F4<T1, T2, T3, T4, R> memoizeQuadFunction(final F4<T1, T2, T3, T4, R> fn) {
         val memoise2 = memoizeFunction((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad.v1, quad.v2, quad.v3, quad.v4));
         return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));
     }
@@ -187,7 +187,7 @@ public class Memoize {
      * @param cache Cachable to store the results
      * @return Memoised TriFunction
      */
-    public static <T1, T2, T3, T4, R> QuadFunction<T1, T2, T3, T4, R> memoizeQuadFunction(final QuadFunction<T1, T2, T3, T4, R> fn,
+    public static <T1, T2, T3, T4, R> F4<T1, T2, T3, T4, R> memoizeQuadFunction(final F4<T1, T2, T3, T4, R> fn,
             final Cacheable<R> cache) {
         val memoise2 = memoizeFunction((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad.v1, quad.v2, quad.v3, quad.v4), cache);
         return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));

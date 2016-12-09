@@ -43,65 +43,65 @@ public interface Witness {
    static interface CollectionXWitness<W extends CollectionXWitness<?>>  extends WitnessType<W>{
        
    }
-    public static <T> Stream<T> stream(AnyM<stream,T> anyM){
+    public static <T> Stream<T> stream(AnyM<stream,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> ReactiveSeq<T> reactiveSeq(AnyM<stream,T> anyM){
+    public static <T> ReactiveSeq<T> reactiveSeq(AnyM<stream,? extends T> anyM){
         return ReactiveSeq.fromStream(anyM.unwrap());
     }
-    public static <T> Streamable<T> streamable(AnyM<streamable,T> anyM){
+    public static <T> Streamable<T> streamable(AnyM<streamable,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> PVectorX<T> pvector(AnyM<pvector,T> anyM){
+    public static <T> PVectorX<T> pvector(AnyM<pvector,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> PStackX<T> pstack(AnyM<pstack,T> anyM){
+    public static <T> PStackX<T> pstack(AnyM<pstack,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> ListX<T> list(AnyM<list,T> anyM){
+    public static <T> ListX<T> list(AnyM<list,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> Deque<T> deque(AnyM<deque,T> anyM){
+    public static <T> Deque<T> deque(AnyM<deque,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> Set<T>set(AnyM<set,T> anyM){
+    public static <T> Set<T>set(AnyM<set,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> Queue<T> queue(AnyM<queue,T> anyM){
+    public static <T> Queue<T> queue(AnyM<queue,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> SortedSet<T> sortedSet(AnyM<sortedSet,T> anyM){
+    public static <T> SortedSet<T> sortedSet(AnyM<sortedSet,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> Optional<T> optional(AnyM<optional,T> anyM){
+    public static <T> Optional<T> optional(AnyM<optional,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T,W extends CollectionXWitness> CollectionX<T> collectionX(AnyM<W,T> anyM){
+    public static <T,W extends CollectionXWitness<W>> CollectionX<T> collectionX(AnyM<W,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T,W extends MonadicValueWitness> MonadicValue<T> monadicValue(AnyM<W,T> anyM){
+    public static <T,W extends MonadicValueWitness<W>> MonadicValue<T> monadicValue(AnyM<W,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> Eval<T> eval(AnyM<eval,T> anyM){
+    public static <T> Eval<T> eval(AnyM<eval,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> Maybe<T> maybe(AnyM<maybe,T> anyM){
+    public static <T> Maybe<T> maybe(AnyM<maybe,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> FutureW<T> future(AnyM<future,T> anyM){
+    public static <T> FutureW<T> future(AnyM<future,? extends T> anyM){
         return anyM.unwrap();
     }
     
-    public static <T> CompletableFuture<T> completableFuture(AnyM<completableFuture,T> anyM){
+    public static <T> CompletableFuture<T> completableFuture(AnyM<completableFuture,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <ST,T> Xor<ST,T> xor(AnyM<xor,T> anyM){
+    public static <ST,T> Xor<ST,T> xor(AnyM<xor,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <ST,T> Ior<ST,T> ior(AnyM<ior,T> anyM){
+    public static <ST,T> Ior<ST,T> ior(AnyM<ior,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <X extends Throwable,T> Try<T,X> Try(AnyM<tryType,T> anyM){
+    public static <X extends Throwable,T> Try<T,X> Try(AnyM<tryType,? extends T> anyM){
         return anyM.unwrap();
     }
     public static enum stream implements WitnessType<stream>{
