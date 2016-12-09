@@ -6,7 +6,7 @@ import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.extensability.FunctionalAdapter;
 
-public class AnyMValueImpl<W extends WitnessType,T> extends BaseAnyMImpl<W,T>implements AnyMValue<W,T> {
+public class AnyMValueImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>implements AnyMValue<W,T> {
 
     public AnyMValueImpl(final Object monad,FunctionalAdapter<W> adapter) {
         super(monad,adapter);

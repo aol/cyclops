@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
  *
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BaseAnyMImpl<W extends WitnessType,T> {
+public abstract class BaseAnyMImpl<W extends WitnessType<W>,T> {
 
     protected final Object monad;
     protected final FunctionalAdapter<W> adapter;
