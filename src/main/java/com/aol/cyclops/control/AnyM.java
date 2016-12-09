@@ -1177,7 +1177,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */
-    public static <W extends WitnessType<W>,T1> AnyM<W,ListX<T1>> sequence(final Collection<AnyM<W,T1>> seq,W w) {
+    public static <W extends WitnessType<W>,T1> AnyM<W,ListX<T1>> sequence(final Collection<? extends AnyM<W,T1>> seq,W w) {
         return sequence(seq.stream(),w).map(ListX::fromStreamS);
     }
 
@@ -1196,7 +1196,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
      * @return Monad with a list
      */
     public static <W extends WitnessType<W>,T, R> AnyM<W,ListX<R>> traverse(final Collection<? extends AnyM<W,T>> seq, final Function<? super T, ? extends R> fn,W w) {
-        return sequence((Collection<AnyM<W,T>>)seq,w).map(l->l.map(fn));
+        return sequence(seq,w).map(l->l.map(fn));
     }
 
     

@@ -35,6 +35,7 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.CompletableFutures;
@@ -419,11 +420,10 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      * @param fts Strean of Futures to Sequence into a Future with a Stream
      * @return Future with a Stream
      */
-    public static <T> FutureW<ReactiveSeq<T>> sequence(final Stream<FutureW<T>> fts) {
-        return AnyM.sequence(fts.map(f -> AnyM.fromFutureW(f)), () -> AnyM.fromFutureW(FutureW.ofResult(Stream.<T> empty())))
-                   .map(s -> ReactiveSeq.fromStream(s))
-                   .unwrap();
-
+    public static <T> FutureW<ReactiveSeq<T>> sequence(final Stream<? extends FutureW<T>> fts) {
+        return AnyM.sequence(fts.map(AnyM::fromFutureW), Witness.future.INSTANCE)
+                   .map(ReactiveSeq::fromStream)
+                   .to(Witness::future);
     }
 
     /**
@@ -894,8 +894,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
      * 
      * @see com.aol.cyclops.types.FlatMap#flatten()
      */
-    @Override
-    public static <R> FutureW<R> flatten(FutureW<FutureW<R>> nested) {
+    public static <R> FutureW<R> flatten(FutureW<? extends FutureW<R>> nested) {
         return nested.flatMap(Function.identity());
     }
 

@@ -576,7 +576,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      */
     @Override
     default  Maybe<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (Maybe<T>)ApplicativeFunctor.super.combine(combiner, app);
+        return (Maybe<T>)MonadicValue.super.combine(combiner, app);
     }
 
 
@@ -766,7 +766,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @Override
     default <U> Maybe<U> cast(final Class<? extends U> type) {
 
-        return (Maybe<U>) ApplicativeFunctor.super.cast(type);
+        return (Maybe<U>) MonadicValue.super.cast(type);
     }
 
     /*
@@ -778,7 +778,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @Override
     default Maybe<T> peek(final Consumer<? super T> c) {
 
-        return (Maybe<T>) ApplicativeFunctor.super.peek(c);
+        return (Maybe<T>) MonadicValue.super.peek(c);
     }
 
     /*
@@ -790,7 +790,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @Override
     default <R> Maybe<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Maybe<R>) ApplicativeFunctor.super.trampoline(mapper);
+        return (Maybe<R>) MonadicValue.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
@@ -799,7 +799,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @Override
     default <R> Maybe<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (Maybe<R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
+        return (Maybe<R>) MonadicValue.super.patternMatch(case1, otherwise);
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)

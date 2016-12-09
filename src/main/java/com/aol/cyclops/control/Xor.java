@@ -291,7 +291,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
     @Override
     default Xor<ST,PT> combine(BinaryOperator<Combiner<PT>> combiner, Combiner<PT> app) {
        
-        return (Xor<ST,PT>)ApplicativeFunctor.super.combine(combiner, app);
+        return (Xor<ST,PT>)MonadicValue.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)
@@ -728,7 +728,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
     @Override
     default <R> Xor<ST, R> patternMatch(final Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (Xor<ST, R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
+        return (Xor<ST, R>) MonadicValue.super.patternMatch(case1, otherwise);
     }
 
     /**
@@ -963,7 +963,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
     @Override
     default <U> Xor<ST, U> cast(final Class<? extends U> type) {
 
-        return (Xor<ST, U>) ApplicativeFunctor.super.cast(type);
+        return (Xor<ST, U>) MonadicValue.super.cast(type);
     }
 
     /* (non-Javadoc)
@@ -972,7 +972,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
     @Override
     default <R> Xor<ST, R> trampoline(final Function<? super PT, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Xor<ST, R>) ApplicativeFunctor.super.trampoline(mapper);
+        return (Xor<ST, R>) MonadicValue.super.trampoline(mapper);
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)

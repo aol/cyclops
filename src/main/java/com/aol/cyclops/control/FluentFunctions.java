@@ -852,7 +852,7 @@ public class FluentFunctions {
         /**
          * @return A function that accepts and reurns an AnyM type
          */
-        public  <W extends WitnessType> FluentFunction<AnyM<W,T>, AnyM<W,R>> liftM() {
+        public  <W extends WitnessType<W>> FluentFunction<AnyM<W,T>, AnyM<W,R>> liftM() {
             return FluentFunctions.of(AnyM.liftM(fn));
         }
 

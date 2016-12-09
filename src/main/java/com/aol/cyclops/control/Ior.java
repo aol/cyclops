@@ -394,7 +394,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
     @Override
     default <R> Xor<ST, R> patternMatch(final Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (Xor<ST, R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
+        return (Xor<ST, R>) MonadicValue.super.patternMatch(case1, otherwise);
     }
 
     /* (non-Javadoc)
@@ -766,7 +766,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
     @Override
     default <T2, R> Ior<ST,R> combine(Value<? extends T2> app,
             BiFunction<? super PT, ? super T2, ? extends R> fn) {
-        return (Ior<ST,R>)ApplicativeFunctor.super.combine(app, fn);
+        return (Ior<ST,R>)MonadicValue.super.combine(app, fn);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
@@ -774,7 +774,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
     @Override
     default  Ior<ST,PT> combine(BinaryOperator<Combiner<PT>> combiner, Combiner<PT> app) {
        
-        return (Ior<ST,PT>)ApplicativeFunctor.super.combine(combiner, app);
+        return (Ior<ST,PT>)MonadicValue.super.combine(combiner, app);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
@@ -809,7 +809,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
     @Override
     default <U> Ior<ST, U> cast(final Class<? extends U> type) {
 
-        return (Ior<ST, U>) ApplicativeFunctor.super.cast(type);
+        return (Ior<ST, U>) MonadicValue.super.cast(type);
     }
 
     /* (non-Javadoc)
@@ -818,7 +818,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
     @Override
     default <R> Ior<ST, R> trampoline(final Function<? super PT, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Ior<ST, R>) ApplicativeFunctor.super.trampoline(mapper);
+        return (Ior<ST, R>) MonadicValue.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)

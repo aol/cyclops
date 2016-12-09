@@ -784,8 +784,8 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * 
      * @return Flattened / joined one level
      */
-    default <T1> Streamable<T1> flatten() {
-        return Streamable.fromStream(reactiveSeq().flatten());
+    public static <T1> Streamable<T1> flatten(Streamable<? extends Streamable<T1>> nested) {
+        return nested.flatMap(Function.identity());
     }
 
     /**

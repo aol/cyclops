@@ -193,8 +193,10 @@ public interface Eval<T>
      * @param evals Collection of evals to convert into a single eval with a List of values
      * @return  Eval with a  list of values
      */
-    public static <T> Eval<ReactiveSeq<T>> sequence(final Stream<Eval<T>> evals) {
-        return AnyM.sequence(evals,Witness.eval).map(ReactiveSeq::fromStream);
+    public static <T> Eval<ReactiveSeq<T>> sequence(final Stream<? extends Eval<T>> evals) {
+        return AnyM.sequence(evals.map(AnyM::fromEval),Witness.eval.INSTANCE)
+                   .map(ReactiveSeq::fromStream)
+                   .to(Witness::eval);
     }
 
     /**

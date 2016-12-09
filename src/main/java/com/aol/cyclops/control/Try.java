@@ -402,7 +402,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      */
     @Override
     default Combiner<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (Try<T,X>)ApplicativeFunctor.super.combine(combiner, app);
+        return (Try<T,X>)MonadicValue.super.combine(combiner, app);
     }
 
     /* (non-Javadoc)
@@ -410,7 +410,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      */
     @Override
     default <U> Try<U, X> cast(final Class<? extends U> type) {
-        return (Try<U, X>) ApplicativeFunctor.super.cast(type);
+        return (Try<U, X>) MonadicValue.super.cast(type);
     }
 
     /* (non-Javadoc)
@@ -418,7 +418,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      */
     @Override
     default <R> Try<R, X> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Try<R, X>) ApplicativeFunctor.super.trampoline(mapper);
+        return (Try<R, X>) MonadicValue.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
@@ -507,7 +507,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     @Override
     default <R> Try<R, X> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (Try<R, X>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
+        return (Try<R, X>) MonadicValue.super.patternMatch(case1, otherwise);
     }
 
     /**
@@ -702,7 +702,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
     @Override
     default Iterator<T> iterator() {
 
-        return ApplicativeFunctor.super.iterator();
+        return MonadicValue.super.iterator();
     }
 
     /**
@@ -1630,7 +1630,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      */
     @Override
     default <T2, R> Try<R, X> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (Try<R, X>) ApplicativeFunctor.super.combine(app, fn);
+        return (Try<R, X>) MonadicValue.super.combine(app, fn);
     }
 
     /**
