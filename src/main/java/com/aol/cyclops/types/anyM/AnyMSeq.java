@@ -1078,7 +1078,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @see com.aol.cyclops.monad.AnyM#flatten()
      */
     
-    static <W extends WitnessType,T1> AnyMSeq<W,T1> flatten(AnyMSeq<W,AnyMSeq<W,T1>> nested){
+    static <W extends WitnessType<W>,T1> AnyMSeq<W,T1> flatten(AnyMSeq<W,AnyMSeq<W,T1>> nested){
         return nested.flatMap(Function.identity());
     }
 
@@ -1130,7 +1130,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn
      * @return
      */
-    public static <W extends WitnessType,U, R> Function<AnyMSeq<W,U>, AnyMSeq<W,R>> liftM(final Function<? super U, ? extends R> fn) {
+    public static <W extends WitnessType<W>,U, R> Function<AnyMSeq<W,U>, AnyMSeq<W,R>> liftM(final Function<? super U, ? extends R> fn) {
         return u -> u.map(input -> fn.apply(input));
     }
 
@@ -1155,7 +1155,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn BiFunction to lift
      * @return Lifted BiFunction
      */
-    public static <W extends WitnessType,U1, U2, R> BiFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,R>> liftM2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
+    public static <W extends WitnessType<W>,U1, U2, R> BiFunction<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,R>> liftM2(final BiFunction<? super U1, ? super U2, ? extends R> fn) {
 
         return (u1, u2) -> u1.flatMapA(input1 -> u2.map(input2 -> fn.apply(input1, input2)));
     }
@@ -1175,7 +1175,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn Function to lift
      * @return Lifted function
      */
-    public static <W extends WitnessType,U1, U2, U3, R> F3<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,R>> liftM3(
+    public static <W extends WitnessType<W>,U1, U2, U3, R> F3<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,R>> liftM3(
             final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
         return (u1, u2, u3) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))));
     }
@@ -1187,7 +1187,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn Quad funciton to lift
      * @return Lifted Quad function
      */
-    public static <W extends WitnessType,U1, U2, U3, U4, R> F4<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,R>> liftM4(
+    public static <W extends WitnessType<W>,U1, U2, U3, U4, R> F4<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,R>> liftM4(
             final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
         return (u1, u2, u3, u4) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4)))));
@@ -1200,7 +1200,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn Function to lift
      * @return Lifted Function
      */
-    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> F5<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,U5>, AnyMSeq<W,R>> liftM5(
+    public static <W extends WitnessType<W>,U1, U2, U3, U4, U5, R> F5<AnyMSeq<W,U1>, AnyMSeq<W,U2>, AnyMSeq<W,U3>, AnyMSeq<W,U4>, AnyMSeq<W,U5>, AnyMSeq<W,R>> liftM5(
             final Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
         return (u1, u2, u3, u4,
@@ -1215,7 +1215,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <W extends WitnessType,U1, U2, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, AnyMSeq<W,R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
+    public static <W extends WitnessType<W>,U1, U2, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, AnyMSeq<W,R>>> liftM2(final Function<U1, Function<U2, R>> fn) {
         return u1 -> u2 -> u1.flatMapA(input1 -> u2.map(input2 -> fn.apply(input1)
                                                                 .apply(input2)));
 
@@ -1227,7 +1227,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <W extends WitnessType,U1, U2, U3, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, AnyMSeq<W,R>>>> liftM3(
+    public static <W extends WitnessType<W>,U1, U2, U3, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, AnyMSeq<W,R>>>> liftM3(
             final Function<? super U1, Function<? super U2, Function<? super U3, ? extends R>>> fn) {
         return u1 -> u2 -> u3 -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.map(input3 -> fn.apply(input1)
                                                                                         .apply(input2)
@@ -1240,7 +1240,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <W extends WitnessType,U1, U2, U3, U4, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, Function<AnyMSeq<W,U4>, AnyMSeq<W,R>>>>> liftM4(
+    public static <W extends WitnessType<W>,U1, U2, U3, U4, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, Function<AnyMSeq<W,U4>, AnyMSeq<W,R>>>>> liftM4(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, ? extends R>>>> fn) {
 
         return u1 -> u2 -> u3 -> u4 -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.map(input4 -> fn.apply(input1)
@@ -1255,7 +1255,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @param fn Function to lift
      * @return Lifted function 
      */
-    public static <W extends WitnessType,U1, U2, U3, U4, U5, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, Function<AnyMSeq<W,U4>, Function<AnyMSeq<W,U5>, AnyMSeq<W,R>>>>>> liftM5(
+    public static <W extends WitnessType<W>,U1, U2, U3, U4, U5, R> Function<AnyMSeq<W,U1>, Function<AnyMSeq<W,U2>, Function<AnyMSeq<W,U3>, Function<AnyMSeq<W,U4>, Function<AnyMSeq<W,U5>, AnyMSeq<W,R>>>>>> liftM5(
             final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, Function<? super U5, ? extends R>>>>> fn) {
 
         return u1 -> u2 -> u3 -> u4 -> u5 -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.flatMapA(input4 -> u5.map(input5 -> fn.apply(input1)
