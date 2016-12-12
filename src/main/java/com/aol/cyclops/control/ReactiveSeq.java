@@ -1,6 +1,5 @@
 package com.aol.cyclops.control;
 
-import static org.hamcrest.Matchers.equalTo;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -49,7 +48,6 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
@@ -105,6 +103,7 @@ import lombok.val;
  *      Parallelism via LazyFutureStream
  *      Lazy grouping (group by size, time, state)
  *      Sliding windows
+ *      
  *      Efficient reversal
  *      foldRight / scanLeft / scanRight
  *      Zipping and Combining
@@ -132,6 +131,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {
 
     
+   
     /**
      * Construct a ReactiveSeq from a String
      * 
@@ -141,21 +141,57 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static  ReactiveSeq<Integer> fromString(String input){
         return fromSpliterator(input.chars().spliterator());
     }
+    
     /**
-     * @param value
+     * @param values ints to populate Stream from
      * @return ReactiveSeq of multiple Integers
      */
-    public static ReactiveSeq<Integer> of(int... value){
-        return fromSpliterator(IntStream.of(value).spliterator());
+    public static ReactiveSeq<Integer> ofInts(int... values){
+        return fromSpliterator(IntStream.of(values).spliterator());
     }
+   
     /**
      * Efficiently construct a ReactiveSeq from an int (will stored an processed as a primitive where possible).
      * 
      * @param value Value to construct ReactiveSeq from
      * @return ReactiveSeq of one Integer
      */
-    public static ReactiveSeq<Integer> of(int value){
+    public static ReactiveSeq<Integer> ofInts(int value){
         return fromSpliterator(IntStream.of(value).spliterator());
+    }
+    /**
+     * 
+     * @param values longs to populate Stream from
+     * @return ReactiveSeq of multiple Longs
+     */
+    public static ReactiveSeq<Long> ofLongs(long... values){
+        return fromSpliterator(LongStream.of(values).spliterator());
+    }
+    /**
+     * Efficiently construct a ReactiveSeq from an long (will stored an processed as a primitive where possible).
+     * 
+     * @param value Value to construct ReactiveSeq from
+     * @return ReactiveSeq of one Long
+     */
+    public static ReactiveSeq<Long> ofLongs(long value){
+        return fromSpliterator(LongStream.of(value).spliterator());
+    }
+    /**
+     * 
+     * @param values longs to populate Stream from
+     * @return ReactiveSeq of multiple Longs
+     */
+    public static ReactiveSeq<Double> ofDoubles(double... values){
+        return fromSpliterator(DoubleStream.of(values).spliterator());
+    }
+    /**
+     * Efficiently construct a ReactiveSeq from an long (will stored an processed as a primitive where possible).
+     * 
+     * @param value Value to construct ReactiveSeq from
+     * @return ReactiveSeq of one Long
+     */
+    public static ReactiveSeq<Double> ofDouble(double value){
+        return fromSpliterator(DoubleStream.of(value).spliterator());
     }
     /**
      * Efficiently construct a ReactiveSeq from a single value
@@ -243,7 +279,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param mapper
      * @return
      */
-    default ReactiveSeq<Long> longs(ToLongFunction<? super T> fn,Function<? super IntStream, ? extends LongStream> mapper){
+    default ReactiveSeq<Long> longs(ToLongFunction<? super T> fn,Function<? super LongStream, ? extends LongStream> mapper){
         return ReactiveSeq.fromSpliterator(foldLong(fn,mapper).spliterator());
     }
     /**
@@ -317,7 +353,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default <R> R foldDouble(ToDoubleFunction<? super T> fn,Function<? super DoubleStream, ? extends R> mapper){
         Spliterator<T> split = this.spliterator();
-        DoubleStream s = (split instanceof Spliterator.OfDouble? StreamSupport.intStream((Spliterator.OfDouble)split,false) : StreamSupport.stream(split,false).mapToDouble(fn);
+        DoubleStream s = (split instanceof Spliterator.OfDouble) ? StreamSupport.doubleStream((Spliterator.OfDouble)split,false) : StreamSupport.stream(split,false).mapToDouble(fn);
         return mapper.apply(s);
     }
     

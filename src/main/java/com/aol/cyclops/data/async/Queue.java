@@ -195,7 +195,8 @@ public class Queue<T> implements Adapter<T> {
      *  }
      * </pre>
      * 
-     * @param closeScalingFactor Scaling factor for Queue closed messages to propagate to connected parallel Streams
+     * @param closeScalingFactor Scaling factor for Queue closed messages to propagate to connected parallel Streams.
+     *              Scaling Factor may need to be high to reach all connect parallel threads.
      * 
      * @return Java 8 Stream connnected to this Queue
      */
@@ -220,6 +221,7 @@ public class Queue<T> implements Adapter<T> {
      *        use queue.stream().parallel() to convert to a parallel Stream
      *  }
      * </pre>
+     * @see Queue#jdkStream(int) for an alternative that sends more poision pills for use with parallel Streams.
      * 
      * @return Java 8 Stream connnected to this Queue
      */
