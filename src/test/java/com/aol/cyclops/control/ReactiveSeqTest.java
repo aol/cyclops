@@ -5,16 +5,42 @@ import static com.aol.cyclops.util.function.Predicates.greaterThan;
 import static com.aol.cyclops.util.function.Predicates.hasItems;
 import static com.aol.cyclops.util.function.Predicates.in;
 import static com.aol.cyclops.util.function.Predicates.not;
-
-import java.util.Arrays;
-import java.util.function.Predicate;
-
-import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class ReactiveSeqTest {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.OptionalDouble;
+import java.util.function.Predicate;
 
+import org.junit.Test;
+
+public class ReactiveSeqTest {
+    @Test
+    public void foldInt(){
+        assertThat(ReactiveSeq.range(1, 1000).foldInt(i->i,s->s.map(i->i*2).filter(i->i<500).average().getAsDouble()),equalTo(250d));
+    }
+    @Test
+    public void intOps(){
+        assertThat(ReactiveSeq.range(1, 1000).ints(i->i,s->s.map(i->i*2).filter(i->i<500))
+                             .size(),equalTo(249));
+    }
+    @Test
+    public void ofTest(){
+        assertThat(ReactiveSeq.of(6)
+                             .single(),equalTo(6));
+    }
+    @Test
+    public void ofTestObj(){
+        assertThat(ReactiveSeq.of("a")
+                             .single(),equalTo("a"));
+    }
+    @Test
+    public void intOpsTest(){
+        assertThat(ReactiveSeq.of(6)
+                             .single(),equalTo(6));
+    }
     @Test
     public void coflatMap(){
         
