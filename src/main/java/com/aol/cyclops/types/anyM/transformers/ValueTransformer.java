@@ -25,7 +25,7 @@ import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F3;
 
-public abstract class ValueTransformer<W extends WitnessType,T> implements Publisher<T>,
+public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                            Unwrapable,
                                                                            Unit<T> {
     public abstract <R> ValueTransformer<W,R> empty();

@@ -104,6 +104,9 @@ import lombok.val;
 public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimpleReactStream<U>, LazyStream<U>, ReactiveSeq<U>, LazyToQueue<U>,
         ConfigurableStream<U, FastFuture<U>>, FutureStreamSynchronousPublisher<U> {
 
+    
+    
+
     @Override
     default LazyFutureStream<U> filterNot(final Predicate<? super U> fn) {
 
@@ -2456,8 +2459,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      *
      * @see com.aol.cyclops.control.ReactiveSeq#flatten()
      */
-    public static <T1> LazyFutureStream<T1> flatten(LazyFutureStream<? extends Stream<T1>> nested){
-        return nested.flatMap(Function.identity());
+    public static <T1> LazyFutureStream<T1> flatten(ReactiveSeq<? extends Stream<T1>> nested){
+        return LazyFutureStream.lazyFutureStream(nested).flatMap(Function.identity());
 
     }
     public static <T1> LazyFutureStream<T1> narrow(LazyFutureStream<? extends T1> broad){

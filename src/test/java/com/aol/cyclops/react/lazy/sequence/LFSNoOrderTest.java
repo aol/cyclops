@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -466,22 +467,18 @@ public  class LFSNoOrderTest {
 	    //tests converted from lazy-seq suite
 	    @Test
 		public void flattenEmpty() throws Exception {
-				assertTrue(LazyFutureStream.<Integer>of().flatten().toList().isEmpty());
+				assertTrue(LazyFutureStream.<Stream<Integer>>of()
+				                           .to(LazyFutureStream::flatten).toList().isEmpty());
 		}
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(LazyFutureStream.of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));		
+			assertThat(LazyFutureStream.of(Stream.of(1,2)).to(LazyFutureStream::flatten).toList().size(),equalTo(asList(1,  2).size()));		
 		}
 
 		
 
-		@Test
-		public void flattenEmptyStream() throws Exception {
-			
-			assertThat(LazyFutureStream.<Integer>of(1,2,3,4,5,5,6,8,9,10).flatten().limit(10).collect(Collectors.toList()).size(),
-											equalTo(asList(2, 3, 4, 5, 6, 7, 0, 0, 0, 0).size()));
-		}
+		
 		
 		
 	

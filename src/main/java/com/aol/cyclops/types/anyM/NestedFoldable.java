@@ -28,7 +28,7 @@ import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 
-public interface NestedFoldable<W extends WitnessType,T> {
+public interface NestedFoldable<W extends WitnessType<W>,T> {
     public AnyM<W,? extends IterableFoldable<T>> nestedFoldables();
 
     /**
@@ -133,10 +133,9 @@ public interface NestedFoldable<W extends WitnessType,T> {
      * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
      * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
      */
-    default OptionalT<T> reduce(final BinaryOperator<T> accumulator) {
-        final AnyM<W,Optional<T>> anyM = nestedFoldables().map(s -> s.reduce(accumulator));
-        return Matchables.anyM(anyM)
-                         .visit(v -> OptionalT.fromValue(v.toEvalLater()), s -> OptionalTSeq.of(s));
+    default AnyM<W,Optional<T>> reduce(final BinaryOperator<T> accumulator) {
+        return nestedFoldables().map(s -> s.reduce(accumulator));
+        
 
     }
 
@@ -182,10 +181,9 @@ public interface NestedFoldable<W extends WitnessType,T> {
      * @param reducers
      * @return
      */
-    default ListT<T> reduce(final Stream<? extends Monoid<T>> reducers) {
-        final AnyM<ListX<T>> anyM = nestedFoldables().map(s -> s.reduce(reducers));
-        return Matchables.anyM(anyM)
-                         .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListT.of(s));
+    default ListT<W,T> reduce(final Stream<? extends Monoid<T>> reducers) {
+        final AnyM<W,ListX<T>> anyM = nestedFoldables().map(s -> s.reduce(reducers));
+        return ListT.of(anyM);
 
     }
 
@@ -211,10 +209,8 @@ public interface NestedFoldable<W extends WitnessType,T> {
      * @param reducers
      * @return
      */
-    default ListT<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
-        final AnyM<ListX<T>> anyM = nestedFoldables().map(s -> s.reduce(reducers));
-        return Matchables.anyM(anyM)
-                         .visit(v -> ListT.fromValue(v.toEvalLater()), s -> ListT.of(s));
+    default ListT<W,T> reduce(final Iterable<? extends Monoid<T>> reducers) {
+        return ListT.of(nestedFoldables().map(s -> s.reduce(reducers)));
     }
 
     /**
@@ -399,11 +395,9 @@ public interface NestedFoldable<W extends WitnessType,T> {
      *         (deterministic)
      * 
      */
-    default OptionalT<T> findFirst() {
-        final AnyM<Optional<T>> anyM = nestedFoldables().map(s -> s.findFirst());
-        return Matchables.anyM(anyM)
-                         .visit(v -> OptionalT.fromValue(v.toEvalLater()), s -> OptionalTSeq.of(s));
-
+    default AnyM<W,Optional<T>> findFirst() {
+        return nestedFoldables().map(s -> s.findFirst());
+       
     }
 
     /**
@@ -516,18 +510,16 @@ public interface NestedFoldable<W extends WitnessType,T> {
      *                                          .map(i -> i + 2)
      *                                          .toConcurrentLazyStreamable();
      * 
-     *  assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     *  assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     *  assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     *  assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
      * }
      * </pre>
      * 
      * @return Streamable that replay this SequenceM, populated lazily and can
      *         be populated across threads
      */
-    default StreamableT<T> toConcurrentLazyStreamable() {
-        final AnyM<Streamable<T>> anyM = nestedFoldables().map(s -> s.toConcurrentLazyStreamable());
-        return Matchables.anyM(anyM)
-                         .visit(v -> StreamableT.fromValue(v.toEvalLater()), s -> StreamableTSeq.of(s));
+    default AnyM<W,Streamable<T>>  toConcurrentLazyStreamable() {
+        return nestedFoldables().map(s -> s.toConcurrentLazyStreamable());
 
     }
 
@@ -592,11 +584,8 @@ public interface NestedFoldable<W extends WitnessType,T> {
      * @return An Optional with single value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
-    default OptionalT<T> singleOptional() {
-        final AnyM<W,Optional<T>> anyM = nestedFoldables().map(s -> s.singleOptional());
-        return Matchables.anyM(anyM)
-                         .visit(v -> OptionalT.fromValue(v.toEvalLater()), s -> OptionalTSeq.of(s));
-
+    default AnyM<W,Optional<T>> singleOptional() {
+        return nestedFoldables().map(s -> s.singleOptional());
     }
 
     /**
@@ -612,11 +601,9 @@ public interface NestedFoldable<W extends WitnessType,T> {
      *            to extract element from
      * @return elementAt index
      */
-    default OptionalT<T> get(final long index) {
-        final AnyM<Optional<T>> anyM = nestedFoldables().map(s -> s.get(index));
-        return Matchables.anyM(anyM)
-                         .visit(v -> OptionalT.fromValue(v.toEvalLater()), s -> OptionalTSeq.of(s));
-
+    default AnyM<W,Optional<T>> get(final long index) {
+        return nestedFoldables().map(s -> s.get(index));
+        
     }
 
     /**

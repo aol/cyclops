@@ -17,7 +17,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T> Data type of elements in nested Monad
  */
-public interface FoldableTransformerSeq<W extends WitnessType,T> extends TransformerSeq<W,T>,  
+public interface FoldableTransformerSeq<W extends WitnessType<W>,T> extends TransformerSeq<W,T>,  
                                                                             NestedFoldable<W,T>, 
                                                                             NestedCollectable<W,T>, 
                                                                             FilterableFunctor<T> {

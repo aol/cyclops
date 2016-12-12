@@ -37,10 +37,10 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.extensability.FunctionalAdapter;
 
 public interface Witness {
-   static interface MonadicValueWitness<W extends MonadicValueWitness<?>>  extends WitnessType<W>{
+   static interface MonadicValueWitness<W extends MonadicValueWitness<W>>  extends WitnessType<W>{
         
     }
-   static interface CollectionXWitness<W extends CollectionXWitness<?>>  extends WitnessType<W>{
+   static interface CollectionXWitness<W extends CollectionXWitness<W>>  extends WitnessType<W>{
        
    }
     public static <T> Stream<T> stream(AnyM<stream,? extends T> anyM){

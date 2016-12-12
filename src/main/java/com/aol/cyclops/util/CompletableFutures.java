@@ -21,6 +21,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.anyM.Witness;
 
 import lombok.experimental.UtilityClass;
 
@@ -70,10 +71,10 @@ public class CompletableFutures {
      * @return Future with a Stream
      */
     public static <T> CompletableFuture<ReactiveSeq<T>> sequence(final Stream<CompletableFuture<T>> fts) {
-        return AnyM.sequence(fts.map(f -> fromCompletableFuture(f)), () -> AnyM.fromCompletableFuture(completedFuture(Stream.<T> empty())))
-                   .map(s -> ReactiveSeq.fromStream(s))
-                   .unwrap();
-
+        return AnyM.sequence(fts.map(AnyM::fromCompletableFuture), Witness.completableFuture.INSTANCE)
+                .map(ReactiveSeq::fromStream)
+                .to(Witness::completableFuture);
+        
     }
     /**
      * 

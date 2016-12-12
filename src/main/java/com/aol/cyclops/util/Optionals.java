@@ -18,6 +18,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.anyM.Witness;
 
 import lombok.experimental.UtilityClass;
 
@@ -83,9 +84,7 @@ public class Optionals {
      * @return Optional with a List of values
      */
     public static <T> Optional<ListX<T>> sequencePresent(final CollectionX<Optional<T>> opts) {
-        final Optional<ListX<T>> unwrapped = AnyM.sequence(opts.map(o -> AnyM.fromOptional(o)))
-                                                 .unwrap();
-        return unwrapped;
+       return sequence(opts.stream().filter(Optional::isPresent)).map(s->s.toListX());
     }
     /**
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
@@ -109,9 +108,9 @@ public class Optionals {
      * @return  Optional with a List of values
      */
     public static <T> Optional<ReactiveSeq<T>> sequence(final Stream<Optional<T>> opts) {
-        return AnyM.sequence(opts.map(f -> AnyM.fromOptional(f)), () -> AnyM.fromOptional(Optional.of(Stream.<T> empty())))
-                   .map(s -> ReactiveSeq.fromStream(s))
-                   .unwrap();
+        return AnyM.sequence(opts.map(AnyM::fromOptional), Witness.optional.INSTANCE)
+                   .map(ReactiveSeq::fromStream)
+                   .to(Witness::optional);
 
     }
     /**

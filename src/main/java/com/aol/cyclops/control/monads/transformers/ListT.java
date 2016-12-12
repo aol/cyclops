@@ -32,6 +32,7 @@ import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.anyM.transformers.FoldableTransformerSeq;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -240,6 +241,9 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     public static <W extends WitnessType<W>,A> ListT<W,A> ofList(final AnyM<W,? extends List<A>> monads) {
         return new ListT<>(
                               monads.map(ListX::fromIterable));
+    }
+    public static <A> ListT<Witness.stream,A> fromStream(final Stream<? extends FluentSequenceX<A>> nested) {
+        return of(AnyM.fromStream(nested));
     }
 
     

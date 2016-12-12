@@ -40,13 +40,14 @@ import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
 import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
 
-public interface ValueTransformerCollector {
+public interface ValueTransformerCollector<W extends WitnessType<W>> {
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Value#mapReduce(com.aol.cyclops.Reducer)
      */

@@ -51,7 +51,10 @@ public class FlatMapSequenceMTest {
 	@Test
 	public void flatMapSeqToSequenceM(){
 		
-		assertThat(LazyFutureStream.of(1,2,3).flatMapAnyM(i-> AnyM.fromCompletableFuture(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
+		assertThat(LazyFutureStream.of(1,2,3)
+		                           .flatMapAnyM(i-> AnyM.fromStream(Stream.of(i+2)))
+		                           .toList(),
+		                           equalTo(Arrays.asList(3,4,5)));
 	}
 	
 	

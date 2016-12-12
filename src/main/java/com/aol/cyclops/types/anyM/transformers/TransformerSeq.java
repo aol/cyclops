@@ -34,7 +34,7 @@ import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.lazy.LazyOperations;
 
-public interface TransformerSeq<W extends WitnessType,T> extends Unwrapable,ConvertableSequence<T>, Traversable<T>, Sequential<T>, Iterable<T>,
+public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,ConvertableSequence<T>, Traversable<T>, Sequential<T>, Iterable<T>,
 
 ToStream<T>, Publisher<T> {
 

@@ -27,7 +27,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
  *
  * @param <T> Data type of the elements in the nested Monad
  */
-public interface NestedCollectable<W extends WitnessType,T> {
+public interface NestedCollectable<W extends WitnessType<W>,T> {
     public AnyM<W,? extends CyclopsCollectable<T>> nestedCollectables();
 
     
@@ -42,7 +42,7 @@ public interface NestedCollectable<W extends WitnessType,T> {
     }
     
     default <R> FutureT<W,R> futureT(Function<? super Iterable<T>,? extends R> fn,Executor exec) {
-        final AnyM<W,? extends FutureW<R>> anyM = nestedCollectables().map(s -> FutureW.ofSupplier(()->fn.apply(s),exec));
+        final AnyM<W,FutureW<R>> anyM = nestedCollectables().map(s -> FutureW.ofSupplier(()->fn.apply(s),exec));
         return FutureT.of(anyM);
     }
 

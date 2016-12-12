@@ -4,11 +4,12 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.types.anyM.WitnessType;
 
 public class Matchers {
  
-    public static <T> Matcher<AnyM<T>> equivalent(AnyM<T> anyM){
-        return new Matcher<AnyM<T>>(){
+    public static <W extends WitnessType<W>,T> Matcher<AnyM<W,T>> equivalent(AnyM<W,T> anyM){
+        return new Matcher<AnyM<W,T>>(){
 
             @Override
             public void describeTo(Description description) {

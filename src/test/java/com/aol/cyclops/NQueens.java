@@ -1,7 +1,5 @@
 package com.aol.cyclops;
 
-import static com.aol.cyclops.control.For.Publishers.each2;
-
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
@@ -19,11 +17,11 @@ public class NQueens {
         if (k == 0) 
             return PStackX.of(PStackX.empty());
         else{
-            return each2(placeQueens(k - 1), 
+            return placeQueens(k - 1).forEach2(
                          queens -> PStackX.range(1, num),
                          (queens, column) -> isSafe(column, queens,1),
-                         (queens, column) -> queens.plus(column))
-                    .toPStackX();       
+                         (queens, column) -> queens.plus(column));
+                  
         }
       
     }
