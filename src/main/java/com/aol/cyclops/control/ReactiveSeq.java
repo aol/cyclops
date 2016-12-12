@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -101,6 +103,7 @@ import lombok.val;
  *      Parallelism via LazyFutureStream
  *      Lazy grouping (group by size, time, state)
  *      Sliding windows
+ *      
  *      Efficient reversal
  *      foldRight / scanLeft / scanRight
  *      Zipping and Combining
@@ -129,6 +132,231 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     
    
+    /**
+     * Construct a ReactiveSeq from a String
+     * 
+     * @param input String to construct ReactiveSeq from
+     * @return ReactiveSeq from a String
+     */
+    public static  ReactiveSeq<Integer> fromString(String input){
+        return fromSpliterator(input.chars().spliterator());
+    }
+    
+    /**
+     * @param values ints to populate Stream from
+     * @return ReactiveSeq of multiple Integers
+     */
+    public static ReactiveSeq<Integer> ofInts(int... values){
+        return fromSpliterator(IntStream.of(values).spliterator());
+    }
+   
+    /**
+     * Efficiently construct a ReactiveSeq from an int (will stored an processed as a primitive where possible).
+     * 
+     * @param value Value to construct ReactiveSeq from
+     * @return ReactiveSeq of one Integer
+     */
+    public static ReactiveSeq<Integer> ofInts(int value){
+        return fromSpliterator(IntStream.of(value).spliterator());
+    }
+    /**
+     * 
+     * @param values longs to populate Stream from
+     * @return ReactiveSeq of multiple Longs
+     */
+    public static ReactiveSeq<Long> ofLongs(long... values){
+        return fromSpliterator(LongStream.of(values).spliterator());
+    }
+    /**
+     * Efficiently construct a ReactiveSeq from an long (will stored an processed as a primitive where possible).
+     * 
+     * @param value Value to construct ReactiveSeq from
+     * @return ReactiveSeq of one Long
+     */
+    public static ReactiveSeq<Long> ofLongs(long value){
+        return fromSpliterator(LongStream.of(value).spliterator());
+    }
+    /**
+     * 
+     * @param values longs to populate Stream from
+     * @return ReactiveSeq of multiple Longs
+     */
+    public static ReactiveSeq<Double> ofDoubles(double... values){
+        return fromSpliterator(DoubleStream.of(values).spliterator());
+    }
+    /**
+     * Efficiently construct a ReactiveSeq from an long (will stored an processed as a primitive where possible).
+     * 
+     * @param value Value to construct ReactiveSeq from
+     * @return ReactiveSeq of one Long
+     */
+    public static ReactiveSeq<Double> ofDouble(double value){
+        return fromSpliterator(DoubleStream.of(value).spliterator());
+    }
+    /**
+     * Efficiently construct a ReactiveSeq from a single value
+     * 
+     * @param value Value to construct ReactiveSeq from
+     * @return ReactiveSeq of one value
+     */
+    public static <T> ReactiveSeq<T> of(T value){
+        return fromStream(Stream.of(value));
+    }
+    /**
+     * Construct a ReactiveSeq from the Supplied Spliterator
+     * 
+     * @param spliterator Spliterator to construct a Stream from
+     * @return ReactiveSeq created from Spliterator
+     */
+    public static <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
+        return fromStream(StreamSupport.stream(spliterator, false));
+    }
+   
+    /**
+     * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     * ReactiveSeq.range(1, 1000)
+     *            .ints(i->i,s->s.map(i->i*2).filter(i->i<500))
+                  .size(),
+       //249
+     * 
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @param mapper
+     * @return
+     */
+    default ReactiveSeq<Integer> ints(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends IntStream> mapper){
+        return ReactiveSeq.fromSpliterator(foldInt(fn,mapper).spliterator());
+    }
+    /**
+     * Perform a fold on a primitive IntStream (this is much faster than working with Integer Objects).
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     *     ReactiveSeq.range(1, 1000)
+     *                .foldInt(i->i,s->s.map(i->i*2)
+     *                                  .filter(i->i<500)
+     *                                  .average());
+     *                                  
+     *     //OptionalDouble[250.0] 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn Conversion function
+     * @param mapper Folding function
+     * @return Fold result
+     */
+    default <R> R foldInt(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends R> mapper){
+        Spliterator<T> split = this.spliterator();
+        IntStream s = (split instanceof Spliterator.OfInt)? StreamSupport.intStream((Spliterator.OfInt)split,false) : StreamSupport.stream(split,false).mapToInt(fn);
+        return mapper.apply(s);
+    }
+    /**
+     * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     * ReactiveSeq.range(1, 1000)
+     *            .longs(i->i.longValue(),s->s.map(i->i*2).filter(i->i<500))
+                  .size(),
+       //249
+     * 
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @param mapper
+     * @return
+     */
+    default ReactiveSeq<Long> longs(ToLongFunction<? super T> fn,Function<? super LongStream, ? extends LongStream> mapper){
+        return ReactiveSeq.fromSpliterator(foldLong(fn,mapper).spliterator());
+    }
+    /**
+     * Perform a fold on a primitive LongStream (this is much faster than working with Long Objects).
+     * If this ReactiveSeq has an OfLong Spliterator it will be converted directly to an LongStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     *     ReactiveSeq.range(1, 1000)
+     *                .foldLong(i->i.longValue(),s->s.map(i->i*2)
+     *                                  .filter(i->i<500)
+     *                                  .average());
+     *                                  
+     *     //OptionalDouble[250.0] 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn Conversion function
+     * @param mapper Folding function
+     * @return Fold result
+     */
+    default <R> R foldLong(ToLongFunction<? super T> fn,Function<? super LongStream, ? extends R> mapper){
+        Spliterator<T> split = this.spliterator();
+        LongStream s = (split instanceof Spliterator.OfLong)? StreamSupport.longStream((Spliterator.OfLong)split,false) : StreamSupport.stream(split,false).mapToLong(fn);
+        return mapper.apply(s);
+    }
+    /**
+     * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     * ReactiveSeq.range(1, 1000)
+     *            .doubles(i->i.doubleValue(),s->s.map(i->i*2).filter(i->i<500))
+                  .size(),
+       //249
+     * 
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @param mapper
+     * @return
+     */
+    default ReactiveSeq<Double> doubles(ToDoubleFunction<? super T> fn,Function<? super DoubleStream, ? extends DoubleStream> mapper){
+        return ReactiveSeq.fromSpliterator(foldDouble(fn,mapper).spliterator());
+    }
+    /**
+     * Perform a fold on a primitive DoubleStream (this is much faster than working with Double Objects).
+     * If this ReactiveSeq has an OfDouble Spliterator it will be converted directly to an DoubleStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     *     ReactiveSeq.range(1, 1000)
+     *                .foldDouble(i->i.doubleValue(),s->s.map(i->i*2)
+     *                                                   .filter(i->i<500)
+     *                                                  .average());
+     *                                  
+     *     //OptionalDouble[250.0] 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn Conversion function
+     * @param mapper Folding function
+     * @return Fold result
+     */
+    default <R> R foldDouble(ToDoubleFunction<? super T> fn,Function<? super DoubleStream, ? extends R> mapper){
+        Spliterator<T> split = this.spliterator();
+        DoubleStream s = (split instanceof Spliterator.OfDouble) ? StreamSupport.doubleStream((Spliterator.OfDouble)split,false) : StreamSupport.stream(split,false).mapToDouble(fn);
+        return mapper.apply(s);
+    }
+    
     /**
      * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc to
      * switch to a finite Stream)
@@ -2428,7 +2656,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static <T> ReactiveSeq<T> reversedListOf(final List<T> elements) {
         Objects.requireNonNull(elements);
-        final ReversingListSpliterator list = new ReversingListSpliterator<T>(
+        final ReversingListSpliterator<T> list = new ReversingListSpliterator<T>(
                                                                               elements, false).invert();
         return StreamUtils.reactiveSeq(StreamSupport.stream(list, false), Optional.ofNullable(list));
 

@@ -363,7 +363,7 @@ public class EvalTValue<T> implements EvalT<T>, TransformerValue<T>, MonadicValu
         val maybeEval = run.toMaybe();
         return maybeEval.isPresent() ? maybeEval.get()
                                                 .stream()
-                : ReactiveSeq.of();
+                : ReactiveSeq.empty();
     }
 
     @Override

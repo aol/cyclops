@@ -371,7 +371,7 @@ public class CompletableFutureTValue<A> implements CompletableFutureT<A>, Transf
         val maybeEval = run.toMaybe();
         return maybeEval.isPresent() ? FutureW.of(maybeEval.get())
                                               .stream()
-                : ReactiveSeq.of();
+                : ReactiveSeq.empty();
     }
 
     @Override

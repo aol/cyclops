@@ -428,7 +428,7 @@ public interface FeatureToggle<T>
         if (isEnabled())
             return ReactiveSeq.of(get());
         else
-            return ReactiveSeq.of();
+            return ReactiveSeq.empty();
     }
 
     @Override
