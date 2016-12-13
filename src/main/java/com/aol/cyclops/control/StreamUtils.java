@@ -70,6 +70,7 @@ import com.aol.cyclops.internal.stream.operators.SkipLastOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileTimeOperator;
 import com.aol.cyclops.internal.stream.operators.WindowStatefullyWhileOperator;
+import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
@@ -1062,7 +1063,7 @@ public class StreamUtils {
 
     public final static <T> FutureOperations<T> futureOperations(final Stream<T> stream, final Executor exec) {
         return new ReactiveSeqFutureOpterationsImpl<T>(
-                                                       exec, reactiveSeq(stream, Optional.empty()));
+                                                       exec, reactiveSeq(stream, Optional.empty(),Optional.empty()));
     }
 
     public final static <T> T firstValue(final Stream<T> stream) {
@@ -1751,13 +1752,13 @@ public class StreamUtils {
 
     }
 
-    public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<T> stream, final Optional<ReversableSpliterator> rev) {
+    public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<PushingSpliterator<?>> push) {
         if (stream instanceof ReactiveSeq)
             return (ReactiveSeq) stream;
         if (rev.isPresent())
-            return new ReactiveSeqImpl<T>(
-                                          stream, rev.get());
-        return new ReactiveSeqImpl<T>(
+            return new ReactiveSeqImpl<T>()
+                                          stream, rev,push);
+        return new ReactiveSeqImpl<T>((Stream<T>)
                                       stream);
     }
 
