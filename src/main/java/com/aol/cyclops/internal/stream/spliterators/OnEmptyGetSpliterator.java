@@ -11,7 +11,7 @@ public class OnEmptyGetSpliterator<T> extends Spliterators.AbstractSpliterator<T
     private final Spliterator<T> source;
     private final Supplier<? extends T> value;
     private boolean found=false;
-
+    private boolean sent=false;
 
     public OnEmptyGetSpliterator(Spliterator<T> source, Supplier<? extends T> value) {
         super(source.estimateSize(), source.characteristics() & Spliterator.ORDERED);
@@ -22,6 +22,8 @@ public class OnEmptyGetSpliterator<T> extends Spliterators.AbstractSpliterator<T
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
+        if(sent)
+            return false;
         if(found)
             return source.tryAdvance(action);
         else{
@@ -29,6 +31,7 @@ public class OnEmptyGetSpliterator<T> extends Spliterators.AbstractSpliterator<T
                 found =true;
                 action.accept(e);
             })){
+                sent = true;
                 action.accept(value.get());
             }
         }
