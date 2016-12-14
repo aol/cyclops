@@ -26,6 +26,7 @@ import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
+    
     @Test
     public void replayStream(){
        
