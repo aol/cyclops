@@ -231,6 +231,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
                                    c);
     }
 
+    
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterator(java.util.Iterator)
      */
@@ -251,4 +252,6 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
     public String toString() {
         return String.format("%s", delegate);
     }
+
+    
 }

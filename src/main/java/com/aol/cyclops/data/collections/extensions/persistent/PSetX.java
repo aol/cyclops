@@ -36,6 +36,7 @@ import com.aol.cyclops.types.To;
 import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F3;
 
+
 public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
     /**
      * Narrow a covariant PSetX
@@ -187,7 +188,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         return Reducers.<T> toPSetX()
                        .mapReduce(stream);
     }
-
+   
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
      */
@@ -258,8 +259,39 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
     
     @Override
+    default PSetX<T> take(final long num) {
+        return limit(num);
+    }
+    @Override
+    default PSetX<T> drop(final long num) {
+
+        return skip(num);
+    }
+    @Override
     default PSetX<T> toPSetX() {
         return this;
+    }
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     PSetX.of(1,2,3)
+     *          .map(i->i*2)
+     *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *     //PSetX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed PSetX
+     */
+    default <R> PSetX<R> coflatMap(Function<? super PSetX<T>, ? extends R> fn){
+       return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
     }
   
     /**

@@ -62,7 +62,6 @@ import com.aol.cyclops.internal.stream.operators.BatchByTimeAndSizeOperator;
 import com.aol.cyclops.internal.stream.operators.BatchByTimeOperator;
 import com.aol.cyclops.internal.stream.operators.BatchWhileOperator;
 import com.aol.cyclops.internal.stream.operators.DebounceOperator;
-import com.aol.cyclops.internal.stream.operators.LimitLastOperator;
 import com.aol.cyclops.internal.stream.operators.LimitWhileOperator;
 import com.aol.cyclops.internal.stream.operators.LimitWhileTimeOperator;
 import com.aol.cyclops.internal.stream.operators.MultiReduceOperator;
@@ -72,6 +71,9 @@ import com.aol.cyclops.internal.stream.operators.SkipLastOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileTimeOperator;
 import com.aol.cyclops.internal.stream.operators.WindowStatefullyWhileOperator;
+import com.aol.cyclops.internal.stream.spliterators.LimitLastOneSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.LimitLastSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.Witness.stream;
@@ -783,8 +785,7 @@ public class StreamUtils {
     }
 
     public static <U> Stream<U> limitLast(final Stream<U> stream, final int num) {
-        return new LimitLastOperator<>(
-                                       stream, num).limitLast();
+        return LimitLastSpliterator.limitLast(stream, num);
     }
 
     public static <T> Stream<T> recover(final Stream<T> stream, final Function<Throwable, ? extends T> fn) {
@@ -1066,7 +1067,7 @@ public class StreamUtils {
 
     public final static <T> FutureOperations<T> futureOperations(final Stream<T> stream, final Executor exec) {
         return new ReactiveSeqFutureOpterationsImpl<T>(
-                                                       exec, reactiveSeq(stream, Optional.empty()));
+                                                       exec, reactiveSeq(stream, Optional.empty(),Optional.empty()));
     }
 
     public final static <T> T firstValue(final Stream<T> stream) {
@@ -1755,14 +1756,14 @@ public class StreamUtils {
 
     }
 
-    public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<T> stream, final Optional<ReversableSpliterator> rev) {
+    public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<PushingSpliterator<?>> push) {
         if (stream instanceof ReactiveSeq)
             return (ReactiveSeq) stream;
-        if (rev.isPresent())
-            return new ReactiveSeqImpl<T>(
-                                          stream, rev.get());
-        return new ReactiveSeqImpl<T>(
-                                      stream);
+        
+            return new ReactiveSeqImpl<T>((Stream<T>)
+                                          stream, rev,(Optional)push);
+     //   return new ReactiveSeqImpl<T>((Stream<T>)
+       //                              stream);
     }
 
     /**

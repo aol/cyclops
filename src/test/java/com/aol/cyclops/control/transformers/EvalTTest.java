@@ -39,8 +39,6 @@ import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.control.monads.transformers.EvalT;
-import com.aol.cyclops.control.monads.transformers.values.EvalTValue;
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;

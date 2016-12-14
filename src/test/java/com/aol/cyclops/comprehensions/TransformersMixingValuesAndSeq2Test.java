@@ -11,7 +11,6 @@ import org.junit.Test;
 import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.control.monads.transformers.OptionalT;
 import com.aol.cyclops.control.monads.transformers.values.OptionalTValue;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 

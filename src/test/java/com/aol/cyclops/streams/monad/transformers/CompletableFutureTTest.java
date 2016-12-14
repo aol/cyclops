@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.monads.transformers.CompletableFutureT;
 import com.aol.cyclops.control.monads.transformers.seq.CompletableFutureTSeq;
 public class CompletableFutureTTest {
 

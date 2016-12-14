@@ -114,7 +114,7 @@ public class QueueTest {
             q.add(i);
         }
 	    q.close();
-	    q.jdkStream().parallel().forEach(System.out::println);
+	    q.jdkStream(100).parallel().forEach(System.out::println);
 	}
 	@Test
 	public void parallelStream(){

@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 
 import org.junit.Test;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 
 public class LazyOpsTest {
@@ -42,28 +43,28 @@ public class LazyOpsTest {
 	    
 	    @Test
 	    public void testSum() {
-	        assertEquals(Optional.empty(), ReactiveSeq.of().lazyOperations().sum().get());
+	        assertEquals(Maybe.none(), ReactiveSeq.of().lazyOperations().sum());
 	        
-	        assertEquals(Optional.of(1), ReactiveSeq.of(1).lazyOperations().sum().get());
-	        assertEquals(Optional.of(3), ReactiveSeq.of(1, 2).lazyOperations().sum().get());
-	        assertEquals(Optional.of(6), ReactiveSeq.of(1, 2, 3).lazyOperations().sum().get());
+	        assertEquals(new Integer(1), ReactiveSeq.of(1).lazyOperations().sum().get());
+	        assertEquals(new Integer(3), ReactiveSeq.of(1, 2).lazyOperations().sum().get());
+	        assertEquals(new Integer(6), ReactiveSeq.of(1, 2, 3).lazyOperations().sum().get());
 	        
-	        assertEquals(Optional.of(1.0), ReactiveSeq.of(1.0).lazyOperations().sum().get());
-	        assertEquals(Optional.of(3.0), ReactiveSeq.of(1.0, 2.0).lazyOperations().sum().get());
-	        assertEquals(Optional.of(6.0), ReactiveSeq.of(1.0, 2.0, 3.0).lazyOperations().sum().get());
+	        assertEquals(new Double(1.0), ReactiveSeq.of(1.0).lazyOperations().sum().get());
+	        assertEquals(new Double(3.0), ReactiveSeq.of(1.0, 2.0).lazyOperations().sum().get());
+	        assertEquals(new Double(6.0), ReactiveSeq.of(1.0, 2.0, 3.0).lazyOperations().sum().get());
 	    }
 	    
 	    @Test
 	    public void testAvg() {
-	        assertEquals(Optional.empty(), ReactiveSeq.of().lazyOperations().avg().get());
+	        assertEquals(Maybe.none(), ReactiveSeq.of().lazyOperations().avg());
 	        
-	        assertEquals(Optional.of(1), ReactiveSeq.of(1).lazyOperations().avg().get());
-	        assertEquals(Optional.of(1), ReactiveSeq.of(1, 2).lazyOperations().avg().get());
-	        assertEquals(Optional.of(2), ReactiveSeq.of(1, 2, 3).lazyOperations().avg().get());
+	        assertEquals(new Integer(1), ReactiveSeq.of(1).lazyOperations().avg().get());
+	        assertEquals(new Integer(1), ReactiveSeq.of(1, 2).lazyOperations().avg().get());
+	        assertEquals(new Integer(2), ReactiveSeq.of(1, 2, 3).lazyOperations().avg().get());
 	        
-	        assertEquals(Optional.of(1.0), ReactiveSeq.of(1.0).lazyOperations().avg().get());
-	        assertEquals(Optional.of(1.5), ReactiveSeq.of(1.0, 2.0).lazyOperations().avg().get());
-	        assertEquals(Optional.of(2.0), ReactiveSeq.of(1.0, 2.0, 3.0).lazyOperations().avg().get());
+	        assertEquals(new Double(1.0), ReactiveSeq.of(1.0).lazyOperations().avg().get());
+	        assertEquals(new Double(1.5), ReactiveSeq.of(1.0, 2.0).lazyOperations().avg().get());
+	        assertEquals(new Double(2.0), ReactiveSeq.of(1.0, 2.0, 3.0).lazyOperations().avg().get());
 	    }
 
 	    @Test

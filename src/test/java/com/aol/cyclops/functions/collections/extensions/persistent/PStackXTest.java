@@ -11,6 +11,7 @@ import java.util.function.UnaryOperator;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
@@ -33,6 +34,14 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 		return list.efficientOpsOff();
 		
 	}
+	
+	@Test
+    public void coflatMap(){
+       assertThat(PStackX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
+    }
 	@Test
     public void onEmptySwitch(){
             assertThat(PStackX.empty().onEmptySwitch(()->PStackX.of(1,2,3)),equalTo(PStackX.of(1,2,3)));

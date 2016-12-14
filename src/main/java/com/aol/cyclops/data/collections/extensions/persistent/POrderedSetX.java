@@ -206,6 +206,8 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
         return Reducers.<T> toPOrderedSetX()
                        .mapReduce(stream);
     }
+
+
     
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
@@ -275,7 +277,40 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
         
         return (POrderedSetX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     POrderedSetX.of(1,2,3)
+     *                 .map(i->i*2)
+     *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *     //POrderedSetX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed POrderedSetX
+     */
+    default <R> POrderedSetX<R> coflatMap(Function<? super POrderedSetX<T>, ? extends R> fn){
+       return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
 
+    }
+
+    @Override
+    default POrderedSetX<T> take(final long num) {
+
+        return limit(num);
+    }
+    @Override
+    default POrderedSetX<T> drop(final long num) {
+
+        return skip(num);
+    }
     @Override
     default POrderedSetX<T> toPOrderedSetX() {
         return this;

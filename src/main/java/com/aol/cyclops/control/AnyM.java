@@ -33,6 +33,10 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMValueImpl;
+import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
+import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
+import com.aol.cyclops.internal.monads.AnyMonads;
+
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.Foldable;
 import com.aol.cyclops.types.Functor;
@@ -445,6 +449,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     public static <W extends Witness.CollectionXWitness<W>,T> AnyMSeq<W,T> fromCollectionX(final CollectionX<T> collection, W witness) {
         Objects.requireNonNull(collection);
         return AnyMFactory.instance.seq(collection,witness);
+
     }
 
     /**
@@ -518,6 +523,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     public static <T> AnyMSeq<stream,T> fromStream(final Stream<T> stream) {
         Objects.requireNonNull(stream);
         return AnyMFactory.instance.seq(stream,Witness.stream.INSTANCE);
+
     }
 
     /**
@@ -529,6 +535,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     public static AnyMSeq<stream,Integer> fromIntStream(final IntStream stream) {
         Objects.requireNonNull(stream);
         return AnyMFactory.instance.seq(stream.boxed(),Witness.stream.INSTANCE);
+
     }
 
     /**
@@ -540,6 +547,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     public static AnyMSeq<stream,Double> fromDoubleStream(final DoubleStream stream) {
         Objects.requireNonNull(stream);
         return AnyMFactory.instance.seq(stream.boxed(),Witness.stream.INSTANCE);
+
     }
 
     /**
@@ -562,6 +570,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     public static <T> AnyMValue<optional,T> fromOptional(final Optional<T> opt) {
         Objects.requireNonNull(opt);
         return AnyMFactory.instance.value(opt, Witness.optional.INSTANCE);
+
     }
 
     /**
@@ -573,6 +582,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     public static AnyMValue<optional,Double> fromOptionalDouble(final OptionalDouble optional) {
         Objects.requireNonNull(optional);
         return AnyMFactory.instance.value(Optionals.optional(optional), Witness.optional.INSTANCE);
+
     }
 
     /**
@@ -584,6 +594,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     public static AnyMValue<optional,Long> fromOptionalLong(final OptionalLong optional) {
         Objects.requireNonNull(optional);
         return AnyMFactory.instance.value(Optionals.optional(optional), Witness.optional.INSTANCE);
+
     }
 
     /**
@@ -606,6 +617,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     public static <T> AnyMValue<completableFuture,T> fromCompletableFuture(final CompletableFuture<T> future) {
         Objects.requireNonNull(future);
         return AnyMFactory.instance.value(future, Witness.completableFuture.INSTANCE);
+
     }
 
     /**
@@ -618,6 +630,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
         Objects.requireNonNull(xor);
         return AnyMFactory.instance.value(xor,Witness.xor.INSTANCE);
     }
+
 
 
     /**
@@ -655,6 +668,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     public static <W extends Witness.MonadicValueWitness<W>,T> AnyMValue<W,T> fromMonadicValue(final MonadicValue<T> eval,W witness) {
         Objects.requireNonNull(eval);
         return AnyMFactory.instance.value(eval, witness);
+
     }
 
     /**
@@ -679,260 +693,6 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
         return AnyMFactory.instance.value(maybe, Witness.maybe.INSTANCE);
     }
 
-    /**
-     * Create an AnyMValue instance that wraps an EvalTransformer {@link EvalTValue}
-     * 
-     * @param evalT  to wrap inside an AnyM
-     * @return instance that wraps the provided EvalTransformer
-    
-    public static <T> AnyMValue<eval,T> fromEvalTValue(final EvalTValue<T> evalT) {
-        Objects.requireNonNull(evalT);
-        return AnyMFactory.instance.value(evalT, Witness.eval.INSTANCE);
-    }
- */
-    /**
-     *  Create an AnyMValue instance that wraps an MaybeTransformer {@link MaybeTValue}
-     * 
-     * @param maybeT  to wrap inside an AnyM
-     * @return instance that wraps the provided MaybeTransformer
-     
-    public static <T> AnyMValue<T> fromMaybeTValue(final MaybeTValue<T> maybeT) {
-        Objects.requireNonNull(maybeT);
-        return AnyMFactory.instance.value(maybeT,new MaybeTValueComprehender());
-    }*/
-
-    /**
-     * Create an AnyMValue instance that wraps an OptionalTransformer {@link OptionalTValue}
-     * 
-     * @param optionalT to wrap inside an AnyM
-     * @return instance that wraps the provided OptionalTransformer
-    
-    public static <T> AnyMValue<T> fromOptionalTValue(final OptionalTValue<T> optionalT) {
-        Objects.requireNonNull(optionalT);
-        return AnyMFactory.instance.value(optionalT,new OptionalTValueComprehender());
-    }
- */
-    /**
-     * Create an AnyMValue instance that wraps an CompletableFutureTransformer {@link CompletableFutureTValue}
-     * 
-     * @param futureT  to wrap inside an AnyM
-     * @return instance that wraps the provided CompletableFutureTransformer
-     
-    public static <T> AnyMValue<T> fromCompletableFutureTValue(final CompletableFutureTValue<T> futureT) {
-        Objects.requireNonNull(futureT);
-        return AnyMFactory.instance.value(futureT,new CompletableFutureTValueComprehender());
-    }*/
-
-    /**
-     *  Create an AnyMValue instance that wraps an XorTransformer {@link CompletableFutureTValue}
-     * 
-     * @param xorT to wrap inside an AnyM
-     * @return instance that wraps the provided XorTransformer
-    
-    public static <ST, PT> AnyMValue<PT> fromXorTValue(final XorTValue<ST, PT> xorT) {
-        Objects.requireNonNull(xorT);
-        return AnyMFactory.instance.value(xorT,new XorTValueComprehender());
-    } */
-
-    /**
-     * Create an AnyMValue instance that wraps an TryTransformer {@link TryTValue}
-     * 
-     * @param tryT to wrap inside an AnyM
-     * @return instance that wraps the provided TryTransformer
-    
-    public static <T, X extends Throwable> AnyMValue<T> fromTryTValue(final TryTValue<T, X> tryT) {
-        Objects.requireNonNull(tryT);
-        return AnyMFactory.instance.value(tryT,new TryTValueComprehender());
-    } */
-
-    /**
-     * Create an AnyMSeq instance that wraps an XorTransformer {@link XorTSeq}
-     * 
-     * @param xorT to wrap inside an AnyM
-     * @return instance that wraps the provided XorTransformer
-     
-    public static <ST, PT> AnyMSeq<PT> fromXorTSeq(final XorTSeq<ST, PT> xorT) {
-        Objects.requireNonNull(xorT);
-        return AnyMFactory.instance.seq(xorT, new XorTSeqComprehender());
-    }*/
-
-    /**
-     * Create an AnyMSeq instance that wraps an TryTransformer {@link TryTSeq}
-     * 
-     * @param tryT to wrap inside an AnyM
-     * @return instance that wraps the provided TryTransformer
-     
-    public static <T, X extends Throwable> AnyMSeq<T> fromTryTSeq(final TryTSeq<T, X> tryT) {
-        Objects.requireNonNull(tryT);
-        return AnyMFactory.instance.seq(tryT,new TryTSeqComprehender());
-    }*/
-
-    /**
-     * Create an AnyMSeq instance that wraps an EvalTransformer {@link EvalTSeq}
-     * 
-     * @param evalT to wrap inside an AnyM
-     * @return instance that wraps the provided EvalTransformer
-     
-    public static <T> AnyMSeq<T> fromEvalTSeq(final EvalTSeq<T> evalT) {
-        Objects.requireNonNull(evalT);
-        return AnyMFactory.instance.seq(evalT,new EvalTSeqComprehender());
-    }
-*/
-    /**
-     * Create an AnyMSeq instance that wraps an MaybeTransformer {@link MaybeTSeq}
-     * 
-     * @param maybeT to wrap inside an AnyM
-     * @return instance that wraps the provided MaybeTransformer
-     
-    public static <T> AnyMSeq<T> fromMaybeTSeq(final MaybeTSeq<T> maybeT) {
-        Objects.requireNonNull(maybeT);
-        return AnyMFactory.instance.seq(maybeT,new MaybeTSeqComprehender());
-    }
-*/
-    /**
-     * Create an AnyMSeq instance that wraps an OptionalTransformer {@link OptionalTSeq}
-     * 
-     * @param optionalT to wrap inside an AnyM
-     * @return instance that wraps the provided OptionalTransformer
-     
-    public static <T> AnyMSeq<T> fromOptionalTSeq(final OptionalTSeq<T> optionalT) {
-        Objects.requireNonNull(optionalT);
-        return AnyMFactory.instance.seq(optionalT,new OptionalTSeqComprehender());
-    }*/
-
-    /**
-     *  Create an AnyMSeq instance that wraps an CompletableFutureTransformer {@link CompletableFutureTSeq}
-     * 
-     * @param futureT to wrap inside an AnyM
-     * @return instance that wraps the provided CompletableFutureTransformer
-    
-    public static <T> AnyMSeq<T> fromCompletableFutureTSeq(final CompletableFutureTSeq<T> futureT) {
-        Objects.requireNonNull(futureT);
-        return AnyMFactory.instance.seq(futureT,new CompletableFutureTSeqComprehender());
-    } */
-
-    /**
-     * Create an AnyMValue instance that wraps an FutureWTransformer {@link FutureWTSeq}
-     * 
-     * @param futureT to wrap inside an AnyM
-     * @return  instance that wraps the provided FutureWTransformer
-     
-    public static <T> AnyMValue<T> fromFutureWTValue(final FutureWTValue<T> futureT) {
-        Objects.requireNonNull(futureT);
-        return AnyMFactory.instance.value(futureT,new FutureWTSeqComprehender());
-    }*/
-
-    /**
-     * Create an AnyMSeq instance that wraps an FutureWTransformer {@link FutureWTSeq}
-     * 
-     * @param futureT to wrap inside an AnyM
-     * @return instance that wraps the provided FutureWTransformer
-     
-    public static <T> AnyMSeq<T> fromFutureWTSeq(final FutureWTSeq<T> futureT) {
-        Objects.requireNonNull(futureT);
-        return AnyMFactory.instance.seq(futureT);
-    }*/
-
-    /**
-     * Create an AnyMSeq instance that wraps an ListTransformer {@link ListTSeq}
-     * 
-     * @param listT to wrap inside an AnyM
-     * @return instance that wraps the provided ListTransformer
-     
-    public static <T> AnyMSeq<T> fromListT(final ListT<T> listT) {
-        Objects.requireNonNull(listT);
-        return AnyMFactory.instance.seq(listT,listT(listT).visit(v->new ListTValueComprehender(),
-                                                                            s->new ListTSeqComprehender()));
-    }*/
-
-    /**
-     * Create an AnyMSeq instance that wraps an StreamTransformer {@link StreamTSeq}
-     * 
-     * @param streamT to wrap inside an AnyM
-     * @return instance that wraps the provided StreamTransformer
-     
-    public static <T> AnyMSeq<T> fromStreamT(final StreamT<T> streamT) {
-        Objects.requireNonNull(streamT);
-        return AnyMFactory.instance.seq(streamT,streamT(streamT).visit(v->new StreamTValueComprehender(),
-                                                                 s->new StreamTSeqComprehender()));
-       
-    }*/
-
-    /**
-     * Create an AnyMSeq instance that wraps an StreamableTransformer {@link StreamableTSeq}
-     * 
-     * @param streamT  to wrap inside an AnyM
-     * @return instance that wraps the provided StreamableTransformer
-    
-    public static <T> AnyMSeq<T> fromStreamableT(final StreamableT<T> streamT) {
-        Objects.requireNonNull(streamT);
-        return AnyMFactory.instance.seq(streamT,Matchables.streamableT(streamT).visit(v->new StreamableTValueComprehender(),
-                                                                          s->new StreamableTSeqComprehender()));
-    } */
-
-    /**
-     * Create an AnyMSeq instance that wraps an SetTransformer {@link SetTSeq}
-     * 
-     * @param setT to wrap inside an AnyM
-     * @return instance that wraps the provided SetTransformer
-     
-    public static <T> AnyMSeq<T> fromSetT(final SetT<T> setT) {
-        Objects.requireNonNull(setT);
-        return AnyMFactory.instance.seq(setT,Matchables.setT(setT).visit(v->new SetTValueComprehender(),
-                                                                       s->new SetTSeqComprehender()));
-    }*/
-
-    /**
-     * Create an AnyM instance that wraps an Iterable
-     * 
-     * @param iterable Iterable to wrap
-     * @return AnyM that wraps the provided Iterable
-     
-    public static <T> AnyMSeq<T> fromIterable(Iterable<T> iterable) {
-        Objects.requireNonNull(iterable);
-        if (iterable instanceof AnyMSeq)
-            return (AnyMSeq<T>) iterable;
-        if (iterable instanceof List)
-            iterable = ListX.fromIterable(iterable);
-        if (iterable instanceof Set)
-            iterable = SetX.fromIterable(iterable);
-        return AnyMFactory.instance.convertSeq(iterable);
-    }*/
-
-    /**
-     * Use this method to create an AnyMValue from an Iterable.
-     * This exists as many monadic value types in Java libraries implement iterable (such 
-     * as Optional in Javaslang or FunctionalJava).
-     * 
-     * @param iterable To generate AnyMValue from
-     * @return AnyMValue wrapping the supplied Iterable
-    
-    public static <T> AnyMValue<T> fromIterableValue(final Iterable<T> iterable) {
-        Objects.requireNonNull(iterable);
-        return AnyMFactory.instance.value(iterable);
-    } */
-
-    /**
-     * Take the supplied object and attempt to convert it to a supported Monad type
-     * 
-     * @param monad Monad to convert to a supported type and wrap inside an AnyMValue
-     * @return AnyMValue that wraps the supplied converted monad
-     
-    public static <T> AnyMValue<T> ofConvertableValue(final Object monad) {
-        Objects.requireNonNull(monad);
-        return AnyMFactory.instance.convertValue(monad);
-    }*/
-
-    /**
-     * Take the supplied object and attempt to convert it to a supported Monad type
-     * 
-     * @param monad Monad to convert to a supported type and wrap inside an AnyMValue
-     * @return AnyMSeq that wraps the supplied converted
-    
-    public static <T> AnyMSeq<T> ofConvertableSeq(final Object monad) {
-        Objects.requireNonNull(monad);
-        return AnyMFactory.instance.convertSeq(monad);
-    } */
 
     /**
      * Create an AnyMValue that wraps the untyped monad

@@ -31,7 +31,9 @@ import com.aol.cyclops.types.ExtendedTraversable;
 import com.aol.cyclops.types.IterableFilterable;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.IterableFunctor;
+import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Sequential;
+import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -60,6 +62,8 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
         return new CollectionXImpl<>(
                                      col);
     }
+    <R> CollectionX<R> unit(R r);
+  
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
@@ -363,6 +367,14 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      */
     @Override
     CollectionX<T> limit(long num);
+    @Override
+    default CollectionX<T> take(long num){
+        return limit(num);
+    }
+    @Override
+    default CollectionX<T> drop(long num){
+        return skip(num);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#skip(long)
@@ -760,9 +772,9 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * </pre>
      * 
      * 
-     * @param stream1
+     * @param iterable1
      *            Nested Stream to iterate over
-     * @param stream2
+     * @param iterable2
      *            Nested Stream to iterate over
      * @param filterFunction
      *            Filter to apply over elements before passing non-filtered

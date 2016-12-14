@@ -31,11 +31,15 @@ import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F3;
+
 
 public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PBag<T>> {
     
@@ -117,7 +121,19 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
                           .limit(limit)
                           .toPBagX();
     }
+    /**
+     * Generate a PBagX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for PBagX elements
+     * @return PBagX generated from the provided Supplier
+     */
+    public static <T> PBagX<T> fill(final long limit, final T s) {
 
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
+                          .toPBagX();
+    }
     /**
      * Create a PBagX by iterative application of a function to an initial element up to the supplied limit number of times
      * 
@@ -203,6 +219,16 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
     
     @Override
+    default PBagX<T> take(final long num) {
+
+        return limit(num);
+    }
+    @Override
+    default PBagX<T> drop(final long num) {
+
+        return skip(num);
+    }
+    @Override
     default ReactiveSeq<T> stream() {
 
         return ReactiveSeq.fromIterable(this);
@@ -264,6 +290,28 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     public static <T> PBagX<T> fromStream(final Stream<T> stream) {
         return Reducers.<T> toPBagX()
                        .mapReduce(stream);
+    }
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     PBagX.of(1,2,3)
+     *          .map(i->i*2)
+     *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //PBagX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed PBagX
+     */
+    default <R> PBagX<R> coflatMap(Function<? super PBagX<T>, ? extends R> fn){
+       return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
     }
 
     /**

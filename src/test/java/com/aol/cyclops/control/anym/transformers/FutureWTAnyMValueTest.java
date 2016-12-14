@@ -15,7 +15,6 @@ import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.anym.BaseAnyMValueTest;
-import com.aol.cyclops.control.monads.transformers.FutureWT;
 import com.aol.cyclops.data.Mutable;
 
 public class FutureWTAnyMValueTest extends BaseAnyMValueTest {

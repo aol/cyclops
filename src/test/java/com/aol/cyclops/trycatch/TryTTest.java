@@ -16,8 +16,7 @@ import org.junit.Test;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.monads.transformers.TryT;
-import com.aol.cyclops.control.monads.transformers.seq.TryTSeq;
+
 public class TryTTest {
 
 	String result = null;

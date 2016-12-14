@@ -221,6 +221,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
         return new Just<T>(
                            eval);
     }
+    static <T> Maybe<T> fromEvalNullable(final Eval<T> eval) {
+        return new Lazy<T>(
+                eval.map(u->Maybe.ofNullable(u)));
+    }
     
     static <T> Maybe<T> fromEvalOptional(final Eval<Optional<T>> value){
         return new Lazy<T>(value.map(in->Maybe.<T>fromOptional(in)));
@@ -813,7 +817,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return new Just<>(
                               lazy.map(t -> mapper.apply(t)));
         }
-
+        
         @Override
         public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
             Eval<? extends Maybe<? extends R>> ret = lazy.map(mapper.andThen(v->v.toMaybe()));

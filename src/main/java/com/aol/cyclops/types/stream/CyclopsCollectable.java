@@ -65,12 +65,12 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
      *  }
      *  </pre>
      *  
-     *  Similar to @see {@link ReactiveSeq#lazyOperations(Executor)}, but always returns Eval (e.g. with nested Optionals)
+     *  Similar to @see {@link ReactiveSeq#lazyOperations()}, but always returns Eval (e.g. with nested Optionals)
      *   
      * @param fn Folding function
      * @return Eval that lazily performs the fold once
      */
-    default <R> Eval<R> foldLazy(Function<? super CyclopsCollectable<T>,? extends R> fn,Executor ex){
+    default <R> Eval<R> foldLazy(Function<? super CyclopsCollectable<T>,? extends R> fn){
         return Eval.later(()->fn.apply(this));
     }
    

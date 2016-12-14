@@ -195,6 +195,7 @@ public abstract class BaseSequentialSQLTest {
 
 	    @Test
 	    public void testConcat() {
+	        
 	        assertEquals(asList(1, 2, 3, 4), of(1).concat(of(2, 3, 4)).toList());
 	        assertEquals(asList(1, 2, 3, 4), of(1, 2).concat(of(3, 4)).toList());
 	        assertEquals(asList(1, 2, 3, 4), of(1).concat(2, 3, 4).toList());

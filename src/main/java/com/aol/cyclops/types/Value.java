@@ -100,6 +100,7 @@ public interface Value<T> extends Supplier<T>,
 
             AtomicBoolean running = new AtomicBoolean(
                                                       true);
+            AtomicBoolean cancelled = new AtomicBoolean(false);
 
             @Override
             public void request(final long n) {
@@ -114,8 +115,9 @@ public interface Value<T> extends Supplier<T>,
                     return;
                 }
                 try {
-
-                    sub.onNext(get());
+                    T value = get();
+                    if(!cancelled.get())
+                        sub.onNext(get());
 
                 } catch (final Throwable t) {
                     sub.onError(t);
@@ -133,7 +135,7 @@ public interface Value<T> extends Supplier<T>,
             @Override
             public void cancel() {
 
-                running.set(false);
+                cancelled.set(true);
 
             }
 
@@ -252,11 +254,11 @@ public interface Value<T> extends Supplier<T>,
     /**
      * @return Primary Xor that has the same value as this Value
      */
-    default Xor<?, T> toXor() {
+    default  Xor<?, T> toXor() {
         if (this instanceof Xor)
             return (Xor) this;
         final Optional<T> o = toOptional();
-        return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(new NoSuchElementException());
+        return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(null);
 
     }
 
@@ -303,11 +305,11 @@ public interface Value<T> extends Supplier<T>,
      * Return an Ior that can be this object or a Ior.primary or Ior.secondary
      * @return new Ior 
      */
-    default Ior<?, T> toIor() {
+    default  Ior<?, T> toIor() {
         if (this instanceof Ior)
             return (Ior) this;
         final Optional<T> o = toOptional();
-        return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(new NoSuchElementException());
+        return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(null);
     }
 
     

@@ -86,6 +86,7 @@ public abstract class AbstractCollectionXTest {
 	public static final LazyReact r = new LazyReact(10,10);
 	
 	int captured=-1;
+
 	static Executor ex = Executors.newFixedThreadPool(1);
     @Test
     public void foldFuture(){
@@ -93,12 +94,13 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void foldLazy(){
-        assertThat(of(1,2,3).foldLazy(l->l.reduce(Monoids.intSum), ex).get(),equalTo(6));
+        assertThat(of(1,2,3).foldLazy(l->l.reduce(Monoids.intSum)).get(),equalTo(6));
     }
     @Test
     public void foldTry(){
         assertThat(of(1,2,3).foldTry(l->l.reduce(Monoids.intSum), Throwable.class).get(),equalTo(6));
     }
+
 	@Test
 	public void testRange(){
 	    assertThat(range(0,2).size(),equalTo(2));
@@ -466,6 +468,18 @@ public abstract class AbstractCollectionXTest {
 	@Test
     public void testLimit(){
         assertThat(of(1,2,3,4,5).limit(2).collect(Collectors.toList()).size(),is(2));
+    }
+	@Test
+    public void testTake(){
+        assertThat(of(1,2,3,4,5).take(2).collect(Collectors.toList()).size(),is(2));
+    }
+
+    @Test
+    public void testDrop() {
+        assertThat(of(1, 2, 3, 4, 5).drop(2)
+                                    .collect(Collectors.toList())
+                                    .size(),
+                   is(3));
     }
     @Test
     public void testSkip(){
@@ -843,16 +857,16 @@ public abstract class AbstractCollectionXTest {
 	@Test
 	public void forEach2() {
 
-		assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a , b) -> a + b).toList(),
+		assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a , b) -> a + b).toList().size(),
 				equalTo(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 3, 4, 5, 6, 7, 8,
-						9, 10, 11, 12)));
+						9, 10, 11, 12).size()));
 	}
 
 	@Test
 	public void forEach2Filter() {
 
 		assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), (a , b) -> a > 2 && b < 8,
-				(a ,b) -> a + b).toList(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10)));
+				(a ,b) -> a + b).toList().size(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10).size()));
 	}
 	    
   

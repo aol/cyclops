@@ -31,7 +31,7 @@ import org.junit.Test;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.comprehensions.comprehenders.ListComprehender;
 import com.aol.cyclops.internal.comprehensions.comprehenders.StreamAdapter;
-import com.aol.cyclops.internal.monads.ComprehenderSelector;
+
 public class ComprehenderSelectorTest {
 
     @Test

@@ -15,8 +15,6 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.control.monads.transformers.XorT;
-import com.aol.cyclops.control.monads.transformers.seq.XorTSeq;
 
 public class XorTTest {
 

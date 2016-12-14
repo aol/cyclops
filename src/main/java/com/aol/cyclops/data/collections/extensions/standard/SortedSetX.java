@@ -143,6 +143,16 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         return of(value);
     }
 
+    @Override
+    default SortedSetX<T> take(final long num) {
+
+        return (SortedSetX<T>) MutableCollectionX.super.limit(num);
+    }
+    @Override
+    default SortedSetX<T> drop(final long num) {
+
+        return (SortedSetX<T>) MutableCollectionX.super.skip(num);
+    }
     /**
      * Construct a SortedSetX from an Publisher
      * 
@@ -156,7 +166,15 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     public static <T> SortedSetX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+        if (it instanceof SortedSetX)
+            return (SortedSetX<T>) it;
+        if (it instanceof SortedSet)
+            return new SortedSetXImpl<T>(
+                                         (SortedSet) it, defaultCollector());
+        return new SortedSetXImpl<T>(
+                                     StreamUtils.stream(it)
+                                                .collect(defaultCollector()),
+                                                defaultCollector());
     }
     public static <T> SortedSetX<T> fromIterator(final Iterator<T> it) {
         return fromIterable(()->it);
@@ -164,7 +182,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
     public static <T> SortedSetX<T> fromIterable(final Collector<T, ?, SortedSet<T>> collector, final Iterable<T> it) {
         if (it instanceof SortedSetX)
-            return (SortedSetX<T>) it;
+            return ((SortedSetX<T>) it).withCollector(collector);
         if (it instanceof SortedSet)
             return new SortedSetXImpl<T>(
                                          (SortedSet) it, collector);
@@ -173,6 +191,32 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
                                                 .collect(collector),
                                      collector);
     }
+    
+    SortedSetX<T> withCollector(Collector<T, ?, SortedSet<T>> collector);
+
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     SortedSetX.of(1,2,3)
+     *               .map(i->i*2)
+     *               .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //SortedSetX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed SortedSet
+     */
+    default <R> SortedSetX<R> coflatMap(Function<? super SortedSetX<T>, ? extends R> fn){
+        return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)

@@ -16,8 +16,7 @@ import org.junit.Test;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.EvalT;
-import com.aol.cyclops.control.monads.transformers.seq.EvalTSeq;
+
 public class EvalTTest {
 
 	String result = null;

@@ -23,18 +23,18 @@ public abstract class BaseAnyMImpl<W extends WitnessType<W>,T> {
     public FunctionalAdapter<W> adapter(){
         return adapter;
     }
- 
-    
+
+
     public <R> R unwrap(){
         return (R)monad;
     }
-  
-   
+
+
     @Override
     public String toString() {
         return String.format("AnyM(%s)", monad);
     }
 
-    
+
 
 }

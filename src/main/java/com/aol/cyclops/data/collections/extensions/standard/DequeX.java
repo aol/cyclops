@@ -35,6 +35,7 @@ import com.aol.cyclops.types.To;
 import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F3;
 
+
 /**
  * An eXtended Deque type, that offers additional eagerly executed functional style operators such as bimap, filter and more
  * 
@@ -89,6 +90,19 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      */
     static <U, T> DequeX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
+                          .toDequeX();
+    }
+    /**
+     * Generate a DequeX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for DequeX elements
+     * @return DequeX generated from the provided Supplier
+     */
+    public static <T> DequeX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
                           .toDequeX();
     }
 
@@ -205,7 +219,16 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      * @return DequeX
      */
     public static <T> DequeX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+    
+        if (it instanceof DequeX)
+            return (DequeX) it;
+        if (it instanceof Deque)
+            return new DequeXImpl<T>(
+                                     (Deque) it, defaultCollector());
+        return new DequeXImpl<T>(
+                                 StreamUtils.stream(it)
+                                            .collect(defaultCollector()),
+                                            defaultCollector());
     }
 
     /**
@@ -217,7 +240,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      */
     public static <T> DequeX<T> fromIterable(final Collector<T, ?, Deque<T>> collector, final Iterable<T> it) {
         if (it instanceof DequeX)
-            return (DequeX) it;
+            return ((DequeX) it).withCollector(collector);
         if (it instanceof Deque)
             return new DequeXImpl<T>(
                                      (Deque) it, collector);
@@ -228,6 +251,8 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
     
    
+
+    DequeX<T> withCollector(Collector<T, ?, Deque<T>> collector);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
@@ -349,7 +374,28 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX<T>) MutableCollectionX.super.combine(predicate, op);
     }
 
-   
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *     DequeX.of(1,2,3)
+     *           .map(i->i*2)
+     *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //DequeX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed Deque
+     */
+    default <R> DequeX<R> coflatMap(Function<? super DequeX<T>, ? extends R> fn){
+        return fn.andThen(r ->  this.<R>unit(r))
+                .apply(this);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
@@ -429,6 +475,16 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX<T>) MutableCollectionX.super.limit(num);
     }
 
+    @Override
+    default DequeX<T> take(final long num) {
+
+        return (DequeX<T>) MutableCollectionX.super.limit(num);
+    }
+    @Override
+    default DequeX<T> drop(final long num) {
+
+        return (DequeX<T>) MutableCollectionX.super.skip(num);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#skip(long)
      */

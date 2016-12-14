@@ -1503,7 +1503,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
          */
         @Override
         public ReactiveSeq<T> stream() {
-            return ReactiveSeq.<T> of();
+            return ReactiveSeq.<T> empty();
         }
 
         /* 

@@ -59,6 +59,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return ReactiveSeq.fromStream(s).toListX();
     }
    
+
     /**
      * Create a ListX that contains the Integers between start and end
      * 
@@ -104,6 +105,19 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     static <U, T> ListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
+                          .toListX();
+    }
+    /**
+     * Generate a ListX from the provided value up to the provided limit number of times
+     * 
+     * @param limit Max number of elements to generate
+     * @param s Value for ListX elements
+     * @return ListX generated from the provided Supplier
+     */
+    public static <T> ListX<T> fill(final long limit, final T s) {
+
+        return ReactiveSeq.fill(s)
+                          .limit(limit)
                           .toListX();
     }
 
@@ -287,12 +301,20 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     public static <T> ListX<T> fromIterable(final Iterable<T> it) {
-        return fromIterable(defaultCollector(), it);
+        if (it instanceof ListX)
+            return (ListX<T>) it;
+        if (it instanceof List)
+            return new ListXImpl<T>(
+                                    (List<T>) it, defaultCollector());
+        return new ListXImpl<T>(
+                                StreamUtils.stream(it)
+                                           .collect(defaultCollector()),
+                                           defaultCollector());
     }
 
     public static <T> ListX<T> fromIterable(final Collector<T, ?, List<T>> collector, final Iterable<T> it) {
         if (it instanceof ListX)
-            return (ListX<T>) it;
+            return ((ListX<T>) it).withCollector(collector);
         if (it instanceof List)
             return new ListXImpl<T>(
                                     (List<T>) it, collector);
@@ -301,6 +323,41 @@ public interface ListX<T> extends To<ListX<T>>,
                                            .collect(collector),
                                 collector);
     }
+    @Override
+    default ListX<T> take(final long num) {
+
+        return (ListX<T>) MutableCollectionX.super.limit(num);
+    }
+    @Override
+    default ListX<T> drop(final long num) {
+
+        return (ListX<T>) MutableCollectionX.super.skip(num);
+    }
+    ListX<T> withCollector(Collector<T, ?, List<T>> collector);
+
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *      ListX.of(1,2,3)
+     *           .map(i->i*2)
+     *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //ListX[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn mapping function
+     * @return Transformed List
+     */
+    default <R> ListX<R> coflatMap(Function<? super ListX<T>, ? extends R> fn){
+        return fn.andThen(r ->  this.<R>unit(r))
+                 .apply(this);
+    }
+    
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
@@ -748,7 +805,6 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     @Override
     default ListX<T> cycleUntil(final Predicate<? super T> predicate) {
-
         return (ListX<T>) MutableCollectionX.super.cycleUntil(predicate);
     }
 

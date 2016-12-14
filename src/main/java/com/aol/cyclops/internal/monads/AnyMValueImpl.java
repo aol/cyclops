@@ -10,7 +10,7 @@ public class AnyMValueImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>
 
     public AnyMValueImpl(final Object monad,FunctionalAdapter<W> adapter) {
         super(monad,adapter);
-        
+
     }
 
     @Override

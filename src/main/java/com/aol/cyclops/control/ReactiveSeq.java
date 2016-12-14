@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +51,9 @@ import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.internal.stream.spliterators.FillSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.LazySingleSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
@@ -74,6 +79,7 @@ import com.aol.cyclops.types.stream.JoolWindowing;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
+import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.function.F4;
@@ -100,6 +106,7 @@ import lombok.val;
  *      Parallelism via LazyFutureStream
  *      Lazy grouping (group by size, time, state)
  *      Sliding windows
+ *      
  *      Efficient reversal
  *      foldRight / scanLeft / scanRight
  *      Zipping and Combining
@@ -122,12 +129,293 @@ import lombok.val;
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Unwrapable, 
                                         Stream<T>, 
-                                        OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
-                                        FilterableFunctor<T>, ExtendedTraversable<T>, IterableFoldable<T>, CyclopsCollectable<T>, JoolWindowing<T>, Seq<T>, Iterable<T>, Publisher<T>,
-                                        ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {
+                                        OnEmptySwitch<T, Stream<T>>,
+                                        JoolManipulation<T>,
+                                        IterableFilterable<T>,
+                                        FilterableFunctor<T>,
+                                        ExtendedTraversable<T>,
+                                        IterableFoldable<T>,
+                                        CyclopsCollectable<T>,
+                                        JoolWindowing<T>,
+                                        Seq<T>,
+                                        Iterable<T>,
+                                        Publisher<T>,
+                                        ReactiveStreamsTerminalOperations<T>,
+                                        ZippingApplicativable<T>,
+                                        Unit<T>,
+                                        ConvertableSequence<T> {
 
+
+    <A,R> ReactiveSeq<R> collectSeq(Collector<? super T,A,R> c);
+
+
+
+    ReactiveSeq<T> fold(Monoid<T> monoid);
     
+    public static  <T> ReactiveSubscriber<T> pushable(){
+        return new ReactiveSubscriber<>();
+    }
+    /**
+     * Construct a ReactiveSeq from a String
+     * 
+     * @param input String to construct ReactiveSeq from
+     * @return ReactiveSeq from a String
+     */
+    public static  ReactiveSeq<Integer> fromString(String input){
+        return fromSpliterator(input.chars().spliterator());
+    }
+    
+    /**
+     * @param values ints to populate Stream from
+     * @return ReactiveSeq of multiple Integers
+     */
+    public static ReactiveSeq<Integer> ofInts(int... values){
+        return fromSpliterator(IntStream.of(values).spliterator());
+    }
    
+    /**
+     * Efficiently construct a ReactiveSeq from an int (will stored an processed as a primitive where possible).
+     * 
+     * @param value Value to construct ReactiveSeq from
+     * @return ReactiveSeq of one Integer
+     */
+    public static ReactiveSeq<Integer> ofInts(int value){
+        return fromSpliterator(IntStream.of(value).spliterator());
+    }
+    /**
+     * 
+     * @param values longs to populate Stream from
+     * @return ReactiveSeq of multiple Longs
+     */
+    public static ReactiveSeq<Long> ofLongs(long... values){
+        return fromSpliterator(LongStream.of(values).spliterator());
+    }
+    /**
+     * Efficiently construct a ReactiveSeq from an long (will stored an processed as a primitive where possible).
+     * 
+     * @param value Value to construct ReactiveSeq from
+     * @return ReactiveSeq of one Long
+     */
+    public static ReactiveSeq<Long> ofLongs(long value){
+        return fromSpliterator(LongStream.of(value).spliterator());
+    }
+    /**
+     * 
+     * @param values longs to populate Stream from
+     * @return ReactiveSeq of multiple Longs
+     */
+    public static ReactiveSeq<Double> ofDoubles(double... values){
+        return fromSpliterator(DoubleStream.of(values).spliterator());
+    }
+    /**
+     * Efficiently construct a ReactiveSeq from an long (will stored an processed as a primitive where possible).
+     * 
+     * @param value Value to construct ReactiveSeq from
+     * @return ReactiveSeq of one Long
+     */
+    public static ReactiveSeq<Double> ofDouble(double value){
+        return fromSpliterator(DoubleStream.of(value).spliterator());
+    }
+    /**
+     * Efficiently construct a ReactiveSeq from a single value
+     * 
+     * @param value Value to construct ReactiveSeq from
+     * @return ReactiveSeq of one value
+     */
+    public static <T> ReactiveSeq<T> of(T value){
+        return fromStream(Stream.of(value));
+    }
+    /**
+     * Construct a ReactiveSeq from the Supplied Spliterator
+     * 
+     * @param spliterator Spliterator to construct a Stream from
+     * @return ReactiveSeq created from Spliterator
+     */
+    public static <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
+        return fromStream(StreamSupport.stream(spliterator, false));
+    }
+    public static <T> ReactiveSeq<T> fromSpliterator(PushingSpliterator<T> spliterator){
+        return StreamUtils.reactiveSeq(StreamSupport.stream(spliterator, false), Optional.empty(),Optional.of(spliterator));
+        
+    }
+   
+    /**
+     * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     * ReactiveSeq.range(1, 1000)
+     *            .ints(i->i,s->s.map(i->i*2).filter(i->i<500))
+                  .size(),
+       //249
+     * 
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @param mapper
+     * @return
+     */
+    default ReactiveSeq<Integer> ints(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends IntStream> mapper){
+        return ReactiveSeq.fromSpliterator(foldInt(fn,mapper).spliterator());
+    }
+    /**
+     * Perform a fold on a primitive IntStream (this is much faster than working with Integer Objects).
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     *     ReactiveSeq.range(1, 1000)
+     *                .foldInt(i->i,s->s.map(i->i*2)
+     *                                  .filter(i->i<500)
+     *                                  .average());
+     *                                  
+     *     //OptionalDouble[250.0] 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn Conversion function
+     * @param mapper Folding function
+     * @return Fold result
+     */
+    default <R> R foldInt(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends R> mapper){
+        Spliterator<T> split = this.spliterator();
+        IntStream s = (split instanceof Spliterator.OfInt)? StreamSupport.intStream((Spliterator.OfInt)split,false) : StreamSupport.stream(split,false).mapToInt(fn);
+        return mapper.apply(s);
+    }
+    /**
+     * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     * ReactiveSeq.range(1, 1000)
+     *            .longs(i->i.longValue(),s->s.map(i->i*2).filter(i->i<500))
+                  .size(),
+       //249
+     * 
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @param mapper
+     * @return
+     */
+    default ReactiveSeq<Long> longs(ToLongFunction<? super T> fn,Function<? super LongStream, ? extends LongStream> mapper){
+        return ReactiveSeq.fromSpliterator(foldLong(fn,mapper).spliterator());
+    }
+    /**
+     * Perform a fold on a primitive LongStream (this is much faster than working with Long Objects).
+     * If this ReactiveSeq has an OfLong Spliterator it will be converted directly to an LongStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     *     ReactiveSeq.range(1, 1000)
+     *                .foldLong(i->i.longValue(),s->s.map(i->i*2)
+     *                                  .filter(i->i<500)
+     *                                  .average());
+     *                                  
+     *     //OptionalDouble[250.0] 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn Conversion function
+     * @param mapper Folding function
+     * @return Fold result
+     */
+    default <R> R foldLong(ToLongFunction<? super T> fn,Function<? super LongStream, ? extends R> mapper){
+        Spliterator<T> split = this.spliterator();
+        LongStream s = (split instanceof Spliterator.OfLong)? StreamSupport.longStream((Spliterator.OfLong)split,false) : StreamSupport.stream(split,false).mapToLong(fn);
+        return mapper.apply(s);
+    }
+    /**
+     * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     * ReactiveSeq.range(1, 1000)
+     *            .doubles(i->i.doubleValue(),s->s.map(i->i*2).filter(i->i<500))
+                  .size(),
+       //249
+     * 
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @param mapper
+     * @return
+     */
+    default ReactiveSeq<Double> doubles(ToDoubleFunction<? super T> fn,Function<? super DoubleStream, ? extends DoubleStream> mapper){
+        return ReactiveSeq.fromSpliterator(foldDouble(fn,mapper).spliterator());
+    }
+    /**
+     * Perform a fold on a primitive DoubleStream (this is much faster than working with Double Objects).
+     * If this ReactiveSeq has an OfDouble Spliterator it will be converted directly to an DoubleStream,
+     * otherwise the provided conversion function will be used.
+     * 
+     * <pre>
+     * {@code 
+     *     ReactiveSeq.range(1, 1000)
+     *                .foldDouble(i->i.doubleValue(),s->s.map(i->i*2)
+     *                                                   .filter(i->i<500)
+     *                                                  .average());
+     *                                  
+     *     //OptionalDouble[250.0] 
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn Conversion function
+     * @param mapper Folding function
+     * @return Fold result
+     */
+    default <R> R foldDouble(ToDoubleFunction<? super T> fn,Function<? super DoubleStream, ? extends R> mapper){
+        Spliterator<T> split = this.spliterator();
+        DoubleStream s = (split instanceof Spliterator.OfDouble) ? StreamSupport.doubleStream((Spliterator.OfDouble)split,false) : StreamSupport.stream(split,false).mapToDouble(fn);
+        return mapper.apply(s);
+    }
+    
+    /**
+     * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc to
+     * switch to a finite Stream)
+     * 
+     * @param t Value to fill Stream with
+     * @return Infinite ReactiveSeq consisting of a single value
+     */
+    public static <T> ReactiveSeq<T> fill(T t){
+        return ReactiveSeq.fromStream(StreamSupport.stream(new FillSpliterator<T>(t), false));
+    }
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * 
+     * <pre>
+     * {@code 
+     *   
+     *      ReactiveSeq.of(1,2,3)
+     *                 .map(i->i*2)
+     *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *      
+     *      //ReactiveSeq[12]
+     * }
+     * </pre>
+     * 
+     * 
+     * @param fn
+     * @return
+     */
+    default <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
+        return ReactiveSeq.fromStream(StreamSupport.<R>stream(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(this,fn), false));
+
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
@@ -467,6 +755,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <U> ReactiveSeq<Tuple2<T, U>> zip(final Stream<? extends U> other) {
         return zip(Seq.seq(other));
     }
+    
+    
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -1581,7 +1871,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
      * </pre>
      * 
-     * @param iterator
+     * @param stream
      * @return True if Monad starts with Iterators sequence of data
      */
     @Override
@@ -2368,7 +2658,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static <T> ReactiveSeq<T> of(final T... elements) {
         final ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
                                                                                     elements, false, 0);
-        return StreamUtils.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array));
+        return StreamUtils.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array),Optional.empty());
 
     }
 
@@ -2384,7 +2674,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static <T> ReactiveSeq<T> reversedOf(final T... elements) {
         final ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
                                                                                     elements, false, 0).invert();
-        return StreamUtils.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array));
+        return StreamUtils.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array),Optional.empty());
 
     }
 
@@ -2398,9 +2688,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static <T> ReactiveSeq<T> reversedListOf(final List<T> elements) {
         Objects.requireNonNull(elements);
-        final ReversingListSpliterator list = new ReversingListSpliterator<T>(
+        final ReversingListSpliterator<T> list = new ReversingListSpliterator<T>(
                                                                               elements, false).invert();
-        return StreamUtils.reactiveSeq(StreamSupport.stream(list, false), Optional.ofNullable(list));
+        return StreamUtils.reactiveSeq(StreamSupport.stream(list, false), Optional.ofNullable(list),Optional.empty());
 
     }
 
@@ -2417,7 +2707,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static ReactiveSeq<Integer> range(final int start, final int end) {
         final ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(
                                                                                     start, end, false);
-        return StreamUtils.reactiveSeq(StreamSupport.stream(range, false), Optional.ofNullable(range));
+        return StreamUtils.reactiveSeq(StreamSupport.stream(range, false), Optional.ofNullable(range),Optional.empty());
 
     }
 
@@ -2434,7 +2724,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static ReactiveSeq<Long> rangeLong(final long start, final long end) {
         final ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(
                                                                                       start, end, false);
-        return StreamUtils.reactiveSeq(StreamSupport.stream(range, false), Optional.ofNullable(range));
+        return StreamUtils.reactiveSeq(StreamSupport.stream(range, false), Optional.ofNullable(range),Optional.empty());
 
     }
 
@@ -2449,7 +2739,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Objects.requireNonNull(stream);
         if (stream instanceof ReactiveSeq)
             return (ReactiveSeq<T>) stream;
-        return StreamUtils.reactiveSeq(stream, Optional.empty());
+        return StreamUtils.reactiveSeq(stream, Optional.empty(),Optional.empty());
     }
 
     /**
@@ -2461,7 +2751,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static ReactiveSeq<Integer> fromIntStream(final IntStream stream) {
         Objects.requireNonNull(stream);
-        return StreamUtils.reactiveSeq(stream.boxed(), Optional.empty());
+        return StreamUtils.reactiveSeq(stream.boxed(), Optional.empty(),Optional.empty());
 
     }
 
@@ -2474,7 +2764,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static ReactiveSeq<Long> fromLongStream(final LongStream stream) {
         Objects.requireNonNull(stream);
-        return StreamUtils.reactiveSeq(stream.boxed(), Optional.empty());
+        return StreamUtils.reactiveSeq(stream.boxed(), Optional.empty(),Optional.empty());
     }
 
     /**
@@ -2486,14 +2776,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static ReactiveSeq<Double> fromDoubleStream(final DoubleStream stream) {
         Objects.requireNonNull(stream);
-        return StreamUtils.reactiveSeq(stream.boxed(), Optional.empty());
+        return StreamUtils.reactiveSeq(stream.boxed(), Optional.empty(),Optional.empty());
     }
 
     /**
      * Construct a ReactiveSeq from a List (prefer this method if the source is a
      * list, as it allows more efficient Stream reversal).
      * 
-     * @param iterable
+     * @param list
      *            to construct Sequence from
      * @return ReactiveSeq
      */
@@ -2501,13 +2791,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Objects.requireNonNull(list);
         final ReversingListSpliterator array = new ReversingListSpliterator<T>(
                                                                                list, false);
-        return StreamUtils.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array));
+        return StreamUtils.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array),Optional.empty());
     }
 
     /**
      * Construct a ReactiveSeq from an Publisher
      * 
-     * @param iterable
+     * @param publisher
      *            to construct ReactiveSeq from
      * @return ReactiveSeq
      */
@@ -2527,7 +2817,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static <T> ReactiveSeq<T> fromIterable(final Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
-        return StreamUtils.reactiveSeq(StreamSupport.stream(iterable.spliterator(), false), Optional.empty());
+        return StreamUtils.reactiveSeq(StreamSupport.stream(iterable.spliterator(), false), Optional.empty(), Optional.empty());
     }
 
     /**
@@ -2546,7 +2836,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see Stream#iterate(Object, UnaryOperator)
      */
     static <T> ReactiveSeq<T> iterate(final T seed, final UnaryOperator<T> f) {
-        return StreamUtils.reactiveSeq(Stream.iterate(seed, f), Optional.empty());
+        return StreamUtils.reactiveSeq(Stream.iterate(seed, f), Optional.empty(),Optional.empty());
 
     }
 
@@ -2573,7 +2863,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see Stream#generate(Supplier)
      */
     static <T> ReactiveSeq<T> generate(final Supplier<T> s) {
-        return StreamUtils.reactiveSeq(Stream.generate(s), Optional.empty());
+        return StreamUtils.reactiveSeq(Stream.generate(s), Optional.empty(),Optional.empty());
 
     }
 
@@ -2798,13 +3088,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         }));
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
-     */
+         * (non-Javadoc)
+         *
+         * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
+         */
     @Override
-    ReactiveSeq<T> onEmpty(T value);
+    default ReactiveSeq<T> onEmpty(T value){
+        return onEmptyGet(()->value);
+    }
 
     /*
      * (non-Javadoc)
@@ -2812,7 +3105,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier);
+    default ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier){
+        return ReactiveSeq.fromStream(JoolManipulation.super.onEmptyGet(supplier));
+    }
 
     /*
      * (non-Javadoc)
@@ -3087,7 +3382,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Number of retries
      * @param delay
      *            Delay in TimeUnits
-     * @param 
+     * @param timeUnit
      *            TimeUnit to use for delay
      */
     default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
@@ -3412,6 +3707,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             final F3<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
             final F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+
         return this.flatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
@@ -3455,6 +3751,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
             F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+
         return this.flatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
@@ -3987,5 +4284,156 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         JoolWindowing.super.print(stream);
     }
+    
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#crossApply(java.util.function.Function)
+     */
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> crossApply(Function<? super T, ? extends Iterable<? extends U>> function) {
+        
+        return (ReactiveSeq)JoolManipulation.super.crossApply(function);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#outerApply(java.util.function.Function)
+     */
+    @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> outerApply(Function<? super T, ? extends Iterable<? extends U>> function) {
+        
+        return (ReactiveSeq)JoolManipulation.super.outerApply(function);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(java.lang.Iterable)
+     */
+    @Override
+    default ReactiveSeq<T> concat(Iterable<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.concat(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(org.jooq.lambda.Seq)
+     */
+    @Override
+    default ReactiveSeq<T> concat(Seq<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.concat(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#concat(java.util.Optional)
+     */
+    @Override
+    default ReactiveSeq<T> concat(Optional<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.concat(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
+     */
+    @Override
+    default ReactiveSeq<T> append(Stream<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.append(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
+     */
+    @Override
+    default ReactiveSeq<T> append(Iterable<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.append(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(org.jooq.lambda.Seq)
+     */
+    @Override
+    default ReactiveSeq<T> append(Seq<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.append(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#append(java.util.Optional)
+     */
+    @Override
+    default ReactiveSeq<T> append(Optional<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.append(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.util.stream.Stream)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Stream<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.prepend(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.lang.Iterable)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Iterable<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.prepend(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(org.jooq.lambda.Seq)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Seq<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.prepend(other));
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#prepend(java.util.Optional)
+     */
+    @Override
+    default ReactiveSeq<T> prepend(Optional<? extends T> other) {
+        
+        return fromStream(JoolManipulation.super.prepend(other));
+    }
+  
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#cycle(long)
+     */
+    @Override
+    default ReactiveSeq<T> cycle(long times) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.cycle(times);
+    }
+  
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#skipWhileClosed(java.util.function.Predicate)
+     */
+    @Override
+    default ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.skipWhileClosed(predicate);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#limitWhileClosed(java.util.function.Predicate)
+     */
+    @Override
+    default ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.limitWhileClosed(predicate);
+    }
 
+ 
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#sorted(java.util.function.Function, java.util.Comparator)
+     */
+    @Override
+    default <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+        
+        return (ReactiveSeq<T>)JoolManipulation.super.sorted(function, comparator);
+    }
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Seq#sliding(long)
+     */
+    @Override
+    default ReactiveSeq<Seq<T>> sliding(long size) {
+        
+        return (ReactiveSeq<Seq<T>>)JoolManipulation.super.sliding(size);
+    }
+  
+
+    
 }

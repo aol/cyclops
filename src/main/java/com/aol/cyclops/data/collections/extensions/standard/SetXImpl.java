@@ -8,12 +8,13 @@ import java.util.stream.Collector;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.Wither;
 
 @AllArgsConstructor
 public class SetXImpl<T> implements SetX<T> {
 
     private final Set<T> set;
-    @Getter
+    @Getter @Wither
     private final Collector<T, ?, Set<T>> collector;
 
     public SetXImpl(final Set<T> set) {

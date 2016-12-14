@@ -3,6 +3,7 @@ package com.aol.cyclops.functions.collections.extensions.standard;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -21,10 +22,21 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     public <T> FluentCollectionX<T> of(T... values) {
         return SortedSetX.of(values);
     }
+
     @Test
-    public void onEmptySwitch(){
-            assertThat(SortedSetX.empty().onEmptySwitch(()->SortedSetX.of(1,2,3)),equalTo(SortedSetX.of(1,2,3)));
+    public void onEmptySwitch() {
+        assertThat(SortedSetX.empty()
+                             .onEmptySwitch(() -> SortedSetX.of(1, 2, 3)),
+                   equalTo(SortedSetX.of(1, 2, 3)));
     }
+
+    public void coflatMap(){
+       assertThat(SortedSetX.of(1,2,3)
+                   .coflatMap(s->s.sum().get())
+                   .single(),equalTo(6));
+        
+    }
+   
 
     /*
      * (non-Javadoc)
@@ -36,6 +48,16 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     @Override
     public <T> FluentCollectionX<T> empty() {
         return SortedSetX.empty();
+    }
+
+    @Test
+    @Override
+    public void forEach2() {
+
+        assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a, b) -> a + b)
+                              .toList()
+                              .size(),
+                   equalTo(12));
     }
 
     @Override

@@ -39,7 +39,6 @@ import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.control.monads.transformers.MaybeT;
 import com.aol.cyclops.control.monads.transformers.values.MaybeTValue;
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.Mutable;

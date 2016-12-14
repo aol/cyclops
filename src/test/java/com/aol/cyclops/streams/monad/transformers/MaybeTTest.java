@@ -16,7 +16,6 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.monads.transformers.MaybeT;
 import com.aol.cyclops.control.monads.transformers.seq.MaybeTSeq;
 public class MaybeTTest {
 

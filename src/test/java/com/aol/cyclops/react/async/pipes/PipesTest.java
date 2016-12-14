@@ -75,11 +75,16 @@ public class PipesTest {
         
         bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
         
+        
+ 
         val ev = bus.nextValue("reactor");
+       
+        System.out.println("EV");
         List results = new ArrayList();
         
         results.add(ev.get());
         results.add(ev.get());
+        System.out.println("Results " + results);
         
        
         results.add(ev.get());
