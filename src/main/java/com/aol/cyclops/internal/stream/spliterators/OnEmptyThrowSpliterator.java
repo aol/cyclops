@@ -16,7 +16,7 @@ public class OnEmptyThrowSpliterator<T> extends Spliterators.AbstractSpliterator
 
 
     public OnEmptyThrowSpliterator(Spliterator<T> source, Supplier<? extends Throwable> t) {
-        super(source.estimateSize(), source.characteristics());
+        super(source.estimateSize(), source.characteristics() & Spliterator.ORDERED);
         this.source = source;
         this.t=t;
     }

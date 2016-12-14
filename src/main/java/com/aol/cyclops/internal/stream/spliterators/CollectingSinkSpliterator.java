@@ -13,7 +13,7 @@ public class CollectingSinkSpliterator<T,A,R> extends AbstractSpliterator<R> imp
     volatile Consumer<? super R> action;
     public CollectingSinkSpliterator(long est, int additionalCharacteristics, Spliterator<T> s, Collector<? super T,A,R> monoid) {
         super(
-              est, additionalCharacteristics);
+              est, additionalCharacteristics & Spliterator.ORDERED);
        
         this.s=s;
         this.monoid = monoid;

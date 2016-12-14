@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.function.Consumer;
+import java.util.stream.Collector.Characteristics;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -28,7 +29,7 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T>{
     private final Spliterator<T> source;
 
     public LimitLastSpliterator(final Spliterator<T> source, final int limit) {
-        super(source.estimateSize(),source.characteristics());
+        super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
         buffer = new ArrayDeque<>(
                                   limit);
         this.source = source;;

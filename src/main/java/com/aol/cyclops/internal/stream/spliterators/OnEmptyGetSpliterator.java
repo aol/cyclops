@@ -14,7 +14,7 @@ public class OnEmptyGetSpliterator<T> extends Spliterators.AbstractSpliterator<T
 
 
     public OnEmptyGetSpliterator(Spliterator<T> source, Supplier<? extends T> value) {
-        super(source.estimateSize(), source.characteristics());
+        super(source.estimateSize(), source.characteristics() & Spliterator.ORDERED);
         this.source = source;
         this.value = value;
     }

@@ -13,7 +13,7 @@ public class OnEmptySpliterator<T> extends Spliterators.AbstractSpliterator<T> {
 
 
     public OnEmptySpliterator(Spliterator<T> source, T value) {
-        super(source.estimateSize(), source.characteristics());
+        super(source.estimateSize(), source.characteristics() & Spliterator.ORDERED);
         this.source = source;
         this.value = value;
     }

@@ -17,7 +17,7 @@ public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements 
     volatile T total; //sync only execution for now
     public FoldingSinkSpliterator(long est, int additionalCharacteristics, Spliterator<T> s, Monoid<T> monoid) {
         super(
-              est, additionalCharacteristics);
+              est, additionalCharacteristics & Spliterator.ORDERED);
        
         this.s=s;
         this.monoid = monoid;

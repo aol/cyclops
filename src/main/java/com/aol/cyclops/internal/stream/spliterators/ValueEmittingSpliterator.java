@@ -1,5 +1,6 @@
 package com.aol.cyclops.internal.stream.spliterators;
 
+import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
@@ -11,7 +12,7 @@ public class ValueEmittingSpliterator<T> extends AbstractSpliterator<T> {
 
     public ValueEmittingSpliterator(long est, int additionalCharacteristics,ReactiveSeq<T> seq) {
         super(
-              est, additionalCharacteristics);
+              est, additionalCharacteristics & Spliterator.ORDERED);
         seq.forEach(e->value.set(e));
     }
 
