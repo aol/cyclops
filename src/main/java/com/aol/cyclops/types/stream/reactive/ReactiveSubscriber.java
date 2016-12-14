@@ -63,6 +63,8 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
         val cons = action.getAction();
         if(cons!=null) 
               cons.accept(t);
+        else
+            action.capture(t);
         
     }
 
@@ -78,6 +80,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onComplete() {
+        System.out.println("completing!" +action.getOnComplete());
         val run = action.getOnComplete();
         if(run!=null)
             run.run();

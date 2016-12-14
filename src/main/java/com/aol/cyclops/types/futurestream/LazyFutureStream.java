@@ -31,14 +31,9 @@ import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
-import java.util.stream.BaseStream;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.stream.*;
 
+import com.aol.cyclops.util.function.Lambda;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -97,16 +92,15 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 import lombok.val;
 
-/**
- * Lazy Stream Factory methods
- *
- * @author johnmcclean
- *
- */
-
 public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimpleReactStream<U>, LazyStream<U>, ReactiveSeq<U>, LazyToQueue<U>,
         ConfigurableStream<U, FastFuture<U>>, FutureStreamSynchronousPublisher<U> {
 
+    default <A,R> LazyFutureStream<R> collectSeq(Collector<? super U,A,R> c){
+        return this.getSimpleReact().fromStream(Stream.of(Lambda.λ(()->this.collect(c))).map(Supplier::get));
+    }
+    default LazyFutureStream<U> fold(Monoid<U> monoid){
+        return this.getSimpleReact().fromStream(Stream.of(Lambda.λ(()->this.reduce(monoid))).map(Supplier::get));
+    }
     
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#crossApply(java.util.function.Function)
@@ -453,7 +447,6 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * </pre>
      *
      *
-     * @param defaultValue Value if supplied case doesn't match
      * @param case1 Function to generate a case (or chain of cases as a single case)
      * @return LazyFutureStream where elements are transformed by pattern matching
      */
@@ -2899,7 +2892,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     default <S, R> LazyFutureStream<R> zipStream(final BaseStream<? extends S, ? extends BaseStream<? extends S, ?>> second,
             final BiFunction<? super U, ? super S, ? extends R> zipper) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                                     .zipStream(second, zipper));
+                                     .zipStream((BaseStream)second, zipper));
 
     }
 

@@ -6,30 +6,162 @@ import static com.aol.cyclops.util.function.Predicates.hasItems;
 import static com.aol.cyclops.util.function.Predicates.in;
 import static com.aol.cyclops.util.function.Predicates.not;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.aol.cyclops.Monoids;
 import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 
 public class ReactiveSeqTest {
+    AtomicBoolean active = new AtomicBoolean(true);
+    @Test
+    public void replayStream(){
+       
+        ReactiveSeq<String> stream = ReactiveSeq.of("hello","world");
+        ReactiveSeq<String> stream1 = stream.map(str->"hello world " + str);
+        Spliterator<String> sp = stream1.spliterator();
+        
+        ReactiveSeq.fromSpliterator(sp).forEach(System.out::println);
+       
+        ReactiveSeq.fromSpliterator(sp).forEach(System.err::println);
+        
+    }
+    @Test
+    public void replay(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+        ReactiveSeq<String> stream1 = stream.map(str->"hello world " + str);
+        Spliterator<String> sp = stream1.spliterator();
+        pushable.onNext("hello");
+       
+        pushable.onComplete();
+        ReactiveSeq.fromSpliterator(sp).forEach(System.out::println);
+        pushable.onNext("world");
+        
+        pushable.onComplete();
+        ReactiveSeq.fromSpliterator(sp).forEach(System.err::println);
+        
+    }
+        
+    @Test
+    public void block(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+        new Thread(()->{active.set(false); pushable.onComplete();}).run();
+        stream.forEach(System.out::println);
+        assertFalse(active.get());
+    }
+    @Test
+    public void blockToList(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+        new Thread(()->{active.set(false); pushable.onComplete();}).run();
+        stream.toList();
+        assertFalse(active.get());
+    }
+    @Test
+    public void blockToListAddOne(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+        new Thread(()->{
+            pushable.onNext("hello");
+            active.set(false);
+            pushable.onComplete();
+        }).run();
+        assertThat(stream.toList().size(),equalTo(1));
+        assertFalse(active.get());
+    }
+    
+    @Test
+    public void limitLast(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+        pushable.onNext("hello1");
+        
+        pushable.onNext("hello2");
+        pushable.onNext("hello3");
+        pushable.onComplete();
+       // stream.printOut();
+        stream.limitLast(2).zip(Stream.of(1,2)).printOut();
+    }
+    
+    @Test
+    public void zip(){
+        Stream<Integer> s = Stream.of(1,2,3);
+        Iterator<Integer> it = s.iterator();
+        int i = it.next();
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+        new Thread(()->{
+            pushable.onNext("hello");
+            active.set(false);
+            pushable.onComplete();
+        }).run();
+       
+        assertThat(stream.zip(Stream.of(1,2)).toList().size(),equalTo(1));
+        assertFalse(active.get());
+    }
+    
+    @Test
+    public void lazy(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+        
+        Eval<List<String>> list = stream.peek(System.err::println)
+                                        .foldLazy(s->s.collect(Collectors.toList()));
+      
+        pushable.onNext("hello");
+        pushable.onComplete();
+        assertThat(list.get().size(),equalTo(1));
+        
+    }
     @Test
     public void push(){
         ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
         ReactiveSeq<String> stream = pushable.stream();
         Executor ex= Executors.newFixedThreadPool(1);
-        FutureW<List<String>> list = stream.foldFuture(s->s.collect(Collectors.toList()),ex);
+        FutureW<List<String>> list = stream.peek(System.err::println)
+                                           .foldFuture(s->s.collect(Collectors.toList()),ex);
+      
         pushable.onNext("hello");
         pushable.onComplete();
-        list.printOut();
+        assertThat(list.get().size(),equalTo(1));
+        
+    }
+   
+    
+    @Test
+    public void fold(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+        ReactiveSeq<Integer> res = stream.map(s->s.length()).fold(Monoids.intSum);
+        pushable.onNext("hello");
+        pushable.onNext("world");
+        pushable.onComplete();
+        assertThat(res.single(),equalTo(10));
+        
+    }
+    @Test
+    public void collect(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+        ReactiveSeq<List<Integer>> res = stream.map(s->s.length()).collectSeq(Collectors.toList());
+        pushable.onNext("hello");
+        pushable.onNext("world");
+        pushable.onComplete();
+        assertThat(res.single().size(),equalTo(2));
         
     }
     @Test

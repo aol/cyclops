@@ -92,6 +92,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
 
     }
 
+
     @Override
     public void forwardErrors(final Consumer<Throwable> c) {
         error.forward = c;
@@ -151,7 +152,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
     @Override
     public LazyFutureStream<U> withLastActive(final LazyStreamWrapper w) {
         return new LazyFutureStreamImpl<U>(
-                                           errorHandler, w, lazyCollector, queueFactory, simpleReact, subscription, error, maxActive);
+                errorHandler, w, lazyCollector, queueFactory, simpleReact, subscription, error, maxActive);
 
     }
 

@@ -94,7 +94,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void foldLazy(){
-        assertThat(of(1,2,3).foldLazy(l->l.reduce(Monoids.intSum), ex).get(),equalTo(6));
+        assertThat(of(1,2,3).foldLazy(l->l.reduce(Monoids.intSum)).get(),equalTo(6));
     }
     @Test
     public void foldTry(){

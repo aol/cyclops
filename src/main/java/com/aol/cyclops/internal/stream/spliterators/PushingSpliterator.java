@@ -1,5 +1,7 @@
 package com.aol.cyclops.internal.stream.spliterators;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Spliterator;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
@@ -31,12 +33,22 @@ public class PushingSpliterator<T> implements Spliterator<T> {
     };
     @Setter
     volatile boolean hold = true;
-    
+    volatile List<T> capture;
     public void setOnComplete(Runnable onComplete){
         this.onComplete = ()->{
             onComplete.run();
             hold=false;
         };
+    }
+    public void capture(T next){
+        
+        if(!hold)
+            return;
+        if(capture==null){
+            capture = new ArrayList<>(10);
+        }
+        capture.add(next);
+    
     }
     /* (non-Javadoc)
      * @see java.util.Spliterator#forEachRemaining(java.util.function.Consumer)
@@ -47,17 +59,25 @@ public class PushingSpliterator<T> implements Spliterator<T> {
         while(hold){
             LockSupport.parkNanos(10l);
         }
+        
+        if(capture!=null){
+            capture.stream().forEach(c->action.accept(c));
+            capture=null;
+        }
     }
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        
-        return false;
+        this.action = action;
+        if(capture!=null && capture.size()>0){
+            action.accept(capture.remove(0));
+        }
+        return hold;
     }
 
     @Override
     public Spliterator<T> trySplit() {
-        return null;
+        return this;
     }
 
     @Override

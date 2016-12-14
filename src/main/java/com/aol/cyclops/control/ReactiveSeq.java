@@ -53,6 +53,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.stream.spliterators.FillSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.LazySingleSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
@@ -127,12 +128,29 @@ import lombok.val;
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Unwrapable, 
                                         Stream<T>, 
-                                        OnEmptySwitch<T, Stream<T>>, JoolManipulation<T>, IterableFilterable<T>,
-                                        FilterableFunctor<T>, ExtendedTraversable<T>, IterableFoldable<T>, CyclopsCollectable<T>, JoolWindowing<T>, Seq<T>, Iterable<T>, Publisher<T>,
-                                        ReactiveStreamsTerminalOperations<T>, ZippingApplicativable<T>, Unit<T>, ConvertableSequence<T> {
+                                        OnEmptySwitch<T, Stream<T>>,
+                                        JoolManipulation<T>,
+                                        IterableFilterable<T>,
+                                        FilterableFunctor<T>,
+                                        ExtendedTraversable<T>,
+                                        IterableFoldable<T>,
+                                        CyclopsCollectable<T>,
+                                        JoolWindowing<T>,
+                                        Seq<T>,
+                                        Iterable<T>,
+                                        Publisher<T>,
+                                        ReactiveStreamsTerminalOperations<T>,
+                                        ZippingApplicativable<T>,
+                                        Unit<T>,
+                                        ConvertableSequence<T> {
 
+
+    <A,R> ReactiveSeq<R> collectSeq(Collector<? super T,A,R> c);
+
+
+
+    ReactiveSeq<T> fold(Monoid<T> monoid);
     
-   
     public static  <T> ReactiveSubscriber<T> pushable(){
         return new ReactiveSubscriber<>();
     }
@@ -214,6 +232,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
         return fromStream(StreamSupport.stream(spliterator, false));
+    }
+    public static <T> ReactiveSeq<T> fromSpliterator(PushingSpliterator<T> spliterator){
+        return StreamUtils.reactiveSeq(StreamSupport.stream(spliterator, false), Optional.empty(),Optional.of(spliterator));
+        
     }
    
     /**
@@ -729,6 +751,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <U> ReactiveSeq<Tuple2<T, U>> zip(final Stream<? extends U> other) {
         return zip(Seq.seq(other));
     }
+    
+    
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -1843,7 +1867,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
      * </pre>
      * 
-     * @param iterator
+     * @param stream
      * @return True if Monad starts with Iterators sequence of data
      */
     @Override
@@ -2755,7 +2779,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Construct a ReactiveSeq from a List (prefer this method if the source is a
      * list, as it allows more efficient Stream reversal).
      * 
-     * @param iterable
+     * @param list
      *            to construct Sequence from
      * @return ReactiveSeq
      */
@@ -2769,7 +2793,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Construct a ReactiveSeq from an Publisher
      * 
-     * @param iterable
+     * @param publisher
      *            to construct ReactiveSeq from
      * @return ReactiveSeq
      */
@@ -3060,13 +3084,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         }));
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
-     */
+         * (non-Javadoc)
+         *
+         * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
+         */
     @Override
-    ReactiveSeq<T> onEmpty(T value);
+    default ReactiveSeq<T> onEmpty(T value){
+        return onEmptyGet(()->value);
+    }
 
     /*
      * (non-Javadoc)
@@ -3074,7 +3101,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier);
+    default ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier){
+        return ReactiveSeq.fromStream(JoolManipulation.super.onEmptyGet(supplier));
+    }
 
     /*
      * (non-Javadoc)
@@ -3349,7 +3378,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Number of retries
      * @param delay
      *            Delay in TimeUnits
-     * @param 
+     * @param timeUnit
      *            TimeUnit to use for delay
      */
     default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {

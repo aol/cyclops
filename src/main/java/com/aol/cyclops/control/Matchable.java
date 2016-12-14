@@ -2783,7 +2783,7 @@ public interface Matchable<TYPE> {
          */
         public final CheckValues<T, R> is(final MTuple4<Predicate<? super T>, Predicate<? super T>, Predicate<? super T>, Predicate<? super T>> when,
                 final Supplier<? extends R> then) {
-            return isWhere(then, Arrays.asList(when.getMatchable().v1, when.getMatchable().v2, when.getMatchable().v3, when.getMatchable().v4));
+            return isWhere(then, Arrays.<Predicate<? super T>>asList(when.getMatchable().v1, when.getMatchable().v2, when.getMatchable().v3, when.getMatchable().v4));
         }
 
         /**
