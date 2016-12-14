@@ -387,14 +387,13 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<T> scanRight(final Monoid<T> monoid) {
-        return reverse().scanLeft(monoid.zero(), (u, t) -> monoid
-                                                                                         .apply(t, u));
+        return reverse().scanLeft(monoid.zero(), (u, t) -> monoid.apply(t, u));
     }
 
     @Override
     public final <U> ReactiveSeq<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
+        return reverse().scanLeft(identity,(u,t)->combiner.apply(t,u));
 
-        return StreamUtils.reactiveSeq(StreamUtils.scanRight(this, identity, combiner), reversible,split);
     }
 
     @Override
