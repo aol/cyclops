@@ -2,6 +2,7 @@ package com.aol.cyclops.util.function;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.function.Predicate;
 
 import org.jooq.lambda.function.Function1;
 
@@ -44,7 +45,7 @@ public interface F1<T1,  R> extends Function1<T1,R>, Reader<T1,R> {
         return Memoize.memoizeFunction(this,c);
     }
     
-    
+
     default F0<R> bind(final T1 s) {
         return Curry.curry(this)
                     .apply(s);

@@ -33,9 +33,6 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMValueImpl;
-import com.aol.cyclops.internal.comprehensions.comprehenders.InvokeDynamicComprehender;
-import com.aol.cyclops.internal.comprehensions.converters.MonadicConverters;
-import com.aol.cyclops.internal.monads.AnyMonads;
 
 import com.aol.cyclops.types.EmptyUnit;
 import com.aol.cyclops.types.Foldable;
@@ -124,7 +121,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
      * }
      * </pre>
      * 
-     * @param value to embed inside the monad wrapped by AnyM
+     * @param t to embed inside the monad wrapped by AnyM
      * @return Newly instantated AnyM
      */
     @Override
@@ -188,7 +185,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
      * 
      * </pre>
      * 
-     * @param p Filtering predicate
+     * @param fn Filtering predicate
      * @return Filtered AnyM
      */
     default  AnyM<W,T> filter(Predicate<? super T> fn){
@@ -564,7 +561,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T
     /**
      * Create an AnyM instance that wraps an Optional
      * 
-     * @param optional Optional to wrap
+     * @param opt Optional to wrap
      * @return AnyM that wraps the provided Optonal
      */
     public static <T> AnyMValue<optional,T> fromOptional(final Optional<T> opt) {

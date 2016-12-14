@@ -630,7 +630,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     @Override
 
     public final <R> ReactiveSeq<R> flatMapAnyM(final Function<? super T, AnyM<Witness.stream,? extends R>> fn) {
-        return StreamUtils.reactiveSeq(StreamUtils.flatMapAnyM(this, fn), reversible);
+        return StreamUtils.reactiveSeq(StreamUtils.flatMapAnyM(this, fn), reversible,split);
     }
 
     @Override
