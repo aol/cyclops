@@ -10,6 +10,7 @@ public class OnEmptySpliterator<T> extends Spliterators.AbstractSpliterator<T> {
     private final Spliterator<T> source;
     private final T value;
     private boolean found=false;
+    private boolean sent=false;
 
 
     public OnEmptySpliterator(Spliterator<T> source, T value) {
@@ -21,6 +22,8 @@ public class OnEmptySpliterator<T> extends Spliterators.AbstractSpliterator<T> {
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
+        if(sent)
+            return false;
         if(found)
             return source.tryAdvance(action);
         else{
@@ -28,6 +31,7 @@ public class OnEmptySpliterator<T> extends Spliterators.AbstractSpliterator<T> {
                 found =true;
                 action.accept(e);
             })){
+                sent =true;
                 action.accept(value);
             }
         }
