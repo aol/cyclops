@@ -735,7 +735,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      */
     @Override
-    <S, U> ReactiveSeq<Tuple3<T, S, U>> zipS3(Iterable<? extends S> second, Iterable<? extends U> third);
+    <S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third);
 
     /**
      * zip 4 Streams into 1
@@ -750,7 +750,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      */
     @Override
-    <T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zipS4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth);
+    <T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth);
 
     default Seq<T> seq(){
         return Seq.seq((Stream<T>)this);

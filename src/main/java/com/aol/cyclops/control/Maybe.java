@@ -567,16 +567,6 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq,
-     * java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Maybe<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (Maybe<R>) MonadicValue.super.zip(other, zipper);
-    }
 
     /*
      * (non-Javadoc)
@@ -585,9 +575,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Maybe<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Maybe<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (Maybe<R>) MonadicValue.super.zip(other, zipper);
+        return (Maybe<R>) MonadicValue.super.zipS(other, zipper);
     }
 
     /*
@@ -596,21 +586,11 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Maybe<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> Maybe<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (Maybe) MonadicValue.super.zip(other);
+        return (Maybe) MonadicValue.super.zipS(other);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> Maybe<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-
-        return (Maybe) MonadicValue.super.zip(other);
-    }
 
     /*
      * (non-Javadoc)

@@ -43,13 +43,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
                                      col);
     }
     <R> CollectionX<R> unit(R r);
-  
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    <U> CollectionX<Tuple2<T, U>> zip(Seq<? extends U> other);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#grouped(int, java.util.function.Supplier)
@@ -109,13 +103,13 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * @see com.aol.cyclops.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    <S, U> CollectionX<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third);
+    <S, U> CollectionX<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    <T2, T3, T4> CollectionX<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third, Stream<? extends T4> fourth);
+    <T2, T3, T4> CollectionX<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#limitWhile(java.util.function.Predicate)
@@ -416,7 +410,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function)
      */
     @Override
-    <K> CollectionX<Tuple2<K, Seq<T>>> grouped(Function<? super T, ? extends K> classifier);
+    <K> CollectionX<Tuple2<K, ReactiveSeq<T>>> grouped(Function<? super T, ? extends K> classifier);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
@@ -440,23 +434,18 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     @Override
     <U, R> CollectionX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
-     */
-    @Override
-    <U, R> CollectionX<R> zip(Seq<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    <U, R> CollectionX<R> zip(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
+    <U, R> CollectionX<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    <U> CollectionX<Tuple2<T, U>> zip(Stream<? extends U> other);
+    <U> CollectionX<Tuple2<T, U>> zipS(Stream<? extends U> other);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zipWithIndex()

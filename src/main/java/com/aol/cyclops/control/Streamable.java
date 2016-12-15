@@ -167,7 +167,7 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
     @Override
     default Collectable<T> collectable() {
 
-        return Seq.seq(stream());
+        return Seq.seq((Stream<T>)stream());
     }
 
     /* (non-Javadoc)
@@ -188,32 +188,28 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
         return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
     }
 
-    @Override
-    default <U, R> Streamable<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
-    }
 
     @Override
-    default <U, R> Streamable<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Streamable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
+        return Streamable.fromIterable(ZippingApplicativable.super.zipS(other, zipper));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Streamable<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> Streamable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.zip(other));
+        return Streamable.fromIterable(ZippingApplicativable.super.zipS(other));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.zip3(second, third));
     }
@@ -222,8 +218,8 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.zip4(second, third, fourth));
     }
@@ -250,7 +246,7 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function)
      */
     @Override
-    default <K> Streamable<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> Streamable<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
 
         return Streamable.fromIterable(ZippingApplicativable.super.grouped(classifier));
     }
@@ -803,20 +799,6 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
         return reactiveSeq().toOptional();
     }
 
-    /**
-     * <pre>
-     * {@code 
-     * CompletableFuture<List<String>> cf = Streamable.of("hello","world")
-    										.toCompletableFuture();
-    	assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
-     * }
-     * </pre>
-     * @return The Streamable converted to a CompletableFuture List
-     */
-    @Override
-    default CompletableFuture<ListX<T>> toCompletableFuture() {
-        return reactiveSeq().toCompletableFuture();
-    }
 
     /**
      * Convert to a Stream with the values repeated specified times
@@ -912,11 +894,11 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * 
      * 
      * @return Split Streamable
-     */
+
     default Tuple2<Optional<T>, Streamable<T>> splitAtHead() {
         return reactiveSeq().splitAtHead()
                             .map2(s -> fromStream(s));
-    }
+    }*/
 
     /**
      * Split stream at point where predicate no longer holds
@@ -1035,10 +1017,6 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
         return fromStream(reactiveSeq().zip(other));
     }
 
-    @Override
-    default <U> Streamable<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-        return fromStream(reactiveSeq().zip(other));
-    }
 
     /**
      * zip 3 Streams into one
@@ -1089,29 +1067,7 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
         return fromStream(reactiveSeq().zipWithIndex());
     }
 
-    /**
-     * Zip this Monad with a Stream
-     * 
-     * <pre>
-     * {@code
 
-     *  Stream<List<Integer>> zipped = Streamable.of(1, 2, 3).zipStream(
-     *          Stream.of(2, 3, 4), (a, b) -> Arrays.asList(a, b));
-     * 
-     *  // [[1,2][2,3][3,4]]
-     * }
-     * </pre>
-     * 
-     * @param second
-     *            Stream to zip with
-     * @param zipper
-     *            Zip funciton
-     * @return This monad zipped with a Stream
-     */
-    default <S, R> Streamable<R> zipStream(final BaseStream<? extends S, ? extends BaseStream<? extends S, ?>> second,
-            final BiFunction<? super T, ? super S, ? extends R> zipper) {
-        return fromStream(reactiveSeq().zipStream(second, zipper));
-    }
 
     /**
      * Create a sliding view over this Sequence
@@ -1202,7 +1158,7 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * </pre>
      */
     @Override
-    default <K> MapX<K, List<T>> groupBy(final Function<? super T, ? extends K> classifier) {
+    default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return reactiveSeq().groupBy(classifier);
     }
 
@@ -2110,16 +2066,6 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
         return fromStream(reactiveSeq().insertStreamAt(pos, stream.reactiveSeq()));
     }
 
-    /**
-     * Access asynchronous terminal operations (each returns a Future)
-     * 
-     * @param exec Executor to use for Stream execution
-     * @return Async Future Terminal Operations
-     */
-    @Override
-    default FutureOperations<T> futureOperations(final Executor exec) {
-        return reactiveSeq().futureOperations(exec);
-    }
 
     /**
      * <pre>
@@ -2506,14 +2452,14 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
      */
     default <U> Streamable<Tuple2<T, U>> crossJoin(final Streamable<U> other) {
-        return fromStream(reactiveSeq().crossJoin(other.reactiveSeq()));
+        return fromStream(seq().crossJoin(other));
     }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#innerJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> innerJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
-        return fromStream(reactiveSeq().innerJoin(other.reactiveSeq(), predicate));
+        return fromStream(seq().innerJoin(other, predicate));
     }
 
     /* (non-Javadoc)
@@ -2565,7 +2511,7 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
     }
 
     default Streamable<T> concat(final Streamable<T> other) {
-        return fromStream(reactiveSeq().concat(other.reactiveSeq()));
+        return fromStream(seq().concat(other));
     }
 
     default Streamable<T> concat(final T other) {

@@ -448,43 +448,29 @@ public interface Eval<T> extends    To<Eval<T>>,
      * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> Eval<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+    default <T2, R> Eval<R> zipP( final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return (Eval<R>) MonadicValue.super.zip(fn, app);
 
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Eval<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (Eval<R>) MonadicValue.super.zip(other, zipper);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Eval<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Eval<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (Eval<R>) MonadicValue.super.zip(other, zipper);
+        return (Eval<R>) MonadicValue.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Eval<Tuple2<T, U>> zip(final Stream<? extends U> other) {
-        return (Eval) MonadicValue.super.zip(other);
+    default <U> Eval<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+        return (Eval) MonadicValue.super.zipS(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> Eval<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-        return (Eval) MonadicValue.super.zip(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)

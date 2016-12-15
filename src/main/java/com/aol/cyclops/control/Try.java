@@ -1617,41 +1617,27 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Try<R, X> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (Try<R, X>) MonadicValue.super.zip(other, zipper);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Try<R, X> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Try<R, X> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (Try<R, X>) MonadicValue.super.zip(other, zipper);
+        return (Try<R, X>) MonadicValue.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Try<Tuple2<T, U>, X> zip(final Stream<? extends U> other) {
+    default <U> Try<Tuple2<T, U>, X> zipS(final Stream<? extends U> other) {
 
-        return (Try) MonadicValue.super.zip(other);
+        return (Try) MonadicValue.super.zipS(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> Try<Tuple2<T, U>, X> zip(final Seq<? extends U> other) {
 
-        return (Try) MonadicValue.super.zip(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)

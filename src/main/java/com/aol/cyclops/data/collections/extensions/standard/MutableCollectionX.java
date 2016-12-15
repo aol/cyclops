@@ -214,20 +214,14 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().zip(other, zipper));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> MutableCollectionX<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return fromStream(stream().zip(other, zipper));
-    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> MutableCollectionX<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return fromStream(stream().zip(other, zipper));
+    default <U, R> MutableCollectionX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return fromStream(stream().zipS(other, zipper));
     }
 
     /* (non-Javadoc)
@@ -369,25 +363,17 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> MutableCollectionX<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> MutableCollectionX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return fromStream(stream().zip(other));
+        return fromStream(stream().zipS(other));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> MutableCollectionX<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-
-        return fromStream(stream().zip(other));
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> MutableCollectionX<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> MutableCollectionX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return fromStream(stream().zip3(second, third));
     }
@@ -396,8 +382,8 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> MutableCollectionX<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> MutableCollectionX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return fromStream(stream().zip4(second, third, fourth));
     }
@@ -651,15 +637,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().cast(type));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    default <R> MutableCollectionX<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
-            final Supplier<? extends R> otherwise) {
 
-        return fromStream(stream().patternMatch(case1, otherwise));
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#permutations()

@@ -192,8 +192,8 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * </pre>
      */
-    default <S, U> Traversable<Tuple3<T, S, U>> zipS3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return traversable().zipS3(second, third);
+    default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
+        return traversable().zip3(second, third);
     }
 
     /**
@@ -208,9 +208,9 @@ public interface Traversable<T> extends Publisher<T>,
      * // [[1,100,'a',"hello"],[2,200,'b',"world"]]
      * </pre>
      */
-    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zipS4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
-        return traversable().zipS4(second, third, fourth);
+        return traversable().zip4(second, third, fourth);
     }
 
     /**

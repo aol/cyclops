@@ -1215,16 +1215,7 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
         return FutureW.of(CompletableFuture.supplyAsync(s, ex));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq,
-     * java.util.function.BiFunction)
-     */
-    @Override
-    public <U, R> FutureW<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (FutureW<R>) MonadicValue.super.zip(other, zipper);
-    }
+
 
     /*
      * (non-Javadoc)
@@ -1233,8 +1224,8 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
      * java.util.function.BiFunction)
      */
     @Override
-    public <U, R> FutureW<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (FutureW<R>) MonadicValue.super.zip(other, zipper);
+    public <U, R> FutureW<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (FutureW<R>) MonadicValue.super.zipS(other, zipper);
     }
 
     /*
@@ -1243,19 +1234,11 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    public <U> FutureW<Tuple2<T, U>> zip(final Stream<? extends U> other) {
-        return (FutureW) MonadicValue.super.zip(other);
+    public <U> FutureW<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+        return (FutureW) MonadicValue.super.zipS(other);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    public <U> FutureW<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-        return (FutureW) MonadicValue.super.zip(other);
-    }
+
 
     /*
      * (non-Javadoc)

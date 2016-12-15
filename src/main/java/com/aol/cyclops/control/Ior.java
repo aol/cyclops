@@ -444,8 +444,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
         if (isPrimary())
             return visit(primary, () -> null);
 
-        return Matchables.tuple2(both().get())
-                         .visit((a, b) -> both.apply(a, b));
+        return both().get()
+                         .map((a, b) -> both.apply(a, b));
     }
 
 
@@ -822,47 +822,33 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> Ior<ST, R> zip(final BiFunction<? super PT, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+    default <T2, R> Ior<ST, R> zipP(final Publisher<? extends T2> app,final BiFunction<? super PT, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Xor.fromPublisher(app)
                                                                             .visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Ior<ST, R> zip(final Seq<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
 
-        return (Ior<ST, R>) MonadicValue.super.zip(other, zipper);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Ior<ST, R> zip(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
+    default <U, R> Ior<ST, R> zipS(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
 
-        return (Ior<ST, R>) MonadicValue.super.zip(other, zipper);
+        return (Ior<ST, R>) MonadicValue.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Ior<ST, Tuple2<PT, U>> zip(final Stream<? extends U> other) {
+    default <U> Ior<ST, Tuple2<PT, U>> zipS(final Stream<? extends U> other) {
 
-        return (Ior) MonadicValue.super.zip(other);
+        return (Ior) MonadicValue.super.zipS(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> Ior<ST, Tuple2<PT, U>> zip(final Seq<? extends U> other) {
 
-        return (Ior) MonadicValue.super.zip(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
@@ -901,7 +887,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
         @Override
         public <R> Ior<ST, R> map(final Function<? super PT, ? extends R> fn) {
             return new Primary<ST, R>(
-                                      fn.apply(value));
+                    fn.apply(value));
         }
 
         @Override
@@ -911,7 +897,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
         @Override
         public <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
-                final BiFunction<? super ST, ? super PT, ? extends R> both) {
+                           final BiFunction<? super ST, ? super PT, ? extends R> both) {
             return primary.apply(value);
         }
 
@@ -930,13 +916,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
         @Override
         public <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
-            return Ior.<R1, R2> primary(fn2.apply(value));
+            return Ior.<R1, R2>primary(fn2.apply(value));
         }
 
         @Override
         public Ior<PT, ST> swap() {
             return new Secondary<PT, ST>(
-                                         value);
+                    value);
         }
 
         @Override
@@ -962,11 +948,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
         @Override
         public <RT1> Ior<ST, RT1> flatMap(final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
             return (Ior<ST, RT1>) mapper.apply(value)
-                                         .toIor();
+                    .toIor();
         }
 
         @Override
-        public <LT1> Ior<LT1, PT> secondaryFlatMap(final Function<? super ST, ? extends Ior<LT1,PT>> mapper) {
+        public <LT1> Ior<LT1, PT> secondaryFlatMap(final Function<? super ST, ? extends Ior<LT1, PT>> mapper) {
             return (Ior<LT1, PT>) this;
         }
 
@@ -1023,341 +1009,340 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
         public <T2, R> Ior<ST, R> combine(final Value<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
 
             return app.toXor()
-                      .visit(s -> Ior.secondary(null), f -> Ior.primary(fn.apply(get(), app.get())));
+                    .visit(s -> Ior.secondary(null), f -> Ior.primary(fn.apply(get(), app.get())));
         }
 
-
-
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    @EqualsAndHashCode(of = { "value" })
-    public static class Secondary<ST, PT> implements Ior<ST, PT> {
-        private final ST value;
-
-        @Override
-        public boolean isSecondary() {
-            return true;
-        }
-
-        @Override
-        public boolean isPrimary() {
-            return false;
-        }
-
-        @Override
-        public Xor<ST, PT> toXor() {
-            return Xor.secondary(value);
-        }
-
-        @Override
-        public Xor<ST, PT> toXorDropPrimary() {
-            return Xor.secondary(value);
-        }
-
-        @Override
-        public Ior<ST, PT> secondaryToPrimayMap(final Function<? super ST, ? extends PT> fn) {
-            return new Primary<ST, PT>(
-                                       fn.apply(value));
-        }
-
-        @Override
-        public <R> Ior<R, PT> secondaryMap(final Function<? super ST, ? extends R> fn) {
-            return new Secondary<R, PT>(
-                                        fn.apply(value));
-        }
-
-        @Override
-        public <R> Ior<ST, R> map(final Function<? super PT, ? extends R> fn) {
-            return (Ior<ST, R>) this;
-        }
-
-        @Override
-        public Ior<ST, PT> secondaryPeek(final Consumer<? super ST> action) {
-            return secondaryMap((Function) FluentFunctions.expression(action));
-        }
-
-        @Override
-        public Optional<Tuple2<ST, PT>> both() {
-            return Optional.empty();
-        }
-
-        @Override
-        public Ior<ST, PT> peek(final Consumer<? super PT> action) {
-            return this;
-        }
-
-        @Override
-        public Ior<ST, PT> filter(final Predicate<? super PT> test) {
-            return this;
-        }
-
-        @Override
-        public <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
-            return Ior.<R1, R2> secondary(fn1.apply(value));
-        }
-
-        @Override
-        public Ior<PT, ST> swap() {
-            return new Primary<PT, ST>(
-                                       value);
-        }
-
-        @Override
-        public PT get() {
-            throw new NoSuchElementException();
-        }
-
-        @Override
-        public ST secondaryGet() {
-            return value;
-        }
-
-        @Override
-        public Optional<ST> secondaryToOptional() {
-            return Optional.ofNullable(value);
-        }
-
-        @Override
-        public ReactiveSeq<ST> secondaryToStream() {
-            return ReactiveSeq.fromStream(StreamUtils.optionalToStream(secondaryToOptional()));
-        }
-
-        @Override
-        public <RT1> Ior<ST, RT1> flatMap(final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
-            return (Ior<ST, RT1>) this;
-        }
-
-        @Override
-        public < LT1> Ior<LT1, PT> secondaryFlatMap(final Function<? super ST, ? extends Ior<LT1,PT>> mapper) {
-            return mapper.apply(value);
-        }
-
-        @Override
-        public Ior<ST, PT> secondaryToPrimayFlatMap(final Function<? super ST, ? extends Ior<ST, PT>> fn) {
-            return fn.apply(value);
-        }
-
-        @Override
-        public Ior<ST, PT> bipeek(final Consumer<? super ST> stAction, final Consumer<? super PT> ptAction) {
-            stAction.accept(value);
-            return this;
-        }
-
-        @Override
-        public Value<ST> secondaryValue() {
-            return Value.of(() -> value);
-        }
-
-        @Override
-        public <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
-                final BiFunction<? super ST, ? super PT, ? extends R> both) {
-            return swap().visit(secondary, () -> null);
-        }
-
-        @Override
-        public boolean isBoth() {
-            return false;
-        }
-
-        @Override
-        public Maybe<PT> toMaybe() {
-            return Maybe.none();
-        }
-
-        @Override
-        public Optional<PT> toOptional() {
-            return Optional.empty();
-        }
-
-
-
-        @Override
-        public String toString() {
-            return mkString();
-        }
-
-        @Override
-        public String mkString() {
-            return "Ior.secondary[" + value + "]";
-        }
-
-
-
-        /* (non-Javadoc)
-         * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-         */
-        @Override
-        public <T2, R> Ior<ST, R> combine(final Value<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
-            return (Ior<ST, R>) this;
-        }
     }
+        @AllArgsConstructor(access = AccessLevel.PRIVATE)
+        @EqualsAndHashCode(of = {"value"})
+        public static class Secondary<ST, PT> implements Ior<ST, PT> {
+            private final ST value;
 
-    @AllArgsConstructor(access = AccessLevel.PACKAGE)
-    @EqualsAndHashCode(of = { "secondary", "primary" })
-    public static class Both<ST, PT> implements Ior<ST, PT> {
-        private final Ior<ST, PT> secondary;
-        private final Ior<ST, PT> primary;
-        private static <ST, PT> Ior<ST, PT> both(final Ior<ST, PT> secondary, final Ior<ST, PT> primary) {
-            return new Both<ST, PT>(
-                                    secondary, primary);
+            @Override
+            public boolean isSecondary() {
+                return true;
+            }
+
+            @Override
+            public boolean isPrimary() {
+                return false;
+            }
+
+            @Override
+            public Xor<ST, PT> toXor() {
+                return Xor.secondary(value);
+            }
+
+            @Override
+            public Xor<ST, PT> toXorDropPrimary() {
+                return Xor.secondary(value);
+            }
+
+            @Override
+            public Ior<ST, PT> secondaryToPrimayMap(final Function<? super ST, ? extends PT> fn) {
+                return new Primary<ST, PT>(
+                        fn.apply(value));
+            }
+
+            @Override
+            public <R> Ior<R, PT> secondaryMap(final Function<? super ST, ? extends R> fn) {
+                return new Secondary<R, PT>(
+                        fn.apply(value));
+            }
+
+            @Override
+            public <R> Ior<ST, R> map(final Function<? super PT, ? extends R> fn) {
+                return (Ior<ST, R>) this;
+            }
+
+            @Override
+            public Ior<ST, PT> secondaryPeek(final Consumer<? super ST> action) {
+                return secondaryMap((Function) FluentFunctions.expression(action));
+            }
+
+            @Override
+            public Optional<Tuple2<ST, PT>> both() {
+                return Optional.empty();
+            }
+
+            @Override
+            public Ior<ST, PT> peek(final Consumer<? super PT> action) {
+                return this;
+            }
+
+            @Override
+            public Ior<ST, PT> filter(final Predicate<? super PT> test) {
+                return this;
+            }
+
+            @Override
+            public <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
+                return Ior.<R1, R2>secondary(fn1.apply(value));
+            }
+
+            @Override
+            public Ior<PT, ST> swap() {
+                return new Primary<PT, ST>(
+                        value);
+            }
+
+            @Override
+            public PT get() {
+                throw new NoSuchElementException();
+            }
+
+            @Override
+            public ST secondaryGet() {
+                return value;
+            }
+
+            @Override
+            public Optional<ST> secondaryToOptional() {
+                return Optional.ofNullable(value);
+            }
+
+            @Override
+            public ReactiveSeq<ST> secondaryToStream() {
+                return ReactiveSeq.fromStream(StreamUtils.optionalToStream(secondaryToOptional()));
+            }
+
+            @Override
+            public <RT1> Ior<ST, RT1> flatMap(final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
+                return (Ior<ST, RT1>) this;
+            }
+
+            @Override
+            public <LT1> Ior<LT1, PT> secondaryFlatMap(final Function<? super ST, ? extends Ior<LT1, PT>> mapper) {
+                return mapper.apply(value);
+            }
+
+            @Override
+            public Ior<ST, PT> secondaryToPrimayFlatMap(final Function<? super ST, ? extends Ior<ST, PT>> fn) {
+                return fn.apply(value);
+            }
+
+            @Override
+            public Ior<ST, PT> bipeek(final Consumer<? super ST> stAction, final Consumer<? super PT> ptAction) {
+                stAction.accept(value);
+                return this;
+            }
+
+            @Override
+            public Value<ST> secondaryValue() {
+                return Value.of(() -> value);
+            }
+
+            @Override
+            public <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
+                               final BiFunction<? super ST, ? super PT, ? extends R> both) {
+                return swap().visit(secondary, () -> null);
+            }
+
+            @Override
+            public boolean isBoth() {
+                return false;
+            }
+
+            @Override
+            public Maybe<PT> toMaybe() {
+                return Maybe.none();
+            }
+
+            @Override
+            public Optional<PT> toOptional() {
+                return Optional.empty();
+            }
+
+
+            @Override
+            public String toString() {
+                return mkString();
+            }
+
+            @Override
+            public String mkString() {
+                return "Ior.secondary[" + value + "]";
+            }
+
+
+            /* (non-Javadoc)
+             * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+             */
+            @Override
+            public <T2, R> Ior<ST, R> combine(final Value<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
+                return (Ior<ST, R>) this;
+            }
         }
-        @Override
-        public ReactiveSeq<PT> stream() {
-            return primary.stream();
+
+        @AllArgsConstructor(access = AccessLevel.PACKAGE)
+        @EqualsAndHashCode(of = {"secondary", "primary"})
+        public static class Both<ST, PT> implements Ior<ST, PT> {
+            private final Ior<ST, PT> secondary;
+            private final Ior<ST, PT> primary;
+
+            private static <ST, PT> Ior<ST, PT> both(final Ior<ST, PT> secondary, final Ior<ST, PT> primary) {
+                return new Both<ST, PT>(
+                        secondary, primary);
+            }
+
+            @Override
+            public ReactiveSeq<PT> stream() {
+                return primary.stream();
+            }
+
+            @Override
+            public Iterator<PT> iterator() {
+                return primary.iterator();
+            }
+
+            @Override
+            public Xor<ST, PT> toXor() {
+                return primary.toXor();
+            }
+
+            @Override
+            public Xor<ST, PT> toXorDropPrimary() {
+                return secondary.toXor();
+            }
+
+            @Override
+            public Ior<ST, PT> secondaryToPrimayMap(final Function<? super ST, ? extends PT> fn) {
+                return this;
+            }
+
+            @Override
+            public <R> Ior<R, PT> secondaryMap(final Function<? super ST, ? extends R> fn) {
+                return Both.both(secondary.secondaryMap(fn), primary.secondaryMap(fn));
+            }
+
+            @Override
+            public <R> Ior<ST, R> map(final Function<? super PT, ? extends R> fn) {
+                return Both.<ST, R>both(secondary.map(fn), primary.map(fn));
+            }
+
+            @Override
+            public Ior<ST, PT> secondaryPeek(final Consumer<? super ST> action) {
+                secondary.secondaryPeek(action);
+                return this;
+            }
+
+            @Override
+            public Ior<ST, PT> peek(final Consumer<? super PT> action) {
+                primary.peek(action);
+                return this;
+            }
+
+            @Override
+            public Ior<ST, PT> filter(final Predicate<? super PT> test) {
+                return primary.filter(test);
+            }
+
+            @Override
+            public Ior<PT, ST> swap() {
+                return Both.both(primary.swap(), secondary.swap());
+
+            }
+
+            @Override
+            public <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
+                               final BiFunction<? super ST, ? super PT, ? extends R> both) {
+                return both().get()
+                        .map((a, b) -> both.apply(a, b));
+            }
+
+            @Override
+            public Optional<Tuple2<ST, PT>> both() {
+                return Optional.of(Tuple.tuple(secondary.secondaryGet(), primary.get()));
+            }
+
+            @Override
+            public PT get() {
+                return primary.get();
+            }
+
+            @Override
+            public Value<ST> secondaryValue() {
+                return secondary.secondaryValue();
+            }
+
+            @Override
+            public ST secondaryGet() {
+                return secondary.secondaryGet();
+            }
+
+            @Override
+            public Optional<ST> secondaryToOptional() {
+                return secondary.secondaryToOptional();
+            }
+
+            @Override
+            public ReactiveSeq<ST> secondaryToStream() {
+                return secondary.secondaryToStream();
+            }
+
+            @Override
+            public <RT1> Ior<ST, RT1> flatMap(final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
+                return Both.both((Ior<ST, RT1>) secondary, primary.flatMap(mapper));
+            }
+
+            @Override
+            public <LT1> Ior<LT1, PT> secondaryFlatMap(final Function<? super ST, ? extends Ior<LT1, PT>> mapper) {
+                return Both.both(secondary.secondaryFlatMap(mapper), primary.secondaryFlatMap(mapper));
+            }
+
+            @Override
+            public Ior<ST, PT> secondaryToPrimayFlatMap(final Function<? super ST, ? extends Ior<ST, PT>> fn) {
+                return Both.both(secondary.secondaryToPrimayFlatMap(fn), primary.secondaryToPrimayFlatMap(fn));
+            }
+
+            @Override
+            public Ior<ST, PT> bipeek(final Consumer<? super ST> stAction, final Consumer<? super PT> ptAction) {
+                secondary.secondaryPeek(stAction);
+                primary.peek(ptAction);
+                return this;
+            }
+
+            @Override
+            public <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
+                return Both.both((Ior) secondary.secondaryMap(fn1), (Ior) primary.map(fn2));
+            }
+
+            @Override
+            public boolean isPrimary() {
+
+                return false;
+            }
+
+            @Override
+            public boolean isSecondary() {
+
+                return false;
+            }
+
+            @Override
+            public boolean isBoth() {
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return mkString();
+            }
+
+            @Override
+            public String mkString() {
+                return "Ior.both[" + primary.toString() + ":" + secondary.toString() + "]";
+            }
+
+
+            /* (non-Javadoc)
+             * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+             */
+            @Override
+            public <T2, R> Ior<ST, R> combine(final Value<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
+                return app.toXor()
+                        .visit(s -> Ior.secondary(this.secondaryGet()), f -> Ior.both(this.secondaryGet(), fn.apply(get(), app.get())));
+            }
         }
-
-        @Override
-        public Iterator<PT> iterator() {
-            return primary.iterator();
-        }
-
-        @Override
-        public Xor<ST, PT> toXor() {
-            return primary.toXor();
-        }
-
-        @Override
-        public Xor<ST, PT> toXorDropPrimary() {
-            return secondary.toXor();
-        }
-
-        @Override
-        public Ior<ST, PT> secondaryToPrimayMap(final Function<? super ST, ? extends PT> fn) {
-            return this;
-        }
-
-        @Override
-        public <R> Ior<R, PT> secondaryMap(final Function<? super ST, ? extends R> fn) {
-            return Both.both(secondary.secondaryMap(fn), primary.secondaryMap(fn));
-        }
-
-        @Override
-        public <R> Ior<ST, R> map(final Function<? super PT, ? extends R> fn) {
-            return Both.<ST, R> both(secondary.map(fn), primary.map(fn));
-        }
-
-        @Override
-        public Ior<ST, PT> secondaryPeek(final Consumer<? super ST> action) {
-            secondary.secondaryPeek(action);
-            return this;
-        }
-
-        @Override
-        public Ior<ST, PT> peek(final Consumer<? super PT> action) {
-            primary.peek(action);
-            return this;
-        }
-
-        @Override
-        public Ior<ST, PT> filter(final Predicate<? super PT> test) {
-            return primary.filter(test);
-        }
-
-        @Override
-        public Ior<PT, ST> swap() {
-            return Both.both(primary.swap(), secondary.swap());
-
-        }
-
-        @Override
-        public <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
-                final BiFunction<? super ST, ? super PT, ? extends R> both) {
-            return Matchables.tuple2(both().get())
-                             .visit((a, b) -> both.apply(a, b));
-        }
-
-        @Override
-        public Optional<Tuple2<ST, PT>> both() {
-            return Optional.of(Tuple.tuple(secondary.secondaryGet(), primary.get()));
-        }
-
-        @Override
-        public PT get() {
-            return primary.get();
-        }
-
-        @Override
-        public Value<ST> secondaryValue() {
-            return secondary.secondaryValue();
-        }
-
-        @Override
-        public ST secondaryGet() {
-            return secondary.secondaryGet();
-        }
-
-        @Override
-        public Optional<ST> secondaryToOptional() {
-            return secondary.secondaryToOptional();
-        }
-
-        @Override
-        public ReactiveSeq<ST> secondaryToStream() {
-            return secondary.secondaryToStream();
-        }
-
-        @Override
-        public < RT1> Ior<ST, RT1> flatMap(final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
-            return Both.both((Ior<ST,RT1>)secondary, primary.flatMap(mapper));
-        }
-
-        @Override
-        public <LT1> Ior<LT1,PT> secondaryFlatMap(final Function<? super ST, ? extends Ior<LT1, PT>> mapper) {
-            return Both.both(secondary.secondaryFlatMap(mapper), primary.secondaryFlatMap(mapper));
-        }
-
-        @Override
-        public Ior<ST, PT> secondaryToPrimayFlatMap(final Function<? super ST, ? extends Ior<ST, PT>> fn) {
-            return Both.both(secondary.secondaryToPrimayFlatMap(fn), primary.secondaryToPrimayFlatMap(fn));
-        }
-
-        @Override
-        public Ior<ST, PT> bipeek(final Consumer<? super ST> stAction, final Consumer<? super PT> ptAction) {
-            secondary.secondaryPeek(stAction);
-            primary.peek(ptAction);
-            return this;
-        }
-
-        @Override
-        public <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
-            return Both.both((Ior) secondary.secondaryMap(fn1), (Ior) primary.map(fn2));
-        }
-
-        @Override
-        public boolean isPrimary() {
-
-            return false;
-        }
-
-        @Override
-        public boolean isSecondary() {
-
-            return false;
-        }
-
-        @Override
-        public boolean isBoth() {
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return mkString();
-        }
-
-        @Override
-        public String mkString() {
-            return "Ior.both[" + primary.toString() + ":" + secondary.toString() + "]";
-        }
-
-
-        /* (non-Javadoc)
-         * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
-         */
-        @Override
-        public <T2, R> Ior<ST, R> combine(final Value<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
-            return app.toXor()
-                      .visit(s -> Ior.secondary(this.secondaryGet()), f -> Ior.both(this.secondaryGet(), fn.apply(get(), app.get())));
-        }
-    }
 
 }

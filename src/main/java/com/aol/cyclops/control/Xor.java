@@ -826,47 +826,32 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> Xor<ST, R> zip(final BiFunction<? super PT, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+    default <T2, R> Xor<ST, R> zipP( final Publisher<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Xor.fromPublisher(app)
                                                                             .visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Xor<ST, R> zip(final Seq<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
-
-        return (Xor<ST, R>) MonadicValue.super.zip(other, zipper);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Xor<ST, R> zip(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
+    default <U, R> Xor<ST, R> zipS(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
 
-        return (Xor<ST, R>) MonadicValue.super.zip(other, zipper);
+        return (Xor<ST, R>) MonadicValue.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Xor<ST, Tuple2<PT, U>> zip(final Stream<? extends U> other) {
+    default <U> Xor<ST, Tuple2<PT, U>> zipS(final Stream<? extends U> other) {
 
-        return (Xor) MonadicValue.super.zip(other);
+        return (Xor) MonadicValue.super.zipS(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> Xor<ST, Tuple2<PT, U>> zip(final Seq<? extends U> other) {
 
-        return (Xor) MonadicValue.super.zip(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)

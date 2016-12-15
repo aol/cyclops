@@ -606,16 +606,11 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<R>) MutableCollectionX.super.zip(other, zipper);
     }
 
-    @Override
-    default <U, R> ListX<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (ListX<R>) MutableCollectionX.super.zip(other, zipper);
-    }
 
     @Override
-    default <U, R> ListX<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ListX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (ListX<R>) MutableCollectionX.super.zip(other, zipper);
+        return (ListX<R>) MutableCollectionX.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -806,25 +801,17 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> ListX<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> ListX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
         return (ListX) MutableCollectionX.super.zip(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> ListX<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-
-        return (ListX) MutableCollectionX.super.zip(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> ListX<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> ListX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Stream<? extends U> third) {
 
         return (ListX) MutableCollectionX.super.zip3(second, third);
     }
