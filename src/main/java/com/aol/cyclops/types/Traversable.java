@@ -174,58 +174,11 @@ public interface Traversable<T> extends Publisher<T>,
      * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Traversable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Traversable<R> zip(final Iterable<? extends U> other,final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return traversable().zip(other, zipper);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Traversable<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return zip((Iterable<? extends U>) other, zipper);
-    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Traversable<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
-    }
-
-    /**
-     * Zip 2 streams into one
-     * 
-     * <pre>
-     * {@code
-
-     *  List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
-     *  // [[1,"a"],[2,"b"]]
-     * }
-     * </pre>
-     * 
-     */
-    @Override
-    default <U> Traversable<Tuple2<T, U>> zip(final Stream<? extends U> other) {
-        return traversable().zip(other);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> Traversable<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-        return zip((Stream<? extends U>) other);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
-     */
-    @Override
-    default <U> Traversable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return zip((Stream<? extends U>) ReactiveSeq.fromIterable(other));
-    }
 
     /**
      * zip 3 Streams into one
@@ -239,8 +192,8 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * </pre>
      */
-    default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
-        return traversable().zip3(second, third);
+    default <S, U> Traversable<Tuple3<T, S, U>> zipS3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
+        return traversable().zipS3(second, third);
     }
 
     /**
@@ -255,9 +208,9 @@ public interface Traversable<T> extends Publisher<T>,
      * // [[1,100,'a',"hello"],[2,200,'b',"world"]]
      * </pre>
      */
-    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
-        return traversable().zip4(second, third, fourth);
+    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zipS4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
+        return traversable().zipS4(second, third, fourth);
     }
 
     /**

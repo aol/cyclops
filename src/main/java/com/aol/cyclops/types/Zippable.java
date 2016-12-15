@@ -38,21 +38,12 @@ public interface Zippable<T> extends Iterable<T>{
      * @param fn Zip / combining function
      * @return Combined zippable
      */
-    default <T2, R> Zippable<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+    default <T2, R> Zippable<R> zipP(final Publisher<? extends T2> publisher,final BiFunction<? super T, ? super T2, ? extends R> fn, ) {
         return ReactiveSeq.fromIterable(this)
-                          .zip(fn, publisher);
+                          .zipP(publisher,fn);
     }
 
-    /**
-     * Zip (combine) this Zippable with the supplied Seq, using the supplied combining function
-     * 
-     * @param other Seq to combine with
-     * @param zipper Zip / combining function
-     * @return Combined zippable
-     */
-    default <U, R> Zippable<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return zip((Iterable<? extends U>) other, zipper);
-    }
+
 
     /**
      * Zip (combine) this Zippable with the supplied Stream, using the supplied combining function
@@ -61,7 +52,7 @@ public interface Zippable<T> extends Iterable<T>{
      * @param zipper Zip / combining function
      * @return Combined zippable
      */
-    default <U, R> Zippable<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Zippable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
     }
 
@@ -71,18 +62,11 @@ public interface Zippable<T> extends Iterable<T>{
      * @param other Stream to combine with
      * @return Combined Zippable
      */
-    default <U> Zippable<Tuple2<T, U>> zip(final Stream<? extends U> other) {
-        return zip(other, (a, b) -> Tuple.tuple(a, b));
+    default <U> Zippable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+        return zipS(other, (a, b) -> Tuple.tuple(a, b));
     }
-
-    /**
-     * Zip (combine) this Zippable with the supplied Seq combining both into a Tuple2
-     * 
-     * @param other Seq to combine with
-     * @return Combined Zippable
-     */
-    default <U> Zippable<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-        return zip((Stream<? extends U>) other);
+    default <U> Zippable<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return zipP(other, (a, b) -> Tuple.tuple(a, b));
     }
 
     /**
@@ -92,7 +76,7 @@ public interface Zippable<T> extends Iterable<T>{
      * @return
      */
     default <U> Zippable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return zip((Stream<? extends U>) ReactiveSeq.fromIterable(other));
+        return zipS((Stream<? extends U>) ReactiveSeq.fromIterable(other));
     }
 
 }

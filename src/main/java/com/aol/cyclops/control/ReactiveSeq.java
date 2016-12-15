@@ -9,17 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 import java.util.stream.*;
 
 import com.aol.cyclops.util.function.Lambda;
@@ -32,7 +22,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
-import com.aol.cyclops.control.Matchable.CheckValue1;
+
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
@@ -452,20 +442,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return ReactiveSeq.fromStream(Seq.zip(this, other, zipper));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#zip(org.jooq.lambda.Seq,
-     * java.util.function.BiFunction)
-     */
     @Override
-    default <U, R> ReactiveSeq<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ReactiveSeq<R> zipP(final Publisher<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return zip((Iterable<? extends U>) other, zipper);
+        return zip((Iterable<? extends U>) ReactiveSeq.fromPublisher(other), zipper);
     }
+ 
 
     @Override
-    default <U, R> ReactiveSeq<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
     }
@@ -724,7 +709,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      */
     @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> ReactiveSeq<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
         return zip(Seq.seq(other));
     }
     
@@ -735,21 +720,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return zip(Seq.seq(other));
     }
 
-    /**
-     * Zip 2 streams into one
-     * 
-     * <pre>
-     * {@code 
-     *  List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
-     *  // [[1,"a"],[2,"b"]]
-     * }
-     * </pre>
-     * 
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-        return fromStream(JoolManipulation.super.zip(other));
-    }
+
 
     /**
      * zip 3 Streams into one
@@ -764,7 +735,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      */
     @Override
-    <S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(Stream<? extends S> second, Stream<? extends U> third);
+    <S, U> ReactiveSeq<Tuple3<T, S, U>> zipS3(Iterable<? extends S> second, Iterable<? extends U> third);
 
     /**
      * zip 4 Streams into 1
@@ -779,7 +750,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      */
     @Override
-    <T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third, Stream<? extends T4> fourth);
+    <T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zipS4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth);
 
     default Seq<T> seq(){
         return Seq.seq((Stream<T>)this);
@@ -798,25 +769,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return fromStream(seq().zipWithIndex());
     }
 
-    /**
-     * Zip this Stream with another
-     * 
-     * <pre>
-     * {@code
-     *  Stream<List<Integer>> zipped = ReactiveSeq.of(1, 2, 3)).zipStream(Stream.of(2, 3, 4), (a, b) -> Arrays.asList(a, b));
-     * 
-     *  // [[1,2][2,3][3,4]]     
-     * }
-     * </pre>
-     * 
-     * @param second
-     *            Stream to zip with
-     * @param zipper
-     *            Zip funciton
-     * @return This monad zipped with a Stream
-     */
-    <S, R> ReactiveSeq<R> zipStream(BaseStream<? extends S, ? extends BaseStream<? extends S, ?>> second,
-            BiFunction<? super T, ? super S, ? extends R> zipper);
+  
 
     /**
      * Create a sliding view over this Sequence
@@ -1105,7 +1058,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default <K, A, D> ReactiveSeq<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
             final Collector<? super T, A, D> downstream) {
-        return fromStream(JoolManipulation.super.grouped(classifier, downstream));
+        return fromStream(seq().grouped(classifier, downstream));
     }*/
 
     /* (non-Javadoc)
@@ -1113,7 +1066,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default <K> ReactiveSeq<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return fromStream(JoolManipulation.super.grouped(classifier));
+        return fromStream(seq().grouped(classifier));
     } */
 
     /**
@@ -1374,7 +1327,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#skipUntilClosed(java.util.function.Predicate)
      */
-    @Override
     default ReactiveSeq<T> skipUntilClosed(final Predicate<? super T> p) {
         return fromStream(seq().skipUntilClosed(p));
     }
@@ -1695,6 +1647,113 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner);
+
+    /**
+     * Performs a <a href="package-summary.html#MutableReduction">mutable
+     * reduction</a> operation on the elements of this stream.  A mutable
+     * reduction is one in which the reduced value is a mutable result container,
+     * such as an {@code ArrayList}, and elements are incorporated by updating
+     * the state of the result rather than by replacing the result.  This
+     * produces a result equivalent to:
+     * <pre>{@code
+     *     R result = supplier.get();
+     *     for (T element : this stream)
+     *         accumulator.accept(result, element);
+     *     return result;
+     * }</pre>
+     * <p>
+     * <p>Like {@link #reduce(Object, BinaryOperator)}, {@code collect} operations
+     * can be parallelized without requiring additional synchronization.
+     * <p>
+     * <p>This is a <a href="package-summary.html#StreamOps">terminal
+     * operation</a>.
+     *
+     * @param supplier    a function that creates a new result container. For a
+     *                    parallel execution, this function may be called
+     *                    multiple times and must return a fresh value each time.
+     * @param accumulator an <a href="package-summary.html#Associativity">associative</a>,
+     *                    <a href="package-summary.html#NonInterference">non-interfering</a>,
+     *                    <a href="package-summary.html#Statelessness">stateless</a>
+     *                    function for incorporating an additional element into a result
+     * @param combiner    an <a href="package-summary.html#Associativity">associative</a>,
+     *                    <a href="package-summary.html#NonInterference">non-interfering</a>,
+     *                    <a href="package-summary.html#Statelessness">stateless</a>
+     *                    function for combining two values, which must be
+     *                    compatible with the accumulator function
+     * @return the result of the reduction
+     * @apiNote There are many existing classes in the JDK whose signatures are
+     * well-suited for use with method references as arguments to {@code collect()}.
+     * For example, the following will accumulate strings into an {@code ArrayList}:
+     * <pre>{@code
+     *     List<String> asList = stringStream.collect(ArrayList::new, ArrayList::add,
+     *                                                ArrayList::addAll);
+     * }</pre>
+     * <p>
+     * <p>The following will take a stream of strings and concatenates them into a
+     * single string:
+     * <pre>{@code
+     *     String concat = stringStream.collect(StringBuilder::new, StringBuilder::append,
+     *                                          StringBuilder::append)
+     *                                 .toString();
+     * }</pre>
+     */
+    @Override
+    default <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+        return seq().collect(supplier,accumulator,combiner);
+    }
+
+    /**
+     * Performs a <a href="package-summary.html#MutableReduction">mutable
+     * reduction</a> operation on the elements of this stream using a
+     * {@code Collector}.  A {@code Collector}
+     * encapsulates the functions used as arguments to
+     * {@link #collect(Supplier, BiConsumer, BiConsumer)}, allowing for reuse of
+     * collection strategies and composition of collect operations such as
+     * multiple-level grouping or partitioning.
+     * <p>
+     * <p>If the stream is parallel, and the {@code Collector}
+     * is {@link Collector.Characteristics#CONCURRENT concurrent}, and
+     * either the stream is unordered or the collector is
+     * {@link Collector.Characteristics#UNORDERED unordered},
+     * then a concurrent reduction will be performed (see {@link Collector} for
+     * details on concurrent reduction.)
+     * <p>
+     * <p>This is a <a href="package-summary.html#StreamOps">terminal
+     * operation</a>.
+     * <p>
+     * <p>When executed in parallel, multiple intermediate results may be
+     * instantiated, populated, and merged so as to maintain isolation of
+     * mutable data structures.  Therefore, even when executed in parallel
+     * with non-thread-safe data structures (such as {@code ArrayList}), no
+     * additional synchronization is needed for a parallel reduction.
+     *
+     * @param collector the {@code Collector} describing the reduction
+     * @return the result of the reduction
+     * @apiNote The following will accumulate strings into an ArrayList:
+     * <pre>{@code
+     *     List<String> asList = stringStream.collect(Collectors.toList());
+     * }</pre>
+     * <p>
+     * <p>The following will classify {@code Person} objects by city:
+     * <pre>{@code
+     *     Map<String, List<Person>> peopleByCity
+     *         = personStream.collect(Collectors.groupingBy(Person::getCity));
+     * }</pre>
+     * <p>
+     * <p>The following will classify {@code Person} objects by state and city,
+     * cascading two {@code Collector}s together:
+     * <pre>{@code
+     *     Map<String, Map<String, List<Person>>> peopleByStateAndCity
+     *         = personStream.collect(Collectors.groupingBy(Person::getState,
+     *                                                      Collectors.groupingBy(Person::getCity)));
+     * }</pre>
+     * @see #collect(Supplier, BiConsumer, BiConsumer)
+     * @see Collectors
+     */
+    @Override
+    default <R, A> R collect(Collector<? super T, A, R> collector) {
+        return seq().collect(collector);
+    }
 
     /**
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
@@ -3720,6 +3779,23 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     }
 
+    /**
+     * Returns the count of elements in this stream.  This is a special case of
+     * a <a href="package-summary.html#Reduction">reduction</a> and is
+     * equivalent to:
+     * <pre>{@code
+     *     return mapToLong(e -> 1L).sum();
+     * }</pre>
+     * <p>
+     * <p>This is a <a href="package-summary.html#StreamOps">terminal operation</a>.
+     *
+     * @return the count of elements in this stream
+     */
+    @Override
+    default long count() {
+        return seq().count();
+    }
+
     @Override
     default Optional<T> min(final Comparator<? super T> comparator) {
         return StreamUtils.min(this, comparator);
@@ -3742,95 +3818,39 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         seq().print(stream);
     }
-    
-     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#concat(java.lang.Iterable)
-     */
-    @Override
-    default ReactiveSeq<T> concat(Iterable<? extends T> other) {
-        
-        return fromStream(JoolManipulation.super.concat(other));
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#concat(org.jooq.lambda.Seq)
-     */
-    @Override
-    default ReactiveSeq<T> concat(Seq<? extends T> other) {
-        
-        return fromStream(JoolManipulation.super.concat(other));
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#concat(java.util.Optional)
-     */
-    @Override
-    default ReactiveSeq<T> concat(Optional<? extends T> other) {
-        
-        return fromStream(JoolManipulation.super.concat(other));
-    }
+
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
      */
-    @Override
-    default ReactiveSeq<T> append(Stream<? extends T> other) {
+    default ReactiveSeq<T> appendS(Stream<? extends T> other) {
         
-        return fromStream(JoolManipulation.super.append(other));
+        return fromStream(seq().append(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
      */
-    @Override
     default ReactiveSeq<T> append(Iterable<? extends T> other) {
         
-        return fromStream(JoolManipulation.super.append(other));
+        return fromStream(seq().append(other));
     }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(org.jooq.lambda.Seq)
-     */
-    @Override
-    default ReactiveSeq<T> append(Seq<? extends T> other) {
-        
-        return fromStream(JoolManipulation.super.append(other));
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(java.util.Optional)
-     */
-    @Override
-    default ReactiveSeq<T> append(Optional<? extends T> other) {
-        
-        return fromStream(JoolManipulation.super.append(other));
-    }
+
+
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#prepend(java.util.stream.Stream)
      */
-    @Override
-    default ReactiveSeq<T> prepend(Stream<? extends T> other) {
+    default ReactiveSeq<T> prependS(Stream<? extends T> other) {
         
-        return fromStream(JoolManipulation.super.prepend(other));
+        return fromStream(seq().prepend(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#prepend(java.lang.Iterable)
      */
-    @Override
     default ReactiveSeq<T> prepend(Iterable<? extends T> other) {
         
-        return fromStream(JoolManipulation.super.prepend(other));
+        return fromStream(seq().prepend(other));
     }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#prepend(org.jooq.lambda.Seq)
-     */
-    @Override
-    default ReactiveSeq<T> prepend(Seq<? extends T> other) {
-        
-        return fromStream(JoolManipulation.super.prepend(other));
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#prepend(java.util.Optional)
-     */
-    @Override
-    default ReactiveSeq<T> prepend(Optional<? extends T> other) {
-        
-        return fromStream(JoolManipulation.super.prepend(other));
-    }
+
+
   
 
     ReactiveSeq<T> cycle(long times);
