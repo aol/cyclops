@@ -490,7 +490,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
 
     @Override
-    default <K> SetX<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> SetX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return (SetX) MutableCollectionX.super.grouped(classifier);
     }
 
@@ -509,16 +509,11 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
 
     @Override
-    default <U, R> SetX<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> SetX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (SetX<R>) MutableCollectionX.super.zip(other, zipper);
+        return (SetX<R>) MutableCollectionX.super.zipS(other, zipper);
     }
 
-    @Override
-    default <U, R> SetX<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (SetX<R>) MutableCollectionX.super.zip(other, zipper);
-    }
 
     @Override
     default SetX<ListX<T>> sliding(final int windowSize) {
@@ -622,25 +617,17 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> SetX<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> SetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (SetX) MutableCollectionX.super.zip(other);
+        return (SetX) MutableCollectionX.super.zipS(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> SetX<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-
-        return (SetX) MutableCollectionX.super.zip(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> SetX<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> SetX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return (SetX) MutableCollectionX.super.zip3(second, third);
     }
@@ -649,8 +636,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> SetX<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> SetX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return (SetX) MutableCollectionX.super.zip4(second, third, fourth);
     }
@@ -899,13 +886,6 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         return (SetX<U>) MutableCollectionX.super.cast(type);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
-     */
-    @Override
-    default <R> SetX<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-        return (SetX<R>) MutableCollectionX.super.patternMatch(case1, otherwise);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(int, java.util.function.Supplier)

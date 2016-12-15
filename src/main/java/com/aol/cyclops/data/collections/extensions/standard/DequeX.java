@@ -582,7 +582,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function)
      */
     @Override
-    default <K> DequeX<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> DequeX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return (DequeX) MutableCollectionX.super.grouped(classifier);
     }
 
@@ -603,22 +603,15 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX<R>) MutableCollectionX.super.zip(other, zipper);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> DequeX<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (DequeX<R>) MutableCollectionX.super.zip(other, zipper);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> DequeX<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> DequeX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (DequeX<R>) MutableCollectionX.super.zip(other, zipper);
+        return (DequeX<R>) MutableCollectionX.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -722,13 +715,6 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX<T>) MutableCollectionX.super.peek(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.CollectionX#patternMatch(java.lang.Object, java.util.function.Function)
-     */
-    @Override
-    default <R> DequeX<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-        return (DequeX<R>) MutableCollectionX.super.patternMatch(case1, otherwise);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Traversable#cycle(int)
@@ -770,25 +756,18 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> DequeX<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> DequeX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (DequeX) MutableCollectionX.super.zip(other);
+        return (DequeX) MutableCollectionX.super.zipS(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> DequeX<Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
-        return (DequeX) MutableCollectionX.super.zip(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> DequeX<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> DequeX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return (DequeX) MutableCollectionX.super.zip3(second, third);
     }
@@ -797,8 +776,8 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      * @see com.aol.cyclops.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> DequeX<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> DequeX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return (DequeX) MutableCollectionX.super.zip4(second, third, fourth);
     }

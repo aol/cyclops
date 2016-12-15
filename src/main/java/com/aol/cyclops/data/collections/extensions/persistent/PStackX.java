@@ -677,7 +677,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
     }
 
     @Override
-    default <K> PStackX<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> PStackX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return (PStackX) PersistentCollectionX.super.grouped(classifier);
     }
 
@@ -695,16 +695,11 @@ public interface PStackX<T> extends To<PStackX<T>>,
         return (PStackX<R>) PersistentCollectionX.super.zip(other, zipper);
     }
 
-    @Override
-    default <U, R> PStackX<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (PStackX<R>) PersistentCollectionX.super.zip(other, zipper);
-    }
 
     @Override
-    default <U, R> PStackX<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> PStackX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (PStackX<R>) PersistentCollectionX.super.zip(other, zipper);
+        return (PStackX<R>) PersistentCollectionX.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -825,7 +820,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> PStackX<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> PStackX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return (PStackX) PersistentCollectionX.super.zip3(second, third);
     }
@@ -834,8 +829,8 @@ public interface PStackX<T> extends To<PStackX<T>>,
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> PStackX<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> PStackX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return (PStackX) PersistentCollectionX.super.zip4(second, third, fourth);
     }
@@ -1084,14 +1079,6 @@ public interface PStackX<T> extends To<PStackX<T>>,
         return (PStackX<U>) PersistentCollectionX.super.cast(type);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
-     */
-    @Override
-    default <R> PStackX<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-
-        return (PStackX<R>) PersistentCollectionX.super.patternMatch(case1, otherwise);
-    }
 
     @Override
     default <C extends Collection<? super T>> PStackX<C> grouped(final int size, final Supplier<C> supplier) {

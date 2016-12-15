@@ -505,7 +505,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     @Override
-    default <K> PSetX<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> PSetX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return (PSetX) PersistentCollectionX.super.grouped(classifier);
     }
 
@@ -523,16 +523,11 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         return (PSetX<R>) PersistentCollectionX.super.zip(other, zipper);
     }
 
-    @Override
-    default <U, R> PSetX<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (PSetX<R>) PersistentCollectionX.super.zip(other, zipper);
-    }
 
     @Override
-    default <U, R> PSetX<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> PSetX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (PSetX<R>) PersistentCollectionX.super.zip(other, zipper);
+        return (PSetX<R>) PersistentCollectionX.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -667,7 +662,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> PSetX<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> PSetX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return (PSetX) PersistentCollectionX.super.zip3(second, third);
     }
@@ -676,8 +671,8 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> PSetX<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> PSetX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return (PSetX) PersistentCollectionX.super.zip4(second, third, fourth);
     }
@@ -926,14 +921,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         return (PSetX<U>) PersistentCollectionX.super.cast(type);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
-     */
-    @Override
-    default <R> PSetX<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (PSetX<R>) PersistentCollectionX.super.patternMatch(case1, otherwise);
-    }
 
     @Override
     default <C extends Collection<? super T>> PSetX<C> grouped(final int size, final Supplier<C> supplier) {

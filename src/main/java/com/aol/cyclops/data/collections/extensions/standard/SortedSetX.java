@@ -488,7 +488,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     @Override
-    default <K> SortedSetX<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> SortedSetX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
 
         return (SortedSetX) fromStream(stream().grouped(classifier)
                                                .map(t -> t.map2(Comparables::comparable)));
@@ -507,14 +507,10 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         return (SortedSetX<R>) MutableCollectionX.super.zip(other, zipper);
     }
 
-    @Override
-    default <U, R> SortedSetX<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (SortedSetX<R>) MutableCollectionX.super.zip(other, zipper);
-    }
 
     @Override
-    default <U, R> SortedSetX<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (SortedSetX<R>) MutableCollectionX.super.zip(other, zipper);
+    default <U, R> SortedSetX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (SortedSetX<R>) MutableCollectionX.super.zipS(other, zipper);
     }
 
     @Override
@@ -619,25 +615,18 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> SortedSetX<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> SortedSetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (SortedSetX) MutableCollectionX.super.zip(other);
+        return (SortedSetX) MutableCollectionX.super.zipS(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> SortedSetX<Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
-        return (SortedSetX) MutableCollectionX.super.zip(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> SortedSetX<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> SortedSetX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return (SortedSetX) MutableCollectionX.super.zip3(second, third);
     }
@@ -646,8 +635,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> SortedSetX<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> SortedSetX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return (SortedSetX) MutableCollectionX.super.zip4(second, third, fourth);
     }
@@ -896,13 +885,6 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         return (SortedSetX<U>) MutableCollectionX.super.cast(type);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#patternMatch(java.lang.Object, java.util.function.Function)
-     */
-    @Override
-    default <R> SortedSetX<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-        return (SortedSetX<R>) MutableCollectionX.super.patternMatch(case1, otherwise);
-    }
 
     @Override
     default <C extends Collection<? super T>> SortedSetX<C> grouped(final int size, final Supplier<C> supplier) {

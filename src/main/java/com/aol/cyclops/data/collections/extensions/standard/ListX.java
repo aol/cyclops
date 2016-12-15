@@ -803,7 +803,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default <U> ListX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (ListX) MutableCollectionX.super.zip(other);
+        return (ListX) MutableCollectionX.super.zipS(other);
     }
 
 
@@ -811,7 +811,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.aol.cyclops.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> ListX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> ListX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return (ListX) MutableCollectionX.super.zip3(second, third);
     }
@@ -820,8 +820,8 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.aol.cyclops.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> ListX<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> ListX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return (ListX) MutableCollectionX.super.zip4(second, third, fourth);
     }

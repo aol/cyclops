@@ -221,7 +221,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default <K> PersistentCollectionX<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> PersistentCollectionX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return from(this.<Tuple2<K, Seq<T>>> monoid()
                         .mapReduce(stream().grouped(classifier)));
     }
@@ -238,16 +238,12 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
                         .mapReduce(stream().zip(other, zipper)));
     }
 
-    @Override
-    default <U, R> PersistentCollectionX<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return from(this.<R> monoid()
-                        .mapReduce(stream().zip(other, zipper)));
-    }
+
 
     @Override
-    default <U, R> PersistentCollectionX<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> PersistentCollectionX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return from(this.<R> monoid()
-                        .mapReduce(stream().zip(other, zipper)));
+                        .mapReduce(stream().zipS(other, zipper)));
     }
 
     @Override
@@ -351,7 +347,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> PersistentCollectionX<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> PersistentCollectionX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return from(this.<Tuple3<T, S, U>> monoid()
                         .mapReduce(stream().zip3(second, third)));
@@ -361,8 +357,8 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> PersistentCollectionX<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> PersistentCollectionX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return from(this.<Tuple4<T, T2, T3, T4>> monoid()
                         .mapReduce(stream().zip4(second, third, fourth)));
@@ -642,16 +638,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
                         .mapReduce(stream().cast(type)));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#patternMatch(java.lang.Object, java.util.function.Function)
-     */
-    @Override
-    default <R> PersistentCollectionX<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1,
-            final Supplier<? extends R> otherwise) {
 
-        return from(this.<R> monoid()
-                        .mapReduce(stream().patternMatch(case1, otherwise)));
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()
