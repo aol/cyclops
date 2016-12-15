@@ -1,14 +1,10 @@
 package com.aol.cyclops.validation;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-
-import com.aol.cyclops.control.Validator;
-import com.aol.cyclops.util.validation.ValidationResults;
 
 import lombok.Value;
 public class ValidationAccumulateUntilFailTest {

@@ -18,7 +18,6 @@ import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;

@@ -20,7 +20,6 @@ import org.junit.Test;
 
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Validator;
 
 public abstract class AbstractFoldableTest {
     public abstract <T> IterableFoldable<T> of(T...elements);

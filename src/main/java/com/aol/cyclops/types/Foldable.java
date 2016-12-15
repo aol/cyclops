@@ -2,7 +2,6 @@ package com.aol.cyclops.types;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
@@ -18,7 +17,6 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.control.Validator;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;

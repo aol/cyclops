@@ -1,46 +1,31 @@
 package com.aol.cyclops.control;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.reactivestreams.Publisher;
-
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroups;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.BiFunctor;
-import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.*;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F3;
-
+import com.aol.cyclops.util.function.F4;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+import org.reactivestreams.Publisher;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.function.*;
+import java.util.stream.Stream;
 
 /**
  * eXclusive Or (Xor)
@@ -120,7 +105,7 @@ import lombok.EqualsAndHashCode;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<PT>, Functor<PT>, BiFunctor<ST,PT>,Filterable<PT>, ApplicativeFunctor<PT> {
+public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor<ST,PT> {
 
     /**
      * Construct a Primary Xor from the supplied publisher
@@ -722,45 +707,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
         return  (Xor<R1, R2>)BiFunctor.super.bitrampoline(mapper1, mapper2);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    default <R> Xor<ST, R> patternMatch(final Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (Xor<ST, R>) MonadicValue.super.patternMatch(case1, otherwise);
-    }
-
-    /**
-     * Pattern match on the value/s inside this Xor.
-     * 
-     * <pre>
-     * {@code 
-     * 
-     * import static com.aol.cyclops.control.Matchable.otherwise;
-       import static com.aol.cyclops.control.Matchable.then;
-       import static com.aol.cyclops.control.Matchable.when;
-       import static com.aol.cyclops.util.function.Predicates.instanceOf;
-     * 
-     * Xor.primary(10)
-     *    .matches(c->c.is(when("10"),then("hello")),
-                   c->c.is(when(instanceOf(Integer.class)), then("error")),
-                   otherwise("miss"))
-           .get()
-       //"error" Note the second case, 'primary' case is the one that matches
-     * 
-     * 
-     * }
-     * </pre>
-     * 
-     * 
-     * @param fn1 Pattern matching function executed if this Xor has the secondary type
-     * @param fn2 Pattern matching function executed if this Xor has the primary type
-     * @param otherwise Supplier used to provide a value if the selecting pattern matching function fails to find a match
-     * @return Lazy result of the pattern matching
-     */
-    <R> Eval<R> matches(Function<CheckValue1<ST, R>, CheckValue1<ST, R>> fn1, Function<CheckValue1<PT, R>, CheckValue1<PT, R>> fn2,
-            Supplier<? extends R> otherwise);
 
     /* (non-Javadoc)
      * @see java.util.function.Supplier#get()
@@ -1095,15 +1042,6 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
             return primary.apply(value);
         }
 
-        @Override
-        public <R> Eval<R> matches(
-                final Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> secondary,
-                final Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> primary,
-                final Supplier<? extends R> otherwise) {
-            final Matchable.MTuple1<PT> mt1 = () -> Tuple.tuple(value);
-            return mt1.matches(primary, otherwise);
-
-        }
 
         /* (non-Javadoc)
          * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
@@ -1163,14 +1101,6 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
             return false;
         }
 
-        @Override
-        public <R> Eval<R> matches(
-                final Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> secondary,
-                final Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> primary,
-                final Supplier<? extends R> otherwise) {
-            final Matchable.MTuple1<ST> mt1 = () -> Tuple.tuple(value);
-            return mt1.matches(secondary, otherwise);
-        }
 
         @Override
         public Xor<ST, PT> secondaryToPrimayMap(final Function<? super ST, ? extends PT> fn) {
@@ -1281,13 +1211,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<P
             return "Xor.secondary[" + value + "]";
         }
 
-        /* (non-Javadoc)
-         * @see com.aol.cyclops.value.Value#unapply()
-         */
-        @Override
-        public ListX<ST> unapply() {
-            return ListX.of(value);
-        }
+
 
         @Override
         public Ior<ST, PT> toIor() {

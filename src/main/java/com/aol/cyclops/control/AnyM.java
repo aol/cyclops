@@ -95,7 +95,14 @@ import com.aol.cyclops.util.function.F3;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,To<AnyM<W,T>>, EmptyUnit<T>, Unit<T>, Foldable<T>, Functor<T>, ToStream<T>,Publisher<T> {
+public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
+                                                            To<AnyM<W,T>>,
+                                                            EmptyUnit<T>,
+                                                            Unit<T>,
+                                                            Foldable<T>,
+                                                            Functor<T>,
+                                                            ToStream<T>,
+                                                            Publisher<T> {
    
     
     default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){

@@ -63,8 +63,8 @@ import com.aol.cyclops.util.function.F3;
  *
  * @param <T> Type of value storable in this Eval
  */
-public interface Eval<T>
-        extends  To<Eval<T>>,Supplier<T>, MonadicValue<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>{
+public interface Eval<T> extends    To<Eval<T>>,
+                                    MonadicValue<T> {
 
    
     /**

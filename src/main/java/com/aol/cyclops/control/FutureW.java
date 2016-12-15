@@ -1,5 +1,27 @@
 package com.aol.cyclops.control;
 
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.react.Status;
+import com.aol.cyclops.react.collectors.lazy.Blocker;
+import com.aol.cyclops.types.*;
+import com.aol.cyclops.types.anyM.Witness;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops.util.CompletableFutures;
+import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops.util.function.F3;
+import com.aol.cyclops.util.function.F4;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
+import org.reactivestreams.Publisher;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -7,45 +29,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.reactivestreams.Publisher;
-
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
-import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.react.Status;
-import com.aol.cyclops.react.collectors.lazy.Blocker;
-import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.ConvertableFunctor;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
-import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
-import com.aol.cyclops.util.CompletableFutures;
-import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * A Wrapper around CompletableFuture that implements cyclops-react interfaces and provides a more standard api
@@ -54,15 +40,15 @@ import lombok.extern.slf4j.Slf4j;
  *   map instead of thenApply
  *   flatMap instead of thenCompose
  *   combine instead of thenCombine (applicative functor ap)
- * 
- * @author johnmcclean
  *
- * @param <T> Type of wrapped future value
- */
+ * @author johnmcclean
+        *
+        * @param <T> Type of wrapped future value
+        */
 @AllArgsConstructor
 @EqualsAndHashCode
 @Slf4j
-public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, ApplicativeFunctor<T>, MonadicValue<T>, Filterable<T> {
+public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
 
     /**
      * An empty FutureW
@@ -738,7 +724,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
                               future.thenApplyAsync(fn,ex));
     }
 
-    
+
 
     /*
      * (non-Javadoc)

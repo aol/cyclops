@@ -59,7 +59,7 @@ import lombok.EqualsAndHashCode;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<PT>, BiFunctor<ST, PT>, Functor<PT>, Filterable<PT>, ApplicativeFunctor<PT> {
+public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFunctor<ST, PT> {
 
     @Deprecated //internal use only
     public static <ST, PT> Ior<ST, PT> both(final Ior<ST, PT> secondary, final Ior<ST, PT> primary) {
