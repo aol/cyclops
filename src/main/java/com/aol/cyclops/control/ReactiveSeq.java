@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.*;
 import java.util.stream.*;
 
+import com.aol.cyclops.types.*;
 import com.aol.cyclops.util.function.Lambda;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
@@ -33,11 +34,6 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
-import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
@@ -425,7 +421,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default <R> ZippingApplicativable<R> ap1(final Function<? super T, ? extends R> fn) {
-        val dup = this.duplicateSequence();
+        val dup = this.duplicate();
         final Streamable<T> streamable = dup.v1.toStreamable();
         return new ApplyingZippingApplicativeBuilder<T, R, ZippingApplicativable<R>>(
                                                                                      streamable, streamable).applicative(fn)
@@ -2627,7 +2623,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Element and Sequence
      */
     default Tuple2<T, ReactiveSeq<T>> elementAt(final long index) {
-        final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> tuple = this.duplicateSequence();
+        final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> tuple = this.duplicate();
         return tuple.map1(s -> s.zipWithIndex()
                                 .filter(t -> t.v2 == index)
                                 .findFirst()
@@ -3865,5 +3861,33 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     String format();
 
-    
+    @Override
+    default ReactiveSeq<T> removeAll(final Stream<? extends T> stream) {
+        return (ReactiveSeq<T>)ExtendedTraversable.super.removeAll(stream);
+    }
+
+    @Override
+    default ReactiveSeq<T> removeAll(final Iterable<? extends T> it) {
+        return (ReactiveSeq<T>)ExtendedTraversable.super.removeAll(it);
+    }
+
+    @Override
+    default ReactiveSeq<T> removeAll(final T... values) {
+        return (ReactiveSeq<T>)ExtendedTraversable.super.removeAll(values);
+    }
+
+    @Override
+    default ReactiveSeq<T> retainAll(final Iterable<? extends T> it) {
+        return (ReactiveSeq<T>)ExtendedTraversable.super.retainAll(it);
+    }
+
+    @Override
+    default ReactiveSeq<T> retainAll(final Stream<? extends T> stream) {
+        return (ReactiveSeq<T>)ExtendedTraversable.super.retainAll(stream);
+    }
+
+    @Override
+    default ReactiveSeq<T> retainAll(final T... values) {
+        return (ReactiveSeq<T>)ExtendedTraversable.super.retainAll(values);
+    }
 }

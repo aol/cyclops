@@ -449,6 +449,27 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     }
 
     @Override
+    public ReactiveSeq<T> cycle(long times) {
+
+        return StreamUtils.reactiveSeq(Seq.seq((Stream<T>) this).cycle(times),reversible,split );
+    }
+
+    @Override
+    public ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
+        return StreamUtils.reactiveSeq(Seq.seq((Stream<T>) this).skipWhileClosed(predicate),reversible,split );
+    }
+
+    @Override
+    public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
+        return StreamUtils.reactiveSeq(Seq.seq((Stream<T>) this).limitWhileClosed(predicate),reversible,split );
+    }
+
+    @Override
+    public <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+        return StreamUtils.reactiveSeq(Seq.seq((Stream<T>) this).sorted(function,comparator),reversible,split );
+    }
+
+    @Override
     public final <C extends Comparable<? super C>> Optional<T> maxBy(final Function<? super T, ? extends C> f) {
         return StreamUtils.maxBy(this, f);
     }
