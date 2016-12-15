@@ -550,7 +550,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> Maybe<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+    default <T2, R> Maybe<R> zipP(final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Maybe.fromPublisher(app)
                                                                               .visit(i -> Maybe.just(tuple.v2.apply(i)), () -> Maybe.none()));

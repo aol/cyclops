@@ -12,7 +12,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.*;
 import java.util.stream.*;
 
+import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
 import com.aol.cyclops.types.*;
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.util.function.Lambda;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
@@ -1050,12 +1053,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#grouped(java.util.function.Function, java.util.stream.Collector)
-
+     */
     @Override
     default <K, A, D> ReactiveSeq<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
             final Collector<? super T, A, D> downstream) {
         return fromStream(seq().grouped(classifier, downstream));
-    }*/
+    }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#grouped(java.util.function.Function)
@@ -3891,4 +3894,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<T>)ExtendedTraversable.super.retainAll(values);
     }
 
+    @Override
+    default ReactiveSeq<T> filterNot(final Predicate<? super T> predicate) {
+        return (ReactiveSeq<T>)ExtendedTraversable.super.filterNot(predicate);
+    }
+
+    @Override
+    default ReactiveSeq<T> notNull() {
+        return (ReactiveSeq<T>)ExtendedTraversable.super.notNull();
+    }
+
+    default ReactiveStreamsTerminalFutureOperations<T> futureOps(Executor ex){
+        return new ReactiveSeqFutureOpterationsImpl<T>(ex,this);
+    }
 }

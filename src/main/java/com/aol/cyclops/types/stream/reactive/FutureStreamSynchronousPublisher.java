@@ -30,10 +30,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 
     void forwardErrors(Consumer<Throwable> c);
 
-    @Deprecated
-    default void subscribeSync(final Subscriber<? super T> s) {
-        FutureStreamSynchronousPublisher.this.subscribe(s);
-    }
+
 
     /* (non-Javadoc)
      * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)

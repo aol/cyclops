@@ -33,6 +33,8 @@ import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.*;
 
+import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.aol.cyclops.util.function.Lambda;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
@@ -87,9 +89,16 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 import lombok.val;
 
-public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimpleReactStream<U>, LazyStream<U>, ReactiveSeq<U>, LazyToQueue<U>,
+public interface LazyFutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>, ReactiveSeq<U>, LazyToQueue<U>,
         ConfigurableStream<U, FastFuture<U>>, FutureStreamSynchronousPublisher<U> {
 
+    @Override
+    default ReactiveStreamsTerminalFutureOperations<U> futureOps(Executor ex){
+        return new LazyFutureStreamFutureOpterationsImpl<U>(ex,this);
+    }
+    default ReactiveStreamsTerminalFutureOperations<U> futureOps(){
+        return new LazyFutureStreamFutureOpterationsImpl<U>(getSimpleReact().getExecutor(),this);
+    }
     default <A,R> LazyFutureStream<R> collectSeq(Collector<? super U,A,R> c){
         return this.getSimpleReact().fromStream(Stream.of(Lambda.λ(()->this.collect(c))).map(Supplier::get));
     }

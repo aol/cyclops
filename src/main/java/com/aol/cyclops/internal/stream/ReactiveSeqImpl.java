@@ -1153,46 +1153,6 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
         return prepend((T[]) new Object[] { value });
     }
 
-    @Override
-    public <X extends Throwable> ReactiveTask forEachX(Executor ex,final long numberOfElements, final Consumer<? super T> consumer) {
-        return new ReactiveTask(
-                ex, FutureStreamUtils.forEachX(this, numberOfElements, consumer)
-                .map2(r -> CompletableFuture.runAsync(r, ex)));
-    }
 
-    @Override
-    public <X extends Throwable> ReactiveTask forEachXWithError(Executor ex,final long numberOfElements, final Consumer<? super T> consumer,
-                                                                final Consumer<? super Throwable> consumerError) {
-        return new ReactiveTask(
-                ex, FutureStreamUtils.forEachXWithError(this, numberOfElements, consumer, consumerError)
-                .map2(r -> CompletableFuture.runAsync(r, ex)));
-
-    }
-
-    @Override
-    public <X extends Throwable> ReactiveTask forEachXEvents(Executor ex,final long numberOfElements, final Consumer<? super T> consumer,
-                                                             final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
-        return new ReactiveTask(
-                ex, FutureStreamUtils.forEachXEvents(this, numberOfElements, consumer, consumerError, onComplete)
-                .map2(r -> CompletableFuture.runAsync(r, ex)));
-
-    }
-
-    @Override
-    public <X extends Throwable> ReactiveTask forEachWithError(Executor ex,final Consumer<? super T> consumerElement,
-                                                               final Consumer<? super Throwable> consumerError) {
-
-        return new ReactiveTask(
-                ex, FutureStreamUtils.forEachWithError(this, consumerElement, consumerError)
-                .map2(r -> CompletableFuture.runAsync(r, ex)));
-    }
-
-    @Override
-    public <X extends Throwable> ReactiveTask forEachEvent(Executor ex,final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
-                                                           final Runnable onComplete) {
-        return new ReactiveTask(
-                ex, FutureStreamUtils.forEachEvent(this, consumerElement, consumerError, onComplete)
-                .map2(r -> CompletableFuture.runAsync(r, ex)));
-    }
 
 }

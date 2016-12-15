@@ -386,27 +386,20 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see com.aol.cyclops.control.monads.transformers.ListT#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> ListT<W,R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> ListT<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (ListT<W,R>) FoldableTransformerSeq.super.zip(other, zipper);
+        return (ListT<W,R>) FoldableTransformerSeq.super.zipS(other, zipper);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.ListT#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
-     */
-    @Override
-    public <U, R> ListT<W,R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (ListT<W,R>) FoldableTransformerSeq.super.zip(other, zipper);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> ListT<W,Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    public <U> ListT<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (ListT) FoldableTransformerSeq.super.zip(other);
+        return (ListT) FoldableTransformerSeq.super.zipS(other);
     }
 
     /* (non-Javadoc)
@@ -418,20 +411,13 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return (ListT) FoldableTransformerSeq.super.zip(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    public <U> ListT<W,Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
-        return (ListT) FoldableTransformerSeq.super.zip(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <S, U> ListT<W,Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    public <S, U> ListT<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return (ListT) FoldableTransformerSeq.super.zip3(second, third);
     }
@@ -440,8 +426,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    public <T2, T3, T4> ListT<W,Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    public <T2, T3, T4> ListT<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return (ListT) FoldableTransformerSeq.super.zip4(second, third, fourth);
     }
@@ -549,7 +535,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see com.aol.cyclops.control.monads.transformers.values.ListT#grouped(java.util.function.Function)
      */
     @Override
-    public <K> ListT<W,Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    public <K> ListT<W,Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
 
         return (ListT) FoldableTransformerSeq.super.grouped(classifier);
     }

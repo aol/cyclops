@@ -449,7 +449,7 @@ public interface Eval<T> extends    To<Eval<T>>,
      */
     @Override
     default <T2, R> Eval<R> zipP( final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (Eval<R>) MonadicValue.super.zip(fn, app);
+        return (Eval<R>) MonadicValue.super.zipP(app,fn);
 
     }
 

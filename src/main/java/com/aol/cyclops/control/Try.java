@@ -1610,7 +1610,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
      * @return
      */
     @Override
-    default <T2, R> Try<R, X> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+    default <T2, R> Try<R, X> zipP( final Publisher<? extends T2> app,final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Try.fromPublisher(app)
                                                                             .visit(i -> Try.success(tuple.v2.apply(i)), () -> Try.failure(null)));

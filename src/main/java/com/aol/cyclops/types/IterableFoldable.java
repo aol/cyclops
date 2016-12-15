@@ -7,13 +7,14 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
 /**
- * A non-scalar Foldable type
+ * A non-scalar Foldable type 
  * 
  * @author johnmcclean
  *
  * @param <T> Data type of elements stored in this Foldable
  */
-public interface IterableFoldable<T> extends Foldable<T>, Iterable<T> {
+public interface IterableFoldable<T> extends Foldable<T>,
+                                             Iterable<T> {
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Foldable#foldable()

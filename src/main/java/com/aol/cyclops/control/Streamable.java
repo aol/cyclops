@@ -67,8 +67,17 @@ import lombok.AllArgsConstructor;
  *
  * @param <T> Data type for Stream
  */
-public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFoldable<T>, CyclopsCollectable<T>, ConvertableSequence<T>, Functor<T>, Filterable<T>,
-        Traversable<T>, Unit<T>, ZippingApplicativable<T>, Zippable<T> {
+public interface Streamable<T> extends  To<Streamable<T>>,
+                                        ToStream<T>,
+                                        IterableFoldable<T>,
+                                        CyclopsCollectable<T>,
+                                        ConvertableSequence<T>,
+                                        Functor<T>,
+                                        Filterable<T>,
+                                        Traversable<T>,
+                                        Unit<T>,
+                                        ZippingApplicativable<T>,
+                                        Zippable<T> {
 
     public static <T> Streamable<T> fromObject(final Object toCoerce) {
         return new StreamableImpl(
@@ -928,7 +937,7 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * </pre>
      */
     default Tuple2<Streamable<T>, Streamable<T>> partition(final Predicate<T> splitter) {
-        return reactiveSeq().partitionSequence(splitter)
+        return reactiveSeq().partition(splitter)
                             .map1(s -> fromStream(s))
                             .map2(s -> fromStream(s));
     }
@@ -2515,11 +2524,11 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
     }
 
     default Streamable<T> concat(final T other) {
-        return fromStream(reactiveSeq().concat(other));
+        return fromStream(reactiveSeq().append(other));
     }
 
     default Streamable<T> concat(final T... other) {
-        return fromStream(reactiveSeq().concat(other));
+        return fromStream(reactiveSeq().append(other));
     }
 
     default <U> Streamable<T> distinct(final Function<? super T, ? extends U> keyExtractor) {

@@ -4,12 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.Executor;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -26,6 +21,7 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import org.reactivestreams.Subscription;
 
 /**
  * A non-scalar navigatable data type
@@ -913,4 +909,28 @@ public interface Traversable<T> extends Publisher<T>,
         return stream();
     }
 
+    @Override
+    default <X extends Throwable> Subscription forEachX(long numberOfElements, Consumer<? super T> consumer){
+        return stream().forEachX(numberOfElements,consumer);
+    }
+
+    @Override
+    default <X extends Throwable> Subscription forEachXWithError(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
+        return stream().forEachXWithError(numberOfElements,consumer,consumerError);
+    }
+
+    @Override
+    default <X extends Throwable> Subscription forEachXEvents(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
+        return stream().forEachXEvents(numberOfElements,consumer,consumerError,onComplete);
+    }
+
+    @Override
+    default <X extends Throwable> void forEachWithError(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError){
+          stream().forEachWithError(consumerElement,consumerError);
+    }
+
+    @Override
+    default <X extends Throwable> void forEachEvent(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete){
+        stream().forEachEvent(consumerElement, consumerError, onComplete);
+    }
 }

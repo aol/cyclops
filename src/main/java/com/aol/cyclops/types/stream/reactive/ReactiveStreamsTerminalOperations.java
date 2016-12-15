@@ -19,19 +19,6 @@ import org.reactivestreams.Subscription;
 public interface ReactiveStreamsTerminalOperations<T> {
 
 
-   <X extends Throwable> ReactiveTask forEachX(Executor ex,final long numberOfElements, final Consumer<? super T> consumer) ;
-
-    <X extends Throwable> ReactiveTask forEachXWithError(Executor ex,final long numberOfElements, final Consumer<? super T> consumer,
-                                                                final Consumer<? super Throwable> consumerError);
-
-    <X extends Throwable> ReactiveTask forEachXEvents(Executor ex, final long numberOfElements, final Consumer<? super T> consumer,
-                                                             final Consumer<? super Throwable> consumerError, final Runnable onComplete);
-
-    <X extends Throwable> ReactiveTask forEachWithError(Executor ex,final Consumer<? super T> consumerElement,
-                                                               final Consumer<? super Throwable> consumerError);
-
-    <X extends Throwable> ReactiveTask forEachEvent(Executor ex,final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
-                                                           final Runnable onComplete);
     /**
      * Perform a forEach operation over the Stream, without closing it, consuming only the specified number of elements from
      * the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription

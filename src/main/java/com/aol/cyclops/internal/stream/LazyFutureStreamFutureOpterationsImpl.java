@@ -6,33 +6,34 @@ import java.util.function.Consumer;
 
 import com.aol.cyclops.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.aol.cyclops.types.stream.reactive.ReactiveTask;
 
-public class LazyFutureStreamFutureOpterationsImpl<T> extends BaseFutureOperationsImpl<T> {
+public class LazyFutureStreamFutureOpterationsImpl<T> implements ReactiveStreamsTerminalFutureOperations<T> {
+    private final Executor exec;
+    private final LazyFutureStream<T> stream;
 
     public LazyFutureStreamFutureOpterationsImpl(final Executor exec, final LazyFutureStream<T> stream) {
-        super(exec, stream);
+        this.exec = exec;
+        this.stream = stream;
 
     }
 
-    @Override
-    public LazyFutureStream<T> getStream() {
-        return (LazyFutureStream<T>) super.getStream();
-    }
+   
 
     @Override
     public <X extends Throwable> ReactiveTask forEachX(final long numberOfElements, final Consumer<? super T> consumer) {
         return new ReactiveTask(
-                                getExec(), LazyFutureStreamUtils.forEachX(getStream(), numberOfElements, consumer)
-                                                                .map2(r -> CompletableFuture.runAsync(r, getExec())));
+                                exec, LazyFutureStreamUtils.forEachX(stream, numberOfElements, consumer)
+                                                                .map2(r -> CompletableFuture.runAsync(r, exec)));
     }
 
     @Override
     public <X extends Throwable> ReactiveTask forEachXWithError(final long numberOfElements, final Consumer<? super T> consumer,
             final Consumer<? super Throwable> consumerError) {
         return new ReactiveTask(
-                                getExec(), LazyFutureStreamUtils.forEachXWithError(getStream(), numberOfElements, consumer, consumerError)
-                                                                .map2(r -> CompletableFuture.runAsync(r, getExec())));
+                                exec, LazyFutureStreamUtils.forEachXWithError(stream, numberOfElements, consumer, consumerError)
+                                                                .map2(r -> CompletableFuture.runAsync(r, exec)));
 
     }
 
@@ -40,8 +41,8 @@ public class LazyFutureStreamFutureOpterationsImpl<T> extends BaseFutureOperatio
     public <X extends Throwable> ReactiveTask forEachXEvents(final long numberOfElements, final Consumer<? super T> consumer,
             final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
         return new ReactiveTask(
-                                getExec(), LazyFutureStreamUtils.forEachXEvents(getStream(), numberOfElements, consumer, consumerError, onComplete)
-                                                                .map2(r -> CompletableFuture.runAsync(r, getExec())));
+                                exec, LazyFutureStreamUtils.forEachXEvents(stream, numberOfElements, consumer, consumerError, onComplete)
+                                                                .map2(r -> CompletableFuture.runAsync(r, exec)));
 
     }
 
@@ -50,15 +51,15 @@ public class LazyFutureStreamFutureOpterationsImpl<T> extends BaseFutureOperatio
             final Consumer<? super Throwable> consumerError) {
 
         return new ReactiveTask(
-                                getExec(), LazyFutureStreamUtils.forEachWithError(getStream(), consumerElement, consumerError)
-                                                                .map2(r -> CompletableFuture.runAsync(r, getExec())));
+                                exec, LazyFutureStreamUtils.forEachWithError(stream, consumerElement, consumerError)
+                                                                .map2(r -> CompletableFuture.runAsync(r, exec)));
     }
 
     @Override
     public <X extends Throwable> ReactiveTask forEachEvent(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
             final Runnable onComplete) {
         return new ReactiveTask(
-                                getExec(), LazyFutureStreamUtils.forEachEvent(getStream(), consumerElement, consumerError, onComplete)
-                                                                .map2(r -> CompletableFuture.runAsync(r, getExec())));
+                                exec, LazyFutureStreamUtils.forEachEvent(stream, consumerElement, consumerError, onComplete)
+                                                                .map2(r -> CompletableFuture.runAsync(r, exec)));
     }
 }

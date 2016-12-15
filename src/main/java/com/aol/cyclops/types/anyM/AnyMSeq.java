@@ -1028,30 +1028,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
 
     }
 
-    @Override
-   default  <X extends Throwable> ReactiveTask forEachX(Executor ex, final long numberOfElements, final Consumer<? super T> consumer){
-        return this.stream().forEachX(ex, numberOfElements, consumer);
-    }
-
-    @Override
-    default <X extends Throwable> ReactiveTask forEachXWithError(Executor ex, final long numberOfElements, final Consumer<? super T> consumer, final Consumer<? super Throwable> consumerError){
-       return this.stream().forEachXWithError(ex, numberOfElements, consumer, consumerError);
-    }
-
-    @Override
-    default <X extends Throwable> ReactiveTask forEachXEvents(Executor ex, final long numberOfElements, final Consumer<? super T> consumer, final Consumer<? super Throwable> consumerError, final Runnable onComplete){
-        return this.stream().forEachXEvents(ex, numberOfElements, consumer, consumerError, onComplete);
-    }
-
-    @Override
-    default  <X extends Throwable> ReactiveTask forEachWithError(Executor ex, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError){
-        return this.stream().forEachWithError(ex, consumerElement, consumerError);
-    }
-
-    @Override
-    default <X extends Throwable> ReactiveTask forEachEvent(Executor ex, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError, final Runnable onComplete){
-        return this.stream().forEachEvent(ex, consumerElement, consumerError, onComplete);
-    }
 
     /* (non-Javadoc)
          * @see com.aol.cyclops.monad.AnyM#peek(java.util.function.Consumer)

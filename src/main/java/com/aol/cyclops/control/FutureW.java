@@ -1183,8 +1183,8 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
      * org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> FutureW<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
-        return (FutureW<R>) MonadicValue.super.zip(fn, app);
+    public <T2, R> FutureW<R> zipP(final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (FutureW<R>) MonadicValue.super.zipP(app,fn);
 
     }
 
