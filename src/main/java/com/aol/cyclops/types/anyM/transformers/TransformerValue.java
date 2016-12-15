@@ -5,7 +5,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.ConvertableFunctor;

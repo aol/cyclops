@@ -158,7 +158,15 @@ public interface Foldable<T> {
         final Foldable<T> foldable = foldable();
         return foldable.reduce(identity, accumulator);
     }
-
+    default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator) {
+       return reduce(identity,accumulator);
+    }
+    default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
+        return reduce(identity,accumulator,combiner);
+    }
+    default T foldLeft(final T identity, final BinaryOperator<T> accumulator) {
+        return reduce(identity, accumulator);
+    }
     /**
      * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BiFunction, BinaryOperator)}
      * 
@@ -375,7 +383,7 @@ public interface Foldable<T> {
      * 
      * </pre>
      */
-    default <K> MapX<K, List<T>> groupBy(final Function<? super T, ? extends K> classifier) {
+    default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return foldable().groupBy(classifier);
     }
 

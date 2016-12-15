@@ -1,45 +1,25 @@
 package com.aol.cyclops.data.collections.extensions;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
-
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.types.*;
+import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
+import com.aol.cyclops.types.stream.HeadAndTail;
+import com.aol.cyclops.util.function.F3;
+import com.aol.cyclops.util.function.F4;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.IterableFilterable;
-import com.aol.cyclops.types.IterableFoldable;
-import com.aol.cyclops.types.IterableFunctor;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.Sequential;
-import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 /**
  * An interface that extends JDK Collection interface with a significant number of new operators
@@ -227,13 +207,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
         return ReactiveSeq.fromIterable(this);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFunctor#collectable()
-     */
-    @Override
-    default CyclopsCollectable<T> collectable() {
-        return stream();
-    }
+
 
     /**
      * Get the element at the specified index (if it exists)
@@ -337,7 +311,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      * @see com.aol.cyclops.types.Foldable#groupBy(java.util.function.Function)
      */
     @Override
-    default <K> MapX<K, List<T>> groupBy(final Function<? super T, ? extends K> classifier) {
+    default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return stream().groupBy(classifier);
     }
 
@@ -922,13 +896,5 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
         return (CollectionX<U>) ZippingApplicativable.super.cast(type);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    default <R> CollectionX<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-
-        return (CollectionX<R>) ZippingApplicativable.super.patternMatch(case1, otherwise);
-    }
 
 }

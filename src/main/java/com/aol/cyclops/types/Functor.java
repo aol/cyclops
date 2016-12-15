@@ -4,8 +4,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.Trampoline;
 
 /** 
@@ -112,30 +110,5 @@ public interface Functor<T> {
                                .result());
     }
 
-    /**
-    * Transform the elements of this Stream with a Pattern Matching case and default value
-    *
-    * <pre>
-    * {@code
-    * List<String> result = CollectionX.of(1,2,3,4)
-                                             .patternMatch(
-                                                       c->c.valuesWhere(i->"even", (Integer i)->i%2==0 )
-                                                     )
-    * }
-    * // CollectionX["odd","even","odd","even"]
-    * </pre>
-    *
-    *
-    * @param case1 Function to generate a case (or chain of cases as a single case)
-    * @param otherwise Value if supplied case doesn't match
-    * @return CollectionX where elements are transformed by pattern matching
-    */
-    default <R> Functor<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-
-        return map(u -> Matchable.of(u)
-                                 .matches(case1, otherwise)
-                                 .get());
-
-    }
 
 }

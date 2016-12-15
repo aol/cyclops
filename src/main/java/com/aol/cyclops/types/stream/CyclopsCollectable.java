@@ -31,7 +31,7 @@ import com.aol.cyclops.types.Foldable;
  *
  * @param <T> Data type of elements in this Collectable
  */
-public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Foldable<T> {
+public interface CyclopsCollectable<T> extends  Iterable<T>, Foldable<T> { //Collectable<T>,
 
     /**
      * Perform an async fold on the provided executor
@@ -95,7 +95,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#modeBy(java.util.function.Function)
      */
-    @Override
+    
     default <U> Optional<T> modeBy(final Function<? super T, ? extends U> function) {
 
         return collectable().modeBy(function);
@@ -104,7 +104,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#modeAll()
      */
-    @Override
+    
     default ReactiveSeq<T> modeAll() {
 
         return ReactiveSeq.fromStream(collectable().modeAll());
@@ -113,7 +113,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#modeAllBy(java.util.function.Function)
      */
-    @Override
+    
     default <U> ReactiveSeq<T> modeAllBy(final Function<? super T, ? extends U> function) {
 
         return ReactiveSeq.fromStream(collectable().modeAllBy(function));
@@ -122,7 +122,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#minAll()
      */
-    @Override
+    
     default ReactiveSeq<T> minAll() {
 
         return ReactiveSeq.fromStream(collectable().minAll());
@@ -131,7 +131,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#minAll(java.util.Comparator)
      */
-    @Override
+    
     default ReactiveSeq<T> minAll(final Comparator<? super T> comparator) {
 
         return ReactiveSeq.fromStream(collectable().minAll(comparator));
@@ -140,7 +140,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#minAll(java.util.function.Function)
      */
-    @Override
+    
     default <U extends Comparable<? super U>> ReactiveSeq<U> minAll(final Function<? super T, ? extends U> function) {
 
         return ReactiveSeq.fromStream(collectable().minAll(function));
@@ -149,7 +149,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#minAll(java.util.function.Function, java.util.Comparator)
      */
-    @Override
+    
     default <U> ReactiveSeq<U> minAll(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return ReactiveSeq.fromStream(collectable().minAll(function, comparator));
@@ -158,7 +158,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#minAllBy(java.util.function.Function)
      */
-    @Override
+    
     default <U extends Comparable<? super U>> ReactiveSeq<T> minAllBy(final Function<? super T, ? extends U> function) {
 
         return ReactiveSeq.fromStream(collectable().minAllBy(function));
@@ -167,7 +167,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#minAllBy(java.util.function.Function, java.util.Comparator)
      */
-    @Override
+    
     default <U> ReactiveSeq<T> minAllBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return ReactiveSeq.fromStream(collectable().minAllBy(function, comparator));
@@ -176,7 +176,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#maxAll()
      */
-    @Override
+    
     default ReactiveSeq<T> maxAll() {
 
         return ReactiveSeq.fromStream(collectable().maxAll());
@@ -185,7 +185,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#maxAll(java.util.Comparator)
      */
-    @Override
+    
     default ReactiveSeq<T> maxAll(final Comparator<? super T> comparator) {
 
         return ReactiveSeq.fromStream(collectable().maxAll(comparator));
@@ -194,7 +194,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#maxAll(java.util.function.Function)
      */
-    @Override
+    
     default <U extends Comparable<? super U>> ReactiveSeq<U> maxAll(final Function<? super T, ? extends U> function) {
 
         return ReactiveSeq.fromStream(collectable().maxAll(function));
@@ -203,7 +203,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#maxAll(java.util.function.Function, java.util.Comparator)
      */
-    @Override
+    
     default <U> ReactiveSeq<U> maxAll(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return ReactiveSeq.fromStream(collectable().maxAll(function, comparator));
@@ -212,7 +212,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#maxAllBy(java.util.function.Function)
      */
-    @Override
+    
     default <U extends Comparable<? super U>> ReactiveSeq<T> maxAllBy(final Function<? super T, ? extends U> function) {
 
         return ReactiveSeq.fromStream(collectable().maxAllBy(function));
@@ -221,25 +221,17 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#maxAllBy(java.util.function.Function, java.util.Comparator)
      */
-    @Override
+    
     default <U> ReactiveSeq<T> maxAllBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
 
         return ReactiveSeq.fromStream(collectable().maxAllBy(function, comparator));
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#bitAnd()
-     */
-    @Override
-    default Optional<T> bitAnd() {
-
-        return collectable().bitAnd();
-    }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#bitAnd(java.util.function.Function)
      */
-    @Override
+    
     default <U> Optional<U> bitAnd(final Function<? super T, ? extends U> function) {
 
         return collectable().bitAnd(function);
@@ -248,7 +240,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#bitAndInt(java.util.function.ToIntFunction)
      */
-    @Override
+    
     default int bitAndInt(final ToIntFunction<? super T> function) {
 
         return collectable().bitAndInt(function);
@@ -257,26 +249,19 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#bitAndLong(java.util.function.ToLongFunction)
      */
-    @Override
+    
     default long bitAndLong(final ToLongFunction<? super T> function) {
 
         return collectable().bitAndLong(function);
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#bitOr()
-     */
-    @Override
-    default Optional<T> bitOr() {
 
-        return collectable().bitOr();
-    }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#bitOr(java.util.function.Function)
      */
-    @Override
-    default <U> Optional<U> bitOr(final Function<? super T, ? extends U> function) {
+    
+    default <U extends Number> Optional<U> bitOr(final Function<? super T, ? extends U> function) {
 
         return collectable().bitOr(function);
     }
@@ -284,7 +269,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#bitOrInt(java.util.function.ToIntFunction)
      */
-    @Override
+    
     default int bitOrInt(final ToIntFunction<? super T> function) {
 
         return collectable().bitOrInt(function);
@@ -293,7 +278,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#bitOrLong(java.util.function.ToLongFunction)
      */
-    @Override
+    
     default long bitOrLong(final ToLongFunction<? super T> function) {
 
         return collectable().bitOrLong(function);
@@ -302,7 +287,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#toMap(java.util.function.Function)
      */
-    @Override
+    
     default <K> Map<K, T> toMap(final Function<? super T, ? extends K> keyMapper) {
 
         return collectable().toMap(keyMapper);
@@ -311,7 +296,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#commonPrefix()
      */
-    @Override
+    
     default String commonPrefix() {
 
         return collectable().commonPrefix();
@@ -320,7 +305,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#commonSuffix()
      */
-    @Override
+    
     default String commonSuffix() {
 
         return collectable().commonSuffix();
@@ -329,7 +314,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
-    @Override
+    
     default <R, A> R collect(final Collector<? super T, A, R> collector) {
         return collectable().collect(collector);
     }
@@ -337,7 +322,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#count()
      */
-    @Override
+    
     default long count() {
         return collectable().count();
     }
@@ -345,7 +330,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#count(java.util.function.Predicate)
      */
-    @Override
+    
     default long count(final Predicate<? super T> predicate) {
         return collectable().count(predicate);
     }
@@ -353,7 +338,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#countDistinct(java.util.function.Predicate)
      */
-    @Override
+    
     default long countDistinct(final Predicate<? super T> predicate) {
         return collectable().countDistinct(predicate);
     }
@@ -361,7 +346,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#countDistinctBy(java.util.function.Function, java.util.function.Predicate)
      */
-    @Override
+    
     default <U> long countDistinctBy(final Function<? super T, ? extends U> function, final Predicate<? super U> predicate) {
         return collectable().countDistinctBy(function, predicate);
     }
@@ -376,7 +361,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#countDistinct()
      */
-    @Override
+    
     default long countDistinct() {
         return collectable().countDistinct();
     }
@@ -384,7 +369,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#countDistinctBy(java.util.function.Function)
      */
-    @Override
+    
     default <U> long countDistinctBy(final Function<? super T, ? extends U> function) {
         return collectable().countDistinctBy(function);
     }
@@ -392,31 +377,25 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#mode()
      */
-    @Override
+    
     default Optional<T> mode() {
         return collectable().mode();
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#sum()
-     */
-    @Override
-    default Optional<T> sum() {
-        return collectable().sum();
-    }
+
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#sum(java.util.function.Function)
      */
-    @Override
-    default <U> Optional<U> sum(final Function<? super T, ? extends U> function) {
+    
+    default <U extends Number> Optional<U> sum(final Function<? super T, ? extends U> function) {
         return collectable().sum(function);
     }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#sumInt(java.util.function.ToIntFunction)
      */
-    @Override
+    
     default int sumInt(final ToIntFunction<? super T> function) {
         return collectable().sumInt(function);
     }
@@ -424,7 +403,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#sumLong(java.util.function.ToLongFunction)
      */
-    @Override
+    
     default long sumLong(final ToLongFunction<? super T> function) {
         return collectable().sumLong(function);
     }
@@ -432,31 +411,25 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#sumDouble(java.util.function.ToDoubleFunction)
      */
-    @Override
+    
     default double sumDouble(final ToDoubleFunction<? super T> function) {
         return collectable().sumDouble(function);
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#avg()
-     */
-    @Override
-    default Optional<T> avg() {
-        return collectable().avg();
-    }
+
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#avg(java.util.function.Function)
      */
-    @Override
-    default <U> Optional<U> avg(final Function<? super T, ? extends U> function) {
+    
+    default <U extends Number> Optional<U> avg(final Function<? super T, ? extends U> function) {
         return collectable().avg(function);
     }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#avgInt(java.util.function.ToIntFunction)
      */
-    @Override
+    
     default double avgInt(final ToIntFunction<? super T> function) {
         return collectable().avgInt(function);
     }
@@ -464,7 +437,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#avgLong(java.util.function.ToLongFunction)
      */
-    @Override
+    
     default double avgLong(final ToLongFunction<? super T> function) {
         return collectable().avgLong(function);
     }
@@ -472,7 +445,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#avgDouble(java.util.function.ToDoubleFunction)
      */
-    @Override
+    
     default double avgDouble(final ToDoubleFunction<? super T> function) {
         return collectable().avgDouble(function);
     }
@@ -480,7 +453,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#min()
      */
-    @Override
+    
     default Optional<T> min() {
         return collectable().min();
     }
@@ -488,7 +461,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#min(java.util.Comparator)
      */
-    @Override
+    
     default Optional<T> min(final Comparator<? super T> comparator) {
         return collectable().min(comparator);
     }
@@ -496,7 +469,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#min(java.util.function.Function)
      */
-    @Override
+    
     default <U extends Comparable<? super U>> Optional<U> min(final Function<? super T, ? extends U> function) {
         return collectable().min(function);
     }
@@ -504,7 +477,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#min(java.util.function.Function, java.util.Comparator)
      */
-    @Override
+    
     default <U> Optional<U> min(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return collectable().min(function, comparator);
     }
@@ -512,7 +485,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#minBy(java.util.function.Function)
      */
-    @Override
+    
     default <U extends Comparable<? super U>> Optional<T> minBy(final Function<? super T, ? extends U> function) {
         return collectable().minBy(function);
     }
@@ -520,7 +493,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#minBy(java.util.function.Function, java.util.Comparator)
      */
-    @Override
+    
     default <U> Optional<T> minBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return collectable().minBy(function, comparator);
     }
@@ -528,7 +501,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#max()
      */
-    @Override
+    
     default Optional<T> max() {
         return collectable().max();
     }
@@ -536,7 +509,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#max(java.util.Comparator)
      */
-    @Override
+    
     default Optional<T> max(final Comparator<? super T> comparator) {
         return collectable().max(comparator);
     }
@@ -544,7 +517,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#max(java.util.function.Function)
      */
-    @Override
+    
     default <U extends Comparable<? super U>> Optional<U> max(final Function<? super T, ? extends U> function) {
         return collectable().max(function);
     }
@@ -552,7 +525,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#max(java.util.function.Function, java.util.Comparator)
      */
-    @Override
+    
     default <U> Optional<U> max(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return collectable().max(function, comparator);
     }
@@ -560,7 +533,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#maxBy(java.util.function.Function)
      */
-    @Override
+    
     default <U extends Comparable<? super U>> Optional<T> maxBy(final Function<? super T, ? extends U> function) {
         return collectable().maxBy(function);
     }
@@ -568,7 +541,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#maxBy(java.util.function.Function, java.util.Comparator)
      */
-    @Override
+    
     default <U> Optional<T> maxBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return collectable().maxBy(function, comparator);
     }
@@ -576,7 +549,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#median()
      */
-    @Override
+
     default Optional<T> median() {
         return collectable().median();
     }
@@ -584,7 +557,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#median(java.util.Comparator)
      */
-    @Override
+    
     default Optional<T> median(final Comparator<? super T> comparator) {
         return collectable().median(comparator);
     }
@@ -592,7 +565,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#medianBy(java.util.function.Function)
      */
-    @Override
+    
     default <U extends Comparable<? super U>> Optional<T> medianBy(final Function<? super T, ? extends U> function) {
         return collectable().medianBy(function);
     }
@@ -600,7 +573,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#medianBy(java.util.function.Function, java.util.Comparator)
      */
-    @Override
+    
     default <U> Optional<T> medianBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
         return collectable().medianBy(function, comparator);
     }
@@ -608,7 +581,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#percentile(double)
      */
-    @Override
+    
     default Optional<T> percentile(final double percentile) {
         return collectable().percentile(percentile);
     }
@@ -616,7 +589,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#percentile(double, java.util.Comparator)
      */
-    @Override
+    
     default Optional<T> percentile(final double percentile, final Comparator<? super T> comparator) {
         return collectable().percentile(percentile, comparator);
     }
@@ -624,7 +597,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#percentileBy(double, java.util.function.Function)
      */
-    @Override
+    
     default <U extends Comparable<? super U>> Optional<T> percentileBy(final double percentile, final Function<? super T, ? extends U> function) {
         return collectable().percentileBy(percentile, function);
     }
@@ -632,7 +605,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#percentileBy(double, java.util.function.Function, java.util.Comparator)
      */
-    @Override
+    
     default <U> Optional<T> percentileBy(final double percentile, final Function<? super T, ? extends U> function,
             final Comparator<? super U> comparator) {
         return collectable().percentileBy(percentile, function, comparator);
@@ -650,7 +623,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
      * @param c
      *            Predicate to check if all match
      */
-    @Override
+    
     default boolean allMatch(final Predicate<? super T> c) {
         return collectable().allMatch(c);
     }
@@ -668,7 +641,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
      * @param c
      *            Predicate to check if any match
      */
-    @Override
+    
     default boolean anyMatch(final Predicate<? super T> c) {
         return collectable().anyMatch(c);
     }
@@ -676,7 +649,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#noneMatch(java.util.function.Predicate)
      */
-    @Override
+    
     default boolean noneMatch(final Predicate<? super T> c) {
         return collectable().noneMatch(c);
     }
@@ -684,7 +657,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#toList()
      */
-    @Override
+    
     default List<T> toList() {
         if (this instanceof List)
             return (List) this;
@@ -694,7 +667,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#toList(java.util.function.Supplier)
      */
-    @Override
+    
     default <L extends List<T>> L toList(final Supplier<L> factory) {
         return collectable().toList(factory);
     }
@@ -702,7 +675,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#toSet()
      */
-    @Override
+    
     default Set<T> toSet() {
         if (this instanceof Set)
             return (Set) this;
@@ -712,7 +685,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#toSet(java.util.function.Supplier)
      */
-    @Override
+    
     default <S extends Set<T>> S toSet(final Supplier<S> factory) {
         return collectable().toSet(factory);
     }
@@ -720,7 +693,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#toCollection(java.util.function.Supplier)
      */
-    @Override
+    
     default <C extends Collection<T>> C toCollection(final Supplier<C> factory) {
         return collectable().toCollection(factory);
     }
@@ -728,7 +701,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#toMap(java.util.function.Function, java.util.function.Function)
      */
-    @Override
+    
     default <K, V> Map<K, V> toMap(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
         return collectable().toMap(keyMapper, valueMapper);
     }
@@ -736,7 +709,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#toString(java.lang.CharSequence)
      */
-    @Override
+    
     default String toString(final CharSequence delimiter) {
         return collectable().toString(delimiter);
     }
@@ -744,7 +717,7 @@ public interface CyclopsCollectable<T> extends Collectable<T>, Iterable<T>, Fold
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#toString(java.lang.CharSequence, java.lang.CharSequence, java.lang.CharSequence)
      */
-    @Override
+    
     default String toString(final CharSequence delimiter, final CharSequence prefix, final CharSequence suffix) {
         return collectable().toString(delimiter, prefix, suffix);
     }

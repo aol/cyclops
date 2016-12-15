@@ -194,7 +194,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#grouped(java.util.function.Function)
      */
     @Override
-    default <K> MutableCollectionX<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> MutableCollectionX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return fromStream(stream().grouped(classifier));
     }
 

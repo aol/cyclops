@@ -7,8 +7,6 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.aol.cyclops.internal.matcher2.AsDecomposable;
-
 import lombok.Value;
 public class CoerceToDecomposableTest {
 

@@ -1,20 +1,14 @@
 package com.aol.cyclops.data;
 
-import java.util.OptionalInt;
-import java.util.function.Function;
-import java.util.function.IntConsumer;
-import java.util.function.IntFunction;
-import java.util.function.IntSupplier;
-import java.util.function.IntUnaryOperator;
-import java.util.stream.IntStream;
-
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.To;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.OptionalInt;
+import java.util.function.*;
+import java.util.stream.IntStream;
 
 /**
  * Class that represents a Closed Variable
@@ -43,7 +37,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Matchable.ValueAndOptionalMatcher<Integer> {
+public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supplier<Integer> {
 
     private int var;
 

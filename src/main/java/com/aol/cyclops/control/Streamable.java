@@ -43,14 +43,12 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.stream.SeqUtils;
 import com.aol.cyclops.internal.stream.StreamableImpl;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Traversable;
 import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
@@ -58,7 +56,6 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.ToStream;
-import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 
 import lombok.AllArgsConstructor;
@@ -2523,7 +2520,7 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> leftOuterJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
-        return fromStream(reactiveSeq().leftOuterJoin(other.reactiveSeq(), predicate));
+        return fromStream(reactiveSeq().jooλ(s->s.leftOuterJoin(other, predicate)));
 
     }
 
@@ -2531,7 +2528,7 @@ public interface Streamable<T> extends To<Streamable<T>>,ToStream<T>, IterableFo
      * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> rightOuterJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
-        return fromStream(reactiveSeq().rightOuterJoin(other.reactiveSeq(), predicate));
+        return fromStream(reactiveSeq().jooλ(s->s.rightOuterJoin(other, predicate)));
     }
 
     /** If this Streamable is empty replace it with a another Stream

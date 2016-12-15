@@ -12,7 +12,9 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
  *
  * @param <T> Data type of elements in this ExtendedTraversable
  */
-public interface ExtendedTraversable<T> extends Traversable<T>, TransformerTraversable<T>, Foldable<T>, Iterable<T>, ConvertableSequence<T> {
+public interface ExtendedTraversable<T> extends Traversable<T>,
+                                                TransformerTraversable<T>,
+                                                ConvertableSequence<T> {
 
     /**
      * Generate the permutations based on values in the ExtendedTraversable. 

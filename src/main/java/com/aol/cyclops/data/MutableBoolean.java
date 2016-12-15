@@ -1,16 +1,15 @@
 package com.aol.cyclops.data;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.To;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Class that represents a Closed Variable
@@ -39,7 +38,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consumer<Boolean>, Matchable.ValueAndOptionalMatcher<Boolean> {
+public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consumer<Boolean>, Supplier<Boolean> {
+
 
     private boolean var;
 
@@ -194,7 +194,7 @@ public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consu
 
     }
 
-    @Override
+
     public Boolean get() {
         return getAsBoolean();
     }

@@ -179,12 +179,7 @@ public interface Value<T> extends Supplier<T>,
                           .map(Try::get);
     }
 
-    /**
-     * @return This value converted to a List (for pattern matching purposes)
-     */
-    default ListX<?> unapply() {
-        return toListX();
-    }
+
 
     /**
      * Use the value stored in this Value to seed a Stream generated from the provided function
@@ -203,53 +198,6 @@ public interface Value<T> extends Supplier<T>,
         return ReactiveSeq.generate(this);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Foldable#mapReduce(com.aol.cyclops.Reducer)
-     */
-    @Override
-    default <E> E mapReduce(final Reducer<E> monoid) {
-        return monoid.mapReduce(toStream());
-    }
-
-    /**
-     * Use the supplied Monoid to reduce this Value to a single result (unwraps the value stored in this Value 
-     * if the provided Monoid instance obeys the Monoid laws)
-     * 
-     * @param monoid Monoid to apply to this value
-     * @return The value stored inside this Value
-     */
-    default T fold(final Monoid<T> monoid) {
-        return monoid.reduce(toStream());
-    }
-
-    /**
-     * Use the supplied identity value and function to reduce this Value to a single result (unwraps the value stored in this Value 
-     * if the provided monoid combination instance obeys the Monoid laws)
-     * 
-     * @param identity Identity value
-     * @param accumulator Accumulation function
-     * @return Result of applying Value stored in this value and the identity value to the provided accumulator
-     */
-    default T fold(final T identity, final BinaryOperator<T> accumulator) {
-        final Optional<T> opt = toOptional();
-        if (opt.isPresent())
-            return accumulator.apply(identity, get());
-        return identity;
-    }
-
-    /**
-     * @return LazyImmutable that has the same value as this Value
-     */
-    default LazyImmutable<T> toLazyImmutable() {
-        return LazyImmutable.of(get());
-    }
-
-    /**
-     * @return Mutable that has the same value as this Value
-     */
-    default Mutable<T> toMutable() {
-        return Mutable.of(get());
-    }
 
     /**
      * @return Primary Xor that has the same value as this Value
@@ -346,93 +294,6 @@ public interface Value<T> extends Supplier<T>,
         return visit(p -> Maybe.ofNullable(p), () -> Maybe.none());
     }
 
-    /**
-     * Returns a ListX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return new ListX from current object
-     */
-    default ListX<T> toListX() {
-        return ListX.fromIterable(toList());
-    }
-
-    /**
-     * Returns a SetX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return new SetX from current object
-     */
-    default SetX<T> toSetX() {
-        return SetX.fromIterable(toList());
-    }
-
-    /**
-     * Returns a SortedSetX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return  new SortedSetX from current object
-     */
-    default SortedSetX<T> toSortedSetX() {
-        return SortedSetX.fromIterable(toList());
-    }
-
-    /**
-     * REturns a QueueX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return new QueueX from current object
-     */
-    default QueueX<T> toQueueX() {
-        return QueueX.fromIterable(toList());
-    }
-
-    /**
-     * Returns a DequeX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return new DequeX from current object
-     */
-    default DequeX<T> toDequeX() {
-        return DequeX.fromIterable(toList());
-    }
-
-    /** 
-     * Returns a PStackX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return new PStackX from current object.
-     */
-    default PStackX<T> toPStackX() {
-        return PStackX.fromCollection(toList());
-    }
-
-    /**
-     * Returns a PVectosX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return new PVectorX from current object
-     */
-    default PVectorX<T> toPVectorX() {
-        return PVectorX.fromCollection(toList());
-    }
-
-    /**
-     * Returns a PQueueX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return new PQueueX from current object
-     */
-    default PQueueX<T> toPQueueX() {
-        return PQueueX.fromCollection(toList());
-    }
-
-    /**
-     * Returns a PSetX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return new PSetX from current object
-     */
-    default PSetX<T> toPSetX() {
-        return PSetX.fromCollection(toList());
-    }
-
-    /**
-     * Returns a POrderedSetX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return new POrderedSetX from current object
-     */
-    default POrderedSetX<T> toPOrderedSetX() {
-        return POrderedSetX.fromCollection(toList());
-    }
-
-    /**
-     * Returns a PBagX created with a list which is result of a get() call. If this get() returns null the the list is the empty list. 
-     * @return new PBagX<T> from current object
-     */
-    default PBagX<T> toPBagX() {
-        return PBagX.fromCollection(toList());
-    }
 
     /**
      * Returns the class name and the name of the subclass, if there is any value, the value is showed between square brackets.
@@ -445,59 +306,6 @@ public interface Value<T> extends Supplier<T>,
         return getClass().getSimpleName() + "[]";
     }
 
-    /**
-     * Creates a LazyFutureStream with the input LazyReact the data-flow initialized with an array of one-off-suppliers.
-     * @param reactor
-     * @return  LazyFutureStream<T> from input LazyReact
-     */
-    default LazyFutureStream<T> toFutureStream(final LazyReact reactor) {
-        return reactor.ofAsync(this);
-    }
 
-    /**
-     * Returns a new LazyFutureStream with the data-flow open with an array of one-off-suppliers.
-     * @return new LazyFutureStream<T> from current object
-     */
-    default LazyFutureStream<T> toFutureStream() {
-        return new LazyReact().ofAsync(this);
-    }
-
-    /**
-     * Returns the input SimpleReact with the data-flow initialized with an array of one-off-suppliers.
-     * @param reactor
-     * @return new SimpleReactStream<T> from SimpleReact
-     */
-    default SimpleReactStream<T> toSimpleReact(final SimpleReact reactor) {
-        return reactor.ofAsync(this);
-    }
-
-    /**
-     * Returns a SimpleReactStream with the dataflow open with an array of one-off-suppliers
-     * @return new SimpleReactStream from current object
-     */
-    default SimpleReactStream<T> toSimpleReact() {
-        return new SimpleReact().ofAsync(this);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Convertable#collect(java.util.stream.Collector)
-     */
-    @Override
-    default <R, A> R collect(final Collector<? super T, A, R> collector) {
-        final A state = collector.supplier()
-                                 .get();
-        collector.accumulator()
-                 .accept(state, get());
-        return collector.finisher()
-                        .apply(state);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Convertable#toList()
-     */
-    @Override
-    default List<T> toList() {
-        return Convertable.super.toList();
-    }
 
 }

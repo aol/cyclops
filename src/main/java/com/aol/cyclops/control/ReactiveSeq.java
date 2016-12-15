@@ -3,16 +3,7 @@ package com.aol.cyclops.control;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -29,17 +20,11 @@ import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
-import java.util.stream.BaseStream;
-import java.util.stream.Collector;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.stream.*;
 
+import com.aol.cyclops.util.function.Lambda;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -59,9 +44,6 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.types.ExtendedTraversable;
-import com.aol.cyclops.types.FilterableFunctor;
-import com.aol.cyclops.types.IterableFilterable;
-import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Unit;
@@ -74,11 +56,7 @@ import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.types.stream.JoolManipulation;
-import com.aol.cyclops.types.stream.JoolWindowing;
 import com.aol.cyclops.types.stream.PausableHotStream;
-import com.aol.cyclops.types.stream.future.FutureOperations;
-import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -130,20 +108,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Unwrapable, 
                                         Stream<T>, 
                                         OnEmptySwitch<T, Stream<T>>,
-                                        JoolManipulation<T>,
-                                        IterableFilterable<T>,
-                                        FilterableFunctor<T>,
                                         ExtendedTraversable<T>,
-                                        IterableFoldable<T>,
-                                        CyclopsCollectable<T>,
-                                        JoolWindowing<T>,
-                                        Seq<T>,
-                                        Iterable<T>,
-                                        Publisher<T>,
-                                        ReactiveStreamsTerminalOperations<T>,
                                         ZippingApplicativable<T>,
                                         Unit<T>,
                                         ConvertableSequence<T> {
+
 
 
     <A,R> ReactiveSeq<R> collectSeq(Collector<? super T,A,R> c);
@@ -260,6 +229,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default ReactiveSeq<Integer> ints(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends IntStream> mapper){
         return ReactiveSeq.fromSpliterator(foldInt(fn,mapper).spliterator());
+    }
+    default <R> ReactiveSeq<R> jooλ(Function<? super Seq<T>, ? extends Seq<R>> mapper){
+        return ReactiveSeq.fromSpliterator(foldJooλ(mapper).spliterator());
+    }
+    default <R> R foldJooλ(Function<? super Seq<T>, ? extends R> mapper){
+        Spliterator<T> split = this.spliterator();
+        return mapper.apply(Seq.seq((Stream<T>)this));
     }
     /**
      * Perform a fold on a primitive IntStream (this is much faster than working with Integer Objects).
@@ -434,16 +410,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see org.jooq.lambda.Seq#foldRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
-    default <U> U foldRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> accumulator) {
-        return JoolWindowing.super.foldRight(identity, accumulator);
-    }
+    <U> U foldRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> accumulator);
 
     /* (non-Javadoc)
     * @see org.jooq.lambda.Seq#printOut()
     */
     @Override
     default void printOut() {
-        JoolWindowing.super.printOut();
+        Seq.seq((Stream)this).printOut();
     }
 
     /* (non-Javadoc)
@@ -542,7 +516,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Times values should be repeated within a Stream
      * @return Stream with values repeated
      */
-    @Override
     ReactiveSeq<T> cycle(int times);
 
     /**
@@ -557,7 +530,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * @return Stream with values repeated
      */
-    @Override
     ReactiveSeq<T> cycle();
 
     /**
@@ -809,6 +781,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     <T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(Stream<? extends T2> second, Stream<? extends T3> third, Stream<? extends T4> fourth);
 
+    default Seq<T> seq(){
+        return Seq.seq((Stream<T>)this);
+    }
     /**
      * Add an index to the current Stream
      * 
@@ -820,7 +795,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<Tuple2<T, Long>> zipWithIndex() {
-        return fromStream(JoolManipulation.super.zipWithIndex());
+        return fromStream(seq().zipWithIndex());
     }
 
     /**
@@ -1126,20 +1101,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#grouped(java.util.function.Function, java.util.stream.Collector)
-     */
+
     @Override
     default <K, A, D> ReactiveSeq<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
             final Collector<? super T, A, D> downstream) {
         return fromStream(JoolManipulation.super.grouped(classifier, downstream));
-    }
+    }*/
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#grouped(java.util.function.Function)
-     */
+
     @Override
     default <K> ReactiveSeq<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return fromStream(JoolManipulation.super.grouped(classifier));
-    }
+    } */
 
     /**
      * Use classifier function to group elements in this Sequence into a Map
@@ -1156,8 +1131,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      */
     @Override
-    default <K> MapX<K, List<T>> groupBy(final Function<? super T, ? extends K> classifier) {
-        return MapX.fromMap(JoolManipulation.super.groupBy(classifier));
+    default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
+        return collect(Collectors.groupingBy(classifier, (Supplier)MapX::empty, ListX.<T>defaultCollector()));
     }
 
     /*
@@ -1343,6 +1318,26 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> skip(long num);
 
     /**
+     * Performs an action for each element of this stream.
+     * <p>
+     * <p>This is a <a href="package-summary.html#StreamOps">terminal
+     * operation</a>.
+     * <p>
+     * <p>The behavior of this operation is explicitly nondeterministic.
+     * For parallel stream pipelines, this operation does <em>not</em>
+     * guarantee to respect the encounter order of the stream, as doing so
+     * would sacrifice the benefit of parallelism.  For any given element, the
+     * action may be performed at whatever time and in whatever thread the
+     * library chooses.  If the action accesses shared state, it is
+     * responsible for providing the required synchronization.
+     *
+     * @param action a <a href="package-summary.html#NonInterference">
+     *               non-interfering</a> action to perform on the elements
+     */
+    @Override
+    void forEach(Consumer<? super T> action);
+
+    /**
      * 
      * SkipWhile drops elements from the Stream while the predicate holds, once
      * the predicte returns true all subsequent elements are included *
@@ -1381,7 +1376,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<T> skipUntilClosed(final Predicate<? super T> p) {
-        return fromStream(JoolManipulation.super.skipUntilClosed(p));
+        return fromStream(seq().skipUntilClosed(p));
     }
 
     /**
@@ -1431,9 +1426,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#limitUntilClosed(java.util.function.Predicate)
      */
-    @Override
     default ReactiveSeq<T> limitUntilClosed(final Predicate<? super T> p) {
-        return fromStream(JoolManipulation.super.limitUntilClosed(p));
+        return fromStream(seq().limitUntilClosed(p));
     }
 
     /**
@@ -1979,9 +1973,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     ReactiveSeq<T> filter(Predicate<? super T> fn);
 
-    /* (non-Javadoc)
-     * @see java.util.stream.BaseStream#sequential()
+    /**
+     * Returns a spliterator for the elements of this stream.
+     * <p>
+     * <p>This is a <a href="package-summary.html#StreamOps">terminal
+     * operation</a>.
+     *
+     * @return the element spliterator for this stream
      */
+    @Override
+    Spliterator<T> spliterator();
+
+    /* (non-Javadoc)
+         * @see java.util.stream.BaseStream#sequential()
+         */
     @Override
     ReactiveSeq<T> sequential();
 
@@ -2162,13 +2167,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to append
      * @return ReactiveSeq with appended values
      */
-    @Override
+
     ReactiveSeq<T> append(T... values);
 
-    @Override
+
     ReactiveSeq<T> append(T value);
 
-    @Override
+
     ReactiveSeq<T> prepend(T value);
 
     /**
@@ -2186,7 +2191,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param values to prepend
      * @return ReactiveSeq with values prepended
      */
-    @Override
+
     ReactiveSeq<T> prepend(T... values);
 
     /**
@@ -2245,15 +2250,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     ReactiveSeq<T> insertStreamAt(int pos, Stream<T> stream);
 
-    /**
-     * Access asynchronous terminal operations (each returns a Future)
-     * 
-     * @param exec
-     *            Executor to use for Stream execution
-     * @return Async Future Terminal Operations
-     */
-    @Override
-    FutureOperations<T> futureOperations(Executor exec);
+
 
     /**
      * <pre>
@@ -2920,143 +2917,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                           quad.v1.map(Tuple4::v1), quad.v2.map(Tuple4::v2), quad.v3.map(Tuple4::v3), quad.v4.map(Tuple4::v4));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(final Stream<? extends U> other) {
-        return fromStream(JoolManipulation.super.crossJoin(other));
-    }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#crossJoin(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(final Seq<? extends U> other) {
-        return fromStream(JoolManipulation.super.crossJoin(other));
-    }
-
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#crossJoin(java.lang.Iterable)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(final Iterable<? extends U> other) {
-        return fromStream(JoolManipulation.super.crossJoin(other));
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#innerJoin(java.util.stream.Stream,
-     * java.util.function.BiPredicate)
-     */
-
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(final Stream<? extends U> other,
-            final java.util.function.BiPredicate<? super T, ? super U> predicate) {
-        final Streamable<? extends U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
-
-        return innerJoin(s, predicate);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#innerJoin(java.lang.Iterable, java.util.function.BiPredicate)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(final Iterable<? extends U> other,
-            final java.util.function.BiPredicate<? super T, ? super U> predicate) {
-        final Streamable<? extends U> s = Streamable.fromIterable(other);
-        return innerJoin(s, predicate);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#innerJoin(org.jooq.lambda.Seq, java.util.function.BiPredicate)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(final Seq<? extends U> other,
-            final java.util.function.BiPredicate<? super T, ? super U> predicate) {
-        final Streamable<? extends U> s = Streamable.fromStream(ReactiveSeq.fromStream(other));
-
-        return innerJoin(s, predicate);
-    }
-
-    default <U> ReactiveSeq<Tuple2<T, U>> innerJoin(final Streamable<? extends U> other,
-            final java.util.function.BiPredicate<? super T, ? super U> predicate) {
-        return flatMap(t -> other.stream()
-                                 .filter(u -> predicate.test(t, u))
-                                 .map(u -> Tuple.tuple(t, u)));
-
-    }
-
-  
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Stream<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
-
-        final Streamable<? extends U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other)
-                                                                             .toLazyCollection());
-
-        return leftOuterJoin(s, predicate);
-
-    }
-
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#leftOuterJoin(org.jooq.lambda.Seq, java.util.function.BiPredicate)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Seq<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
-
-        final Streamable<? extends U> s = Streamable.fromIterable(ReactiveSeq.fromStream(other));
-
-        return leftOuterJoin(s, predicate);
-
-    }
-
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#leftOuterJoin(java.lang.Iterable, java.util.function.BiPredicate)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Iterable<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
-
-        final Streamable<? extends U> s = Streamable.fromIterable(other);
-
-        return leftOuterJoin(s, predicate);
-
-    }
-
-   
-    default <U> ReactiveSeq<Tuple2<T, U>> leftOuterJoin(final Streamable<? extends U> s,
-            final java.util.function.BiPredicate<? super T, ? super U> predicate) {
-        return flatMap(t -> Seq.seq(s.stream())
-                               .filter(u -> predicate.test(t, u))
-                               .onEmpty(null)
-                               .map(u -> Tuple.tuple(t, u)));
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream,
-     * java.util.function.BiPredicate)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(final Stream<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
-        return fromStream(JoolManipulation.super.rightOuterJoin(other, predicate));
-    }
-
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(final Iterable<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
-        return fromStream(JoolManipulation.super.rightOuterJoin(other, predicate));
-    }
-
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> rightOuterJoin(final Seq<? extends U> other, final BiPredicate<? super T, ? super U> predicate) {
-        return fromStream(JoolManipulation.super.rightOuterJoin(other, predicate));
-    }
 
     /**
      * If this ReactiveSeq is empty replace it with a another Stream
@@ -3105,9 +2966,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
      */
     @Override
-    default ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier){
-        return ReactiveSeq.fromStream(JoolManipulation.super.onEmptyGet(supplier));
-    }
+    ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier);
 
     /*
      * (non-Javadoc)
@@ -3115,40 +2974,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> ReactiveSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
-        return ReactiveSeq.fromStream(JoolManipulation.super.onEmptyThrow(supplier));
-    }
+    <X extends Throwable> ReactiveSeq<T> onEmptyThrow(final Supplier<? extends X> supplier);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
-     */
-    @Override
-    ReactiveSeq<T> concat(Stream<? extends T> other);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#concat(java.lang.Object)
-     */
-    @Override
-    ReactiveSeq<T> concat(T other);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#concat(java.lang.Object[])
-     */
-    @Override
-    ReactiveSeq<T> concat(T... other);
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#distinct(java.util.function.Function)
-     */
-    @Override
     <U> ReactiveSeq<T> distinct(Function<? super T, ? extends U> keyExtractor);
 
     /*
@@ -3422,7 +3251,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            element to remove
      * @return Filtered Stream / ReactiveSeq
      */
-    @Override
     default ReactiveSeq<T> remove(final T t) {
         return this.filter(v -> v != t);
     }
@@ -3882,378 +3710,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         });
     }
 
-    @Override
-    default long count() {
-        return CyclopsCollectable.super.count();
-    }
 
-    @Override
-    default <R, A> R collect(final Collector<? super T, A, R> collector) {
-        return CyclopsCollectable.super.collect(collector);
-    }
 
-    @Override
-    default Collectable<T> collectable() {
-        return this;
-    }
-
-    @Override
-    default <R> ReactiveSeq<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-
-        return (ReactiveSeq<R>) ZippingApplicativable.super.patternMatch(case1, otherwise);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#count(java.util.function.Predicate)
-     */
-    @Override
-    default long count(final Predicate<? super T> predicate) {
-
-        return CyclopsCollectable.super.count(predicate);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinct(java.util.function.Predicate)
-     */
-    @Override
-    default long countDistinct(final Predicate<? super T> predicate) {
-
-        return CyclopsCollectable.super.countDistinct(predicate);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinctBy(java.util.function.Function, java.util.function.Predicate)
-     */
-    @Override
-    default <U> long countDistinctBy(final Function<? super T, ? extends U> function, final Predicate<? super U> predicate) {
-
-        return CyclopsCollectable.super.countDistinctBy(function, predicate);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinct()
-     */
-    @Override
-    default long countDistinct() {
-
-        return CyclopsCollectable.super.countDistinct();
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#countDistinctBy(java.util.function.Function)
-     */
-    @Override
-    default <U> long countDistinctBy(final Function<? super T, ? extends U> function) {
-
-        return CyclopsCollectable.super.countDistinctBy(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#mode()
-     */
-    @Override
-    default Optional<T> mode() {
-
-        return CyclopsCollectable.super.mode();
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#sum()
-     */
-    @Override
-    default Optional<T> sum() {
-
-        return CyclopsCollectable.super.sum();
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#sum(java.util.function.Function)
-     */
-    @Override
-    default <U> Optional<U> sum(final Function<? super T, ? extends U> function) {
-
-        return CyclopsCollectable.super.sum(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#sumInt(java.util.function.ToIntFunction)
-     */
-    @Override
-    default int sumInt(final ToIntFunction<? super T> function) {
-
-        return CyclopsCollectable.super.sumInt(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#sumLong(java.util.function.ToLongFunction)
-     */
-    @Override
-    default long sumLong(final ToLongFunction<? super T> function) {
-
-        return CyclopsCollectable.super.sumLong(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#sumDouble(java.util.function.ToDoubleFunction)
-     */
-    @Override
-    default double sumDouble(final ToDoubleFunction<? super T> function) {
-
-        return CyclopsCollectable.super.sumDouble(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#avg()
-     */
-    @Override
-    default Optional<T> avg() {
-
-        return CyclopsCollectable.super.avg();
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#avg(java.util.function.Function)
-     */
-    @Override
-    default <U> Optional<U> avg(final Function<? super T, ? extends U> function) {
-
-        return CyclopsCollectable.super.avg(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#avgInt(java.util.function.ToIntFunction)
-     */
-    @Override
-    default double avgInt(final ToIntFunction<? super T> function) {
-
-        return CyclopsCollectable.super.avgInt(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#avgLong(java.util.function.ToLongFunction)
-     */
-    @Override
-    default double avgLong(final ToLongFunction<? super T> function) {
-
-        return CyclopsCollectable.super.avgLong(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#avgDouble(java.util.function.ToDoubleFunction)
-     */
-    @Override
-    default double avgDouble(final ToDoubleFunction<? super T> function) {
-
-        return CyclopsCollectable.super.avgDouble(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#min()
-     */
-    @Override
-    default Optional<T> min() {
-
-        return CyclopsCollectable.super.min();
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#min(java.util.function.Function)
-     */
-    @Override
-    default <U extends Comparable<? super U>> Optional<U> min(final Function<? super T, ? extends U> function) {
-
-        return CyclopsCollectable.super.min(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#min(java.util.function.Function, java.util.Comparator)
-     */
-    @Override
-    default <U> Optional<U> min(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
-
-        return CyclopsCollectable.super.min(function, comparator);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#minBy(java.util.function.Function)
-     */
-    @Override
-    default <U extends Comparable<? super U>> Optional<T> minBy(final Function<? super T, ? extends U> function) {
-
-        return CyclopsCollectable.super.minBy(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#minBy(java.util.function.Function, java.util.Comparator)
-     */
-    @Override
-    default <U> Optional<T> minBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
-
-        return CyclopsCollectable.super.minBy(function, comparator);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#max()
-     */
-    @Override
-    default Optional<T> max() {
-
-        return CyclopsCollectable.super.max();
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#max(java.util.function.Function)
-     */
-    @Override
-    default <U extends Comparable<? super U>> Optional<U> max(final Function<? super T, ? extends U> function) {
-
-        return CyclopsCollectable.super.max(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#max(java.util.function.Function, java.util.Comparator)
-     */
-    @Override
-    default <U> Optional<U> max(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
-
-        return CyclopsCollectable.super.max(function, comparator);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#maxBy(java.util.function.Function)
-     */
-    @Override
-    default <U extends Comparable<? super U>> Optional<T> maxBy(final Function<? super T, ? extends U> function) {
-
-        return CyclopsCollectable.super.maxBy(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#maxBy(java.util.function.Function, java.util.Comparator)
-     */
-    @Override
-    default <U> Optional<T> maxBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
-
-        return CyclopsCollectable.super.maxBy(function, comparator);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#median()
-     */
-    @Override
-    default Optional<T> median() {
-
-        return CyclopsCollectable.super.median();
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#median(java.util.Comparator)
-     */
-    @Override
-    default Optional<T> median(final Comparator<? super T> comparator) {
-
-        return CyclopsCollectable.super.median(comparator);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#medianBy(java.util.function.Function)
-     */
-    @Override
-    default <U extends Comparable<? super U>> Optional<T> medianBy(final Function<? super T, ? extends U> function) {
-
-        return CyclopsCollectable.super.medianBy(function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#medianBy(java.util.function.Function, java.util.Comparator)
-     */
-    @Override
-    default <U> Optional<T> medianBy(final Function<? super T, ? extends U> function, final Comparator<? super U> comparator) {
-
-        return CyclopsCollectable.super.medianBy(function, comparator);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentile(double)
-     */
-    @Override
-    default Optional<T> percentile(final double percentile) {
-
-        return CyclopsCollectable.super.percentile(percentile);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentile(double, java.util.Comparator)
-     */
-    @Override
-    default Optional<T> percentile(final double percentile, final Comparator<? super T> comparator) {
-
-        return CyclopsCollectable.super.percentile(percentile, comparator);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentileBy(double, java.util.function.Function)
-     */
-    @Override
-    default <U extends Comparable<? super U>> Optional<T> percentileBy(final double percentile, final Function<? super T, ? extends U> function) {
-
-        return CyclopsCollectable.super.percentileBy(percentile, function);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#percentileBy(double, java.util.function.Function, java.util.Comparator)
-     */
-    @Override
-    default <U> Optional<T> percentileBy(final double percentile, final Function<? super T, ? extends U> function,
-            final Comparator<? super U> comparator) {
-
-        return CyclopsCollectable.super.percentileBy(percentile, function, comparator);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#toList(java.util.function.Supplier)
-     */
-    @Override
-    default <L extends List<T>> L toList(final Supplier<L> factory) {
-
-        return CyclopsCollectable.super.toList(factory);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#toSet(java.util.function.Supplier)
-     */
-    @Override
-    default <S extends Set<T>> S toSet(final Supplier<S> factory) {
-
-        return CyclopsCollectable.super.toSet(factory);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#toMap(java.util.function.Function, java.util.function.Function)
-     */
-    @Override
-    default <K, V> Map<K, V> toMap(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
-
-        return CyclopsCollectable.super.toMap(keyMapper, valueMapper);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#toString(java.lang.CharSequence)
-     */
-    @Override
-    default String toString(final CharSequence delimiter) {
-
-        return CyclopsCollectable.super.toString(delimiter);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#toString(java.lang.CharSequence, java.lang.CharSequence, java.lang.CharSequence)
-     */
-    @Override
-    default String toString(final CharSequence delimiter, final CharSequence prefix, final CharSequence suffix) {
-
-        return CyclopsCollectable.super.toString(delimiter, prefix, suffix);
-    }
 
     @Override
     default Optional<T> max(final Comparator<? super T> comparator) {
@@ -4270,38 +3728,22 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default void printErr() {
 
-        JoolWindowing.super.printErr();
+        seq().printErr();
     }
 
     @Override
     default void print(final PrintWriter writer) {
 
-        JoolWindowing.super.print(writer);
+        seq().print(writer);
     }
 
     @Override
     default void print(final PrintStream stream) {
 
-        JoolWindowing.super.print(stream);
+        seq().print(stream);
     }
     
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#crossApply(java.util.function.Function)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> crossApply(Function<? super T, ? extends Iterable<? extends U>> function) {
-        
-        return (ReactiveSeq)JoolManipulation.super.crossApply(function);
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#outerApply(java.util.function.Function)
-     */
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> outerApply(Function<? super T, ? extends Iterable<? extends U>> function) {
-        
-        return (ReactiveSeq)JoolManipulation.super.outerApply(function);
-    }
-    /* (non-Javadoc)
+     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#concat(java.lang.Iterable)
      */
     @Override
@@ -4390,49 +3832,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return fromStream(JoolManipulation.super.prepend(other));
     }
   
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#cycle(long)
-     */
-    @Override
-    default ReactiveSeq<T> cycle(long times) {
-        
-        return (ReactiveSeq<T>)JoolManipulation.super.cycle(times);
-    }
-  
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#skipWhileClosed(java.util.function.Predicate)
-     */
-    @Override
-    default ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
-        
-        return (ReactiveSeq<T>)JoolManipulation.super.skipWhileClosed(predicate);
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#limitWhileClosed(java.util.function.Predicate)
-     */
-    @Override
-    default ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
-        
-        return (ReactiveSeq<T>)JoolManipulation.super.limitWhileClosed(predicate);
-    }
 
- 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#sorted(java.util.function.Function, java.util.Comparator)
-     */
-    @Override
-    default <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
-        
-        return (ReactiveSeq<T>)JoolManipulation.super.sorted(function, comparator);
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#sliding(long)
-     */
-    @Override
-    default ReactiveSeq<Seq<T>> sliding(long size) {
-        
-        return (ReactiveSeq<Seq<T>>)JoolManipulation.super.sliding(size);
-    }
+    ReactiveSeq<T> cycle(long times);
+  
+
+    ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate);
+
+    ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate);
+    <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
+
+
   
 
     

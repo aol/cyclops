@@ -80,7 +80,6 @@ import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
 import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.types.stream.reactive.FutureStreamSynchronousPublisher;
 import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F3;
@@ -429,31 +428,6 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
         return (LazyFutureStream<R>)ReactiveSeq.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
 
-    /**
-     * Transform the elements of this Stream with a Pattern Matching case and default value
-     *
-     * <pre>
-     * {@code
-     * List<String> result = LazyFutureStream.of(1,2,3,4)
-                                              .patternMatch(
-                                                        c->c.hasValuesWhere( (Integer i)->i%2==0 ).then(i->"even")
-                                                      )
-    
-     * }
-     * // LazyFutureStream["odd","even","odd","even"]
-     * </pre>
-     *
-     *
-     * @param case1 Function to generate a case (or chain of cases as a single case)
-     * @return LazyFutureStream where elements are transformed by pattern matching
-     */
-    @Override
-    default <R> LazyFutureStream<R> patternMatch(final Function<CheckValue1<U, R>, CheckValue1<U, R>> case1, final Supplier<? extends R> otherwise) {
-
-        return map(u -> Matchables.supplier(() -> u)
-                                  .matches(case1, otherwise)
-                                  .get());
-    }
 
     /**
      * Remove all occurances of the specified element from the SequenceM
@@ -1726,7 +1700,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     @Override
     default LazyFutureStream<U> concat(final Stream<? extends U> other) {
         return fromStream(Stream.concat(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false),
-                                        StreamSupport.stream(Spliterators.spliteratorUnknownSize(other.iterator(), Spliterator.ORDERED), false)));
+                                        StreamSupport.stream(other.spliterator(), false)));
 
     }
 
@@ -1976,7 +1950,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      */
     @Override
     default LazyFutureStream<ListX<U>> sliding(final int size, final int increment) {
-        //return this.fromStream(SlidingWindow.sliding(this,size, increment));
+
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                                      .sliding(size, increment));
 
@@ -2002,7 +1976,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @see #duplicate(Stream)
      */
     @Override
-    default Tuple2<Seq<U>, Seq<U>> duplicate() {
+    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate() {
         return ReactiveSeq.super.duplicate();
 
     }

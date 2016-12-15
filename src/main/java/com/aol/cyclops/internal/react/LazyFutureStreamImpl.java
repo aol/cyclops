@@ -230,7 +230,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
         return StreamUtils.primedPausableHotStream(this, e);
     }
 
-    @Override
+   // @Override
     public String format() {
         return Seq.seq(this)
                   .format();

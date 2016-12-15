@@ -1,5 +1,13 @@
 package com.aol.cyclops.data;
 
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.To;
+import com.aol.cyclops.types.Unit;
+import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import lombok.ToString;
+
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -7,17 +15,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
-
-import lombok.ToString;
 
 /**
  * A class that represents an 'immutable' value that is generated inside a lambda
@@ -44,7 +41,7 @@ import lombok.ToString;
  */
 @ToString
 
-public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consumer<T>, Matchable.ValueAndOptionalMatcher<T>, Functor<T>, ApplicativeFunctor<T> {
+public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consumer<T>, Functor<T>, ApplicativeFunctor<T> {
     private final static Object UNSET = new Object();
     private final AtomicReference value = new AtomicReference<>(
                                                                 UNSET);
@@ -104,14 +101,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
             return LazyImmutable.of(fn.apply(val));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    public <R> LazyImmutable<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (com.aol.cyclops.data.LazyImmutable<R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
-    }
 
     /**
      * FlatMap the value stored in Immutable Closed Value from one Value to another
@@ -207,13 +197,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
         return LazyImmutable.of(unit);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.value.Value#toLazyImmutable()
-     */
-    @Override
-    public LazyImmutable<T> toLazyImmutable() {
-        return this;
-    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)

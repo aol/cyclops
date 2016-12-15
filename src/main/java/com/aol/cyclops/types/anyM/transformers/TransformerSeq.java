@@ -31,8 +31,6 @@ import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.ToStream;
-import com.aol.cyclops.types.stream.future.FutureOperations;
-import com.aol.cyclops.types.stream.lazy.LazyOperations;
 
 public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,ConvertableSequence<T>, Traversable<T>, Sequential<T>, Iterable<T>,
 

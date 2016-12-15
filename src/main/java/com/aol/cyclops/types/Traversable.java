@@ -13,6 +13,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.stream.CyclopsCollectable;
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -23,8 +25,6 @@ import org.reactivestreams.Subscriber;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.stream.future.FutureOperations;
-import com.aol.cyclops.types.stream.lazy.LazyOperations;
 
 /**
  * A non-scalar navigatable data type
@@ -33,9 +33,19 @@ import com.aol.cyclops.types.stream.lazy.LazyOperations;
  *
  * @param <T> The data type of the elements in this Traversable
  */
-public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Zippable<T>{
+public interface Traversable<T> extends Publisher<T>,
+                                        OnEmpty<T>,
+                                        Zippable<T>,
+                                        ReactiveStreamsTerminalOperations<T>,
+                                        CyclopsCollectable<T>,
+                                        IterableFoldable<T>,
+                                        IterableFilterable<T>,
+                                        FilterableFunctor<T>{
 
-     
+
+    default Seq<T> seq(){
+        return Seq.seq(this);
+    }
     /**
      * @return This Traversable converted to a Stream
      */
@@ -485,7 +495,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
      * @param classifier Grouping function
      * @return Traversable of grouped data
      */
-    default <K> Traversable<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> Traversable<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return traversable().grouped(classifier);
     }
 
@@ -840,26 +850,7 @@ public interface Traversable<T> extends Iterable<T>, Publisher<T>, OnEmpty<T>, Z
         return traversable().shuffle();
     }
 
-    /**
-     * Access asynchronous terminal operations (each returns a Future)
-     * 
-     * @param exec
-     *            Executor to use for Stream execution
-     * @return Async Future Terminal Operations
-     */
-    default FutureOperations<T> futureOperations(final Executor exec) {
-        return traversable().futureOperations(exec);
-    }
 
-    /**
-     * Access a set of Lazy terminal operations (each returns an Eval)
-     * 
-     * @return Lazy Terminal Operations
-     */
-    default LazyOperations<T> lazyOperations() {
-        return new LazyOperations<T>(
-                                     ReactiveSeq.fromIterable(traversable()));
-    }
 
     /**
      * assertThat(ReactiveSeq.of(1,2,3,4,5) .skipLast(2)

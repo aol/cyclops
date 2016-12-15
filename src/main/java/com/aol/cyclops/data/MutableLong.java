@@ -1,14 +1,9 @@
 package com.aol.cyclops.data;
 
 import java.util.OptionalLong;
-import java.util.function.Function;
-import java.util.function.LongConsumer;
-import java.util.function.LongFunction;
-import java.util.function.LongSupplier;
-import java.util.function.LongUnaryOperator;
+import java.util.function.*;
 import java.util.stream.LongStream;
 
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.To;
 
 import lombok.AllArgsConstructor;
@@ -43,7 +38,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer, Matchable.ValueAndOptionalMatcher<Long> {
+public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer, Supplier<Long> {
 
     private long var;
 

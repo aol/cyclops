@@ -46,7 +46,7 @@ import com.aol.cyclops.util.function.F3;
  * @param <T> the type of elements held in this collection
  */
 public interface ListX<T> extends To<ListX<T>>,
-                                List<T>, 
+                                  List<T>,
                                  MutableCollectionX<T>, 
                                  MutableSequenceX<T>, 
                                  Comparable<T>, 
@@ -383,13 +383,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return fromIterable(() -> it);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    default <R> ListX<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-        return (ListX<R>) MutableCollectionX.super.patternMatch(case1, otherwise);
-    }
+
 
     /* (non-Javadoc)
      * @see java.util.Collection#stream()
@@ -591,7 +585,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function)
      */
     @Override
-    default <K> ListX<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> ListX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return (ListX) MutableCollectionX.super.grouped(classifier);
     }
 

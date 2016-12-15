@@ -25,7 +25,6 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Test;
 
 import com.aol.cyclops.Semigroups;
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;

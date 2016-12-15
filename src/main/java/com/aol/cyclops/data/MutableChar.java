@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.To;
 
 import lombok.AllArgsConstructor;
@@ -39,7 +38,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableChar implements To<MutableChar>,Supplier<Character>, Consumer<Character>, Matchable.ValueAndOptionalMatcher<Character> {
+public class MutableChar implements To<MutableChar>,Supplier<Character>, Consumer<Character> {
 
     private char var;
 

@@ -71,7 +71,6 @@ import com.aol.cyclops.internal.stream.operators.SkipLastOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileTimeOperator;
 import com.aol.cyclops.internal.stream.operators.WindowStatefullyWhileOperator;
-import com.aol.cyclops.internal.stream.spliterators.LimitLastOneSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.LimitLastSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
@@ -81,7 +80,6 @@ import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.NonPausableHotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
-import com.aol.cyclops.types.stream.future.FutureOperations;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
@@ -1065,10 +1063,7 @@ public class StreamUtils {
                  .stream();
     }
 
-    public final static <T> FutureOperations<T> futureOperations(final Stream<T> stream, final Executor exec) {
-        return new ReactiveSeqFutureOpterationsImpl<T>(
-                                                       exec, reactiveSeq(stream, Optional.empty(),Optional.empty()));
-    }
+
 
     public final static <T> T firstValue(final Stream<T> stream) {
         return stream.findAny()

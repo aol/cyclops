@@ -1,16 +1,14 @@
 package com.aol.cyclops.data;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.To;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Class that represents a Closed Variable
@@ -40,7 +38,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class Mutable<T> implements To<Mutable<T>>,Supplier<T>, Consumer<T>, Matchable.ValueAndOptionalMatcher<T> {
+public class Mutable<T> implements To<Mutable<T>>,Supplier<T>, Consumer<T> {
 
     private T var;
 
@@ -152,12 +150,6 @@ public class Mutable<T> implements To<Mutable<T>>,Supplier<T>, Consumer<T>, Matc
 
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.value.Value#toMutable()
-     */
-    @Override
-    public Mutable<T> toMutable() {
-        return this;
-    }
+
 
 }

@@ -1,16 +1,14 @@
 package com.aol.cyclops.data;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.types.To;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Class that represents a Closed Variable
@@ -39,7 +37,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableFloat implements To<MutableFloat>,Supplier<Float>, Consumer<Float>, Matchable.ValueAndOptionalMatcher<Float> {
+public class MutableFloat implements To<MutableFloat>,Supplier<Float>, Consumer<Float>{
 
     private float var;
 

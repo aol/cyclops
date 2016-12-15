@@ -19,8 +19,6 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Matchable;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
@@ -41,13 +39,12 @@ import com.aol.cyclops.util.function.F3;
  *
  * @param <T> Data types of elements managed by wrapped scalar Monad.
  */
-public interface AnyMValue<W extends WitnessType<W>,T> extends AnyM<W,T>, 
-                                                            Value<T>, 
-                                                            Filterable<T>,
-                                                            Combiner<T>, 
-                                                            ApplicativeFunctor<T>, 
-                                                            MonadicValue<T>, 
-                                                            Matchable.ValueAndOptionalMatcher<T> {
+public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
+                                                                Value<T>,
+                                                                Filterable<T>,
+                                                                Combiner<T>,
+                                                                ApplicativeFunctor<T>,
+                                                                MonadicValue<T> {
 
     
     
@@ -115,12 +112,6 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends AnyM<W,T>,
         return opt.isPresent() ? "AnyMValue[" + get() + "]" : "AnyMValue[]";
     }
 
-    /**
-     * @return First value in this Monad
-     */
-    default Value<T> toFirstValue() {
-        return () -> firstOrNull(toListX());
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
@@ -167,14 +158,6 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends AnyM<W,T>,
         return (AnyMValue<W,R>) AnyM.super.trampoline(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    default <R> AnyMValue<W,R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-
-        return (AnyMValue<W,R>) AnyM.super.patternMatch(case1, otherwise);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
@@ -281,7 +264,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends AnyM<W,T>,
     }
 
 
-   
+
     @Override
     default <T2, R> AnyMValue<W,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         if (this.unwrap() instanceof ApplicativeFunctor) {
@@ -306,7 +289,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends AnyM<W,T>,
     @Override
     default Iterator<T> iterator() {
 
-        return Matchable.ValueAndOptionalMatcher.super.iterator();
+        return AnyM.super.iterator();
     }
 
     @Override

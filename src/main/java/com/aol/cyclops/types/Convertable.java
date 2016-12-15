@@ -28,27 +28,7 @@ import lombok.Value;
  */
 public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
 
-    /**
-     * An equivalent operation to {@link java.util.stream.Stream#collect(Collector)}
-     * 
-     * @param collector Collector to create new Collection
-     * @return Collected data
-     */
-    default <R, A> R collect(final Collector<? super T, A, R> collector) {
-        return toStream().collect(collector);
-    }
 
-    /**
-     *  An equivalent operation to {@link java.util.stream.Stream#collect(Supplier, BiConsumer, BiConsumer)}
-     * 
-     * @param supplier Supplier that creates the datastructure to collect results in
-     * @param accumulator Accumulation function
-     * @param combiner Combiner
-     * @return Collected datastructure
-     */
-    default <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
-        return toStream().collect(supplier, accumulator, combiner);
-    }
 
     /* Present is executed and it's return value returned if the value is both present, otherwise absent is called and its return value returned
      * 
@@ -142,21 +122,6 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
                      .map(Optional::get);
     }
 
-    /**
-     * @return An AtomicReference containing value returned by get()
-     */
-    default AtomicReference<T> toAtomicReference() {
-        return new AtomicReference<T>(
-                                      get());
-    }
-
-    /**
-     * @return An Optional AtomicReference containing value returned by get(), Optional.empty if get() returns null
-     */
-    default Optional<AtomicReference<T>> toOptionalAtomicReference() {
-        return toOptional().map(u -> new AtomicReference<T>(
-                                                            u));
-    }
 
     /**Get the contained value or else the provided alternative
      * 
@@ -178,15 +143,7 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
         return toOptional().orElseThrow(ex);
     }
 
-    /**
-     * @return A List containing value returned by get(), if get() returns null an Empty List is returned
-     */
-    default List<T> toList() {
-        final Optional<T> opt = toOptional();
-        if (opt.isPresent())
-            return Arrays.asList(get());
-        return Arrays.asList();
-    }
+
 
     /* An Iterator over the list returned from toList()
      * 
@@ -195,7 +152,11 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
      */
     @Override
     default Iterator<T> iterator() {
-        return toList().iterator();
+        final Optional<T> opt = toOptional();
+        if (opt.isPresent())
+            return Arrays.asList(get()).iterator();
+        return Arrays.<T>asList().iterator();
+
     }
 
     /**

@@ -5,7 +5,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.Matchable;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.react.async.subscription.Continueable;
@@ -24,8 +23,8 @@ public interface Adapter<T> {
     /**
      * @return A structural Pattern Matcher for this Adapter that allows matching on  Queue / Topic types
      */
-    default Matchable.MXor<Queue<T>, Topic<T>> matches() {
-        return visit(q -> () -> Xor.secondary(q), topic -> () -> Xor.primary(topic));
+    default Xor<Queue<T>, Topic<T>> matches() {
+        return visit(q -> Xor.secondary(q), topic -> Xor.primary(topic));
     }
 
     /**
