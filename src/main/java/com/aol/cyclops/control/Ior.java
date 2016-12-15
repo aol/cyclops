@@ -388,14 +388,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
         return () -> both();
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    default <R> Xor<ST, R> patternMatch(final Function<CheckValue1<PT, R>, CheckValue1<PT, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (Xor<ST, R>) MonadicValue.super.patternMatch(case1, otherwise);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
@@ -457,39 +450,6 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
                          .visit((a, b) -> both.apply(a, b));
     }
 
-    /**
-     * Pattern match on the value/s inside this Ior.
-     * 
-     * <pre>
-     * {@code 
-     * import static com.aol.cyclops.control.Matchable.otherwise;
-       import static com.aol.cyclops.control.Matchable.then;
-       import static com.aol.cyclops.control.Matchable.when;
-       import static com.aol.cyclops.util.function.Predicates.instanceOf;
-
-       Ior.primary(10)
-          .matches(c->c.is(when("10"),then("hello")),
-                   c->c.is(when(instanceOf(Integer.class)), then("error")),
-                   c->c.is(when("10",10), then("boo!")),
-                   otherwise("miss"));
-                   
-       //Eval["error"]
-     * 
-     * 
-     * }
-     * </pre>
-     * 
-     * 
-     * 
-     * 
-     * @param secondary Pattern matching function executed if this Ior has the secondary type only
-     * @param primary Pattern matching function executed if this Ior has the primary type only
-     * @param both Pattern matching function executed if this Ior has both types
-     * @param otherwise Supplier used to provide a value if the selecting pattern matching function fails to find a match
-     * @return Lazy result of the pattern matching
-     */
-    <R> Eval<R> matches(Function<CheckValue1<ST, R>, CheckValue1<ST, R>> secondary, Function<CheckValue1<PT, R>, CheckValue1<PT, R>> primary,
-            Function<CheckValue2<ST, PT, R>, CheckValue2<ST, PT, R>> both, Supplier<? extends R> otherwise);
 
     /* (non-Javadoc)
      * @see java.util.function.Supplier#get()
@@ -1068,18 +1028,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
                       .visit(s -> Ior.secondary(null), f -> Ior.primary(fn.apply(get(), app.get())));
         }
 
-        @Override
-        public <R> Eval<R> matches(
-                final Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> secondary,
-                final Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> primary,
-                final Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> both,
-                final Supplier<? extends R> otherwise) {
 
-            final Matchable.MTuple1<PT> mt1 = () -> Tuple.tuple(value);
-            return mt1.matches(primary, otherwise);
-        }
-
-    }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @EqualsAndHashCode(of = { "value" })
@@ -1221,13 +1170,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
             return Optional.empty();
         }
 
-        /* (non-Javadoc)
-         * @see com.aol.cyclops.value.Value#unapply()
-         */
-        @Override
-        public ListX<ST> unapply() {
-            return ListX.of(value);
-        }
+
 
         @Override
         public String toString() {
@@ -1239,16 +1182,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
             return "Ior.secondary[" + value + "]";
         }
 
-        @Override
-        public <R> Eval<R> matches(
-                final Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> fn1,
-                final Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn2,
-                final Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
-                final Supplier<? extends R> otherwise) {
-            final Matchable.MTuple1<ST> mt1 = () -> Tuple.tuple(value);
-            return mt1.matches(fn1, otherwise);
 
-        }
 
         /* (non-Javadoc)
          * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
@@ -1417,16 +1351,6 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>,Supplier<PT>, MonadicValue<
             return "Ior.both[" + primary.toString() + ":" + secondary.toString() + "]";
         }
 
-        @Override
-        public <R> Eval<R> matches(
-                final Function<com.aol.cyclops.control.Matchable.CheckValue1<ST, R>, com.aol.cyclops.control.Matchable.CheckValue1<ST, R>> fn1,
-                final Function<com.aol.cyclops.control.Matchable.CheckValue1<PT, R>, com.aol.cyclops.control.Matchable.CheckValue1<PT, R>> fn2,
-                final Function<com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>, com.aol.cyclops.control.Matchable.CheckValue2<ST, PT, R>> fn3,
-                final Supplier<? extends R> otherwise) {
-            final Matchable.MTuple2<ST, PT> mt2 = () -> Tuple.tuple(secondary.secondaryGet(), primary.get());
-            return mt2.matches(fn3, otherwise);
-
-        }
 
         /* (non-Javadoc)
          * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)

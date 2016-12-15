@@ -22,7 +22,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
@@ -293,40 +292,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
 
     }
 
-    /**
-     * Pattern match on the value/s inside this Try
-     * 
-     * <pre>
-     * {@code 
-     * 
-     * import static com.aol.cyclops.control.Matchable.otherwise;
-       import static com.aol.cyclops.control.Matchable.then;
-       import static com.aol.cyclops.control.Matchable.when;
-       import static com.aol.cyclops.util.function.Predicates.instanceOf;
-       
-       
-     *   Try.success(10)
-     *      .matches(c->c.is(when(10),then("hello")),
-                     c->c.is(when(instanceOf(Throwable.class)), then("error")),
-                     otherwise("miss"))
-            .get()
-            
-         //"hello"
-     * 
-     * }
-     * </pre>
-     * 
-     * 
-     * @param successCase Pattern matching function executed if this Try is a Success
-     * @param failureCase Pattern matching function executed if this Try is a Failure
-     * @param otherwise Supplier used to provide a value if the selecting pattern matching function fails to find a match
-     * @return Lazy result of the pattern matching
-     */
-    default <R> Eval<R> matches(final Function<CheckValue1<T, R>, CheckValue1<T, R>> successCase,
-            final Function<CheckValue1<X, R>, CheckValue1<X, R>> failureCase, final Supplier<? extends R> otherwise) {
-        return toXor().swap()
-                      .matches(successCase, failureCase, otherwise);
-    }
+
 
     
     /**
@@ -501,14 +467,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
         return success(value);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    default <R> Try<R, X> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (Try<R, X>) MonadicValue.super.patternMatch(case1, otherwise);
-    }
 
     /**
      * Execute one function conditional on Try state (Success / Failure)
@@ -1042,10 +1001,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
         private final T value;
         private final Class<? extends Throwable>[] classes;
 
-        @Override
-        public ListX<T> unapply() {
-            return ListX.of(value);
-        }
+
 
         @Override
         public Xor<X, T> toXor() {
@@ -1344,11 +1300,6 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
         @Override
         public String mkString() {
             return "Failure[" + error + "]";
-        }
-
-        @Override
-        public ListX<X> unapply() {
-            return ListX.of(error);
         }
 
         private final X error;

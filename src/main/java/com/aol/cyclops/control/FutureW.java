@@ -561,51 +561,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
                                       );
     }
 
-    /**
-     * Asychronously pattern match on the value inside this FutureW once it becomes available.
-     * 
-     * <pre>
-     * {@code 
-     * 
-       import static com.aol.cyclops.control.Matchable.otherwise;
-       import static com.aol.cyclops.control.Matchable.then;
-       import static com.aol.cyclops.control.Matchable.when;
-       import static com.aol.cyclops.util.function.Predicates.instanceOf;
 
-       FutureW.ofResult(10).matches(c->c.is(when(10),then("hello")),
-                                    c->c.is(when(instanceOf(Throwable.class)), then("error")),
-                                    otherwise("miss"));
-       //FutureW["hello"]
-        
-       FutureW.ofResult(10).matches(c->c.is(when(10),then("hello")).is(when(2),then("hello")),
-                                    c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
-                                    otherwise("miss"));
-       //FutureW["hello"]
-            
-       FutureW.ofResult(10).matches(c->c.is(when(1),then("hello"))
-                                        .is(when(2),then(()->"hello"))
-                                        .is(when(3),then(()->"hello")),
-                                    c->c.is(when(Predicates.instanceOf(Throwable.class)), then("error")),
-                                    otherwise("miss"));
-       //FutureW["miss"]
-     * 
-     * }
-     * </pre>
-     * 
-     * @param successCase Pattern matching function executed if this FutureW completes the previous stage successfully
-     * @param failureCase Pattern matching function executed if this FutureW completes the previous stage with an exception
-     * @param otherwise Supplier used to provide a value if the selecting pattern matching function fails to find a match
-     * @return FutureW containing result asynchronously populated by pattern matching on the result of previous stage
-     */
-    public <R> FutureW<R> matches(final Function<CheckValue1<T, R>, CheckValue1<T, R>> successCase,
-            final Function<CheckValue1<Throwable, R>, CheckValue1<Throwable, R>> failureCase, final Supplier<? extends R> otherwise) {
-       return this.map(t->Matchable.of(t)
-                                 .matches(successCase, otherwise)
-                                 .get())
-                    .recover(e->Matchable.of(e)
-                             .matches(failureCase, otherwise)
-                             .get()); 
-    }
     
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
@@ -782,18 +738,7 @@ public class FutureW<T> implements To<FutureW<T>>,ConvertableFunctor<T>, Applica
                               future.thenApplyAsync(fn,ex));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function,
-     * java.util.function.Supplier)
-     */
-    @Override
-    public <R> FutureW<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-
-        return (FutureW<R>) MonadicValue.super.patternMatch(case1, otherwise);
-    }
+    
 
     /*
      * (non-Javadoc)

@@ -99,7 +99,7 @@ import lombok.AllArgsConstructor;
 public interface Maybe<T> extends To<Maybe<T>>,
                                   MonadicValue<T>, 
                                   Zippable<T>,
-                                  Supplier<T>, ConvertableFunctor<T>, Filterable<T>, ApplicativeFunctor<T>, Matchable.ValueAndOptionalMatcher<T> {
+                                  Supplier<T>, ConvertableFunctor<T>, Filterable<T>, ApplicativeFunctor<T> {
 
    
     public static <T,R> Function<? super T, ? extends Maybe<R>> arrow(Function<?  super T, ? extends R> fn){
@@ -798,14 +798,6 @@ public interface Maybe<T> extends To<Maybe<T>>,
         return (Maybe<R>) MonadicValue.super.trampoline(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    default <R> Maybe<R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
-
-        return (Maybe<R>) MonadicValue.super.patternMatch(case1, otherwise);
-    }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Just<T> implements Maybe<T> {
