@@ -15,6 +15,7 @@ import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
+import com.aol.cyclops.types.stream.reactive.ReactiveTask;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
@@ -243,7 +244,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     }
 
     @Override
-    public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(final Predicate<T> splitter) {
+    public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(final Predicate<? super T> splitter) {
         return StreamUtils.partition(this, splitter)
                           .map1(s -> StreamUtils.reactiveSeq(s, reversible.map(r -> r.copy()),split))
                           .map2(s -> StreamUtils.reactiveSeq(s, reversible.map(r -> r.copy()),split));
@@ -1150,6 +1151,48 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
             return prependStream((Stream<T>) value);
         }
         return prepend((T[]) new Object[] { value });
+    }
+
+    @Override
+    public <X extends Throwable> ReactiveTask forEachX(Executor ex,final long numberOfElements, final Consumer<? super T> consumer) {
+        return new ReactiveTask(
+                ex, FutureStreamUtils.forEachX(this, numberOfElements, consumer)
+                .map2(r -> CompletableFuture.runAsync(r, ex)));
+    }
+
+    @Override
+    public <X extends Throwable> ReactiveTask forEachXWithError(Executor ex,final long numberOfElements, final Consumer<? super T> consumer,
+                                                                final Consumer<? super Throwable> consumerError) {
+        return new ReactiveTask(
+                ex, FutureStreamUtils.forEachXWithError(this, numberOfElements, consumer, consumerError)
+                .map2(r -> CompletableFuture.runAsync(r, ex)));
+
+    }
+
+    @Override
+    public <X extends Throwable> ReactiveTask forEachXEvents(Executor ex,final long numberOfElements, final Consumer<? super T> consumer,
+                                                             final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
+        return new ReactiveTask(
+                ex, FutureStreamUtils.forEachXEvents(this, numberOfElements, consumer, consumerError, onComplete)
+                .map2(r -> CompletableFuture.runAsync(r, ex)));
+
+    }
+
+    @Override
+    public <X extends Throwable> ReactiveTask forEachWithError(Executor ex,final Consumer<? super T> consumerElement,
+                                                               final Consumer<? super Throwable> consumerError) {
+
+        return new ReactiveTask(
+                ex, FutureStreamUtils.forEachWithError(this, consumerElement, consumerError)
+                .map2(r -> CompletableFuture.runAsync(r, ex)));
+    }
+
+    @Override
+    public <X extends Throwable> ReactiveTask forEachEvent(Executor ex,final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
+                                                           final Runnable onComplete) {
+        return new ReactiveTask(
+                ex, FutureStreamUtils.forEachEvent(this, consumerElement, consumerError, onComplete)
+                .map2(r -> CompletableFuture.runAsync(r, ex)));
     }
 
 }

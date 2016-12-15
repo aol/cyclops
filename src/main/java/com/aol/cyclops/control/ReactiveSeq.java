@@ -3890,4 +3890,5 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<T> retainAll(final T... values) {
         return (ReactiveSeq<T>)ExtendedTraversable.super.retainAll(values);
     }
+
 }

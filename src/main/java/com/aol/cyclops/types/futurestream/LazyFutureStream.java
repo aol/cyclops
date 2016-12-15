@@ -1957,7 +1957,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @see #partition(Predicate)
      */
     default Tuple2<LazyFutureStream<U>, LazyFutureStream<U>> partitionFutureStream(final Predicate<? super U> predicate) {
-        final Tuple2<Seq<U>, Seq<U>> partition = partition(predicate);
+        final Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partition = partition(predicate);
         return new Tuple2(
                           fromStream(partition.v1), fromStream(partition.v2));
     }

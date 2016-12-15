@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -17,6 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.stream.reactive.ReactiveTask;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.function.Function3;
@@ -31,7 +33,6 @@ import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Trampoline;
@@ -411,7 +412,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      */
     @Override
     default <R> ZippingApplicativable<R> ap1(final Function<? super T, ? extends R> fn) {
-        val dup = stream().duplicateSequence();
+        val dup = stream().duplicate();
         final Streamable<T> streamable = dup.v1.toStreamable();
         return new ApplyingZippingApplicativeBuilder<T, R, ZippingApplicativable<R>>(
                                                                                      streamable, streamable).applicative(fn)
@@ -448,22 +449,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
         return () -> firstOrNull(toListX());
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.ConvertableSequence#toXor()
-     */
-    @Override
-    default Xor<?, ListX<T>> toXor() {
-        return toValue().toXor();
-    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.ConvertableSequence#toXorSecondary()
-     */
-    @Override
-    default Xor<ListX<T>, ?> toXorSecondary() {
-        return toValue().toXor()
-                        .swap();
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
@@ -483,14 +469,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
         return (AnyMSeq<W,R>) ZippingApplicativable.super.trampoline(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#patternMatch(java.lang.Object, java.util.function.Function)
-     */
-    @Override
-    default <R> AnyMSeq<W,R> patternMatch(final Function<CheckValue1<T, R>, CheckValue1<T, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (AnyMSeq<W,R>) ZippingApplicativable.super.patternMatch(case1, otherwise);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#cycle(int)
@@ -549,27 +528,20 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> AnyMSeq<W,R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> AnyMSeq<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return fromIterable(ZippingApplicativable.super.zip(other, zipper));
+        return fromIterable(ZippingApplicativable.super.zipS(other, zipper));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> AnyMSeq<W,R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return fromIterable(ZippingApplicativable.super.zip(other, zipper));
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> AnyMSeq<W,Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> AnyMSeq<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return fromIterable(ZippingApplicativable.super.zip(other));
+        return fromIterable(ZippingApplicativable.super.zipS(other));
     }
 
     /* (non-Javadoc)
@@ -581,20 +553,13 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
         return fromIterable(ZippingApplicativable.super.zip(other));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> AnyMSeq<W,Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
-        return fromIterable(ZippingApplicativable.super.zip(other));
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> AnyMSeq<W,Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> AnyMSeq<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return fromIterable(ZippingApplicativable.super.zip3(second, third));
     }
@@ -603,8 +568,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> AnyMSeq<W,Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> AnyMSeq<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
 
         return fromIterable(ZippingApplicativable.super.zip4(second, third, fourth));
     }
@@ -721,7 +686,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function)
      */
     @Override
-    default <K> AnyMSeq<W,Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> AnyMSeq<W,Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
 
         return fromIterable(ZippingApplicativable.super.grouped(classifier));
     }
@@ -966,7 +931,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
     @Override
     default <U> AnyMSeq<W,U> ofType(final Class<? extends U> type) {
 
-        return (AnyMSeq<W,U>) FilterableFunctor.super.ofType(type);
+        return (AnyMSeq<W,U>) ExtendedTraversable.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -974,7 +939,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
      */
     @Override
     default AnyMSeq<W,T> filterNot(final Predicate<? super T> fn) {
-        return (AnyMSeq<W,T>) FilterableFunctor.super.filterNot(fn);
+        return (AnyMSeq<W,T>) ExtendedTraversable.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
@@ -1063,9 +1028,34 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
 
     }
 
+    @Override
+   default  <X extends Throwable> ReactiveTask forEachX(Executor ex, final long numberOfElements, final Consumer<? super T> consumer){
+        return this.stream().forEachX(ex, numberOfElements, consumer);
+    }
+
+    @Override
+    default <X extends Throwable> ReactiveTask forEachXWithError(Executor ex, final long numberOfElements, final Consumer<? super T> consumer, final Consumer<? super Throwable> consumerError){
+       return this.stream().forEachXWithError(ex, numberOfElements, consumer, consumerError);
+    }
+
+    @Override
+    default <X extends Throwable> ReactiveTask forEachXEvents(Executor ex, final long numberOfElements, final Consumer<? super T> consumer, final Consumer<? super Throwable> consumerError, final Runnable onComplete){
+        return this.stream().forEachXEvents(ex, numberOfElements, consumer, consumerError, onComplete);
+    }
+
+    @Override
+    default  <X extends Throwable> ReactiveTask forEachWithError(Executor ex, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError){
+        return this.stream().forEachWithError(ex, consumerElement, consumerError);
+    }
+
+    @Override
+    default <X extends Throwable> ReactiveTask forEachEvent(Executor ex, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError, final Runnable onComplete){
+        return this.stream().forEachEvent(ex, consumerElement, consumerError, onComplete);
+    }
+
     /* (non-Javadoc)
-     * @see com.aol.cyclops.monad.AnyM#peek(java.util.function.Consumer)
-     */
+         * @see com.aol.cyclops.monad.AnyM#peek(java.util.function.Consumer)
+         */
     @Override
     default AnyMSeq<W,T> peek(final Consumer<? super T> c) {
         return map(i -> {

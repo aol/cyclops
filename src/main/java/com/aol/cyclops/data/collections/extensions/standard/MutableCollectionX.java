@@ -569,14 +569,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().removeAll(stream));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#removeAll(org.jooq.lambda.Seq)
-     */
-    @Override
-    default MutableCollectionX<T> removeAll(final Seq<? extends T> stream) {
 
-        return fromStream(stream().removeAll(stream));
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#removeAll(java.lang.Iterable)
@@ -612,13 +605,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().retainAll(stream));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#retainAll(org.jooq.lambda.Seq)
-     */
-    @Override
-    default MutableCollectionX<T> retainAll(final Seq<? extends T> stream) {
-        return fromStream(stream().retainAll(stream));
-    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#retainAll(java.lang.Object[])

@@ -1,26 +1,20 @@
 package com.aol.cyclops.types.applicative;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import org.jooq.lambda.tuple.Tuple;
-import org.reactivestreams.Publisher;
-
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.ConvertableFunctor;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.*;
 import com.aol.cyclops.util.function.Curry;
+import com.aol.cyclops.util.function.F3;
 import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F5;
-import com.aol.cyclops.util.function.F3;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
+import org.jooq.lambda.tuple.Tuple;
+import org.reactivestreams.Publisher;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * @author johnmcclean
@@ -63,7 +57,7 @@ public interface ApplicativeFunctor<T> extends Combiner<T>,ConvertableFunctor<T>
      * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> ApplicativeFunctor<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+    default <T2, R> ApplicativeFunctor<R> zipP(final Publisher<? extends T2> app,final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
         return (ApplicativeFunctor<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                                                     .apply(v))).map(tuple -> Maybe.fromPublisher(app)

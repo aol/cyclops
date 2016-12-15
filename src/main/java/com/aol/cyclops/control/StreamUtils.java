@@ -53,7 +53,6 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.stream.FutureStreamUtils;
 import com.aol.cyclops.internal.stream.PausableHotStreamImpl;
-import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
 import com.aol.cyclops.internal.stream.ReactiveSeqImpl;
 import com.aol.cyclops.internal.stream.ReversedIterator;
 import com.aol.cyclops.internal.stream.SeqUtils;
@@ -498,7 +497,7 @@ public class StreamUtils {
      *
      * </pre>
      */
-    public final static <T> Tuple2<Stream<T>, Stream<T>> partition(final Stream<T> stream, final Predicate<T> splitter) {
+    public final static <T> Tuple2<Stream<T>, Stream<T>> partition(final Stream<T> stream, final Predicate<? super T> splitter) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicate(stream);
         return new Tuple2(
                           Tuple2.v1.filter(splitter), Tuple2.v2.filter(splitter.negate()));
