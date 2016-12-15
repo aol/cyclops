@@ -535,7 +535,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * @return duplicated stream
      */
-    Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicateSequence();
+    Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate();
 
     /**
      * Triplicates a Stream Buffers intermediate values, leaders may change
@@ -587,7 +587,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    Tuple2<Optional<T>, ReactiveSeq<T>> splitSequenceAtHead();
+    Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead();
 
     /**
      * Split at supplied location
@@ -630,7 +630,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * </pre>
      */
-    Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partitionSequence(Predicate<T> splitter);
+    Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(Predicate<T> splitter);
 
     /**
      * Convert to a Stream with the result of a reduction operation repeated
@@ -1063,11 +1063,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#grouped(java.util.function.Function)
-
+     */
     @Override
-    default <K> ReactiveSeq<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return fromStream(seq().grouped(classifier));
-    } */
+    default <K> ReactiveSeq<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+        Seq<? extends Tuple2<? extends K, ReactiveSeq<T>>> grouped = seq().grouped(classifier).map(t -> t.map2(s -> ReactiveSeq.<T>fromStream(s)));
+        return fromStream((Seq)grouped);
+    }
 
     /**
      * Use classifier function to group elements in this Sequence into a Map
@@ -2937,7 +2938,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      */
     public static <T, U> Tuple2<ReactiveSeq<T>, ReactiveSeq<U>> unzip(final ReactiveSeq<Tuple2<T, U>> sequence) {
-        final Tuple2<ReactiveSeq<Tuple2<T, U>>, ReactiveSeq<Tuple2<T, U>>> tuple2 = sequence.duplicateSequence();
+        final Tuple2<ReactiveSeq<Tuple2<T, U>>, ReactiveSeq<Tuple2<T, U>>> tuple2 = sequence.duplicate();
         return new Tuple2(
                           tuple2.v1.map(Tuple2::v1), tuple2.v2.map(Tuple2::v2));
     }
@@ -3862,7 +3863,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
 
 
-  
+    String format();
 
     
 }

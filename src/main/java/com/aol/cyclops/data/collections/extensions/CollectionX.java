@@ -513,13 +513,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     @Override
     CollectionX<T> removeAll(Iterable<? extends T> it);
 
-    /**
-     * Remove all elements from this collection that match the values in the provided Seq
-     * 
-     * @param seq Stream of values to remove
-     * @return Collection with the values removed
-     */
-    CollectionX<T> removeAll(Seq<? extends T> seq);
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.lang.Object[])
@@ -533,13 +527,6 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     @Override
     CollectionX<T> retainAll(Iterable<? extends T> it);
 
-    /**
-     * Retain all elements from this collection that match the values in the provided Seq
-     * 
-     * @param seq Stream of values to retain
-     * @return Collection with the values retained
-     */
-    CollectionX<T> retainAll(Seq<? extends T> seq);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.util.stream.Stream)

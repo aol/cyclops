@@ -1,20 +1,15 @@
 package com.aol.cyclops.data.collections.extensions.persistent;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Random;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
-
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
+import com.aol.cyclops.util.function.F3;
+import com.aol.cyclops.util.function.F4;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -23,17 +18,10 @@ import org.pcollections.AmortizedPQueue;
 import org.pcollections.PQueue;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Reducers;
-import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PQueue<T>> {
 
@@ -765,23 +753,11 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
      * zip(java.util.stream.Stream)
      */
     @Override
-    default <U> PQueueX<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> PQueueX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (PQueueX) PersistentCollectionX.super.zip(other);
+        return (PQueueX) PersistentCollectionX.super.zipS(other);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
-     * zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> PQueueX<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-
-        return (PQueueX) PersistentCollectionX.super.zip(other);
-    }
 
     /*
      * (non-Javadoc)
@@ -791,7 +767,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
      * zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> PQueueX<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
+    default <S, U> PQueueX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return (PQueueX) PersistentCollectionX.super.zip3(second, third);
     }
@@ -1194,12 +1170,6 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
     default <C extends Collection<? super T>> PQueueX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (PQueueX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
-    }
-
-    @Override
-    default PQueueX<T> removeAll(final Seq<? extends T> stream) {
-
-        return (PQueueX<T>) PersistentCollectionX.super.removeAll(stream);
     }
 
     @Override

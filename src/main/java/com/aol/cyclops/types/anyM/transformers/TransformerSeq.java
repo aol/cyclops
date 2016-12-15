@@ -102,20 +102,12 @@ ToStream<T>, Publisher<T> {
 
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Traversable<R> zip(final Seq<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return zip((Iterable<? extends U>) other, zipper);
-
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Traversable<R> zip(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> Traversable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
 
     }
@@ -124,34 +116,27 @@ ToStream<T>, Publisher<T> {
      * @see com.aol.cyclops.types.Traversable#zipStream(java.util.stream.Stream)
      */
     @Override
-    default <U> Traversable<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> Traversable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
         final Streamable<? extends U> streamable = Streamable.fromStream(other);
-        return unitAnyM(transformerStream().map(s -> s.zip(streamable.stream())));
+        return unitAnyM(transformerStream().map(s -> s.zipS(streamable.stream())));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> Traversable<Tuple2<T, U>> zip(final Seq<? extends U> other) {
-        return zip((Stream<? extends U>) other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
     default <U> Traversable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return zip((Stream<? extends U>) ReactiveSeq.fromIterable(other));
+        return zipS((Stream<? extends U>) ReactiveSeq.fromIterable(other));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Stream<? extends S> second, final Stream<? extends U> third) {
-        final Streamable<? extends S> streamable2 = Streamable.fromStream(second);
-        final Streamable<? extends U> streamable3 = Streamable.fromStream(third);
+    default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
+        final Streamable<? extends S> streamable2 = Streamable.fromIterable(second);
+        final Streamable<? extends U> streamable3 = Streamable.fromIterable(third);
         final AnyM<W,Traversable<Tuple3<T, S, U>>> zipped = transformerStream().map(s -> s.zip3(streamable2.stream(), streamable3.stream()));
         return unitAnyM(zipped);
     }
@@ -160,11 +145,11 @@ ToStream<T>, Publisher<T> {
      * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
-        final Streamable<? extends T2> streamable2 = Streamable.fromStream(second);
-        final Streamable<? extends T3> streamable3 = Streamable.fromStream(third);
-        final Streamable<? extends T4> streamable4 = Streamable.fromStream(fourth);
+    default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
+        final Streamable<? extends T2> streamable2 = Streamable.fromIterable(second);
+        final Streamable<? extends T3> streamable3 = Streamable.fromIterable(third);
+        final Streamable<? extends T4> streamable4 = Streamable.fromIterable(fourth);
         final AnyM<W,Traversable<Tuple4<T, T2, T3, T4>>> zipped = transformerStream().map(s -> s.zip4(streamable2.stream(), streamable3.stream(),
                                                                                                     streamable4.stream()));
         return unitAnyM(zipped);
@@ -269,7 +254,7 @@ ToStream<T>, Publisher<T> {
      * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function)
      */
     @Override
-    default <K> Traversable<Tuple2<K, Seq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
+    default <K> Traversable<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
         return unitAnyM(transformerStream().map(s -> s.grouped(classifier)));
 
     }
@@ -450,23 +435,7 @@ ToStream<T>, Publisher<T> {
         return unitAnyM(transformerStream().map(s -> s.shuffle()));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#futureOperations(java.util.concurrent.Executor)
-     */
-    @Override
-    default FutureOperations<T> futureOperations(final Executor exec) {
-        // TODO Auto-generated method stub
-        return Traversable.super.futureOperations(exec);
-    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#lazyOperations()
-     */
-    @Override
-    default LazyOperations<T> lazyOperations() {
-        // TODO Auto-generated method stub
-        return Traversable.super.lazyOperations();
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#skipLast(int)
@@ -535,7 +504,7 @@ ToStream<T>, Publisher<T> {
 
     @Override
     default ReactiveSeq<T> stream() {
-        return ConvertableSequence.super.stream();
+        return Traversable.super.stream();
     }
 
 }

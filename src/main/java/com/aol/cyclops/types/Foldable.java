@@ -731,27 +731,7 @@ public interface Foldable<T> {
         return foldable().scheduleFixedRate(rate, ex);
     }
 
-    /**
-     * Apply the specified validator to all elements in this foldable, resulting in a failure Stream and success Stream.
-     * Each Stream is accessible via the returned Ior (Inclusive Or) {@link com.aol.cyclops.control.Ior}
-     * 
-     * @param validator {@link com.aol.cyclops.control.Validator} to validate each element with
-     * @return Ior with a Failure Stream and / or Success Stream
-     */
-    default <S, F> Ior<ReactiveSeq<F>, ReactiveSeq<S>> validate(final Validator<T, S, F> validator) {
 
-        final Tuple2<ReactiveSeq<Xor<F, S>>, ReactiveSeq<Xor<F, S>>> xors = stream().<Xor<F, S>> flatMap(s -> validator.accumulate(s)
-                                                                                                                       .toXors()
-                                                                                                                       .stream())
-                                                                                    .duplicateSequence();
-
-        final Predicate<Xor<F, S>> primaryPredicate = e -> e.isPrimary();
-
-        return Ior.both(xors.v1.filter(primaryPredicate.negate())
-                               .map(x -> x.secondaryGet()),
-                        xors.v2.filter(primaryPredicate)
-                               .map(x -> x.get()));
-    }
 
     /**
      * Check that there are specified number of matches of predicate in the

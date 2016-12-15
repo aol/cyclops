@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import org.jooq.lambda.Seq;
@@ -40,7 +41,9 @@ public interface Traversable<T> extends Publisher<T>,
                                         CyclopsCollectable<T>,
                                         IterableFoldable<T>,
                                         IterableFilterable<T>,
-                                        FilterableFunctor<T>{
+                                        FilterableFunctor<T>,
+                                        TransformerTraversable<T>,
+                                        ConvertableSequence<T> {
 
 
     default Seq<T> seq(){
@@ -336,6 +339,17 @@ public interface Traversable<T> extends Publisher<T>,
      */
     default Traversable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
         return traversable().groupedStatefullyUntil(predicate);
+    }
+
+    /**
+     * Zip (combine) this Zippable with the supplied Stream combining both into a Tuple2
+     *
+     * @param other Stream to combine with
+     * @return Combined Zippable
+     */
+    @Override
+    default <U> Traversable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+        return traversable().zipS(other);
     }
 
     /**

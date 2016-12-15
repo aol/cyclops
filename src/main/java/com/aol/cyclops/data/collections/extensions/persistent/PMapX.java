@@ -17,7 +17,6 @@ import org.pcollections.PMap;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
@@ -66,14 +65,7 @@ public interface PMapX<K, V>
         return stream().iterator();
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.sequence.traits.SequenceMCollectable#collectable()
-     */
-    @Override
-    default Collectable<Tuple2<K, V>> collectable() {
 
-        return stream();
-    }
 
     /* (non-Javadoc)
      * @see org.pcollections.PMap#plus(java.lang.Object, java.lang.Object)
@@ -262,14 +254,7 @@ public interface PMapX<K, V>
         return (PMapX<K, V>) IterableFilterable.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function, java.util.function.Supplier)
-     */
-    @Override
-    default <R> PMapX<K, R> patternMatch(final Function<CheckValue1<V, R>, CheckValue1<V, R>> case1, final Supplier<? extends R> otherwise) {
 
-        return (PMapX<K, R>) Functor.super.patternMatch(case1, otherwise);
-    }
 
     /* (non-Javadoc)
      * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)

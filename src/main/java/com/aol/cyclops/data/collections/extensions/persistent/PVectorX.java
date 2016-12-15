@@ -1,21 +1,16 @@
 package com.aol.cyclops.data.collections.extensions.persistent;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Random;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
-
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Reducer;
+import com.aol.cyclops.Reducers;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
+import com.aol.cyclops.util.function.F3;
+import com.aol.cyclops.util.function.F4;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -24,18 +19,10 @@ import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Reducers;
-import com.aol.cyclops.control.Matchable.CheckValue1;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 public interface PVectorX<T> extends To<PVectorX<T>>,
                                      PVector<T>, 
@@ -745,19 +732,12 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
      */
     @Override
-    default <U> PVectorX<Tuple2<T, U>> zip(final Stream<? extends U> other) {
+    default <U> PVectorX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (PVectorX) PersistentCollectionX.super.zip(other);
+        return (PVectorX) PersistentCollectionX.super.zipS(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> PVectorX<Tuple2<T, U>> zip(final Seq<? extends U> other) {
 
-        return (PVectorX) PersistentCollectionX.super.zip(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
@@ -1059,11 +1039,6 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
         return (PVectorX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
     }
 
-    @Override
-    default PVectorX<T> removeAll(final Seq<? extends T> stream) {
-
-        return (PVectorX<T>) PersistentCollectionX.super.removeAll(stream);
-    }
 
     @Override
     default PVectorX<T> retainAll(final Seq<? extends T> stream) {

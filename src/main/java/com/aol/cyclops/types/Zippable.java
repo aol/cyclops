@@ -38,7 +38,7 @@ public interface Zippable<T> extends Iterable<T>{
      * @param fn Zip / combining function
      * @return Combined zippable
      */
-    default <T2, R> Zippable<R> zipP(final Publisher<? extends T2> publisher,final BiFunction<? super T, ? super T2, ? extends R> fn, ) {
+    default <T2, R> Zippable<R> zipP(final Publisher<? extends T2> publisher,final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return ReactiveSeq.fromIterable(this)
                           .zipP(publisher,fn);
     }

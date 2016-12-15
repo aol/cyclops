@@ -22,6 +22,7 @@ import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.types.Foldable;
+import org.jooq.lambda.Seq;
 
 /**
  * 
@@ -356,7 +357,9 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Foldable<T> { //Col
      * 
      * @return Collectable
      */
-    Collectable<T> collectable();
+    default Collectable<T> collectable(){
+        return Seq.seq(this);
+    }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#countDistinct()

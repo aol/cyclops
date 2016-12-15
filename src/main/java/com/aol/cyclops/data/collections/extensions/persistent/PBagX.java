@@ -28,7 +28,6 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
@@ -680,8 +679,8 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> PBagX<Tuple2<T, U>> zip(final Stream<? extends U> other) {
-        return (PBagX) PersistentCollectionX.super.zip(other);
+    default <U> PBagX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+        return (PBagX) PersistentCollectionX.super.zipS(other);
     }
 
 
@@ -985,12 +984,6 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     default <C extends Collection<? super T>> PBagX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (PBagX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
-    }
-
-    @Override
-    default PBagX<T> removeAll(final Seq<? extends T> stream) {
-
-        return (PBagX<T>) PersistentCollectionX.super.removeAll(stream);
     }
 
     @Override

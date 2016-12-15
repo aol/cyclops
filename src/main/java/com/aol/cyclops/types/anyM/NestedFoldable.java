@@ -365,7 +365,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> {
      * 
      * </pre>
      */
-    default <K> AnyM<W,MapX<K, List<T>>> groupBy(final Function<? super T, ? extends K> classifier) {
+    default <K> AnyM<W,MapX<K, ListX<T>>> groupBy(final Function<? super T, ? extends K> classifier) {
         return nestedFoldables().map(s -> s.groupBy(classifier));
     }
 
@@ -711,7 +711,4 @@ public interface NestedFoldable<W extends WitnessType<W>,T> {
         return stream().scheduleFixedRate(rate, ex);
     }
 
-    default <S, F> AnyM<W,Ior<ReactiveSeq<F>, ReactiveSeq<S>>> validate(final Validator<T, S, F> validator) {
-        return nestedFoldables().map(s -> s.validate(validator));
-    }
 }

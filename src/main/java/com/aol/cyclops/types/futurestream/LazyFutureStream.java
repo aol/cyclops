@@ -46,7 +46,6 @@ import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.Matchable.CheckValue1;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.StreamUtils;
@@ -101,44 +100,22 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#crossApply(java.util.function.Function)
      */
-    @Override
     default <U1> LazyFutureStream<Tuple2<U, U1>> crossApply(Function<? super U, ? extends Iterable<? extends U1>> function) {
-        return fromStream(ReactiveSeq.fromStream(stream()).crossApply(function));
+        return fromStream(ReactiveSeq.fromStream(stream()).seq().crossApply(function));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#outerApply(java.util.function.Function)
      */
-    @Override
     default <U1> LazyFutureStream<Tuple2<U, U1>> outerApply(Function<? super U, ? extends Iterable<? extends U1>> function) {
-        return fromStream(ReactiveSeq.fromStream(stream()).outerApply(function));
+        return fromStream(ReactiveSeq.fromStream(stream()).seq().outerApply(function));
     }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#concat(java.lang.Iterable)
-     */
-    @Override
-    default LazyFutureStream<U> concat(Iterable<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).concat(other));
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#concat(org.jooq.lambda.Seq)
-     */
-    @Override
-    default LazyFutureStream<U> concat(Seq<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).concat(other));
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#concat(java.util.Optional)
-     */
-    @Override
-    default LazyFutureStream<U> concat(Optional<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).append(other));
-    }
+
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
      */
     @Override
-    default LazyFutureStream<U> append(Stream<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).append(other));
+    default LazyFutureStream<U> appendS(Stream<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).appendS(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
@@ -147,26 +124,14 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     default LazyFutureStream<U> append(Iterable<? extends U> other) {
         return fromStream(ReactiveSeq.fromStream(stream()).append(other));
     }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(org.jooq.lambda.Seq)
-     */
-    @Override
-    default LazyFutureStream<U> append(Seq<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).append(other));
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(java.util.Optional)
-     */
-    @Override
-    default LazyFutureStream<U> append(Optional<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).append(other));
-    }
+
+
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#prepend(java.util.stream.Stream)
      */
     @Override
-    default LazyFutureStream<U> prepend(Stream<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).prepend(other));
+    default LazyFutureStream<U> prependS(Stream<? extends U> other) {
+        return fromStream(ReactiveSeq.fromStream(stream()).prependS(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#prepend(java.lang.Iterable)
@@ -176,22 +141,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
         
         return fromStream(ReactiveSeq.fromStream(stream()).prepend(other));
     }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#prepend(org.jooq.lambda.Seq)
-     */
-    @Override
-    default LazyFutureStream<U> prepend(Seq<? extends U> other) {
-        
-        return fromStream(ReactiveSeq.fromStream(stream()).prepend(other));
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#prepend(java.util.Optional)
-     */
-    @Override
-    default LazyFutureStream<U> prepend(Optional<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).prepend(other));
-        
-    }
+
+
   
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#cycle(long)
@@ -226,15 +177,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
         return fromStream(ReactiveSeq.fromStream(stream()).sorted(function,comparator));
         
     }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#sliding(long)
-     */
-    @Override
-    default LazyFutureStream<Seq<U>> sliding(long size) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                   .sliding(size));
-    }
-    
+
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
      * 
@@ -1956,30 +1899,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
 
     }
 
-    /**
-     * Duplicate a LazyFutureStream into two equivalent Streams.
-     * Two LazyFutureStreams are
-     * returned but Seq interface specifies return type is Seq. See duplicateFutureStream to
-     * see an alternative which returns LazyFutureStream
-     *
-     * <pre>
-     * {@code
-     *
-     * // tuple((1, 2, 3), (1, 2, 3))
-     *
-     * LazyFutureStream.of(1, 2, 3).duplicate()
-     * }
-     * </pre>
-     *
-     * @see LazyFutureStream#copy(int)
-     *
-     * @see #duplicate(Stream)
-     */
-    @Override
-    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate() {
-        return ReactiveSeq.super.duplicate();
 
-    }
 
     /*
      * <pre>
@@ -1996,7 +1916,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @see #duplicate(Stream)
      */
     default Tuple2<LazyFutureStream<U>, LazyFutureStream<U>> duplicateFutureStream() {
-        final Tuple2<Seq<U>, Seq<U>> duplicated = this.duplicate();
+        final Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicated = this.duplicate();
         return new Tuple2(
                           fromStream(duplicated.v1), fromStream(duplicated.v2));
     }
@@ -2018,7 +1938,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @see #partition(Stream, Predicate)
      */
     @Override
-    default Tuple2<Seq<U>, Seq<U>> partition(final Predicate<? super U> predicate) {
+    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partition(final Predicate<? super U> predicate) {
         return ReactiveSeq.super.partition(predicate);
     }
 
@@ -2075,26 +1995,10 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
                                      .zipWithIndex());
     }
 
-    /**
-     * Zip two streams into one.
-     *
-     * <pre>
-     * {@code
-     *  // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
-     *  LazyFutureStream.of(1, 2, 3)
-     *                  .zip(Seq.of("a", "b", "c"))
-     * }
-     * </pre>
-     *
-     * @see #zip(Stream, Stream)
-     */
-    @Override
-    default <T> LazyFutureStream<Tuple2<U, T>> zip(final Seq<? extends T> other) {
-        return fromStream(LazyFutureStreamFunctions.zip(this, other));
-    }
+
 
     @Override
-    default <T> LazyFutureStream<Tuple2<U, T>> zip(final Stream<? extends T> other) {
+    default <T> LazyFutureStream<Tuple2<U, T>> zipS(final Stream<? extends T> other) {
         return fromStream(LazyFutureStreamFunctions.zip(this, other));
     }
 
@@ -2103,24 +2007,10 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
         return fromStream(LazyFutureStreamFunctions.zip(this, ReactiveSeq.fromIterable(other)));
     }
 
-    /**
-     * Zip two streams into one using a {@link BiFunction} to produce resulting
-     * values.
-     * <p>
-     * <code>
-     * // ("1:a", "2:b", "3:c")
-     * LazyFutureStream.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
-     * </code>
-     *
-     * @see #zip(Seq, BiFunction)
-     */
-    @Override
-    default <T, R> LazyFutureStream<R> zip(final Seq<? extends T> other, final BiFunction<? super U, ? super T, ? extends R> zipper) {
-        return fromStream(LazyFutureStreamFunctions.zip(this, other, zipper));
-    }
+
 
     @Override
-    default <T, R> LazyFutureStream<R> zip(final Stream<? extends T> other, final BiFunction<? super U, ? super T, ? extends R> zipper) {
+    default <T, R> LazyFutureStream<R> zipS(final Stream<? extends T> other, final BiFunction<? super U, ? super T, ? extends R> zipper) {
         return fromStream(LazyFutureStreamFunctions.zip(this, ReactiveSeq.fromStream(other), zipper));
     }
 
@@ -2282,7 +2172,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      */
     @Override
     default <T> LazyFutureStream<Tuple2<U, T>> crossJoin(final Stream<? extends T> other) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).seq()
                                      .crossJoin(other));
     }
 
@@ -2340,7 +2230,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      */
     @Override
     default <X extends Throwable> LazyFutureStream<U> onEmptyThrow(final Supplier<? extends X> supplier) {
-        return fromStream(ReactiveSeq.super.onEmptyThrow(supplier));
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).onEmptyThrow(supplier));
     }
 
     /**
@@ -2354,7 +2244,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      */
     @Override
     default <T> LazyFutureStream<Tuple2<U, T>> innerJoin(final Stream<? extends T> other, final BiPredicate<? super U, ? super T> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).seq()
                                      .innerJoin(other, predicate));
 
     }
@@ -2368,9 +2258,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * LazyFutureStream.of(1, 2, 3).leftOuterJoin(Seq.of(1, 2), t -> Objects.equals(t.v1, t.v2))
      * }</pre>
      */
-    @Override
     default <T> LazyFutureStream<Tuple2<U, T>> leftOuterJoin(final Stream<? extends T> other, final BiPredicate<? super U, ? super T> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).seq()
                                      .leftOuterJoin(other, predicate));
     }
 
@@ -2383,9 +2272,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * LazyFutureStream.of(1, 2).rightOuterJoin(Seq.of(1, 2, 3), t -> Objects.equals(t.v1, t.v2))
      * }</pre>
      */
-    @Override
     default <T> LazyFutureStream<Tuple2<U, T>> rightOuterJoin(final Stream<? extends T> other, final BiPredicate<? super U, ? super T> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).seq()
                                      .rightOuterJoin(other, predicate));
     }
 
@@ -2617,7 +2505,6 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @return This Stream as a CompletableFuture
      * @see com.aol.cyclops.control.ReactiveSeq#toCompletableFuture()
      */
-    @Override
     default CompletableFuture<ListX<U>> toCompletableFuture() {
         return CompletableFuture.completedFuture(this)
                                 .thenApplyAsync(s -> s.block(), getTaskExecutor());
@@ -2755,13 +2642,28 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
     }
 
     /*
-     *	Duplicate the data in this Stream. To duplicate into 2 LazyFutureStreams use actOnFutures#duplicate
-     * @see com.aol.cyclops.control.ReactiveSeq#duplicateSequence()
+     * Duplicate a LazyFutureStream into two equivalent Streams.
+     * Two LazyFutureStreams are
+     * returned but Seq interface specifies return type is Seq. See duplicateFutureStream to
+     * see an alternative which returns LazyFutureStream
+     *
+     * <pre>
+     * {@code
+     *
+     * // tuple((1, 2, 3), (1, 2, 3))
+     *
+     * LazyFutureStream.of(1, 2, 3).duplicate()
+     * }
+     * </pre>
+     *
+     * @see LazyFutureStream#copy(int)
+     *
+     * @see #duplicate(Stream)
      */
     @Override
-    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicateSequence() {
+    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate() {
         return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                          .duplicateSequence();
+                          .duplicate();
     }
 
     /*
@@ -2791,9 +2693,9 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @see com.aol.cyclops.control.ReactiveSeq#splitSequenceAtHead()
      */
     @Override
-    default Tuple2<Optional<U>, ReactiveSeq<U>> splitSequenceAtHead() {
+    default Tuple2<Optional<U>, ReactiveSeq<U>> splitAtHead() {
         return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                          .splitSequenceAtHead();
+                          .splitAtHead();
 
     }
 
@@ -2821,9 +2723,9 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @see com.aol.cyclops.control.ReactiveSeq#partitionSequence(java.util.function.Predicate)
      */
     @Override
-    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partitionSequence(final Predicate<U> splitter) {
+    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partition(final Predicate<U> splitter) {
         return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                          .partitionSequence(splitter);
+                          .partition(splitter);
 
     }
 
@@ -2841,7 +2743,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @see com.aol.cyclops.control.ReactiveSeq#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <S, R> LazyFutureStream<Tuple3<U, S, R>> zip3(final Stream<? extends S> second, final Stream<? extends R> third) {
+    default <S, R> LazyFutureStream<Tuple3<U, S, R>> zip3(final Iterable<? extends S> second, final Iterable<? extends R> third) {
         return (LazyFutureStream) fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                                                         .zip3(second, third));
 
@@ -2851,23 +2753,14 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      * @see com.aol.cyclops.control.ReactiveSeq#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
-    default <T2, T3, T4> LazyFutureStream<Tuple4<U, T2, T3, T4>> zip4(final Stream<? extends T2> second, final Stream<? extends T3> third,
-            final Stream<? extends T4> fourth) {
+    default <T2, T3, T4> LazyFutureStream<Tuple4<U, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+            final Iterable<? extends T4> fourth) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                                      .zip4(second, third, fourth));
 
     }
 
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#zipStream(java.util.stream.BaseStream, java.util.function.BiFunction)
-     */
-    @Override
-    default <S, R> LazyFutureStream<R> zipStream(final BaseStream<? extends S, ? extends BaseStream<? extends S, ?>> second,
-            final BiFunction<? super U, ? super S, ? extends R> zipper) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                                     .zipStream((BaseStream)second, zipper));
 
-    }
 
     /*
      * @see com.aol.cyclops.control.ReactiveSeq#grouped(int)
@@ -3056,24 +2949,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
                                      .insertStreamAt(pos, stream));
     }
 
-    /**
-     * @return access to asynchronous terminal operations
-     */
-    default FutureOperations<U> futureOperations() {
-        return new LazyFutureStreamFutureOpterationsImpl<>(
-                                                           getTaskExecutor(), this);
 
-    }
-
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#futureOperations(java.util.concurrent.Executor)
-     */
-    @Override
-    default FutureOperations<U> futureOperations(final Executor exec) {
-        return new LazyFutureStreamFutureOpterationsImpl<>(
-                                                           exec, this);
-
-    }
 
     /*
      * @see com.aol.cyclops.control.ReactiveSeq#skip(long, java.util.concurrent.TimeUnit)
