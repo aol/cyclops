@@ -1936,7 +1936,8 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partition(final Predicate<? super U> predicate) {
-        return ReactiveSeq.super.partition(predicate);
+        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                .partition(predicate);
     }
 
     /**
@@ -2714,15 +2715,7 @@ public interface LazyFutureStream<U> extends Functor<U>, Filterable<U>, LazySimp
 
     }
 
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#partitionSequence(java.util.function.Predicate)
-     */
-    @Override
-    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partition(final Predicate<U> splitter) {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                          .partition(splitter);
 
-    }
 
     /*
      * @see com.aol.cyclops.control.ReactiveSeq#cycle(com.aol.cyclops.sequence.Monoid, int)

@@ -165,6 +165,7 @@ modifyPom {
 				name 'Ke Wang'
 				email 'ke.wang@teamaol.com'
 			}
+
 			developer {
 				id 'tkountis'
 				name 'Thomas Kountis Wang'

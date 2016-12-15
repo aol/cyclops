@@ -112,7 +112,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
      * @return MapX
      */
     default MapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
-        return new MapXImpl<>(
+        return new MapXImpl<K,V>(
                               stream.toMap(t -> t.v1, t -> t.v2), getCollector());
     }
 

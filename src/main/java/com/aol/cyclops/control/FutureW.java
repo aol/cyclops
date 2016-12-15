@@ -6,9 +6,11 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.Status;
 import com.aol.cyclops.react.collectors.lazy.Blocker;
-import com.aol.cyclops.types.*;
+import com.aol.cyclops.types.Combiner;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
+import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.CompletableFutures;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -16,9 +18,7 @@ import com.aol.cyclops.util.function.F3;
 import com.aol.cyclops.util.function.F4;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
@@ -617,7 +617,6 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
     }
 
 
-    @Getter
     private final CompletableFuture<T> future;
 
     /**
@@ -1275,6 +1274,8 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
         return (FutureW<T>)MonadicValue.super.combine(combiner, app);
     }
 
-   
 
+    public CompletableFuture<T> getFuture() {
+        return this.future;
+    }
 }

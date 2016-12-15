@@ -626,7 +626,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * </pre>
      */
-    Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(Predicate<T> splitter);
+    Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(Predicate<? super T> splitter);
 
     /**
      * Convert to a Stream with the result of a reduction operation repeated
