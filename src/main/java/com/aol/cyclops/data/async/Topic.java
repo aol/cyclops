@@ -33,7 +33,7 @@ public class Topic<T> implements Adapter<T> {
     @Getter(AccessLevel.PACKAGE)
     private final DistributingCollection<T> distributor = new DistributingCollection<T>();
     @Getter(AccessLevel.PACKAGE)
-    private volatile PMap<Seq, Queue<T>> streamToQueue = HashTreePMap.empty();
+    private volatile PMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashTreePMap.empty();
     private final Object lock = new Object();
     private volatile int index = 0;
 
