@@ -4,6 +4,8 @@ import java.util.Spliterator;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import org.jooq.lambda.Seq;
+
 import lombok.AllArgsConstructor;
 
 
@@ -11,7 +13,6 @@ public class ScanLeftSpliterator<T,U> implements Spliterator<U>{
 
     private final Spliterator<T> source;
     private U current; 
-    private final U identity; 
     private final BiFunction<? super U, ? super T, ? extends U> function;
     private final long size;
     private final int characteristics;
@@ -19,9 +20,9 @@ public class ScanLeftSpliterator<T,U> implements Spliterator<U>{
             BiFunction<? super U, ? super T, ? extends U> function) {
         super();
         this.source = source;
-        this.identity = identity;
+        this.current = identity;
         this.function = function;
-        this.current=  null;
+        
         size = source.estimateSize();
         characteristics= source.characteristics() & Spliterator.ORDERED;;
     }
@@ -31,10 +32,7 @@ public class ScanLeftSpliterator<T,U> implements Spliterator<U>{
      */
     @Override
     public void forEachRemaining(Consumer<? super U> action) {
-        if(current==null){
-            action.accept(identity);
-            current = identity;
-        }
+        
         source.forEachRemaining(e->{
             action.accept( current=function.apply(current,e));
             
@@ -42,17 +40,17 @@ public class ScanLeftSpliterator<T,U> implements Spliterator<U>{
         
     }
 
+    boolean advance =true;
     @Override
     public boolean tryAdvance(Consumer<? super U> action) {
-        if(current==null){
-            action.accept(identity);
-            current = identity;
-        }
-        return source.tryAdvance(e->{
-          
-            action.accept( current=function.apply(current,e));
+       
+       return source.tryAdvance(e->{
+           action.accept(current= function.apply(current, e));
+            
           
        });
+       
+      
     }
 
     @Override
