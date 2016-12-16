@@ -381,7 +381,7 @@ public class CompletableFutures {
     public static <T1, T2, R> CompletableFuture<R> zip(final Publisher<? extends T2> p, final CompletableFuture<? extends T1> f,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
         return narrow(FutureW.of(f)
-                             .zip(fn, p)
+                             .zipP(p,fn)
                              .getFuture());
     }
     /**

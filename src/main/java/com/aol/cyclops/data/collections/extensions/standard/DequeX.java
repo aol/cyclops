@@ -1082,23 +1082,9 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#removeAll(org.jooq.lambda.Seq)
-     */
-    @Override
-    default DequeX<T> removeAll(final Seq<? extends T> stream) {
 
-        return (DequeX<T>) MutableCollectionX.super.removeAll(stream);
-    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#retainAll(org.jooq.lambda.Seq)
-     */
-    @Override
-    default DequeX<T> retainAll(final Seq<? extends T> stream) {
 
-        return (DequeX<T>) MutableCollectionX.super.retainAll(stream);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)

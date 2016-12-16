@@ -1,8 +1,5 @@
 package com.aol.cyclops.control;
 
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
 import static com.aol.cyclops.util.function.Predicates.instanceOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
@@ -58,20 +55,15 @@ public class Xor2Test {
 		just = Xor.primary(10);
 		none = Xor.secondary("none");
 	}
-	@Test
-    public void testApFeatureToggle() {
-      
-        assertThat(just.combine(FeatureToggle.enable(20),this::add).get(),equalTo(30));
-    }
-   
+
 	@Test
     public void testZip(){
         assertThat(Xor.primary(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Xor.primary(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
-        assertThat(Xor.primary(10).zip(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Xor.primary(10).zipP(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Xor.primary(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Xor.primary(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Xor.primary(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Xor.primary(10).zip(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Xor.primary(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Xor.primary(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }
    
@@ -97,10 +89,7 @@ public class Xor2Test {
         Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
         assertThat(iors,equalTo(Ior.primary(3)));
     }
-    @Test
-    public void testZipPubFeatureToggle() {
-        assertThat(just.zip(FeatureToggle.enable(20),this::add).get(),equalTo(30));
-    }
+
 	@Test
     public void nest(){
        assertThat(just.nest().map(m->m.get()),equalTo(just));
@@ -224,11 +213,6 @@ public class Xor2Test {
 		assertThat(none.visit(i->i+1,()->20),equalTo(20));
 	}
 
-	@Test
-	public void testUnapply() {
-		assertThat(just.unapply(),equalTo(ListX.of(10)));
-		assertThat(none.unapply(),equalTo(ListX.of("none")));
-	}
 
 	@Test
 	public void testStream() {
@@ -258,12 +242,12 @@ public class Xor2Test {
 	
 	@Test
 	public void testIterate() {
-		assertThat(just.iterate(i->i+1).limit(10).sum(),equalTo(Optional.of(145)));
+		assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(Optional.of(145)));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.generate().limit(10).sum(),equalTo(Optional.of(100)));
+		assertThat(just.generate().limit(10).sumInt(i->i),equalTo(Optional.of(100)));
 	}
 
 	@Test
@@ -271,39 +255,7 @@ public class Xor2Test {
 		assertThat(just.mapReduce(Reducers.toCountInt()),equalTo(1));
 	}
 
-	@Test
-	public void testFoldMonoidOfT() {
-		assertThat(just.fold(Reducers.toTotalInt()),equalTo(10));
-	}
 
-	@Test
-	public void testFoldTBinaryOperatorOfT() {
-		assertThat(just.fold(1, (a,b)->a*b),equalTo(10));
-	}
-
-	@Test
-	public void testToLazyImmutable() {
-		assertThat(just.toLazyImmutable(),equalTo(LazyImmutable.of(10)));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToLazyImmutableNone(){
-		none.toLazyImmutable();
-		fail("exception expected");
-		
-	}
-
-	@Test
-	public void testToMutable() {
-		assertThat(just.toMutable(),equalTo(Mutable.of(10)));
-		
-		
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToMutableNone(){
-		none.toMutable();
-		fail("exception expected");
-		
-	}
 
 	@Test
 	public void testToXor() {
@@ -401,72 +353,6 @@ public class Xor2Test {
 		
 	}
 
-	@Test
-	public void testToListX() {
-		
-		assertThat(just.toListX(),equalTo(ListX.singleton(10)));
-		assertThat(none.toListX(),equalTo(ListX.empty()));
-	}
-
-	@Test
-	public void testToSetX() {
-		assertThat(just.toSetX(),equalTo(SetX.singleton(10)));
-		assertThat(none.toSetX(),equalTo(SetX.empty()));
-	}
-
-	@Test
-	public void testToSortedSetX() {
-		assertThat(just.toSortedSetX(),equalTo(SortedSetX.singleton(10)));
-		assertThat(none.toSortedSetX(),equalTo(SortedSetX.empty()));
-	}
-
-	@Test
-	public void testToQueueX() {
-		assertThat(just.toQueueX().toList(),equalTo(QueueX.singleton(10).toList()));
-		assertThat(none.toQueueX().toList(),equalTo(QueueX.empty().toList()));
-	}
-
-	@Test
-	public void testToDequeX() {
-		assertThat(just.toDequeX().toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toDequeX().toList(),equalTo(DequeX.empty().toList()));
-	}
-
-	@Test
-	public void testToPStackX() {
-		assertThat(just.toPStackX(),equalTo(PStackX.singleton(10)));
-		assertThat(none.toPStackX(),equalTo(PStackX.empty()));
-	}
-
-	@Test
-	public void testToPVectorX() {
-		assertThat(just.toPVectorX(),equalTo(PVectorX.singleton(10)));
-		assertThat(none.toPVectorX(),equalTo(PVectorX.empty()));
-	}
-
-	@Test
-	public void testToPQueueX() {
-		assertThat(just.toPQueueX().toList(),equalTo(PQueueX.singleton(10).toList()));
-		assertThat(none.toPQueueX().toList(),equalTo(PQueueX.empty().toList()));
-	}
-
-	@Test
-	public void testToPSetX() {
-		assertThat(just.toPSetX(),equalTo(PSetX.singleton(10)));
-		assertThat(none.toPSetX(),equalTo(PSetX.empty()));
-	}
-
-	@Test
-	public void testToPOrderedSetX() {
-		assertThat(just.toPOrderedSetX(),equalTo(POrderedSetX.singleton(10)));
-		assertThat(none.toPOrderedSetX(),equalTo(POrderedSetX.empty()));
-	}
-
-	@Test
-	public void testToPBagX() {
-		assertThat(just.toPBagX(),equalTo(PBagX.singleton(10)));
-		assertThat(none.toPBagX(),equalTo(PBagX.empty()));
-	}
 
 	@Test
 	public void testMkString() {
@@ -474,29 +360,7 @@ public class Xor2Test {
 		assertThat(none.mkString(),equalTo("Xor.secondary[none]"));
 	}
 	LazyReact react = new LazyReact();
-	@Test
-	public void testToFutureStreamLazyReact() {
-		assertThat(just.toFutureStream(react).toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toFutureStream(react).toList(),equalTo(Arrays.asList()));
-	}
 
-	@Test
-	public void testToFutureStream() {
-		assertThat(just.toFutureStream().toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toFutureStream().toList(),equalTo(Arrays.asList()));
-	}
-	SimpleReact react2 = new SimpleReact();
-	@Test
-	public void testToSimpleReactSimpleReact() {
-		assertThat(just.toSimpleReact(react2).block(),equalTo(Arrays.asList(10)));
-		assertThat(none.toSimpleReact(react2).block(),equalTo(Arrays.asList()));
-	}
-
-	@Test
-	public void testToSimpleReact() {
-		assertThat(just.toSimpleReact().block(),equalTo(Arrays.asList(10)));
-		assertThat(none.toSimpleReact().block(),equalTo(Arrays.asList()));
-	}
 
 	@Test
 	public void testGet() {
@@ -593,12 +457,6 @@ public class Xor2Test {
                 .ap(Ior.primary(10)).toMaybe(),equalTo(Ior.secondary(null).toMaybe()));
     }
 
-	
-
-	@Test
-	public void testMapReduceReducerOfR() {
-		assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(just.toPStackX()));
-	}
 
 	@Test
 	public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
@@ -649,10 +507,7 @@ public class Xor2Test {
 		assertThat(just.foldRight(10,(a,b)->a+b),equalTo(20));
 	}
 
-	@Test
-	public void testFoldRightMapToType() {
-		assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(just.toPStackX()));
-	}
+
 
 	
 	
@@ -683,20 +538,6 @@ public class Xor2Test {
 		
 	}
 
-	@Test
-	public void testToAtomicReference() {
-		assertThat(just.toAtomicReference().get(),equalTo(10));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToAtomicReferenceNone() {
-		none.toAtomicReference().get();
-	}
-
-	@Test
-	public void testToOptionalAtomicReference() {
-		assertFalse(none.toOptionalAtomicReference().isPresent());
-		assertTrue(just.toOptionalAtomicReference().isPresent());
-	}
 
 	@Test
 	public void testOrElse() {
@@ -714,11 +555,6 @@ public class Xor2Test {
 		assertThat(just.orElseThrow(()->new RuntimeException()),equalTo(10));
 	}
 
-	@Test
-	public void testToList() {
-		assertThat(just.toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toListX(),equalTo(new ArrayList<>()));
-	}
 
 	
 	@Test
@@ -748,35 +584,7 @@ public class Xor2Test {
 
 	
 
-	@Test
-    public void testMatches() {
-        assertThat(just.matches(c->c.is(when("10"),then("hello")),
-                                        c->c.is(when(instanceOf(Integer.class)), then("error")),
-                                            otherwise("miss")).toMaybe(),
-                                            equalTo(Maybe.of("error")));
-        
-            assertThat(just.matches(c->c.is(when("10"),then("hello")).is(when("2"),then("hello")),
-                                    c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
-                                        otherwise("miss")).toMaybe(),
-                                            equalTo(Maybe.of("error")));
-            
-            assertThat(just.matches(c->c.is(when("1"),then("hello"))
-                                     .is(when("2"),then(()->"hello"))
-                                     .is(when("3"),then(()->"hello")),
-                                     c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
-                                     otherwise("miss")).toMaybe(),equalTo(Maybe.just("error")));
-            
-            
-            assertThat(none.matches(c->c.is(when("1"),then("hello"))
-                    .is(when("2"),then(()->"hello"))
-                    .is(when("3"),then(()->"hello")),
-                    c->c.is(when(Predicates.instanceOf(Integer.class)), then("error")),
-                    otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
-        
-    }
 
-	
-	
 
 	
 

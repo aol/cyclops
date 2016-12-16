@@ -2887,18 +2887,18 @@ public interface LazyFutureStream<U> extends LazySimpleReactStream<U>, LazyStrea
      * @see com.aol.cyclops.control.ReactiveSeq#appendStream(java.util.stream.Stream)
      */
     @Override
-    default LazyFutureStream<U> appendStream(final Stream<U> stream) {
+    default LazyFutureStream<U> appendS(final Stream<? extends U> stream) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                                     .appendStream(stream));
+                                     .appendS(stream));
     }
 
     /*
      * @see com.aol.cyclops.control.ReactiveSeq#prependStream(java.util.stream.Stream)
      */
     @Override
-    default LazyFutureStream<U> prependStream(final Stream<U> stream) {
+    default LazyFutureStream<U> prependS(final Stream<? extends U> stream) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                                     .prependStream(stream));
+                                     .prependS(stream));
     }
 
     /*

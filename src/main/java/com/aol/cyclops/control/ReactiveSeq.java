@@ -2176,21 +2176,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     public ReactiveSeq<T> shuffle();
 
-    /**
-     * Append Stream to this ReactiveSeq
-     * 
-     * <pre>
-     * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).appendStream(ReactiveSeq.of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
-     * 
-     *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
-     * </pre>
-     * 
-     * @param stream
-     *            to append
-     * @return ReactiveSeq with Stream appended
-     */
-    public ReactiveSeq<T> appendStream(Stream<T> stream);
+
+
 
     /**
      * Prepend Stream to this ReactiveSeq
@@ -2198,7 +2185,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3)
-     *                                   .prependStream(of(100, 200, 300))
+     *                                   .prependS(of(100, 200, 300))
      *                                   .map(it -> it + "!!")
      *                                   .collect(Collectors.toList());
      * 
@@ -2210,7 +2197,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to Prepend
      * @return ReactiveSeq with Stream prepended
      */
-    ReactiveSeq<T> prependStream(Stream<T> stream);
+    ReactiveSeq<T> prependS(Stream<? extends T> stream);
 
     /**
      * Append values to the end of this ReactiveSeq
@@ -3819,36 +3806,29 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         seq().print(stream);
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
+    /**
+     * Append Stream to this ReactiveSeq
+     *
+     * <pre>
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).appendStream(ReactiveSeq.of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
+     *
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
+     * </pre>
+     *
+     * @param stream
+     *            to append
+     * @return ReactiveSeq with Stream appended
      */
-    default ReactiveSeq<T> appendS(Stream<? extends T> other) {
-        
-        return fromStream(seq().append(other));
-    }
+     ReactiveSeq<T> appendS(Stream<? extends T> other);
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
      */
-    default ReactiveSeq<T> append(Iterable<? extends T> other) {
-        
-        return fromStream(seq().append(other));
-    }
+
+    ReactiveSeq<T> append(Iterable<? extends T> other);
 
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#prepend(java.util.stream.Stream)
-     */
-    default ReactiveSeq<T> prependS(Stream<? extends T> other) {
-        
-        return fromStream(seq().prepend(other));
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#prepend(java.lang.Iterable)
-     */
-    default ReactiveSeq<T> prepend(Iterable<? extends T> other) {
-        
-        return fromStream(seq().prepend(other));
-    }
+    ReactiveSeq<T> prepend(Iterable<? extends T> other);
 
 
   
@@ -3906,5 +3886,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     default ReactiveStreamsTerminalFutureOperations<T> futureOps(Executor ex){
         return new ReactiveSeqFutureOpterationsImpl<T>(ex,this);
+    }
+
+    default boolean isEmpty(){
+        return !findAny().isPresent();
     }
 }

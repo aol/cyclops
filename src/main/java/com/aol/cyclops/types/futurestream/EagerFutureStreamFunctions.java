@@ -1,5 +1,12 @@
 package com.aol.cyclops.types.futurestream;
 
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.async.Queue;
+import com.aol.cyclops.data.async.Queue.QueueReader;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -7,14 +14,6 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.Queue.QueueReader;
 
 public class EagerFutureStreamFunctions {
     /**

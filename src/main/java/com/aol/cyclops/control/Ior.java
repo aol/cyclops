@@ -59,6 +59,41 @@ import lombok.EqualsAndHashCode;
  */
 public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFunctor<ST, PT> {
 
+
+    /**
+     * Static method useful as a method reference for fluent consumption of any value type stored in this Either
+     * (will capture the lowest common type)
+     *
+     * <pre>
+     * {@code
+     *
+     *   myEither.to(Xor::consumeAny)
+    .accept(System.out::println);
+     * }
+     * </pre>
+     *
+     * @param either Xor to consume value for
+     * @return Consumer we can apply to consume value
+     */
+    static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Ior<LT,RT> either){
+        return in->visitAny(in,either);
+    }
+
+    static <X, LT extends X, M extends X, RT extends X,R>  Function<Function<? super X, R>,R> applyAny(Ior<LT,RT> either){
+        return in->visitAny(either,in);
+    }
+
+    static <X, PT extends X, ST extends X,R> R visitAny(Ior<ST,PT> either, Function<? super X, ? extends R> fn){
+        return either.visit(fn, fn, (a,b)-> fn.apply(a));
+    }
+
+    static <X, LT extends X, RT extends X> X visitAny(Consumer<? super X> c,Ior<LT,RT> either){
+        Function<? super X, X> fn = x ->{
+            c.accept(x);
+            return x;
+        };
+        return visitAny(either,fn);
+    }
     @Deprecated //internal use only
     public static <ST, PT> Ior<ST, PT> both(final Ior<ST, PT> secondary, final Ior<ST, PT> primary) {
         return new Both<ST, PT>(

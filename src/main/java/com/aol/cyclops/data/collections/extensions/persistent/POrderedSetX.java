@@ -961,10 +961,6 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     }
 
 
-    @Override
-    default POrderedSetX<T> retainAll(final Seq<? extends T> stream) {
 
-        return (POrderedSetX<T>) PersistentCollectionX.super.retainAll(stream);
-    }
 
 }

@@ -1096,10 +1096,5 @@ public interface PStackX<T> extends To<PStackX<T>>,
     }
 
 
-    @Override
-    default PStackX<T> retainAll(final Seq<? extends T> stream) {
-
-        return (PStackX<T>) PersistentCollectionX.super.retainAll(stream);
-    }
 
 }

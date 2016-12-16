@@ -1040,10 +1040,5 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
 
-    @Override
-    default PVectorX<T> retainAll(final Seq<? extends T> stream) {
-
-        return (PVectorX<T>) PersistentCollectionX.super.retainAll(stream);
-    }
 
 }

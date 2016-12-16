@@ -906,17 +906,6 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         return (SortedSetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
-    @Override
-    default SortedSetX<T> removeAll(final Seq<? extends T> stream) {
-
-        return (SortedSetX<T>) MutableCollectionX.super.removeAll(stream);
-    }
-
-    @Override
-    default SortedSetX<T> retainAll(final Seq<? extends T> stream) {
-
-        return (SortedSetX<T>) MutableCollectionX.super.retainAll(stream);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.ExtendedTraversable#permutations()

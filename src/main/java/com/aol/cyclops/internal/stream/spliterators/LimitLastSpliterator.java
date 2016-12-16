@@ -10,6 +10,11 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.control.StreamUtils;
+import java.util.Spliterator;
+import java.util.Spliterators.AbstractSpliterator;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class LimitLastSpliterator<T> extends AbstractSpliterator<T>{
 
@@ -17,6 +22,9 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T>{
         Spliterator<T> source = stream.spliterator();
         if(limit==0){
             return Stream.of();
+        }
+        if(limit==source.getExactSizeIfKnown()){ //right sized already
+            return StreamSupport.stream(source,false);
         }
         if(limit==1)
             return StreamSupport.stream(new LimitLastOneSpliterator<T>(source), false);
@@ -37,7 +45,6 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T>{
     }
 
     
-    
      boolean requestedAll =false;
      @Override
      public boolean tryAdvance(Consumer<? super T> action) {
@@ -45,7 +52,6 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T>{
                     if (buffer.size() == limit) {
                         buffer.poll();
                     }
-                    System.out.println("Adding = "  + e);
                     buffer.offer(e);
                });
          
@@ -56,8 +62,6 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T>{
             //need to handle case where external subscription is not closed
             return buffer.size()>0;
      }
-        
-    
-    
+
    
 }

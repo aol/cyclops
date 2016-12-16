@@ -926,23 +926,6 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         return (SetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#removeAll(org.jooq.lambda.Seq)
-     */
-    @Override
-    default SetX<T> removeAll(final Seq<? extends T> stream) {
-
-        return (SetX<T>) MutableCollectionX.super.removeAll(stream);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#retainAll(org.jooq.lambda.Seq)
-     */
-    @Override
-    default SetX<T> retainAll(final Seq<? extends T> stream) {
-
-        return (SetX<T>) MutableCollectionX.super.retainAll(stream);
-    }
 
     /**
      * Narrow a covariant Set

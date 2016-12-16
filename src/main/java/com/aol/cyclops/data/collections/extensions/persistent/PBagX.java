@@ -986,10 +986,6 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
         return (PBagX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
     }
 
-    @Override
-    default PBagX<T> retainAll(final Seq<? extends T> stream) {
 
-        return (PBagX<T>) PersistentCollectionX.super.retainAll(stream);
-    }
 
 }

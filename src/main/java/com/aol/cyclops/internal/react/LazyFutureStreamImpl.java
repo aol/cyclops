@@ -232,7 +232,7 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
 
    // @Override
     public String format() {
-        return Seq.seq(this)
+        return Seq.seq((Stream<U>)this)
                   .format();
     }
 

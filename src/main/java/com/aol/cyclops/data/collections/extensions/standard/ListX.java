@@ -1125,22 +1125,9 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#removeAll(org.jooq.lambda.Seq)
-     */
-    @Override
-    default ListX<T> removeAll(final Seq<? extends T> stream) {
 
-        return (ListX<T>) MutableCollectionX.super.removeAll(stream);
-    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#retainAll(org.jooq.lambda.Seq)
-     */
-    @Override
-    default ListX<T> retainAll(final Seq<? extends T> stream) {
-        return (ListX<T>) MutableCollectionX.super.retainAll(stream);
-    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)

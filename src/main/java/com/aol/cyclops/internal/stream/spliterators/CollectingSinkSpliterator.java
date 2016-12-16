@@ -28,7 +28,9 @@ public class CollectingSinkSpliterator<T,A,R> extends AbstractSpliterator<R> imp
     public R result(){
         return monoid.finisher().apply(total);
     }
-    
+
+
+
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
         this.action = action;

@@ -938,10 +938,6 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
 
-    @Override
-    default PSetX<T> retainAll(final Seq<? extends T> stream) {
 
-        return (PSetX<T>) PersistentCollectionX.super.retainAll(stream);
-    }
 
 }

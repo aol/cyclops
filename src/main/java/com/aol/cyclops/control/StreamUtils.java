@@ -1,75 +1,13 @@
 package com.aol.cyclops.control;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.BaseStream;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
-import org.reactivestreams.Subscription;
-
 import com.aol.cyclops.CyclopsCollectors;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.internal.stream.FutureStreamUtils;
-import com.aol.cyclops.internal.stream.PausableHotStreamImpl;
-import com.aol.cyclops.internal.stream.ReactiveSeqImpl;
-import com.aol.cyclops.internal.stream.ReversedIterator;
-import com.aol.cyclops.internal.stream.SeqUtils;
-import com.aol.cyclops.internal.stream.operators.BatchBySizeOperator;
-import com.aol.cyclops.internal.stream.operators.BatchByTimeAndSizeOperator;
-import com.aol.cyclops.internal.stream.operators.BatchByTimeOperator;
-import com.aol.cyclops.internal.stream.operators.BatchWhileOperator;
-import com.aol.cyclops.internal.stream.operators.DebounceOperator;
-import com.aol.cyclops.internal.stream.operators.LimitWhileOperator;
-import com.aol.cyclops.internal.stream.operators.LimitWhileTimeOperator;
-import com.aol.cyclops.internal.stream.operators.MultiReduceOperator;
-import com.aol.cyclops.internal.stream.operators.OnePerOperator;
-import com.aol.cyclops.internal.stream.operators.RecoverOperator;
-import com.aol.cyclops.internal.stream.operators.SkipLastOperator;
-import com.aol.cyclops.internal.stream.operators.SkipWhileOperator;
-import com.aol.cyclops.internal.stream.operators.SkipWhileTimeOperator;
-import com.aol.cyclops.internal.stream.operators.WindowStatefullyWhileOperator;
+import com.aol.cyclops.internal.stream.*;
+import com.aol.cyclops.internal.stream.operators.*;
 import com.aol.cyclops.internal.stream.spliterators.LimitLastSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
@@ -80,10 +18,34 @@ import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.NonPausableHotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.util.ExceptionSoftener;
-
 import lombok.AllArgsConstructor;
-import lombok.val;
 import lombok.experimental.UtilityClass;
+import lombok.val;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
+import org.pcollections.ConsPStack;
+import org.pcollections.PStack;
+import org.reactivestreams.Subscription;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
+import java.util.function.*;
+import java.util.stream.BaseStream;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Static utility methods for working with Java  8 Streams
@@ -1756,8 +1718,7 @@ public class StreamUtils {
         
             return new ReactiveSeqImpl<T>((Stream<T>)
                                           stream, rev,(Optional)push);
-     //   return new ReactiveSeqImpl<T>((Stream<T>)
-       //                              stream);
+
     }
 
     /**

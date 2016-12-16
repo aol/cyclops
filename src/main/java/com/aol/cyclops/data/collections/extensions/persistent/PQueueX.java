@@ -1172,10 +1172,5 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
         return (PQueueX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
     }
 
-    @Override
-    default PQueueX<T> retainAll(final Seq<? extends T> stream) {
-
-        return (PQueueX<T>) PersistentCollectionX.super.retainAll(stream);
-    }
 
 }

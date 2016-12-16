@@ -286,7 +286,7 @@ public class Optionals {
     public static <T1, T2, R> Optional<R> zip(final Publisher<? extends T2> p, final Optional<? extends T1> f,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
         return narrow(Maybe.fromOptional(f)
-                           .zip(fn, p)
+                           .zipP(p, fn)
                            .toOptional());
     }
     /**

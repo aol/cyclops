@@ -945,23 +945,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
         return (QueueX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#removeAll(org.jooq.lambda.Seq)
-     */
-    @Override
-    default QueueX<T> removeAll(final Seq<? extends T> stream) {
 
-        return (QueueX<T>) MutableCollectionX.super.removeAll(stream);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#retainAll(org.jooq.lambda.Seq)
-     */
-    @Override
-    default QueueX<T> retainAll(final Seq<? extends T> stream) {
-
-        return (QueueX<T>) MutableCollectionX.super.retainAll(stream);
-    }
 
     /**
      * Narrow a covariant Queue
