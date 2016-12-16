@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -35,6 +34,7 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
@@ -47,45 +47,42 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.internal.monads.ComprehenderSelector;
 import com.aol.cyclops.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.ScanLeftSpliterator;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.types.stream.future.FutureOperations;
-import com.aol.cyclops.util.function.QuadFunction;
-import com.aol.cyclops.util.function.TriFunction;
 
 public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T> {
-    private final Seq<T> stream;
+    private final Stream<T> stream;
     private final Optional<ReversableSpliterator> reversable;
 
     public ReactiveSeqImpl(final Stream<T> stream) {
 
-        this.stream = Seq.seq(stream);
+        this.stream = stream;
         this.reversable = Optional.empty();
 
     }
 
     public ReactiveSeqImpl(final Stream<T> stream, final ReversableSpliterator rev) {
-        this.stream = Seq.seq(stream);
+        this.stream = stream;
         this.reversable = Optional.of(rev);
 
     }
 
     @Override
     public <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
-        return stream.foldLeft(identity, accumulator);
+        return Seq.seq(stream).foldLeft(identity, accumulator);
     }
 
     /* (non-Javadoc)
@@ -293,14 +290,15 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<T> scanLeft(final Monoid<T> monoid) {
-        return StreamUtils.reactiveSeq(StreamUtils.scanLeft(stream, monoid), reversable);
+         return scanLeft(monoid.zero(),monoid);
     }
 
     @Override
     public final <U> ReactiveSeq<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
-        return StreamUtils.reactiveSeq(Seq.seq(stream)
-                                          .scanLeft(seed, function),
+        
+        return StreamUtils.reactiveSeq(Stream.concat(Stream.of(seed),
+StreamSupport.stream(new ScanLeftSpliterator<T,U>(this.stream.spliterator(),seed,function),false)),
                                        reversable);
 
     }
@@ -779,7 +777,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> appendStream(final Stream<T> stream) {
-        return StreamUtils.reactiveSeq(StreamUtils.appendStream(this.stream, stream), Optional.empty());
+        return StreamUtils.reactiveSeq(Stream.concat(this.stream, stream), Optional.empty());
     }
 
     @Override
@@ -872,22 +870,19 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> concat(final Stream<? extends T> other) {
-        return StreamUtils.reactiveSeq(Seq.seq(stream)
-                                          .concat(other),
+        return StreamUtils.reactiveSeq(Stream.concat(stream,other),
                                        Optional.empty());
     }
 
     @Override
     public ReactiveSeq<T> concat(final T other) {
-        return StreamUtils.reactiveSeq(Seq.seq(stream)
-                                          .concat(other),
+        return StreamUtils.reactiveSeq(Stream.concat(stream,Stream.of(other)),
                                        Optional.empty());
     }
 
     @Override
     public ReactiveSeq<T> concat(final T... other) {
-        return StreamUtils.reactiveSeq(Seq.seq(stream)
-                                          .concat(other),
+        return StreamUtils.reactiveSeq(Stream.concat(stream,Stream.of(other)),
                                        Optional.empty());
     }
 
