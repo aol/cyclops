@@ -297,9 +297,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     public final <U> ReactiveSeq<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
         
-        return StreamUtils.reactiveSeq(Stream.concat(Stream.of(seed),
-StreamSupport.stream(new ScanLeftSpliterator<T,U>(this.stream.spliterator(),seed,function),false)),
-                                       reversable);
+        return StreamUtils.reactiveSeq(Stream.concat(Stream.of(seed), StreamSupport.stream(new ScanLeftSpliterator<T,U>(this.stream.spliterator(),
+                                        seed,function),false)),reversable);
 
     }
 
