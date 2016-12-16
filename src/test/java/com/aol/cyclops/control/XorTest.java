@@ -14,6 +14,20 @@ public class XorTest {
 	private String concat(String a,String b){
 		return a+b;
 	}
+	static class Base{ }
+    static class One extends Base{ }
+    static class Two extends Base{}
+    @Test
+    public void visitAny(){
+       
+        Xor<One,Two> test = Xor.primary(new Two());
+        test.to(Xor::applyAny).apply(b->b.toString());
+        Xor.primary(10).to(Xor::consumeAny).accept(System.out::println);
+        Xor.primary(10).to(e->Xor.visitAny(System.out::println,e));
+        Object value = Xor.primary(10).to(e->Xor.visitAny(e,x->x));
+        assertThat(value,equalTo(10));
+    }
+	
 	@Test
 	public void test() {
 		Xor<String,String> fail1 = Xor.secondary("failed1");

@@ -122,6 +122,40 @@ import lombok.EqualsAndHashCode;
 public interface Xor<ST, PT> extends To<Xor<ST,PT>>,Supplier<PT>, MonadicValue<PT>, Functor<PT>, BiFunctor<ST,PT>,Filterable<PT>, ApplicativeFunctor<PT> {
 
     /**
+     * Static method useful as a method reference for fluent consumption of any value type stored in this Either 
+     * (will capture the lowest common type)
+     * 
+     * <pre>
+     * {@code 
+     * 
+     *   myEither.to(Xor::consumeAny)
+                 .accept(System.out::println);
+     * }
+     * </pre>
+     * 
+     * @param either Xor to consume value for
+     * @return Consumer we can apply to consume value
+     */
+    static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Xor<LT,RT> either){
+        return in->visitAny(in,either);
+    }
+    
+    static <X, LT extends X, M extends X, RT extends X,R>  Function<Function<? super X, R>,R> applyAny(Xor<LT,RT> either){
+        return in->visitAny(either,in);
+    }
+
+    static <X, PT extends X, ST extends X,R> R visitAny(Xor<ST,PT> either, Function<? super X, ? extends R> fn){
+        return either.visit(fn, fn);
+    }
+ 
+    static <X, LT extends X, RT extends X> X visitAny(Consumer<? super X> c,Xor<LT,RT> either){
+        Function<? super X, X> fn = x ->{
+            c.accept(x);
+            return x;
+        };
+        return visitAny(either,fn);
+    }
+    /**
      * Construct a Primary Xor from the supplied publisher
      * <pre>
      * {@code 
