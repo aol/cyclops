@@ -11,15 +11,17 @@ public class ScanLeftSpliterator<T,U> implements Spliterator<U>{
 
     private final Spliterator<T> source;
     private U current; 
+    private final U identity; 
     private final BiFunction<? super U, ? super T, ? extends U> function;
     private final long size;
     private final int characteristics;
-    public ScanLeftSpliterator(Spliterator<T> source, U current,
+    public ScanLeftSpliterator(Spliterator<T> source, U identity,
             BiFunction<? super U, ? super T, ? extends U> function) {
         super();
         this.source = source;
-        this.current = current;
+        this.identity = identity;
         this.function = function;
+        this.current=  null;
         size = source.estimateSize();
         characteristics= source.characteristics() & Spliterator.ORDERED;;
     }
@@ -29,16 +31,27 @@ public class ScanLeftSpliterator<T,U> implements Spliterator<U>{
      */
     @Override
     public void forEachRemaining(Consumer<? super U> action) {
+        if(current==null){
+            action.accept(identity);
+            current = identity;
+        }
         source.forEachRemaining(e->{
-           action.accept(current=function.apply(current,e));
+            action.accept( current=function.apply(current,e));
+            
         });
         
     }
 
     @Override
     public boolean tryAdvance(Consumer<? super U> action) {
-      return source.tryAdvance(e->{
-           action.accept(current =function.apply(current,e));
+        if(current==null){
+            action.accept(identity);
+            current = identity;
+        }
+        return source.tryAdvance(e->{
+          
+            action.accept( current=function.apply(current,e));
+          
        });
     }
 

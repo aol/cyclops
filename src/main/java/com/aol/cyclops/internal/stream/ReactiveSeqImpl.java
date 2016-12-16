@@ -290,7 +290,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<T> scanLeft(final Monoid<T> monoid) {
-        return StreamUtils.reactiveSeq(StreamUtils.scanLeft(stream, monoid), reversable);
+         return scanLeft(monoid.zero(),monoid);
     }
 
     @Override
