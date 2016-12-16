@@ -1,7 +1,10 @@
 package com.aol.cyclops.functions.collections.extensions.persistent;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
+import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -9,12 +12,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import org.jooq.lambda.tuple.Tuple2;
-import org.junit.Test;
-
-import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class PSetXTest extends AbstractCollectionXTest {
 
@@ -54,7 +53,7 @@ public class PSetXTest extends AbstractCollectionXTest {
     @Test
     public void coflatMap(){
        assertThat(PSetX.of(1,2,3)
-                   .coflatMap(s->s.sum().get())
+                   .coflatMap(s->s.sum(i->i))
                    .single(),equalTo(6));
         
     }

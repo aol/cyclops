@@ -24,10 +24,7 @@ public class XorSecondaryTest {
 	public void setup(){
 		failure = Xor.secondary(error);
 	}
-	@Test
-	public void testUnapply() {
-		assertThat(failure.unapply(),equalTo(Arrays.asList(error)));
-	}
+
 
 	@Test
 	public void testOf() {

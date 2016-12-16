@@ -50,10 +50,7 @@ public class IorSecondaryTest {
         assertThat(mapped.swap().get(),instanceOf(Throwable.class));
     }
 
-	@Test
-	public void testUnapply() {
-		assertThat(failure.unapply(),equalTo(Arrays.asList(error)));
-	}
+
 
 	@Test
 	public void testOf() {

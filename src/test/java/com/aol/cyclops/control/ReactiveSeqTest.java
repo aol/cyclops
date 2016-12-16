@@ -1,12 +1,8 @@
 package com.aol.cyclops.control;
 
-import static com.aol.cyclops.util.function.Predicates.anyOf;
-import static com.aol.cyclops.util.function.Predicates.greaterThan;
-import static com.aol.cyclops.util.function.Predicates.hasItems;
-import static com.aol.cyclops.util.function.Predicates.in;
-import static com.aol.cyclops.util.function.Predicates.not;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import com.aol.cyclops.Monoids;
+import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,10 +15,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Test;
-
-import com.aol.cyclops.Monoids;
-import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
+import static com.aol.cyclops.util.function.Predicates.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
@@ -95,7 +91,7 @@ public class ReactiveSeqTest {
         pushable.onNext("hello3");
         pushable.onComplete();
        // stream.printOut();
-        stream.limitLast(2).zip(Stream.of(1,2)).printOut();
+        stream.limitLast(2).zipS(Stream.of(1,2)).printOut();
     }
     
     @Test
@@ -111,7 +107,7 @@ public class ReactiveSeqTest {
             pushable.onComplete();
         }).run();
        
-        assertThat(stream.zip(Stream.of(1,2)).toList().size(),equalTo(1));
+        assertThat(stream.zipS(Stream.of(1,2)).toList().size(),equalTo(1));
         assertFalse(active.get());
     }
     
@@ -222,7 +218,7 @@ public class ReactiveSeqTest {
     public void coflatMap(){
         
        assertThat(ReactiveSeq.of(1,2,3)
-                   .coflatMap(s->s.sum().get())
+                   .coflatMap(s->s.sumInt(i->i))
                    .single(),equalTo(6));
         
     }

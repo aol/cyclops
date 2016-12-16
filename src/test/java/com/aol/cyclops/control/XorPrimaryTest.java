@@ -41,10 +41,7 @@ public class XorPrimaryTest {
 		success = Xor.primary(10);
 	}
 
-	@Test
-	public void testUnapply() {
-		assertThat(success.unapply(),equalTo(Arrays.asList(value)));
-	}
+
 
 	@Test
 	public void testGet() {

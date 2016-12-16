@@ -38,7 +38,7 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 	@Test
     public void coflatMap(){
        assertThat(PStackX.of(1,2,3)
-                   .coflatMap(s->s.sum().get())
+                   .coflatMap(s->s.sumInt(i->i))
                    .single(),equalTo(6));
         
     }

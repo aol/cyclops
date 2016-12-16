@@ -64,10 +64,7 @@ public class IorPrimaryTest {
         assertTrue(mapped.isPrimary());
     }
 
-	@Test
-	public void testUnapply() {
-		assertThat(success.unapply(),equalTo(Arrays.asList(value)));
-	}
+
 
 	@Test
 	public void testGet() {

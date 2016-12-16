@@ -27,11 +27,11 @@ public class EvalTest {
     @Test
     public void testZip(){
         assertThat(Eval.now(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Eval.now(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
-        assertThat(Eval.now(10).zip(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Eval.now(10).zipP(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Eval.now(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Eval.now(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Eval.now(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Eval.now(10).zip(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Eval.now(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Eval.now(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }
     

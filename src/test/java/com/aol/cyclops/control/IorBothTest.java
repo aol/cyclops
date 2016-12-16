@@ -65,10 +65,6 @@ public class IorBothTest {
         assertThat(mapped.swap().get(),instanceOf(Throwable.class));
     }
 
-	@Test
-	public void testUnapply() {
-		assertThat(success.unapply(),equalTo(Arrays.asList(value)));
-	}
 
 	@Test
 	public void testGet() {

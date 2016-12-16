@@ -28,7 +28,7 @@ public abstract class BaseNumberOperationsTest {
 	
 	@Test
 	public void sumInt(){
-		assertThat(of(1,2,3,4).futureOperations(exec).sumInt(i->i).join(),
+		assertThat(of(1,2,3,4).foldFuture(s->s.sumInt(i->i),exec).get(),
 				equalTo(10));
 	}
 	@Test
