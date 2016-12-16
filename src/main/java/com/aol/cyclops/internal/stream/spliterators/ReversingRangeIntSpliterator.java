@@ -2,6 +2,7 @@ package com.aol.cyclops.internal.stream.spliterators;
 
 import java.util.Objects;
 import java.util.Spliterator;
+import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 import lombok.Getter;
@@ -68,6 +69,44 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     public ReversableSpliterator copy() {
         return new ReversingRangeIntSpliterator(
                                                 index, max, reverse);
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.Spliterator.OfInt#forEachRemaining(java.util.function.IntConsumer)
+     */
+    @Override
+    public void forEachRemaining(IntConsumer action) {
+        if (!reverse) {
+            for( ;index < max && index > min;) {
+                action.accept(index++);
+                
+            }
+        }
+        if (reverse) {
+            for( ;index > min && index < max;) {
+                action.accept(index--);
+                
+            }
+            
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.Spliterator.OfInt#forEachRemaining(java.util.function.Consumer)
+     */
+    @Override
+    public void forEachRemaining(Consumer<? super Integer> action) {
+        if (!reverse) {
+            for( ;index < max && index > min;) {
+                action.accept(index++);
+            }
+        }
+        if (reverse) {
+            for( ;index > min && index < max;) {
+                action.accept(index--);   
+            }
+            
+        }
     }
 
 }

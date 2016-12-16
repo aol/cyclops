@@ -60,7 +60,6 @@ import com.aol.cyclops.internal.stream.operators.BatchByTimeAndSizeOperator;
 import com.aol.cyclops.internal.stream.operators.BatchByTimeOperator;
 import com.aol.cyclops.internal.stream.operators.BatchWhileOperator;
 import com.aol.cyclops.internal.stream.operators.DebounceOperator;
-import com.aol.cyclops.internal.stream.operators.LimitLastOperator;
 import com.aol.cyclops.internal.stream.operators.LimitWhileOperator;
 import com.aol.cyclops.internal.stream.operators.LimitWhileTimeOperator;
 import com.aol.cyclops.internal.stream.operators.MultiReduceOperator;
@@ -70,6 +69,7 @@ import com.aol.cyclops.internal.stream.operators.SkipLastOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileOperator;
 import com.aol.cyclops.internal.stream.operators.SkipWhileTimeOperator;
 import com.aol.cyclops.internal.stream.operators.WindowStatefullyWhileOperator;
+import com.aol.cyclops.internal.stream.spliterators.LimitLastSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
@@ -779,8 +779,7 @@ public class StreamUtils {
     }
 
     public static <U> Stream<U> limitLast(final Stream<U> stream, final int num) {
-        return new LimitLastOperator<>(
-                                       stream, num).limitLast();
+        return LimitLastSpliterator.limitLast(stream, num);
     }
 
     public static <T> Stream<T> recover(final Stream<T> stream, final Function<Throwable, ? extends T> fn) {
