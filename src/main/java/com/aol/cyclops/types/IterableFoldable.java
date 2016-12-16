@@ -7,7 +7,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
 /**
- * A non-scalar Foldable type 
+ * A non-scalar Foldable type
  * 
  * @author johnmcclean
  *
