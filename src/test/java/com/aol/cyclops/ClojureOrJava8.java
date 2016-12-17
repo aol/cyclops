@@ -97,7 +97,7 @@ public class ClojureOrJava8 {
         
     }
     
-    public MapX<Integer, List<Person>> cyclopsJava8(ListX<Person> people){
+    public MapX<Integer, ListX<Person>> cyclopsJava8(ListX<Person> people){
         
       return people.groupBy(Person::getAge);
         

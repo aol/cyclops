@@ -7,12 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
+import java.util.function.*;
 import java.util.stream.Collector;
 
 import org.jooq.lambda.Collectable;
@@ -54,6 +49,9 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Foldable<T> { //Col
      */
     default <R> FutureW<R> foldFuture(Function<? super CyclopsCollectable<T>,? extends R> fn,Executor ex){
         return FutureW.ofSupplier(()->fn.apply(this),ex);
+    }
+    default <R> FutureW<Void> runFuture( Executor ex,Consumer<? super CyclopsCollectable<T>> fn){
+        return FutureW.ofSupplier(()->{ fn.accept(this); return null;},ex);
     }
     /**
      * Perform a lazy caching fold (results are memoized)

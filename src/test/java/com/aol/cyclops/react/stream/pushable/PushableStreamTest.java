@@ -174,7 +174,7 @@ public class PushableStreamTest {
 	@Test
 	public void testSeqAdapter() {
 		Signal<Integer> signal = Signal.queueBackedSignal();
-		Seq<Integer> pushable = StreamSource.reactiveSeq(signal
+		ReactiveSeq<Integer> pushable = StreamSource.reactiveSeq(signal
 				.getDiscrete());
 		signal.set(100);
 		signal.close();
@@ -261,7 +261,7 @@ public class PushableStreamTest {
 												.ofMultiple();
 		LazyFutureStream<Integer> pushable = multi
 				.futureStream(new LazyReact());
-		Seq<Integer> seq = multi.reactiveSeq();
+		ReactiveSeq<Integer> seq = multi.reactiveSeq();
 		Stream<Integer> stream = multi.stream();
 		multi.getInput().offer(100);
 		multi.getInput().close();

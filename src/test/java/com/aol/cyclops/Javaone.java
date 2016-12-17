@@ -197,8 +197,7 @@ public class Javaone {
 
         transferQueue.stream()
                   .map(e->"Consumed on " + Thread.currentThread().getId())
-                  .futureOperations(Executors.newFixedThreadPool(1))
-                  .forEach(System.out::println);
+                  .runFuture(Executors.newFixedThreadPool(1),s->s.forEach(System.out::println));
         
         
         
@@ -226,8 +225,7 @@ public class Javaone {
         
         inputQueue.stream()
                   .map(e->"Consumed on " + Thread.currentThread().getId())
-                  .futureOperations(Executors.newFixedThreadPool(1))
-                  .forEach(System.out::println);
+                  .runFuture(Executors.newFixedThreadPool(1),s->s.forEach(System.out::println));
         
         
         
@@ -335,10 +333,9 @@ public class Javaone {
         ReactiveSeq.of(6,5,2,1)
         .map(e->e*100)
         .filter(e->e<551)
-        .futureOperations(Executors.newFixedThreadPool(1))
-        .forEach(e->{
+         .runFuture(Executors.newFixedThreadPool(1),s->s.forEach(e->{
             System.out.println("Element " + e + " on thread " + Thread.currentThread().getId());
-        });
+        }));
     }
     
     public static void main(String[] args){
@@ -348,11 +345,10 @@ public class Javaone {
             ReactiveSeq.of(6, 5, 2, 1)
                        .map(e -> e * 100)
                        .filter(e -> e < 551)
-                       .futureOperations(Executors.newFixedThreadPool(1))
-                       .forEach(e -> {
+                    .runFuture(Executors.newFixedThreadPool(1),s->s.forEach(e -> {
                            System.out.println("Element " + e + " on thread " + Thread.currentThread()
                                                                                      .getId());
-                       });
+                       }));
 
         }
         
@@ -362,12 +358,11 @@ public class Javaone {
                 ReactiveSeq.of(6,5,2,1)
                            .map(e->e*100)
                            .filter(e->e<551)
-                           .futureOperations(Executors.newFixedThreadPool(1))
-                           .forEach(e->{
+                        .runFuture(Executors.newFixedThreadPool(1),s->s.forEach(e->{
                                System.out.println("Element " + e 
                                                   + " on thread " 
                                                   + Thread.currentThread().getId());
-                           });
+                           }));
                           
                 
                 

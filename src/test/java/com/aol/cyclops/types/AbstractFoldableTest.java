@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Ior;
@@ -266,7 +267,7 @@ public abstract class AbstractFoldableTest {
     }
     @Test
     public void testGroupByEager() {
-        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
        
         assertThat(map1.get(0),hasItem(2));
         assertThat(map1.get(0),hasItem(4));
@@ -278,11 +279,5 @@ public abstract class AbstractFoldableTest {
      
     }
     
-    @Test
-    public void testValidateIsLazy() {
-    	Validator<Integer, Integer, Integer> v = Validator.of(i -> i < 3, null, 0);
-		Ior<ReactiveSeq<Integer>, ReactiveSeq<Integer>> results = ReactiveSeq.of(1, 2, 3, 4, 5, 6).validate(v);
-		
-		results.swap().findFirst().get().map(i -> i + 1);
-    }
+
 }
