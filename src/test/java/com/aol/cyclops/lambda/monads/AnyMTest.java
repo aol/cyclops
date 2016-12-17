@@ -1,5 +1,6 @@
 package com.aol.cyclops.lambda.monads;
 
+import static com.aol.cyclops.types.anyM.Witness.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
@@ -42,7 +43,7 @@ public class AnyMTest {
     }
     @Test
     public void anyMSetConversion() {
-      AnyMSeq<Integer> wrapped = AnyM.fromSet(SetX.of(1, 2, 3, 4, 5));
+      AnyMSeq<set,Integer> wrapped = AnyM.fromSet(SetX.of(1, 2, 3, 4, 5));
 
       Eval<Integer> lazyResult = wrapped
               .map(i -> i * 10)
@@ -53,7 +54,7 @@ public class AnyMTest {
     }
     @Test
     public void anyMListConversion() {
-      AnyMSeq<Integer> wrapped = AnyM.fromList(ListX.of(1, 2, 3, 4, 5));
+      AnyMSeq<set,Integer> wrapped = AnyM.fromList(ListX.of(1, 2, 3, 4, 5));
 
       Eval<Integer> lazyResult = wrapped
               .map(i -> i * 10)
@@ -66,7 +67,7 @@ public class AnyMTest {
     public void flatMapFirst(){
      
        List l= AnyM.fromList(ListX.of(1,2,3))
-            .flatMapFirst(i->AnyM.fromList(ListX.of(10,i)))
+            .flatMap(i->AnyM.fromList(ListX.of(10,i)))
             .unwrap();
       assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
@@ -74,7 +75,7 @@ public class AnyMTest {
     public void flatMapFirstList(){
      
        List l= AnyM.fromList(ListX.of(1,2,3))
-            .flatMapFirst(i->ListX.of(10,i))
+            .flatMap(i->ListX.of(10,i))
             .unwrap();
        assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
@@ -82,7 +83,7 @@ public class AnyMTest {
     public void flatMapFirstQueue(){
      
        List l= AnyM.fromList(ListX.of(1,2,3))
-            .flatMapFirst(i->QueueX.of(10,i))
+            .flatMap(i->QueueX.of(10,i))
             .unwrap();
        assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
@@ -90,7 +91,7 @@ public class AnyMTest {
     public void flatMapFirstFlux(){
      
        List l= AnyM.fromList(ListX.of(1,2,3))
-            .flatMapFirstPublisher(i->Flux.just(10,i))
+            .flatMapPublisher(i->Flux.just(10,i))
             .unwrap();
        assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
@@ -98,7 +99,7 @@ public class AnyMTest {
     public void flatMapValueFirstList(){
      
        Maybe l= AnyM.fromMaybe(Maybe.of(1))
-            .flatMapFirst(i->ListX.of(10,i))
+            .flatMapA(i->ListX.of(10,i).anyM())
             .unwrap();
        assertThat(l,equalTo(Maybe.of(10)));
     }
@@ -142,116 +143,99 @@ public class AnyMTest {
 	@Test
 	public void createAnyMFromListOrOptionalAsAnyM(){
 		List<Integer> list = Arrays.asList(1,2,3);
-		assertThat(AnyM.ofSeq(list).unwrap(),instanceOf(List.class));
+		assertThat(AnyM.fromList(list).unwrap(),instanceOf(List.class));
 		Optional<Integer> opt = Optional.of(1);
-		assertThat(AnyM.ofSeq(opt).unwrap(),instanceOf(Optional.class));
+		assertThat(AnyM.fromOptional(opt).unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void flatMapWithListComprehender() {
 	    List<Integer> list = Arrays.asList(1,2,3);
-	    AnyMSeq<Integer> any = AnyM.fromList(list); 
-	    AnyM<Integer> mapped = any.flatMap(e -> any.unit(e));
+	    AnyMSeq<list,Integer> any = AnyM.fromList(list);
+	    AnyM<list,Integer> mapped = any.flatMap(e -> any.unit(e));
 	    List<Integer> unwrapped = mapped.unwrap();
 	    assertEquals(list, unwrapped);
 	}
 	@Test
 	public void fromStreamLong(){
-		AnyM<Long> stream = AnyM.fromLongStream(LongStream.of(1));
+		AnyM<stream,Long> stream = AnyM.fromLongStream(LongStream.of(1));
 		assertThat(stream.unwrap(),instanceOf(Stream.class));
 	}
 	@Test
 	public void fromStreamDouble(){
-		AnyM<Double> stream = AnyM.fromDoubleStream(DoubleStream.of(1));
+		AnyM<stream,Double> stream = AnyM.fromDoubleStream(DoubleStream.of(1));
 		assertThat(stream.unwrap(),instanceOf(Stream.class));
 	}
 	@Test
 	public void fromStreamInt(){
-		AnyM<Integer> stream = AnyM.fromIntStream(IntStream.of(1));
+		AnyM<stream,Integer> stream = AnyM.fromIntStream(IntStream.of(1));
 		assertThat(stream.unwrap(),instanceOf(Stream.class));
 	}
 	@Test
 	public void fromStream(){
-		AnyM<Integer> stream = AnyM.fromStream(Stream.of(1));
+		AnyM<stream,Integer> stream = AnyM.fromStream(Stream.of(1));
 		assertThat(stream.unwrap(),instanceOf(Stream.class));
 	}
 	@Test
 	public void fromOptionalLong(){
-		AnyM<Long> opt = AnyM.fromOptionalLong(OptionalLong.of(1));
+		AnyM<optional,Long> opt = AnyM.fromOptionalLong(OptionalLong.of(1));
 		assertThat(opt.unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void fromOptionalDouble(){
-		AnyM<Double> opt = AnyM.fromOptionalDouble(OptionalDouble.of(1));
+		AnyM<optional,Double> opt = AnyM.fromOptionalDouble(OptionalDouble.of(1));
 		assertThat(opt.unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void fromOptionalInt(){
-		AnyM<Integer> opt = AnyM.fromOptionalInt(OptionalInt.of(1));
+		AnyM<optional,Integer> opt = AnyM.fromOptionalInt(OptionalInt.of(1));
 		assertThat(opt.unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void fromOptional(){
-		AnyM<Integer> opt = AnyM.fromOptional(Optional.of(1));
+		AnyM<optional,Integer> opt = AnyM.fromOptional(Optional.of(1));
 		assertThat(opt.unwrap(),instanceOf(Optional.class));
 	}
 	@Test
 	public void fromCompletableFuture(){
-		AnyM<Integer> future = AnyM.fromCompletableFuture(CompletableFuture.supplyAsync(()->1));
+		AnyM<completableFuture,Integer> future = AnyM.fromCompletableFuture(CompletableFuture.supplyAsync(()->1));
 		assertThat(future.unwrap(),instanceOf(CompletableFuture.class));
 	}
 	
 	@Test
 	public void ofNullable(){
-		AnyM<Integer> opt = AnyM.ofNullable(null);
+		AnyM<optional,Integer> opt = AnyM.ofNullable(null);
 		assertThat(opt.unwrap(),instanceOf(Optional.class));
 	}
-	@Test
-	public void ofMonad(){
-		AnyM<Integer> opt = AnyM.ofSeq(Optional.of(1));
-		assertThat(opt.unwrap(),instanceOf(Optional.class));
-	}
-	@Test
-	public void ofConvertable(){
-		AnyM<Integer> future = AnyM.ofConvertableValue((Supplier<Integer>)()->1);
-		assertThat(future.unwrap(),instanceOf(CompletableFuture.class));
-	}
-	@Test
-	public void testLisOfMonad(){
-		AnyM<Integer> list = AnyM.ofSeq(Arrays.asList(1,2,3));
-		assertThat(list.unwrap(),instanceOf(List.class));
-	}
+
+
 	
 	@Test
 	public void testListFromList(){
-		AnyM<Integer> list = AnyM.fromList(Arrays.asList(1,2,3));
+		AnyM<list,Integer> list = AnyM.fromList(Arrays.asList(1,2,3));
 		assertThat(list.unwrap(),instanceOf(List.class));
 	}
-	@Test
-	public void testList(){
-		AnyM<Integer> list = AnyM.fromIterable(Arrays.asList(1,2,3));
-		assertThat(list.unwrap(),instanceOf(List.class));
-	}
+
 	@Test
 	public void testListMap(){
-		AnyM<Integer> list = AnyM.fromIterable(Arrays.asList(1,2,3));
+		AnyM<list,Integer> list = AnyM.fromList(Arrays.asList(1,2,3));
 		assertThat(list.map(i->i+2).unwrap(),equalTo(Arrays.asList(3,4,5)));
 	}
 	
 	
 	@Test
 	public void testListFilter(){
-		AnyM<Integer> list = AnyM.fromIterable(Arrays.asList(1,2,3));
+		AnyM<list,Integer> list = AnyM.fromList(Arrays.asList(1,2,3));
 		assertThat(list.filter(i->i<3).unwrap(),equalTo(Arrays.asList(1,2)));
 	}
 	@Test
 	public void testSet(){
 	   
-		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
+		AnyM<set,Integer> set = AnyM.fromSet(new HashSet<>(Arrays.asList(1,2,3)));
 		assertThat(set.unwrap(),instanceOf(Set.class));
 	}
 	@Test
 	public void testSetMap(){
-		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
+		AnyM<set,Integer> set = AnyM.fromSet(new HashSet<>(Arrays.asList(1,2,3)));
 		assertThat(set.map(i->i+2).unwrap(),equalTo((Set<Integer>)new HashSet<>(Arrays.asList(3,4,5))));
 		
 	}
@@ -259,14 +243,20 @@ public class AnyMTest {
 	
 	@Test
 	public void testSetFilter(){
-		AnyM<Integer> set = AnyM.fromIterable(new HashSet<>(Arrays.asList(1,2,3)));
+		AnyM<set,Integer> set = AnyM.fromSet(new HashSet<>(Arrays.asList(1,2,3)));
 		System.out.println(set.filter(i->i<3).unwrap().getClass());
 		assertThat(set.filter(i->i<3).unwrap(),equalTo((Set<Integer>)new HashSet<>(Arrays.asList(1,2))));
 	}
-	
-	
-	
-	
+
+
+
+	@Test
+	public void unitOptional() {
+		AnyM<optional,Integer> empty = AnyM.fromOptional(Optional.empty());
+		AnyM<optional,Integer> unit = empty.unit(1);
+		Optional<Integer> unwrapped = unit.unwrap();
+		assertEquals(Integer.valueOf(1), unwrapped.get());
+	}
 
 	@Test
 	public void testReplicateM(){

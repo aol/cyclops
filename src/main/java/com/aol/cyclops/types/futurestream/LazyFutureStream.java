@@ -33,7 +33,6 @@ import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.*;
 
-import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.aol.cyclops.util.function.Lambda;
 import org.jooq.lambda.Seq;
@@ -44,7 +43,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.LazyReact;
@@ -73,13 +71,8 @@ import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.IterableFoldable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.reactive.FutureStreamSynchronousPublisher;
 import com.aol.cyclops.util.function.F4;
@@ -234,23 +227,7 @@ public interface LazyFutureStream<U> extends LazySimpleReactStream<U>, LazyStrea
 
     }
 
-    @Override
-    default <R> ApplyingZippingApplicativeBuilder<U, R, ZippingApplicativable<R>> applicatives() {
-        final Streamable<U> streamable = toStreamable();
-        return new ApplyingZippingApplicativeBuilder<U, R, ZippingApplicativable<R>>(
-                                                                                     streamable, streamable);
-    }
 
-    @Override
-    default <R> ZippingApplicativable<R> ap1(final Function<? super U, ? extends R> fn) {
-        val dup = this.duplicate();
-        final Streamable<U> streamable = dup.v1.toStreamable();
-        return new ApplyingZippingApplicativeBuilder<U, R, ZippingApplicativable<R>>(
-                                                                                     streamable, streamable).applicative(fn)
-                                                                                                            .ap(dup.v2);
-
-    }
-   
 
 
     /* (non-Javadoc)
@@ -2358,10 +2335,6 @@ public interface LazyFutureStream<U> extends LazySimpleReactStream<U>, LazyStrea
         return cycle().limitUntil(predicate);
     }
 
-    @Override
-    default IterableFoldable<U> foldable() {
-        return this;
-    }
 
     /*
      *	@return Convert to standard JDK 8 Stream
@@ -2883,23 +2856,6 @@ public interface LazyFutureStream<U> extends LazySimpleReactStream<U>, LazyStrea
                           .toConcurrentLazyStreamable();
     }
 
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#appendStream(java.util.stream.Stream)
-     */
-    @Override
-    default LazyFutureStream<U> appendS(final Stream<? extends U> stream) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                                     .appendS(stream));
-    }
-
-    /*
-     * @see com.aol.cyclops.control.ReactiveSeq#prependStream(java.util.stream.Stream)
-     */
-    @Override
-    default LazyFutureStream<U> prependS(final Stream<? extends U> stream) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                                     .prependS(stream));
-    }
 
     /*
      * @see com.aol.cyclops.control.ReactiveSeq#append(java.lang.Object[])

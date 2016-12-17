@@ -93,8 +93,10 @@ public abstract class BaseNumberOperationsTest {
 	}
 	@Test
 	public void summaryStatsDouble(){
-		assertThat(of(1.0,2.0,3.0,4.0).futureOperations(exec)
-				.summaryStatisticsDouble(i->i).join().getSum(),
+		assertThat(of(1.0,2.0,3.0,4.0).foldFuture(s->s.mapToDouble(e->e)
+						                              .summaryStatistics(),exec).get().getSum(),
+				equalTo(10.0));
+		assertThat(of(1.0,2.0,3.0,4.0).foldDouble(exec,i->i,s->s.summaryStatistics()).get().getSum(),
 				equalTo(10.0));
 	}
 	@Test

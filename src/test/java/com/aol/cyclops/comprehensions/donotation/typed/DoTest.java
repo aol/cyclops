@@ -1,23 +1,10 @@
 package com.aol.cyclops.comprehensions.donotation.typed;
 
-import static com.aol.cyclops.control.ReactiveSeq.range;
-import static org.hamcrest.Matchers.equalTo;
-import static org.jooq.lambda.tuple.Tuple.tuple;
-import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import com.aol.cyclops.control.ReactiveSeq;
 import org.junit.Test;
 
-import com.aol.cyclops.control.For;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.types.anyM.AnyMSeq;
-
-import lombok.val;
+import static com.aol.cyclops.control.ReactiveSeq.range;
+import static org.jooq.lambda.tuple.Tuple.tuple;
 public class DoTest {
 	
     @Test

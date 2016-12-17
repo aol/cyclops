@@ -15,9 +15,6 @@ import java.util.stream.*;
 import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
 import com.aol.cyclops.types.*;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
-import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
-import com.aol.cyclops.util.function.Lambda;
-import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -39,10 +36,7 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.applicative.zipping.ApplyingZippingApplicativeBuilder;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
@@ -97,8 +91,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Unwrapable, 
                                         Stream<T>, 
                                         OnEmptySwitch<T, Stream<T>>,
-                                        ExtendedTraversable<T>,
-                                        ZippingApplicativable<T>,
+                                        FoldableTraversable<T>,
                                         Unit<T>,
                                         ConvertableSequence<T> {
 
@@ -246,12 +239,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param fn Conversion function
      * @param mapper Folding function
      * @return Fold result
-     */
+     */ //same as mapToInt().xxx
     default <R> R foldInt(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends R> mapper){
         Spliterator<T> split = this.spliterator();
         IntStream s = (split instanceof Spliterator.OfInt)? StreamSupport.intStream((Spliterator.OfInt)split,false) : StreamSupport.stream(split,false).mapToInt(fn);
         return mapper.apply(s);
     }
+
     /**
      * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
      * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
@@ -348,6 +342,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         DoubleStream s = (split instanceof Spliterator.OfDouble) ? StreamSupport.doubleStream((Spliterator.OfDouble)split,false) : StreamSupport.stream(split,false).mapToDouble(fn);
         return mapper.apply(s);
     }
+
     
     /**
      * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc to
@@ -384,9 +379,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
-     */
+
     @Override
-    public <T> ReactiveSeq<T> unitIterator(Iterator<T> it);
+    public <T> ReactiveSeq<T> unitIterator(Iterator<T> it);*/
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
@@ -409,28 +404,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Seq.seq((Stream)this).printOut();
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.applicative.zipping.ZippingApplicativable#applicatives()
-     */
-    @Override
-    default <R> ApplyingZippingApplicativeBuilder<T, R, ZippingApplicativable<R>> applicatives() {
-        final Streamable<T> streamable = toStreamable();
-        return new ApplyingZippingApplicativeBuilder<T, R, ZippingApplicativable<R>>(
-                                                                                     streamable, streamable);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.applicative.zipping.ZippingApplicativable#ap1(java.util.function.Function)
-     */
-    @Override
-    default <R> ZippingApplicativable<R> ap1(final Function<? super T, ? extends R> fn) {
-        val dup = this.duplicate();
-        final Streamable<T> streamable = dup.v1.toStreamable();
-        return new ApplyingZippingApplicativeBuilder<T, R, ZippingApplicativable<R>>(
-                                                                                     streamable, streamable).applicative(fn)
-                                                                                                            .ap(dup.v2);
-
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
@@ -1192,7 +1165,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.takeWhile(p);
+        return (ReactiveSeq<T>) FoldableTraversable.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
@@ -1217,7 +1190,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.dropWhile(p);
+        return (ReactiveSeq<T>) FoldableTraversable.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
@@ -1226,7 +1199,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.takeUntil(p);
+        return (ReactiveSeq<T>) FoldableTraversable.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -1235,7 +1208,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.dropUntil(p);
+        return (ReactiveSeq<T>) FoldableTraversable.super.dropUntil(p);
     }
 
     /* (non-Javadoc)
@@ -1244,7 +1217,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> dropRight(final int num) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.dropRight(num);
+        return (ReactiveSeq<T>) FoldableTraversable.super.dropRight(num);
     }
 
     /* (non-Javadoc)
@@ -1253,7 +1226,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> takeRight(final int num) {
 
-        return (ReactiveSeq<T>) ExtendedTraversable.super.takeRight(num);
+        return (ReactiveSeq<T>) FoldableTraversable.super.takeRight(num);
     }
 
     /**
@@ -3846,42 +3819,42 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default ReactiveSeq<T> removeAll(final Stream<? extends T> stream) {
-        return (ReactiveSeq<T>)ExtendedTraversable.super.removeAll(stream);
+        return (ReactiveSeq<T>)FoldableTraversable.super.removeAll(stream);
     }
 
     @Override
     default ReactiveSeq<T> removeAll(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)ExtendedTraversable.super.removeAll(it);
+        return (ReactiveSeq<T>)FoldableTraversable.super.removeAll(it);
     }
 
     @Override
     default ReactiveSeq<T> removeAll(final T... values) {
-        return (ReactiveSeq<T>)ExtendedTraversable.super.removeAll(values);
+        return (ReactiveSeq<T>)FoldableTraversable.super.removeAll(values);
     }
 
     @Override
     default ReactiveSeq<T> retainAll(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)ExtendedTraversable.super.retainAll(it);
+        return (ReactiveSeq<T>)FoldableTraversable.super.retainAll(it);
     }
 
     @Override
     default ReactiveSeq<T> retainAll(final Stream<? extends T> stream) {
-        return (ReactiveSeq<T>)ExtendedTraversable.super.retainAll(stream);
+        return (ReactiveSeq<T>)FoldableTraversable.super.retainAll(stream);
     }
 
     @Override
     default ReactiveSeq<T> retainAll(final T... values) {
-        return (ReactiveSeq<T>)ExtendedTraversable.super.retainAll(values);
+        return (ReactiveSeq<T>)FoldableTraversable.super.retainAll(values);
     }
 
     @Override
     default ReactiveSeq<T> filterNot(final Predicate<? super T> predicate) {
-        return (ReactiveSeq<T>)ExtendedTraversable.super.filterNot(predicate);
+        return (ReactiveSeq<T>)FoldableTraversable.super.filterNot(predicate);
     }
 
     @Override
     default ReactiveSeq<T> notNull() {
-        return (ReactiveSeq<T>)ExtendedTraversable.super.notNull();
+        return (ReactiveSeq<T>)FoldableTraversable.super.notNull();
     }
 
     default ReactiveStreamsTerminalFutureOperations<T> futureOps(Executor ex){

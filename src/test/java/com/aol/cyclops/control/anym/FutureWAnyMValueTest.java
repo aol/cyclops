@@ -10,6 +10,7 @@ public class FutureWAnyMValueTest extends BaseAnyMValueTest {
     public void setUp() throws Exception {
         just = AnyM.fromFutureW(FutureW.ofResult(10));
         none = AnyM.fromFutureW(FutureW.ofError(new RuntimeException()));
+
     }
     
 }

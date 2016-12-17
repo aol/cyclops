@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -244,7 +245,7 @@ public  class BaseSequenceTest {
 	
 	@Test
 	public void testDuplicate(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 	}
@@ -267,7 +268,7 @@ public  class BaseSequenceTest {
 
 	@Test
 	public void testDuplicateFilter(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 	} 
@@ -288,7 +289,7 @@ public  class BaseSequenceTest {
 	}
 	@Test
 	public void testDuplicateLimit(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 	} 
@@ -321,7 +322,7 @@ public  class BaseSequenceTest {
 		
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 	       
 	        assertThat(map1.get(0),hasItem(2));
 	        assertThat(map1.get(0),hasItem(4));
@@ -450,7 +451,7 @@ public  class BaseSequenceTest {
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));		
+			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));
 		}
 
 		

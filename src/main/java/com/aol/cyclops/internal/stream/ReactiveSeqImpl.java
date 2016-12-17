@@ -37,7 +37,7 @@ import java.util.stream.*;
 public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T> {
 
     private final Stream<T> stream;
-    private final Optional<PushingSpliterator<?>> split;
+    private final Optional<PushingSpliterator<?>> split; //should be an Xor3 type here
     private final Optional<ReversableSpliterator> reversible;
 
     public ReactiveSeqImpl(final Stream<T> stream) {

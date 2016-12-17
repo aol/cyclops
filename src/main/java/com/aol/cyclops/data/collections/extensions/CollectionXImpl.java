@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
-import com.aol.cyclops.types.IterableFunctor;
 
 import lombok.AllArgsConstructor;
 

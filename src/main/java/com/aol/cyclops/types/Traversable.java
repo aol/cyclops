@@ -2,6 +2,7 @@ package com.aol.cyclops.types;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.Executor;
 import java.util.function.*;
@@ -33,13 +34,12 @@ import org.reactivestreams.Subscription;
 public interface Traversable<T> extends Publisher<T>,
                                         OnEmpty<T>,
                                         Zippable<T>,
-                                        ReactiveStreamsTerminalOperations<T>,
-                                        CyclopsCollectable<T>,
-                                        IterableFoldable<T>,
                                         IterableFilterable<T>,
                                         FilterableFunctor<T>,
                                         TransformerTraversable<T>,
-                                        ConvertableSequence<T> {
+                                        Sequential<T>
+                                         {
+
 
 
     default Seq<T> seq(){
@@ -52,6 +52,19 @@ public interface Traversable<T> extends Publisher<T>,
         return ReactiveSeq.fromIterable(this);
     }
 
+                                             /**
+                                              * Create an IterableFunctor instance of the same type from an Iterator
+                                              * <pre>
+                                              * {@code
+                                              *       ReactiveSeq<Integer> newSeq = seq.unitIterator(myIterator);
+                                              *
+                                              * }
+                                              * </pre>
+                                              *
+                                              * @param U Iterator to create new IterableFunctor from
+                                              * @return New IterableFunctor instance
+                                              */
+                                             <U> Traversable<U> unitIterator(Iterator<U> U);
     /* (non-Javadoc)
      * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
      */
@@ -909,28 +922,5 @@ public interface Traversable<T> extends Publisher<T>,
         return stream();
     }
 
-    @Override
-    default <X extends Throwable> Subscription forEachX(long numberOfElements, Consumer<? super T> consumer){
-        return stream().forEachX(numberOfElements,consumer);
-    }
 
-    @Override
-    default <X extends Throwable> Subscription forEachXWithError(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
-        return stream().forEachXWithError(numberOfElements,consumer,consumerError);
-    }
-
-    @Override
-    default <X extends Throwable> Subscription forEachXEvents(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
-        return stream().forEachXEvents(numberOfElements,consumer,consumerError,onComplete);
-    }
-
-    @Override
-    default <X extends Throwable> void forEachWithError(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError){
-          stream().forEachWithError(consumerElement,consumerError);
-    }
-
-    @Override
-    default <X extends Throwable> void forEachEvent(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete){
-        stream().forEachEvent(consumerElement, consumerError, onComplete);
-    }
 }

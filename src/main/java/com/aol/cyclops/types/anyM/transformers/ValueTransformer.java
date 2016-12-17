@@ -74,9 +74,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
      * @see com.aol.cyclops.types.Value#unapply()
      */
    
-    public ListT<W,?> unapply() {
-        return ListT.fromAnyM(this.transformerStream().map(v->v.unapply()));
-    }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Value#iterate(java.util.function.UnaryOperator)
      */
@@ -107,18 +105,17 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
      * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
    
-    public <T2, R> ValueTransformer<W,R> zip(BiFunction<? super T, ? super T2, ? extends R> fn,
-            Publisher<? extends T2> publisher) {
+    public <T2, R> ValueTransformer<W,R> zipP(Publisher<? extends T2> publisher,BiFunction<? super T, ? super T2, ? extends R> f) {
         
-        return unitAnyM(this.transformerStream().map(v->v.zip(fn,publisher)));
+        return unitAnyM(this.transformerStream().map(v->v.zipP(publisher,f)));
     }
      /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
    
-    public <U> ValueTransformer<W,Tuple2<T,U>> zip(Stream<? extends U> other) {
+    public <U> ValueTransformer<W,Tuple2<T,U>> zipS(Stream<? extends U> other) {
         
-        return this.unitAnyM(this.transformerStream().map(v->v.zip(other)));
+        return this.unitAnyM(this.transformerStream().map(v->v.zipS(other)));
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)

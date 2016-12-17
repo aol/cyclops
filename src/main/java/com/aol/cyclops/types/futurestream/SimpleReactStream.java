@@ -1,6 +1,7 @@
 package com.aol.cyclops.types.futurestream;
 
 import com.aol.cyclops.control.LazyReact;
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.data.async.Queue;
@@ -316,7 +317,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * @param s Stream that will start the emission of values from this stream
      * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
      */
-    default <T> Seq<U> skipUntil(final SimpleReactStream<T> s) {
+    default <T> ReactiveSeq<U> skipUntil(final SimpleReactStream<T> s) {
         return EagerFutureStreamFunctions.skipUntil(this, s);
     }
 
@@ -328,7 +329,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * @param s Stream that will stop the emission of values from this stream
      * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
      */
-    default <T> Seq<U> takeUntil(final SimpleReactStream<T> s) {
+    default <T> ReactiveSeq<U> takeUntil(final SimpleReactStream<T> s) {
         return EagerFutureStreamFunctions.takeUntil(this, s);
     }
 

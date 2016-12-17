@@ -2,32 +2,40 @@ package com.aol.cyclops.types.anyM;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.types.IterableFoldable;
+import com.aol.cyclops.types.FoldableTraversable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
+import org.reactivestreams.Subscription;
 
 public interface NestedFoldable<W extends WitnessType<W>,T> {
-    public AnyM<W,? extends IterableFoldable<T>> nestedFoldables();
+    public AnyM<W,? extends FoldableTraversable<T>> nestedFoldables();
+
+
+
+    default <X extends Throwable> AnyM<W,? extends Subscription> forEachXWithError(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
+        return nestedFoldables().map(n->n.forEachXWithError(numberOfElements,consumer,consumerError));
+    }
+
+
+    default <X extends Throwable> AnyM<W,? extends Subscription> forEachXEvents(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
+        return nestedFoldables().map(n->n.forEachXEvents(numberOfElements,consumer,consumerError,onComplete));
+    }
+
+
 
     /**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,

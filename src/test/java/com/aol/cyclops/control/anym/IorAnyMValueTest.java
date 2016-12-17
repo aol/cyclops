@@ -19,6 +19,7 @@ public class IorAnyMValueTest extends BaseAnyMValueTest {
     @Test
     public void testPeek() {
         Mutable<Integer> capture = Mutable.of(null);
+
         just = just.peek(c->capture.set(c));
         
         

@@ -6,12 +6,10 @@ import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.*;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.util.function.F3;
 import com.aol.cyclops.util.function.F4;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -28,8 +26,7 @@ import java.util.stream.Stream;
  *
  * @param <T>
  */
-public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Sequential<T>, IterableFunctor<T>, IterableFoldable<T>,
-        IterableFilterable<T>, ZippingApplicativable<T>, Unit<T>, Collection<T>, CyclopsCollectable<T> {
+public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
 
     /**
      * Create a CollectionX from the supplied Collection
@@ -391,7 +388,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
      */
     @Override
     default CollectionX<T> peek(final Consumer<? super T> c) {
-        return (CollectionX<T>) ZippingApplicativable.super.peek(c);
+        return (CollectionX<T>) FoldableTraversable.super.peek(c);
     }
 
     /* (non-Javadoc)
@@ -869,7 +866,7 @@ public interface CollectionX<T> extends ExtendedTraversable<T>, Iterable<T>, Seq
     @Override
     default <U> CollectionX<U> cast(final Class<? extends U> type) {
 
-        return (CollectionX<U>) ZippingApplicativable.super.cast(type);
+        return (CollectionX<U>) FoldableTraversable.super.cast(type);
     }
 
 

@@ -277,11 +277,11 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
      * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> AnyMValue<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+    default <T2, R> AnyMValue<W,R> zipP(final Publisher<? extends T2> app,final BiFunction<? super T, ? super T2, ? extends R> fn) {
         if (this.unwrap() instanceof ApplicativeFunctor) {
-            return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).zip(fn, app));
+            return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).zipP(app,fn));
         }
-        return (AnyMValue<W,R>) MonadicValue.super.zip(fn, app);
+        return (AnyMValue<W,R>) MonadicValue.super.zipP(app,fn);
     }
 
     

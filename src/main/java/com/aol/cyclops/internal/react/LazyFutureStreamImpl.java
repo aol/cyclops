@@ -15,6 +15,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.futurestream.LazySimpleReactStream;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 
@@ -45,24 +46,29 @@ import lombok.Getter;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
-@Wither
+
 @Getter
 @Slf4j
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
 
+    @Wither
     private final Optional<Consumer<Throwable>> errorHandler;
     private final LazyStreamWrapper<U> lastActive;
 
+    @Wither
     private final Supplier<LazyResultConsumer<U>> lazyCollector;
+    @Wither
     private final QueueFactory<U> queueFactory;
+    @Wither
     private final LazyReact simpleReact;
+    @Wither
     private final Continueable subscription;
     private final static ReactPool<LazyReact> pool = ReactPool.elasticPool(() -> new LazyReact(
                                                                                                Executors.newSingleThreadExecutor()));
-
+    @Wither
     private final ConsumerHolder error;
-
+    @Wither
     private final MaxActive maxActive;
 
     @AllArgsConstructor
@@ -149,12 +155,15 @@ public class LazyFutureStreamImpl<U> implements LazyFutureStream<U> {
         return this.withSimpleReact(simpleReact.withRetrier(retry));
     }
 
+
+
     @Override
-    public LazyFutureStream<U> withLastActive(final LazyStreamWrapper w) {
-        return new LazyFutureStreamImpl<U>(
+    public <U> LazyFutureStream<U> withLastActive(final LazyStreamWrapper<U> w) {
+        return new LazyFutureStreamImpl(
                 errorHandler, w, lazyCollector, queueFactory, simpleReact, subscription, error, maxActive);
 
     }
+
 
     @Override
     public LazyFutureStream<U> maxActive(final int max) {

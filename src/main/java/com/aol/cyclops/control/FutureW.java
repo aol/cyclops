@@ -50,6 +50,18 @@ import java.util.stream.Stream;
 @Slf4j
 public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
 
+    interface Futureable<T>{
+        FutureW<T> execute(Executor ex);
+    }
+    @AllArgsConstructor
+    static class RunnableFuture<T> implements Futureable<T>{
+
+        private final Supplier<T> t;
+        @Override
+        public FutureW<T> execute(Executor ex) {
+            return FutureW.ofSupplier(t,ex);
+        }
+    }
     /**
      * An empty FutureW
      * 

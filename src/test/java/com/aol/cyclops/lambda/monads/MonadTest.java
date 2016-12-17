@@ -29,16 +29,7 @@ public class MonadTest {
 	 Function<Optional<Integer>,Monad<Integer>> g = input -> new MonadWrapper<>(Optional.of(input.get()*50));
 
 	
-	@Test
-	public void test() {
-		val stream = (Stream<Integer>) MonadWrapper.<List<Integer>>of(Stream.of(Arrays.asList(1,3)))
-				.bind(Collection::stream).unwrap();
-		val list = stream.map((Integer i)->i*2)
-				.peek(System.out::println)
-				.collect(Collectors.toList());
-		assertThat(Arrays.asList(2,6),equalTo(list));
-	}
-	
+
 	
 	
 	@Test

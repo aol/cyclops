@@ -4,12 +4,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
+
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.aol.cyclops.types.anyM.Witness.*;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
@@ -24,23 +26,23 @@ import lombok.val;
 public class AnyMSeqTest {
     @Test
     public void equals(){
-        AnyMSeq<ListX<Integer>> test1 = AnyM.fromList(ListX.of(ListX.of(10,1)));
-        AnyMSeq<ListX<Integer>> test2 = AnyM.fromList(ListX.of(ListX.of(10,1)));
+        AnyMSeq<list,ListX<Integer>> test1 = AnyM.fromList(ListX.of(ListX.of(10,1)));
+        AnyMSeq<list,ListX<Integer>> test2 = AnyM.fromList(ListX.of(ListX.of(10,1)));
         System.out.println(test1.equals(test2));
         assertThat(test1,equalTo(test2));
     }
     @Test
     public void equalsNull(){
-        AnyMSeq<ListX<Integer>> test1 = AnyM.fromList(ListX.of(ListX.of(10,1)));
+        AnyMSeq<list,ListX<Integer>> test1 = AnyM.fromList(ListX.of(ListX.of(10,1)));
         
         assertThat(test1,not(equalTo(null)));
     }
     @Test
     public void testSequenceAnyMSeq() {
-        AnyMSeq<Integer> just = AnyM.fromList(ListX.of(10));
-        Supplier<AnyMSeq<Stream<Integer>>> unitEmpty = ()->AnyM.fromList(ListX.of(Stream.<Integer>empty()));
-        Stream<AnyMSeq<Integer>> source = ReactiveSeq.of(just,AnyM.fromArray(1));
-        AnyMSeq<ListX<Integer>> maybes =AnyMSeq.sequence(source, unitEmpty)
+        AnyMSeq<list,Integer> just = AnyM.fromList(ListX.of(10));
+        Supplier<AnyMSeq<list,Stream<Integer>>> unitEmpty = ()->AnyM.fromList(ListX.of(Stream.<Integer>empty()));
+        Stream<AnyMSeq<list,Integer>> source = ReactiveSeq.of(just,AnyM.fromArray(1));
+        AnyMSeq<list,ListX<Integer>> maybes =AnyMSeq.sequence(source, unitEmpty)
                                           .map(s->ReactiveSeq.fromStream(s).toListX());
        
         
@@ -58,7 +60,7 @@ public class AnyMSeqTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<ListX<Integer>> futureList = AnyMSeq.sequence(AnyM.listFromStream(futures));
+        AnyM<list,ListX<Integer>> futureList = AnyMSeq.sequence(AnyM.listFromStream(futures));
         
  
         List<Integer> collected = futureList.<Stream<Integer>>unwrap().collect(Collectors.toList());
@@ -81,7 +83,7 @@ public class AnyMSeqTest {
                 .collect(Collectors.toList());
 
        
-        AnyM<ListX<String>> futureList = AnyMSeq.traverse( AnyM.listFromStream(futures), (Integer i) -> "hello" +i);
+        AnyM<list,ListX<String>> futureList = AnyMSeq.traverse( AnyM.listFromStream(futures), (Integer i) -> "hello" +i);
    
         List<String> collected = futureList.<Stream<String>>unwrap().collect(Collectors.toList());
         assertThat(collected.size(),equalTo( list.size()));
@@ -95,9 +97,9 @@ public class AnyMSeqTest {
 
 	@Test
 	public void testLiftMSimplex(){
-		val lifted = AnyMSeq.liftM((Integer a)->a+3);
-		
-		AnyM<Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)));
+		val lifted = AnyMSeq.<stream,Integer,Integer>liftM((Integer a)->a+3);
+
+		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)));
 		
 		assertThat(result.<Stream<Integer>>unwrap().findFirst().get(),equalTo(6));
 	}
@@ -106,17 +108,17 @@ public class AnyMSeqTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		val lifted = AnyMSeq.liftM2((Integer a,Integer b)->a+b);
+		val lifted = AnyMSeq.<stream,Integer,Integer,Integer>liftM2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));
+		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));
 		
 		assertThat(result.<Stream<Integer>>unwrap().findFirst().get(),equalTo(7));
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		val lifted = AnyMSeq.liftM2((Integer a,Integer b)->a+b);
+		val lifted = AnyMSeq.<stream,Integer,Integer,Integer>liftM2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of()));
+		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of()));
 		
 		assertThat(result.<Stream<Integer>>unwrap().findFirst().isPresent(),equalTo(false));
 	}
@@ -126,9 +128,9 @@ public class AnyMSeqTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		val lifted = AnyMSeq.liftM2(this::add); 
+		val lifted = AnyMSeq.<stream,Integer,Integer,Integer>liftM2(this::add);
 		
-		AnyM<Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromList(ListX.of(4)));
+		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));
 		
 		
 		assertThat(result.<Stream<Integer>>unwrap().findFirst().get(),equalTo(7));

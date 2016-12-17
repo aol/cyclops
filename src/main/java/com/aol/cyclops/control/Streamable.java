@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -28,6 +27,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.*;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -43,15 +43,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.internal.stream.SeqUtils;
 import com.aol.cyclops.internal.stream.StreamableImpl;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.IterableFoldable;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.applicative.zipping.ZippingApplicativable;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HotStream;
@@ -69,14 +61,13 @@ import lombok.AllArgsConstructor;
  */
 public interface Streamable<T> extends  To<Streamable<T>>,
                                         ToStream<T>,
-                                        IterableFoldable<T>,
+                                        FoldableTraversable<T>,
                                         CyclopsCollectable<T>,
                                         ConvertableSequence<T>,
                                         Functor<T>,
                                         Filterable<T>,
                                         Traversable<T>,
                                         Unit<T>,
-                                        ZippingApplicativable<T>,
                                         Zippable<T> {
 
     public static <T> Streamable<T> fromObject(final Object toCoerce) {
@@ -185,7 +176,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default Streamable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.combine(predicate, op));
+        return Streamable.fromIterable(FoldableTraversable.super.combine(predicate, op));
     }
 
     /* (non-Javadoc)
@@ -194,7 +185,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default <U, R> Streamable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.zip(other, zipper));
+        return Streamable.fromIterable(FoldableTraversable.super.zip(other, zipper));
     }
 
 
@@ -202,7 +193,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default <U, R> Streamable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.zipS(other, zipper));
+        return Streamable.fromIterable(FoldableTraversable.super.zipS(other, zipper));
     }
 
     /* (non-Javadoc)
@@ -211,7 +202,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default <U> Streamable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.zipS(other));
+        return Streamable.fromIterable(FoldableTraversable.super.zipS(other));
     }
 
     /* (non-Javadoc)
@@ -220,7 +211,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.zip3(second, third));
+        return Streamable.fromIterable(FoldableTraversable.super.zip3(second, third));
     }
 
     /* (non-Javadoc)
@@ -230,7 +221,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.zip4(second, third, fourth));
+        return Streamable.fromIterable(FoldableTraversable.super.zip4(second, third, fourth));
     }
 
     /* (non-Javadoc)
@@ -239,7 +230,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default Streamable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.groupedStatefullyUntil(predicate));
+        return Streamable.fromIterable(FoldableTraversable.super.groupedStatefullyUntil(predicate));
     }
 
     /* (non-Javadoc)
@@ -248,7 +239,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default <K, A, D> Streamable<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
             final Collector<? super T, A, D> downstream) {
-        return Streamable.fromIterable(ZippingApplicativable.super.grouped(classifier, downstream));
+        return Streamable.fromIterable(FoldableTraversable.super.grouped(classifier, downstream));
     }
 
     /* (non-Javadoc)
@@ -257,7 +248,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default <K> Streamable<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
 
-        return Streamable.fromIterable(ZippingApplicativable.super.grouped(classifier));
+        return Streamable.fromIterable(FoldableTraversable.super.grouped(classifier));
     }
 
     /* (non-Javadoc)
@@ -266,7 +257,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default Streamable<T> takeWhile(final Predicate<? super T> p) {
 
-        return (Streamable<T>) ZippingApplicativable.super.takeWhile(p);
+        return (Streamable<T>) FoldableTraversable.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
@@ -275,7 +266,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default Streamable<T> dropWhile(final Predicate<? super T> p) {
 
-        return (Streamable<T>) ZippingApplicativable.super.dropWhile(p);
+        return (Streamable<T>) FoldableTraversable.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
@@ -284,7 +275,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default Streamable<T> takeUntil(final Predicate<? super T> p) {
 
-        return (Streamable<T>) ZippingApplicativable.super.takeUntil(p);
+        return (Streamable<T>) FoldableTraversable.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -293,7 +284,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default Streamable<T> dropUntil(final Predicate<? super T> p) {
 
-        return (Streamable<T>) ZippingApplicativable.super.dropUntil(p);
+        return (Streamable<T>) FoldableTraversable.super.dropUntil(p);
     }
 
     /* (non-Javadoc)
@@ -302,7 +293,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default Streamable<T> dropRight(final int num) {
 
-        return (Streamable<T>) ZippingApplicativable.super.dropRight(num);
+        return (Streamable<T>) FoldableTraversable.super.dropRight(num);
     }
 
     /* (non-Javadoc)
@@ -311,7 +302,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     @Override
     default Streamable<T> takeRight(final int num) {
 
-        return (Streamable<T>) ZippingApplicativable.super.takeRight(num);
+        return (Streamable<T>) FoldableTraversable.super.takeRight(num);
     }
 
     /**
@@ -421,7 +412,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return New Streamable with provided Streamable appended
      */
     default Streamable<T> appendAll(final Streamable<T> t) {
-        return Streamable.fromStream(reactiveSeq().appendStream(t.reactiveSeq()));
+        return Streamable.fromStream(reactiveSeq().appendS(t.reactiveSeq()));
     }
 
     /**
@@ -1951,7 +1942,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return Streamable with Stream appended
      */
     default Streamable<T> appendStreamable(final Streamable<T> stream) {
-        return fromStream(reactiveSeq().appendStream(stream.reactiveSeq()));
+        return fromStream(reactiveSeq().appendS(stream.reactiveSeq()));
     }
 
     /**
@@ -1973,7 +1964,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return Streamable with Stream prepended
      */
     default Streamable<T> prependStreamable(final Streamable<T> stream) {
-        return fromStream(reactiveSeq().prependStream(stream.reactiveSeq()));
+        return fromStream(reactiveSeq().prependS(stream.reactiveSeq()));
     }
 
     /**
@@ -2570,8 +2561,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @param t Time unit
      * @return Streamable that emits x elements per time period
      */
-    default Streamable<T> xPer(final int x, final long time, final TimeUnit t) {
-        return fromStream(reactiveSeq().xPer(x, time, t));
+    default ReactiveSeq<T> xPer(final int x, final long time, final TimeUnit t) {
+        return reactiveSeq().xPer(x, time, t);
 
     }
 
@@ -2594,8 +2585,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @param t Time unit
      * @return Streamable that emits 1 element per time period
      */
-    default Streamable<T> onePer(final long time, final TimeUnit t) {
-        return fromStream(reactiveSeq().onePer(time, t));
+    default ReactiveSeq<T> onePer(final long time, final TimeUnit t) {
+        return reactiveSeq().onePer(time, t);
 
     }
 
@@ -2738,8 +2729,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @param unit for the delay
      * @return Streamable that emits each element after a fixed delay
      */
-    default Streamable<T> fixedDelay(final long l, final TimeUnit unit) {
-        return fromStream(reactiveSeq().fixedDelay(l, unit));
+    default ReactiveSeq<T> fixedDelay(final long l, final TimeUnit unit) {
+        return reactiveSeq().fixedDelay(l, unit);
     }
 
     /**
