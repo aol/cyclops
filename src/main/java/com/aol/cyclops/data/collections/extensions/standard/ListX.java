@@ -30,9 +30,7 @@ public interface ListX<T> extends To<ListX<T>>,
                                   List<T>,
                                  MutableCollectionX<T>, 
                                  MutableSequenceX<T>, 
-                                 Comparable<T>, 
-                                 IterableFunctor<T>, 
-                                 ZippingApplicativable<T>,
+                                 Comparable<T>,
                                  OnEmptySwitch<T, List<T>> {
 
    

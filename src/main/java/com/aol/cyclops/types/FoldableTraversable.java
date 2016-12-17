@@ -27,7 +27,9 @@ public interface FoldableTraversable<T> extends Traversable<T>,
     @Override
     ReactiveSeq<T> stream();
     @Override
-    Seq<T> seq();
+    default Seq<T> seq(){
+        return Seq.seq(this);
+    }
     /**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
      * whenStream may be more efficient (as it is guaranteed to be lazy).

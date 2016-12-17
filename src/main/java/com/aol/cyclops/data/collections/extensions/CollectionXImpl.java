@@ -235,7 +235,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
      * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterator(java.util.Iterator)
      */
     @Override
-    public <U> IterableFunctor<U> unitIterator(final Iterator<U> u) {
+    public <U> CollectionX<U> unitIterator(final Iterator<U> u) {
         return ListX.fromIterable(() -> u);
     }
 
