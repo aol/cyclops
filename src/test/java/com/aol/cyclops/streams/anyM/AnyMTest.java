@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.anyM.Witness;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
@@ -59,7 +60,7 @@ public class AnyMTest {
 	  
 	   
 	   
-		AnyM<List<Integer>> stream = AnyM.fromOptional(Optional.of(1))
+		AnyM<Witness.optional,List<Integer>> stream = AnyM.fromOptional(Optional.of(1))
 										 .bind(i->Stream.of(1,2,i));
 		
 		stream.map(i->i.size());

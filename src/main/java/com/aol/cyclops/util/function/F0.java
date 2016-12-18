@@ -3,6 +3,7 @@ package com.aol.cyclops.util.function;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+import com.aol.cyclops.types.anyM.WitnessType;
 import org.jooq.lambda.function.Function0;
 
 import com.aol.cyclops.control.Eval;
@@ -32,6 +33,10 @@ public interface F0< R> extends Function0<R>, Value<R> {
     }
     default F0<   Optional<R>> liftOpt(){
        return ()-> Optional.ofNullable(apply());
+    }
+
+    default <W extends WitnessType<W>>  MFunc0<W,R> liftF(W witness){
+        return ()-> witness.adapter().unit(this.get());
     }
     
     default F0<R> memoize(){

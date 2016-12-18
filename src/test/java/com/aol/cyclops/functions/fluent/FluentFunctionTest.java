@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import com.aol.cyclops.types.anyM.Witness;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -242,32 +243,7 @@ public class FluentFunctionTest {
 						.toList().size(),equalTo(2));
 	}
 
-	@Test
-	public void testMatches1(){
-		assertThat(FluentFunctions.of(this::addOne)	
-					   .matches(c->c.is(when(2),then(3)),otherwise(-1))
-					   .apply(1),equalTo(3));
-	}
 
-	@Test
-	public void testMatches1Default(){
-		assertThat(FluentFunctions.of(this::addOne)	
-					   .matches(c->c.is(when(4),then(3)),otherwise(-1))
-					   .apply(1),equalTo(-1));
-	}
-	@Test
-	public void testMatches2(){
-		assertThat(FluentFunctions.of(this::addOne)	
-					   .matches(c->c.is(when(4),then(5)).is(when(2),then(3)),otherwise(-1))
-					   .apply(1),equalTo(3));
-	}
-
-	@Test
-	public void testMatches2Default(){
-		assertThat(FluentFunctions.of(this::addOne)	
-				 				  .matches(c->c.is(when(4),then(15)).is(when(3),then(13)),otherwise(-1))
-				 				  .apply(1),equalTo(-1));
-	}
 	
 	
 	@Test
@@ -280,7 +256,7 @@ public class FluentFunctionTest {
 	@Test
 	public void testLiftM(){
 		
-		AnyM<Integer> result = FluentFunctions.of(this::addOne)	
+		AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::addOne)
 											  .liftM()
 											  .apply(AnyM.streamOf(1,2,3,4));
 		

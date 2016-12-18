@@ -1,13 +1,13 @@
 package com.aol.cyclops.functions.fluent;
 
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.aol.cyclops.control.AnyM;
+import com.aol.cyclops.control.FluentFunctions;
+import com.aol.cyclops.control.Try;
+import com.aol.cyclops.types.anyM.Witness;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -16,14 +16,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.FluentFunctions;
-import com.aol.cyclops.control.Try;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.*;
 
 public class FluentSupplierTest {
 
@@ -166,36 +160,7 @@ public class FluentSupplierTest {
 						.limit(2)
 						.toList().size(),equalTo(2));
 	}
-	
-	
-	@Test
-	public void testMatches1(){
-		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(c->c.is(when(1),then(()->4)),otherwise(-1))
-					   .get(),equalTo(4));
-	}
 
-	@Test
-	public void testMatches1Default(){
-		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(c->c.is(when(4),then(()->4)),otherwise(-1))
-					   .get(),equalTo(-1));
-	}
-	@Test
-	public void testMatches2(){
-		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(c->c.is(when(1),then(()->5))
-							   			.is(when(2),then(()->4)),otherwise(-1))
-					   .get(),equalTo(5));
-	}
-
-	@Test
-	public void testMatches2Default(){
-		assertThat(FluentFunctions.of(this::getOne)	
-					   .matches(c->c.is(when(100),then(()->5))
-					   				.is(when(200),then(()->4)),otherwise(-1))
-					   .get(),equalTo(-1));
-	}
 	
 	
 	@Test
@@ -208,7 +173,7 @@ public class FluentSupplierTest {
 	@Test
 	public void testLiftM(){
 		
-		AnyM<Integer> result = FluentFunctions.of(this::getOne)	
+		AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::getOne)
 											  .liftM()
 											  .get();
 		

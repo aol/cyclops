@@ -2,15 +2,13 @@ package com.aol.cyclops.util.function;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.aol.cyclops.control.*;
+import com.aol.cyclops.types.anyM.WitnessType;
+import lombok.val;
 import org.jooq.lambda.function.Function1;
-
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.Reader;
-import com.aol.cyclops.control.Try;
 
 @FunctionalInterface
 public interface F1<T1,  R> extends Function1<T1,R>, Reader<T1,R> {
@@ -37,6 +35,10 @@ public interface F1<T1,  R> extends Function1<T1,R>, Reader<T1,R> {
     default F1<T1,   Optional<R>> liftOpt(){
        return (T1)-> Optional.ofNullable(apply(T1));
     }
+    default <W extends WitnessType<W>> MFunc1<W,T1,R> liftF(){
+        return AnyM.liftF(this);
+    }
+
     
     default F1<T1,R> memoize(){
         return Memoize.memoizeFunction(this);

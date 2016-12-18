@@ -1,8 +1,6 @@
 package com.aol.cyclops.functions.fluent;
 
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -17,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
+import com.aol.cyclops.types.anyM.Witness;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
@@ -183,34 +182,7 @@ public class FluentBiFunctionTest {
 						.toList().size(),equalTo(2));
 	}
 
-	@Test
-	public void testMatches1(){
-		assertThat(FluentFunctions.of(this::add)	
-					   .matches(c->c.is(when(2),then(3)),otherwise(-1))
-					   .apply(1,1),equalTo(3));
-	}
 
-	@Test
-	public void testMatches1Default(){
-		assertThat(FluentFunctions.of(this::add)	
-					   .matches(c->c.is(when(4),then(3)),otherwise(-1))
-					   .apply(1,1),equalTo(-1));
-	}
-	@Test
-	public void testMatches2(){
-		assertThat(FluentFunctions.of(this::add)	
-					   .matches(c->c.is(when(4),then(30))
-							   			.is(when(2),then(3)),otherwise(-1))
-					   .apply(1,1),equalTo(3));
-	}
-
-	@Test
-	public void testMatches2Default(){
-		assertThat(FluentFunctions.of(this::add)	
-					   .matches(c->c.is(when(4),then(3))
-							   		   .is(when(103),then(108)),otherwise(-1))
-					   .apply(1,1),equalTo(-1));
-	}
 	
 	@Test
 	public void testLift(){
@@ -222,9 +194,9 @@ public class FluentBiFunctionTest {
 	@Test
 	public void testLiftM(){
 		
-		AnyM<Integer> result = FluentFunctions.of(this::add)	
-											  .liftM()
-											  .apply(AnyM.streamOf(1,2,3,4),AnyM.ofNullable(1));
+		AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::add)
+											  .<Witness.stream>liftF()
+											  .apply(AnyM.streamOf(1,2,3,4),AnyM.streamOf(1));
 		
 		assertThat(result.stream().toList(),
 					equalTo(Arrays.asList(2,3,4,5)));

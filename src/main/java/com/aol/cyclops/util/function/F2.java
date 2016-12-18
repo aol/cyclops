@@ -4,13 +4,10 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
+import com.aol.cyclops.control.*;
+import com.aol.cyclops.types.anyM.WitnessType;
 import org.jooq.lambda.function.Function2;
 import org.jooq.lambda.function.Function3;
-
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.Try;
 
 @FunctionalInterface
 public interface F2<T1, T2, R> extends Function2<T1,T2,R> {
@@ -24,8 +21,10 @@ public interface F2<T1, T2, R> extends Function2<T1,T2,R> {
     
     public R apply(T1 a, T2 b);
 
-   
-    
+
+    default <W extends WitnessType<W>> MFunc2<W,T1,T2,R> liftF(){
+        return AnyM.liftF2(this);
+    }
     
     
     default F2<T1, T2,  Maybe<R>> lift(){

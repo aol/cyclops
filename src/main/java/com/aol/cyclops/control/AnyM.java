@@ -24,6 +24,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.util.function.*;
 import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
@@ -61,11 +62,6 @@ import com.aol.cyclops.types.extensability.FunctionalAdapter;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.util.Optionals;
-import com.aol.cyclops.util.function.F5;
-import com.aol.cyclops.util.function.Lambda;
-import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
 
 /**
  * 
@@ -1035,7 +1031,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
    * @param fn
    * @return
    */
-  public static <W extends WitnessType<W>,U, R> Function<AnyM<W,U>, AnyM<W,R>> liftF(final Function<? super U, ? extends R> fn) {
+  public static <W extends WitnessType<W>,U, R> MFunc1<W,U,R> liftF(final Function<? super U, ? extends R> fn) {
       return u -> u.map(input -> fn.apply(input));
   }
 
@@ -1060,7 +1056,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
    * @param fn BiFunction to lift
    * @return Lifted BiFunction
    */
-  public static <W extends WitnessType<W>,U1, U2, R> BiFunction<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,R>> liftF2(
+  public static <W extends WitnessType<W>,U1, U2, R> MFunc2<W,U1,U2,R> liftF2(
           final BiFunction<? super U1, ? super U2, ? extends R> fn) {
 
       return (u1, u2) -> u1.flatMapA(input1 -> u2.map(input2 -> fn.apply(input1, input2)));

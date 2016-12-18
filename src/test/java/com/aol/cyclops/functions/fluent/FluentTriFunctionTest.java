@@ -1,8 +1,6 @@
 package com.aol.cyclops.functions.fluent;
 
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -16,6 +14,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.aol.cyclops.types.anyM.Witness;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
@@ -206,41 +205,11 @@ public class FluentTriFunctionTest {
                    equalTo(2));
     }
 
-    @Test
-    public void testMatches1() {
-        assertThat(FluentFunctions.of(this::add)
-                                  .matches(c -> c.is(when(3), then(() -> 4)), otherwise(-1))
-                                  .apply(1, 1, 1),
-                   equalTo(4));
-    }
 
-    @Test
-    public void testMatches1Default() {
-        assertThat(FluentFunctions.of(this::add)
-                                  .matches(c -> c.is(when(4), then(() -> 4)), otherwise(-1))
-                                  .apply(1, 1, 1),
-                   equalTo(-1));
-    }
 
-    @Test
-    public void testMatches2() {
-        assertThat(FluentFunctions.of(this::add)
-                                  .matches(c -> c.is(when(1), then(() -> 5))
-                                                 .is(when(3), then(() -> 4)),
-                                           otherwise(-1))
-                                  .apply(1, 1, 1),
-                   equalTo(4));
-    }
 
-    @Test
-    public void testMatches2Default() {
-        assertThat(FluentFunctions.of(this::add)
-                                  .matches(c -> c.is(when(1), then(() -> 5))
-                                                 .is(when(2), then(() -> 4)),
-                                           otherwise(-1))
-                                  .apply(1, 1, 1),
-                   equalTo(-1));
-    }
+
+
 
     @Test
     public void testLift() {
@@ -254,7 +223,7 @@ public class FluentTriFunctionTest {
     @Test
     public void testLiftM() {
 
-        AnyM<Integer> result = FluentFunctions.of(this::add)
+        AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::add)
                                               .liftM()
                                               .apply(AnyM.streamOf(1, 2, 3, 4), AnyM.ofNullable(1), AnyM.ofNullable(10));
 

@@ -29,11 +29,7 @@ public class FlatMapTest {
 		
 		assertThat(AnyM.fromStream(Seq.of(1,2,3)).flatMap(i-> AnyM.fromStream(Stream.of(i+2))).stream().toList(),equalTo(Arrays.asList(3,4,5)));
 	}
-	@Test
-	public void flatMapSeqToCompletableFuture(){
-		
-		assertThat(AnyM.fromStream(Seq.of(1,2,3)).flatMap(i-> AnyM.fromCompletableFuture(CompletableFuture.completedFuture(i+2))).stream().toList(),equalTo(Arrays.asList(3,4,5)));
-	}
+
 	@Test
 	public void flatMapSeqToSequenceM(){
 		
