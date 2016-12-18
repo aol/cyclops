@@ -1058,7 +1058,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
-        return collect(Collectors.groupingBy(classifier, (Supplier)MapX::empty, ListX.<T>defaultCollector()));
+        return (MapX<K, ListX<T>>)this.collect(Collectors.groupingBy(classifier, (Supplier)MapX::empty, ListX.<T>defaultCollector()));
     }
 
     /*
@@ -3283,10 +3283,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<ReactiveSeq<T>> permutations() {
-        final Streamable<Streamable<T>> streamable = Streamable.fromStream(this)
+        final Streamable<ReactiveSeq<T>> streamable = Streamable.fromStream(this)
                                                                .permutations();
-        return streamable.map(s -> s.reactiveSeq())
-                         .reactiveSeq();
+        return streamable.reactiveSeq();
     }
 
     /**
@@ -3330,10 +3329,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<ReactiveSeq<T>> combinations(final int size) {
-        final Streamable<Streamable<T>> streamable = Streamable.fromStream(this)
+        final Streamable<ReactiveSeq<T>> streamable = Streamable.fromStream(this)
                                                                .combinations(size);
-        return streamable.map(s -> s.reactiveSeq())
-                         .reactiveSeq();
+        return streamable.reactiveSeq();
     }
 
     /**
@@ -3351,10 +3349,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<ReactiveSeq<T>> combinations() {
-        final Streamable<Streamable<T>> streamable = Streamable.fromStream(this)
+        final Streamable<ReactiveSeq<T>> streamable = Streamable.fromStream(this)
                                                                .combinations();
-        return streamable.map(s -> s.reactiveSeq())
-                         .reactiveSeq();
+        return streamable.reactiveSeq();
     }
 
     /**
