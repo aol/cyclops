@@ -55,7 +55,7 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
     }
 
     @Override
-    public <T, R> AnyM<W, R> ap(AnyM<W,? extends Function<T, R>> fn, AnyM<W, T> apply) {
+    public <T, R> AnyM<W, R> ap(AnyM<W,? extends Function<? super T, ? extends R>> fn, AnyM<W, T> apply) {
          return fromMonadicValue(monadicValue(apply).combine(monadicValue(fn),(a,b)->b.apply(a)),witness);
          
     }

@@ -70,13 +70,13 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         
         return this.transformerStream().map(t->{
            if(t instanceof PStackX){
-               return pListFn.apply((PStackX)t);
+               return pListFn.apply((PStackX<T>)t);
            }
            else if(t instanceof PVectorX){
-               return vectorFn.apply((PVectorX)t);
+               return vectorFn.apply((PVectorX<T>)t);
            }
            else if(t instanceof ListX){
-               return listXFn.apply((ListX)t);
+               return listXFn.apply((ListX<T>)t);
            }
            return listXFn.apply(ListX.fromIterable(t));
         });
@@ -90,13 +90,13 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return this.transformerStream()
                    .map(t -> {
                        if (t instanceof PStackX) {
-                           return pListFn.apply((PStackX) t);
+                           return pListFn.apply((PStackX<T>) t);
                        } else if (t instanceof PVectorX) {
-                           return vectorFn.apply((PVectorX) t);
+                           return vectorFn.apply((PVectorX<T>) t);
                        } else if (t instanceof DequeX) {
-                           return dequeXFn.apply((DequeX) t);
+                           return dequeXFn.apply((DequeX<T>) t);
                        } else if (t instanceof ListX) {
-                           return listXFn.apply((ListX) t);
+                           return listXFn.apply((ListX<T>) t);
                        }
                        return listXFn.apply(ListX.fromIterable(t));
                    });
@@ -108,9 +108,9 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return this.transformerStream()
                    .map(t -> {
                        if (t instanceof PVectorX) {
-                           return vectorFn.apply((PVectorX) t);
+                           return vectorFn.apply((PVectorX<T>) t);
                        } else if (t instanceof ListX) {
-                           return listXFn.apply((ListX) t);
+                           return listXFn.apply((ListX<T>) t);
                        }
                        return listXFn.apply(ListX.fromIterable(t));
                    });

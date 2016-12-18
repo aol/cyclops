@@ -56,7 +56,7 @@ public class StreamAdapter extends AbstractFunctionalAdapter<Witness.stream> {
 
 
     @Override
-    public <T, R> AnyM<stream, R> ap(AnyM<stream,? extends Function<T, R>> fn, AnyM<stream, T> apply) {
+    public <T, R> AnyM<stream, R> ap(AnyM<stream,? extends Function<? super T,? extends R>> fn, AnyM<stream, T> apply) {
          return fromStream(zipSequence(stream(apply), stream(fn),(a,b)->b.apply(a)));
     }
 

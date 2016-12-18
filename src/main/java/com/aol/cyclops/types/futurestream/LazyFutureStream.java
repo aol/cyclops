@@ -2450,7 +2450,7 @@ public interface LazyFutureStream<U> extends LazySimpleReactStream<U>, LazyStrea
      *
      * @see com.aol.cyclops.control.ReactiveSeq#flatten()
      */
-    public static <T1> LazyFutureStream<T1> flatten(ReactiveSeq<? extends Stream<T1>> nested){
+    public static <T1> LazyFutureStream<T1> flatten(ReactiveSeq<? extends Stream<? extends T1>> nested){
         return LazyFutureStream.lazyFutureStream(nested).flatMap(Function.identity());
 
     }

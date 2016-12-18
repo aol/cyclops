@@ -52,7 +52,7 @@ public class FutureAdapter extends AbstractFunctionalAdapter<Witness.completable
 
 
     @Override
-    public <T, R> AnyM<completableFuture, R> ap(AnyM<completableFuture, ? extends Function<T, R>> fn, AnyM<completableFuture, T> apply) {
+    public <T, R> AnyM<completableFuture, R> ap(AnyM<completableFuture, ? extends Function<? super T, ? extends R>> fn, AnyM<completableFuture, T> apply) {
          return fromCompletableFuture(combine(completableFuture(apply), completableFuture(fn),(a,b)->b.apply(a)));
     }
 

@@ -53,7 +53,7 @@ public class StreamableAdapter extends AbstractFunctionalAdapter<Witness.streama
 
 
     @Override
-    public <T, R> AnyM<streamable, R> ap(AnyM<streamable,? extends Function<T, R>> fn, AnyM<streamable, T> apply) {
+    public <T, R> AnyM<streamable, R> ap(AnyM<streamable,? extends Function<? super T,? extends  R>> fn, AnyM<streamable, T> apply) {
          return fromStreamable(streamable(apply).zip(streamable(fn),(a,b)->b.apply(a)));
     }
 
