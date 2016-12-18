@@ -1145,8 +1145,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
         final Queue queue = stream.getQueueFactory()
                                   .build();
         stream.then(it -> it.sync()
-                            .then(queue::offer))
+                            .then(in->queue.offer(in)))
               .allOf(it -> queue.close());
+
         return stream.fromStream(queue.stream(stream.getSubscription()));
 
     }

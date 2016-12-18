@@ -42,9 +42,7 @@ public interface Traversable<T> extends Publisher<T>,
 
 
 
-    default Seq<T> seq(){
-        return Seq.seq(this);
-    }
+
     /**
      * @return This Traversable converted to a Stream
      */

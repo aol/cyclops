@@ -28,6 +28,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
+import lombok.val;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -653,17 +654,17 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     
      * 
      */
-    default Streamable<Streamable<T>> permutations() {
+    default Streamable<ReactiveSeq<T>> permutations() {
         if (isEmpty()) {
             return Streamable.empty();
         } else {
             final Streamable<T> tail = tail();
             if (tail.isEmpty()) {
-                return Streamable.of(this);
+                return Streamable.of(this.stream());
             } else {
-                final Streamable<Streamable<T>> zero = Streamable.empty();
+                final Streamable<ReactiveSeq<T>> zero = Streamable.empty();
                 return distinct().foldLeft(zero, (xs, x) -> {
-                    final Function<Streamable<T>, Streamable<T>> prepend = l -> l.prepend(x);
+                    final Function<ReactiveSeq<T>, ReactiveSeq<T>> prepend = l -> l.prepend(x);
                     return xs.appendAll(remove(x).permutations()
                                                  .map(prepend));
                 });
@@ -731,15 +732,15 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @param size of combinations
      * @return All combinations of the elements in this stream of the specified size
      */
-    default Streamable<Streamable<T>> combinations(final int size) {
+    default Streamable<ReactiveSeq<T>> combinations(final int size) {
         if (size == 0) {
-            return Streamable.of(Streamable.empty());
+            return Streamable.of(ReactiveSeq.empty());
         } else {
-            return Streamable.fromStream(IntStream.range(0, size())
+           val combs = IntStream.range(0, size())
                                                   .boxed()
-                                                  .<Streamable<T>> flatMap(i -> subStream(i + 1, size()).combinations(size - 1)
-                                                                                                        .map(t -> t.prepend(elementAt(i)))
-                                                                                                        .reactiveSeq()));
+                    .<ReactiveSeq<T>> flatMap(i -> subStream(i + 1, size()).combinations(size - 1)
+                                                                      .map(t -> t.prepend(elementAt(i))).reactiveSeq());
+            return Streamable.fromStream(combs);
         }
     }
 
@@ -756,7 +757,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * 
      * @return All combinations of the elements in this stream
      */
-    default Streamable<Streamable<T>> combinations() {
+    default Streamable<ReactiveSeq<T>> combinations() {
         return range(0, size() + 1).map(this::combinations)
                                    .flatMap(s -> s);
 

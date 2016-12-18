@@ -1,10 +1,11 @@
 package com.aol.cyclops.internal.monads;
 
-import java.util.Objects;
-
+import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.extensability.FunctionalAdapter;
+
+import java.util.Objects;
 
 public class AnyMSeqImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>implements AnyMSeq<W,T> {
 
@@ -12,7 +13,10 @@ public class AnyMSeqImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>im
         super(monad,adapter);
 
     }
-  
+    @Override
+    public ReactiveSeq<T> stream(){
+        return ReactiveSeq.fromIterable(this);
+    }
     @Override
     public String toString() {
         return String.format("AnyMSeq[%s]", monad);

@@ -32,9 +32,11 @@ import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.ToStream;
 
-public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,ConvertableSequence<T>, Traversable<T>, Sequential<T>, Iterable<T>,
-
-ToStream<T>, Publisher<T> {
+public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
+                                                                    ConvertableSequence<T>,
+                                                                    Traversable<T>,
+                                                                    ToStream<T>,
+                                                                    Publisher<T> {
 
     public boolean isSeqPresent();
 
