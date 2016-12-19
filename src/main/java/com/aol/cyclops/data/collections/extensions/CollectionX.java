@@ -28,6 +28,12 @@ import java.util.stream.Stream;
  */
 public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
 
+    @Override
+    Iterator<T> iterator();
+
+    @Override
+    boolean isEmpty();
+
     /**
      * Create a CollectionX from the supplied Collection
      * 

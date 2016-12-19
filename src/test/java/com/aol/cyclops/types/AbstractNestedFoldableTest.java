@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.anyM.WitnessType;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemErrRule;
@@ -34,18 +35,17 @@ import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.StreamableT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.anyM.NestedFoldable;
 
-public abstract class AbstractNestedFoldableTest {
+public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Rule
     public final SystemOutRule sout = new SystemOutRule().enableLog();
     @Rule
     public final SystemErrRule serr = new SystemErrRule().enableLog();
     
-    public abstract <T>NestedFoldable<T> of(T...elements);
-    public abstract <T> NestedFoldable<T> empty();
+    public abstract <T>NestedFoldable<W,T> of(T...elements);
+    public abstract <T> NestedFoldable<W,T> empty();
     
 
 
@@ -215,7 +215,7 @@ public abstract class AbstractNestedFoldableTest {
 
     @Test
     public void testGroupBy() {
-        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2).single();
+        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2).single();
         
         assertThat(map1.get(0),hasItem(2));
         assertThat(map1.get(0),hasItem(4));
@@ -246,7 +246,7 @@ public abstract class AbstractNestedFoldableTest {
 
     @Test
     public void testFindFirst() {
-        assertThat(of(1,2,3,4,5).findFirst().stream().single(),lessThan(6));
+        assertThat(of(1,2,3,4,5).findFirst().stream().single().get(),lessThan(6));
     }
 
     @Test
@@ -292,7 +292,7 @@ public abstract class AbstractNestedFoldableTest {
         col.forEach(System.out::println);
         assertThat(col.size(),equalTo(5));
     }
-
+/**
     @Test
     public void testToConcurrentLazyStreamable() {
         StreamableT<Integer> repeat = of(1,2,3,4,5,6)
@@ -302,6 +302,7 @@ public abstract class AbstractNestedFoldableTest {
         assertThat(repeat.reactiveSeq().toList(),hasItems(1,2,3,4,5,6));
         
     }
+ **/
 
     @Test
     public void testFirstValue() {
@@ -361,15 +362,5 @@ public abstract class AbstractNestedFoldableTest {
                 .toList(),equalTo(Arrays.asList(1)));
     }
 
-    @Test
-    public void testValidate() {
-       
-        Validator<Integer, Integer, Integer> validator = Validator.of(i -> i % 2 == 0, 1, 1);
-        Ior<ReactiveSeq<Integer>, ReactiveSeq<Integer>> ior =  of(1,2,3,4,5,6,7).validate(validator).single();
-        int even = ior.get().sum().get();
-        int odd = ior.secondaryGet().sum().get();
-        assertThat(even, equalTo(3));
-        assertThat(odd, equalTo(4));
-    }
 
 }

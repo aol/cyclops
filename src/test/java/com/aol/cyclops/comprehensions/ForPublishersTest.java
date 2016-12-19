@@ -1,10 +1,10 @@
 package com.aol.cyclops.comprehensions;
 
+import com.aol.cyclops.types.anyM.Witness;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
-import com.aol.cyclops.control.For.Publishers;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -18,9 +18,9 @@ public class ForPublishersTest {
     @Test
     public void groupedT(){
         
-       ListT<Integer> nestedList = ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10)
-                                                 .groupedT(2)
-                                                 .map(i->i*2);
+       ListT<Witness.stream,Integer> nestedList = ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10)
+                                                             .groupedT(2)
+                                                             .map(i->i*2);
        
        ListX<ListX<String>> listOfLists = nestedList.map(i->"nested:"+i)
                                                      .toListOfLists();
@@ -36,9 +36,9 @@ public class ForPublishersTest {
     public void listT(){
         
         
-        ListT<Integer> nestedList = ListT.fromIterable(SetX.of(ListX.of(11,22),ListX.of(100,200)));
+        ListT<Witness.set,Integer> nestedList = ListT.fromSet(SetX.of(ListX.of(11,22),ListX.of(100,200)));
         
-        ListT<Integer> doubled = nestedList.map(i->i*2);
+        ListT<Witness.set,Integer> doubled = nestedList.map(i->i*2);
         System.out.println(doubled);
         
         //ListTSeq[AnyMSeq[[[22, 44], [200, 400]]]]
@@ -49,7 +49,7 @@ public class ForPublishersTest {
         
        // import static com.aol.cyclops.control.For.*;
         
-        ReactiveSeq<Tuple2<Integer,Integer>> stream = Publishers.each2(Flux.just(1,2,3), i->  ReactiveSeq.range(i,5), 
+        ReactiveSeq<Tuple2<Integer,Integer>> stream = ReactiveSeq.of(1,2,3).forEach2(i->  ReactiveSeq.range(i,5),
                                                                             Tuple::tuple)
                                                                     .stream();
                         

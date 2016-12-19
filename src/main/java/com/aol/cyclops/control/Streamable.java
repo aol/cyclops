@@ -2915,7 +2915,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
 
     @Override
     default ReactiveSeq<T> stream() {
-        return ToStream.super.reactiveSeq();
+        return FoldableTraversable.super.reactiveSeq();
     }
 
     @Override

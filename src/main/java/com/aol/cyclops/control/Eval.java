@@ -582,7 +582,7 @@ public interface Eval<T> extends    To<Eval<T>>,
 
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-                final RecFunction s = __ -> asEval(mapper.apply(super.apply())).steps();
+                final RecFunction s = __ -> asEval(mapper.apply(super.applyRec())).steps();
 
                 return new Later<R>(
                                     PVectorX.of(s));
@@ -725,7 +725,7 @@ public interface Eval<T> extends    To<Eval<T>>,
                 return fns;
             }
 
-            T apply() {
+            T applyRec() {
                 Object input = VOID;
                 for (final Function<Object, Object> n : fns) {
                     final DequeX<Function<Object, Object>> newFns = DequeX.of(n);
@@ -742,7 +742,7 @@ public interface Eval<T> extends    To<Eval<T>>,
             }
 
             public T get() {
-                return apply();
+                return applyRec();
             }
 
         }

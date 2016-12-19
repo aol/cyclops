@@ -1,10 +1,6 @@
 package com.aol.cyclops.control.monads.transformers;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -245,7 +241,12 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return of(AnyM.fromStream(nested));
     }
 
-    
+    public static <A> ListT<Witness.list,A> fromList(final List<? extends FluentSequenceX<A>> nested) {
+        return of(AnyM.fromList(nested));
+    }
+    public static <A> ListT<Witness.set,A> fromSet(final Set<? extends FluentSequenceX<A>> nested) {
+        return of(AnyM.fromSet(nested));
+    }
 
     /*
      * (non-Javadoc)

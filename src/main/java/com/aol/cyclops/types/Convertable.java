@@ -28,7 +28,25 @@ import lombok.Value;
  */
 public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
 
-
+    /**
+     * Collect the contents of the monad wrapped by this AnyM into supplied collector
+     * A mutable reduction operation equivalent to Stream#collect
+     *
+     * <pre>
+     * {@code
+     *      AnyM<Integer> monad1 = AnyM.fromStream(Stream.of(1,2,3));
+     *      AnyM<Integer> monad2 = AnyM.fromOptional(Optional.of(1));
+     *
+     *      List<Integer> list1 = monad1.collect(Collectors.toList());
+     *      List<Integer> list2 = monad2.collect(Collectors.toList());
+     *
+     * }
+     * </pre>
+     *
+     *
+     * @param collector JDK collector to perform mutable reduction
+     * @return Reduced value
+     */
     default <R, A> R collect(Collector<? super T, A, R> collector){
         return this.toStream().collect(collector);
     }
