@@ -174,7 +174,7 @@ public class FluentSupplierTest {
 	public void testLiftM(){
 		
 		AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::getOne)
-											  .liftM()
+											  .<Witness.stream>liftF(Witness.stream.INSTANCE)
 											  .get();
 		
 		assertThat(result.stream().toList(),

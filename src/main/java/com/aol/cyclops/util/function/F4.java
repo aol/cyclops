@@ -17,7 +17,7 @@ public interface F4<T1, T2, T3, T4, R> extends Function4<T1,T2,T3,T4,R> {
     public R apply(T1 a, T2 b, T3 c, T4 d);
     
     default F4<T1, T2, T3, T4, Maybe<R>> lift(){
-       return (s1,s2,s3,s4)-> Maybe.fromEval(Eval.later(()->apply(s1,s2,s3,s4)));
+       return (s1,s2,s3,s4)-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4))));
     }
     default Function<T2, Function<T3, Function<T4, R>>> apply(final T1 s) {
         return Curry.curry4(this)

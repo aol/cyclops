@@ -105,6 +105,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return (AnyMSeq<W,U>)adapter().unitIterator(U);
     }
 
+    <R> AnyM<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> AnyM<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> AnyM<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn);
     default <R> AnyM<W,R> flatMapA(Function<? super T, ? extends AnyM<W,? extends R>> fn){
         return adapter().flatMap(this, fn);
     }

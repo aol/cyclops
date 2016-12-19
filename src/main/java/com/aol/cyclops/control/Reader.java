@@ -3,6 +3,7 @@ package com.aol.cyclops.control;
 import java.util.function.Function;
 
 import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.util.function.F1;
 
 /**
  * An interface that represents the Reader monad
@@ -43,7 +44,7 @@ import com.aol.cyclops.types.Functor;
  * @param <T> Current input type of Function
  * @param <R> Current return type of Function
  */
-public interface Reader<T, R> extends Function<T, R>, Functor<R> {
+public interface Reader<T, R> extends F1<T, R>, Functor<R> {
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Functor#map(java.util.function.Function)

@@ -1,11 +1,14 @@
 package com.aol.cyclops.data.collections.extensions.standard;
 
 import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import static com.aol.cyclops.types.anyM.Witness.list;
 import com.aol.cyclops.util.function.F3;
 import com.aol.cyclops.util.function.F4;
 import org.jooq.lambda.tuple.Tuple2;
@@ -33,6 +36,10 @@ public interface ListX<T> extends To<ListX<T>>,
                                  Comparable<T>,
                                  OnEmptySwitch<T, List<T>> {
 
+
+    default AnyMSeq<list,T> anyM(){
+        return AnyM.fromList(this);
+    }
    
     public static <T> ListX<T> fromStreamS(Stream<T> s){
         return ReactiveSeq.fromStream(s).toListX();

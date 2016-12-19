@@ -21,6 +21,7 @@ import org.reactivestreams.Publisher;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -83,7 +84,10 @@ import java.util.stream.Stream;
 public interface Maybe<T> extends To<Maybe<T>>,
                                   MonadicValue<T> {
 
-   
+
+    static <T> Maybe<T> fromLazy(Eval<Maybe<T>> lazy){
+        return new Lazy<T>(lazy);
+    }
     public static <T,R> Function<? super T, ? extends Maybe<R>> arrow(Function<?  super T, ? extends R> fn){
         return in-> Maybe.ofNullable(fn.apply(in));
     }
@@ -158,6 +162,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
         return Maybe.fromEval(Eval.fromIterable(iterable));
     }
 
+    static <R> Maybe<R> fromStream(Stream<? extends R> apply) {
+        return Maybe.fromEval(Eval.later(()->apply.collect(Collectors.toList())))
+                    .flatMap(l->Maybe.fromIterable(l));
+    }
     /**
      * Construct an equivalent Maybe from the Supplied Optional
      * <pre>
@@ -203,6 +211,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         return new Just<T>(
                            eval);
     }
+
     static <T> Maybe<T> fromEvalNullable(final Eval<T> eval) {
         return new Lazy<T>(
                 eval.map(u->Maybe.ofNullable(u)));
@@ -759,6 +768,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
         return (Maybe<R>) MonadicValue.super.trampoline(mapper);
     }
+
+
 
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)

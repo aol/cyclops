@@ -13,7 +13,7 @@ import com.aol.cyclops.control.Try;
 import com.aol.cyclops.types.Value;
 
 @FunctionalInterface
-public interface F0< R> extends Function0<R>, Value<R> {
+public interface F0< R> extends Function0<R>{
 
     public static <  T3,R> F0< R> λ(final F0<R> triFunc){
         return triFunc;
@@ -21,10 +21,11 @@ public interface F0< R> extends Function0<R>, Value<R> {
     public static <  T3,R> F0<? extends R> λv(final F0<? extends R> triFunc){
         return triFunc;
     }
-    
+
     default F0<Maybe<R>> lift(){
-       return ()-> Maybe.fromEval(Eval.later(()->apply()));
+        return ()-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply())));
     }
+
     default F0<   FutureW<R>> lift(Executor ex){
        return ()-> FutureW.ofSupplier(()->apply(),ex);
     }
@@ -47,7 +48,7 @@ public interface F0< R> extends Function0<R>, Value<R> {
     }
     
     
-    
+
 
     
 }

@@ -29,7 +29,7 @@ public interface F2<T1, T2, R> extends Function2<T1,T2,R> {
     
     default F2<T1, T2,  Maybe<R>> lift(){
         F2<T1, T2,  R> host = this;
-       return (T1,T2)-> Maybe.fromEval(Eval.later(()->host.apply(T1,T2)));
+       return (T1,T2)-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(T1,T2))));
     }
     default F2<T1, T2,  FutureW<R>> lift(Executor ex){
         F2<T1, T2,  R> host = this;
@@ -43,6 +43,7 @@ public interface F2<T1, T2, R> extends Function2<T1,T2,R> {
         F2<T1, T2,  R> host = this;
        return (T1,T2)-> Optional.ofNullable(host.apply(T1,T2));
     }
+
     
     default F2<T1,T2,R> memoize(){
         return Memoize.memoizeBiFunction(this);

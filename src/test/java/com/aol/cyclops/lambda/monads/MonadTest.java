@@ -23,10 +23,7 @@ import lombok.val;
 public class MonadTest {
 
 	 Optional<Integer> value = Optional.of(42);
-	 Monad<Integer> monadicValue = new MonadWrapper<>(value);
-	 Function<Optional<Integer>,Monad<Integer>> monadOf = input ->new MonadWrapper<>(input);
-	 Function<Optional<Integer>,Monad<Integer>> f = input -> new MonadWrapper<>(Optional.of(input.get()*5));
-	 Function<Optional<Integer>,Monad<Integer>> g = input -> new MonadWrapper<>(Optional.of(input.get()*50));
+
 
 	
 

@@ -78,7 +78,7 @@ public interface F7<T1, T2, T3, T4, T5, T6, T7, R> {
                     .apply(s6);
     }
     default F7<T1, T2, T3, T4, T5, T6, T7, Maybe<R>> lift() {
-        return (s1, s2, s3, s4, s5,s6,s7) -> Maybe.fromEval(Eval.later(() -> apply(s1, s2, s3, s4, s5,s6,s7)));
+        return (s1, s2, s3, s4, s5,s6,s7) -> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4,s5,s6,s7))));
     }
     default F7<T1, T2, T3, T4, T5, T6, T7,FutureW<R>> lift(Executor ex) {
 

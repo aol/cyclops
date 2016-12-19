@@ -40,7 +40,7 @@ public interface F6<T1, T2, T3, T4, T5, T6, R> {
                        .apply(s5);
     }
     default F6<T1, T2, T3, T4, T5, T6, Maybe<R>> lift() {
-        return (s1, s2, s3, s4, s5,s6) -> Maybe.fromEval(Eval.later(() -> apply(s1, s2, s3, s4, s5,s6)));
+        return (s1, s2, s3, s4, s5,s6) ->  Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4,s5,s6))));
     }
     default F6<T1, T2, T3, T4, T5, T6, FutureW<R>> lift(Executor ex) {
 

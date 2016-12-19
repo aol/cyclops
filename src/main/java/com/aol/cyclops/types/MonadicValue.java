@@ -3,6 +3,7 @@ package com.aol.cyclops.types;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
 
@@ -409,6 +410,12 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
     default <R> MonadicValue<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return this.flatMap(a -> {
             return Maybe.fromIterable(mapper.apply(a));
+        });
+    }
+
+    default <R> MonadicValue<R> flatMapS(final Function<? super T, ? extends Stream<? extends R>> mapper) {
+        return this.flatMap(a -> {
+            return Maybe.fromStream(mapper.apply(a));
         });
     }
 

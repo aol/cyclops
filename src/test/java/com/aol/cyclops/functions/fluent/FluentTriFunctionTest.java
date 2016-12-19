@@ -215,17 +215,17 @@ public class FluentTriFunctionTest {
     public void testLift() {
         Integer nullValue = null;
         assertThat(FluentFunctions.of(this::add)
-                                  .lift()
-                                  .apply(Optional.ofNullable(nullValue), Optional.of(1), Optional.of(3)),
-                   equalTo(Optional.empty()));
+                                  .liftOpt()
+                                  .apply(2, 1, 3),
+                   equalTo(Optional.of(6)));
     }
 
     @Test
     public void testLiftM() {
 
         AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::add)
-                                              .liftM()
-                                              .apply(AnyM.streamOf(1, 2, 3, 4), AnyM.ofNullable(1), AnyM.ofNullable(10));
+                                              .<Witness.stream>liftF()
+                                              .apply(AnyM.streamOf(1, 2, 3, 4), AnyM.streamOf(1), AnyM.streamOf(10));
 
         assertThat(result.stream()
                          .toList(),

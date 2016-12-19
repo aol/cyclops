@@ -47,19 +47,17 @@ public class AnyMTest {
 
       Eval<Integer> lazyResult = wrapped
               .map(i -> i * 10)
-              .lazyOperations() 
-              .reduce(50, (acc, next) -> acc + next);
+			  .foldLazy(s-> s.reduce(50, (acc, next) -> acc + next));
 
       assertEquals(200, lazyResult.get().intValue());
     }
     @Test
     public void anyMListConversion() {
-      AnyMSeq<set,Integer> wrapped = AnyM.fromList(ListX.of(1, 2, 3, 4, 5));
+      AnyMSeq<list,Integer> wrapped = AnyM.fromList(ListX.of(1, 2, 3, 4, 5));
 
       Eval<Integer> lazyResult = wrapped
               .map(i -> i * 10)
-              .lazyOperations() 
-              .reduce(50, (acc, next) -> acc + next);
+              .foldLazy(s->s.reduce(50, (acc, next) -> acc + next));
 
       assertEquals(200, lazyResult.get().intValue());
     }
@@ -75,31 +73,31 @@ public class AnyMTest {
     public void flatMapFirstList(){
      
        List l= AnyM.fromList(ListX.of(1,2,3))
-            .flatMap(i->ListX.of(10,i))
-            .unwrap();
+			       .flatMapI(i->ListX.of(10,i))
+                   .unwrap();
        assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
     @Test
     public void flatMapFirstQueue(){
      
        List l= AnyM.fromList(ListX.of(1,2,3))
-            .flatMap(i->QueueX.of(10,i))
-            .unwrap();
+            	   .flatMap(i->QueueX.of(10,i))
+                   .unwrap();
        assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
     @Test
     public void flatMapFirstFlux(){
      
        List l= AnyM.fromList(ListX.of(1,2,3))
-            .flatMapPublisher(i->Flux.just(10,i))
-            .unwrap();
+                   .flatMapPublisher(i->Flux.just(10,i))
+                   .unwrap();
        assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
     @Test
     public void flatMapValueFirstList(){
      
        Maybe l= AnyM.fromMaybe(Maybe.of(1))
-            .flatMapA(i->ListX.of(10,i).anyM())
+            .flatMapIterable(i->ListX.of(10,i).anyM())
             .unwrap();
        assertThat(l,equalTo(Maybe.of(10)));
     }
@@ -287,7 +285,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		val lifted = AnyM.liftM2((Integer a,Integer b)->a+b);
+		val lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
 		
 		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.ofNullable(null)));
 		
@@ -299,7 +297,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		val lifted = AnyM.liftM2(this::add); 
+		val lifted = AnyM.liftF2(this::add);
 		
 		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromStream(Stream.of(4,6,7)));
 		

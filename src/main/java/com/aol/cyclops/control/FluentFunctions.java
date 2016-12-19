@@ -501,9 +501,9 @@ public class FluentFunctions {
         /**
          * @return A Supplier that returns it's value wrapped in an Optional inside an AnyM
          */
-        public   FluentSupplier<AnyM<Witness.maybe,R>> liftF() {
+        public  <W extends WitnessType<W>> FluentSupplier<AnyM<W,R>> liftF(W witness) {
             return new FluentSupplier<>(
-                                        () -> AnyM.fromMaybe(Maybe.ofNullable(get())));
+                                        () -> witness.adapter().unit(get()));
         }
 
         /**
@@ -790,11 +790,11 @@ public class FluentFunctions {
 
         /**
          * @return A Function that accepts and returns an Optional
-         */
+
         public FluentFunction<Optional<T>, Optional<R>> lift() {
             return new FluentFunction<>(
                                         opt -> opt.map(t -> fn.apply(t)));
-        }
+        }*/
 
         /**
          * @param classes To catch exceptions for
@@ -806,10 +806,10 @@ public class FluentFunctions {
 
         /**
          * @return A function that accepts and reurns an AnyM type
-         */
+
         public  <W extends WitnessType<W>> FluentFunction<AnyM<W,T>, AnyM<W,R>> liftF() {
             return FluentFunctions.of(AnyM.liftF(fn));
-        }
+        }*/
 
         /**
          * @param ex Executor to execute this function on

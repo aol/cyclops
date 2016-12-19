@@ -1,14 +1,18 @@
 package com.aol.cyclops.types;
 
+import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
+import com.aol.cyclops.util.function.F1;
 import org.jooq.lambda.Seq;
 import org.reactivestreams.Subscription;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -16,12 +20,18 @@ import java.util.function.Supplier;
 /**
  * Created by johnmcclean on 17/12/2016.
  */
-public interface FoldableTraversable<T> extends Traversable<T>,
+public interface FoldableTraversable<T> extends F1<Long,T>,
+                                                Traversable<T>,
                                                 ReactiveStreamsTerminalOperations<T>,
                                                 CyclopsCollectable<T>,
                                                 ConvertableSequence<T>,
                                                 ExtendedTraversable<T>{
 
+
+    @Override
+    default T apply(Long index){
+        return this.get(index).orElse(null);
+    }
 
 
     @Override
@@ -53,7 +63,6 @@ public interface FoldableTraversable<T> extends Traversable<T>,
      * @return
      */
     default <R> R visit(final BiFunction<? super T, ? super ReactiveSeq<T>, ? extends R> match, final Supplier<? extends R> ifEmpty) {
-
         final HeadAndTail<T> ht = stream().headAndTail();
         if (ht.isHeadPresent())
             return match.apply(ht.head(), ht.tail());

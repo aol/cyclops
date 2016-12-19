@@ -1,8 +1,6 @@
 package com.aol.cyclops.functions.fluent;
 
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -257,7 +255,7 @@ public class FluentFunctionTest {
 	public void testLiftM(){
 		
 		AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::addOne)
-											  .liftM()
+											  .<Witness.stream>liftF()
 											  .apply(AnyM.streamOf(1,2,3,4));
 		
 		assertThat(result.stream().toList(),

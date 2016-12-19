@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class AnyMSeqTest {
     public void testSequenceAnyMSeq() {
         AnyMSeq<list,Integer> just = AnyM.fromList(ListX.of(10));
         Supplier<AnyMSeq<list,Stream<Integer>>> unitEmpty = ()->AnyM.fromList(ListX.of(Stream.<Integer>empty()));
-        Stream<AnyMSeq<list,Integer>> source = ReactiveSeq.of(just,AnyM.fromArray(1));
+        Stream<AnyMSeq<list,Integer>> source = ReactiveSeq.of(just,AnyM.fromList(Arrays.asList(1)));
         AnyMSeq<list,ListX<Integer>> maybes =AnyMSeq.sequence(source, unitEmpty)
                                           .map(s->ReactiveSeq.fromStream(s).toListX());
        

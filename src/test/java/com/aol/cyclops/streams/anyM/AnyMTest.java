@@ -54,49 +54,30 @@ public class AnyMTest {
                 .unwrap();
         assertThat(l,equalTo(Arrays.asList("hello1","hello2","hello3")));
     }
-	@Test
-	public void multiReturnBind(){
-
-	  
-	   
-	   
-		AnyM<Witness.optional,List<Integer>> stream = AnyM.fromOptional(Optional.of(1))
-										 .bind(i->Stream.of(1,2,i));
-		
-		stream.map(i->i.size());
-	}
+	
 	@Test
 	public void collectList(){
+
 		assertThat(AnyM.fromList(Arrays.asList(1,2,2)).collect(Collectors.toSet()).size(),equalTo(2));
 	}
 	@Test
 	public void flatMapWithListComprehender() {
 	    List<Integer> list = Arrays.asList(1,2,3);
-	    AnyMSeq<Integer> any = AnyM.fromList(list); 
-	    AnyM<Integer> mapped = any.flatMap(e -> any.unit(e));
+	    AnyMSeq<Witness.list,Integer> any = AnyM.fromList(list);
+	    AnyM<Witness.list,Integer> mapped = any.flatMap(e -> any.unit(e));
 	    List<Integer> unwrapped = mapped.unwrap();
 	    assertEquals(list, unwrapped);
 	}
-	@Test
-	public void testLisOfConvertable(){
-		AnyM<Integer> list = AnyM.ofConvertableSeq(Arrays.asList(1,2,3));
-		assertThat(list.unwrap(),instanceOf(List.class));
-	}
+
 	@Test
 	public void testForEach() {
 		   AnyM.fromStream(Stream.of(asList(1,3)))
-				  				.flatMap(c->ofSeq(c.stream()))
+				  				.flatMap(c->AnyM.fromArray(c))
 				  				.stream()
 				  				.forEach(System.out::println);
 				  				
 	}
-	@Test
-	public void testForEachCf() {
-		   ofValue(CompletableFuture.completedFuture(asList(1,3)))
-		   						.stream()
-				  				.forEach(System.out::println);
-				  				
-	}
+
 	/** should no longer compile!
 	@Test
 	public void testForEachCfFlatMapToStream() {

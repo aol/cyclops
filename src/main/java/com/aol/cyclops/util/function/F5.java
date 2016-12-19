@@ -16,7 +16,7 @@ public interface F5<T1, T2, T3, T4, T5, R> extends Function5<T1, T2, T3, T4, T5,
     public R apply(T1 a, T2 b, T3 c, T4 d, T5 e);
 
     default F5<T1, T2, T3, T4, T5, Maybe<R>> lift() {
-        return (s1, s2, s3, s4, s5) -> Maybe.fromEval(Eval.later(() -> apply(s1, s2, s3, s4, s5)));
+        return (s1, s2, s3, s4, s5) -> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4,s5))));
     }
 
     default Function<T2, Function<T3, Function<T4, Function<T5, R>>>> apply(final T1 s) {

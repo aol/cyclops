@@ -31,7 +31,7 @@ public interface F3<S1, S2, S3, R> extends Function3<S1,S2,S3,R> {
     
     default F3<S1, S2, S3, Maybe<R>> lift(){
         F3<S1, S2, S3, R> host = this;
-       return (s1,s2,s3)-> Maybe.fromEval(Eval.later(()->host.apply(s1,s2,s3)));
+       return (s1,s2,s3)-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3))));
     }
     default F3<S1, S2, S3, FutureW<R>> lift(Executor ex){
         F3<S1, S2, S3, R> host = this;

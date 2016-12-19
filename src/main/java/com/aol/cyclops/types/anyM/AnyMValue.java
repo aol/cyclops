@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
@@ -217,6 +218,15 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     default <R> AnyMValue<W,R> flatMapA(Function<? super T, ? extends AnyM<W,? extends R>> fn){
         return  (AnyMValue<W,R>)AnyM.super.flatMapA(fn);   
         
+    }
+    default <R> AnyM<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn){
+        return (AnyMValue<W,R>)MonadicValue.super.flatMapIterable(fn);
+    }
+    default <R> AnyM<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
+        return (AnyMValue<W,R>)MonadicValue.super.flatMapPublisher(fn);
+    }
+    default <R> AnyMValue<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
+        return (AnyMValue<W,R>)MonadicValue.super.flatMapS(fn);
     }
 
     @Override

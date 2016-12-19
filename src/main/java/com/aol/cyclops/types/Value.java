@@ -11,6 +11,8 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 
+import com.aol.cyclops.util.function.F0;
+import com.aol.cyclops.util.function.F1;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -58,13 +60,18 @@ public interface Value<T> extends Supplier<T>,
                                     Convertable<T>, 
                                     Publisher<T>, 
                                     Predicate<T>, 
-                                    Zippable<T>{
+                                    Zippable<T>,
+                                    F0<T> {
+    @Override
+    default T apply() {
+        return this.orElse(null);
+    }
 
     /* An Iterator over the list returned from toList()
-     * 
-     *  (non-Javadoc)
-     * @see java.lang.Iterable#iterator()
-     */
+         *
+         *  (non-Javadoc)
+         * @see java.lang.Iterable#iterator()
+         */
     @Override
     default Iterator<T> iterator() {
         return Convertable.super.iterator();

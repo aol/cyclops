@@ -1,14 +1,14 @@
 package com.aol.cyclops.comprehensions;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+
+import com.aol.cyclops.util.Optionals;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.aol.cyclops.control.For;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 
 
@@ -28,10 +28,7 @@ public class OptionalRunTest {
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 	
-		Optional<Integer> result =  For.optional(two)
-										.optional(a->four)
-										.optional(a->b->three)
-										.yield(v1->v2->v3-> f2.apply(v1, v2)).unwrap();
+		Optional<Integer> result = Optionals.forEach3(two,a->four,(a,b)->three,(v1,v2,v3)-> f2.apply(v1, v2));
 		
 		assertThat(result.get(),equalTo(8));
 
@@ -44,10 +41,9 @@ public class OptionalRunTest {
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 		
-		Optional<Integer> result  = For.optional(one)
-								.yield(v-> f2.apply(v, 10)).unwrap();
+		Optional<Integer> result  = Optionals.forEach2(one,a->empty,(a,b)-> f2.apply(a, 10));
 
-		assertThat(result.get(),equalTo(10));
+		assertThat(result.isPresent(),equalTo(false));
 
 	}
 	
