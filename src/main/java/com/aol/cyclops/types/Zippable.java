@@ -3,6 +3,7 @@ package com.aol.cyclops.types;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.stream.ToStream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -17,7 +18,7 @@ import com.aol.cyclops.control.ReactiveSeq;
  *
  * @param <T> Data type of element(s) of this Zippable
  */
-public interface Zippable<T> extends Iterable<T>{
+public interface Zippable<T> extends Iterable<T>, ToStream<T> {
     /**
      * Zip (combine) this Zippable with the supplied Iterable using the supplied combining function
      * 

@@ -32,7 +32,8 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	protected AnyMValue<W,Integer> just;
 	protected AnyMValue<W,Integer> none;
-	
+
+
 
 	@Test
 	public void testToMaybe() {

@@ -29,7 +29,9 @@ import lombok.Value;
 public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
 
 
-
+    default <R, A> R collect(Collector<? super T, A, R> collector){
+        return this.toStream().collect(collector);
+    }
     /* Present is executed and it's return value returned if the value is both present, otherwise absent is called and its return value returned
      * 
      * (non-Javadoc)

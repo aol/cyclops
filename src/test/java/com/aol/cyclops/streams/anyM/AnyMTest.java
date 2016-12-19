@@ -54,7 +54,7 @@ public class AnyMTest {
                 .unwrap();
         assertThat(l,equalTo(Arrays.asList("hello1","hello2","hello3")));
     }
-	
+
 	@Test
 	public void collectList(){
 

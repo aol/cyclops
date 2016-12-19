@@ -23,7 +23,7 @@ import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.ReactiveSeq;
 
 public abstract class AbstractFoldableTest {
-    public abstract <T> IterableFoldable<T> of(T...elements);
+    public abstract <T> FoldableTraversable<T> of(T...elements);
     
     @Test
     public void get0(){

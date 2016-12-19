@@ -266,7 +266,7 @@ public class AnyMTest {
 
 	@Test
 	public void testLiftMSimplex(){
-		val lifted = AnyM.liftM((Integer a)->a+3);
+		val lifted = AnyM.liftF((Integer a)->a+3);
 		
 		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)));
 		
@@ -277,7 +277,7 @@ public class AnyMTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		val lifted = AnyM.liftM2((Integer a,Integer b)->a+b);
+		val lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
 		
 		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.of(4)));
 		

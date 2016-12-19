@@ -3,6 +3,8 @@ package com.aol.cyclops.control.anym;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import com.aol.cyclops.types.anyM.Witness;
+import com.aol.cyclops.types.anyM.WitnessType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,7 +12,7 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.data.Mutable;
 
-public class IorAnyMValueTest extends BaseAnyMValueTest {
+public class IorAnyMValueTest extends BaseAnyMValueTest<Witness.ior> {
     @Before
     public void setUp() throws Exception {
         just = AnyM.fromIor(Ior.primary(10));
