@@ -610,9 +610,9 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
 
     /**
      * @param fn Recovery function - map from a failure to a Success.
-     * @return new Success
+     * @return new Try
      */
-    public Success<T, X> recover(Function<? super X, ? extends T> fn);
+    public Try<T, X> recover(Function<? super X, ? extends T> fn);
 
     /**
      * flatMap recovery
@@ -620,7 +620,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
      * @param fn Recovery FlatMap function. Map from a failure to a Success
      * @return Success from recovery function
      */
-    public Success<T, X> recoverWith(Function<? super X, ? extends Success<T, X>> fn);
+    public Try<T, X> recoverWith(Function<? super X, ? extends Try<T, X>> fn);
 
     /**
      * Recover if exception is of specified type
@@ -1062,7 +1062,8 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
         public Ior<X, T> toIor() {
             return Ior.primary(value);
         }
-
+        
+       
         /* 
          *	@return Current value
          * @see com.aol.cyclops.trycatch.Try#get()
@@ -1192,7 +1193,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
          * @see com.aol.cyclops.trycatch.Try#recoverWith(java.util.function.Function)
          */
         @Override
-        public Success<T, X> recoverWith(final Function<? super X, ? extends Success<T, X>> fn) {
+        public Try<T, X> recoverWith(final Function<? super X, ? extends Try<T, X>> fn) {
             return this;
         }
 
@@ -1547,7 +1548,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, M
          * @see com.aol.cyclops.trycatch.Try#recoverWith(java.util.function.Function)
          */
         @Override
-        public Success<T, X> recoverWith(final Function<? super X, ? extends Success<T, X>> fn) {
+        public Try<T, X> recoverWith(final Function<? super X, ? extends Try<T, X>> fn) {
             return fn.apply(error);
         }
 

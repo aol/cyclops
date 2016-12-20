@@ -694,6 +694,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
     Maybe<T> recover(Supplier<T> value);
 
     Maybe<T> recover(T value);
+    
+    default Maybe<T> recoverWith(Supplier<? extends Maybe<T>> fn){
+        return this.visit(s->this, fn);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#map(java.util.function.Function)

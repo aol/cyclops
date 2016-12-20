@@ -65,6 +65,13 @@ public class MaybeTest implements Printable {
 
     }
     
+    @Test
+    public void recoverWith(){
+        assertThat(none.recoverWith(()->Maybe.just(10)).get(),equalTo(10));
+        assertThat(none.recoverWith(()->Maybe.none()).isPresent(),equalTo(false));
+        assertThat(just.recoverWith(()->Maybe.just(5)).get(),equalTo(10));
+    }
+    
     boolean lazy = true;
     @Test
     public void lazyTest() {
