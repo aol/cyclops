@@ -464,9 +464,9 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
      * @param fn BiFunction to combine them
      * @return New Applicativefunctor that represents the combined values
      */
-    default <T2, R> Functor<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> MonadicValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return (Functor<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
+        return (MonadicValue<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
                 .apply(v))).map(tuple -> app.visit(i -> tuple.v2.apply(i), () -> tuple.v1));
     }
     /* (non-Javadoc)

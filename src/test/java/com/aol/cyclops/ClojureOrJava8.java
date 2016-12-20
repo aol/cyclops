@@ -42,12 +42,7 @@ public class ClojureOrJava8 {
             .coflatMap(v->v.isPresent()?v.get() : 10);
         
     }
-    @Test
-    public void applicative(){
-        AnyM.fromOptional(Optional.of(1)).applyFunctions().ap(Semigroups.intMult)
-                                         .ap(AnyM.fromOptional(Optional.of(10)));
-    }
-    
+
     public void java8TransformList(){
         
         

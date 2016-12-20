@@ -3880,4 +3880,5 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default boolean isEmpty(){
         return !findAny().isPresent();
     }
+
 }

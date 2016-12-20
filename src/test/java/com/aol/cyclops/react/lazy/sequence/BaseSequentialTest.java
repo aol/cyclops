@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -104,7 +105,7 @@ public class BaseSequentialTest {
 	    
 	    @Test
 	    public void presentConvert(){
-	        assertTrue(of(1).toMaybe().isPresent());
+
 	        assertTrue(of(1).toOptional().isPresent());
 	        assertTrue(of(1).toListX().size()>0);
 	        assertTrue(of(1).toDequeX().size()>0);
@@ -118,17 +119,7 @@ public class BaseSequentialTest {
 	        assertTrue(of(1).toPBagX().size()>0);
 	        assertTrue(of(1).toPMapX(t->t,t->t).size()>0);
 	        assertTrue(of(1).toMapX(t->t,t->t).size()>0);
-	        assertTrue(of(1).toXor().get().size()>0);
-	        assertTrue(of(1).toIor().get().size()>0);
-	        assertTrue(of(1).toXor().isPrimary());
-	        assertTrue(of(1).toIor().isPrimary());
-	        assertFalse(of(1).toXorSecondary().isPrimary());
-	        assertFalse(of(1).toIorSecondary().isPrimary());
-	        assertTrue(of(1).toTry().isSuccess());
-	        assertTrue(of(1).toEvalNow().get().size()>0);
-	        assertTrue(of(1).toEvalLater().get().size()>0);
-	        assertTrue(of(1).toEvalAlways().get().size()>0);
-	        assertTrue(of(1).toCompletableFuture().join().size()>0);
+
 	        assertTrue(of(1).toSet().size()>0);
 	        assertTrue(of(1).toList().size()>0);
 	        assertTrue(of(1).toStreamable().size()>0);
@@ -138,46 +129,7 @@ public class BaseSequentialTest {
 	Integer value2() {
 		return 5;
 	}
-	@Test
-    public void zap1(){
-        assertThat(of(1,2,3).ap1(this::addOne)
-                  .toListX(),equalTo(Arrays.asList(2,3,4)));
-        
-    }
-    @Test
-    public void zap2(){
-        assertThat(of(1,2,3).ap2(this::add)
-                  .ap(of(3,4,5))
-                  .toListX(),equalTo(Arrays.asList(4,6,8)));
-        
-    }
-    @Test
-    public void zap3(){
-        assertThat(of("a","b","c")
-                  .ap3(this::concat)
-                  .ap(of("1","2","3"))
-                  .ap(of(".","?","!"))
-                  .toListX(),equalTo(Arrays.asList("a1.","b2?","c3!")));
-    }
-    @Test
-    public void zap4(){
-        assertThat(of("a","b","c")
-                  .ap4(this::concat4)
-                  .ap(of("1","2","3"))
-                  .ap(of(".","?","!"))
-                  .ap(of("R","R","R"))
-                  .toListX(),equalTo(Arrays.asList("a1.R","b2?R","c3!R")));
-    }
-    @Test
-    public void zap5(){
-        assertThat(of("a","b","c")
-                  .ap5(this::concat5)
-                  .ap(of("1","2","3"))
-                  .ap(of(".","?","!"))
-                  .ap(of("R","R","R"))
-                  .ap(of("Z","Z","Z"))
-                  .toListX(),equalTo(Arrays.asList("a1.RZ","b2?RZ","c3!RZ")));
-    }
+
 		
     private int addOne(Integer i){
         return i+1;
@@ -217,7 +169,7 @@ public class BaseSequentialTest {
 		}
 		@Test
 		public void concatStreams(){
-		List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
+		List<String> result = 	of(1,2,3).appendS(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -225,7 +177,7 @@ public class BaseSequentialTest {
 		
 		@Test
 		public void prependStreams(){
-		List<String> result = 	of(1,2,3).prependStream(of(100,200,300))
+		List<String> result = 	of(1,2,3).prependS(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -416,7 +368,7 @@ public class BaseSequentialTest {
 		
 		@Test
 		public void testDuplicate(){
-			 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+			 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 			 assertTrue(copies.v1.anyMatch(i->i==2));
 			 assertTrue(copies.v2.anyMatch(i->i==2));
 		}
@@ -429,7 +381,7 @@ public class BaseSequentialTest {
 			
 		    @Test
 		    public void testGroupByEager() {
-		        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+		        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 		        assertEquals(asList(2, 4), map1.get(0));
 		        assertEquals(asList(1, 3), map1.get(1));
 		        assertEquals(2, map1.size());

@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Ignore;
@@ -231,7 +232,7 @@ public abstract class LazySeqTest extends BaseSeqTest {
 		
 		final LazyFutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1);
 		final LazyFutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100);
-		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
+		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 
 		
 		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
@@ -240,9 +241,9 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	@Test
 	public void shouldZipFiniteWithInfiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
-		final Seq<Integer> units = LazyFutureStream.iterate(1,n -> n+1).limit(5);
+		final ReactiveSeq<Integer> units = LazyFutureStream.iterate(1,n -> n+1).limit(5);
 		final LazyFutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
-		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
+		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		
 		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 		ThreadPools.setUseCommon(true);
@@ -252,8 +253,8 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	public void shouldZipInfiniteWithFiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
 		final LazyFutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
-		final Seq<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100).limit(5);
-		final Seq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
+		final ReactiveSeq<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100).limit(5);
+		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 		ThreadPools.setUseCommon(true);
 	}

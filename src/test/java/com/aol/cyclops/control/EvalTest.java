@@ -1,18 +1,13 @@
 package com.aol.cyclops.control;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
-
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
-import com.aol.cyclops.types.ConvertableFunctor;
+import java.util.stream.Stream;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 public class EvalTest {
     
     @Test

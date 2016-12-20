@@ -33,7 +33,7 @@ public class SetXTest extends AbstractCollectionXTest {
     @Test
     public void coflatMap(){
        assertThat(SetX.of(1,2,3)
-                   .coflatMap(s->s.sum().get())
+                   .coflatMap(s->s.sumInt(i->i))
                    .single(),equalTo(6));
         
     }

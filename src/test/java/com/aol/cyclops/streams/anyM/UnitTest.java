@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.anyM.Witness;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
@@ -13,16 +15,16 @@ import com.aol.cyclops.control.AnyM;
 public class UnitTest {
 	@Test
 	public void unitOptional() {
-	    AnyM<Integer> empty = AnyM.fromOptional(Optional.empty());
-	    AnyM<Integer> unit = empty.unit(1);
+	    AnyM<Witness.optional,Integer> empty = AnyM.fromOptional(Optional.empty());
+	    AnyM<Witness.optional,Integer> unit = empty.unit(1);
 	    Optional<Integer> unwrapped = unit.unwrap();
 	    assertEquals(Integer.valueOf(1), unwrapped.get());
 	}
 
 	@Test
 	public void unitList() {
-	    AnyM<Integer> empty = AnyM.fromIterable(Collections.emptyList());
-	    AnyM<Integer> unit = empty.unit(1);
+	    AnyM<Witness.list,Integer> empty = AnyM.fromList(ListX.empty());
+	    AnyM<Witness.list,Integer> unit = empty.unit(1);
 	    List<Integer> unwrapped = unit.stream().toList();
 	    assertEquals(Integer.valueOf(1), unwrapped.get(0));
 	}

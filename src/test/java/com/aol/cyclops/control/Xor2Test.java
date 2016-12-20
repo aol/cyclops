@@ -1,14 +1,17 @@
 package com.aol.cyclops.control;
 
-import static com.aol.cyclops.util.function.Predicates.instanceOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.Monoids;
+import com.aol.cyclops.Reducers;
+import com.aol.cyclops.Semigroups;
+import com.aol.cyclops.data.Mutable;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -19,30 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Monoids;
-import com.aol.cyclops.Reducers;
-import com.aol.cyclops.Semigroups;
-import com.aol.cyclops.data.LazyImmutable;
-import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
-import com.aol.cyclops.data.collections.extensions.standard.DequeX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.QueueX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
-import com.aol.cyclops.util.function.Predicates;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.*;
 
 
 
@@ -131,17 +112,7 @@ public class Xor2Test {
 	private int add1(int i){
 		return i+1;
 	}
-	@Test
-	public void testApplicativeBuilder() {
-		assertThat(Applicatives.<Integer,Integer>applicatives(just, just)
-					.applicative(this::add1).ap(Optional.of(20)).get(),equalTo(21));
-	}
 
-	
-
-	
-
-	
 	@Test
 	public void testOfT() {
 		assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
@@ -405,57 +376,23 @@ public class Xor2Test {
 	}
 
 	
-
-
-	@Test
-	public void testAp1() {
-		assertThat(Ior.primary(1).applyFunctions().ap1(this::add1).toMaybe(),equalTo(Ior.primary(2).toMaybe()));
-	}
-	
 	private int add(int a, int b){
 		return a+b;
 	}
 
-	@Test
-	public void testAp2() {
-		assertThat(Ior.primary(1).applyFunctions().ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Ior.primary(4).toMaybe()));
-	}
+
 	private int add3(int a, int b, int c){
 		return a+b+c;
 	}
-	@Test
-	public void testAp3() {
-		assertThat(Ior.primary(1).applyFunctions().ap3(this::add3).ap(Optional.of(3)).ap(Ior.primary(4)).toMaybe(),equalTo(Ior.primary(8).toMaybe()));
-	}
+
 	private int add4(int a, int b, int c,int d){
 		return a+b+c+d;
 	}
-	@Test
-	public void testAp4() {
-		assertThat(Ior.primary(1).applyFunctions().ap4(this::add4)
-						.ap(Optional.of(3))
-						.ap(Ior.primary(4))
-						.ap(Ior.primary(6)).toMaybe(),equalTo(Ior.primary(14).toMaybe()));
-	}
+
 	private int add5(int a, int b, int c,int d,int e){
 		return a+b+c+d+e;
 	}
-	@Test
-	public void testAp5() {
-		assertThat(Ior.primary(1).applyFunctions().ap5(this::add5)
-				.ap(Optional.of(3))
-				.ap(Ior.primary(4))
-				.ap(Ior.primary(6))
-				.ap(Ior.primary(10)).toMaybe(),equalTo(Ior.primary(24).toMaybe()));
-	}
-	@Test
-    public void testAp5Secondary() {
-        assertThat(Ior.<Integer,Integer>secondary(1).applyFunctions().ap5(this::add5)
-                .ap(Optional.of(3))
-                .ap(Ior.primary(4))
-                .ap(Ior.primary(6))
-                .ap(Ior.primary(10)).toMaybe(),equalTo(Ior.secondary(null).toMaybe()));
-    }
+
 
 
 	@Test

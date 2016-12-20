@@ -60,7 +60,6 @@ public interface Value<T> extends Supplier<T>,
                                     Convertable<T>, 
                                     Publisher<T>, 
                                     Predicate<T>, 
-                                    Zippable<T>,
                                     F0<T> {
     @Override
     default T apply() {

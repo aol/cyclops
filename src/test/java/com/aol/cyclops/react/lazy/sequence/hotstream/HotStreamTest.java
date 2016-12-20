@@ -79,8 +79,7 @@ public class HotStreamTest {
 				.hotStream(exec)
 				.connect(new LinkedBlockingQueue<>())
 				.limit(100)
-				.futureOperations(ForkJoinPool.commonPool())
-				.forEach(System.out::println);
+				.foldFuture(s->s.forEach(System.out::println),ForkJoinPool.commonPool());
 		
 		latch.await();
 		assertTrue(value!=null);

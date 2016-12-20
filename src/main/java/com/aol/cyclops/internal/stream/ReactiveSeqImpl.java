@@ -8,6 +8,7 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops.internal.stream.spliterators.*;
+import com.aol.cyclops.types.FoldableTraversable;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.Witness;
@@ -122,7 +123,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
         
         return ReactiveSeq.fromSpliterator(new ValueEmittingSpliterator<T>(1, s.characteristics(),ReactiveSeq.fromSpliterator(fs)));
     }
-    public <R> FutureW<R> foldFuture(Function<? super CyclopsCollectable<T>,? extends R> fn,Executor ex){
+    public <R> FutureW<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
         split.ifPresent(p->p.setHold(true));
         split.ifPresent(p->p.setOnComplete(()->p.setHold(false)));
         return FutureW.ofSupplier(()->{

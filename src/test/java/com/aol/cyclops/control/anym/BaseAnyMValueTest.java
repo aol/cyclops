@@ -9,7 +9,6 @@ import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.WitnessType;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -66,13 +65,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 	private int add1(int i){
 		return i+1;
 	}
-	@Test
-	public void testApplicativeBuilder() {
-		assertThat(Applicatives.<Integer,Integer>applicatives(just, just)
-					.applicative(this::add1).ap(Optional.of(20)).get(),equalTo(21));
-	}
 
-	
 
 	@Test
 	public void testFromOptional() {
