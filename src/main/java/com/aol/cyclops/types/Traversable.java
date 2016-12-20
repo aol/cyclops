@@ -1,13 +1,9 @@
 package com.aol.cyclops.types;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.function.*;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -37,11 +33,17 @@ public interface Traversable<T> extends Publisher<T>,
                                         IterableFilterable<T>,
                                         FilterableFunctor<T>,
                                         TransformerTraversable<T>,
-                                        Sequential<T>
-                                         {
+                                        Sequential<T>{
 
-
-
+    default DoubleStream mapToDouble(ToDoubleFunction<? super T> fn){
+        return this.stream().mapToDouble(fn);
+    }
+    default LongStream mapToLong(ToLongFunction<? super T> fn){
+        return this.stream().mapToLong(fn);
+    }
+    default IntStream mapToInt(ToIntFunction<? super T> fn){
+        return this.stream().mapToInt(fn);
+    }
 
     /**
      * @return This Traversable converted to a Stream

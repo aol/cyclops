@@ -1,9 +1,6 @@
 package com.aol.cyclops.control.transformers;
 
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -22,23 +19,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.control.*;
+import com.aol.cyclops.control.monads.transformers.FutureT;
+import com.aol.cyclops.types.anyM.Witness;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.Semigroups;
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.Ior;
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.LazyImmutable;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
@@ -59,14 +48,16 @@ import com.aol.cyclops.types.mixins.Printable;
 
 public class FutureWTTest implements Printable {
 
-	FutureWTValue<Integer> just;
-	FutureWTValue<Integer> none;
-	FutureWTValue<Integer> one;
+	FutureT<Witness.optional,Integer> just;
+	FutureT<Witness.optional,Integer> none;
+	FutureT<Witness.optional,Integer> one;
 	@Before
 	public void setUp() throws Exception {
-		just = FutureWTValue.of(FutureW.ofResult(10));
-		none = FutureWT.emptyOptional();
-		one = FutureWTValue.of(FutureW.ofResult(1));
+
+
+		just = FutureW.ofResult(10).liftM(Witness.optional.INSTANCE);
+		none = FutureT.of(AnyM.ofNullable(null));
+		one = FutureT.of(AnyM.ofNullable(FutureW.ofResult(1)));
 	}
 	
 	@Test
@@ -80,21 +71,7 @@ public class FutureWTTest implements Printable {
 	    
 	}
 	
-    @Test
-    public void odd() {
-        System.out.println(even(Maybe.just(200000)).get());
-    }
 
-    public Maybe<String> odd(Maybe<Integer> n) {
-
-        return n.flatMap(x -> even(Maybe.just(x - 1)));
-    }
-
-    public Maybe<String> even(Maybe<Integer> n) {
-        return n.flatMap(x -> {
-            return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
-        });
-    }
 
 	@Test
 	public void testFiltering(){
@@ -182,15 +159,12 @@ public class FutureWTTest implements Printable {
 	
 	@Test
 	public void testWhenFunctionOfQsuperTQextendsRSupplierOfQextendsR() {
+
 		assertThat(just.visit(i->i+1,()->20),equalTo(11));
 		assertThat(none.visit(i->i+1,()->20),equalTo(20));
 	}
 
-	@Test
-	public void testUnapply() {
-		assertThat(just.unapply(),equalTo(ListX.of(10)));
-		assertThat(none.unapply(),equalTo(ListX.of()));
-	}
+
 
 	@Test
 	public void testStream() {
@@ -719,20 +693,7 @@ public class FutureWTTest implements Printable {
 
 	
 
-	@Test
-    public void testMatches() {
-        assertThat(just.matches(c->c.is(when(10),then("hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.of("hello")));
-        assertThat(just.matches(c->c.is(when(10),then("hello")).is(when(2),then("hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.of("hello")));
-        assertThat(just.matches(c->c.is(when(1),then("hello"))
-                                     .is(when(2),then(()->"hello"))
-                                     .is(when(3),then(()->"hello")),otherwise("miss")).toMaybe(),equalTo(Maybe.just("miss")));
-        
-    }
 
-	
-	
-
-	
 
 	@Test
 	public void testIterator1() {
@@ -783,9 +744,5 @@ public class FutureWTTest implements Printable {
 
 	
 
-	@Test
-	public void testUnitT1() {
-		assertThat(none.unit(10).toMaybe(),equalTo(just.value().toMaybe()));
-	}
 
 }

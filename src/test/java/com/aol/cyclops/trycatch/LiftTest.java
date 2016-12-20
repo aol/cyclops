@@ -1,5 +1,6 @@
 package com.aol.cyclops.trycatch;
 
+import com.aol.cyclops.types.anyM.Witness.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -8,6 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.anyM.Witness;
+import com.aol.cyclops.util.function.MFunc1;
+import com.aol.cyclops.util.function.MFunc2;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
@@ -24,36 +28,36 @@ public class LiftTest {
 	
 	@Test
 	public void testLift(){
-		val add =	AnyM.liftF2(this::add);
+		MFunc2<tryType,Integer,Integer,Integer> add =	AnyM.liftF2(this::add);
 		
-		AnyM<Integer> result = add.apply(AnyM.fromIterable(Try.of(2, RuntimeException.class)), AnyM.fromIterable(Try.of(3,RuntimeException.class)));
+		AnyM<tryType,Integer> result = add.apply(Try.of(2, RuntimeException.class).anyM(), Try.of(3,RuntimeException.class).anyM());
 		assertThat(result.<Try<Integer,RuntimeException>>unwrap().get(),equalTo(5));
 	}
 	
 	@Test
 	public void testLiftError(){
-		val divide = AnyM.liftM2(this::divide);
+		MFunc2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
-		AnyM<Integer> result = divide.apply(AnyM.fromIterable(Try.of(2, ArithmeticException.class)),AnyM.fromIterable(Try.of(0,ArithmeticException.class)));
+		AnyM<tryType,Integer> result = divide.apply(Try.of(2, ArithmeticException.class).anyM(),Try.of(0,ArithmeticException.class).anyM());
 		System.out.println(result);
 		assertThat(result.<Try<Integer,ArithmeticException>>unwrap().isFailure(),equalTo(true));
 	}
 	
 	@Test
 	public void testLiftErrorAndStream(){
-		val divide = AnyM.liftM2(this::divide);
+		MFunc2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
-		AnyM<Integer> result = divide.apply(AnyM.fromIterable(Try.of(20, ArithmeticException.class)), AnyM.fromStream(Stream.of(4,1,2,3,0)));
+		AnyM<tryType,Integer> result = divide.apply(Try.of(20, ArithmeticException.class).anyM(), Try.success(4).anyM());
 		System.out.println(result);
 		assertThat(result.<Try<Integer,ArithmeticException>>unwrap().isFailure(),equalTo(true));
 	}
 	
 	@Test
 	public void testLiftAndStream(){
+
+		MFunc2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
-		val divide = AnyM.liftM2(this::divide);
-		
-		AnyM<Integer> result = divide.apply(AnyM.fromIterable(Try.of(2, ArithmeticException.class)), AnyM.fromStream(Stream.of(10,1,2,3)));
+		AnyM<tryType,Integer> result = divide.apply(Try.of(2, ArithmeticException.class).anyM(), Try.success(4).anyM());
 		
 		assertThat(result.<Try<List<Integer>,ArithmeticException>>unwrap().get(),equalTo(Arrays.asList(0, 2, 1, 0)));
 		
@@ -61,9 +65,9 @@ public class LiftTest {
 	
 	@Test(expected=ArithmeticException.class)
 	public void testLiftNoExceptionType(){
-		val divide = AnyM.liftM2(this::divide);
+		MFunc2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
-		AnyM<Integer> result = divide.apply(AnyM.fromIterable(Try.of(2)),AnyM.fromIterable(Try.of(0)));
+		AnyM<tryType,Integer> result = divide.apply(Try.of(2).anyM(),Try.of(0).anyM());
 		System.out.println(result);
 		fail("exception should be thrown");
 	}

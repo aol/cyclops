@@ -4,7 +4,6 @@ package com.aol.cyclops.functions.fluent.reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.aol.cyclops.control.For;
 import com.aol.cyclops.control.Reader;
 
 
@@ -13,14 +12,12 @@ public class UserInfo implements Users {
 
 	public Reader<UserRepository,Map<String,String>> userInfo(String username) {
 	   
-		For.reader(findUser(username))
-		   .reader(user ->getUser(user.getSupervisor().getId()))
-		 		.yield(user -> boss -> "user:"+username+" boss is "+boss.getName());
+		findUser(username).forEach2(user ->getUser(user.getSupervisor().getId()),
+				   (user,boss) -> "user:"+username+" boss is "+boss.getName());
 		
 		
-		return For.reader(findUser(username))
-				 .reader(user -> getUser(user.getSupervisor().getId()))
-				 .yield(user -> boss -> buildMap(user,boss)).unwrap();
+		return findUser(username).forEach2(user -> getUser(user.getSupervisor().getId()),
+				                           (user,boss) -> buildMap(user,boss));
 		
 		
 	}

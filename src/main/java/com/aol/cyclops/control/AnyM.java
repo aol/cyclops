@@ -24,6 +24,9 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops.control.monads.transformers.FutureT;
+import com.aol.cyclops.control.monads.transformers.ListT;
+import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.util.function.*;
 import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
@@ -340,7 +343,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * 
      * @return Flattened / joined one level
      */ 
-    static <W extends WitnessType<W>,T1> AnyM<W,T1> flatten(AnyM<W,AnyM<W,T1>> nested){
+    static <W extends WitnessType<W>,T1> AnyM<W,T1> flatten(AnyM<W,? extends AnyM<W,T1>> nested){
         return nested.flatMapA(Function.identity());
     }
 
@@ -1175,5 +1178,22 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
                                                                                                                                       .apply(input4)
                                                                                                                                       .apply(input5))))));
   }
+
+    default FutureT<W, T> liftMFuture(Function<? super T, ? extends FutureW<T>> lift) {
+
+        return FutureT.of(this.map(a -> lift.apply(a)));
+    }
+
+    default ListT<W, T> liftMList(Function<? super T, ? extends FluentSequenceX<T>> lift) {
+        return ListT.of(this.map(a -> lift.apply(a)));
+    }
+
+    default FutureT<W, T> liftMFuture() {
+        return FutureT.of(this.map(a -> FutureW.ofResult(a)));
+    }
+
+    default ListT<W, T> liftMListX() {
+        return ListT.of(this.map(a -> ListX.of(a)));
+    }
 
 }

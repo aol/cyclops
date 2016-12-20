@@ -20,9 +20,10 @@ import com.aol.cyclops.types.FoldableTraversable;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
+import com.aol.cyclops.types.stream.ToStream;
 import org.reactivestreams.Subscription;
 
-public interface NestedFoldable<W extends WitnessType<W>,T> {
+public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> {
     public AnyM<W,? extends CyclopsCollectable<T>> nestedFoldables();
 
 
@@ -35,8 +36,6 @@ public interface NestedFoldable<W extends WitnessType<W>,T> {
     default <X extends Throwable> AnyM<W,? extends Subscription> forEachXEvents(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
         return nestedFoldables().map(n->n.forEachXEvents(numberOfElements,consumer,consumerError,onComplete));
     }
-
-
 
 
 
@@ -309,7 +308,6 @@ public interface NestedFoldable<W extends WitnessType<W>,T> {
         return nestedFoldables().map(s -> s.join(sep, start, end));
     }
 
-    ReactiveSeq<T> stream();
 
     default void print(final PrintStream str) {
         nestedFoldables().peek(s -> s.print(str))

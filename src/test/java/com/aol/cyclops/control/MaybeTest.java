@@ -46,6 +46,7 @@ public class MaybeTest implements Printable {
     }
     
     boolean lazy = true;
+
     @Test
     public void lazyTest() {
         Maybe.just(10)

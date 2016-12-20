@@ -2,6 +2,8 @@ package com.aol.cyclops.control;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
+import com.aol.cyclops.control.monads.transformers.FutureT;
+import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.Status;
@@ -11,6 +13,7 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.Witness;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.CompletableFutures;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -49,6 +52,10 @@ import java.util.stream.Stream;
 @EqualsAndHashCode
 @Slf4j
 public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
+
+    public <W extends WitnessType<W>> FutureT<W, T> liftM(W witness) {
+        return FutureT.of(witness.adapter().unit(this));
+    }
 
     interface Futureable<T>{
         FutureW<T> execute(Executor ex);

@@ -13,6 +13,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.aol.cyclops.types.anyM.Witness.*;
+
+import com.aol.cyclops.types.anyM.Witness;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
@@ -41,10 +43,9 @@ public class AnyMSeqTest {
     @Test
     public void testSequenceAnyMSeq() {
         AnyMSeq<list,Integer> just = AnyM.fromList(ListX.of(10));
-        Supplier<AnyMSeq<list,Stream<Integer>>> unitEmpty = ()->AnyM.fromList(ListX.of(Stream.<Integer>empty()));
+
         Stream<AnyMSeq<list,Integer>> source = ReactiveSeq.of(just,AnyM.fromList(Arrays.asList(1)));
-        AnyMSeq<list,ListX<Integer>> maybes =AnyMSeq.sequence(source, unitEmpty)
-                                          .map(s->ReactiveSeq.fromStream(s).toListX());
+        AnyM<list,Stream<Integer>> maybes =AnyM.sequence(source, list.INSTANCE);
        
         
        
@@ -61,7 +62,7 @@ public class AnyMSeqTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<list,ListX<Integer>> futureList = AnyMSeq.sequence(AnyM.listFromStream(futures));
+        AnyM<stream,ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromStream(futures), stream.INSTANCE);
         
  
         List<Integer> collected = futureList.<Stream<Integer>>unwrap().collect(Collectors.toList());
@@ -84,7 +85,7 @@ public class AnyMSeqTest {
                 .collect(Collectors.toList());
 
        
-        AnyM<list,ListX<String>> futureList = AnyMSeq.traverse( AnyM.listFromStream(futures), (Integer i) -> "hello" +i);
+        AnyM<stream,ListX<String>> futureList = AnyM.traverse( AnyM.listFromStream(futures), (Integer i) -> "hello" +i, stream.INSTANCE);
    
         List<String> collected = futureList.<Stream<String>>unwrap().collect(Collectors.toList());
         assertThat(collected.size(),equalTo( list.size()));

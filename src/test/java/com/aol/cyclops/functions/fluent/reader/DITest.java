@@ -1,17 +1,15 @@
 package com.aol.cyclops.functions.fluent.reader;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import com.aol.cyclops.control.FluentFunctions;
+import com.aol.cyclops.control.Reader;
+import com.aol.cyclops.functions.fluent.reader.Application.UserRepositoryImpl;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-
-import com.aol.cyclops.control.FluentFunctions;
-import com.aol.cyclops.control.For;
-import com.aol.cyclops.control.Reader;
-import com.aol.cyclops.functions.fluent.reader.Application.UserRepositoryImpl;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 //Reader Monad for Dependency Injection converted to Java8
 //http://blog.originate.com/blog/2013/10/21/reader-monad-for-dependency-injection/
@@ -34,15 +32,11 @@ public class DITest {
 	}
 	@Test
     public void forComp(){
-	 Reader<UserRepository,Integer> res =  For.reader(depth1("bob"))
-	                                          .reader(a->depth2("bob"))
-	                                          .reader(a->b->depth3("bob"))
-	                                          .reader(a->b->c->depth3("bob"))
-	                                          .reader(a->b->c->d->depth4("bob"))
-	                                          .reader(a->b->c->d->e->depth5("bob"))
-	                                          .reader(a->b->c->d->e->f->depth5("bob"))
-	                                          .reader(a->b->c->d->e->f->g->depth6("bob"))
-	                                          .yield(a->b->c->d->e->f->g->h->a+b+c+d+e+f+g+h).unwrap();
+	 Reader<UserRepository,Integer> res = depth1("bob")
+			 								.forEach4(a->depth2("bob"),
+			 									      (a,b)->depth3("bob"),
+													  (a,b,c)->depth3("bob"),
+													  (a,b,c,d)->(a+b+c+d));
         assertThat(res.apply(new UserRepositoryImpl()), equalTo(29));
     }
 	private Reader<UserRepository,Integer> depth8(String name){

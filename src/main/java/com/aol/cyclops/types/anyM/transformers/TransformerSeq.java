@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.types.FoldableTraversable;
+import com.aol.cyclops.types.*;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -26,9 +26,6 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Sequential;
-import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.ToStream;

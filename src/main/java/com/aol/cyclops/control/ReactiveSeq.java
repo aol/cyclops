@@ -14,6 +14,7 @@ import java.util.stream.*;
 
 import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
 import com.aol.cyclops.types.*;
+import com.aol.cyclops.types.stream.*;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
@@ -36,10 +37,6 @@ import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator
 import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -210,7 +207,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return
      */
     default ReactiveSeq<Integer> ints(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends IntStream> mapper){
-        return ReactiveSeq.fromSpliterator(foldInt(fn,mapper).spliterator());
+        return ReactiveSeq.fromSpliterator(mapper.apply(mapToInt(fn)).spliterator());
     }
     default <R> ReactiveSeq<R> jooλ(Function<? super Seq<T>, ? extends Seq<R>> mapper){
         return ReactiveSeq.fromSpliterator(foldJooλ(mapper).spliterator());
@@ -239,12 +236,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param fn Conversion function
      * @param mapper Folding function
      * @return Fold result
-     */ //same as mapToInt().xxx
+      //same as mapToInt().xxx
     default <R> R foldInt(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends R> mapper){
+
         Spliterator<T> split = this.spliterator();
         IntStream s = (split instanceof Spliterator.OfInt)? StreamSupport.intStream((Spliterator.OfInt)split,false) : StreamSupport.stream(split,false).mapToInt(fn);
         return mapper.apply(s);
+    }*/
+
+    @Override
+    default IntStream mapToInt(ToIntFunction<? super T> fn){
+        Spliterator<T> split = this.spliterator();
+        IntStream s = (split instanceof Spliterator.OfInt)? StreamSupport.intStream((Spliterator.OfInt)split,false) : StreamSupport.stream(split,false).mapToInt(fn);
+        return s;
     }
+
 
     /**
      * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
@@ -266,7 +272,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return
      */
     default ReactiveSeq<Long> longs(ToLongFunction<? super T> fn,Function<? super LongStream, ? extends LongStream> mapper){
-        return ReactiveSeq.fromSpliterator(foldLong(fn,mapper).spliterator());
+        return ReactiveSeq.fromSpliterator(mapper.apply(mapToLong(fn)).spliterator());
     }
     /**
      * Perform a fold on a primitive LongStream (this is much faster than working with Long Objects).
@@ -288,12 +294,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param fn Conversion function
      * @param mapper Folding function
      * @return Fold result
-     */
+
     default <R> R foldLong(ToLongFunction<? super T> fn,Function<? super LongStream, ? extends R> mapper){
         Spliterator<T> split = this.spliterator();
         LongStream s = (split instanceof Spliterator.OfLong)? StreamSupport.longStream((Spliterator.OfLong)split,false) : StreamSupport.stream(split,false).mapToLong(fn);
         return mapper.apply(s);
+    } */
+    @Override
+    default LongStream mapToLong(ToLongFunction<? super T> fn){
+        Spliterator<T> split = this.spliterator();
+        return (split instanceof Spliterator.OfLong)? StreamSupport.longStream((Spliterator.OfLong)split,false) : StreamSupport.stream(split,false).mapToLong(fn);
+
     }
+
     /**
      * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
      * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
@@ -314,7 +327,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return
      */
     default ReactiveSeq<Double> doubles(ToDoubleFunction<? super T> fn,Function<? super DoubleStream, ? extends DoubleStream> mapper){
-        return ReactiveSeq.fromSpliterator(foldDouble(fn,mapper).spliterator());
+        return ReactiveSeq.fromSpliterator(mapper.apply(mapToDouble(fn)).spliterator());
     }
     /**
      * Perform a fold on a primitive DoubleStream (this is much faster than working with Double Objects).
@@ -336,12 +349,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param fn Conversion function
      * @param mapper Folding function
      * @return Fold result
-     */
+
     default <R> R foldDouble(ToDoubleFunction<? super T> fn,Function<? super DoubleStream, ? extends R> mapper){
         Spliterator<T> split = this.spliterator();
         DoubleStream s = (split instanceof Spliterator.OfDouble) ? StreamSupport.doubleStream((Spliterator.OfDouble)split,false) : StreamSupport.stream(split,false).mapToDouble(fn);
         return mapper.apply(s);
+    } */
+    default DoubleStream mapToDouble(ToDoubleFunction<? super T> fn){
+        Spliterator<T> split = this.spliterator();
+        return (split instanceof Spliterator.OfDouble) ? StreamSupport.doubleStream((Spliterator.OfDouble)split,false) : StreamSupport.stream(split,false).mapToDouble(fn);
+
     }
+
 
     
     /**

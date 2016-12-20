@@ -1,8 +1,6 @@
 package com.aol.cyclops.types;
 
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.*;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -13,8 +11,10 @@ import org.reactivestreams.Subscription;
 
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -27,6 +27,66 @@ public interface FoldableTraversable<T> extends F1<Long,T>,
                                                 ExtendedTraversable<T>{
 
 
+    /**
+     * Perform an async fold on the provided executor
+     *
+     *  <pre>
+     *  {@code
+     *    FutureW<Integer> sum =  ListX.of(1,2,3)
+     *                                 .map(this::load)
+     *                                 .foldFuture(list->list.reduce(0,(a,b)->a+b),exec)
+     *
+     *  }
+     *  </pre>
+     *
+     * Similar to @see {@link ReactiveSeq#futureOperations(Executor)}, but returns FutureW
+     *
+     * @param fn Folding function
+     * @param ex Executor to perform fold on
+     * @return Future that will contain the result when complete
+     */
+    default <R> FutureW<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
+        return FutureW.ofSupplier(()->fn.apply(this),ex);
+    }
+
+    /**
+     * Perform a lazy caching fold (results are memoized)
+     *  <pre>
+     *  {@code
+     *    Eval<Integer> sum =  ListX.of(1,2,3)
+     *                                 .map(this::load)
+     *                                 .foldLazy(list->list.reduce(0,(a,b)->a+b))
+     *
+     *  }
+     *  </pre>
+     *
+     *  Similar to @see {@link ReactiveSeq#lazyOperations()}, but always returns Eval (e.g. with nested Optionals)
+     *
+     * @param fn Folding function
+     * @return Eval that lazily performs the fold once
+     */
+    default <R> Eval<R> foldLazy(Function<? super FoldableTraversable<T>,? extends R> fn){
+        return Eval.later(()->fn.apply(this));
+    }
+
+    /**
+     * Try a fold, capturing any unhandling execution exceptions (that match the provided classes)
+     *  <pre>
+     *  {@code
+     *    Try<Integer,Throwable> sum =  ListX.of(1,2,3)
+     *                                       .map(this::load)
+     *                                       .foldLazy(list->list.reduce(0,(a,b)->a+b),IOException.class)
+     *
+     *  }
+     *  </pre>
+     * @param fn Folding function
+     * @param classes Unhandled Exception types to capture in Try
+     * @return Try that eagerly executes the fold and captures specified unhandled exceptions
+     */
+    default <R, X extends Throwable> Try<R, X> foldTry(Function<? super FoldableTraversable<T>,? extends R> fn,
+                                                       final Class<X>... classes){
+        return Try.catchExceptions(classes).tryThis(()->fn.apply(this));
+    }
     @Override
     default T apply(Long index){
         return this.get(index).orElse(null);

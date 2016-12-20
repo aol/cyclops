@@ -63,7 +63,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     public <R> AnyM<W,R> visit(Function<? super ListX<T>,? extends R> listXFn,
                        Function<? super PStackX<T>, ? extends R> pListFn,
                        Function<? super PVectorX<T>, ? extends R> vectorFn){
-        
+
         return this.transformerStream().map(t->{
            if(t instanceof PStackX){
                return pListFn.apply((PStackX<T>)t);

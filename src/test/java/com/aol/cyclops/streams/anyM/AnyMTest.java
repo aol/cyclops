@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.anyM.Witness;
+import com.aol.cyclops.util.function.MFunc1;
+import com.aol.cyclops.util.function.MFunc2;
 import org.junit.Test;
 
 import com.aol.cyclops.Monoid;
@@ -133,15 +135,15 @@ public class AnyMTest {
 	@Test
 	public void testJoin(){
 		assertThat(fromStream(Stream.of(1,2,2))
-							.map(b-> Stream.of(b))
-							.flatten()
+							.map(b-> AnyM.fromArray(b))
+							.to(AnyM::flatten)
 							.stream()
 							.toList(),equalTo(Arrays.asList(1,2,2)));
 	}
 	@Test
 	public void testJoin2(){
-		assertThat(fromStream(Stream.of(asList(1,2),asList(2)))
-						.flatten()
+		assertThat(AnyM.fromArray(AnyM.fromArray(asList(1,2),asList(2)))
+				        .to(AnyM::flatten)
 						.stream()
 						.toList(),equalTo(Arrays.asList(1,2,2)));
 	}
@@ -200,31 +202,14 @@ public class AnyMTest {
 
 	@Test
 	public void traversableTest(){
-		 List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-								.toReactiveSeq(i->i.stream())
+		 List<List<Integer>> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
+								.stream()
 								.collect(Collectors.toList());
 
 		 
-		 assertThat(list,hasItems(1,2,3,4,5,6));
+		 assertThat(list.get(0),hasItems(1,2,3,4,5,6));
 	}
-	@Test
-	public void traversableTestStream(){
-		 List<Integer> list = AnyM.fromStream(Stream.of(Arrays.asList(1,2,3,4,5,6)))
-								.toReactiveSeq(i->i.stream())
-								.collect(Collectors.toList());
 
-		 
-		 assertThat(list,hasItems(1,2,3,4,5,6));
-	}
-	@Test
-	public void traversableTestStreamNested(){
-		List<Integer> list = AnyM.fromStream(Stream.of(Stream.of(1,2,3,4,5,6)))
-								.toReactiveSeq(i->i)
-								.collect(Collectors.toList());
-
-		 
-		 assertThat(list,hasItems(1,2,3,4,5,6));
-	}
 	
 	@Test
 	public void testFlatMap(){
@@ -308,14 +293,14 @@ public class AnyMTest {
 	@Test
 	public void groupedOptional(){
 		
-		List<List<Integer>> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
+		List<List<List<Integer>>> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
 											.stream()
 											.grouped(3)
 											.collect(Collectors.toList());
 		
 		
-		assertThat(list.get(0),hasItems(1,2,3));
-		assertThat(list.get(1),hasItems(4,5,6));
+		assertThat(list.get(0).get(0),hasItems(1,2,3));
+		assertThat(list.get(0).get(1),hasItems(4,5,6));
 		
 	}
 	
@@ -329,16 +314,7 @@ public class AnyMTest {
 	public void startsWithIterator(){
 		assertTrue(AnyM.fromStream(Stream.of(1,2,3,4)).stream().startsWith(Arrays.asList(1,2,3).stream()));
 	}
-	@Test
-	public void distinctOptional(){
-		List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,2,2,5,6)))
-											.stream()
-											.distinct()
-											.collect(Collectors.toList());
-		
-		
-		assertThat(list.size(),equalTo(4));
-	}
+
 	@Test
     public void scanLeft() {
         assertEquals(
@@ -363,46 +339,15 @@ public class AnyMTest {
 		 
 		assertThat(result,equalTo(Arrays.asList(10,24)));
 	}
-	@Test
-	public void reducer2(){
-		Reducer<Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
-		Reducer<Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
-		val result = AnyM.fromOptional(Optional.of(Stream.of(1,2,3,4)))
-						.<Integer>toReactiveSeq(i->i)
-						.reduce(Arrays.asList(sum,mult) );
-				
-		 
-		assertThat(result,equalTo(Arrays.asList(10,24)));
-	}
-	@Test
-	public void reducer3(){
-		Reducer<Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
-		Reducer<Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
-		val result = AnyM.fromOptional(Optional.of(Stream.of()))
-		                .<Integer>toSequence()
-						.reduce(Arrays.asList(sum,mult) );
-				
-		 
-		assertThat(result,equalTo(Arrays.asList(0,1)));
-	}
-	@Test
-	public void reducer4(){
-		Reducer<Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
-		Reducer<Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
-		val result = AnyM.<Stream<Integer>>fromOptional(Optional.empty())
-		                    .<Integer>toReactiveSeq(i->i)
-						.reduce(Arrays.asList(sum,mult) );
-				
-		 
-		assertThat(result,equalTo(Arrays.asList(0,1)));
-	}
-	
+
+
+
 	@Test
 	public void aggregate(){
 		List<Integer> result = AnyM.fromStream(Stream.of(1,2,3,4))
-								.aggregate(ofValue(Optional.of(5)))
+								.aggregate(AnyM.fromArray(5))
 								.stream()
-								.<Integer>flatten()
+							    .flatMap(List::stream)
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
@@ -411,21 +356,11 @@ public class AnyMTest {
 	public void aggregate2(){
 		List<Integer> result = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4)))
 								.aggregate((AnyM)AnyM.fromCompletableFuture(CompletableFuture.completedFuture(5)))
-								.<Integer>toSequence()
+								.stream()
 								.toList();
 		
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
 	}
-	@Test
-	public void aggregate3(){
-		List<Integer> result = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4)))
-								.<Integer>aggregate(ofValue(CompletableFuture.supplyAsync(()->Arrays.asList(5,6))))
-								.<Integer>toSequence()
-								.toList();
-		
-		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5,6)));
-	}
-	
 
 
 
@@ -464,9 +399,9 @@ public class AnyMTest {
 	
 	@Test
 	public void testLiftMSimplex(){
-		val lifted = AnyM.liftF((Integer a)->a+3);
+		MFunc1<Witness.optional,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 		
-		AnyM<Integer> result = lifted.apply(ofValue(Optional.of(3)));
+		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3));
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(6));
 	}
@@ -475,25 +410,25 @@ public class AnyMTest {
 
 	@Test
 	public void testLiftM2Simplex(){
-		val lifted = AnyM.liftM2((Integer a,Integer b)->a+b);
+		MFunc2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(ofValue(Optional.of(3)),ofValue(Optional.of(4)));
+		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
 	}
 	@Test
     public void testLiftM2AnyMValue(){
-        val lifted = AnyMValue.liftM2((Integer a,Integer b)->a+b);
+		MFunc2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
         
-        AnyM<Integer> result = lifted.apply(ofValue(Optional.of(3)),ofValue(Optional.of(4)));
+        AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
         
         assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
     }
 	@Test
 	public void testLiftM2SimplexNull(){
-		val lifted = AnyM.liftM2((Integer a,Integer b)->a+b);
+		MFunc2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(ofValue(Optional.of(3)),ofValue(Optional.ofNullable(null)));
+		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(null));
 		
 		assertThat(result.<Optional<Integer>>unwrap().isPresent(),equalTo(false));
 	}
@@ -503,9 +438,9 @@ public class AnyMTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		val lifted = AnyM.liftM2(this::add); 
+		MFunc2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 		
-		AnyM<Integer> result = lifted.apply(ofValue(Optional.of(3)),ofValue(Stream.of(4,6,7)));
+		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
 		
 		
 		assertThat(result.<Optional<List<Integer>>>unwrap().get(),equalTo(Arrays.asList(7,9,10)));

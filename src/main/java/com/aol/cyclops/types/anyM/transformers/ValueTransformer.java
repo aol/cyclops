@@ -1,10 +1,6 @@
 package com.aol.cyclops.types.anyM.transformers;
 
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
@@ -23,8 +19,10 @@ import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F3;
 
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
-                                                                           Unwrapable,
-                                                                           Unit<T>, NestedFoldable<W,T> {
+                                                                            Unwrapable,
+                                                                            Unit<T>,
+                                                                            NestedFoldable<W,T>,
+                                                                            Zippable<T>{
     public abstract <R> ValueTransformer<W,R> empty();
     public abstract <R> ValueTransformer<W,R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> f);
     public abstract AnyM<W,? extends MonadicValue<T>> transformerStream();
@@ -134,22 +132,23 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
      * @see java.util.function.Predicate#and(java.util.function.Predicate)
      */
    
-    public ValueTransformer<W,T> and(Predicate<? super T> other) {
-        return unitAnyM(this.transformerStream().map(v->v.and(other)));
+    public AnyM<W,Predicate<T>> and(Predicate<? super T> other) {
+
+        return this.transformerStream().map(v->v.and(other));
     }
     /* (non-Javadoc)
      * @see java.util.function.Predicate#negate()
      */
    
-    public ValueTransformer<W,T> negate() {
-        return unitAnyM(this.transformerStream().map(v->v.negate()));
+    public AnyM<W,Predicate<T>> negate() {
+        return this.transformerStream().map(v->v.negate());
     }
     /* (non-Javadoc)
      * @see java.util.function.Predicate#or(java.util.function.Predicate)
      */
    
-    public ValueTransformer<W,T> or(Predicate<? super T> other) {
-        return unitAnyM(this.transformerStream().map(v->v.or(other)));
+    public AnyM<W,Predicate<T>> or(Predicate<? super T> other) {
+        return this.transformerStream().map(v->v.or(other));
     }
 
    
@@ -241,6 +240,10 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return unitAnyM(this.transformerStream().map(v->v.flatMapPublisher(mapper)));
     }
 
+
+    public <R> AnyM<W,R> visit(Function<? super T, ? extends R> some, Supplier<? extends R> none){
+        return this.transformerStream().map(v->v.visit(some,none));
+    }
     
 
 }

@@ -1,14 +1,11 @@
 package com.aol.cyclops.types.stream;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.function.*;
 import java.util.stream.Collector;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import org.jooq.lambda.Collectable;
@@ -28,68 +25,9 @@ import org.jooq.lambda.Seq;
  *
  * @param <T> Data type of elements in this Collectable
  */
-public interface CyclopsCollectable<T> extends  Iterable<T>, Foldable<T>,ReactiveStreamsTerminalOperations<T> { //Collectable<T>,
+public interface CyclopsCollectable<T> extends  Iterable<T>, Foldable<T>,ReactiveStreamsTerminalOperations<T> {
 
-    /**
-     * Perform an async fold on the provided executor
-     *  
-     *  <pre>
-     *  {@code 
-     *    FutureW<Integer> sum =  ListX.of(1,2,3)
-     *                                 .map(this::load)
-     *                                 .foldFuture(list->list.reduce(0,(a,b)->a+b),exec)
-     *  
-     *  }
-     *  </pre>
-     *  
-     * Similar to @see {@link ReactiveSeq#futureOperations(Executor)}, but returns FutureW
-     *  
-     * @param fn Folding function
-     * @param ex Executor to perform fold on
-     * @return Future that will contain the result when complete
-     */
-    default <R> FutureW<R> foldFuture(Function<? super CyclopsCollectable<T>,? extends R> fn,Executor ex){
-        return FutureW.ofSupplier(()->fn.apply(this),ex);
-    }
 
-    /**
-     * Perform a lazy caching fold (results are memoized)
-     *  <pre>
-     *  {@code 
-     *    Eval<Integer> sum =  ListX.of(1,2,3)
-     *                                 .map(this::load)
-     *                                 .foldLazy(list->list.reduce(0,(a,b)->a+b))
-     *  
-     *  }
-     *  </pre>
-     *  
-     *  Similar to @see {@link ReactiveSeq#lazyOperations()}, but always returns Eval (e.g. with nested Optionals)
-     *   
-     * @param fn Folding function
-     * @return Eval that lazily performs the fold once
-     */
-    default <R> Eval<R> foldLazy(Function<? super CyclopsCollectable<T>,? extends R> fn){
-        return Eval.later(()->fn.apply(this));
-    }
-   
-    /**
-     * Try a fold, capturing any unhandling execution exceptions (that match the provided classes)
-     *  <pre>
-     *  {@code 
-     *    Try<Integer,Throwable> sum =  ListX.of(1,2,3)
-     *                                       .map(this::load)
-     *                                       .foldLazy(list->list.reduce(0,(a,b)->a+b),IOException.class)
-     *  
-     *  }
-     *  </pre>
-     * @param fn Folding function
-     * @param classes Unhandled Exception types to capture in Try
-     * @return Try that eagerly executes the fold and captures specified unhandled exceptions
-     */
-    default <R, X extends Throwable> Try<R, X> foldTry(Function<? super CyclopsCollectable<T>,? extends R> fn, 
-                                                        final Class<X>... classes){
-        return Try.catchExceptions(classes).tryThis(()->fn.apply(this));
-    }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#modeBy(java.util.function.Function)
      */
@@ -358,6 +296,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Foldable<T>,Reactiv
         return Seq.seq(this);
     }
 
+
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#countDistinct()
      */
@@ -397,6 +336,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Foldable<T>,Reactiv
      */
     
     default int sumInt(final ToIntFunction<? super T> function) {
+
         return collectable().sumInt(function);
     }
 

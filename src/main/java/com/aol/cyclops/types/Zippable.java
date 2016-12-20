@@ -1,17 +1,23 @@
 package com.aol.cyclops.types;
 
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.stream.ToStream;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.control.ReactiveSeq;
 
 /**
+ * TODO zip3 /zip4 with functions, + applicative style zip(Zippable<Function<? super T,? extends R>>
+ *      remove ApplicativeFunctor + combiner
+ *
  * A Data Type that can be comined with another data type 
  * 
  * @author johnmcclean
@@ -19,6 +25,39 @@ import com.aol.cyclops.control.ReactiveSeq;
  * @param <T> Data type of element(s) of this Zippable
  */
 public interface Zippable<T> extends Iterable<T>, ToStream<T> {
+
+    /**
+     * Combine two applicatives together using the provided BinaryOperator (Semigroup, Monoid and Reducer all
+     * extend BinaryOperator - checkout Semigroups and Monoids for a large number of canned combinations).
+     * If this Applicative is a scalar value the provided value is combined with that value,
+     * otherwise the value is combined pair wise with all value in a non-scalar datastructure
+     *
+     * @see com.aol.cyclops.Semigroup
+     * @see com.aol.cyclops.Semigroups
+     * @see com.aol.cyclops.Monoid
+     * @see com.aol.cyclops.Monoids
+     *
+     * To lift any Semigroup (or monoid) up to handling Applicatives use the combineApplicatives operator in Semigroups
+     * {@see com.aol.cyclops.Semigroups#combineApplicatives(BiFunction) } or Monoids
+     * { {@see com.aol.cyclops.Monoids#combineApplicatives(java.util.function.Function, com.aol.cyclops.Monoid)
+     *  }
+     * <pre>
+     * {@code
+     *
+     *
+     *  BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
+        Maybe.just(1).zip(sumMaybes, Maybe.just(5))
+       //Maybe.just(6));
+     * }
+     * </pre>
+     *
+     * @param combiner
+     * @param app
+     * @return
+     */
+    default  Zippable<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return combiner.apply(this, app);
+    }
     /**
      * Zip (combine) this Zippable with the supplied Iterable using the supplied combining function
      * 
@@ -79,5 +118,37 @@ public interface Zippable<T> extends Iterable<T>, ToStream<T> {
     default <U> Zippable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return zipS((Stream<? extends U>) ReactiveSeq.fromIterable(other));
     }
+    /**
+     * zip 3 Streams into one
+     *
+     * <pre>
+     * {@code
+     *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(Collectors.toList());
+     *
+     *  // [[1,100,'a'],[2,200,'b'],[3,300,'c']]
+     * }
+     *
+     * </pre>
+     */
+    default <S, U> Zippable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
+        return zip(second,Tuple::tuple).zip(third,(a,b)->(Tuple3<T,S,U>)Tuple.tuple(a.v1,a.v2,b));
+    }
 
+    /**
+     * zip 4 Streams into 1
+     *
+     * <pre>
+     * {@code
+     *  List<Tuple4<Integer, Integer, Character, String>> list = of(1, 2, 3, 4, 5, 6).zip4(of(100, 200, 300, 400), of('a', 'b', 'c'), of("hello", "world"))
+     *          .collect(Collectors.toList());
+     *
+     * }
+     * // [[1,100,'a',"hello"],[2,200,'b',"world"]]
+     * </pre>
+     */
+    default <T2, T3, T4> Zippable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+                                                                 final Iterable<? extends T4> fourth) {
+        return zip(second,Tuple::tuple).zip(third,(a,b)->Tuple.tuple(a.v1,a.v2,b))
+                                       .zip(fourth,(a,b)->(Tuple4<T,T2,T3,T4>)Tuple.tuple(a.v1,a.v2,a.v3,b));
+    }
 }

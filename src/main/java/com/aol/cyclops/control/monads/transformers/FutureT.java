@@ -11,6 +11,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
+import com.aol.cyclops.types.anyM.transformers.TransformerSeq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -37,11 +38,16 @@ import com.aol.cyclops.util.function.F3;
 public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
                                                        implements  To<FutureT<W,T>>,
                                                                    Functor<T>,
-                                                                   Filterable<T> {
+                                                                   Filterable<T>{
 
     private final AnyM<W,FutureW<T>> run;
 
     @Override
+    public Iterator<T> iterator() {
+        return stream().iterator();
+    }
+
+                                                                         @Override
     public ReactiveSeq<T> stream() {
         return run.stream().map(FutureW::get);
     }
@@ -374,32 +380,6 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         return (FutureT)super.zip(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.ValueTransformer#and(java.util.function.Predicate)
-     */
-    @Override
-    public FutureT<W, T> and(Predicate<? super T> other) {
-        
-        return (FutureT<W, T>)super.and(other);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.ValueTransformer#negate()
-     */
-    @Override
-    public FutureT<W, T> negate() {
-        
-        return (FutureT<W, T>)super.negate();
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.ValueTransformer#or(java.util.function.Predicate)
-     */
-    @Override
-    public FutureT<W, T> or(Predicate<? super T> other) {
-        
-        return (FutureT<W, T>)super.or(other);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)

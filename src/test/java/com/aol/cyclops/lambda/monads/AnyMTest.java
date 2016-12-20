@@ -242,52 +242,11 @@ public class AnyMTest {
 		assertEquals(Integer.valueOf(1), unwrapped.get());
 	}
 
-	@Test
-	public void testReplicateM(){
-		
-		 AnyM<List<Integer>> applied =AnyM.fromOptional(Optional.of(2)).replicateM(5);
-		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
-	
-	}
 
-	@Test
-	public void testLiftMSimplex(){
-		val lifted = AnyM.liftF((Integer a)->a+3);
-		
-		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)));
-		
-		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(6));
-	}
-	
-	
-	
-	@Test
-	public void testLiftM2Simplex(){
-		val lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
-		
-		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.of(4)));
-		
-		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
-	}
-	@Test
-	public void testLiftM2SimplexNull(){
-		val lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
-		
-		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.ofNullable(null)));
-		
-		assertThat(result.<Optional<Integer>>unwrap().isPresent(),equalTo(false));
-	}
-	
+
+
 	private Integer add(Integer a, Integer  b){
 		return a+b;
 	}
-	@Test
-	public void testLiftM2Mixed(){
-		val lifted = AnyM.liftF2(this::add);
-		
-		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromStream(Stream.of(4,6,7)));
-		
-		
-		assertThat(result.<Optional<List<Integer>>>unwrap().get(),equalTo(Arrays.asList(7,9,10)));
-	}
+
 }

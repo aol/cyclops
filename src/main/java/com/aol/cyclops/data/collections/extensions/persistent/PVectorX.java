@@ -5,10 +5,12 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Reducers;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
+import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
+import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.util.function.F3;
 import com.aol.cyclops.util.function.F4;
 import org.jooq.lambda.Seq;
@@ -32,6 +34,9 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
                                      PVector<T>> {
 
 
+    default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
+        return ListT.of(witness.adapter().unit(this));
+    }
     /**
      * Narrow a covariant PVectorX
      * 
