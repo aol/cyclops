@@ -48,6 +48,9 @@ public interface FoldableTraversable<T> extends F1<Long,T>,
     default <R> FutureW<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
         return FutureW.ofSupplier(()->fn.apply(this),ex);
     }
+    default  FutureW<Void> runFuture(Consumer<? super FoldableTraversable<T>> fn, Executor ex){
+        return FutureW.ofSupplier(()-> { fn.accept(this); return null;},ex);
+    }
 
     /**
      * Perform a lazy caching fold (results are memoized)
@@ -67,6 +70,9 @@ public interface FoldableTraversable<T> extends F1<Long,T>,
      */
     default <R> Eval<R> foldLazy(Function<? super FoldableTraversable<T>,? extends R> fn){
         return Eval.later(()->fn.apply(this));
+    }
+    default Eval<Void> runLazy(Consumer<? super FoldableTraversable<T>> fn){
+        return Eval.later(()->{ fn.accept(this); return null;});
     }
 
     /**

@@ -41,7 +41,7 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
+
 import com.aol.cyclops.types.mixins.Printable;
 
 
@@ -62,7 +62,8 @@ public class FutureWTTest implements Printable {
 	
 	@Test
 	public void optionalVMaybe(){
-	    
+
+
 	    Optional.of(10)
 	            .map(i->print("optional " + (i+10)));
 	            
@@ -83,6 +84,7 @@ public class FutureWTTest implements Printable {
         assertThat(ReactiveSeq.of(1,1).filter(Xor.primary(1))
                     .toListX(),equalTo(ListX.of(1,1)));
     }
+    /**
 	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.just(10)));
@@ -93,20 +95,11 @@ public class FutureWTTest implements Printable {
         assertThat(just.toOptional(),equalTo(Optional.of(10)));
        
     }
+	**/
 
 	private int add1(int i){
 		return i+1;
 	}
-	@Test
-	public void testApplicativeBuilder() {
-		assertThat(Applicatives.<Integer,Integer>applicatives(just, just)
-					.applicative(this::add1).ap(Optional.of(20)).get(),equalTo(21));
-	}
-
-	
-
-	
-	
 
 	@Test
 	public void testOfT() {
@@ -131,30 +124,24 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20).toMaybe(),equalTo(Maybe.of(20)));
+		assertThat(just.unit(20).get(),equalTo(20));
 	}
 
 	
 
-	@Test
-	public void testIsPresent() {
-		assertTrue(just.isValuePresent());
-		assertFalse(none.isValuePresent());
-	}
 
-	
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5).get(),equalTo(15));
-		assertThat(none.map(i->i+5).isValuePresent(),equalTo(false));
+		assertThat(none.map(i->i+5).orElse(1000),equalTo(1000));
 	}
 
 	@Test
 	public void testFlatMap() {
 	    
-		assertThat(just.flatMap(i->Maybe.of(i+5)).toMaybe(),equalTo(Maybe.of(15)));
-		assertThat(none.flatMap(i->Maybe.of(i+5)).isValuePresent(),equalTo(false));
+		assertThat(just.flatMap(i->Maybe.of(i+5)).get(),equalTo(15));
+		assertThat(none.flatMap(i->Maybe.of(i+5)).orElse(-1),equalTo(-1));
 	}
 	
 	@Test

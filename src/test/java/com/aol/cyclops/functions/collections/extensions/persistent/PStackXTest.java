@@ -76,12 +76,12 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 	
 	@Test
 	public void remove(){
-	    
+	    /**
 	    PStackX.of(1,2,3)
 	            .minusAll(PBagX.of(2,3))
                 .flatMapPublisher(i->Flux.just(10+i,20+i,30+i));
 
-	    
+	    **/
 	}
 	
 	 @Override

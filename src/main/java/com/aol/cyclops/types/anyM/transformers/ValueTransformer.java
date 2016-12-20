@@ -1,10 +1,12 @@
 package com.aol.cyclops.types.anyM.transformers;
 
+import java.util.Optional;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
 import com.aol.cyclops.types.anyM.NestedFoldable;
+import com.aol.cyclops.util.function.F0;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -21,18 +23,34 @@ import com.aol.cyclops.util.function.F3;
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                             Unwrapable,
                                                                             Unit<T>,
-                                                                            NestedFoldable<W,T>,
-                                                                            Zippable<T>{
+                                                                            Foldable<T>,
+                                                                            Zippable<T>,
+                                                                            F0<T> {
     public abstract <R> ValueTransformer<W,R> empty();
     public abstract <R> ValueTransformer<W,R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> f);
     public abstract AnyM<W,? extends MonadicValue<T>> transformerStream();
     protected abstract <R> ValueTransformer<W,R> unitAnyM(AnyM<W,? super MonadicValue<R>> anyM);
-    
+
+    public T get(){
+        return stream().firstValue();
+    }
+
+    public T orElse(T value){
+        return stream().findAny().orElse(value);
+    }
+    public T orElseGet(Supplier<? super T> s){
+       return stream().findAny().orElseGet((Supplier<T>)s);
+    }
+    public <X extends Throwable> T orElseThrow(Supplier<? super X> s) throws X {
+        return stream().findAny().orElseThrow((Supplier<X>)s);
+    }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     public <T2, R> ValueTransformer<W,R> combine(Value<? extends T2> app,
             BiFunction<? super T, ? super T2, ? extends R> fn) {
+
         return unitAnyM(this.transformerStream().map(v->v.combine(app, fn)));
     }
     
@@ -54,7 +72,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
      * @see com.aol.cyclops.types.Combiner#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Combiner)
      */
    
-    public  ValueTransformer<W,T> combine(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+    public  ValueTransformer<W,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
         return this.unitAnyM(this.transformerStream().map(v->v.zip(combiner, app)));
     }
 
@@ -217,13 +235,6 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return unitAnyM(this.transformerStream().map(v->v.forEach2(value1, filterFunction, yieldingFunction)));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
-     */
-   
-    public ValueTransformer<W,T> combineEager(Monoid<T> monoid, MonadicValue<? extends T> v2) {
-        return unitAnyM(this.transformerStream().map(v->v.combineEager(monoid, v2)));
-    }
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#flatMapIterable(java.util.function.Function)
      */

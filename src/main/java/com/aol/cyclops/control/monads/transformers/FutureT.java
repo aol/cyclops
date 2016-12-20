@@ -450,14 +450,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         return (FutureT<W, R>)super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.ValueTransformer#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
-     */
-    @Override
-    public FutureT<W, T> combineEager(Monoid<T> monoid, MonadicValue<? extends T> v2) {
-        
-        return (FutureT<W, T>)super.combineEager(monoid, v2);
-    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.control.monads.transformers.values.ValueTransformer#flatMapIterable(java.util.function.Function)
