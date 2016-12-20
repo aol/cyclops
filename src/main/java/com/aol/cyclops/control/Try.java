@@ -148,6 +148,8 @@ import lombok.val;
  */
 public interface Try<T, X extends Throwable> extends To<Try<T,X>>,Supplier<T>, MonadicValue<T>, ToStream<T>, Filterable<T>, Functor<T>, ApplicativeFunctor<T> {
 
+    
+    
     /**
      * Construct a Try  that contains a single value extracted from the supplied reactive-streams Publisher, will catch any Exceptions
      * of the provided types
