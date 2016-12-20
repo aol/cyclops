@@ -166,27 +166,21 @@ public class FutureWTTest implements Printable {
 
 	@Test
     public void testConvertTo() {
-        Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
+        AnyM<Witness.optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
         assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 
-    @Test
-    public void testConvertToAsync() {
-        FutureW<Stream<Integer>> async = FutureW.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
-        
-        assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
-    }
 
 
 
 	@Test
 	public void testIterate() {
-		assertThat(just.iterate(i->i+1).limit(10).sum(),equalTo(Optional.of(145)));
+		assertThat(just.iterate(i->i+1).to(Witness::optional).get().limit(10).sumInt(i->(int)i),equalTo(Optional.of(145)));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.generate().limit(10).sum(),equalTo(Optional.of(100)));
+		assertThat(just.generate().to(Witness::optional).get().limit(10).sumInt(i->i),equalTo(Optional.of(100)));
 	}
 
 	@Test
@@ -196,231 +190,25 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testFoldMonoidOfT() {
-		assertThat(just.fold(Reducers.toTotalInt()),equalTo(10));
+
+		assertThat(just.foldLeft(Reducers.toTotalInt()),equalTo(10));
 	}
 
 	@Test
 	public void testFoldTBinaryOperatorOfT() {
-		assertThat(just.fold(1, (a,b)->a*b),equalTo(10));
-	}
-
-	@Test
-	public void testToLazyImmutable() {
-		assertThat(just.toLazyImmutable(),equalTo(LazyImmutable.of(10)));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToLazyImmutableNone(){
-		none.toLazyImmutable();
-		fail("exception expected");
-		
-	}
-
-	@Test
-	public void testToMutable() {
-		assertThat(just.toMutable(),equalTo(Mutable.of(10)));
-		
-		
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToMutableNone(){
-		none.toMutable();
-		fail("exception expected");
-		
-	}
-
-	@Test
-	public void testToXor() {
-		assertThat(just.toXor(),equalTo(Xor.primary(10)));
-		
-	}
-	@Test
-	public void testToXorNone(){
-	    Xor<?,Integer> empty = none.toXor();
-	    
-	    
-        assertTrue(empty.swap().map(__->10).get()==10);
-		
+		assertThat(just.foldLeft(1, (a,b)->a*b),equalTo(10));
 	}
 
 
-	@Test
-	public void testToXorSecondary() {
-		assertThat(just.toXor().swap(),equalTo(Xor.secondary(10)));
-	}
-
-	@Test
-	public void testToXorSecondaryNone(){
-		Xor<Integer,?> empty = none.toXor().swap();
-		assertTrue(empty.isPrimary());
-		assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
-		
-		
-	}
-	@Test
-	public void testToTry() {
-		assertTrue(none.toTry().isFailure());
-		assertThat(just.toTry(),equalTo(Try.success(10)));
-	}
-
-	@Test
-	public void testToTryClassOfXArray() {
-		assertTrue(none.toTry(Throwable.class).isFailure());
-	}
-
-	@Test
-	public void testToIor() {
-		assertThat(just.toIor(),equalTo(Ior.primary(10)));
-		
-	}
-	@Test
-	public void testToIorNone(){
-	    Xor<Integer,?> empty = none.toXor().swap();
-        assertTrue(empty.isPrimary());
-        assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
-		
-	}
 
 
-	@Test
-	public void testToIorSecondary() {
-		assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
-	}
-
-	@Test
-	public void testToIorSecondaryNone(){
-		Ior<Integer,?> ior = none.toIor().swap().map(__->10);
-		assertThat(ior.get(),equalTo(10));
-		
-	}
-	@Test
-	public void testToEvalNow() {
-		assertThat(just.toEvalNow(),equalTo(Eval.now(10)));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToEvalNowNone() {
-		none.toEvalNow();
-		fail("exception expected");
-		
-	}
-
-	@Test
-	public void testToEvalLater() {
-		assertThat(just.toEvalLater(),equalTo(Eval.later(()->10)));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToEvalLaterNone() {
-		none.toEvalLater().get();
-		fail("exception expected");
-		
-	}
-
-	@Test
-	public void testToEvalAlways() {
-		assertThat(just.toEvalAlways(),equalTo(Eval.always(()->10)));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToEvalAlwaysNone() {
-		none.toEvalAlways().get();
-		fail("exception expected");
-		
-	}
-
-	@Test
-	public void testToListX() {
-		
-		assertThat(just.toListX(),equalTo(ListX.singleton(10)));
-		assertThat(none.toListX(),equalTo(ListX.empty()));
-	}
-
-	@Test
-	public void testToSetX() {
-		assertThat(just.toSetX(),equalTo(SetX.singleton(10)));
-		assertThat(none.toSetX(),equalTo(SetX.empty()));
-	}
-
-	@Test
-	public void testToSortedSetX() {
-		assertThat(just.toSortedSetX(),equalTo(SortedSetX.singleton(10)));
-		assertThat(none.toSortedSetX(),equalTo(SortedSetX.empty()));
-	}
-
-	@Test
-	public void testToQueueX() {
-		assertThat(just.toQueueX().toList(),equalTo(QueueX.singleton(10).toList()));
-		assertThat(none.toQueueX().toList(),equalTo(QueueX.empty().toList()));
-	}
-
-	@Test
-	public void testToDequeX() {
-		assertThat(just.toDequeX().toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toDequeX().toList(),equalTo(DequeX.empty().toList()));
-	}
-
-	@Test
-	public void testToPStackX() {
-		assertThat(just.toPStackX(),equalTo(PStackX.singleton(10)));
-		assertThat(none.toPStackX(),equalTo(PStackX.empty()));
-	}
-
-	@Test
-	public void testToPVectorX() {
-		assertThat(just.toPVectorX(),equalTo(PVectorX.singleton(10)));
-		assertThat(none.toPVectorX(),equalTo(PVectorX.empty()));
-	}
-
-	@Test
-	public void testToPQueueX() {
-		assertThat(just.toPQueueX().toList(),equalTo(PQueueX.singleton(10).toList()));
-		assertThat(none.toPQueueX().toList(),equalTo(PQueueX.empty().toList()));
-	}
-
-	@Test
-	public void testToPSetX() {
-		assertThat(just.toPSetX(),equalTo(PSetX.singleton(10)));
-		assertThat(none.toPSetX(),equalTo(PSetX.empty()));
-	}
-
-	@Test
-	public void testToPOrderedSetX() {
-		assertThat(just.toPOrderedSetX(),equalTo(POrderedSetX.singleton(10)));
-		assertThat(none.toPOrderedSetX(),equalTo(POrderedSetX.empty()));
-	}
-
-	@Test
-	public void testToPBagX() {
-		assertThat(just.toPBagX(),equalTo(PBagX.singleton(10)));
-		assertThat(none.toPBagX(),equalTo(PBagX.empty()));
-	}
 
 	@Test
 	public void testMkString() {
 		assertThat(just.mkString(),equalTo("FutureWTValue[10]"));
 		assertThat(none.mkString(),equalTo("FutureWTValue[]"));
 	}
-	LazyReact react = new LazyReact();
-	@Test
-	public void testToFutureStreamLazyReact() {
-		assertThat(just.toFutureStream(react).toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toFutureStream(react).toList(),equalTo(Arrays.asList()));
-	}
 
-	@Test
-	public void testToFutureStream() {
-		assertThat(just.toFutureStream().toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toFutureStream().toList(),equalTo(Arrays.asList()));
-	}
-	SimpleReact react2 = new SimpleReact();
-	@Test
-	public void testToSimpleReactSimpleReact() {
-		assertThat(just.toSimpleReact(react2).block(),equalTo(Arrays.asList(10)));
-		assertThat(none.toSimpleReact(react2).block(),equalTo(Arrays.asList()));
-	}
-
-	@Test
-	public void testToSimpleReact() {
-		assertThat(just.toSimpleReact().block(),equalTo(Arrays.asList(10)));
-		assertThat(none.toSimpleReact().block(),equalTo(Arrays.asList()));
-	}
 
 	@Test
 	public void testGet() {
@@ -467,62 +255,29 @@ public class FutureWTTest implements Printable {
 	
 
 
-	@Test
-	public void testAp1() {
-		assertThat(one.applyFunctions().ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
-	}
-	
+
 	private int add(int a, int b){
 		return a+b;
 	}
 
-	@Test
-	public void testAp2() {
-		assertThat(one.applyFunctions().ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
-	}
+
 	private int add3(int a, int b, int c){
 		return a+b+c;
 	}
-	@Test
-	public void testAp3() {
-	    
-	    
-	    one.applyFunctions()
-	         .ap3(this::add3)
-	         .ap(Optional.of(3))
-	         .ap(Maybe.of(4));
-	    
-		
-	    assertThat(one.applyFunctions().ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
-	}
+
 	private int add4(int a, int b, int c,int d){
 		return a+b+c+d;
 	}
-	@Test
-	public void testAp4() {
-	   
-		assertThat(one.applyFunctions().ap4(this::add4)
-						.ap(Optional.of(3))
-						.ap(Maybe.of(4))
-						.ap(Maybe.of(6)).toMaybe(),equalTo(Maybe.of(14)));
-	}
+
 	private int add5(int a, int b, int c,int d,int e){
 		return a+b+c+d+e;
-	}
-	@Test
-	public void testAp5() {
-		assertThat(one.applyFunctions().ap5(this::add5)
-				.ap(Optional.of(3))
-				.ap(Maybe.of(4))
-				.ap(Maybe.of(6))
-				.ap(Maybe.of(10)).toMaybe(),equalTo(Maybe.of(24)));
 	}
 
 	
 
 	@Test
 	public void testMapReduceReducerOfR() {
-		assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(just.toPStackX()));
+		assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(PStackX.of(10)));
 	}
 
 	@Test
@@ -576,7 +331,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testFoldRightMapToType() {
-		assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(just.toPStackX()));
+		assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(PStackX.of(10)));
 	}
 
 	
@@ -601,34 +356,7 @@ public class FutureWTTest implements Printable {
 		assertThat(just.orElseGet(()->2),equalTo(10));
 	}
 
-	@Test
-	public void testToOptional() {
-		assertFalse(none.toOptional().isPresent());
-		assertTrue(just.toOptional().isPresent());
-		assertThat(just.toOptional(),equalTo(Optional.of(10)));
-	}
 
-	@Test
-	public void testToStream() {
-		assertThat(none.toStream().collect(Collectors.toList()).size(),equalTo(0));
-		assertThat(just.toStream().collect(Collectors.toList()).size(),equalTo(1));
-		
-	}
-
-	@Test
-	public void testToAtomicReference() {
-		assertThat(just.toAtomicReference().get(),equalTo(10));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToAtomicReferenceNone() {
-		none.toAtomicReference().get();
-	}
-
-	@Test
-	public void testToOptionalAtomicReference() {
-		assertFalse(none.toOptionalAtomicReference().isPresent());
-		assertTrue(just.toOptionalAtomicReference().isPresent());
-	}
 
 	@Test
 	public void testOrElse() {
@@ -646,37 +374,7 @@ public class FutureWTTest implements Printable {
 		assertThat(just.orElseThrow(()->new RuntimeException()),equalTo(10));
 	}
 
-	@Test
-	public void testToList() {
-		assertThat(just.toList(),equalTo(Arrays.asList(10)));
-		assertThat(none.toListX(),equalTo(new ArrayList<>()));
-	}
 
-	
-	@Test
-	public void testToFutureW() {
-		FutureW<Integer> cf = just.toFutureW();
-		assertThat(cf.get(),equalTo(10));
-	}
-
-	@Test
-	public void testToCompletableFuture() {
-		CompletableFuture<Integer> cf = just.toCompletableFuture();
-		assertThat(cf.join(),equalTo(10));
-	}
-
-	@Test
-	public void testToCompletableFutureAsync() {
-		CompletableFuture<Integer> cf = just.toCompletableFutureAsync();
-		assertThat(cf.join(),equalTo(10));
-	}
-	Executor exec = Executors.newFixedThreadPool(1);
-
-	@Test
-	public void testToCompletableFutureAsyncExecutor() {
-		CompletableFuture<Integer> cf = just.toCompletableFutureAsync(exec);
-		assertThat(cf.join(),equalTo(10));
-	}
 
 	
 
@@ -707,7 +405,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5).toMaybe(),equalTo(Maybe.of(15)));
+		assertThat(just.map(i->i+5).get(),equalTo(15));
 	}
 	
 	@Test
@@ -726,7 +424,7 @@ public class FutureWTTest implements Printable {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).toMaybe(),equalTo(Maybe.of(65)));
+		assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(65));
 	}
 
 	

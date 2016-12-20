@@ -158,6 +158,9 @@ public interface Foldable<T> extends ToStream<T> {
     default T foldLeft(final T identity, final BinaryOperator<T> accumulator) {
         return reduce(identity, accumulator);
     }
+    default T foldLeft(final Monoid<T> reducer) {
+        return reduce(reducer);
+    }
     /**
      * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BiFunction, BinaryOperator)}
      * 

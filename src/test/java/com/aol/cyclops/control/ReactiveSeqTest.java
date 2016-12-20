@@ -163,26 +163,21 @@ public class ReactiveSeqTest {
     }
     @Test
     public void foldInt(){
-        assertThat(ReactiveSeq.range(1, 1000).foldInt(i->i,s->s.map(i->i*2).filter(i->i<500).average().getAsDouble()),equalTo(250d));
+        Double res= ReactiveSeq.range(1, 1000).mapToInt(i->i).map(i->i*2).filter(i->i<500).average().getAsDouble();
+        assertThat(res,equalTo(250d));
     }
     @Test
     public void intOps(){
         assertThat(ReactiveSeq.range(1, 1000).ints(i->i,s->s.map(i->i*2).filter(i->i<500))
                              .size(),equalTo(249));
     }
-    @Test
-    public void foldLong(){
-        assertThat(ReactiveSeq.rangeLong(1, 1000).foldLong(i->i,s->s.map(i->i*2).filter(i->i<500).average().getAsDouble()),equalTo(250d));
-    }
+
     @Test
     public void longs(){
         assertThat(ReactiveSeq.rangeLong(1, 1000).longs(i->i,s->s.map(i->i*2).filter(i->i<500))
                              .size(),equalTo(249));
     }
-    @Test
-    public void foldDouble(){
-        assertThat(ReactiveSeq.range(1, 1000).foldDouble(i->i.doubleValue(),s->s.map(i->i*2).filter(i->i<500).average().getAsDouble()),equalTo(250d));
-    }
+
     @Test
     public void doubles(){
         assertThat(ReactiveSeq.range(1, 1000).doubles(i->i.doubleValue(),s->s.map(i->i*2).filter(i->i<500))

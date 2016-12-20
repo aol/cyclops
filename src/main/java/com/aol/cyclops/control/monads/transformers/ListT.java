@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.FoldableTraversable;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -240,7 +241,12 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     public static <A> ListT<Witness.stream,A> fromStream(final Stream<? extends FluentSequenceX<A>> nested) {
         return of(AnyM.fromStream(nested));
     }
-
+    public static <A> ListT<Witness.optional,A> fromOptional(final Optional<? extends FluentSequenceX<A>> nested) {
+        return of(AnyM.fromOptional(nested));
+    }
+    public static <A> ListT<Witness.maybe,A> fromMaybe(final Maybe<? extends FluentSequenceX<A>> nested) {
+        return of(AnyM.fromMaybe(nested));
+    }
     public static <A> ListT<Witness.list,A> fromList(final List<? extends FluentSequenceX<A>> nested) {
         return of(AnyM.fromList(nested));
     }

@@ -976,7 +976,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
      * @see com.aol.cyclops.trycatch.Try#flatten()
      */
   
-    public static <T,X extends Throwable> Try<T, X> flatten(Try<Try<T,X>,X> nested) {
+    public static <T,X extends Throwable> Try<T, X> flatten(Try<? extends Try<T,X>,X> nested) {
         return nested.flatMap(Function.identity());
     }
 

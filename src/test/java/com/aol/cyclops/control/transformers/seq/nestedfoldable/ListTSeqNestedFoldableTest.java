@@ -6,18 +6,19 @@ import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.AbstractNestedFoldableTest;
 import com.aol.cyclops.types.anyM.NestedFoldable;
+import com.aol.cyclops.types.anyM.Witness;
 
 
-public class ListTSeqNestedFoldableTest extends AbstractNestedFoldableTest {
+public class ListTSeqNestedFoldableTest extends AbstractNestedFoldableTest<Witness.list> {
 
     @Override
-    public <T> NestedFoldable<T> of(T... elements) {
-        return ListT.fromIterable(ListX.of(Arrays.asList(elements)));
+    public <T> NestedFoldable<Witness.list,T> of(T... elements) {
+        return  ListX.of(elements).liftM(Witness.list.INSTANCE);
     }
 
     @Override
-    public <T> NestedFoldable<T> empty() {
-        return ListT.fromIterable(ListX.of(ListX.<T>empty()));
+    public <T> NestedFoldable<Witness.list,T> empty() {
+        return  ListX.<T>empty().liftM(Witness.list.INSTANCE);
     }
 
 }

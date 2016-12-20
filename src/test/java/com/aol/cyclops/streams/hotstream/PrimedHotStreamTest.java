@@ -13,6 +13,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.LockSupport;
 
+import com.aol.cyclops.types.FoldableTraversable;
 import org.junit.Test;
 
 import com.aol.cyclops.control.ReactiveSeq;
@@ -52,8 +53,7 @@ public class PrimedHotStreamTest {
 					.primedHotStream(exec)
 					.connect()
 					.limit(100)
-					.futureOperations(ForkJoinPool.commonPool())
-					.forEach(System.out::println);
+					.runFuture(ForkJoinPool.commonPool(),s->s.forEach(System.out::println));
 			
 			latch.await();
 			assertTrue(value!=null);
@@ -71,8 +71,7 @@ public class PrimedHotStreamTest {
 				.primedHotStream(exec)
 				.connect(new LinkedBlockingQueue<>())
 				.limit(100)
-				.futureOperations(ForkJoinPool.commonPool())
-				.forEach(System.out::println);
+				.runFuture(ForkJoinPool.commonPool(),s->s.forEach(System.out::println));
 		
 		latch.await();
 		assertTrue(value!=null);
@@ -97,15 +96,14 @@ public class PrimedHotStreamTest {
 		value= null;
 		active=true;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream s = ReactiveSeq.range(0,Integer.MAX_VALUE)
+		PausableHotStream<Integer> s = ReactiveSeq.range(0,Integer.MAX_VALUE)
 				.limitWhile(i->active)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.primedPausableHotStream(exec);
 		s.connect(new LinkedBlockingQueue<>())
 				.limit(100)
-				.futureOperations(ForkJoinPool.commonPool())
-				.forEach(System.out::println);
+				.runFuture(ForkJoinPool.commonPool(),st->st.forEach(System.out::println));
 		
 		Object oldValue = value;
 	
@@ -128,15 +126,15 @@ public class PrimedHotStreamTest {
 	public void hotStreamConnectPausableConnect() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream s = ReactiveSeq.range(0,Integer.MAX_VALUE)
+		PausableHotStream<Integer> s = ReactiveSeq.range(0,Integer.MAX_VALUE)
 				.limit(50000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.primedPausableHotStream(exec);
 		s.connect()
 				.limit(100)
-				.futureOperations(ForkJoinPool.commonPool())
-				.forEach(System.out::println);
+				.runFuture(ForkJoinPool.commonPool(),st->st.forEach(System.out::println));
+
 		
 		Object oldValue = value;
 		try{

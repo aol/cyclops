@@ -99,24 +99,8 @@ public abstract class BaseSequentialSeqTest {
 		}
 		return 200;
 	}
-	@Test
-	public void groupByCol(){
-		 Map<Integer, Long> map3 =
-			       of(tuple(1, 1), tuple(1, 2), tuple(1, 3), tuple(2, 1), tuple(2, 2))
-			           .groupBy(t -> t.v1, counting());
-			        assertEquals(3L, (long) map3.get(1));
-			        assertEquals(2L, (long) map3.get(2));
-	}
-	@Test
-	public void groupBySupplierAndCollector(){
-		Map<Integer, Tuple2<Long, String>> map4 =
-		        of(tuple(1, 1), tuple(1, 2), tuple(1, 3), tuple(2, 4), tuple(2, 5))
-		           .groupBy(t -> t.v1, collectors(counting(), mapping(t -> ((Tuple2<Integer,Integer>)t).map2(Object::toString).v2, joining(", "))));
-		        assertEquals(3L, (long) map4.get(1).v1);
-		        assertEquals(2L, (long) map4.get(2).v1);
-		        assertEquals("1, 2, 3", map4.get(1).v2);
-		        assertEquals("4, 5", map4.get(2).v2);
-	}
+
+
 	@Test
 	public void sliding(){
 		List<List<Integer>> list = of(1,2,3,4,5,6).sliding(2)

@@ -47,10 +47,7 @@ public class SuccessTest {
 		success = Try.success(10);
 	}
 
-	@Test
-	public void testUnapply() {
-		assertThat(success.unapply(),equalTo(Arrays.asList(value)));
-	}
+
 
 	@Test
 	public void testGet() {
@@ -106,12 +103,13 @@ public class SuccessTest {
 	@Test
 	public void testFlatten() {
 		
-		assertThat(Try.success(success).flatten(),equalTo(success));
+		assertThat(Try.<Try<Integer,FileNotFoundException>,FileNotFoundException>success(success)
+				      .to(Try::flatten),equalTo(success));
 	}
 	@Test
 	public void testFlattenFailure() {
 		FileNotFoundException error = new FileNotFoundException();
-		assertThat(Try.success(Try.failure(error)).flatten(),equalTo(Try.failure(error)));
+		assertThat(Try.<Try<Integer,FileNotFoundException>,FileNotFoundException>success(Try.failure(error)).to(Try::flatten),equalTo(Try.failure(error)));
 	}
 
 	@Test

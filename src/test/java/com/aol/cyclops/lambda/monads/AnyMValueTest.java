@@ -1,5 +1,6 @@
 package com.aol.cyclops.lambda.monads;
 
+import com.aol.cyclops.types.anyM.Witness.*;
 import static com.aol.cyclops.Matchers.equivalent;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -12,6 +13,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.anyM.Witness;
+import com.aol.cyclops.util.function.MFunc1;
+import com.aol.cyclops.util.function.MFunc2;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
@@ -28,20 +32,19 @@ public class AnyMValueTest {
 
     @Test
     public void testSequenceAnyM() {
-        AnyMValue<Integer> just = AnyM.ofNullable(10);
-        Supplier<AnyM<Stream<Integer>>> unitEmpty = ()->AnyM.fromMaybe(Maybe.just(Stream.<Integer>empty()));
-        Stream<AnyM<Integer>> source = ReactiveSeq.of(just,AnyM.ofNullable(1));
-        AnyM<ListX<Integer>> maybes =AnyM.sequence(source, unitEmpty)
-                                          .map(s->ReactiveSeq.fromStream(s).toListX());
+        AnyMValue<optional,Integer> just = AnyM.ofNullable(10);
+
+        Stream<AnyM<optional,Integer>> source = ReactiveSeq.of(just,AnyM.ofNullable(1));
+        AnyM<optional,Stream<Integer>> maybes =AnyM.sequence(source, optional.INSTANCE);
         assertThat(maybes,equivalent(AnyM.ofNullable(ListX.of(10,1))));
     }
    
     @Test
     public void testSequenceAnyMValue() {
-        AnyMValue<Integer> just = AnyM.ofNullable(10);
-        Supplier<AnyMValue<Stream<Integer>>> unitEmpty = ()->AnyM.fromMaybe(Maybe.just(Stream.<Integer>empty()));
-        Stream<AnyMValue<Integer>> source = ReactiveSeq.of(just,AnyM.ofNullable(1));
-        AnyM<ListX<Integer>> maybes =AnyMValue.sequence(source, unitEmpty)
+        AnyMValue<optional,Integer> just = AnyM.ofNullable(10);
+
+        Stream<AnyM<optional,Integer>> source = ReactiveSeq.of(just,AnyM.ofNullable(1));
+        AnyM<optional,ListX<Integer>> maybes =AnyM.sequence(source, optional.INSTANCE)
                                           .map(s->ReactiveSeq.fromStream(s).toListX());
         assertThat(maybes,equivalent(AnyM.ofNullable(ListX.of(10,1))));
     }
@@ -55,7 +58,7 @@ public class AnyMValueTest {
                 .collect(Collectors.toList());
        
         
-        AnyM<ListX<Integer>> futureList = AnyMValue.sequence(AnyM.listFromCompletableFuture(futures));
+        AnyM<completableFuture,ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures),Witness.completableFuture.INSTANCE);
         
  
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();
@@ -78,7 +81,7 @@ public class AnyMValueTest {
                 .collect(Collectors.toList());
 
        
-        AnyM<ListX<String>> futureList = AnyMValue.traverse( AnyM.listFromCompletableFuture(futures), (Integer i) -> "hello" +i);
+        AnyM<completableFuture,ListX<String>> futureList = AnyM.traverse( AnyM.listFromCompletableFuture(futures), (Integer i) -> "hello" +i, completableFuture.INSTANCE);
    
         List<String> collected = futureList.<CompletableFuture<List<String>>>unwrap().join();
         assertThat(collected.size(),equalTo( list.size()));
@@ -94,9 +97,9 @@ public class AnyMValueTest {
 
 	@Test
 	public void testLiftMSimplex(){
-		val lifted = AnyMValue.liftM((Integer a)->a+3);
+		MFunc1<Witness.optional,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 		
-		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)));
+		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(6));
 	}
@@ -105,17 +108,17 @@ public class AnyMValueTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		val lifted = AnyMValue.liftM2((Integer a,Integer b)->a+b);
+		MFunc2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.of(4)));
+		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.of(4)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		val lifted = AnyMValue.liftM2((Integer a,Integer b)->a+b);
+		MFunc2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
-		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.ofNullable(null)));
+		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.ofNullable(null)));
 		
 		assertThat(result.<Optional<Integer>>unwrap().isPresent(),equalTo(false));
 	}
@@ -125,9 +128,9 @@ public class AnyMValueTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		val lifted = AnyMValue.liftM2(this::add); 
+		MFunc2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 		
-		AnyM<Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromMaybe(Maybe.of(4)));
+		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.ofNullable(4));
 		
 		
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));

@@ -10,10 +10,13 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.*;
 import com.aol.cyclops.types.anyM.transformers.TransformerSeq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
@@ -52,10 +55,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         return run.stream().map(FutureW::get);
     }
 
-    @Override
-    public AnyM<W, ? extends FoldableTraversable<T>> nestedFoldables() {
-        return null;
-    }
+
 
     /**
      * @return The wrapped AnyM
@@ -267,7 +267,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      */
     @Override
     public String toString() {
-        return String.format("FutureTSeq[%s]", run);
+        return String.format("FutureT[%s]", run);
     }
 
     
@@ -527,6 +527,78 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
                                        .filter(in2->filterFunction.apply(in,in2))
                                        .map(in2->yieldingFunction.apply(in,in2)));
     }
-    
-  
+
+    public String mkString(){
+        return toString();
+    }
+
+    @Override
+    public <U> FutureT<W,U> cast(Class<? extends U> type) {
+        return (FutureT<W,U>)super.cast(type);
+    }
+
+    @Override
+    public <U> FutureT<W,U> ofType(Class<? extends U> type) {
+        return (FutureT<W,U>)Filterable.super.ofType(type);
+    }
+
+    @Override
+    public FutureT<W,T> filterNot(Predicate<? super T> predicate) {
+        return (FutureT<W,T>)Filterable.super.filterNot(predicate);
+    }
+
+    @Override
+    public FutureT<W,T> notNull() {
+        return (FutureT<W,T>)Filterable.super.notNull();
+    }
+
+    @Override
+    public <R> FutureT<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (FutureT<W,R>)super.zipWith(fn);
+    }
+
+    @Override
+    public <R> FutureT<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (FutureT<W,R>)super.zipWithS(fn);
+    }
+
+    @Override
+    public <R> FutureT<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (FutureT<W,R>)super.zipWithP(fn);
+    }
+
+    @Override
+    public <R> FutureT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (FutureT<W,R>)super.trampoline(mapper);
+    }
+
+    @Override
+    public <U, R> FutureT<W,R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (FutureT<W,R>)super.zipS(other,zipper);
+    }
+
+    @Override
+    public <U> FutureT<W,Tuple2<T, U>> zipP(Publisher<? extends U> other) {
+        return (FutureT)super.zipP(other);
+    }
+
+    @Override
+    public <S, U> FutureT<W,Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
+        return (FutureT)super.zip3(second,third);
+    }
+
+    @Override
+    public <S, U, R> FutureT<W,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, F3<? super T, ? super S, ? super U, ? extends R> f3) {
+        return (FutureT<W,R>)super.zip3(second,third,f3);
+    }
+
+    @Override
+    public <T2, T3, T4> FutureT<W,Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
+        return (FutureT)super.zip4(second,third,fourth);
+    }
+
+    @Override
+    public <T2, T3, T4, R> FutureT<W,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, F4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (FutureT<W,R>)super.zip4(second,third,fourth,fn);
+    }
 }
