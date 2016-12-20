@@ -7,8 +7,7 @@ import com.aol.cyclops.Semigroups;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.mixins.Printable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -59,9 +58,9 @@ public class MaybeTest implements Printable {
             
     }
     @Test
-    public void testCombine(){
-        BinaryOperator<Combiner<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
-        assertThat(Maybe.just(1).combine(sumMaybes, Maybe.just(5)),equalTo(Maybe.just(6)));
+    public void testZipMonoid(){
+        BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
+        assertThat(Maybe.just(1).zip(sumMaybes, Maybe.just(5)),equalTo(Maybe.just(6)));
         
     }
 
@@ -172,11 +171,7 @@ public class MaybeTest implements Printable {
         return i + 1;
     }
 
-    @Test
-    public void testApplicativeBuilder() {
-        assertThat(Applicatives.<Integer, Integer> applicatives(just, just).applicative(this::add1).ap(Optional.of(20))
-                .get(), equalTo(21));
-    }
+
 
     @Test
     public void testFromOptional() {
@@ -489,53 +484,27 @@ public class MaybeTest implements Printable {
 
     }
 
-    @Test
-    public void testAp1() {
-        assertThat(Maybe.of(1).applyFunctions().ap1(this::add1).toMaybe(), equalTo(Maybe.of(2)));
-    }
-
-    private int add(int a, int b) {
+     private int add(int a, int b) {
         return a + b;
-    }
-
-    @Test
-    public void testAp2() {
-        assertThat(Maybe.of(1).applyFunctions().ap2(this::add).ap(Optional.of(3)).toMaybe(), equalTo(Maybe.of(4)));
     }
 
     private int add3(int a, int b, int c) {
         return a + b + c;
     }
 
-    @Test
-    public void testAp3() {
 
-        Maybe.of(1).applyFunctions().ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4));
-
-        assertThat(Maybe.of(1).applyFunctions().ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),
-                equalTo(Maybe.of(8)));
-    }
 
     private int add4(int a, int b, int c, int d) {
         return a + b + c + d;
     }
 
-    @Test
-    public void testAp4() {
 
-        assertThat(Maybe.of(1).applyFunctions().ap4(this::add4).ap(Optional.of(3)).ap(Maybe.of(4)).ap(Maybe.of(6))
-                .toMaybe(), equalTo(Maybe.of(14)));
-    }
 
     private int add5(int a, int b, int c, int d, int e) {
         return a + b + c + d + e;
     }
 
-    @Test
-    public void testAp5() {
-        assertThat(Maybe.of(1).applyFunctions().ap5(this::add5).ap(Optional.of(3)).ap(Maybe.of(4)).ap(Maybe.of(6))
-                .ap(Maybe.of(10)).toMaybe(), equalTo(Maybe.of(24)));
-    }
+
 
 
     @Test

@@ -1,18 +1,18 @@
 package com.aol.cyclops.types;
 
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops.util.function.Curry;
+import com.aol.cyclops.util.function.F3;
+import com.aol.cyclops.util.function.F4;
+import org.jooq.lambda.tuple.Tuple;
+import org.reactivestreams.Publisher;
+
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import org.reactivestreams.Publisher;
-
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
-import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
 
 /**
  * A type that represents a Monad that wraps a single value
@@ -21,11 +21,9 @@ import com.aol.cyclops.util.function.F3;
  *
  * @param <T> Data type of element stored inside this Monad
  */
-public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterable<T>, ApplicativeFunctor<T>{
+public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterable<T>, Zippable<T>{
 
-    default <T2, R> MonadicValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn){
-        return (MonadicValue<R>)ApplicativeFunctor.super.combine(app, fn);
-    }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
      */
@@ -445,6 +443,54 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
 
 
     }
+    /**
+     * Lazily combine this ApplicativeFunctor with the supplied value via the supplied BiFunction
+     *
+     * Example
+     * <pre>
+     * {@code
+     *   Maybe<Integer> some = Maybe.just(10);
+     *   just.combine(Eval.now(20), this::add);
+     *   //Some[30]
+     *
+     *   Maybe<Integer> none = Maybe.none();
+     *   none.combine(Eval.now(20), this::add);
+     *   //None
+     *
+     * }
+     * </pre>
+     *
+     * @param app Value to combine with this one.
+     * @param fn BiFunction to combine them
+     * @return New Applicativefunctor that represents the combined values
+     */
+    default <T2, R> Functor<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+
+        return (Functor<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
+                .apply(v))).map(tuple -> app.visit(i -> tuple.v2.apply(i), () -> tuple.v1));
+    }
+    /* (non-Javadoc)
+    * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
+    */
+    @Override
+    default <T2, R> MonadicValue<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+
+        return (MonadicValue<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
+                .apply(v))).map(tuple -> Maybe.fromIterable(app)
+                .visit(i -> tuple.v2.apply(i), () -> tuple.v1));
+    }
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     */
+    @Override
+    default <T2, R> MonadicValue<R> zipP(final Publisher<? extends T2> app,final BiFunction<? super T, ? super T2, ? extends R> fn) {
+
+        return (MonadicValue<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
+                .apply(v))).map(tuple -> Maybe.fromPublisher(app)
+                .visit(i -> tuple.v2.apply(i), () -> tuple.v1));
+    }
+
 
 
 }

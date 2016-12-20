@@ -1,38 +1,23 @@
 package com.aol.cyclops.types.anyM;
 
-import static com.aol.cyclops.internal.Utils.firstOrNull;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
-
-import org.jooq.lambda.function.Function3;
-import org.jooq.lambda.function.Function4;
-import org.jooq.lambda.function.Function5;
-import org.reactivestreams.Publisher;
-
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F5;
-import com.aol.cyclops.util.function.F3;
+import org.reactivestreams.Publisher;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 /**
  * Wrapper around 'Any' scalar 'M'onad
@@ -44,8 +29,6 @@ import com.aol.cyclops.util.function.F3;
 public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
                                                                 Value<T>,
                                                                 Filterable<T>,
-                                                                Combiner<T>,
-                                                                ApplicativeFunctor<T>,
                                                                 MonadicValue<T> {
 
 
@@ -77,9 +60,9 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
      * @see com.aol.cyclops.control.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default AnyMValue<W,T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+    default AnyMValue<W,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
         
-        return (AnyMValue<W,T>)MonadicValue.super.combine(combiner, app);
+        return (AnyMValue<W,T>)MonadicValue.super.zip(combiner, app);
     }
 
 
@@ -271,9 +254,9 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
      */
     @Override
     default <T2, R> AnyMValue<W,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        if (this.unwrap() instanceof ApplicativeFunctor) {
+        if (this.unwrap() instanceof MonadicValue) {
             
-            return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).combine(app, fn));
+            return (AnyMValue<W, R>) adapter().unit(((MonadicValue) unwrap()).combine(app, fn));
         }
         return (AnyMValue<W, R>) MonadicValue.super.combine(app, fn);
     }
@@ -282,8 +265,8 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
     @Override
     default <T2, R> AnyMValue<W,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        if (this.unwrap() instanceof ApplicativeFunctor) {
-            return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).zip(app, fn));
+        if (this.unwrap() instanceof Zippable) {
+            return (AnyMValue<W, R>) adapter().unit(((Zippable) unwrap()).zip(app, fn));
         }
         return (AnyMValue<W,R>) MonadicValue.super.zip(app, fn);
     }
@@ -293,8 +276,8 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
      */
     @Override
     default <T2, R> AnyMValue<W,R> zipP(final Publisher<? extends T2> app,final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        if (this.unwrap() instanceof ApplicativeFunctor) {
-            return (AnyMValue<W, R>) adapter().unit(((ApplicativeFunctor) unwrap()).zipP(app,fn));
+        if (this.unwrap() instanceof Zippable) {
+            return (AnyMValue<W, R>) adapter().unit(((Zippable) unwrap()).zipP(app,fn));
         }
         return (AnyMValue<W,R>) MonadicValue.super.zipP(app,fn);
     }

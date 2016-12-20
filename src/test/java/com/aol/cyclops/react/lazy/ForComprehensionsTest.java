@@ -1,20 +1,13 @@
 package com.aol.cyclops.react.lazy;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import org.junit.Test;
 
-import com.aol.cyclops.control.For;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class ForComprehensionsTest {
 
@@ -30,42 +23,7 @@ public class ForComprehensionsTest {
 		         .toList(),equalTo(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 
 		        		 9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)));
 	}
-	@Test
-	public void intStreamSanityCheck() {
-		Stream<Integer> s1 =  For.stream(Stream.of(1,2,3))
-				.stream(u->IntStream.range(0,10))
-				//.withStream(d->IntStream.range(0,10).boxed())
-				.yield( a -> b-> a+b).unwrap();
-		
-		List<Integer> s = s1.collect(Collectors.toList());
-		assertThat(s,
-				equalTo(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8,
-						9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)));
-	}
-	@Test
-	public void listSanityCheck(){
-		List<Integer> s = For.iterable(Arrays.asList(1,2,3))
-				.stream(u->IntStream.range(0,10))
-				.yield(a->b->a+b)
-				.unwrap();
-		assertThat(s,
-				equalTo(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8,
-						9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)));
 
-		
-	}
-	@Test
-	public void setSanityCheck(){
-		Set<Integer> s = For.iterable(new HashSet<>(Arrays.asList(1,2,3)))
-				.stream(u->IntStream.range(0,10))
-				.yield(a->b->a+b)
-				.unwrap();
-		assertThat(s,
-				equalTo(new HashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8,
-						9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12))));
-
-		
-	}
 	@Test
 	public void forEach2Filter(){
 

@@ -1,46 +1,29 @@
 package com.aol.cyclops.control;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.reactivestreams.Publisher;
-
-import com.aol.cyclops.Matchables;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.BiFunctor;
-import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.*;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F3;
-
+import com.aol.cyclops.util.function.F4;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+import org.reactivestreams.Publisher;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.function.*;
+import java.util.stream.Stream;
 
 /**
  * Inclusive Or (can be one of Primary, Secondary or Both Primary and Secondary)
@@ -762,13 +745,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
             BiFunction<? super PT, ? super T2, ? extends R> fn) {
         return (Ior<ST,R>)MonadicValue.super.combine(app, fn);
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
+
     @Override
-    default  Ior<ST,PT> combine(BinaryOperator<Combiner<PT>> combiner, Combiner<PT> app) {
+    default  Ior<ST,PT> zip(BinaryOperator<Zippable<PT>> combiner, Zippable<PT> app) {
        
-        return (Ior<ST,PT>)MonadicValue.super.combine(combiner, app);
+        return (Ior<ST,PT>)MonadicValue.super.zip(combiner, app);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)

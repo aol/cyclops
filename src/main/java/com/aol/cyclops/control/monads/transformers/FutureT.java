@@ -317,9 +317,9 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      * @see com.aol.cyclops.control.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Combiner)
      */
     @Override
-    public FutureT<W, T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
+    public FutureT<W, T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
         
-        return (FutureT<W, T>)super.combine(combiner, app);
+        return (FutureT<W, T>)super.zip(combiner, app);
     }
 
 

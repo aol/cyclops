@@ -54,8 +54,8 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
      * @see com.aol.cyclops.types.Combiner#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Combiner)
      */
    
-    public  ValueTransformer<W,T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return this.unitAnyM(this.transformerStream().map(v->v.combine(combiner, app)));
+    public  ValueTransformer<W,T> combine(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return this.unitAnyM(this.transformerStream().map(v->v.zip(combiner, app)));
     }
 
     /* (non-Javadoc)

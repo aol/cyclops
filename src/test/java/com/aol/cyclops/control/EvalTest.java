@@ -122,98 +122,9 @@ public class EvalTest {
 	public String concat5(String a, String b, String c,String d,String e){
 		return a+b+c+d+e;
 	}
-	@Test
-	public void apExample(){
-		
-	//	System.out.println(Maybe.Applicatives.applicative(this::addOne).ap(Eval.now(10)).ap(Eval.now(30)).get());
-	//	ListX.ZippingApplicatives.applicative(this::addOne);
-		//ApplicativeBuilder.<Integer>of(t->Eval.now(t)).applicative2(this::addOne);
-		System.out.println(Maybe.of(10).applyFunctions().ap2(this::add).ap(Eval.now(20)).get());
-		System.out.println(Maybe.of(10).applyFunctions().ap2(this::add).ap(Optional.of(20)).get());
-		System.out.println(Eval.now(10).applyFunctions().ap2(this::add).ap(Eval.now(20)).get());
-		
-	//	Eval.now(10).ap2(Maybe.applicativeBuilder().applicative2B(this::addOne).ap(Eval.now(20));
-	}
-	
-	
-	@Test
-	public void ap1Function(){
-		assertThat(Maybe.of(10).applyFunctions().ap1(this::addOne).get(),equalTo(11));
 
-	}
-	@Test
-	public void ap1NoneFunction(){
-		assertFalse(Maybe.<Integer>none().applyFunctions().ap1(this::addOne).toOptional().isPresent());
 
-	}
-	@Test
-	public void ap2Function(){
-		assertThat(Maybe.of(10).applyFunctions().ap2(this::add).ap(Maybe.of(20)).get(),equalTo(30));
-		assertThat(Maybe.of(10).applyFunctions().ap2(this::add).ap(Optional.of(20)).get(),equalTo(30));
-		
-		ConvertableFunctor<Integer> maybe = Maybe.of(10).applyFunctions().ap2(this::add).ap(Maybe.of(20));
-		maybe.toMaybe();
 
-	}
-	@Test
-	public void ap2OptionalEmptyFunction(){
-		assertFalse(Maybe.of(1).applyFunctions().ap2(this::add).ap(Optional.empty()).toOptional().isPresent());
 
-	}
-	@Test
-	public void ap3Function(){
-		assertThat(Maybe.of("hello").applyFunctions().ap3(this::concat).ap(Optional.of("world")).ap(CompletableFuture.supplyAsync(()->"boo!")).get(),equalTo("helloworldboo!"));
-
-	}
-	@Test
-	public void ap3OptionalEmptyFunction(){
-		System.out.println("r="+Maybe.of("hello").applyFunctions().ap3(this::concat)
-									.ap(Optional.empty())
-									.ap(CompletableFuture.supplyAsync(()->"boo!")));
-		
-		assertFalse(Maybe.of("hello").applyFunctions().ap3(this::concat).ap(Optional.empty()).ap(CompletableFuture.supplyAsync(()->"boo!")).toOptional().isPresent());
-
-	}
-	@Test
-	public void ap4Function(){
-		
-		assertThat(Maybe.of("hello").applyFunctions()
-						.ap4(this::concat4)
-						.ap(Optional.of("world"))
-						.ap(CompletableFuture.supplyAsync(()->"boo!"))
-						.ap(Eval.now("done?")).get(),equalTo("helloworldboo!done?"));
-
-	}
-	@Test
-	public void ap4OptionalEmptyFunction(){
-		assertFalse(Maybe.of("hello").applyFunctions()
-				.ap4(this::concat4)
-				.ap(Optional.of("world"))
-				.ap(Maybe.none())
-				.ap(Eval.now("done?")).toOptional().isPresent());
-
-	}
-	
-	@Test
-	public void ap5Function(){
-		
-		assertThat(Maybe.of("hello").applyFunctions()
-						.ap5(this::concat5)
-						.ap(Optional.of("world"))
-						.ap(CompletableFuture.supplyAsync(()->"boo!"))
-						.ap(Maybe.of("hello"))
-						.ap(Eval.now("done?")).get(),equalTo("helloworldboo!hellodone?"));
-
-	}
-	@Test
-	public void ap5OptionalEmptyFunction(){
-		assertFalse(Maybe.of("hello").applyFunctions()
-				.ap5(this::concat5)
-				.ap(Optional.of("world"))
-				.ap(CompletableFuture.supplyAsync(()->"boo!"))
-				.ap(Maybe.of("hello"))
-				.ap(Maybe.none()).toOptional().isPresent());
-
-	}
 	
 }

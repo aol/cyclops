@@ -8,7 +8,6 @@ import com.aol.cyclops.control.Eval.Module.Later;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor.Applicatives;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -79,11 +78,6 @@ public class Eval2Test {
 
 	private int add1(int i){
 		return i+1;
-	}
-	@Test
-	public void testApplicativeBuilder() {
-		assertThat(Applicatives.<Integer,Integer>applicatives(just, just)
-					.applicative(this::add1).ap(Optional.of(20)).get(),equalTo(21));
 	}
 
 	
@@ -387,34 +381,12 @@ public class Eval2Test {
 	
 
 
-	@Test
-	public void testAp1() {
-		assertThat(Eval.now(1).applyFunctions().ap1(this::add1).toMaybe(),equalTo(Maybe.of(2)));
-	}
-	
+
 	private int add(int a, int b){
 		return a+b;
 	}
-	@Test
-    public void testApEval() {
-        assertThat(just.combine(Eval.later(()->20),this::add),equalTo(Eval.now(30)));
-    }
-	@Test
-	public void testApEvalLazy(){
-	    assertTrue(Eval.later(()->10).combine(Eval.later(()->20),this::add) instanceof Later);
-	}
-	
-	@Test
-	public void testApCombiner(){
-	    assertThat(just.applyFunctions().ap(this::add).ap(Eval.later(()->20)).convertable().toEvalNow(),equalTo(Eval.now(30)));
-	}
-	@Test
-    public void testApMonoid(){
-        assertThat(just.applyFunctions()
-                        .ap(Semigroups.intSum)
-                        .ap(Eval.later(()->20))
-                       .convertable().toEvalNow(),equalTo(Eval.now(30)));
-    }
+
+
 	@Test
     public void testZipEval() {
         assertThat(just.zip(Eval.later(()->20),this::add),equalTo(Eval.now(30)));
@@ -431,38 +403,19 @@ public class Eval2Test {
     public void testZipPubEvalLazy(){
         assertTrue(Eval.later(()->10).zipP(Eval.later(()->20),this::add) instanceof Later);
     }
-	@Test
-	public void testAp2() {
-		assertThat(Eval.now(1).applyFunctions().ap2(this::add).ap(Optional.of(3)).toMaybe(),equalTo(Maybe.of(4)));
-	}
+
 	private int add3(int a, int b, int c){
 		return a+b+c;
 	}
-	@Test
-	public void testAp3() {
-		assertThat(Eval.now(1).applyFunctions().ap3(this::add3).ap(Optional.of(3)).ap(Maybe.of(4)).toMaybe(),equalTo(Maybe.of(8)));
-	}
+
 	private int add4(int a, int b, int c,int d){
 		return a+b+c+d;
 	}
-	@Test
-	public void testAp4() {
-		assertThat(Eval.now(1).applyFunctions().ap4(this::add4)
-						.ap(Optional.of(3))
-						.ap(Maybe.of(4))
-						.ap(Maybe.of(6)).toMaybe(),equalTo(Maybe.of(14)));
-	}
+
 	private int add5(int a, int b, int c,int d,int e){
 		return a+b+c+d+e;
 	}
-	@Test
-	public void testAp5() {
-		assertThat(Eval.now(1).applyFunctions().ap5(this::add5)
-				.ap(Optional.of(3))
-				.ap(Maybe.of(4))
-				.ap(Maybe.of(6))
-				.ap(Maybe.of(10)).toMaybe(),equalTo(Maybe.of(24)));
-	}
+
 
 	
 

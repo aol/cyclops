@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.*;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -23,14 +24,7 @@ import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -368,8 +362,8 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default Combiner<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (Try<T,X>)MonadicValue.super.combine(combiner, app);
+    default Try<T,X> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return (Try<T,X>)MonadicValue.super.zip(combiner, app);
     }
 
     /* (non-Javadoc)

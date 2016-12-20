@@ -9,14 +9,12 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.*;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
 import com.aol.cyclops.util.function.F3;
 import com.aol.cyclops.util.function.F4;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -304,13 +302,11 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
     
     
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
+
     @Override
-    default Xor<ST,PT> combine(BinaryOperator<Combiner<PT>> combiner, Combiner<PT> app) {
+    default Xor<ST,PT> zip(BinaryOperator<Zippable<PT>> combiner, Zippable<PT> app) {
        
-        return (Xor<ST,PT>)MonadicValue.super.combine(combiner, app);
+        return (Xor<ST,PT>)MonadicValue.super.zip(combiner, app);
     }
 
     /* (non-Javadoc)

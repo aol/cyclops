@@ -4,16 +4,17 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.*;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.To;
+import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.function.Curry;
 import com.aol.cyclops.util.function.F3;
 import com.aol.cyclops.util.function.F4;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -574,8 +575,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
-    default  Maybe<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (Maybe<T>)MonadicValue.super.combine(combiner, app);
+    default  Maybe<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return (Maybe<T>)MonadicValue.super.zip(combiner, app);
     }
 
 

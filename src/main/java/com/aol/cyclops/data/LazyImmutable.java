@@ -4,8 +4,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
+import com.aol.cyclops.types.Zippable;
 import lombok.ToString;
 
 import java.util.Iterator;
@@ -41,7 +40,7 @@ import java.util.function.Supplier;
  */
 @ToString
 
-public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consumer<T>, Functor<T>, ApplicativeFunctor<T> {
+public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consumer<T>, Functor<T>, Zippable<T> {
     private final static Object UNSET = new Object();
     private final AtomicReference value = new AtomicReference<>(
                                                                 UNSET);
@@ -189,13 +188,6 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
         return stream().iterator();
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
-     */
-    @Override
-    public <T> Unit<T> unit(final T unit) {
-        return LazyImmutable.of(unit);
-    }
 
 
 
@@ -205,7 +197,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     @Override
     public <U> LazyImmutable<U> cast(final Class<? extends U> type) {
 
-        return (LazyImmutable<U>) ApplicativeFunctor.super.cast(type);
+        return (LazyImmutable<U>) Zippable.super.cast(type);
     }
 
     /* (non-Javadoc)
@@ -214,7 +206,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     @Override
     public LazyImmutable<T> peek(final Consumer<? super T> c) {
 
-        return (LazyImmutable<T>) ApplicativeFunctor.super.peek(c);
+        return (LazyImmutable<T>) Zippable.super.peek(c);
     }
 
     /* (non-Javadoc)
@@ -223,7 +215,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     @Override
     public <R> LazyImmutable<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (LazyImmutable<R>) ApplicativeFunctor.super.trampoline(mapper);
+        return (LazyImmutable<R>) Zippable.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)

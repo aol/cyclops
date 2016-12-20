@@ -1,41 +1,18 @@
 package com.aol.cyclops;
 
+import com.aol.cyclops.control.*;
+import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops.data.collections.extensions.persistent.*;
+import com.aol.cyclops.data.collections.extensions.standard.*;
+import com.aol.cyclops.types.Zippable;
+import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import org.jooq.lambda.Seq;
+
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import org.jooq.lambda.Seq;
-
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.Ior;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
-import com.aol.cyclops.data.collections.extensions.standard.DequeX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.QueueX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
-import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.Zippable;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 /**
  * 
@@ -232,7 +209,7 @@ public interface Monoids {
      * @param monoid Monoid to combine the values inside the Scalar Functors
      * @return Combination of two Scalar Functors
      */
-    static <T,A extends Combiner<T>> Monoid<A> combineScalarFunctors(Function<T,A> zeroFn,Monoid<T> monoid) {
+    static <T,A extends Zippable<T>> Monoid<A> combineScalarFunctors(Function<T,A> zeroFn,Monoid<T> monoid) {
        
         return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineScalarFunctors(monoid));
     }

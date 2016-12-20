@@ -1,38 +1,28 @@
 package com.aol.cyclops.control;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.reactivestreams.Publisher;
-
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.types.applicative.ApplicativeFunctor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
-import com.aol.cyclops.util.function.Memoize;
-import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F3;
+import com.aol.cyclops.util.function.F4;
+import com.aol.cyclops.util.function.Memoize;
+import org.jooq.lambda.tuple.Tuple2;
+import org.reactivestreams.Publisher;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.*;
+import java.util.stream.Stream;
 
 /**
  * Represents a computation that can be defered (always), cached (later) or immediate(now).
@@ -324,12 +314,10 @@ public interface Eval<T> extends    To<Eval<T>>,
         return (Eval<R>)MonadicValue.super.flatMapPublisher(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
+
     @Override
-    default Eval<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (Eval)MonadicValue.super.combine(combiner, app);
+    default Eval<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return (Eval)MonadicValue.super.zip(combiner, app);
     }
 
     /* (non-Javadoc)

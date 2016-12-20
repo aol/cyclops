@@ -3,15 +3,14 @@ package com.aol.cyclops.control;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.Reducer;
 import com.aol.cyclops.control.monads.transformers.FutureT;
-import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.react.Status;
 import com.aol.cyclops.react.collectors.lazy.Blocker;
-import com.aol.cyclops.types.Combiner;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
+import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
@@ -1285,12 +1284,10 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
     public <R> FutureW<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return (FutureW<R>) MonadicValue.super.flatMapPublisher(mapper);
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
-     */
+
     @Override
-    public FutureW<T> combine(BinaryOperator<Combiner<T>> combiner, Combiner<T> app) {
-        return (FutureW<T>)MonadicValue.super.combine(combiner, app);
+    public FutureW<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return (FutureW<T>)MonadicValue.super.zip(combiner, app);
     }
 
 
