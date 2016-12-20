@@ -2,9 +2,12 @@ package com.aol.cyclops.types;
 
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.stream.ToStream;
+import com.aol.cyclops.util.function.F3;
+import com.aol.cyclops.util.function.F4;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -15,8 +18,6 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops.control.ReactiveSeq;
 
 /**
- * TODO zip3 /zip4 with functions, + applicative style zip(Zippable<Function<? super T,? extends R>>
- *      remove ApplicativeFunctor + combiner
  *
  * A Data Type that can be comined with another data type 
  * 
@@ -24,7 +25,7 @@ import com.aol.cyclops.control.ReactiveSeq;
  *
  * @param <T> Data type of element(s) of this Zippable
  */
-public interface Zippable<T> extends Iterable<T>, ToStream<T> {
+public interface Zippable<T> extends Iterable<T>, Functor<T>, ToStream<T> {
 
     /**
      * Combine two applicatives together using the provided BinaryOperator (Semigroup, Monoid and Reducer all
@@ -58,6 +59,17 @@ public interface Zippable<T> extends Iterable<T>, ToStream<T> {
     default  Zippable<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
         return combiner.apply(this, app);
     }
+
+    default <R> Zippable<R> zipWith(Iterable<Function<? super T,? extends R>> fn){
+        return zip(fn,(a,b)->b.apply(a));
+    }
+    default <R> Zippable<R> zipWithS(Stream<Function<? super T,? extends R>> fn){
+        return zipS(fn,(a,b)->b.apply(a));
+    }
+    default <R> Zippable<R> zipWithP(Publisher<Function<? super T,? extends R>> fn){
+        return zipP(fn,(a,b)->b.apply(a));
+    }
+
     /**
      * Zip (combine) this Zippable with the supplied Iterable using the supplied combining function
      * 
@@ -133,6 +145,10 @@ public interface Zippable<T> extends Iterable<T>, ToStream<T> {
     default <S, U> Zippable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
         return zip(second,Tuple::tuple).zip(third,(a,b)->(Tuple3<T,S,U>)Tuple.tuple(a.v1,a.v2,b));
     }
+    default <S, U,R> Zippable<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third,
+                                                  final F3<? super T, ? super S, ? super U,? extends R> f3) {
+        return (Zippable<R>)zip3(second,third).map(t->f3.apply(t.v1,t.v2,t.v3));
+    }
 
     /**
      * zip 4 Streams into 1
@@ -150,5 +166,10 @@ public interface Zippable<T> extends Iterable<T>, ToStream<T> {
                                                                  final Iterable<? extends T4> fourth) {
         return zip(second,Tuple::tuple).zip(third,(a,b)->Tuple.tuple(a.v1,a.v2,b))
                                        .zip(fourth,(a,b)->(Tuple4<T,T2,T3,T4>)Tuple.tuple(a.v1,a.v2,a.v3,b));
+    }
+    default <T2, T3, T4,R> Zippable<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
+                                      final Iterable<? extends T4> fourth,
+                                      final F4<? super T, ? super T2, ? super T3,? super T4,? extends R> fn) {
+        return (Zippable<R>)zip4(second,third,fourth).map(t->fn.apply(t.v1,t.v2,t.v3,t.v4));
     }
 }
