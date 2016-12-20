@@ -10,6 +10,7 @@ import java.util.concurrent.Executor;
 import java.util.function.*;
 import java.util.stream.Collector;
 
+import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import org.jooq.lambda.Collectable;
 
 import com.aol.cyclops.control.Eval;
@@ -27,7 +28,7 @@ import org.jooq.lambda.Seq;
  *
  * @param <T> Data type of elements in this Collectable
  */
-public interface CyclopsCollectable<T> extends  Iterable<T>, Foldable<T> { //Collectable<T>,
+public interface CyclopsCollectable<T> extends  Iterable<T>, Foldable<T>,ReactiveStreamsTerminalOperations<T> { //Collectable<T>,
 
     /**
      * Perform an async fold on the provided executor

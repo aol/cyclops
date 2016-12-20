@@ -57,9 +57,12 @@ public interface PMapX<K, V>
         return stream.toPMapX(k -> k.v1, v -> v.v2);
     }
 
+    @Override
+    boolean isEmpty();
+
     /* (non-Javadoc)
-     * @see java.lang.Iterable#iterator()
-     */
+         * @see java.lang.Iterable#iterator()
+         */
     @Override
     default Iterator<Tuple2<K, V>> iterator() {
         return stream().iterator();

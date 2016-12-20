@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.PMap;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -14,6 +16,7 @@ import com.aol.cyclops.data.collections.extensions.standard.SetX;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
+import org.reactivestreams.Subscription;
 
 @AllArgsConstructor
 public class PMapXImpl<K, V> implements PMapX<K, V> {
@@ -330,4 +333,28 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
         return map.merge(key, value, remappingFunction);
     }
 
+    @Override
+    public <X extends Throwable> Subscription forEachX(long numberOfElements, Consumer<? super Tuple2<K, V>> consumer) {
+        return this.stream().forEachX(numberOfElements, consumer);
+    }
+
+    @Override
+    public <X extends Throwable> Subscription forEachXWithError(long numberOfElements, Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError) {
+        return this.stream().forEachXWithError(numberOfElements,consumer,consumerError);
+    }
+
+    @Override
+    public <X extends Throwable> Subscription forEachXEvents(long numberOfElements, Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+        return this.stream().forEachXEvents(numberOfElements,consumer,consumerError,onComplete);
+    }
+
+    @Override
+    public <X extends Throwable> void forEachWithError(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError) {
+
+    }
+
+    @Override
+    public <X extends Throwable> void forEachEvent(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+
+    }
 }

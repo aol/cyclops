@@ -24,7 +24,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLift(){
-		val add =	AnyM.liftM2(this::add);
+		val add =	AnyM.liftF2(this::add);
 		
 		AnyM<Integer> result = add.apply(AnyM.fromIterable(Try.of(2, RuntimeException.class)), AnyM.fromIterable(Try.of(3,RuntimeException.class)));
 		assertThat(result.<Try<Integer,RuntimeException>>unwrap().get(),equalTo(5));

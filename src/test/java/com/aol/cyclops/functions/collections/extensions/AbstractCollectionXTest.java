@@ -1,8 +1,7 @@
 package com.aol.cyclops.functions.collections.extensions;
 
 
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
+
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -125,114 +124,7 @@ public abstract class AbstractCollectionXTest {
         assertThat(unfold(1,fn ).size(),equalTo(6));
     }
 	
-	@Test
-    public void mergePublisherFlux() throws InterruptedException{
-      
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Flux.just(10,20),Mono.just(4),Maybe.of(5)))
-                        .toListX(),hasItems(10,20,1,2,3,4,5));
-        
-    }
-	@Test
-    public void mergePublisher() throws InterruptedException{
-      
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)))
-                        .toListX(),hasItems(1,2,3,4,5));
-        
-    }
-    @Test
-    public void mergePublisherSize() throws InterruptedException{
-      
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)))
-                        .toListX().size(),equalTo(5));
-        
-    }
-    @Test
-    public void mergePublisherWithAsync() throws InterruptedException{
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
-                        .toListX(),hasItems(1,2,3,4,5));
-        
-    }
-    @Test
-    public void mergePublisherWithSizeAsync() throws InterruptedException{
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
-                        .toListX().size(),equalTo(5));
-        
-    }
-    
-    @Test
-    public void mergePublisherAsync() throws InterruptedException{
-       
-       
-       
-      assertThat(of(3,2,1)
-               .mergePublisher(ReactiveSeq.generate(()->r.generate(()->1).peek(a->sleep2(a*100)).limit(5).async()).limit(2).toList())
-               .toListX().size(),equalTo(13));
-    }
-    @Test
-    public void flatMapPublisher() throws InterruptedException{
-        
-        assertThat(of(1,2,3)
-                        .flatMapPublisher(i->Maybe.of(i))
-                        .toListX(),equalTo(Arrays.asList(1,2,3)));
-        
-        
-    }
-    
-    @Test
-    public void flatMapPublisherWithAsync() throws InterruptedException{
-        
-           for(int x=0;x<10_000;x++){
-               
-           assertThat(of(1,2,3)
-                           .flatMapPublisher(i->Maybe.of(i),500,QueueFactories.unboundedQueue())
-                           .toListX(),hasItems(1,2,3));
-           }
-           
-   }
-    @Test
-    public void flatMapPublisherFlux() throws InterruptedException{
-        
-        assertThat(of(1,2,3)
-                        .flatMapPublisher(i->Flux.just(i,i*10))
-                        .toListX(),hasItems(1,10,2,20,3,30));
-        
-        
-    }
-    
-    @Test
-    public void flatMapPublisherWithAsyncFlux() throws InterruptedException{
-        
-           for(int x=0;x<10_000;x++){
-               
-           assertThat(of(1,2,3)
-                           .flatMapPublisher(i->Flux.just(i,i*10),500,QueueFactories.unboundedQueue())
-                           .toListX(),hasItems(1,10,2,20,3,30));
-           }
-           
-   }
-    private void sleep2(int time){
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-    @Test
-    public void flatMapPublisherAsync() throws InterruptedException{
-       LazyReact r = new LazyReact(10,10);
-       
-      
-      assertThat(of(3,2,1)
-               .flatMapPublisher(i-> r.generate(()->i).peek(a->sleep2(a*100)).limit(5).async())
-               .toListX().size(),equalTo(15));
-       
-    }
+
 	@Test
 	public void plusOne(){
 	    assertThat(of().plus(1),hasItem(1));
@@ -290,10 +182,7 @@ public abstract class AbstractCollectionXTest {
 	    assertThat(of(1,2,3,4,5).retainAll((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
 	}
 	
-	@Test
-    public void retainAllSeq(){
-        assertThat(of(1,2,3,4,5).retainAll(Seq.of(1,2,3)),hasItems(1,2,3));
-    }
+
 	@Test
     public void retainAllStream(){
         assertThat(of(1,2,3,4,5).retainAll(Stream.of(1,2,3)),hasItems(1,2,3));
@@ -306,10 +195,7 @@ public abstract class AbstractCollectionXTest {
     public void removeAll(){
         assertThat(of(1,2,3,4,5).removeAll((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
     }
-    @Test
-    public void removeAllSeq(){
-        assertThat(of(1,2,3,4,5).removeAll(Seq.of(1,2,3)),hasItems(4,5));
-    }
+
     @Test
     public void removeAllStream(){
         assertThat(of(1,2,3,4,5).removeAll(Stream.of(1,2,3)),hasItems(4,5));
@@ -700,7 +586,7 @@ public abstract class AbstractCollectionXTest {
 		
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 	       
 	        assertThat(map1.get(0),hasItem(2));
 	        assertThat(map1.get(0),hasItem(4));
@@ -1359,7 +1245,7 @@ public abstract class AbstractCollectionXTest {
 	
 	@Test
 	public void emptyConvert(){
-		assertFalse(empty().toMaybe().isPresent());
+
 		assertFalse(empty().toOptional().isPresent());
 		assertFalse(empty().toListX().size()>0);
 		assertFalse(empty().toDequeX().size()>0);
@@ -1373,18 +1259,7 @@ public abstract class AbstractCollectionXTest {
 		assertFalse(empty().toPBagX().size()>0);
 		assertFalse(empty().toPMapX(t->t,t->t).size()>0);
 		assertFalse(empty().toMapX(t->t,t->t).size()>0);
-		assertFalse(empty().toXor().get().size()>0);
-		assertFalse(empty().toIor().get().size()>0);
-		assertTrue(empty().toXor().isPrimary());
-		assertTrue(empty().toIor().isPrimary());
 
-		assertFalse(empty().toXorSecondary().isPrimary());
-		assertFalse(empty().toIorSecondary().isPrimary());
-		assertTrue(empty().toTry().isSuccess());
-		assertFalse(empty().toEvalNow().get().size()>0);
-		assertFalse(empty().toEvalLater().get().size()>0);
-		assertFalse(empty().toEvalAlways().get().size()>0);
-		assertFalse(empty().toCompletableFuture().join().size()>0);
 		assertFalse(empty().toSet().size()>0);
 		assertFalse(empty().toList().size()>0);
 		assertFalse(empty().toStreamable().size()>0);
@@ -1393,7 +1268,7 @@ public abstract class AbstractCollectionXTest {
 	}
 	@Test
 	public void presentConvert(){
-		assertTrue(of(1).toMaybe().isPresent());
+
 		assertTrue(of(1).toOptional().isPresent());
 		assertTrue(of(1).toListX().size()>0);
 		assertTrue(of(1).toDequeX().size()>0);
@@ -1407,17 +1282,7 @@ public abstract class AbstractCollectionXTest {
 		assertTrue(of(1).toPBagX().size()>0);
 		assertTrue(of(1).toPMapX(t->t,t->t).size()>0);
 		assertTrue(of(1).toMapX(t->t,t->t).size()>0);
-		assertTrue(of(1).toXor().get().size()>0);
-		assertTrue(of(1).toIor().get().size()>0);
-		assertTrue(of(1).toXor().isPrimary());
-		assertTrue(of(1).toIor().isPrimary());
-		assertFalse(of(1).toXorSecondary().isPrimary());
-		assertFalse(of(1).toIorSecondary().isPrimary());
-		assertTrue(of(1).toTry().isSuccess());
-		assertTrue(of(1).toEvalNow().get().size()>0);
-		assertTrue(of(1).toEvalLater().get().size()>0);
-		assertTrue(of(1).toEvalAlways().get().size()>0);
-		assertTrue(of(1).toCompletableFuture().join().size()>0);
+
 		assertTrue(of(1).toSet().size()>0);
 		assertTrue(of(1).toList().size()>0);
 		assertTrue(of(1).toStreamable().size()>0);
@@ -1472,7 +1337,7 @@ public abstract class AbstractCollectionXTest {
 	    @Test
 	    public void zip2(){
 	        List<Tuple2<Integer,Integer>> list =
-	                of(1,2,3,4,5,6).zip(Stream.of(100,200,300,400))
+	                of(1,2,3,4,5,6).zipS(Stream.of(100,200,300,400))
 	                                                .peek(it -> System.out.println(it))
 	                                                
 	                                                .collect(Collectors.toList());
@@ -1760,41 +1625,7 @@ public abstract class AbstractCollectionXTest {
 
 	        }
 	     
-	        @Test
-	        public void patternTestPojoNoOrder(){
-	            
-	            List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
-	                                                  .patternMatch(
-	                                                          c->c.is(when(new MyCase2(1,2)),then("one"))
-	                                                               .is(when(new MyCase2(3,4)),then("two"))
-	                                                               .is(when(new MyCase2(3,5)),then("three"))
-	                                                               .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
-	                                                               ,Matchable.otherwise("n/a")
-	                                                          )
-	                                                  .toListX();
-	            assertThat(result,equalTo(Arrays.asList("one","two")));
-	        }
-	        @AllArgsConstructor
-	        @EqualsAndHashCode
-	        static class MyCase implements Comparable<MyCase>{
-	            int first;
-	            int second;
-                @Override
-                public int compareTo(MyCase o) {
-                    return first - o.first;
-                }
-	        }
-	        @AllArgsConstructor
-	        @EqualsAndHashCode
-	        static class MyCase2 implements Comparable<MyCase2>{
-	            int first;
-	            int second;
-                @Override
-                public int compareTo(MyCase2 o) {
-                    return first-o.first;
-                }
-	            
-	        }
+
 	        
 	        @Test @Ignore
 	        public void testOfTypeNoOrder() {

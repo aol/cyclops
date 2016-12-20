@@ -1,7 +1,7 @@
 package com.aol.cyclops.streams.anyM;
 
 
-import static com.aol.cyclops.control.AnyM.ofSeq;
+import static com.aol.cyclops.control.AnyM.fromStream;
 import static com.aol.cyclops.control.AnyM.ofValue;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
@@ -101,35 +101,25 @@ public class AnyMTest {
 				  				.collect(Collectors.toList());
 		assertThat(Arrays.asList(2,6),equalTo(list));
 	}
-	@Test
-	public void testMixed() {
-		
-		List<Integer> list = AnyM.fromStream(Stream.of(Arrays.asList(1,3),null))
-									.flatMap(d->AnyM.fromOptional(Optional.ofNullable(d)))
-									.map(i->i.size())
-									.peek(System.out::println)
-									.stream()
-									.toList();
-		assertThat(Arrays.asList(2),equalTo(list));
-	}
+	
 	int count;
 	@Test
 	public void testCycleWhile(){
 		count =0;
-		assertThat(ofSeq(Stream.of(1,2,2)).stream()
+		assertThat(fromStream(Stream.of(1,2,2)).stream()
 											.cycleWhile(next -> count++<6)
 											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
 	}
 	@Test
 	public void testCycleUntil(){
 		count =0;
-		assertThat(ofSeq(Stream.of(1,2,2)).stream()
+		assertThat(fromStream(Stream.of(1,2,2)).stream()
 											.cycleUntil(next -> count++>6)
 											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
 	}
 	@Test
 	public void testCycle(){
-		assertThat(ofSeq(Stream.of(1,2,2)).stream()
+		assertThat(fromStream(Stream.of(1,2,2)).stream()
 											.cycle(3).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
 	}
 	@Test
@@ -142,7 +132,7 @@ public class AnyMTest {
 	
 	@Test
 	public void testJoin(){
-		assertThat(ofSeq(Stream.of(1,2,2))
+		assertThat(fromStream(Stream.of(1,2,2))
 							.map(b-> Stream.of(b))
 							.flatten()
 							.stream()
@@ -150,7 +140,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testJoin2(){
-		assertThat(ofSeq(Stream.of(asList(1,2),asList(2)))
+		assertThat(fromStream(Stream.of(asList(1,2),asList(2)))
 						.flatten()
 						.stream()
 						.toList(),equalTo(Arrays.asList(1,2,2)));
@@ -158,19 +148,19 @@ public class AnyMTest {
 	
 	@Test
 	public void testToSet(){
-		assertThat(ofSeq(Stream.of(1,2,2))
+		assertThat(fromStream(Stream.of(1,2,2))
 					.stream()
 					.toSet().size(),equalTo(2));
 	}
 	@Test
 	public void testToList(){
-		assertThat(ofSeq(Stream.of(1,2,3))
+		assertThat(fromStream(Stream.of(1,2,3))
 					.stream()
 					.toList(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testCollect(){
-		assertThat(ofSeq(Stream.of(1,2,3))
+		assertThat(fromStream(Stream.of(1,2,3))
 					.stream()
 					.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
@@ -180,7 +170,8 @@ public class AnyMTest {
 	
 		assertThat(AnyM.fromStream(Stream.of(1,2,3,null))
 					.map(Maybe::ofNullable)
-					.flatMap(Maybe::anyM)
+					.filter(Maybe::isPresent)
+				    .map(Maybe::get)
 					.stream()
 					.toList(),equalTo(Arrays.asList(1,2,3)));
 	
@@ -188,7 +179,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testToListOptional(){
-		assertThat(ofValue(Optional.of(1))
+		assertThat(AnyM.fromOptional(Optional.of(1))
 					.stream()
 					.toList(),equalTo(Arrays.asList(1)));
 	}
@@ -196,7 +187,7 @@ public class AnyMTest {
 	@Test
     public void testFold() {
 		 
-       Supplier<AnyM<String>> s = () -> ofSeq(Stream.of("a","b","c"));
+       Supplier<AnyM<Witness.stream,String>> s = () -> fromStream(Stream.of("a","b","c"));
 
         assertThat("cba",equalTo( s.get().stream().foldRight(Reducers.toString(""))));
         assertThat("abc",equalTo( s.get().stream().reduce(Reducers.toString(""))));
@@ -206,15 +197,7 @@ public class AnyMTest {
     }
 	
 	
-	@Test
-	public void traversableTestToList(){
-		 List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-								.toReactiveSeq(i->i.stream())
-								.toList();
 
-		 
-		 assertThat(list,hasItems(1,2,3,4,5,6));
-	}
 	@Test
 	public void traversableTest(){
 		 List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
@@ -245,15 +228,15 @@ public class AnyMTest {
 	
 	@Test
 	public void testFlatMap(){
-		AnyMSeq<List<Integer>> m  = AnyM.fromStream(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
-		AnyM<Integer> intM = m.flatMap( c -> ofSeq(c.stream()));
+		AnyMSeq<Witness.stream,List<Integer>> m  = AnyM.fromStream(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
+		AnyM<Witness.stream,Integer> intM = m.flatMap( c -> fromStream(c.stream()));
 		List<Integer> list = intM.stream().toList();
 		assertThat(list,equalTo(Arrays.asList(1, 2, 3, 1, 2, 3)));
 	}
 	@Test
 	public void testBind(){
-		AnyM<List<Integer>> m  = ofSeq(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
-		AnyM<Integer> intM = m.bind(Collection::stream);
+		AnyM<Witness.stream,List<Integer>> m  = fromStream(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
+		AnyM<Witness.stream,Integer> intM = m.flatMapS(Collection::stream);
 		List<Integer> list = intM.stream().toList();
 		assertThat(list,equalTo(Arrays.asList(1, 2, 3, 1, 2, 3)));
 	}
@@ -261,9 +244,9 @@ public class AnyMTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void zipOptional(){
-		Stream<List<Integer>> zipped = ofSeq(Stream.of(1,2,3))
+		Stream<List<Integer>> zipped = fromStream(Stream.of(1,2,3))
 										.stream()
-										.zip(ofValue(Optional.of(2)), 
+										.zip(AnyM.fromOptional(Optional.of(2)),
 											(a,b) -> Arrays.asList(a,b)).toStream();
 		
 		
@@ -274,9 +257,9 @@ public class AnyMTest {
 	}
 	@Test
 	public void zipStream(){
-		Stream<List<Integer>> zipped = ofSeq(Stream.of(1,2,3))
+		Stream<List<Integer>> zipped = fromStream(Stream.of(1,2,3))
 											.stream()
-											.zipStream(Stream.of(2,3,4), 
+											.zipS(Stream.of(2,3,4),
 													(a,b) -> Arrays.asList(a,b))
 													.toStream();
 		
@@ -326,7 +309,7 @@ public class AnyMTest {
 	public void groupedOptional(){
 		
 		List<List<Integer>> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-											.toReactiveSeq(i->i.stream())
+											.stream()
 											.grouped(3)
 											.collect(Collectors.toList());
 		
@@ -338,7 +321,7 @@ public class AnyMTest {
 	
 	@Test
 	public void startsWith(){
-		assertTrue(ofValue(Stream.of(1,2,3,4))
+		assertTrue(fromStream(Stream.of(1,2,3,4))
 						.stream()
 						.startsWithIterable(Arrays.asList(1,2,3)));
 	}
@@ -349,7 +332,7 @@ public class AnyMTest {
 	@Test
 	public void distinctOptional(){
 		List<Integer> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,2,2,5,6)))
-											.<Integer>toReactiveSeq(i->i.stream())
+											.stream()
 											.distinct()
 											.collect(Collectors.toList());
 		
@@ -443,65 +426,12 @@ public class AnyMTest {
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5,6)));
 	}
 	
-	@Test
-	public void testApplyM(){
-	AnyM<Function<Integer,Integer>> anyM = AnyM.fromStreamable(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2));
-	
-	 AnyM<Integer> applied =	AnyM.fromStream(Stream.of(1,2,3))
-			
-			 							.applyM(AnyM.fromStreamable(Streamable.of( (Integer a)->a+1 ,(Integer a) -> a*2)));
-	
-	 assertThat(applied.stream().toList(),equalTo(Arrays.asList(2, 2, 3, 4, 4, 6)));
-	 
-	}
-	
-	
-	@Test
-	public void testApplyMOptional(){
-	 AnyM<Integer> applied =AnyM.fromOptional(Optional.of(2))
-			 						.applyM(AnyM.fromOptional(Optional.of( (Integer a)->a+1) ));
-	
-	 assertThat(applied.stream().toList(),equalTo(Arrays.asList(3)));
-	 
-	}
-	@Test
-	public void testApplyMOptionalEmpty(){
-	 AnyM<Integer> applied =AnyM.fromOptional(Optional.of(2)).applyM(AnyM.fromOptional(Optional.empty()));
-	
-	 assertThat(applied.stream().toList(),equalTo(Arrays.asList()));
-	 
-	}
-	@Test
-	public void testApplyMEmptyOptional(){
-		AnyMValue<Integer> empty= 	AnyM.fromOptional(Optional.empty());
-		AnyM<Integer> applied =	empty.applyM(AnyM.fromOptional(Optional.of((Integer a)->a+1)) );
-	
-		assertThat(applied.stream().toList(),equalTo(Arrays.asList()));
-	 
-	}
-	
-	
-	
-	@Test
-	public void testReplicateM(){
-		
-		 AnyM<List<Integer>> applied =AnyM.fromOptional(Optional.of(2)).replicateM(5);
-		 assertThat(applied.unwrap(),equalTo(Optional.of(Arrays.asList(2,2,2,2,2))));
-	
-	}
-	@Test
-	public void testReplicateMStream(){
-	
-		AnyMSeq<Integer> replicated =AnyM.fromStream(Stream.of(2,3,4)).replicateM(5);
-		
-		assertThat(replicated.stream().toList(),
-						equalTo(Arrays.asList(2,3,4 ,2,3,4 ,2,3,4 ,2,3,4 ,2,3,4)));
-	
-	}
-	
-	@Test
+
+
+
+		@Test
 	public void testSorted(){
-		assertThat(ofSeq(Stream.of(4,3,6,7)).stream().sorted().toList(),equalTo(Arrays.asList(3,4,6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().sorted().toList(),equalTo(Arrays.asList(3,4,6,7)));
 	}
 	@Test
 	public void testSortedCompartor(){
@@ -534,7 +464,7 @@ public class AnyMTest {
 	
 	@Test
 	public void testLiftMSimplex(){
-		val lifted = AnyM.liftM((Integer a)->a+3);
+		val lifted = AnyM.liftF((Integer a)->a+3);
 		
 		AnyM<Integer> result = lifted.apply(ofValue(Optional.of(3)));
 		
@@ -542,21 +472,7 @@ public class AnyMTest {
 	}
 	
 	
-	@Test
-	public void testReduceM(){
-		Monoid<AnyMValue<Integer>> optionalAdd = Monoid.of(ofValue(Optional.of(0)), (a,b)-> AnyM.<Integer>ofValue(Optional.of(a.get()+b.get())));
-		
-		val res = AnyM.fromStream(Stream.of(2,8,3,1)).reduceMValue(optionalAdd);
-		assertThat(AnyM.fromStream(Stream.of(2,8,3,1)).reduceMValue(optionalAdd).unwrap(),equalTo(Optional.of(14)));
-	}
-	@Test
-    public void testReduceSeqM(){
-        Monoid<AnyMSeq<Integer>> streamAdd = Monoid.of(ofSeq(ReactiveSeq.of(0)), (a,b)-> AnyM.<Integer>ofSeq(ReactiveSeq.of(a.single()+b.single())));
-        
-      
-        assertThat(AnyM.fromStream(Stream.of(2,8,3,1)).reduceMSeq(streamAdd).toList(),equalTo(Arrays.asList(14)));
-    }
-	
+
 	@Test
 	public void testLiftM2Simplex(){
 		val lifted = AnyM.liftM2((Integer a,Integer b)->a+b);

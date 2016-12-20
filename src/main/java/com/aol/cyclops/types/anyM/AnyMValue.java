@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.function.Function3;
@@ -47,8 +48,12 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
                                                                 ApplicativeFunctor<T>,
                                                                 MonadicValue<T> {
 
-    
-    
+
+    @Override
+    default <R, A> R collect(Collector<? super T, A, R> collector) {
+        return AnyM.super.collect(collector);
+    }
+
     /**
      * Equivalence test, returns true if this Monad is equivalent to the supplied monad
      * e.g.

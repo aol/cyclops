@@ -3,6 +3,7 @@ package com.aol.cyclops.functions.collections.extensions.standard.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import com.aol.cyclops.types.anyM.Witness;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
@@ -10,18 +11,18 @@ import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest{
+public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.streamable>{
 
 	@Override
-	public <T> AnyMSeq<T> of(T... values) {
-		return AnyM.fromIterable(Streamable.of(values));
+	public <T> AnyMSeq<Witness.streamable,T> of(T... values) {
+		return AnyM.fromStreamable(Streamable.of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
-	public <T> AnyMSeq<T> empty() {
-		return AnyM.fromIterable(ListX.empty());
+	public <T> AnyMSeq<Witness.streamable,T> empty() {
+		return AnyM.fromStreamable(ListX.empty());
 	}
 	@Test
     public void when(){

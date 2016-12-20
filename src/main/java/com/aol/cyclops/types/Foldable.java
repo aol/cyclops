@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.stream.ToStream;
 import org.jooq.lambda.tuple.Tuple2;
 
 import com.aol.cyclops.Monoid;
@@ -30,12 +31,9 @@ import com.aol.cyclops.types.stream.HotStream;
  *
  * @param <T> Data type of element(s) in this Foldable
  */
-public interface Foldable<T> {
+public interface Foldable<T> extends ToStream<T> {
 
-    /**
-     * @return this Foldable converted to a Stream ({@link com.aol.cyclops.control.ReactiveSeq}) of it's elements
-     */
-    ReactiveSeq<T> stream();
+
 
     
 
@@ -331,7 +329,7 @@ public interface Foldable<T> {
 
     /**
      * Write each element within this Foldable in turn to the supplied PrintStream
-     * 
+     *
      * @param str PrintStream to write to
      */
     default void print(final PrintStream str) {
@@ -340,7 +338,7 @@ public interface Foldable<T> {
 
     /**
      * Write each element within this Foldable in turn to the supplied PrintWriter
-     * 
+     *
      * @param writer PrintWriter to write to
      */
     default void print(final PrintWriter writer) {

@@ -3,29 +3,30 @@ package com.aol.cyclops.functions.collections.extensions.standard.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import com.aol.cyclops.types.anyM.Witness;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-public class ListXTest extends AbstractAnyMSeqOrderedDependentTest{
+public class ListXTest extends AbstractAnyMSeqOrderedDependentTest<Witness.list>{
 
 	@Override
-	public <T> AnyMSeq<T> of(T... values) {
-		return AnyM.fromIterable(ListX.of(values));
+	public <T> AnyMSeq<Witness.list,T> of(T... values) {
+		return AnyM.fromList(ListX.of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
-	public <T> AnyMSeq<T> empty() {
-		return AnyM.fromIterable(ListX.empty());
+	public <T> AnyMSeq<Witness.list,T> empty() {
+		return AnyM.fromList(ListX.empty());
 	}
 	@Test
     public void when(){
         
-        String res= AnyM.fromIterable(ListX.of(1,2,3)).visit((x,xs)->
+        String res= AnyM.fromList(ListX.of(1,2,3)).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
                     
         assertThat(res,equalTo("2world3"));

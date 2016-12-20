@@ -66,7 +66,11 @@ import com.aol.cyclops.util.function.F3;
 public interface Eval<T> extends    To<Eval<T>>,
                                     MonadicValue<T> {
 
-   
+
+    default AnyM<Witness.eval,T> anyM(){
+        return AnyM.fromEval(this);
+    }
+
     /**
      * Create an Eval instance from a reactive-streams publisher
      * 

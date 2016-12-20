@@ -77,20 +77,12 @@ public class AnyMTest {
                    .unwrap();
        assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
-    @Test
-    public void flatMapFirstQueue(){
-     
-       List l= AnyM.fromList(ListX.of(1,2,3))
-            	   .flatMap(i->QueueX.of(10,i))
-                   .unwrap();
-       assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
-    }
+
     @Test
     public void flatMapFirstFlux(){
      
        List l= AnyM.fromList(ListX.of(1,2,3))
-                   .flatMapPublisher(i->Flux.just(10,i))
-                   .unwrap();
+                   .flatMapP(i->Flux.just(10,i)).unwrap();
        assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
     @Test
@@ -98,30 +90,30 @@ public class AnyMTest {
      
        Maybe l= AnyM.fromMaybe(Maybe.of(1))
             .flatMapIterable(i->ListX.of(10,i).anyM())
-            .unwrap();
+            .toMaybe();
        assertThat(l,equalTo(Maybe.of(10)));
     }
     @Test
     public void flatMapValueFirstSet(){
      
        Maybe l= AnyM.fromMaybe(Maybe.of(1))
-            .flatMapFirst(i->SetX.of(10,i))
-            .unwrap();
+            		.flatMapIterable(i->SetX.of(10,i)).toMaybe();
+
        assertThat(l.get(),instanceOf(Integer.class));
     }
     @Test
     public void flatMapValueFirstQueue(){
      
         Maybe l= AnyM.fromMaybe(Maybe.of(1))
-            .flatMapFirst(i->QueueX.of(10,i))
-            .unwrap();
+            .flatMapIterable(i->QueueX.of(10,i)).toMaybe();
+
         assertThat(l,equalTo(Maybe.of(10)));
     }
     @Test
     public void flatMapValueFirstFlux(){
      
         Maybe l= AnyM.fromMaybe(Maybe.of(1))
-            .flatMapFirstPublisher(i->Flux.just(10,i))
+            .flatMapP(i->Flux.just(10,i))
             .unwrap();
         assertThat(l,equalTo(Maybe.of(10)));
     }
@@ -131,13 +123,7 @@ public class AnyMTest {
             .flatMap(i->AnyM.fromStream(Stream.of(10,i)))
             .forEach(System.out::println);
     }
-	@Test
-	public void createAnyMFromListOrOptional(){
-		List<Integer> list = Arrays.asList(1,2,3);
-		assertThat(AnyM.ofSeq(list).unwrap(),instanceOf(List.class));
-		Optional<Integer> opt = Optional.of(1);
-		assertThat(AnyM.ofSeq(opt).unwrap(),instanceOf(Optional.class));
-	}
+
 	@Test
 	public void createAnyMFromListOrOptionalAsAnyM(){
 		List<Integer> list = Arrays.asList(1,2,3);

@@ -1,8 +1,5 @@
 package com.aol.cyclops.functions.collections.extensions;
 
-
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.anyOf;
@@ -36,6 +33,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import com.aol.cyclops.types.anyM.WitnessType;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -64,9 +63,9 @@ import com.aol.cyclops.util.function.Predicates;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
-public abstract class AbstractAnyMSeqTest {
-	public abstract <T> AnyMSeq<T> empty();
-	public abstract <T> AnyMSeq<T> of(T... values);
+public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
+	public abstract <T> AnyMSeq<W,T> empty();
+	public abstract <T> AnyMSeq<W,T> of(T... values);
 	
     public static final LazyReact r = new LazyReact(10,10);
     @Test
@@ -74,70 +73,9 @@ public abstract class AbstractAnyMSeqTest {
        
         assertThat(of(1,2,3).stream().collect(Collectors.toList()),hasItems(1,2,3));
     }
-	@Test
-    public void mergePublisher() throws InterruptedException{
 
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)))
-                        .toListX(),hasItems(1,2,3,4,5));
-        
-    }
-    @Test
-    public void mergePublisherSize() throws InterruptedException{
-      
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)))
-                        .toListX().size(),equalTo(5));
-        
-    }
-    @Test
-    public void mergePublisherWithAsync() throws InterruptedException{
-        
-        for(int i=0;i<10_000;i++){
-            
-            ListX<Integer> list  = of(1,2,3)
-                    .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
-                    .toListX();
-        assertThat("failed " +  list,list,hasItems(1,2,3,4,5));
-        }
-        
-    }
-    @Test
-    public void mergePublisherWithSizeAsync() throws InterruptedException{
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
-                        .toListX().size(),equalTo(5));
-        
-    }
     
-    @Test
-    public void mergePublisherAsync() throws InterruptedException{
-       
-       
-       
-      assertThat(of(3,2,1)
-               .mergePublisher(ReactiveSeq.generate(()->r.generate(()->1).peek(a->sleep2(a*100)).limit(5).async()).limit(2).toList())
-               .toListX().size(),equalTo(13));
-    }
-    @Test
-    public void flatMapPublisher() throws InterruptedException{
-        
-        assertThat(of(1,2,3)
-                        .flatMapPublisher(i->Maybe.of(i))
-                        .toListX(),equalTo(Arrays.asList(1,2,3)));
-        
-        
-    }
-    
-    @Test
-    public void flatMapPublisherWithAsync() throws InterruptedException{
-        for(int x=0;x<10_000;x++){
-        assertThat(of(1,2,3)
-                        .flatMapPublisher(i->Maybe.of(i),1000,QueueFactories.unboundedQueue())
-                        .toListX(),hasItems(1,2,3));
-        }
-        
-    }
+
     private void sleep2(int time){
         try {
             Thread.sleep(time);
@@ -146,16 +84,7 @@ public abstract class AbstractAnyMSeqTest {
             e.printStackTrace();
         }
     }
-    @Test
-    public void flatMapPublisherAsync() throws InterruptedException{
-       LazyReact r = new LazyReact(10,10);
-       
-      
-      assertThat(of(3,2,1)
-               .flatMapPublisher(i-> r.generate(()->i).peek(a->sleep2(a*100)).limit(5).async())
-               .toListX().size(),equalTo(15));
-       
-    }
+
     @Test
     public void visit(){
         
@@ -235,8 +164,8 @@ public abstract class AbstractAnyMSeqTest {
 	
 	
 	
-	AnyMSeq<Integer> empty;
-	AnyMSeq<Integer> nonEmpty;
+	AnyMSeq<W,Integer> empty;
+	AnyMSeq<W,Integer> nonEmpty;
 
 	@Before
 	public void setup(){
@@ -334,7 +263,7 @@ public abstract class AbstractAnyMSeqTest {
 		
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 	       
 	        assertThat(map1.get(0),hasItem(2));
 	        assertThat(map1.get(0),hasItem(4));
@@ -363,7 +292,7 @@ public abstract class AbstractAnyMSeqTest {
 	   
 	    @Test
 	    public void testSkipWhile() {
-	        Supplier<AnyMSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<AnyMSeq<W,Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertTrue(s.get().dropWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	      
@@ -372,7 +301,7 @@ public abstract class AbstractAnyMSeqTest {
 
 	    @Test
 	    public void testSkipUntil() {
-	        Supplier<AnyMSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<AnyMSeq<W,Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
 	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
@@ -382,7 +311,7 @@ public abstract class AbstractAnyMSeqTest {
 
 	    @Test
 	    public void testLimitWhile() {
-	        Supplier<AnyMSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<AnyMSeq<W,Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().takeWhile(i -> false).toList());
 	        assertTrue( s.get().takeWhile(i -> i < 3).toList().size()!=5);       
@@ -405,7 +334,7 @@ public abstract class AbstractAnyMSeqTest {
 
 	    @Test
 	    public void testMinByMaxBy() {
-	        Supplier<AnyMSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+	        Supplier<AnyMSeq<W,Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
 	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
@@ -822,7 +751,7 @@ public abstract class AbstractAnyMSeqTest {
 	public void zipEmpty() throws Exception {
 		
 		
-		final AnyMSeq<Integer> zipped = this.<Integer>empty().zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
+		final AnyMSeq<W,Integer> zipped = this.<Integer>empty().zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -831,7 +760,7 @@ public abstract class AbstractAnyMSeqTest {
 		
 		
 		
-		final AnyMSeq<Integer> zipped = this.<Integer>empty().zip(of(1,2), (a, b) -> a + b);
+		final AnyMSeq<W,Integer> zipped = this.<Integer>empty().zip(of(1,2), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -839,7 +768,7 @@ public abstract class AbstractAnyMSeqTest {
 	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
 		
 		
-		final AnyMSeq<Integer> zipped = of(1,2,3).zip(this.<Integer>empty(), (a, b) -> a + b);
+		final AnyMSeq<W,Integer> zipped = of(1,2,3).zip(this.<Integer>empty(), (a, b) -> a + b);
 
 		
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
@@ -848,11 +777,11 @@ public abstract class AbstractAnyMSeqTest {
 	@Test
 	public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
 		
-		final AnyMSeq<String> first = of("A", "B", "C");
-		final AnyMSeq<Integer> second = of(1, 2, 3);
+		final AnyMSeq<W,String> first = of("A", "B", "C");
+		final AnyMSeq<W,Integer> second = of(1, 2, 3);
 
 		
-		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
@@ -862,20 +791,20 @@ public abstract class AbstractAnyMSeqTest {
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
-		final AnyMSeq<String> first = of("A", "B", "C");
-		final AnyMSeq<Integer> second = of(1, 2, 3, 4);
+		final AnyMSeq<W,String> first = of("A", "B", "C");
+		final AnyMSeq<W,Integer> second = of(1, 2, 3, 4);
 
 		
-		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
-		final AnyMSeq<String> first = of("A", "B", "C","D");
-		final AnyMSeq<Integer> second = of(1, 2, 3);
-		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<W,String> first = of("A", "B", "C","D");
+		final AnyMSeq<W,Integer> second = of(1, 2, 3);
+		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -896,21 +825,21 @@ public abstract class AbstractAnyMSeqTest {
 	
 	@Test
 	public void shouldTrimSecondFixedSeqIfLongerStream() throws Exception {
-		final AnyMSeq<String> first = of("A", "B", "C");
-		final AnyMSeq<Integer> second = of(1, 2, 3, 4);
+		final AnyMSeq<W,String> first = of("A", "B", "C");
+		final AnyMSeq<W,Integer> second = of(1, 2, 3, 4);
 
 		
-		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLongerStream() throws Exception {
-		final AnyMSeq<String> first = of("A", "B", "C","D");
-		final AnyMSeq<Integer> second = of(1, 2, 3);
+		final AnyMSeq<W,String> first = of("A", "B", "C","D");
+		final AnyMSeq<W,Integer> second = of(1, 2, 3);
 		
-		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -930,20 +859,20 @@ public abstract class AbstractAnyMSeqTest {
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLongerSequence() throws Exception {
-		final AnyMSeq<String> first = of("A", "B", "C");
-		final AnyMSeq<Integer> second = of(1, 2, 3, 4);
+		final AnyMSeq<W,String> first = of("A", "B", "C");
+		final AnyMSeq<W,Integer> second = of(1, 2, 3, 4);
 
 		
-		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLongerSequence() throws Exception {
-		final AnyMSeq<String> first = of("A", "B", "C","D");
-		final AnyMSeq<Integer> second = of(1, 2, 3);
-		final AnyMSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final AnyMSeq<W,String> first = of("A", "B", "C","D");
+		final AnyMSeq<W,Integer> second = of(1, 2, 3);
+		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
 		
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -964,7 +893,7 @@ public abstract class AbstractAnyMSeqTest {
 	
 	@Test
 	public void emptyConvert(){
-		assertFalse(empty().toMaybe().isPresent());
+
 		assertFalse(empty().toOptional().isPresent());
 		assertFalse(empty().toListX().size()>0);
 		assertFalse(empty().toDequeX().size()>0);
@@ -978,18 +907,8 @@ public abstract class AbstractAnyMSeqTest {
 		assertFalse(empty().toPBagX().size()>0);
 		assertFalse(empty().toPMapX(t->t,t->t).size()>0);
 		assertFalse(empty().toMapX(t->t,t->t).size()>0);
-		assertFalse(empty().toXor().get().size()>0);
-		assertFalse(empty().toIor().get().size()>0);
-		assertTrue(empty().toXor().isPrimary());
-		assertTrue(empty().toIor().isPrimary());
 
-		assertFalse(empty().toXorSecondary().isPrimary());
-		assertFalse(empty().toIorSecondary().isPrimary());
-		assertTrue(empty().toTry().isSuccess());
-		assertFalse(empty().toEvalNow().get().size()>0);
-		assertFalse(empty().toEvalLater().get().size()>0);
-		assertFalse(empty().toEvalAlways().get().size()>0);
-		assertFalse(empty().toCompletableFuture().join().size()>0);
+
 		assertFalse(empty().toSet().size()>0);
 		assertFalse(empty().toList().size()>0);
 		assertFalse(empty().toStreamable().size()>0);
@@ -998,7 +917,7 @@ public abstract class AbstractAnyMSeqTest {
 	}
 	@Test
 	public void presentConvert(){
-		assertTrue(of(1).toMaybe().isPresent());
+
 		assertTrue(of(1).toOptional().isPresent());
 		assertTrue(of(1).toListX().size()>0);
 		assertTrue(of(1).toDequeX().size()>0);
@@ -1012,17 +931,7 @@ public abstract class AbstractAnyMSeqTest {
 		assertTrue(of(1).toPBagX().size()>0);
 		assertTrue(of(1).toPMapX(t->t,t->t).size()>0);
 		assertTrue(of(1).toMapX(t->t,t->t).size()>0);
-		assertTrue(of(1).toXor().get().size()>0);
-		assertTrue(of(1).toIor().get().size()>0);
-		assertTrue(of(1).toXor().isPrimary());
-		assertTrue(of(1).toIor().isPrimary());
-		assertFalse(of(1).toXorSecondary().isPrimary());
-		assertFalse(of(1).toIorSecondary().isPrimary());
-		assertTrue(of(1).toTry().isSuccess());
-		assertTrue(of(1).toEvalNow().get().size()>0);
-		assertTrue(of(1).toEvalLater().get().size()>0);
-		assertTrue(of(1).toEvalAlways().get().size()>0);
-		assertTrue(of(1).toCompletableFuture().join().size()>0);
+
 		assertTrue(of(1).toSet().size()>0);
 		assertTrue(of(1).toList().size()>0);
 		assertTrue(of(1).toStreamable().size()>0);
@@ -1062,18 +971,18 @@ public abstract class AbstractAnyMSeqTest {
         public void testSorted() {
          
             AnyM.fromList(ListX.of(tuple(2, 2), tuple(1, 1))).printOut();
-            AnyMSeq<Tuple2<Integer, Integer>> t1 = of(tuple(2, 2), tuple(1, 1));
+            AnyMSeq<W,Tuple2<Integer, Integer>> t1 = of(tuple(2, 2), tuple(1, 1));
            
             List<Tuple2<Integer, Integer>> s1 = t1.sorted().toList();
             assertEquals(tuple(1, 1), s1.get(0));
             assertEquals(tuple(2, 2), s1.get(1));
 
-            AnyMSeq<Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "one"));
+            AnyMSeq<W,Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "one"));
             List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toList();
             assertEquals(tuple(1, "one"), s2.get(0));
             assertEquals(tuple(2, "two"), s2.get(1));
 
-            AnyMSeq<Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "one"));
+            AnyMSeq<W,Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "one"));
             List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toList();
             assertEquals(tuple(1, "one"), s3.get(0));
             assertEquals(tuple(2, "two"), s3.get(1));
@@ -1082,7 +991,7 @@ public abstract class AbstractAnyMSeqTest {
         @Test
         public void zip2(){
             List<Tuple2<Integer,Integer>> list =
-                    of(1,2,3,4,5,6).zip(Stream.of(100,200,300,400))
+                    of(1,2,3,4,5,6).zipS(Stream.of(100,200,300,400))
                                                     .peek(it -> System.out.println(it))
                                                     
                                                     .collect(Collectors.toList());
@@ -1108,7 +1017,7 @@ public abstract class AbstractAnyMSeqTest {
 
         @Test
         public void testShuffle() {
-            Supplier<AnyMSeq<Integer>> s = () ->of(1, 2, 3);
+            Supplier<AnyMSeq<W,Integer>> s = () ->of(1, 2, 3);
 
             assertEquals(3, s.get().shuffle().toListX().size());
             assertThat(s.get().shuffle().toListX(), hasItems(1, 2, 3));
@@ -1118,7 +1027,7 @@ public abstract class AbstractAnyMSeqTest {
         @Test
         public void testShuffleRandom() {
             Random r = new Random();
-            Supplier<AnyMSeq<Integer>> s = () ->of(1, 2, 3);
+            Supplier<AnyMSeq<W,Integer>> s = () ->of(1, 2, 3);
 
             assertEquals(3, s.get().shuffle(r).toListX().size());
             assertThat(s.get().shuffle(r).toListX(), hasItems(1, 2, 3));
@@ -1170,7 +1079,7 @@ public abstract class AbstractAnyMSeqTest {
 
             @Test
             public void testMinByMaxBy2() {
-                Supplier<AnyMSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+                Supplier<AnyMSeq<W,Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
                 assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
                 assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
@@ -1185,7 +1094,7 @@ public abstract class AbstractAnyMSeqTest {
             @Test
             public void testFoldLeft() {
                 for(int i=0;i<100;i++){
-                    Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
+                    Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
         
                     assertTrue(s.get().reduce("", String::concat).contains("a"));
                     assertTrue(s.get().reduce("", String::concat).contains("b"));
@@ -1200,7 +1109,7 @@ public abstract class AbstractAnyMSeqTest {
             
             @Test
             public void testFoldRight(){
-                    Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
+                    Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
 
                     assertTrue(s.get().foldRight("", String::concat).contains("a"));
                     assertTrue(s.get().foldRight("", String::concat).contains("b"));
@@ -1210,7 +1119,7 @@ public abstract class AbstractAnyMSeqTest {
             
             @Test
             public void testFoldLeftStringBuilder() {
-                Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
+                Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
                 
                 
                 assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
@@ -1226,7 +1135,7 @@ public abstract class AbstractAnyMSeqTest {
 
             @Test
             public void testFoldRighttringBuilder() {
-                Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
+                Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
 
                 
                 assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("a"));
@@ -1362,41 +1271,7 @@ public abstract class AbstractAnyMSeqTest {
 
             }
          
-            @Test
-            public void patternTestPojoNoOrder(){
-                
-                List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
-                                                      .patternMatch(
-                                                              c->c.is(when(new MyCase2(1,2)),then("one"))
-                                                                   .is(when(new MyCase2(3,4)),then("two"))
-                                                                   .is(when(new MyCase2(3,5)),then("three"))
-                                                                   .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
-                                                                   ,Matchable.otherwise("n/a")
-                                                              )
-                                                      .toListX();
-                assertThat(result,equalTo(Arrays.asList("one","two")));
-            }
-            @AllArgsConstructor
-            @EqualsAndHashCode
-            static class MyCase implements Comparable<MyCase>{
-                int first;
-                int second;
-                @Override
-                public int compareTo(MyCase o) {
-                    return first - o.first;
-                }
-            }
-            @AllArgsConstructor
-            @EqualsAndHashCode
-            static class MyCase2 implements Comparable<MyCase2>{
-                int first;
-                int second;
-                @Override
-                public int compareTo(MyCase2 o) {
-                    return first-o.first;
-                }
-                
-            }
+
             
             @Test @Ignore
             public void testOfTypeNoOrder() {

@@ -162,6 +162,9 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     @Override
     int size();
 
+    @Override
+    boolean isEmpty();
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.stream.CyclopsCollectable#allMatch(java.util.function.Predicate)
      */

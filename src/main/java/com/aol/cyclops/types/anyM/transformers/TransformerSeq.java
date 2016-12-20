@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.FoldableTraversable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -42,7 +43,9 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
     <T> TransformerSeq<W,T> unitAnyM(AnyM<W,Traversable<T>> traversable);
 
-    AnyM<W,? extends Traversable<T>> transformerStream();
+    AnyM<W,? extends FoldableTraversable<T>> transformerStream();
+
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)

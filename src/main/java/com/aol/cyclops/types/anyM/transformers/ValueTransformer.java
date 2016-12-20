@@ -7,6 +7,8 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.*;
+import com.aol.cyclops.types.anyM.NestedFoldable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -16,18 +18,13 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.Unwrapable;
-import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.util.function.F4;
 import com.aol.cyclops.util.function.F3;
 
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                            Unwrapable,
-                                                                           Unit<T> {
+                                                                           Unit<T>, NestedFoldable<W,T> {
     public abstract <R> ValueTransformer<W,R> empty();
     public abstract <R> ValueTransformer<W,R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> f);
     public abstract AnyM<W,? extends MonadicValue<T>> transformerStream();
@@ -67,9 +64,9 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
      * @see com.aol.cyclops.types.Value#stream()
      */
    //Return StreamT
-    public AnyM<W,? extends ReactiveSeq<T>> stream() {
+  /**  public AnyM<W,? extends ReactiveSeq<T>> stream() {
         return this.transformerStream().map(v->v.stream());
-    }
+    }**/
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Value#unapply()
      */
@@ -159,7 +156,6 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
      */
-   
     public <T2, R1, R2, R3, R> ValueTransformer<W,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
             F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
@@ -221,6 +217,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         
         return unitAnyM(this.transformerStream().map(v->v.forEach2(value1, filterFunction, yieldingFunction)));
     }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
      */

@@ -1,17 +1,16 @@
 package com.aol.cyclops.functions.collections.extensions;
 
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
-import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import com.aol.cyclops.Semigroups;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops.types.anyM.WitnessType;
+import com.aol.cyclops.types.stream.HeadAndTail;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
+import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,21 +19,11 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.junit.Test;
+import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
-import com.aol.cyclops.Semigroups;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.util.function.Predicates;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-
-public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMSeqTest {
+public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType<W>> extends AbstractAnyMSeqTest<W> {
     
     @Test
     public void groupedT(){
@@ -190,33 +179,8 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 
 
 	}
-	@Test
-	public void patternTestPojo(){
-		
-		List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
-											  .patternMatch(
-													  c->c.is( when(Predicates.type(MyCase2.class).isGuard(1,2)),then("one"))
-													       .is(when(Predicates.type(MyCase2.class).isGuard(3,4)),then(()->"two"))
-													       .is(when(Predicates.type(MyCase2.class).isGuard(5,6)),then(()->"three"))
-													       ,Matchable.otherwise("n/a")
-													  )
-											  .toListX();
-		assertThat(result,equalTo(Arrays.asList("one","two")));
-	}
-	@Test
-    public void patternTestPojo2(){
-        
-        List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
-                                              .patternMatch(
-                                                      c->c.is(when(new MyCase2(1,2)),then("one"))
-                                                           .is(when(new MyCase2(3,4)),then("two"))
-                                                           .is(when(new MyCase2(3,5)),then("three"))
-                                                           .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
-                                                           ,Matchable.otherwise("n/a")
-                                                      )
-                                              .toListX();
-        assertThat(result,equalTo(Arrays.asList("one","two")));
-    }
+
+
 	@AllArgsConstructor
 	@EqualsAndHashCode
 	static class MyCase{
@@ -244,20 +208,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 				.ofType(Serializable.class)).toListX(),containsInAnyOrder(1, "a", 2, "b", 3));
 
 	}
-	@Test
-	public void patternTestDecomposable(){
-		List<String> result = of(new MyCase(1,2),new MyCase(3,4))
-											
-											  .patternMatch(
-													  c->c.is(when(Predicates.type(MyCase.class).isGuard(1,2)),then("one"))
-													      .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then("two"))
-													      .is(when(Predicates.type(MyCase.class).isGuard(1,4)),then("three"))
-													      .is(when(Predicates.type(MyCase.class).isGuard(2,3)),then("four"))
-													      ,Matchable.otherwise("n/a")
-													  )
-											  .toListX();
-		assertThat(result,equalTo(Arrays.asList("one","two")));
-	}
+
 	@Test
     public void groupedFunction(){
         assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").count(),equalTo((2L)));
@@ -288,73 +239,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 		return a+b+c+d+e;
 	}
 	
-	@Test
-	public void zap1(){
-		assertThat(of(1,2,3).ap1(this::addOne)
-				  .toListX(),equalTo(Arrays.asList(2,3,4)));
-		
-	}
-	@Test
-	public void zap2(){
-		assertThat(of(1,2,3).ap2(this::add)
-				  .ap(of(3,4,5))
-				  .toListX(),equalTo(Arrays.asList(4,6,8)));
-		
-	}
-	@Test
-	public void zap3(){
-		assertThat(of("a","b","c")
-				  .ap3(this::concat)
-				  .ap(of("1","2","3"))
-				  .ap(of(".","?","!"))
-				  .toListX(),equalTo(Arrays.asList("a1.","b2?","c3!")));
-	}
-	@Test
-	public void zap4(){
-	    
-	   ReactiveSeq.of("a","b","c")
-                  .ap4(this::concat4)
-                  .ap(of("1","2","3"))
-                  .ap(of(".","?","!"))
-                  .ap(of("R","R","R"))
-                  .toListX();
-	   //List["a1.R","b2?R","c3!R"]
-	   
-		assertThat(of("a","b","c")
-				  .ap4(this::concat4)
-				  .ap(of("1","2","3"))
-				  .ap(of(".","?","!"))
-				  .ap(of("R","R","R"))
-				  .toListX(),equalTo(Arrays.asList("a1.R","b2?R","c3!R")));
-	}
-	@Test
-	public void zap5(){
-		assertThat(of("a","b","c")
-				  .ap5(this::concat5)
-				  .ap(of("1","2","3"))
-				  .ap(of(".","?","!"))
-				  .ap(of("R","R","R"))
-				  .ap(of("Z","Z","Z"))
-				  .toListX(),equalTo(Arrays.asList("a1.RZ","b2?RZ","c3!RZ")));
-	}
-	@Test
-	public void patternTest1(){
-		List<String> result = of(1,2,3,4)
-								         .patternMatch(
-								        		 	c->c.is(when((Integer i)->i%2==0), then("even"))
-								        		 		.is(when((Integer i)->i%2!=0), then("odd"))
-								        		 		,Matchable.otherwise("n/a")
-													  )
-											  .toListX();
-		assertThat(result,equalTo(Arrays.asList("odd","even","odd","even")));
-	}
-	@Test
-	public void patternTest2(){
-		List<String> result = of(1,2,3,4)
-										.patternMatch(c->c.is(when(1),then("one")),Matchable.otherwise("n/a"))
-											 .toListX();
-		assertThat(result,equalTo(Arrays.asList("one","n/a","n/a","n/a")));
-	}
+
 	@Test
     public void allCombinations3() {
         assertThat(of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
@@ -400,7 +285,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 	@Test
 	public void headTailReplay() {
 
-		AnyMSeq<String> helloWorld = of("hello", "world", "last");
+		AnyMSeq<W,String> helloWorld = of("hello", "world", "last");
 		HeadAndTail<String> headAndTail = helloWorld.headAndTail();
 		String head = headAndTail.head();
 		assertThat(head, equalTo("hello"));
@@ -427,7 +312,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 
 	@Test
 	public void testFoldRight() {
-		Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
+		Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
 
 		assertTrue(s.get().foldRight("", String::concat).contains("a"));
 		assertTrue(s.get().foldRight("", String::concat).contains("b"));
@@ -438,7 +323,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest extends AbstractAnyMS
 	@Test
 	public void testFoldLeft() {
 		for (int i = 0; i < 100; i++) {
-			Supplier<AnyMSeq<String>> s = () -> of("a", "b", "c");
+			Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
 
 			assertTrue(s.get().reduce("", String::concat).contains("a"));
 			assertTrue(s.get().reduce("", String::concat).contains("b"));

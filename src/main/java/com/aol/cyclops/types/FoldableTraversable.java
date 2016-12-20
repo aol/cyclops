@@ -22,7 +22,6 @@ import java.util.function.Supplier;
  */
 public interface FoldableTraversable<T> extends F1<Long,T>,
                                                 Traversable<T>,
-                                                ReactiveStreamsTerminalOperations<T>,
                                                 CyclopsCollectable<T>,
                                                 ConvertableSequence<T>,
                                                 ExtendedTraversable<T>{

@@ -1,7 +1,5 @@
 package com.aol.cyclops.functions.collections.extensions;
 
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -218,45 +216,8 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 
 
 	}
-	@Test
-	public void patternTestPojo(){
-		
-		List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
-											  .patternMatch(
-													  c->c.is( when(Predicates.type(MyCase2.class).isGuard(1,2)),then("one"))
-													       .is(when(Predicates.type(MyCase2.class).isGuard(3,4)),then(()->"two"))
-													       .is(when(Predicates.type(MyCase2.class).isGuard(5,6)),then(()->"three"))
-													       ,Matchable.otherwise("n/a")
-													  )
-											  .toListX();
-		assertThat(result,equalTo(Arrays.asList("one","two")));
-	}
-	@Test
-    public void patternTestPojo2(){
-        
-        List<String> result = of(new MyCase2(1,2),new MyCase2(3,4))
-                                              .patternMatch(
-                                                      c->c.is(when(new MyCase2(1,2)),then("one"))
-                                                           .is(when(new MyCase2(3,4)),then("two"))
-                                                           .is(when(new MyCase2(3,5)),then("three"))
-                                                           .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then(()->"two"))
-                                                           ,Matchable.otherwise("n/a")
-                                                      )
-                                              .toListX();
-        assertThat(result,equalTo(Arrays.asList("one","two")));
-    }
-	@AllArgsConstructor
-	@EqualsAndHashCode
-	static class MyCase{
-		int first;
-		int second;
-	}
-	@AllArgsConstructor
-	@EqualsAndHashCode
-	static class MyCase2{
-		int first;
-		int second;
-	}
+
+
 	
 	@Test
 	public void testOfType() {
@@ -272,20 +233,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 				.ofType(Serializable.class)).toListX(),containsInAnyOrder(1, "a", 2, "b", 3));
 
 	}
-	@Test
-	public void patternTestDecomposable(){
-		List<String> result = of(new MyCase(1,2),new MyCase(3,4))
-											
-											  .patternMatch(
-													  c->c.is(when(Predicates.type(MyCase.class).isGuard(1,2)),then("one"))
-													      .is(when(Predicates.type(MyCase.class).isGuard(3,4)),then("two"))
-													      .is(when(Predicates.type(MyCase.class).isGuard(1,4)),then("three"))
-													      .is(when(Predicates.type(MyCase.class).isGuard(2,3)),then("four"))
-													      ,Matchable.otherwise("n/a")
-													  )
-											  .toListX();
-		assertThat(result,equalTo(Arrays.asList("one","two")));
-	}
+
 	
 	private int addOne(Integer i){
 		return i+1;
@@ -303,64 +251,8 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 		return a+b+c+d+e;
 	}
 	
-	@Test
-	public void zap1(){
-		assertThat(of(1,2,3).ap1(this::addOne)
-				  .toListX(),equalTo(Arrays.asList(2,3,4)));
-		
-	}
-	@Test
-	public void zap2(){
-		assertThat(of(1,2,3).ap2(this::add)
-				  .ap(of(3,4,5))
-				  .toListX(),equalTo(Arrays.asList(4,6,8)));
-		
-	}
-	@Test
-	public void zap3(){
-		assertThat(of("a","b","c")
-				  .ap3(this::concat)
-				  .ap(of("1","2","3"))
-				  .ap(of(".","?","!"))
-				  .toListX(),equalTo(Arrays.asList("a1.","b2?","c3!")));
-	}
-	@Test
-	public void zap4(){
-		assertThat(of("a","b","c")
-				  .ap4(this::concat4)
-				  .ap(of("1","2","3"))
-				  .ap(of(".","?","!"))
-				  .ap(of("R","R","R"))
-				  .toListX(),equalTo(Arrays.asList("a1.R","b2?R","c3!R")));
-	}
-	@Test
-	public void zap5(){
-		assertThat(of("a","b","c")
-				  .ap5(this::concat5)
-				  .ap(of("1","2","3"))
-				  .ap(of(".","?","!"))
-				  .ap(of("R","R","R"))
-				  .ap(of("Z","Z","Z"))
-				  .toListX(),equalTo(Arrays.asList("a1.RZ","b2?RZ","c3!RZ")));
-	}
-	@Test
-	public void patternTest1(){
-		List<String> result = of(1,2,3,4)
-								         .patternMatch(
-								        		 	c->c.is(when((Integer i)->i%2==0), then("even"))
-								        		 		.is(when((Integer i)->i%2!=0), then("odd"))
-								        		 		,Matchable.otherwise("n/a")
-													  )
-											  .toListX();
-		assertThat(result,equalTo(Arrays.asList("odd","even","odd","even")));
-	}
-	@Test
-	public void patternTest2(){
-		List<String> result = of(1,2,3,4)
-										.patternMatch(c->c.is(when(1),then("one")),Matchable.otherwise("n/a"))
-											 .toListX();
-		assertThat(result,equalTo(Arrays.asList("one","n/a","n/a","n/a")));
-	}
+
+
 	@Test
     public void allCombinations3() {
         assertThat(of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),

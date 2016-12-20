@@ -17,12 +17,13 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.FoldableTraversable;
+import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.HotStream;
 import org.reactivestreams.Subscription;
 
 public interface NestedFoldable<W extends WitnessType<W>,T> {
-    public AnyM<W,? extends FoldableTraversable<T>> nestedFoldables();
+    public AnyM<W,? extends CyclopsCollectable<T>> nestedFoldables();
 
 
 
@@ -37,31 +38,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> {
 
 
 
-    /**
-     * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
-     * whenStream may be more efficient (as it is guaranteed to be lazy).
-     * 
-     * <pre>
-     * {@code 
-     * ListX.of(1,2,3,4,5,6,7,8,9)
-             .dropRight(5)
-             .plus(10)
-             .visit((x,xs) ->
-                 xs.join(x.>2?"hello":"world")),()->"NIL"
-             );
-     * 
-     * }
-     * //2world3world4
-     * 
-     * </pre>
-     * 
-     * 
-     * @param match
-     * @return
-     */
-    default <R> AnyM<W,R> visit(final BiFunction<? super T, ? super ReactiveSeq<T>, ? extends R> match, final Supplier<? extends R> ifEmpty) {
-        return nestedFoldables().map(s -> s.visit(match, ifEmpty));
-    }
+
 
     /**
      * Attempt to map this Sequence to the same type as the supplied Monoid
@@ -377,15 +354,6 @@ public interface NestedFoldable<W extends WitnessType<W>,T> {
         return nestedFoldables().map(s -> s.groupBy(classifier));
     }
 
-    /**
-     * extract head and tail together, where head is expected to be present
-     * 
-     * 
-     * @return
-     */
-    default AnyM<W,HeadAndTail<T>> headAndTail() {
-        return nestedFoldables().map(s -> s.headAndTail());
-    }
 
     /**
      * @return First matching element in sequential order

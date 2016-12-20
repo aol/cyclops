@@ -314,7 +314,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public AnyM<W,? extends Traversable<T>> transformerStream() {
+    public AnyM<W,? extends FoldableTraversable<T>> transformerStream() {
 
         return run;
     }

@@ -85,6 +85,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
                                   MonadicValue<T> {
 
 
+    default AnyM<Witness.maybe,T> anyM(){
+        return AnyM.fromMaybe(this);
+    }
     static <T> Maybe<T> fromLazy(Eval<Maybe<T>> lazy){
         return new Lazy<T>(lazy);
     }

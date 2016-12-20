@@ -5,24 +5,25 @@ import static org.junit.Assert.assertThat;
 
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.anyM.Witness;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-public class StreamTest extends AbstractAnyMSeqOrderedDependentTest{
+public class StreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.stream>{
 
 	@Override
-	public <T> AnyMSeq<T> of(T... values) {
+	public <T> AnyMSeq<Witness.stream,T> of(T... values) {
 		return AnyM.fromStream(Stream.of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
-	public <T> AnyMSeq<T> empty() {
-		return AnyM.fromIterable(ListX.empty());
+	public <T> AnyMSeq<Witness.stream,T> empty() {
+		return AnyM.fromStream(Stream.empty());
 	}
 	@Test
     public void when(){

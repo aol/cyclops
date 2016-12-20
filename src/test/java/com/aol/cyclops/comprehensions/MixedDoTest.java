@@ -1,7 +1,8 @@
 package com.aol.cyclops.comprehensions;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import com.aol.cyclops.control.StreamUtils;
+import com.aol.cyclops.util.CompletableFutures;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,9 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Test;
-
-import com.aol.cyclops.control.For;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 public class MixedDoTest {
 
 	@Test
@@ -22,10 +22,9 @@ public class MixedDoTest {
 		
 		
 		
-		CompletableFuture<String> results1 = For.future(future)
-									 				.stream(a->Stream.of("first","second"))
-									 				.yield((String loadedData) -> (String local)-> loadedData + ":" + local )
-									 				.unwrap();
+		CompletableFuture<String> results1 = CompletableFutures.forEach2(future,
+																			a->CompletableFuture.completedFuture("first"),
+																		(String loadedData,String local)-> loadedData + ":" + local );
 		
 	
 		
@@ -51,10 +50,9 @@ public class MixedDoTest {
 		
 		
 		
-		Stream<String> results1 = For.stream(Stream.of("first","second"))
-									 				.future(a->CompletableFuture.supplyAsync(this::loadData))
-									 				.yield((String local) -> (String loadedData)-> loadedData + ":" + local )
-									 				.unwrap();
+		Stream<String> results1 = StreamUtils.forEach2(Stream.of("first","second"),
+		                                               a->Stream.of(loadData()),
+									 				   (String local,String loadedData)-> loadedData + ":" + local );
 		
 	
 		

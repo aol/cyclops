@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
+import com.aol.cyclops.types.*;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -19,12 +19,6 @@ import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.types.Combiner;
-import com.aol.cyclops.types.Filterable;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.anyM.transformers.ValueTransformer;
 import com.aol.cyclops.util.function.F4;
@@ -41,11 +35,21 @@ import com.aol.cyclops.util.function.F3;
  * @param <T> Type of data stored inside the nested FutureW(s)
  */
 public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
-                                                    implements To<FutureT<W,T>>,
-                                                               Functor<T>, 
-                                                               Filterable<T> {
+                                                       implements  To<FutureT<W,T>>,
+                                                                   Functor<T>,
+                                                                   Filterable<T> {
 
     private final AnyM<W,FutureW<T>> run;
+
+    @Override
+    public ReactiveSeq<T> stream() {
+        return run.stream().map(FutureW::get);
+    }
+
+    @Override
+    public AnyM<W, ? extends FoldableTraversable<T>> nestedFoldables() {
+        return null;
+    }
 
     /**
      * @return The wrapped AnyM
@@ -492,9 +496,64 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         
         return (FutureT<W, R>)super.flatMapPublisher(mapper);
     }
+    public <T2, R1, R2, R3, R> FutureT<W,R> forEach4M(Function<? super T, ? extends FutureT<W,R1>> value1,
+                                                      BiFunction<? super T, ? super R1, ? extends FutureT<W,R2>> value2,
+                                                      F3<? super T, ? super R1, ? super R2, ? extends FutureT<W,R3>> value3,
+                                                      F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return this.flatMapT(in->value1.apply(in)
+                .flatMapT(in2-> value2.apply(in,in2)
+                        .flatMapT(in3->value3.apply(in,in2,in3)
+                                .map(in4->yieldingFunction.apply(in,in2,in3,in4)))));
 
-   
+    }
+    public <T2, R1, R2, R3, R> FutureT<W,R> forEach4M(Function<? super T, ? extends FutureT<W,R1>> value1,
+                                                              BiFunction<? super T, ? super R1, ? extends FutureT<W,R2>> value2,
+                                                              F3<? super T, ? super R1, ? super R2, ? extends FutureT<W,R3>> value3,
+                                                              F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                              F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return this.flatMapT(in->value1.apply(in)
+                    .flatMapT(in2-> value2.apply(in,in2)
+                            .flatMapT(in3->value3.apply(in,in2,in3)
+                                                 .filter(in4->filterFunction.apply(in,in2,in3,in4))
+                                                 .map(in4->yieldingFunction.apply(in,in2,in3,in4)))));
 
+    }
+
+    public <T2, R1, R2, R> FutureT<W,R> forEach3M(Function<? super T, ? extends FutureT<W,R1>> value1,
+                                                          BiFunction<? super T, ? super R1, ? extends FutureT<W,R2>> value2,
+                                                          F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
+        return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2)
+                                                 .map(in3->yieldingFunction.apply(in,in2,in3))));
+
+    }
+
+    public <T2, R1, R2, R> FutureT<W,R> forEach3M(Function<? super T, ? extends FutureT<W,R1>> value1,
+                                                          BiFunction<? super T, ? super R1, ? extends FutureT<W,R2>> value2,
+                                                          F3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                                          F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
+        return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2).filter(in3->filterFunction.apply(in,in2,in3))
+                                                                                     .map(in3->yieldingFunction.apply(in,in2,in3))));
+
+    }
+    public <R1, R> FutureT<W,R> forEach2M(Function<? super T, ? extends FutureT<W,R1>> value1,
+                                                   BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+
+
+        return this.flatMapT(in->value1.apply(in)
+                    .map(in2->yieldingFunction.apply(in,in2)));
+    }
+
+    public <R1, R> FutureT<W,R> forEach2M(Function<? super T, ? extends FutureT<W,R1>> value1,
+                                                   BiFunction<? super T, ? super R1, Boolean> filterFunction,
+                                                   BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+
+
+        return this.flatMapT(in->value1.apply(in)
+                                       .filter(in2->filterFunction.apply(in,in2))
+                                       .map(in2->yieldingFunction.apply(in,in2)));
+    }
     
   
 }
