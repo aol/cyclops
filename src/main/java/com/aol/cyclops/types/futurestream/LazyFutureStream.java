@@ -16,6 +16,7 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
@@ -721,6 +722,39 @@ public interface LazyFutureStream<U> extends LazySimpleReactStream<U>, LazyStrea
     default Queue<U> toQueue() {
 
         return LazyToQueue.super.toQueue();
+    }
+
+    default <R> LazyFutureStream<R> parallel(Function<? super Stream<U>,? extends Stream<R>> fn){
+        com.aol.cyclops.data.async.Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
+                .build();
+
+
+        ReactiveSeq seq = ReactiveSeq.generate(()->foldParallel(fn) )
+                .take(1)
+                .map(s-> FutureW.ofSupplier(()->{s.forEach(queue::offer); return true;}, ForkJoinPool.commonPool())
+                        .peek(b-> queue.close()));
+
+
+
+
+        queue.addContinuation(new Continuation(()->{
+            seq.forEach(e->{});
+            return Continuation.empty();
+
+
+        }));
+        return queue.futureStream(getSimpleReact());
+
+
+    }
+
+    default <R> R foldParallel(Function<? super Stream<U>,? extends R> fn){
+
+        com.aol.cyclops.data.async.Queue<U> queue = toQueue().withTimeout(1);
+
+
+        return fn.apply(queue.jdkStream().parallel());
+
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
 import com.aol.cyclops.internal.stream.spliterators.*;
 import com.aol.cyclops.types.*;
+import com.aol.cyclops.types.futurestream.Continuation;
 import com.aol.cyclops.types.stream.*;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.aol.cyclops.util.function.Lambda;
@@ -329,17 +330,34 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     default <R> ReactiveSeq<R> parallel(Function<? super Stream<T>,? extends Stream<R>> fn){
         com.aol.cyclops.data.async.Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
-                                                                  .build()
-                                                                  .withTimeout(1);
-        return ReactiveSeq.generate(()->foldParallel(fn) )
-                          .take(1)
-                          .map(s-> FutureW.ofSupplier(()->queue.fromStream(s), ForkJoinPool.commonPool()))
-                          .flatMap(f->queue.stream());
+                                                                  .build();
+
+
+        ReactiveSeq seq = ReactiveSeq.generate(()->foldParallel(fn) )
+                .take(1)
+                .map(s-> FutureW.ofSupplier(()->{s.forEach(queue::offer); return true;}, ForkJoinPool.commonPool())
+                         .peek(b-> queue.close()));
+
+
+
+
+        queue.addContinuation(new Continuation(()->{
+            seq.forEach(e->{});
+            return Continuation.empty();
+
+
+        }));
+        return queue.stream();
+
 
     }
     default <R> R foldParallel(Function<? super Stream<T>,? extends R> fn){
+
+
         com.aol.cyclops.data.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue().build().withTimeout(1);
-        FutureW.ofSupplier(()->queue.fromStream(this), ForkJoinPool.commonPool());
+        FutureW.ofSupplier(()->queue.fromStream(this), ForkJoinPool.commonPool())
+                .peek(b->{queue.close();});
+
         return fn.apply(queue.jdkStream().parallel());
 
     }

@@ -27,6 +27,13 @@ public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
     @Test
+    public void testParallel(){
+        assertThat(ReactiveSeq.range(0,1000)
+                              .parallel(s->s.map(i->i*2))
+                              .count(),equalTo(1000L));
+    }
+
+    @Test
     public void fillReplay(){
         ReactiveSeq<Integer> seq = ReactiveSeq.fill(1);
         ReactiveSeq<Integer> seq1 = seq.take(100).map(i->i*2);

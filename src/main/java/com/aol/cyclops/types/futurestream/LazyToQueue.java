@@ -34,12 +34,12 @@ public interface LazyToQueue<U> extends ToQueue<U> {
                     .isPoolingActive())
                 s.peekSync(v -> {
                     throw new CompletedException(
-                                                 v);
+                            v);
                 });
         })
-                                                              .runContinuation(() -> {
-                                                                  queue.close();
-                                                              });
+                .runContinuation(() -> {
+                    queue.close();
+                });
 
         queue.addContinuation(continuation);
         return queue;
