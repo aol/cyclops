@@ -39,6 +39,7 @@ import reactor.core.publisher.Flux;
 public class AnyMTest {
     @Test
     public void testApEval() {
+
         assertThat(AnyM.fromEval(Eval.now(10)).combine(Eval.later(()->20),this::add).unwrap(),equalTo(Eval.now(30)));
     }
     @Test
@@ -134,6 +135,7 @@ public class AnyMTest {
 	@Test
 	public void flatMapWithListComprehender() {
 	    List<Integer> list = Arrays.asList(1,2,3);
+
 	    AnyMSeq<list,Integer> any = AnyM.fromList(list);
 	    AnyM<list,Integer> mapped = any.flatMap(e -> any.unit(e));
 	    List<Integer> unwrapped = mapped.unwrap();

@@ -268,7 +268,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     default <T2, R> AnyMValue<W,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         if (this.unwrap() instanceof MonadicValue) {
             
-            return (AnyMValue<W, R>) adapter().unit(((MonadicValue) unwrap()).combine(app, fn));
+            return (AnyMValue<W, R>) AnyM.ofValue( ((MonadicValue<T>) unwrap()).combine(app, fn),adapter());
         }
         return (AnyMValue<W, R>) MonadicValue.super.combine(app, fn);
     }

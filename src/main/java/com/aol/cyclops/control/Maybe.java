@@ -316,7 +316,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @return Maybe with a List of values
      */
     public static <T> Maybe<ListX<T>> sequenceJust(final CollectionX<Maybe<T>> maybes) {
-        return AnyM.sequence(maybes.map(AnyM::fromMaybe),Witness.maybe.INSTANCE)
+        return AnyM.sequence(maybes.stream().filter(Maybe::isPresent).map(AnyM::fromMaybe).toListX(),Witness.maybe.INSTANCE)
                    .to(Witness::maybe);
     }
 

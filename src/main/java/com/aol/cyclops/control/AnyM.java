@@ -27,11 +27,14 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops.control.monads.transformers.FutureT;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import com.aol.cyclops.data.collections.extensions.standard.SetX;
 import com.aol.cyclops.types.*;
 import com.aol.cyclops.util.function.*;
 import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
+import org.pcollections.PSet;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -450,7 +453,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      */
     public static <T> AnyMSeq<list,T> fromList(final List<T> list) {
         Objects.requireNonNull(list);
-        return AnyMFactory.instance.seq(list,Witness.list.INSTANCE);
+        final List<T> toUse = (list instanceof CollectionX)? list : ListX.fromIterable(list);
+        return AnyMFactory.instance.seq(toUse,Witness.list.INSTANCE);
     }
     public static <W extends Witness.CollectionXWitness<W>,T> AnyMSeq<W,T> fromCollectionX(final CollectionX<T> collection, W witness) {
         Objects.requireNonNull(collection);
@@ -470,8 +474,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      */
     public static <T> AnyMSeq<set,T> fromSet(final Set<T> set) {
         Objects.requireNonNull(set);
-        return AnyMFactory.instance.seq(set, Witness.set.INSTANCE);
+        final Set<T> toUse = (set instanceof CollectionX)? set : SetX.fromIterable(set);
+        return AnyMFactory.instance.seq(SetX.fromIterable(set), Witness.set.INSTANCE);
     }
+
+
 
     /**
      * Create an AnyM wrapping a Stream of the supplied data

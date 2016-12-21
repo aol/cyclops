@@ -52,7 +52,7 @@ public class AnyMSeqTest {
         
        
        
-        assertThat(maybes,equalTo(AnyM.fromList(ListX.of(ListX.of(10,1)))));
+        assertThat(maybes.map(s->s.collect(Collectors.toList())),equalTo(AnyM.fromList(ListX.of(ListX.of(10,1)))));
     }
     @Test
     public void testSequence(){
@@ -62,17 +62,21 @@ public class AnyMSeqTest {
                 .stream()
                 .map(x ->Stream.of( x))
                 .collect(Collectors.toList());
-       
+
+
         
         AnyM<stream,ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromStream(futures), stream.INSTANCE);
         
- 
-        List<Integer> collected = futureList.<Stream<Integer>>unwrap().collect(Collectors.toList());
-        assertThat(collected.size(),equalTo( list.size()));
+
+        System.out.println(" future list " + futureList);
+
+        ListX<ListX<Integer>> collected = futureList.to(Witness::reactiveSeq).toListX();
+
+
+        System.out.println(collected);
+        assertThat(collected.get(0).size(),equalTo( list.size()));
         
-        for(Integer next : list){
-            assertThat(list.get(next),equalTo( collected.get(next)));
-        }
+
         
     }
    
@@ -88,14 +92,12 @@ public class AnyMSeqTest {
 
        
         AnyM<stream,ListX<String>> futureList = AnyM.traverse( AnyM.listFromStream(futures), (Integer i) -> "hello" +i, stream.INSTANCE);
-   
-        List<String> collected = futureList.<Stream<String>>unwrap().collect(Collectors.toList());
-        assertThat(collected.size(),equalTo( list.size()));
+
+        ListX<ListX<String>> collected = futureList.to(Witness::reactiveSeq).toListX();
+
+        assertThat(collected.get(0).size(),equalTo( list.size()));
         
-        for(Integer next : list){
-            assertThat("hello"+list.get(next),equalTo( collected.get(next)));
-        }
-        
+
     }
 
 
