@@ -536,6 +536,7 @@ public class StreamUtils {
     public static <T, X extends Throwable> void forEachWithError(final Stream<T> stream, final Consumer<? super T> consumerElement,
             final Consumer<? super Throwable> consumerError) {
 
+
         val t2 = FutureStreamUtils.forEachWithError(stream, consumerElement, consumerError);
         t2.v2.run();
 

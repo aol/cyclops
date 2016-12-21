@@ -223,9 +223,9 @@ public class FluentTriFunctionTest {
     @Test
     public void testLiftM() {
 
-        AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::add)
-                                              .<Witness.stream>liftF()
-                                              .apply(AnyM.streamOf(1, 2, 3, 4), AnyM.streamOf(1), AnyM.streamOf(10));
+        AnyM<Witness.list,Integer> result = FluentFunctions.of(this::add)
+                                              .<Witness.list>liftF()
+                                              .apply(AnyM.listOf(1, 2, 3, 4), AnyM.listOf(1), AnyM.listOf(10));
 
         assertThat(result.stream()
                          .toList(),

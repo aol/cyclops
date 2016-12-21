@@ -29,10 +29,6 @@ public class MonadTest {
 	 Optional<Integer> value = Optional.of(42);
 
 
-	
-
-	
-	
 	@Test
 	public void testSequence(){
 		
@@ -87,7 +83,7 @@ public class MonadTest {
 		
 		AnyM<completableFuture,Integer> result = lifted.apply(AnyM.fromCompletableFuture(CompletableFuture.completedFuture(3)));
 		
-		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(6));
+		assertThat(result.<CompletableFuture<Integer>>unwrap().join(),equalTo(6));
 	}
 	
 	
@@ -99,7 +95,7 @@ public class MonadTest {
 		AnyM<completableFuture,Integer> result = lifted.apply(AnyM.fromCompletableFuture(CompletableFuture.completedFuture(3)),
 																AnyM.fromCompletableFuture(CompletableFuture.completedFuture(4)));
 		
-		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
+		assertThat(result.<CompletableFuture<Integer>>unwrap().join(),equalTo(7));
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
@@ -121,6 +117,6 @@ public class MonadTest {
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromArray(3),AnyM.fromArray(4,6,7));
 		
 		
-		assertThat(result.<Optional<List<Integer>>>unwrap().get(),equalTo(Arrays.asList(7,9,10)));
+		assertThat(result.<Stream<List<Integer>>>unwrap().collect(Collectors.toList()),equalTo(Arrays.asList(7,9,10)));
 	}
 }

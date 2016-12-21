@@ -344,6 +344,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     static <W extends WitnessType<W>,T1> AnyM<W,T1> flatten(AnyM<W,? extends AnyM<W,T1>> nested){
         return nested.flatMapA(Function.identity());
     }
+    static <W extends WitnessType<W>,T1> AnyM<W,T1> flattenI(AnyM<W,? extends Iterable<T1>> nested){
+        return nested.flatMapI(Function.identity());
+    }
 
    
     /**
@@ -500,6 +503,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      */
     public static <T> AnyMSeq<stream,T> streamOf(final T... streamData) {
         return AnyMFactory.instance.seq(Stream.of(streamData),Witness.stream.INSTANCE);
+    }
+    public static <T> AnyMSeq<list,T> listOf(final T... elements) {
+        return AnyMFactory.instance.seq(ListX.of(elements),Witness.list.INSTANCE);
     }
 
     /**

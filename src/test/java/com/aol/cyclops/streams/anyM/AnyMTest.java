@@ -140,14 +140,7 @@ public class AnyMTest {
 							.stream()
 							.toList(),equalTo(Arrays.asList(1,2,2)));
 	}
-	@Test
-	public void testJoin2(){
-		assertThat(AnyM.fromArray(AnyM.fromArray(asList(1,2),asList(2)))
-				        .to(AnyM::flatten)
-						.stream()
-						.toList(),equalTo(Arrays.asList(1,2,2)));
-	}
-	
+
 	@Test
 	public void testToSet(){
 		assertThat(fromStream(Stream.of(1,2,2))
@@ -354,12 +347,12 @@ public class AnyMTest {
 	}
 	@Test
 	public void aggregate2(){
-		List<Integer> result = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4)))
-								.aggregate((AnyM)AnyM.fromCompletableFuture(CompletableFuture.completedFuture(5)))
+		List<Integer> result = AnyM.fromOptional(Optional.of(1))
+								.aggregate(AnyM.ofNullable(2))
 								.stream()
-								.toList();
+								.toList().get(0);
 		
-		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
+		assertThat(result,equalTo(Arrays.asList(1,2)));
 	}
 
 
@@ -443,6 +436,6 @@ public class AnyMTest {
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
 		
 		
-		assertThat(result.<Optional<List<Integer>>>unwrap().get(),equalTo(Arrays.asList(7,9,10)));
+		assertThat(result.<Optional<List<Integer>>>unwrap().get(),equalTo(7));
 	}
 }

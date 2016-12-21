@@ -194,9 +194,9 @@ public class FluentBiFunctionTest {
 	@Test
 	public void testLiftM(){
 		
-		AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::add)
-											  .<Witness.stream>liftF()
-											  .apply(AnyM.streamOf(1,2,3,4),AnyM.streamOf(1));
+		AnyM<Witness.list,Integer> result = FluentFunctions.of(this::add)
+											  .<Witness.list>liftF()
+											  .apply(AnyM.listOf(1,2,3,4),AnyM.listOf(1));
 		
 		assertThat(result.stream().toList(),
 					equalTo(Arrays.asList(2,3,4,5)));

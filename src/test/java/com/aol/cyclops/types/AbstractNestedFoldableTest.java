@@ -109,7 +109,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void reduceBinaryOperator() {
-        assertThat(of(100,200,300,400,500).reduce( (acc,next) -> acc+next).stream().single(),is(1500));
+        assertThat(of(100,200,300,400,500).reduce( (acc,next) -> acc+next).stream().single(),is(Optional.of(1500)));
     }
 
     @Test
@@ -325,12 +325,12 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Test
     public void testSingleOptional() {
         
-        assertThat(of(1,11).singleOptional().stream().toListX(),equalTo(ListX.of()));
+        assertThat(of(1,11).singleOptional().stream().toListX(),equalTo(ListX.of(Optional.empty())));
     }
 
     @Test
     public void testGet() {
-        assertThat(of(1).get(0).stream().single(),equalTo(1));
+        assertThat(of(1).get(0).stream().single(),equalTo(Optional.of(1)));
     }
 
     @Test

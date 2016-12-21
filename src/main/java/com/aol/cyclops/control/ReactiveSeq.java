@@ -211,7 +211,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     default <R> R foldJooλ(Function<? super Seq<T>, ? extends R> mapper){
         Spliterator<T> split = this.spliterator();
-        return mapper.apply(Seq.seq((Stream<T>)this));
+        return mapper.apply(Seq.seq(split));
     }
 
 
