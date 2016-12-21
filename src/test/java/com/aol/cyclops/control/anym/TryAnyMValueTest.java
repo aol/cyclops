@@ -12,11 +12,13 @@ import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.data.Mutable;
 
+import java.util.NoSuchElementException;
+
 public class TryAnyMValueTest extends BaseAnyMValueTest<Witness.tryType> {
     @Before
     public void setUp() throws Exception {
         just = AnyM.fromTry(Try.success(10));
-        none = AnyM.fromTry(Try.failure(new RuntimeException()));
+        none = AnyM.fromTry(Try.failure(new NoSuchElementException()));
     }
     @Test
     public void testPeek() {

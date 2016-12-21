@@ -28,6 +28,7 @@ public class ZippingSpliterator<T1,T2,R> implements Spliterator<R> {
 
         @Override
         public void accept(T t) {
+            System.out.println("Zipper " + t);
             if(value==null){
                 value = t;
             }else{
@@ -54,7 +55,10 @@ public class ZippingSpliterator<T1,T2,R> implements Spliterator<R> {
 
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
-        if(left.tryAdvance(leftQueue) && right.tryAdvance(rightQueue)){
+        left.tryAdvance(leftQueue);
+        right.tryAdvance(rightQueue);
+
+        if(!leftQueue.isEmpty() && !rightQueue.isEmpty()){
             while(!leftQueue.isEmpty() && !rightQueue.isEmpty()){
                 action.accept(fn.apply(leftQueue.next(),rightQueue.next()));
             }

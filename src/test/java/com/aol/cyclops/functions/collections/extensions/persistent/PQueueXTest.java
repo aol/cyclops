@@ -29,7 +29,7 @@ public class PQueueXTest extends AbstractCollectionXTest{
 	@Test
     public void coflatMap(){
        assertThat(PQueueX.of(1,2,3)
-                   .coflatMap(s->s.sum(i->i))
+                   .coflatMap(s->s.sumInt(i->i))
                    .single(),equalTo(6));
         
     }

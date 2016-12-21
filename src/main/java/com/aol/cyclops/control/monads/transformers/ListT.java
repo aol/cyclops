@@ -261,7 +261,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      */
     @Override
     public String toString() {
-        return String.format("ListT[%s]", run);
+        return String.format("ListT[%s]",  run.unwrap().toString());
 
     }
 
@@ -316,7 +316,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     @Override
     public <T> ListT<W,T> unitAnyM(final AnyM<W,Traversable<T>> traversable) {
 
-        return of((AnyMSeq) traversable.map(t -> ListX.fromIterable(t)));
+        return of((AnyM) traversable.map(t -> ListX.fromIterable(t)));
     }
 
     @Override

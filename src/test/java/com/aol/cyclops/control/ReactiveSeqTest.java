@@ -1,6 +1,7 @@
 package com.aol.cyclops.control;
 
 import com.aol.cyclops.Monoids;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 import org.junit.Test;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.aol.cyclops.util.function.Predicates.*;
@@ -93,6 +95,62 @@ public class ReactiveSeqTest {
        // stream.printOut();
         stream.limitLast(2).zipS(Stream.of(1,2)).printOut();
     }
+
+    @Test
+    public void testFlatMap(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+
+        pushable.onNext("hello");
+        pushable.onComplete();
+        stream.map(s->s.length())
+                .flatMap(s-> IntStream.range(0,s).boxed())
+                .forEach(System.out::println);
+        pushable.onNext("world");
+    }
+    @Test
+    public void testIterator(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+
+        pushable.onNext("hello");
+        pushable.onComplete();
+        Iterator<Integer> it = stream.map(s->s.length())
+                                     .flatMap(s-> IntStream.range(0,s).boxed())
+                                     .iterator();
+        ListX<Integer> result = ListX.empty();
+        while(it.hasNext()){
+            result.add(it.next());
+        }
+       assertThat(result,equalTo(ListX.of(0,1,2,3,4)));
+    }
+    @Test
+    public void testIteratorPull(){
+
+        ReactiveSeq<String> stream = ReactiveSeq.of("hello");
+
+
+        Iterator<Integer> it = stream.map(s->s.length())
+                .flatMap(s-> IntStream.range(0,s).boxed())
+                .iterator();
+        ListX<Integer> result = ListX.empty();
+        while(it.hasNext()){
+            result.add(it.next());
+        }
+        assertThat(result,equalTo(ListX.of(0,1,2,3,4)));
+    }
+    @Test
+    public void forEachWithError(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+
+        pushable.onNext("hello");
+        pushable.onComplete();
+        stream.map(s->s.length())
+                .flatMap(s-> IntStream.range(0,s).boxed())
+                .forEachWithError(System.out::println,System.err::println);
+        pushable.onNext("world");
+    }
     
     @Test
     public void zip(){
@@ -106,7 +164,7 @@ public class ReactiveSeqTest {
             active.set(false);
             pushable.onComplete();
         }).run();
-       
+
         assertThat(stream.zipS(Stream.of(1,2)).toList().size(),equalTo(1));
         assertFalse(active.get());
     }

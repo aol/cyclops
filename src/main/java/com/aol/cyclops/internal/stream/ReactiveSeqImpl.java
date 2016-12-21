@@ -62,20 +62,15 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
         //Iterator for push streams
         Spliterator<T> split = stream.spliterator();
         class QueueingIterator implements Iterator<T>,Consumer<T>{
-            T next;
+
             boolean available;
-            ArrayDeque<T> qd;
+            ArrayDeque<T> qd = new ArrayDeque<>();
             @Override
             public void accept(T t) {
                
-                if(next==null)
-                    next = t;
-                else{
-                    if(qd ==null){
-                        qd = new ArrayDeque<>();
-                    }
-                    qd.offer(t);
-                }
+
+                qd.offer(t);
+
                 available = true;
                     
                 
@@ -93,11 +88,9 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
                 if (!available && !hasNext())
                     throw new NoSuchElementException();
                 else {
-                    available = false;
-                    T res = next;
-                    if(qd!=null && qd.size()>0)
-                        next = qd.pop();
-                    return res;
+                    available = qd.size()-1>0;
+                    return qd.pop();
+
                 }
             }
             

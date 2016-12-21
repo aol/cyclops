@@ -25,7 +25,8 @@ public class PushingSpliterator<T> implements Spliterator<T> {
     
     @Getter
     Consumer<? super T> action;
-    @Getter @Setter
+    @Getter @Setter //error handlers should be chained together, and recoverable errors pushed to the appropriate spliterator
+                    //with the recovered value (may or may not be possible, we will find out)
     Consumer<? super Throwable> error;
     @Getter
     Runnable onComplete =()->{
@@ -72,7 +73,7 @@ public class PushingSpliterator<T> implements Spliterator<T> {
         if(capture!=null && capture.size()>0){
             action.accept(capture.remove(0));
         }
-        return hold;
+        return capture.size()>0 || hold;
     }
 
     @Override

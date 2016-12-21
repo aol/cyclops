@@ -29,7 +29,7 @@ public class OptionalTest {
 	@Test
 	public void testForComphrensions4Null(){
 		Optional<Integer> one = Optional.of(1);
-		Optional<Integer> empty = null;
+		Optional<Integer> empty = Optional.empty();
 		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
 
 		Object result = Optionals.forEach4(one,
