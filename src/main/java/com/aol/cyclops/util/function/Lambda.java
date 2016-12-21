@@ -16,6 +16,10 @@ import org.jooq.lambda.function.Function8;
  *
  */
 public class Lambda {
+
+    public static <T> Iterable<T> it(Iterable<T> it){
+        return it;
+    }
     /**
      * E.g. to use a supplier to embed additional code inisde a ternary operator
      * 

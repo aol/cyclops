@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -12,10 +13,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.*;
 import java.util.stream.*;
 
+import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
+import com.aol.cyclops.internal.stream.spliterators.*;
 import com.aol.cyclops.types.*;
 import com.aol.cyclops.types.stream.*;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
+import com.aol.cyclops.util.function.Lambda;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -28,13 +32,6 @@ import com.aol.cyclops.Reducer;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.internal.stream.spliterators.FillSpliterator;
-import com.aol.cyclops.internal.stream.spliterators.LazySingleSpliterator;
-import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
-import com.aol.cyclops.internal.stream.spliterators.ReversingArraySpliterator;
-import com.aol.cyclops.internal.stream.spliterators.ReversingListSpliterator;
-import com.aol.cyclops.internal.stream.spliterators.ReversingRangeIntSpliterator;
-import com.aol.cyclops.internal.stream.spliterators.ReversingRangeLongSpliterator;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
@@ -396,11 +393,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
 
-    @Override
-    public <T> ReactiveSeq<T> unitIterable(Iterator<T> it);*/
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
@@ -408,7 +401,23 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     public <T> ReactiveSeq<T> unit(T unit);
 
-   
+
+    default <R> ReactiveSeq<R> parallel(Function<? super Stream<T>,? extends Stream<R>> fn){
+        com.aol.cyclops.data.async.Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
+                                                                  .build()
+                                                                  .withTimeout(1);
+        return ReactiveSeq.generate(()->foldParallel(fn) )
+                          .take(1)
+                          .map(s-> FutureW.ofSupplier(()->queue.fromStream(s), ForkJoinPool.commonPool()))
+                          .flatMap(f->queue.stream());
+
+    }
+    default <R> R foldParallel(Function<? super Stream<T>,? extends R> fn){
+        com.aol.cyclops.data.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue().build().withTimeout(1);
+        FutureW.ofSupplier(()->queue.fromStream(this), ForkJoinPool.commonPool());
+        return fn.apply(queue.jdkStream().parallel());
+
+    }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#foldRight(java.lang.Object, java.util.function.BiFunction)
      */
@@ -705,15 +714,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      */
     @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-        return zip(Seq.seq(other));
-    }
+    <U> ReactiveSeq<Tuple2<T, U>> zipS(final Stream<? extends U> other);
     
     
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return zip(Seq.seq(other));
+        return zipS(StreamSupport.stream(other.spliterator(),false));
     }
 
 

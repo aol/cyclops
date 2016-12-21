@@ -1,17 +1,16 @@
 package com.aol.cyclops.types;
 
-import com.aol.cyclops.control.*;
+import com.aol.cyclops.control.Eval;
+import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.control.Try;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.util.function.F1;
 import org.jooq.lambda.Seq;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
-import java.util.Iterator;
-import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -26,6 +25,7 @@ public interface FoldableTraversable<T> extends F1<Long,T>,
                                                 CyclopsCollectable<T>,
                                                 ConvertableSequence<T>,
                                                 ExtendedTraversable<T>{
+
 
 
 

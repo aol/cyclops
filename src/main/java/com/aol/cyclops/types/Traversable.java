@@ -1,24 +1,20 @@
 package com.aol.cyclops.types;
 
-import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.function.*;
-import java.util.stream.*;
-
-import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
-import org.jooq.lambda.Seq;
+import com.aol.cyclops.Monoid;
+import com.aol.cyclops.control.ReactiveSeq;
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import org.reactivestreams.Subscription;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * A non-scalar navigatable data type
@@ -44,6 +40,8 @@ public interface Traversable<T> extends Publisher<T>,
     default IntStream mapToInt(ToIntFunction<? super T> fn){
         return this.stream().mapToInt(fn);
     }
+
+
 
     /**
      * @return This Traversable converted to a Stream
