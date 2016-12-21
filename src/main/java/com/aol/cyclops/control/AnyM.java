@@ -27,6 +27,7 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops.control.monads.transformers.FutureT;
 import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops.types.*;
 import com.aol.cyclops.util.function.*;
 import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
@@ -38,13 +39,6 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops.internal.monads.AnyMValueImpl;
 
-import com.aol.cyclops.types.EmptyUnit;
-import com.aol.cyclops.types.Foldable;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Unit;
-import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.Witness;
@@ -101,6 +95,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
                                                             Foldable<T>,
                                                             Functor<T>,
                                                             ToStream<T>,
+                                                            Zippable<T>,
                                                             Publisher<T> {
 
     /**
@@ -333,7 +328,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      */
     @Override
     default AnyM<W,T> peek(Consumer<? super T> c){
-        return (AnyM<W, T>) Functor.super.peek(c);
+        return (AnyM<W, T>) Zippable.super.peek(c);
     }
 
 
@@ -497,7 +492,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @return  AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
     public static <T> AnyMSeq<stream,T> streamOf(final T... streamData) {
-        return AnyMFactory.instance.seq(Stream.of(streamData),Witness.streamable.INSTANCE);
+        return AnyMFactory.instance.seq(Stream.of(streamData),Witness.stream.INSTANCE);
     }
 
     /**
@@ -1022,7 +1017,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
        
         BiFunction<AnyM<W,Stream<T>>,AnyM<W,T>,AnyM<W,Stream<T>>> combineToStream = (acc,next) -> c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->Stream.concat(a,Stream.of(b)))),acc,next);
 
-        BinaryOperator<AnyM<W,Stream<T>>> combineStreams = (a,b)->a;//a.apply(b, (s1,s2)->s1);  
+        BinaryOperator<AnyM<W,Stream<T>>> combineStreams = (a,b)-> (AnyM<W,Stream<T>>)a.zip(b,(z1,z2)->Stream.concat(z1,z2)); // a.apply(b, (s1,s2)->s1);
 
         return stream.reduce(identity,combineToStream,combineStreams);
     }

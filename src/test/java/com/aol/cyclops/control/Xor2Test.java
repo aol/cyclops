@@ -120,12 +120,9 @@ public class Xor2Test {
 
 	
 
-	
-
-	
-
 	@Test
 	public void testSequence() {
+		Xor.sequencePrimary(ListX.of(just,Xor.primary(1))).printOut();
 		Xor<ListX<String>,ListX<Integer>> maybes =Xor.sequencePrimary(ListX.of(just,none,Xor.primary(1)));
 		assertThat(maybes,equalTo(Xor.primary(ListX.of(10,1))));
 	}
@@ -213,12 +210,12 @@ public class Xor2Test {
 	
 	@Test
 	public void testIterate() {
-		assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(Optional.of(145)));
+		assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.generate().limit(10).sumInt(i->i),equalTo(Optional.of(100)));
+		assertThat(just.generate().limit(10).sumInt(i->i),equalTo(100));
 	}
 
 	@Test

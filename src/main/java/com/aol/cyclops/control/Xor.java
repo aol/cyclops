@@ -479,7 +479,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
      * @return Xor sequenced and swapped
      */
     public static <ST, PT> Xor<ListX<PT>, ListX<ST>> sequenceSecondary(final CollectionX<Xor<ST, PT>> xors) {
-        return AnyM.sequence(xors.map(i->AnyM.fromXor(i.swap())),Witness.xor.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Xor::isSecondary).map(i->AnyM.fromXor(i.swap())).toListX(),Witness.xor.INSTANCE)
                     .to(Witness::xor);
     }
     /**
@@ -552,7 +552,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
      * @return Xor Sequenced
      */
     public static <ST, PT> Xor<ListX<ST>, ListX<PT>> sequencePrimary(final CollectionX<Xor<ST, PT>> xors) {
-        return AnyM.sequence(xors.map(AnyM::fromXor),Witness.xor.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Xor::isPrimary).map(AnyM::fromXor).toListX(),Witness.xor.INSTANCE)
                     .to(Witness::xor);
     }
     /**

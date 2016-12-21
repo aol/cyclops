@@ -558,7 +558,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      * @return Ior sequenced and swapped
      */
     public static <ST, PT> Ior<ListX<PT>, ListX<ST>> sequenceSecondary(final CollectionX<? extends Ior<ST, PT>> iors) {
-        return AnyM.sequence(iors.map(i->AnyM.fromIor(i.swap())),Witness.ior.INSTANCE)
+        return AnyM.sequence(iors.stream().filterNot(Ior::isPrimary).map(i->AnyM.fromIor(i.swap())).toListX(),Witness.ior.INSTANCE)
                    .to(Witness::ior);
    
     }
@@ -659,7 +659,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      * @return Ior Sequenced
      */
     public static <ST, PT> Ior<ListX<ST>, ListX<PT>> sequencePrimary(final CollectionX<Ior<ST, PT>> iors) {
-        return AnyM.sequence(iors.map(AnyM::fromIor),Witness.ior.INSTANCE)
+        return AnyM.sequence(iors.stream().filterNot(Ior::isSecondary).map(AnyM::fromIor).toListX(),Witness.ior.INSTANCE)
                    .to(Witness::ior);
     }
 
