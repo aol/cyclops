@@ -694,6 +694,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
     Maybe<T> recover(Supplier<T> value);
 
     Maybe<T> recover(T value);
+    
+    Maybe<T> recoverWith(Supplier<? extends Maybe<T>> fn);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#map(java.util.function.Function)
@@ -845,6 +847,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         public Maybe<T> recover(final Supplier<T> value) {
             return this;
         }
+        
 
         @Override
         public String toString() {
@@ -908,6 +911,14 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return (Just<R>) Maybe.just(m.get());
         }
 
+        /* (non-Javadoc)
+         * @see com.aol.cyclops.control.Maybe#recoverWith(java.util.function.Supplier)
+         */
+        @Override
+        public Maybe<T> recoverWith(Supplier<? extends Maybe<T>> fn) {
+            return this;
+        }
+
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -962,7 +973,12 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return new Lazy<T>(
                                lazy.map(m -> m.recover(value)));
         }
-
+        @Override
+        public Maybe<T> recoverWith(Supplier<? extends Maybe<T>> fn) {
+            return new Lazy<T>(
+                                    lazy.map(m -> m.recoverWith(fn)));
+        }
+       
         @Override
         public String toString() {
             Maybe<T> maybe = lazy.get();
@@ -1094,7 +1110,14 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return new Just<>(
                               Eval.later(value));
         }
+        @Override
+        public Maybe<T> recoverWith(Supplier<? extends Maybe<T>> fn) {
+   
+            return new Just<>(Eval.narrow(Eval.later(fn))).flatMap(m->m);
 
+        }
+
+        
         @Override
         public <R> R visit(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
             return none.get();
