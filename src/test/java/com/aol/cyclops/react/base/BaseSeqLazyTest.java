@@ -12,10 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -44,7 +41,7 @@ public abstract class BaseSeqLazyTest {
 	@Test
 	public void testMax(){
 		assertThat(of(1,2,3,4,5).foldLazy(s->s.max((t1,t2) -> t1-t2))
-				.get(),is(5));
+				.get(),is(Optional.of(5)));
 	}
 
 	protected Object value() {

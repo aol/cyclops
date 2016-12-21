@@ -598,7 +598,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final <T> Stream<T> toStream() {
-        return (Stream<T>) stream;
+        return (Stream<T>) this.unwrapStream();
     }
 
     @Override

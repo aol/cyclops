@@ -49,7 +49,7 @@ public class LiftTest {
 		
 		AnyM<tryType,Integer> result = divide.apply(Try.of(20, ArithmeticException.class).anyM(), Try.success(4).anyM());
 		System.out.println(result);
-		assertThat(result.<Try<Integer,ArithmeticException>>unwrap().isFailure(),equalTo(true));
+		assertThat(result.<Try<Integer,ArithmeticException>>unwrap().isFailure(),equalTo(false));
 	}
 	
 	@Test
@@ -59,7 +59,7 @@ public class LiftTest {
 		
 		AnyM<tryType,Integer> result = divide.apply(Try.of(2, ArithmeticException.class).anyM(), Try.success(4).anyM());
 		
-		assertThat(result.<Try<List<Integer>,ArithmeticException>>unwrap().get(),equalTo(Arrays.asList(0, 2, 1, 0)));
+		assertThat(result.<Try<List<Integer>,ArithmeticException>>unwrap().get(),equalTo(0));
 		
 	}
 	

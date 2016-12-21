@@ -37,7 +37,7 @@ public class DITest {
 			 									      (a,b)->depth3("bob"),
 													  (a,b,c)->depth3("bob"),
 													  (a,b,c,d)->(a+b+c+d));
-        assertThat(res.apply(new UserRepositoryImpl()), equalTo(29));
+        assertThat(res.apply(new UserRepositoryImpl()), equalTo(9));
     }
 	private Reader<UserRepository,Integer> depth8(String name){
         return repo->depth7(name).apply(repo)+1;

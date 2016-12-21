@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -36,7 +37,7 @@ public class AnyMValueTest {
 
         Stream<AnyM<optional,Integer>> source = ReactiveSeq.of(just,AnyM.ofNullable(1));
         AnyM<optional,Stream<Integer>> maybes =AnyM.sequence(source, optional.INSTANCE);
-        assertThat(maybes,equivalent(AnyM.ofNullable(ListX.of(10,1))));
+        assertThat(maybes.map(s->s.collect(Collectors.toList())),equalTo(AnyM.ofNullable(ListX.of(10,1))));
     }
    
     @Test

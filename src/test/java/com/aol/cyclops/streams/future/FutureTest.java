@@ -12,16 +12,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.aol.cyclops.control.FutureW;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,13 +45,13 @@ public  class FutureTest {
 	public void testMapReduce(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100).foldFuture(s->s
 					.reduce( (acc,next) -> acc+next),exec)
-					.get(),is(1500));
+					.get(),is(Optional.of(1500)));
 	}
 	@Test
 	public void testMapReduceSeed(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100)
-				.foldFuture(s->s.reduce( 50,(acc,next) -> acc+next),exec)
-				,is(1550));
+				.foldFuture(s->s.reduce( 50,(acc,next) -> acc+next),exec).get()
+				,is(FutureW.ofResult(1550).get()));
 	}
 	
 	
