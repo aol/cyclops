@@ -18,10 +18,6 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
-import org.jooq.lambda.Collectable;
-import org.jooq.lambda.function.Function3;
-import org.jooq.lambda.function.Function4;
-import org.jooq.lambda.function.Function5;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -32,20 +28,13 @@ import org.reactivestreams.Subscription;
 import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.extensability.FunctionalAdapter;
-import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.util.function.Predicates;
 import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F5;
 import com.aol.cyclops.util.function.F3;
-
-import lombok.val;
 
 /**
  * Wrapper around 'Any' non-scalar 'M'onad
@@ -463,7 +452,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
     @Override
     default <T> AnyMSeq<W,T> fromIterable(Iterable<T> t){
-        return  (AnyMSeq<W,T>)adapter().unitIterator(t.iterator());
+        return  (AnyMSeq<W,T>)adapter().unitIterable(t);
     }
     
     /* (non-Javadoc)
@@ -903,11 +892,11 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
+     * @see com.aol.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){
-        return (AnyMSeq<W,U>)adapter().unitIterator(U);
+        return (AnyMSeq<W,U>)adapter().unitIterable(()->U);
     }
 
     /* (non-Javadoc)

@@ -352,7 +352,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
+     * @see com.aol.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     default <R> PBagX<R> unitIterator(final Iterator<R> it) {

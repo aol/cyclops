@@ -58,7 +58,9 @@ public interface FunctionalAdapter<W extends WitnessType<W>> {
    
     public <T,R> AnyM<W,R> flatMap(AnyM<W,T> t, Function<? super T, ? extends AnyM<W,? extends R>> fn);
 
-   
+    default boolean isFilterable(){
+        return true;
+    }
     @AllArgsConstructor
     static class ValueIterator<T> implements Iterator<T>{
         private final T value;
@@ -77,7 +79,7 @@ public interface FunctionalAdapter<W extends WitnessType<W>> {
     }
     default <T> AnyM<W,T> unit(T o){
       
-        return unitIterator(new ValueIterator<T>(o,0));
+        return unitIterable(()->new ValueIterator<T>(o,0));
     }
 
     <T> Iterable<T> toIterable(AnyM<W,T> t);
@@ -87,7 +89,7 @@ public interface FunctionalAdapter<W extends WitnessType<W>> {
                    .<T>filter(t->false);
     }
     
-    <T> AnyM<W,T> unitIterator(Iterator<T> it);
+    <T> AnyM<W,T> unitIterable(Iterable<T> it);
 
   
 

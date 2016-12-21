@@ -397,10 +397,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
+     * @see com.aol.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
 
     @Override
-    public <T> ReactiveSeq<T> unitIterator(Iterator<T> it);*/
+    public <T> ReactiveSeq<T> unitIterable(Iterator<T> it);*/
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)

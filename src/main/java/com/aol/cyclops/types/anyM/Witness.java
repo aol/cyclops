@@ -209,7 +209,7 @@ public interface Witness {
         @Override
         public FunctionalAdapter<tryType> adapter() {
             return new MonadicValueAdapter<Witness.tryType>(()->Try.failure(null),
-                    Try::success,false,this);
+                    Try::success,Try::fromIterable,false,this);
         }
         
     }
@@ -220,7 +220,7 @@ public interface Witness {
         @Override
         public FunctionalAdapter<ior> adapter() {
             return new MonadicValueAdapter<Witness.ior>(()->Ior.secondary(null),
-                    Ior::primary,false,this);
+                    Ior::primary,Ior::fromIterable,false,this);
         }
         
     }
@@ -231,7 +231,7 @@ public interface Witness {
         @Override
         public FunctionalAdapter<xor> adapter() {
             return new MonadicValueAdapter<Witness.xor>(()->Xor.secondary(null),
-                    Xor::primary,false,this);
+                    Xor::primary,Xor::fromIterable,false,this);
         }
         
     }
@@ -242,7 +242,7 @@ public interface Witness {
         @Override
         public FunctionalAdapter<eval> adapter() {
             return new MonadicValueAdapter<Witness.eval>(()->Eval.now(null),
-                    Eval::now,false,this);
+                    Eval::now,Eval::fromIterable,false,this);
         }
         
     }
@@ -253,7 +253,7 @@ public interface Witness {
         @Override
         public FunctionalAdapter<maybe> adapter() {
             return new MonadicValueAdapter<Witness.maybe>(()->Maybe.none(),
-                    Maybe::just,true,this);
+                    Maybe::just,Maybe::fromIterable,true,this);
         }
         
     }
@@ -264,7 +264,7 @@ public interface Witness {
         @Override
         public FunctionalAdapter<future> adapter() {
             return new MonadicValueAdapter<Witness.future>(FutureW::future,
-                    FutureW::ofResult,false,this);
+                    FutureW::ofResult,FutureW::fromIterable,false,this);
         }
         
     }

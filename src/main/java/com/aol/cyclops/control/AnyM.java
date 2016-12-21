@@ -132,7 +132,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
     
     default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){
-        return (AnyMSeq<W,U>)adapter().unitIterator(U);
+        return (AnyMSeq<W,U>)adapter().unitIterable(()->U);
     }
 
     <R> AnyM<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
@@ -145,7 +145,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return adapter().map(this, fn);
     }
     default <T> AnyM<W,T> fromIterable(Iterable<T> t){
-        return  (AnyM<W,T>)adapter().unitIterator(t.iterator());
+        return  (AnyM<W,T>)adapter().unitIterable(t);
     }
     /**
      * Construct a new instanceof AnyM using the type of the underlying wrapped monad

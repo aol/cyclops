@@ -73,8 +73,8 @@ public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional>
     }
 
     @Override
-    public <T> AnyM<optional, T> unitIterator(Iterator<T> it) {
-       return fromOptional(this.<T>getUnitIterator().apply(it));
+    public <T> AnyM<optional, T> unitIterable(Iterable<T> it)  {
+       return fromOptional(this.<T>getUnitIterator().apply(it.iterator()));
     }
    
     @Override

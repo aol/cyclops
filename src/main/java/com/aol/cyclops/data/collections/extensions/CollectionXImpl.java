@@ -232,7 +232,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
 
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterator(java.util.Iterator)
+     * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     public <U> CollectionX<U> unitIterator(final Iterator<U> u) {

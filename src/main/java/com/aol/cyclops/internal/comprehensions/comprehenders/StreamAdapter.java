@@ -67,8 +67,8 @@ public class StreamAdapter extends AbstractFunctionalAdapter<Witness.stream> {
     }
 
     @Override
-    public <T> AnyM<stream, T> unitIterator(Iterator<T> it) {
-       return fromStream(this.<T>getUnitIterator().apply(it));
+    public <T> AnyM<stream, T> unitIterable(Iterable<T> it)  {
+       return fromStream(this.<T>getUnitIterator().apply(it.iterator()));
     }
    
     @Override

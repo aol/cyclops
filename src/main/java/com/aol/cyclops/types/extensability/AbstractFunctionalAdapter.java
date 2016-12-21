@@ -20,7 +20,7 @@ public abstract class  AbstractFunctionalAdapter<W extends WitnessType<W>>  impl
     public abstract <T, R> AnyM<W, R> flatMap(AnyM<W, T> t, Function<? super T, ? extends AnyM<W, ? extends R>> fn);
 
     @Override
-    public abstract <T> AnyM<W, T> unitIterator(Iterator<T> it);
+    public abstract <T> AnyM<W, T> unitIterable(Iterable<T> it);
 
    
 }

@@ -369,7 +369,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFunctor#unitIterator(java.util.Iterator)
+     * @see com.aol.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     default <R> ListX<R> unitIterator(final Iterator<R> it) {

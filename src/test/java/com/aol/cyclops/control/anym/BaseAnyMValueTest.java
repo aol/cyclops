@@ -55,10 +55,10 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
     public void combine(){
         
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-        assertThat(just.combine(add,none),equivalent(just));
-        assertThat(none.combine(add,just).toTry(),equalTo(Try.success(0))); 
-        assertThat(none.combine(add,none).toTry(),equalTo(Try.success(0))); 
-        assertThat(just.combine(add,just).toTry(),equalTo(Try.success(20)));
+        assertThat(just.combineEager(add,none),equivalent(just));
+        assertThat(none.combineEager(add,just).toTry(),equalTo(Try.success(0)));
+        assertThat(none.combineEager(add,none).toTry(),equalTo(Try.success(0)));
+        assertThat(just.combineEager(add,just).toTry(),equalTo(Try.success(20)));
         
          
     }
@@ -308,6 +308,8 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testFilter() {
+		if(!just.adapter().isFilterable())
+			return;
 		assertFalse(just.filter(i->i<5).toMaybe().isPresent());
 		assertTrue(just.filter(i->i>5).toMaybe().isPresent());
 		assertFalse(none.filter(i->i<5).toMaybe().isPresent());
@@ -317,6 +319,8 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testOfType() {
+		if(!just.adapter().isFilterable())
+			return;
 		assertFalse(just.ofType(String.class).toMaybe().isPresent());
 		assertTrue(just.ofType(Integer.class).toMaybe().isPresent());
 		assertFalse(none.ofType(String.class).toMaybe().isPresent());
@@ -325,6 +329,8 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testFilterNot() {
+		if(!just.adapter().isFilterable())
+			return;
 		assertTrue(just.filterNot(i->i<5).toMaybe().isPresent());
 		assertFalse(just.filterNot(i->i>5).toMaybe().isPresent());
 		assertFalse(none.filterNot(i->i<5).toMaybe().isPresent());
@@ -333,6 +339,8 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testNotNull() {
+		if(!just.adapter().isFilterable())
+			return;
 		assertTrue(just.notNull().toMaybe().isPresent());
 		assertFalse(none.notNull().toMaybe().isPresent());
 		

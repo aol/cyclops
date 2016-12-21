@@ -56,7 +56,7 @@ public interface Traversable<T> extends Publisher<T>,
                                               * Create an IterableFunctor instance of the same type from an Iterator
                                               * <pre>
                                               * {@code
-                                              *       ReactiveSeq<Integer> newSeq = seq.unitIterator(myIterator);
+                                              *       ReactiveSeq<Integer> newSeq = seq.unitIterable(myIterator);
                                               *
                                               * }
                                               * </pre>

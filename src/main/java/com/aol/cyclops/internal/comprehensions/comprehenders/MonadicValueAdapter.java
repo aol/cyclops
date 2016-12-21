@@ -23,10 +23,16 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
    
     private final Supplier<MonadicValue<?>> empty;
     private final Function<?,MonadicValue<?>> unit;
+    private final Function<MonadicValue<?>,MonadicValue<?>> convert;
    
     private final boolean filter;
     private final W witness;
 
+
+    @Override
+    public boolean isFilterable(){
+        return filter;
+    }
 
     
     private <U> Supplier<MonadicValue<U>> getEmpty(){
@@ -77,8 +83,11 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
     }
 
     @Override
-    public <T> AnyM<W, T> unitIterator(Iterator<T> it) {
-       return fromMonadicValue(this.<T>getUnitIterator().apply(it),witness);
+    public <T> AnyM<W, T> unitIterable(Iterable<T> it) {
+        if(it instanceof MonadicValue){
+            fromMonadicValue(convert.apply((MonadicValue)it),witness);
+        }
+       return fromMonadicValue(this.<T>getUnitIterator().apply(it.iterator()),witness);
     }
    
     @Override

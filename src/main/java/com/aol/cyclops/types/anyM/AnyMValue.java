@@ -9,6 +9,7 @@ import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.Zippable;
+import com.aol.cyclops.types.extensability.FunctionalAdapter;
 import com.aol.cyclops.util.function.Predicates;
 import org.reactivestreams.Publisher;
 
@@ -87,7 +88,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
      */
-    default AnyMValue<W,T> combine(final Monoid<T> monoid, final AnyMValue<W,? extends T> v2) {
+    default AnyMValue<W,T> combineEager(final Monoid<T> monoid, final AnyMValue<W,? extends T> v2) {
         return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.apply(t1, t2)))
                         .orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
@@ -226,6 +227,10 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
     @Override
     default <R> AnyMValue<W,R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn){
+        if(unwrap() instanceof MonadicValue){
+            MonadicValue<T> unwrap = unwrap();
+            return AnyM.ofValue(unwrap.flatMap(fn),adapter());
+        }
         return flatMapA(fn.andThen(this::fromIterable));
     }
     @Override

@@ -70,8 +70,8 @@ public class FutureAdapter extends AbstractFunctionalAdapter<Witness.completable
     }
 
     @Override
-    public <T> AnyM<completableFuture, T> unitIterator(Iterator<T> it) {
-       return fromCompletableFuture(this.<T>getUnitIterator().apply(it));
+    public <T> AnyM<completableFuture, T> unitIterable(Iterable<T> it) {
+       return fromCompletableFuture(this.<T>getUnitIterator().apply(it.iterator()));
     }
    
     @Override

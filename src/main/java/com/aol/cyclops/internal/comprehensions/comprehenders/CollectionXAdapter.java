@@ -66,8 +66,8 @@ public class CollectionXAdapter<W extends Witness.CollectionXWitness<W>> extends
     }
 
     @Override
-    public <T> AnyM<W, T> unitIterator(Iterator<T> it) {
-       return fromCollectionX(this.<T>getUnitIterator().apply(it),witness);
+    public <T> AnyM<W, T> unitIterable(Iterable<T> it)  {
+       return fromCollectionX(this.<T>getUnitIterator().apply(it.iterator()),witness);
     }
    
     @Override

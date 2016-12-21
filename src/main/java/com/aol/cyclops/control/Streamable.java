@@ -331,7 +331,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterator(java.util.Iterator)
+     * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     default <T> Streamable<T> unitIterator(final Iterator<T> it) {
