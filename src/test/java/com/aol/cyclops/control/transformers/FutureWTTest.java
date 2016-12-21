@@ -147,8 +147,8 @@ public class FutureWTTest implements Printable {
 	@Test
 	public void testWhenFunctionOfQsuperTQextendsRSupplierOfQextendsR() {
 
-		assertThat(just.visit(i->i+1,()->20),equalTo(11));
-		assertThat(none.visit(i->i+1,()->20),equalTo(20));
+		assertThat(just.visit(i->i+1,()->20),equalTo(AnyM.ofNullable(11)));
+		assertThat(none.visit(i->i+1,()->20),equalTo(AnyM.ofNullable(null)));
 	}
 
 
@@ -167,7 +167,8 @@ public class FutureWTTest implements Printable {
 	@Test
     public void testConvertTo() {
         AnyM<Witness.optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
-        assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
+
+        assertThat(toStream.stream().flatMap(i->i).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 
 
@@ -175,12 +176,12 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testIterate() {
-		assertThat(just.iterate(i->i+1).to(Witness::optional).get().limit(10).sumInt(i->(int)i),equalTo(Optional.of(145)));
+		assertThat(just.iterate(i->i+1).to(Witness::optional).get().limit(10).sumInt(i->(int)i),equalTo(145));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.generate().to(Witness::optional).get().limit(10).sumInt(i->i),equalTo(Optional.of(100)));
+		assertThat(just.generate().to(Witness::optional).get().limit(10).sumInt(i->i),equalTo(100));
 	}
 
 	@Test
@@ -205,8 +206,8 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("FutureWTValue[10]"));
-		assertThat(none.mkString(),equalTo("FutureWTValue[]"));
+		assertThat(just.mkString(),equalTo("FutureT[Optional[FutureW[10]]]"));
+		assertThat(none.mkString(),equalTo("FutureT[Optional.empty]"));
 	}
 
 
@@ -222,6 +223,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testFilter() {
+
 		assertFalse(just.filter(i->i<5).isPresent());
 		assertTrue(just.filter(i->i>5).isPresent());
 		assertFalse(none.filter(i->i<5).isPresent());
@@ -239,6 +241,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testFilterNot() {
+
 		assertTrue(just.filterNot(i->i<5).isPresent());
 		assertFalse(just.filterNot(i->i>5).isPresent());
 		assertFalse(none.filterNot(i->i<5).isPresent());
@@ -345,8 +348,9 @@ public class FutureWTTest implements Printable {
 	    
 	    
 	    
-		assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
-		assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
+		assertThat(just.visit(s->"hello", ()->"world"),equalTo(AnyM.ofNullable("hello")));
+		//none remains none as visit is on the Future not the Optional
+		assertThat(none.visit(s->"hello", ()->"world"),equalTo(AnyM.ofNullable(null)));
 	}
 
 	

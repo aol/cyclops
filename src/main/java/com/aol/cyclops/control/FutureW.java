@@ -1075,6 +1075,11 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
      */
     @Override
     public String mkString() {
+
+        if(future.isDone()){
+            if(!future.isCompletedExceptionally())
+                return "FutureW[" + future.join() + "]";
+        }
         return "FutureW[" + future.toString() + "]";
     }
 

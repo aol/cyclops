@@ -213,33 +213,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Spliterator<T> split = this.spliterator();
         return mapper.apply(Seq.seq((Stream<T>)this));
     }
-    /**
-     * Perform a fold on a primitive IntStream (this is much faster than working with Integer Objects).
-     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
-     * otherwise the provided conversion function will be used.
-     * 
-     * <pre>
-     * {@code 
-     *     ReactiveSeq.range(1, 1000)
-     *                .foldInt(i->i,s->s.map(i->i*2)
-     *                                  .filter(i->i<500)
-     *                                  .average());
-     *                                  
-     *     //OptionalDouble[250.0] 
-     * }
-     * </pre>
-     * 
-     * 
-     * @param fn Conversion function
-     * @param mapper Folding function
-     * @return Fold result
-      //same as mapToInt().xxx
-    default <R> R foldInt(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends R> mapper){
 
-        Spliterator<T> split = this.spliterator();
-        IntStream s = (split instanceof Spliterator.OfInt)? StreamSupport.intStream((Spliterator.OfInt)split,false) : StreamSupport.stream(split,false).mapToInt(fn);
-        return mapper.apply(s);
-    }*/
 
     @Override
     default IntStream mapToInt(ToIntFunction<? super T> fn){
@@ -271,32 +245,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<Long> longs(ToLongFunction<? super T> fn,Function<? super LongStream, ? extends LongStream> mapper){
         return ReactiveSeq.fromSpliterator(mapper.apply(mapToLong(fn)).spliterator());
     }
-    /**
-     * Perform a fold on a primitive LongStream (this is much faster than working with Long Objects).
-     * If this ReactiveSeq has an OfLong Spliterator it will be converted directly to an LongStream,
-     * otherwise the provided conversion function will be used.
-     * 
-     * <pre>
-     * {@code 
-     *     ReactiveSeq.range(1, 1000)
-     *                .foldLong(i->i.longValue(),s->s.map(i->i*2)
-     *                                  .filter(i->i<500)
-     *                                  .average());
-     *                                  
-     *     //OptionalDouble[250.0] 
-     * }
-     * </pre>
-     * 
-     * 
-     * @param fn Conversion function
-     * @param mapper Folding function
-     * @return Fold result
 
-    default <R> R foldLong(ToLongFunction<? super T> fn,Function<? super LongStream, ? extends R> mapper){
-        Spliterator<T> split = this.spliterator();
-        LongStream s = (split instanceof Spliterator.OfLong)? StreamSupport.longStream((Spliterator.OfLong)split,false) : StreamSupport.stream(split,false).mapToLong(fn);
-        return mapper.apply(s);
-    } */
     @Override
     default LongStream mapToLong(ToLongFunction<? super T> fn){
         Spliterator<T> split = this.spliterator();
@@ -326,32 +275,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<Double> doubles(ToDoubleFunction<? super T> fn,Function<? super DoubleStream, ? extends DoubleStream> mapper){
         return ReactiveSeq.fromSpliterator(mapper.apply(mapToDouble(fn)).spliterator());
     }
-    /**
-     * Perform a fold on a primitive DoubleStream (this is much faster than working with Double Objects).
-     * If this ReactiveSeq has an OfDouble Spliterator it will be converted directly to an DoubleStream,
-     * otherwise the provided conversion function will be used.
-     * 
-     * <pre>
-     * {@code 
-     *     ReactiveSeq.range(1, 1000)
-     *                .foldDouble(i->i.doubleValue(),s->s.map(i->i*2)
-     *                                                   .filter(i->i<500)
-     *                                                  .average());
-     *                                  
-     *     //OptionalDouble[250.0] 
-     * }
-     * </pre>
-     * 
-     * 
-     * @param fn Conversion function
-     * @param mapper Folding function
-     * @return Fold result
 
-    default <R> R foldDouble(ToDoubleFunction<? super T> fn,Function<? super DoubleStream, ? extends R> mapper){
-        Spliterator<T> split = this.spliterator();
-        DoubleStream s = (split instanceof Spliterator.OfDouble) ? StreamSupport.doubleStream((Spliterator.OfDouble)split,false) : StreamSupport.stream(split,false).mapToDouble(fn);
-        return mapper.apply(s);
-    } */
+    @Override
     default DoubleStream mapToDouble(ToDoubleFunction<? super T> fn){
         Spliterator<T> split = this.spliterator();
         return (split instanceof Spliterator.OfDouble) ? StreamSupport.doubleStream((Spliterator.OfDouble)split,false) : StreamSupport.stream(split,false).mapToDouble(fn);

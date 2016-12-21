@@ -32,7 +32,8 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
     protected abstract <R> ValueTransformer<W,R> unitAnyM(AnyM<W,? super MonadicValue<R>> anyM);
 
     public boolean isPresent(){
-        return stream().isEmpty();
+
+        return !stream().isEmpty();
     }
     public T get(){
         return stream().firstValue();

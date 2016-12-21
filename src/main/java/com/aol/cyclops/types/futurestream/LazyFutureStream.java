@@ -1540,7 +1540,7 @@ public interface LazyFutureStream<U> extends LazySimpleReactStream<U>, LazyStrea
      */
     @Override
     default <R> LazyFutureStream<R> flatMap(final Function<? super U, ? extends Stream<? extends R>> flatFn) {
-        return narrow(flatten(map(flatFn)));
+        return  (LazyFutureStream<R>)LazySimpleReactStream.super.flatMap(flatFn);
     }
 
     @Override

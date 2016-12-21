@@ -267,7 +267,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      */
     @Override
     public String toString() {
-        return String.format("FutureT[%s]", run);
+        return String.format("FutureT[%s]", run.unwrap().toString());
     }
 
     
