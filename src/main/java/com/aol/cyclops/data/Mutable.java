@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -38,9 +40,14 @@ import java.util.function.Supplier;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class Mutable<T> implements To<Mutable<T>>,Supplier<T>, Consumer<T> {
+public class Mutable<T> implements To<Mutable<T>>,Supplier<T>, Consumer<T>,Iterable<T> {
 
     private T var;
+
+    @Override
+    public Iterator<T> iterator() {
+        return Arrays.asList(var).iterator();
+    }
 
     /**
      * Create a Mutable variable, which can be mutated inside a Closure 

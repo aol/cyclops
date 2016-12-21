@@ -18,14 +18,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.aol.cyclops.control.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -46,25 +43,18 @@ public class Tutorial {
     @Test
     public void futureOperationsExamaple(){
        
-        CompletableFuture<Integer> asyncResult = ReactiveSeq.of(1,2,3,4)
-                                                            .futureOperations(Executors.newFixedThreadPool(1))
-                                                            .reduce( 50,(acc,next) -> acc+next);
+        FutureW<Integer> asyncResult = ReactiveSeq.of(1,2,3,4)
+                                                            .foldFuture(s->s.reduce( 50,(acc,next) -> acc+next),Executors.newFixedThreadPool(1));
         //CompletableFuture[1550]
         
         Eval<Integer> lazyResult = ListX.of(1,2,3,4)
                                         .map(i->i*10)
-                                        .lazyOperations()
-                                        .reduce( 50,(acc,next) -> acc+next);
+                                        .foldLazy(s->s
+                                        .reduce( 50,(acc,next) -> acc+next));
         
       //Eval[15500]
     }
-    @Test
-    public void addValues(){
-        ListX.of(1,2,3)
-        .ap2(this::sum)
-        .ap(ListX.of(4,5,6))
-        .printOut();
-    }
+
     public int sum(int a,int b){
         return a+b;
     }

@@ -33,6 +33,8 @@ import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.*;
 
+import com.aol.cyclops.control.*;
+import com.aol.cyclops.types.FoldableTraversable;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.aol.cyclops.util.function.Lambda;
 import org.jooq.lambda.Seq;
@@ -44,13 +46,6 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops.Monoid;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.Queue.ClosedQueueException;
 import com.aol.cyclops.data.async.Queue.QueueTimeoutException;
@@ -85,11 +80,14 @@ import lombok.val;
 public interface LazyFutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>, ReactiveSeq<U>, LazyToQueue<U>,
         ConfigurableStream<U, FastFuture<U>>, FutureStreamSynchronousPublisher<U> {
 
+    default <R> FutureW<R> foldFuture(Function<? super FoldableTraversable<U>,? extends R> fn){
+        return FutureW.ofSupplier(()->fn.apply(this),getSimpleReact().getExecutor());
+    }
     @Override
-    default ReactiveStreamsTerminalFutureOperations<U> futureOps(Executor ex){
+    default ReactiveStreamsTerminalFutureOperations<U> futureOperations(Executor ex){
         return new LazyFutureStreamFutureOpterationsImpl<U>(ex,this);
     }
-    default ReactiveStreamsTerminalFutureOperations<U> futureOps(){
+    default ReactiveStreamsTerminalFutureOperations<U> futureOperations(){
         return new LazyFutureStreamFutureOpterationsImpl<U>(getSimpleReact().getExecutor(),this);
     }
     default <A,R> LazyFutureStream<R> collectSeq(Collector<? super U,A,R> c){

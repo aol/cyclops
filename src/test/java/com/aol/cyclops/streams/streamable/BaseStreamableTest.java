@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -237,7 +238,7 @@ public  class BaseStreamableTest {
 		
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 	       
 	        assertThat(map1.get(0),hasItem(2));
 	        assertThat(map1.get(0),hasItem(4));
@@ -358,20 +359,16 @@ public  class BaseStreamableTest {
 	    }
 	    
 	   
-	    //tests converted from lazy-seq suite
-	    @Test
-		public void flattenEmpty() throws Exception {
-				assertTrue(ReactiveSeq.<Integer>of().flatten().toList().isEmpty());
-		}
+
 	    @Test
 		public void flattenOptional() throws Exception {
 	    	
-				assertTrue(ReactiveSeq.of(Optional.of(1)).flatten().toList().get(0).equals(new Integer(1)));
+				assertTrue(ReactiveSeq.of(Optional.of(1)).to(ReactiveSeq::flattenO).toList().get(0).equals(new Integer(1)));
 		}
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));		
+			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).to(ReactiveSeq::flattenI).toList().size(),equalTo(asList(1,  2).size()));
 		}
 
 		
@@ -379,7 +376,7 @@ public  class BaseStreamableTest {
 		@Test
 		public void flattenEmptyStream() throws Exception {
 			
-			assertThat(ReactiveSeq.<Integer>of(1,2,3,4,5,5,6,8,9,10).flatten().limit(10).collect(Collectors.toList()).size(),
+			assertThat(ReactiveSeq.<Integer>of(1,2,3,4,5,5,6,8,9,10).limit(10).collect(Collectors.toList()).size(),
 											equalTo(asList(2, 3, 4, 5, 6, 7, 0, 0, 0, 0).size()));
 		}
 		

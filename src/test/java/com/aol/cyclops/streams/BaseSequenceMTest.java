@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -52,70 +53,18 @@ public  class BaseSequenceMTest {
 	
 	
 	
-	@Test
-    public void mergePublisher() throws InterruptedException{
-	    System.out.println(of(1,2,3)
-        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)))
-        .toListX());
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)))
-                        .toListX(),hasItems(1,2,3,4,5));
-        
-    }
-    
-    @Test
-    public void mergePublisherSize() throws InterruptedException{
-      
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)))
-                        .toListX().size(),equalTo(5));
-        
-    }
-    @Test
-    public void mergePublisherWithAsync() throws InterruptedException{
-        for(int i=0;i<10_000;i++){
-            assertThat(of(1,2,3)
-                            .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
-                            .toListX(),hasItems(1,2,3,4,5));
-        }
-        
-    }
-    @Test
-    public void mergePublisherWithSizeAsync() throws InterruptedException{
-        assertThat(of(1,2,3)
-                        .mergePublisher(Arrays.asList(Maybe.of(4),Maybe.of(5)),QueueFactories.unboundedQueue())
-                        .toListX().size(),equalTo(5));
-        
-    }
-    
-    @Test
-    public void mergePublisherAsync() throws InterruptedException{
-       
-       
-       
-      assertThat(of(3,2,1)
-               .mergePublisher(ReactiveSeq.generate(()->r.generate(()->1).peek(a->sleep2(a*100)).limit(5).async()).limit(2).toList())
-               .toListX().size(),equalTo(13));
-    }
+
     @Test
     public void flatMapPublisher() throws InterruptedException{
-        
+
         assertThat(of(1,2,3)
-                        .flatMapPublisher(i->Maybe.of(i))
+                        .flatMapP(i->Maybe.of(i))
                         .toListX(),equalTo(Arrays.asList(1,2,3)));
         
         
     }
     
-    @Test
-    public void flatMapPublisherWithAsync() throws InterruptedException{
-        for(int x=0;x<10_000;x++){
-        assertThat(of(1,2,3)
-                        .flatMapPublisher(i->Maybe.of(i),500,QueueFactories.unboundedQueue())
-                        .toListX(),hasItems(1,2,3));
-        }
-        
-    }
+
     private void sleep2(int time){
         try {
             Thread.sleep(time);
@@ -124,16 +73,7 @@ public  class BaseSequenceMTest {
             e.printStackTrace();
         }
     }
-    @Test
-    public void flatMapPublisherAsync() throws InterruptedException{
-       LazyReact r = new LazyReact(10,10);
-       
-      
-      assertThat(of(3,2,1)
-               .flatMapPublisher(i-> r.generate(()->i).peek(a->sleep2(a*100)).limit(5).async())
-               .toListX().size(),equalTo(15));
-       
-    }
+
 	
 	protected Object value() {
 		
@@ -244,7 +184,7 @@ public  class BaseSequenceMTest {
 	
 	@Test
 	public void testDuplicate(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 	}
@@ -267,7 +207,7 @@ public  class BaseSequenceMTest {
 
 	@Test
 	public void testDuplicateFilter(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 	} 
@@ -288,7 +228,7 @@ public  class BaseSequenceMTest {
 	}
 	@Test
 	public void testDuplicateLimit(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicateSequence();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 	} 
@@ -321,7 +261,7 @@ public  class BaseSequenceMTest {
 		
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 	       
 	        assertThat(map1.get(0),hasItem(2));
 	        assertThat(map1.get(0),hasItem(4));
@@ -445,12 +385,12 @@ public  class BaseSequenceMTest {
 	    //tests converted from lazy-seq suite
 	    @Test
 		public void flattenEmpty() throws Exception {
-				assertTrue(ReactiveSeq.<Integer>of().flatten().toList().isEmpty());
+				assertTrue(ReactiveSeq.<ReactiveSeq<Integer>>of().to(ReactiveSeq::flatten).toList().isEmpty());
 		}
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).flatten().toList().size(),equalTo(asList(1,  2).size()));		
+			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).to(ReactiveSeq::flattenI).toList().size(),equalTo(asList(1,  2).size()));
 		}
 
 		
@@ -458,7 +398,7 @@ public  class BaseSequenceMTest {
 		@Test
 		public void flattenEmptyStream() throws Exception {
 			
-			assertThat(ReactiveSeq.<Integer>of(1,2,3,4,5,5,6,8,9,10).flatten().limit(10).collect(Collectors.toList()).size(),
+			assertThat(ReactiveSeq.<Integer>of(1,2,3,4,5,5,6,8,9,10).limit(10).collect(Collectors.toList()).size(),
 											equalTo(asList(2, 3, 4, 5, 6, 7, 0, 0, 0, 0).size()));
 		}
 		

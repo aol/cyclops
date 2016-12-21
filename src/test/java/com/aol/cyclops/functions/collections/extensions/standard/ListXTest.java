@@ -33,7 +33,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
     @Test
     public void coflatMap(){
        assertThat(ListX.of(1,2,3)
-                   .coflatMap(s->s.sum().get())
+                   .coflatMap(s->s.sumInt(i->i))
                    .single(),equalTo(6));
         
     }
@@ -60,8 +60,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
                                    .to(l->l.stream())
                                    .map(i->i*2)
                                    .to(r->r.toSetX())
-                                   .to(s->s.toMaybe())
-                                   .get();
+                                   .to(s->s.toListX());
         
         assertThat(list,equalTo(ListX.of(2,4,6)));
     }
@@ -83,16 +82,6 @@ public class ListXTest extends CollectionXTestsWithNulls {
         return ListX.empty();
     }
 
-    @Test
-    @Ignore // manual test for waiting kick in
-    public void flatMapPublisherWithAsync20k() throws InterruptedException {
-        for (int x = 0; x < 10_000; x++) {
-            assertThat(ReactiveSeq.generate(() -> 1)
-                    .flatMapPublisher(i -> Maybe.of(i), 500, QueueFactories.unboundedQueue()).limit(300_000).toListX(),
-                    equalTo(Arrays.asList(1, 2, 3)));
-        }
-
-    }
 
     @Test
     public void when(){
@@ -138,17 +127,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
      * c->c.hasValues('b','b','c').then(i->"boo!") ),()->"hello");
      **/
 
-    @Test
-    public void validate() {
-        ListX<Integer> numbers = ListX.of(1, 2, 3, 4, 5, 6, 7);
-        Validator<Integer, Integer, Integer> validator = Validator.of(i -> i % 2 == 0, 1, 1);
-        Ior<ReactiveSeq<Integer>, ReactiveSeq<Integer>> ior = numbers.validate(validator);
-        int even = ior.get().sum().get();
-        int odd = ior.secondaryGet().sum().get();
-        assertThat(even, equalTo(3));
-        assertThat(odd, equalTo(4));
 
-    }
 
     @Override
     public FluentCollectionX<Integer> range(int start, int end) {

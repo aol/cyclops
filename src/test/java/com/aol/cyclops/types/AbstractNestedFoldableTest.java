@@ -25,7 +25,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.WitnessType;
+import com.aol.cyclops.types.anyM.transformers.FoldableTransformerSeq;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemErrRule;
@@ -44,13 +46,14 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Rule
     public final SystemErrRule serr = new SystemErrRule().enableLog();
     
-    public abstract <T>NestedFoldable<W,T> of(T...elements);
-    public abstract <T> NestedFoldable<W,T> empty();
+    public abstract <T> FoldableTransformerSeq<W,T> of(T...elements);
+    public abstract <T> FoldableTransformerSeq<W,T> empty();
     
 
 
     @Test
     public void visitPresent() {
+
         assertThat(of(1,2,3,4).visit((a, b)->"world",()->"hello" ).single(),equalTo("world"));
     }
     @Test
@@ -74,7 +77,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     public void visitMaybeEmpty() {
         assertThat(this.<Integer>empty().visit((a, b)->a,()->10).single(),equalTo(10));
     }
-    
+
 
     @Test
     public void mapReduce() {

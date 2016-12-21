@@ -7,6 +7,7 @@ import com.aol.cyclops.types.stream.HeadAndTail;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops.util.function.F1;
 import org.jooq.lambda.Seq;
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.util.Iterator;
@@ -25,6 +26,7 @@ public interface FoldableTraversable<T> extends F1<Long,T>,
                                                 CyclopsCollectable<T>,
                                                 ConvertableSequence<T>,
                                                 ExtendedTraversable<T>{
+
 
 
     /**

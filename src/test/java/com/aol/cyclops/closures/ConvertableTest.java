@@ -44,31 +44,7 @@ public class ConvertableTest {
 	public void toStreamNull(){
 		assertThat(Convertable.fromSupplier(()->null).toStream().collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
-	@Test
-	public void toList(){
-		assertThat(Convertable.fromSupplier(()->10).toList(),equalTo(Arrays.asList(10)));
-	}
-	@Test
-	public void toListNull(){
-		assertThat(Convertable.fromSupplier(()->null).toList(),equalTo(Arrays.asList()));
-	}
-	@Test
-	public void toAtomicReference(){
-		assertThat(Convertable.fromSupplier(()->10).toAtomicReference().get(),equalTo(new AtomicReference(10).get()));
-	}
-	@Test
-	public void toOptionalAtomicReferenceNull(){
-		assertThat(Convertable.fromSupplier(()->null).toOptionalAtomicReference(),equalTo(Optional.empty()));
-	}
-	
-	@Test
-	public void toOptionalAtomicReference(){
-		assertThat(Convertable.fromSupplier(()->10).toOptionalAtomicReference().get().get(),equalTo(10));
-	}
-	@Test
-	public void toAtomicReferenceNull(){
-		assertThat(Convertable.fromSupplier(()->null).toAtomicReference().get(),equalTo(new AtomicReference(null).get()));
-	}
+
 	
 	@Test
 	public void orElse(){

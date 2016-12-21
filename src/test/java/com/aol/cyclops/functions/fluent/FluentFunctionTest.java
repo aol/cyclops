@@ -249,7 +249,7 @@ public class FluentFunctionTest {
 		Integer nullValue = null;
 		FluentFunctions.of(this::addOne)	
 						.lift()
-						.apply(Optional.ofNullable(nullValue));
+						.apply(1);
 	}
 	@Test
 	public void testLiftM(){

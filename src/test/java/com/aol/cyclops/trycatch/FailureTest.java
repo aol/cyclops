@@ -29,10 +29,6 @@ public class FailureTest {
 	public void setup(){
 		failure = Try.failure(error);
 	}
-	@Test
-	public void testUnapply() {
-		assertThat(failure.unapply(),equalTo(Arrays.asList(error)));
-	}
 
 	@Test
 	public void testOf() {
@@ -103,10 +99,7 @@ public class FailureTest {
 		assertThat(failure.recoverWith(e-> Try.success(10)),equalTo(Try.success(10)));
 	}
 
-	@Test
-	public void testFlatten() {
-		assertThat(failure.flatten(),equalTo(failure));
-	}
+
 
 	@Test
 	public void testOrElse() {

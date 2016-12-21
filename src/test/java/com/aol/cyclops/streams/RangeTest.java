@@ -35,32 +35,32 @@ public class RangeTest {
     public void intStreamCompare0(){
        
         assertThat(IntStream.range(0,10).sum(),
-                equalTo(ReactiveSeq.range(0,10).sum().get()));
+                equalTo(ReactiveSeq.range(0,10).sumInt(i->i)));
     }
     @Test
     public void longStreamCompare0(){
         assertThat(LongStream.range(0,10).sum(),
-                equalTo(ReactiveSeq.rangeLong(0,10).sum().get()));
+                equalTo(ReactiveSeq.rangeLong(0,10).sumLong(i->i)));
     }
     @Test
     public void intStreamCompareReversed(){
         assertThat(IntStream.of(5,4,3,2,1,0,-1,-2,-3,-4,-5).sum(),
-                equalTo(ReactiveSeq.range(-5,6).reverse().sum().get()));
+                equalTo(ReactiveSeq.range(-5,6).reverse().sumInt(i->i)));
     }
     @Test
     public void longStreamCompareReversed(){
         assertThat(LongStream.of(5,4,3,2,1,0,-1,-2,-3,-4,-5).sum(),
-                equalTo(ReactiveSeq.rangeLong(-5,6).reverse().sum().get()));
+                equalTo(ReactiveSeq.rangeLong(-5,6).reverse().sumLong(i->i)));
     }
     @Test
     public void intStreamCompare(){
         assertThat(IntStream.range(-1,10).sum(),
-                equalTo(ReactiveSeq.range(-1,10).sum().get()));
+                equalTo(ReactiveSeq.range(-1,10).sumInt(i->i)));
     }
     @Test
     public void longStreamCompare(){
         assertThat(LongStream.range(-1l,10l).sum(),
-                equalTo(ReactiveSeq.rangeLong(-1l,10l).sum().get()));
+                equalTo(ReactiveSeq.rangeLong(-1l,10l).sumLong(i->i)));
     }
     @Test
     public void negative(){

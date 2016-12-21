@@ -411,7 +411,7 @@ public class SequenceMTest {
 	
 	@Test
 	public void flatMapCompletableFuture(){
-		assertThat(ReactiveSeq.of(1,2,3).flatMapAnyM(i->AnyM.fromCompletableFuture(CompletableFuture.completedFuture(i+2)))
+		assertThat(ReactiveSeq.of(1,2,3).flatMapAnyM(i->AnyM.fromArray(i+2))
 				  								.collect(Collectors.toList()),
 				  								equalTo(Arrays.asList(3,4,5)));
 	}

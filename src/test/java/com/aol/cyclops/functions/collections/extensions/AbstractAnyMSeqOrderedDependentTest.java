@@ -50,7 +50,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
         assertEquals(asList(2, 3), of(2, 3).onEmptyThrow(() -> new X()).toListX());
     }
     @SuppressWarnings("serial")
-    public class X extends Exception {
+    public static class X extends Exception {
     }
     @Test
     public void testCycle() {

@@ -239,7 +239,7 @@ utilResultList:[1]
 	@Test
 	public void zipOptional(){
 		Stream<List<Integer>> zipped = StreamUtils.zipAnyM(Stream.of(1,2,3)
-										,AnyM.fromOptional(Optional.of(2)), 
+										,AnyM.fromArray(2),
 											(a,b) -> Arrays.asList(a,b));
 		
 		
@@ -251,7 +251,7 @@ utilResultList:[1]
 	@Test
 	public void zipOptionalSequence(){
 		Stream<List<Integer>> zipped = StreamUtils.zipAnyM(Stream.of(1,2,3)
-										,AnyM.fromOptional(Optional.of(2)), 
+										,AnyM.fromArray(2),
 											(a,b) -> Arrays.asList(a,b));
 		
 		

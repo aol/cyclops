@@ -470,10 +470,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * @return Flattened / joined one level
      */
-    static <T1> ReactiveSeq<T1> flatten(ReactiveSeq<ReactiveSeq<T1>> nested){
+    static <T1> ReactiveSeq<T1> flatten(ReactiveSeq<? extends ReactiveSeq<T1>> nested){
         return nested.flatMap(Function.identity());
     }
-
+    static <T1> ReactiveSeq<T1> flattenI(ReactiveSeq<? extends Iterable<T1>> nested){
+        return nested.flatMapIterable(Function.identity());
+    }
+    static <T1> ReactiveSeq<T1> flattenO(ReactiveSeq<? extends Optional<T1>> nested){
+        return nested.flatMap(StreamUtils::optionalToStream);
+    }
     /**
      * Convert to a Stream with the values repeated specified times
      * 
@@ -1998,6 +2003,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     <R> ReactiveSeq<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> fn);
 
+
+    default <R> ReactiveSeq<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
+        return this.flatMapIterable(fn.andThen(ReactiveSeq::fromPublisher));
+    }
     /**
      * flatMap operation
      * 
@@ -3873,7 +3882,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<T>)FoldableTraversable.super.notNull();
     }
 
-    default ReactiveStreamsTerminalFutureOperations<T> futureOps(Executor ex){
+    default ReactiveStreamsTerminalFutureOperations<T> futureOperations(Executor ex){
         return new ReactiveSeqFutureOpterationsImpl<T>(ex,this);
     }
 

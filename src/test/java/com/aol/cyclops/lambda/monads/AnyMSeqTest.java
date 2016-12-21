@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 import static com.aol.cyclops.types.anyM.Witness.*;
 
 import com.aol.cyclops.types.anyM.Witness;
+import com.aol.cyclops.util.function.MFunc1;
+import com.aol.cyclops.util.function.MFunc2;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
@@ -99,7 +101,7 @@ public class AnyMSeqTest {
 
 	@Test
 	public void testLiftMSimplex(){
-		val lifted = AnyMSeq.<stream,Integer,Integer>liftM((Integer a)->a+3);
+        MFunc1<stream,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)));
 		
@@ -110,7 +112,7 @@ public class AnyMSeqTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		val lifted = AnyMSeq.<stream,Integer,Integer,Integer>liftM2((Integer a,Integer b)->a+b);
+        MFunc2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));
 		
@@ -118,7 +120,7 @@ public class AnyMSeqTest {
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		val lifted = AnyMSeq.<stream,Integer,Integer,Integer>liftM2((Integer a,Integer b)->a+b);
+        MFunc2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of()));
 		
@@ -130,7 +132,7 @@ public class AnyMSeqTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		val lifted = AnyMSeq.<stream,Integer,Integer,Integer>liftM2(this::add);
+        MFunc2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));
 		

@@ -76,14 +76,6 @@ public class MutableTest {
 	}
 	
 	@Test
-	public void toOptional(){
-		assertThat(Mutable.of(10).toOptional(),equalTo(Optional.of(10)));
-	}
-	@Test
-	public void toOptionalNull(){
-		assertThat(Mutable.of(null).toOptional(),equalTo(Optional.empty()));
-	}
-	@Test
 	public void toIterator(){
 		assertThat(Mutable.of(10).iterator().next(),equalTo(10));
 	}
@@ -91,70 +83,9 @@ public class MutableTest {
 	public void toIteratorNull(){
 		assertThat(Mutable.of(null).iterator().hasNext(),equalTo(false));
 	}
-	@Test
-	public void toStream(){
-		assertThat(Mutable.of(10).toStream().collect(Collectors.toList()),equalTo(Arrays.asList(10)));
-	}
-	@Test
-	public void toStreamNull(){
-		assertThat(Mutable.of(null).toStream().collect(Collectors.toList()),equalTo(Arrays.asList()));
-	}
-	@Test
-	public void toList(){
-		assertThat(Mutable.of(10).toList(),equalTo(Arrays.asList(10)));
-	}
-	@Test
-	public void toListNull(){
-		assertThat(Mutable.of(null).toList(),equalTo(Arrays.asList()));
-	}
-	@Test
-	public void toAtomicReference(){
-		assertThat(Mutable.of(10).toAtomicReference().get(),equalTo(new AtomicReference(10).get()));
-	}
-	@Test
-	public void toOptionalAtomicReferenceNull(){
-		assertThat(Mutable.of(null).toOptionalAtomicReference(),equalTo(Optional.empty()));
-	}
-	@Test
-	public void toOptionalAtomicReference(){
-		assertThat(Mutable.of(10).toOptionalAtomicReference().get().get(),equalTo(10));
-	}
-	@Test
-	public void toAtomicReferenceNull(){
-		assertThat(Mutable.of(null).toAtomicReference().get(),equalTo(new AtomicReference(null).get()));
-	}
-	
-	@Test
-	public void orElse(){
-		assertThat(Mutable.of(10).orElse(11),equalTo(10));
-	}
-	@Test
-	public void orElseNull(){
-		assertThat(Mutable.of(null).orElse(11),equalTo(11));
-	}
-	@Test
-	public void orElseThrow() throws RuntimeException{
-		//Hack for JDK issue : https://bugs.openjdk.java.net/browse/JDK-8066974
-		assertThat(Mutable.of(10).<RuntimeException>orElseThrow(()->new RuntimeException()),equalTo(10));
-	}
-	@Test
-	public void toCompletableFuture(){
-		assertThat(Mutable.of(10).toCompletableFuture().join(),equalTo(10));
-	}
-	@Test
-	public void toCompletableFutureAsync(){
-		assertThat(Mutable.of(10).toCompletableFutureAsync().join(),equalTo(10));
-	}
-	@Test
-	public void toCompletableFutureAsyncEx(){
-		assertThat(Mutable.of(10).toCompletableFutureAsync(Executors.newSingleThreadExecutor()).join(),equalTo(10));
-	}
-	@Test(expected=RuntimeException.class)
-	public void orElseThrowNull(){
-		Mutable.of(null).orElseThrow(()->new RuntimeException());
-		fail("exception expected");
-	}
-	
+
+
+
 	
 	
 	String value = "";

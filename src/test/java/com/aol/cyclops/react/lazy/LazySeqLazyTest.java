@@ -21,8 +21,7 @@ public class LazySeqLazyTest extends BaseSeqLazyTest{
 	  @Test
 	    public void testZipDifferingLength() {
 	        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d"))
-	        		.lazyOperations()
-	        		.toList()
+	        		.foldLazy(s->s.toList())
 	        		.get();
 
 	        assertEquals(2, list.size());
@@ -34,66 +33,6 @@ public class LazySeqLazyTest extends BaseSeqLazyTest{
 	        
 	    }
 
-	    @Test
-	    public void testZipWithIndex() {
-	        assertEquals(asList(),of().zipWithIndex().lazyOperations().toList().get());
-	   
-	       
-	      assertThat( of("a").zipWithIndex().map(t->t.v2).lazyOperations().findFirst().get(),is(0l));
-	      assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().lazyOperations().toList().get());
-	    }
-
-	   
-	    @Test
-	    public void testSkipWhile() {
-	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
-
-	        assertTrue(s.get().skipWhile(i -> false).lazyOperations().toList().get().containsAll(asList(1, 2, 3, 4, 5)));
-	      
-	        assertEquals(asList(), s.get().skipWhile(i -> true).toList());
-	    }
-
-	    @Test
-	    public void testSkipUntil() {
-	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
-
-	        assertEquals(asList(), s.get().skipUntil(i -> false).lazyOperations().toList().get());
-	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
-		  }
-
-	    @Test
-	    public void testSkipUntilWithNulls() {
-	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
-	       
-	        assertTrue(s.get().skipUntil(i -> true).lazyOperations()
-	        				.toList().get().containsAll(asList(1, 2, null, 3, 4, 5)));
-	    }
-
-	    @Test
-	    public void testLimitWhile() {
-	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
-
-	        assertEquals(asList(), s.get().limitWhile(i -> false).lazyOperations().toList().get());
-	        assertTrue( s.get().limitWhile(i -> i < 3).lazyOperations().toList().get().size()!=5);       
-	        assertTrue(s.get().limitWhile(i -> true).lazyOperations().toList().get().containsAll(asList(1, 2, 3, 4, 5)));
-	    }
-
-	    @Test
-	    public void testLimitUntil() {
-	        
-
-	        assertTrue(of(1, 2, 3, 4, 5).limitUntil(i -> false).lazyOperations().toList()
-	        		.get().containsAll(asList(1, 2, 3, 4, 5)));
-	       
-	    }
-
-	    @Test
-	    public void testLimitUntilWithNulls() {
-	       
-
-	        assertTrue(of(1, 2, null, 3, 4, 5).limitUntil(i -> false).lazyOperations()
-	        				.toSet().get().containsAll(asList(1, 2, null, 3, 4, 5)));
-	    }
 
 		@Override
 		protected <U> LazyFutureStream<U> of(U... array) {

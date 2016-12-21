@@ -18,6 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -280,7 +281,7 @@ public class BaseSequentialTest {
 			
 		    @Test
 		    public void testGroupByEager() {
-		        Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+		        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 		        assertEquals(asList(2, 4), map1.get(0));
 		        assertEquals(asList(1, 3), map1.get(1));
 		        assertEquals(2, map1.size());

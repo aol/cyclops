@@ -29,33 +29,5 @@ public class UnwrapTest {
 											.toOptional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
 	}
-	@Test
-	public void unwrapOptionalEmpty(){
-		Optional<ListX<String>> opt = AnyM.fromOptional(Optional.of(Optional.empty()))
-		                                    .<String>toSequence()
-											.toOptional();
-		System.out.println(opt);
-		assertFalse(opt.isPresent());
-	}
-	@Test
-	public void unwrapOptionalList(){
-		Optional<ListX<String>> stream =AnyM.fromOptional(Optional.of(Arrays.asList("hello","world")))
-												.<String>toSequence()
-												.toOptional();
-		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
-	}
-	@Test
-	public void unwrapCompletableFuture(){
-		CompletableFuture<ListX<String>> cf = AnyM.streamOf("hello","world")
-											.stream()
-											.toCompletableFuture();
-		assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
-	}
-	@Test
-	public void unwrapCompletableFutureList(){
-		CompletableFuture<ListX<String>> cf = AnyM.fromCompletableFuture(CompletableFuture.completedFuture(Arrays.asList("hello","world")))
-												.<String>toSequence()
-												.toCompletableFuture();
-		assertThat(cf.join(),equalTo(Arrays.asList("hello","world")));
-	}
+
 }

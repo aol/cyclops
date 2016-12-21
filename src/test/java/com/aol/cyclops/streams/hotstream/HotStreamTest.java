@@ -190,7 +190,7 @@ public class HotStreamTest {
 					.connect()
 					.limit(100)
 					.futureOperations(ForkJoinPool.commonPool())
-					.forEach(System.out::println);
+					.forEachWithError(System.out::println,System.err::println);
 			
 			latch.await();
 			assertTrue(value!=null);
@@ -209,7 +209,7 @@ public class HotStreamTest {
 				.connect(new LinkedBlockingQueue<>())
 				.limit(100)
 				.futureOperations(ForkJoinPool.commonPool())
-				.forEach(System.out::println);
+				.forEachWithError(System.out::println,System.err::println);
 		
 		latch.await();
 		assertTrue(value!=null);
@@ -228,7 +228,7 @@ public class HotStreamTest {
 		s.connect(new LinkedBlockingQueue<>())
 				.limit(100)
 				.futureOperations(ForkJoinPool.commonPool())
-				.forEach(System.out::println);
+				.forEachWithError(System.out::println,System.err::println);
 		
 		Object oldValue = value;
 		s.pause();

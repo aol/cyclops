@@ -1,16 +1,15 @@
 package com.aol.cyclops.streams;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
-
+import com.aol.cyclops.control.AnyM;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 public class FlatMapSequenceMTest {
 
 	@Test
@@ -39,16 +38,7 @@ public class FlatMapSequenceMTest {
 		
 		assertThat(AnyM.fromStream(Seq.of(1,2,3)).stream().flatMapStream(i-> Stream.of(i+2)).toList(),equalTo(Arrays.asList(3,4,5)));
 	}
-	@Test
-	public void flatMapSeqToCompletableFuture(){
-		
-		assertThat(AnyM.fromStream(Seq.of(1,2,3)).stream().flatMapAnyM(i-> AnyM.fromCompletableFuture(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
-	}
-	@Test
-	public void flatMapSeqToSequenceM(){
-		
-		assertThat(AnyM.fromStream(Seq.of(1,2,3)).stream().flatMapAnyM(i-> AnyM.fromCompletableFuture(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
-	}
-	
+
+
 	
 }

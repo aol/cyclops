@@ -46,7 +46,7 @@ public class PushableStreamTest {
         SetX.fromPublisher(Flux.just(10,20,30));
         
         PSetX.of(1,2,3)
-             .flatMapPublisher(i->Flux.just(i,i*10))
+             .flatMapP(i->Flux.just(i,i*10))
              .toPVectorX();
         
         /**

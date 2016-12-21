@@ -31,7 +31,7 @@ public class ConnectionTesst {
         s.connect()
                 .limit(10000)
                 .futureOperations(exec3)
-                .forEach(System.out::println);
+                .forEachWithError(System.out::println,System.err::println);
         
         
         s.pause();

@@ -13,6 +13,7 @@ import com.aol.cyclops.util.function.F4;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 
 import java.util.*;
 import java.util.function.*;
@@ -33,7 +34,14 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
 
     @Override
     boolean isEmpty();
+    default <R> CollectionX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
+        return this.flatMap(fn.andThen(ReactiveSeq::fromStream));
+    }
 
+
+    default <R> CollectionX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
+        return this.flatMap(fn.andThen(ReactiveSeq::fromPublisher));
+    }
     /**
      * Create a CollectionX from the supplied Collection
      * 
