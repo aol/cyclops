@@ -4,6 +4,7 @@ import com.aol.cyclops.Monoids;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 import org.junit.Test;
+import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -24,7 +25,36 @@ import static org.junit.Assert.assertThat;
 
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
-    
+
+    @Test
+    public void fillReplay(){
+        ReactiveSeq<Integer> seq = ReactiveSeq.fill(1);
+        ReactiveSeq<Integer> seq1 = seq.take(100).map(i->i*2);
+
+        seq.take(100).forEach(System.out::println);
+        seq1.forEach(System.err::println);
+
+    }
+
+    @Test
+    public void testReplay(){
+        Flux<Integer> f1 = Flux.range(0,100);
+        Flux<Integer> f2 = f1.map(i->i*2);
+        System.out.println(f1.count().get());
+        System.out.println(f2.count().get());
+
+        ReactiveSeq<String> stream = ReactiveSeq.of("hello","world");
+        ReactiveSeq<String> stream1 = stream.map(str->"hello world " + str);
+        stream.forEach(System.out::println);
+        stream1.forEach(System.out::println);
+
+        ReactiveSeq<Integer> streama = ReactiveSeq.range(1,100);
+        ReactiveSeq<Integer> streamb = streama.map(i->i*2);
+
+        System.out.println(streama.count());
+        System.out.println(streama.map(i->i*3).zipWithIndex().count());
+        System.out.println(streamb.zipWithIndex().count());
+    }
     @Test
     public void replayStream(){
        

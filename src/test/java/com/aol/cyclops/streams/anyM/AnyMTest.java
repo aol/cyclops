@@ -283,19 +283,7 @@ public class AnyMTest {
 		assertThat(list.get(1),hasItems(4,5,6));
 	
 	}
-	@Test
-	public void groupedOptional(){
-		
-		List<List<List<Integer>>> list = AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3,4,5,6)))
-											.stream()
-											.grouped(3)
-											.collect(Collectors.toList());
-		
-		
-		assertThat(list.get(0).get(0),hasItems(1,2,3));
-		assertThat(list.get(0).get(1),hasItems(4,5,6));
-		
-	}
+
 	
 	@Test
 	public void startsWith(){

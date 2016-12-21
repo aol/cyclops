@@ -35,6 +35,7 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     @Override
     public boolean tryAdvance(final IntConsumer consumer) {
         Objects.requireNonNull(consumer);
+        //
         if (!reverse) {
             if (index < max && index > min) {
                 consumer.accept(index++);
@@ -76,6 +77,7 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
      */
     @Override
     public void forEachRemaining(IntConsumer action) {
+        int index = this.index; //use local index making spliterator reusable
         if (!reverse) {
             for( ;index < max && index > min;) {
                 action.accept(index++);
@@ -96,6 +98,7 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
      */
     @Override
     public void forEachRemaining(Consumer<? super Integer> action) {
+        int index = this.index; //use local index making spliterator reusable
         if (!reverse) {
             for( ;index < max && index > min;) {
                 action.accept(index++);
