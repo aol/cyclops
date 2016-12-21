@@ -1,6 +1,7 @@
 package com.aol.cyclops.data.async;
 
 import static com.aol.cyclops.types.futurestream.BaseSimpleReactStream.parallel;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
@@ -108,12 +109,25 @@ public class QueueTest {
 	        }
 	    }
 	@Test
+	public void closedParallelStreamTimeout(){
+
+		Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build().withTimeout(1);
+		for(int i=0;i<1000;i++){
+			q.add(i);
+		}
+		q.close();
+		//	q.withTimeout(1);
+		// q.jdkStream(100).parallel().forEach(System.out::println);
+		assertThat(q.jdkStream().parallel().collect(Collectors.toList()).size(),equalTo(100));
+	}
+	@Test
 	public void closedParallelStream(){
-	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();
+	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build().withTimeout(1);
 	    for(int i=0;i<1000;i++){
             q.add(i);
         }
 	    q.close();
+
 	    q.jdkStream(100).parallel().forEach(System.out::println);
 	}
 	@Test

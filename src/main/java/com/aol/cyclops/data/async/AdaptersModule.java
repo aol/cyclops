@@ -317,6 +317,13 @@ public interface AdaptersModule {
             return IMMUTABLE;
         }
        final AtomicBoolean closed ;
+
+        @Override
+        public void forEachRemaining(Consumer<? super T> action) {
+           // System.out.println("For each " + Thread.currentThread().getId());
+            Spliterator.super.forEachRemaining(action);
+        }
+
         @Override
         public boolean tryAdvance(final Consumer<? super T> action) {
             Objects.requireNonNull(action);
