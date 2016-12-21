@@ -46,7 +46,7 @@ public class Mutable<T> implements To<Mutable<T>>,Supplier<T>, Consumer<T>,Itera
 
     @Override
     public Iterator<T> iterator() {
-        return Arrays.asList(var).iterator();
+        return var!=null ? Arrays.asList(var).iterator() : Arrays.<T>asList().iterator();
     }
 
     /**

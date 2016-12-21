@@ -43,6 +43,18 @@ public class OptionalRunTest {
 		
 		Optional<Integer> result  = Optionals.forEach2(one,a->empty,(a,b)-> f2.apply(a, 10));
 
+		assertThat(result.isPresent(),equalTo(true));
+
+	}
+	@Test
+	public void testEmpty(){
+		Optional<Integer> one = Optional.of(1);
+		Optional<Integer> empty = Optional.empty();
+		BiFunction<Integer, Integer, Integer> f2 = (a, b) -> a * b;
+
+
+		Optional<Integer> result  = Optionals.forEach2(one,a->empty,(a,b)-> f2.apply(a, 10));
+
 		assertThat(result.isPresent(),equalTo(false));
 
 	}

@@ -12,14 +12,17 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
+import com.aol.cyclops.types.extensability.ValueAdapter;
 import com.aol.cyclops.util.Optionals;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional> {
+public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional> implements ValueAdapter<Witness.optional> {
     
     private final Supplier<Optional<?>> empty;
     private final Function<?,Optional<?>> unit;
@@ -35,6 +38,9 @@ public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional>
     }
     private <U> Function<Iterator<U>,Optional<U>>  getUnitIterator(){
         return  it->it.hasNext() ? this.<U>getUnit().apply(it.next()) : this.<U>getEmpty().get();
+    }
+    public <T> T get(AnyMValue<Witness.optional,T> t){
+        return ((Optional<T>)t.unwrap()).get();
     }
     
     @Override

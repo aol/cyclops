@@ -127,8 +127,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
     @Override
     default Iterator<T> iterator() {
+        return adapter().toIterable(this).iterator();
 
-        return stream().iterator();
     }
     
     default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){

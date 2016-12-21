@@ -187,10 +187,17 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
     @Override
     default boolean isPresent() {
-        if (unwrap() instanceof Value) {
-            return ((Value<T>) unwrap()).isPresent();
+        Object unwrap = unwrap();
+        if (unwrap instanceof Value) {
+            return ((Value<T>) unwrap).isPresent();
+        }else if(unwrap instanceof Optional){
+            return ((Optional<T>) unwrap).isPresent();
+        }else if(unwrap instanceof Iterable){
+            return ((Iterable<T>)unwrap).iterator().hasNext();
+        }else{
+            return this.adapter().toIterable(this).iterator().hasNext();
         }
-        return this.toOptional().isPresent();
+
     }
 
     /* (non-Javadoc)

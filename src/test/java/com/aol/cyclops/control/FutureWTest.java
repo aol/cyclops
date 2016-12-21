@@ -346,12 +346,12 @@ public class FutureWTest {
     
     @Test
     public void testIterate() {
-        assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(Optional.of(145)));
+        assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
     }
 
     @Test
     public void testGenerate() {
-        assertThat(just.generate().limit(10).sumInt(i->i),equalTo(Optional.of(100)));
+        assertThat(just.generate().limit(10).sumInt(i->i),equalTo(100));
     }
 
     @Test

@@ -11,14 +11,17 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
+import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
+import com.aol.cyclops.types.extensability.ValueAdapter;
 import com.aol.cyclops.util.CompletableFutures;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class FutureAdapter extends AbstractFunctionalAdapter<Witness.completableFuture> {
+public class FutureAdapter extends AbstractFunctionalAdapter<Witness.completableFuture> implements ValueAdapter<Witness.completableFuture> {
     
     private final Supplier<CompletableFuture<?>> empty;
     private final Function<?,CompletableFuture<?>> unit;
@@ -36,7 +39,11 @@ public class FutureAdapter extends AbstractFunctionalAdapter<Witness.completable
     private <U> Function<Iterator<U>,CompletableFuture<U>>  getUnitIterator(){
         return  it->it.hasNext() ? this.<U>getUnit().apply(it.next()) : this.<U>getEmpty().get();
     }
-    
+    public <T> T get(AnyMValue<Witness.completableFuture,T> t){
+        return ((CompletableFuture<T>)t.unwrap()).join();
+    }
+
+
     @Override
     public <T> Iterable<T> toIterable(AnyM<completableFuture, T> t) {
         return FutureW.of(completableFuture(t));

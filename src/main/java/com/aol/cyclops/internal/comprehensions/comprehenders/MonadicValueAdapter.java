@@ -10,20 +10,24 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.types.MonadicValue;
+import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 
+import com.aol.cyclops.types.extensability.FunctionalAdapter;
+import com.aol.cyclops.types.extensability.ValueAdapter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> extends AbstractFunctionalAdapter<W> {
+public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> extends AbstractFunctionalAdapter<W> implements ValueAdapter<W> {
    
     private final Supplier<MonadicValue<?>> empty;
     private final Function<?,MonadicValue<?>> unit;
    
     private final boolean filter;
     private final W witness;
-    
+
+
     
     private <U> Supplier<MonadicValue<U>> getEmpty(){
         return (Supplier)empty;
@@ -34,11 +38,17 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
     private <U> Function<Iterator<U>,MonadicValue<U>>  getUnitIterator(){
         return  it->it.hasNext() ? this.<U>getUnit().apply(it.next()) : this.<U>getEmpty().get();
     }
+    public <T> T get(AnyMValue<W,T> t){
+        return ((MonadicValue<T>)t.unwrap()).get();
+    }
     @Override
     public <T> Iterable<T> toIterable(AnyM<W, T> t) {
         return monadicValue(t);
     }
-    
+
+    public <R> R visit(Function<? super FunctionalAdapter<W>,? extends R> fn1, Function<? super ValueAdapter<W>, ? extends R> fn2){
+        return fn2.apply(this);
+    }
 
     @Override
     public <T> AnyM<W, T> filter(AnyM<W, T> t, Predicate<? super T> fn) {
