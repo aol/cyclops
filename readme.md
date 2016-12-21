@@ -1,24 +1,17 @@
-# [Cyclops & cyclops-react](http://cyclops-react.io)
+<img width="820" alt="screen shot 2016-02-22 at 8 44 42 pm" src="https://cloud.githubusercontent.com/assets/9964792/13232030/306b0d50-d9a5-11e5-9706-d44d7731790d.png">
 
-Cyclops is a platform that aims to bring much of the power of languages such as Scala to Java, while retaining it's ease of use.
-
-As a platform Cylops offers powerful sequential and parallel Streaming with common reactive functionality, fast and powerful colleciton extensions, a large range of extened persistent collections, , straightforward structural pattern matching, true for comprehensions, utilities for working with JDK types, enhanced APIs for working with Futures, an advanced Try implementation, Xor & Ior, PushableStreams, lazy data types (Maybe, Eval, Either1-5) and even compiler enforced Higher Kinded Types and type classes.
-
-* Cyclops is **not** a foundational library, the end goal is the primary focus and the technology used is a means to that end
-* Cyclops integrates best of breed libraries for the Java Platform to produce something more powerful than the sum of the parts.
-* By leveraging high quality existing technology where possible the breadth, scope and quality of the cyclops platform increases all the time.
-
-
-# User Guide
-
-* [User Guide](https://github.com/aol/cyclops-react/wiki)
-* [javadoc](http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/)
+Future & functional based programming via JDK compatible extensions for Java 8 and above. 
 
 # Getting cyclops-react
 
 * [![Maven Central : cyclops-react](https://maven-badges.herokuapp.com/maven-central/com.aol.simplereact/cyclops-react/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.simple-react/cyclops-react)
 
 * Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
+
+# Documentation
+
+* [User Guide](https://github.com/aol/cyclops-react/wiki)
+* [javadoc](http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/)
 
 ## Gradle
 
@@ -38,40 +31,52 @@ compile 'com.aol.simplereact:cyclops-react:x.y.z'
 </dependency>
 ```
 
-# Contributing 
+![cyclops-react-types](https://cloud.githubusercontent.com/assets/9964792/14741656/cf3d8494-088f-11e6-9189-b2bed00365d1.png)
 
-Contributions are very welcome! We make heavy use of Lombok, to cut down Java boilerplate - so please do install the appropriate Lombok plugin to your IDE.
+# Features
 
-# Libraries that make the platform
+Used in Aol to build robust, performant & scalable asynchronous systems : features include
 
-When we add a dependency to cyclops, we don't just try and make it easy to convert between one type and another. We look for synergies how can we use library X and Y together to build something more powerful than each used independently.
+* Compatible extensions to JDK interfaces (Collections, Streams, Functions)
+* Built with [jOOλ](https://github.com/jOOQ/jOOL), [reactive-streams](http://www.reactive-streams.org/) ,[Agrona](https://github.com/real-logic/Agrona) and [pCollections](https://github.com/hrldcpr/pcollections)
+* Extensions for efficient JDK compatible persistent collections ([pCollections](http://pcollections.org/))
+* FutureStreams for managing aggregates for Future Tasks (e.g. for multi-threaded execution of large numbers of I/O tasks)
+* Single-threaded asynchronous streaming
+* Scheduling of data emission
+* Powerful extended type hierarchy for aggregrations (Collections & Streams) and single values
+* Powerful functional-style control structures, implemented in Java friendly manner (Maybe, Eval, FutureW, Xor, Ior, Try, AnyM, structural & guard based pattern matching, for-comprehensions)
+* Execute functions between wrapped values (Optional / CompletableFutre etc) without tedious unwrapping (Java friendly Applicative support).
+* Java friendly abstractions for wrapping any Monad type (Stream, CompletableFuture, Optional, cyclops-react types and types from other Java projects too). AnyM and it's two subtypes AnyMSeq for aggregates (Steam, List etc) and AnyMValue for Values
+* Monad Transformers - for manipulating nesting monadic types (e.g. Optionals within a Stream as if it were just an Optional)
+* Applicatives - apply functions across wrapped types (e.g. Optional / Maybe / Xor) without unwrapping & aggregate without terminate on failure
+* Structural pattern matching & pattern matching via Guards (see Matchable and Matchables)
+* Full strength for comprehensions / generators (reference elements from other generators)
+* Tight integration with reactive-streams : collections, streams and datatypes are publishers & can be generated via subscribers
 
-## Core libraries
-
-* Agrona - for wait-free Queues for cross-thread data transfer
-* jOOλ - for base sequential extended Streaming and tuples
-* pCollections - defines a core set of interfaces (and implementations) for working with persistent collections. cyclops extends those interfaces (Lazy Extended Collections) and provides complaint implementations from all the major persistent collection libraries 
-* Async retry - for asynchronous retries
-
-## Pending Core
-
-* [Pivotal's Reactor libary](https://github.com/aol/cyclops/tree/master/cyclops-react) - Reactor provides push based Streaming API, most cyclops extension modules also now depend on cyclops-reactor which builds additional features on top of Reactor. cyclops Lazy Extended Collections execute chains of functional operations blazingly fast, and as a result cyclops-reactor will be merged into cyclops-react (the core of the platform).
-
-## Extensions
-
-* [cyclops-scala](https://github.com/aol/cyclops/tree/master/cyclops-scala) : Provides a standard Java API to work with Scala's awesome persistent collections as cyclops Lazy Extended Persistent Collections
-* [cyclops-javaslang](https://github.com/aol/cyclops/tree/master/cyclops-javaslang) : Provides an API for working with JavaSlang collections as cyclops Lazy Extended Persistent Collections, provides conversions for JavaSlang types, defines Higher Kinded Type encodings for JavaSlang types and type class instances for many JavaSlang collections / data types
-* [cyclops-higherkindedtypes](https://github.com/aol/cyclops/tree/master/cyclops-higherkindedtypes) - Defines Higher Kinded Type encodings for JDK and cyclops-react types, compiler enforced by Derive4j HKT
-* [cyclops-typeclasses](https://github.com/aol/cyclops/tree/master/cyclops-typeclasses) - Defines type classes (Unit, Functor, Applicative, Monad, CoMaond, Traversable, Foldable) and instances for JDK Types and cyclops-react types
-* [cyclops-clojure](https://github.com/aol/cyclops/tree/master/cyclops-clojure) - Provides a standard Java API to work with Clojure's awesome persistent collections as cyclops Lazy Extended Persistent Collections
-* [cyclops-functionaljava](https://github.com/aol/cyclops/tree/master/cyclops-functionaljava) - Provides Higher Kinded Type definitions and type class instances for some FJ data types (community contributes welcome). Native for comprehensions for FJ types. Cross library conversions for FJ types.
-* [cyclops-dexx](https://github.com/aol/cyclops/tree/master/cyclops-dexx) -  Provides an API for working with Dexx collections as cyclops Lazy Extended Persistent Collections
-* [cyclops-sum-types](https://github.com/aol/cyclops/tree/master/cyclops-sum-types) :  Defines totally lazy sum / either types from Either - Either5
-* [cyclops-rx](https://github.com/aol/cyclops/tree/master/cyclops-rx) - Provides For Comprehensions for Observables, Monad Transformers for Observables, Higher Kinded Type encodings and type classes for Observables
+* Very Extensible & integration with other projects via cyclops-integration modules.
 
 
-<img width="820" alt="screen shot 2016-02-22 at 8 44 42 pm" src="https://cloud.githubusercontent.com/assets/9964792/13232030/306b0d50-d9a5-11e5-9706-d44d7731790d.png">
+# Articles
 
+* [Reactive programming with Java 8 and simple-react: The Tutorial](https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-the-tutorial-3634f512eeb1)
+* [JDK Collection eXtensions](https://medium.com/@johnmcclean/extending-jdk-8-collections-8ae8d43dd75e#.tn7ctbaks)
+* [Awesome Fluent Functions](https://medium.com/@johnmcclean/can-we-make-working-with-functions-easier-in-java-8-81ed9d1050f2#.apum92khr)
+* [Articles on medium](https://medium.com/search?q=simplereact)
+* [Introducting the Cyclops Monad API](https://medium.com/@johnmcclean/introducing-the-cyclops-monad-api-a7a6b7967f4d)
+* [Easier Try with Cyclops](http://rdafbn.blogspot.com/2015/06/java-8-easier-with-cyclops-try.html)
+* [4 flavors of Java 8 Functions](https://medium.com/@johnmcclean/4-flavours-of-java-8-functions-6cafbcf5bb4f)
+* [Memoise Functions in Java 8](http://rdafbn.blogspot.com/2015/06/memoize-functions-in-java-8.html)
+* [Strategy Pattern in Java 8 ](http://rdafbn.blogspot.com/2015/06/startegy-pattern-in-java-8.html)
+* [Straightfoward structural Pattern Matching in Java 8](https://medium.com/about-java/straightforward-structural-pattern-matching-d77155bac8da#.ogdrhsyfe)
+* [Functional Feature Toggling](https://medium.com/@johnmcclean/feature-toggling-with-cyclops-a29d1eead62c)
+* [Dependency injection using the Reader Monad in Java8](https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75)
+* [Scheduling a Stream](https://medium.com/@johnmcclean/how-to-schedule-emission-from-a-stream-in-java-aa2dafda7c07#.pi12so6zn)
+* [Neophytes guide to Java 8 : Welcome to the Future](https://medium.com/@johnmcclean/neophytes-guide-to-java-8-welcome-to-the-future-83f432ce82a9#.jb5s9qop8)
+* [JDBC Processing Options with cyclops-react](https://medium.com/@johnmcclean/jdbc-processing-options-with-cyclops-react-49d62b02f775#.1dh1ziaxv)
+* [Deterministic and Non-Deterministic Finite State Machines with Cyclops](http://sebastian-millies.blogspot.de/2015/11/deterministic-and-non-deterministic.html)
+
+
+[OSCON 2016 slides](http://cdn.oreillystatic.com/en/assets/1/event/154/AOL_s%20return%20to%20open%20source_%20An%20overview%20of%20Java%208%20library%20cyclops-react%20Presentation.pdf)
 
 # License
 
