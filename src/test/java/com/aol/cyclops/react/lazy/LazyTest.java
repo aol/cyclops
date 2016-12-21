@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import com.aol.cyclops.control.ReactiveSeq;
 import org.junit.Test;
 
 import com.aol.cyclops.Semigroups;
@@ -20,6 +21,14 @@ import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazyTest {
+
+	@Test
+	public void testParallel(){
+
+		assertThat(new LazyReact().range(0,1000)
+				           .parallel(s->s.map(i->i*2))
+				.count(),equalTo(1000L));
+	}
     @Test
     public void combineNoOrder(){
         assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)

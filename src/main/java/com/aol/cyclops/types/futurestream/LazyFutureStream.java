@@ -723,38 +723,14 @@ public interface LazyFutureStream<U> extends LazySimpleReactStream<U>, LazyStrea
 
         return LazyToQueue.super.toQueue();
     }
-
+    @Override
     default <R> LazyFutureStream<R> parallel(Function<? super Stream<U>,? extends Stream<R>> fn){
-        com.aol.cyclops.data.async.Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
-                .build();
-
-
-        ReactiveSeq seq = ReactiveSeq.generate(()->foldParallel(fn) )
-                .take(1)
-                .map(s-> FutureW.ofSupplier(()->{s.forEach(queue::offer); return true;}, ForkJoinPool.commonPool())
-                        .peek(b-> queue.close()));
-
-
-
-
-        queue.addContinuation(new Continuation(()->{
-            seq.forEach(e->{});
-            return Continuation.empty();
-
-
-        }));
-        return queue.futureStream(getSimpleReact());
-
+        return fromStream(ReactiveSeq.super.parallel(fn));
 
     }
-
-    default <R> R foldParallel(Function<? super Stream<U>,? extends R> fn){
-
-        com.aol.cyclops.data.async.Queue<U> queue = toQueue().withTimeout(1);
-
-
-        return fn.apply(queue.jdkStream().parallel());
-
+    @Override
+    default <R> LazyFutureStream<R> jooλ(Function<? super Seq<U>, ? extends Seq<R>> mapper){
+        return fromStream(ReactiveSeq.super.jooλ(mapper));
     }
 
     @Override
