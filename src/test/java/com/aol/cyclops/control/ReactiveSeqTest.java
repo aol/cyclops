@@ -6,6 +6,7 @@ import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.control.Eval;
 import cyclops.stream.ReactiveSeq;
+import lombok.ToString;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -34,6 +35,11 @@ public class ReactiveSeqTest {
         assertThat(ReactiveSeq.range(0,1000)
                               .parallel(s->s.map(i->i*2))
                               .count(),equalTo(1000L));
+    }
+
+    @Test
+    public void testLimit(){
+        assertThat(ReactiveSeq.fill(1).limit(2).count(),equalTo(2l));
     }
 
     @Test
@@ -93,7 +99,36 @@ public class ReactiveSeqTest {
         ReactiveSeq.fromSpliterator(sp).forEach(System.err::println);
         
     }
-        
+    @Test
+    public void skip(){
+        assertThat(ReactiveSeq.of(1,2,3).skip(1).count(),equalTo(2l));
+        ReactiveSeq.of(10,1,10,2,10,3).skip(1).printOut();
+        ReactiveSeq.of(1,2,3).flatMap(i->Stream.of(10,i)).skip(1).printOut();
+    }
+    @Test
+    public void multipaths() {
+
+        ReactiveSeq<Integer> list = ReactiveSeq.of(1, 2, 3);
+        ReactiveSeq<Integer> by10 = list.map(i -> i * 10);
+        ReactiveSeq<Integer> plus2 = list.map(i -> i + 2);
+        ReactiveSeq<Integer> by10Plus2 = by10.map(i -> i + 2);
+        assertThat(by10.toListX(), equalTo(Arrays.asList(10, 20, 30)));
+        assertThat(plus2.toListX(), equalTo(Arrays.asList(3, 4, 5)));
+        assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12, 22, 32)));
+    }
+
+
+    @Test
+    public void forEachWithErrorPush(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+      //  pushable.onComplete();
+        stream.map(i->i+"-hello")
+                 .forEachWithError(System.out::println,s->System.out.println("Error" + s));
+
+        pushable.onNext("hello");
+        pushable.onError(new RuntimeException());
+    }
     @Test
     public void block(){
         ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();

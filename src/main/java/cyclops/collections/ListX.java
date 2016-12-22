@@ -1,5 +1,6 @@
 package cyclops.collections;
 
+import com.aol.cyclops.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableSequenceX;
@@ -269,11 +270,10 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     @SafeVarargs
     public static <T> ListX<T> of(final T... values) {
-        final List<T> res = (List<T>) defaultCollector().supplier()
-                                                        .get();
-        for (final T v : values)
-            res.add(v);
-        return fromIterable(res);
+        List<T> list = Arrays.asList(values);
+
+
+        return fromIterable(list);
     }
     public static <T> ListX<T> fromIterator(final Iterator<T> it) {
         return fromIterable(()->it);
@@ -299,11 +299,11 @@ public interface ListX<T> extends To<ListX<T>>,
         if (it instanceof ListX)
             return (ListX<T>) it;
         if (it instanceof List)
-            return new ListXImpl<T>(
-                                    (List<T>) it, defaultCollector());
-        return new ListXImpl<T>(
-                                Streams.stream(it)
-                                           .collect(defaultCollector()),
+            return new LazyListX<T>(
+                                    (List<T>) it, null,defaultCollector());
+
+        return new LazyListX<T>(null,
+                                ReactiveSeq.fromIterable(it),
                                            defaultCollector());
     }
 
@@ -311,11 +311,10 @@ public interface ListX<T> extends To<ListX<T>>,
         if (it instanceof ListX)
             return ((ListX<T>) it).withCollector(collector);
         if (it instanceof List)
-            return new ListXImpl<T>(
-                                    (List<T>) it, collector);
-        return new ListXImpl<T>(
-                                Streams.stream(it)
-                                           .collect(collector),
+            return new LazyListX<T>(
+                                    (List<T>) it,null,collector);
+        return new LazyListX<T>(null,
+                                ReactiveSeq.fromIterable(it),
                                 collector);
     }
     @Override
@@ -404,8 +403,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
     @Override
     default <X> ListX<X> fromStream(final Stream<X> stream) {
-        return new ListXImpl<>(
-                               stream.collect(getCollector()), getCollector());
+        return new LazyListX<>(null,ReactiveSeq.fromStream(stream), getCollector());
     }
 
     /* (non-Javadoc)

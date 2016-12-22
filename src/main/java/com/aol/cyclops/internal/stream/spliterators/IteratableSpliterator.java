@@ -16,11 +16,11 @@ import java.util.function.Function;
 public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>{
 
     private final Iterable<T> source;
-    @Wither
+
     Iterator<T> active;
 
-    public IteratableSpliterator(final Iterable<T> source, long size, int characteristics) {
-        super(size,characteristics & Spliterator.ORDERED);
+    public IteratableSpliterator(final Iterable<T> source) {
+        super(-1,Spliterator.ORDERED);
 
         this.source = source;
 
@@ -45,6 +45,6 @@ public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T
 
     @Override
     public Spliterator<T> copy() {
-        return new IteratableSpliterator<>(source,this.estimateSize(),this.characteristics());
+        return new IteratableSpliterator<>(source);
     }
 }

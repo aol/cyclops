@@ -69,7 +69,7 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     @Override
     public ReversableSpliterator copy() {
         return new ReversingRangeIntSpliterator(
-                                                index, max, reverse);
+                                                min, max, reverse);
     }
 
     /* (non-Javadoc)

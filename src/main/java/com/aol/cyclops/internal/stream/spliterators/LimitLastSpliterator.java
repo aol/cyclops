@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class LimitLastSpliterator<T> extends AbstractSpliterator<T>{
+public class LimitLastSpliterator<T> extends AbstractSpliterator<T> implements CopyableSpliterator<T>{
 
     public static <T> Stream<T> limitLast(Stream<T> stream, int limit){
         Spliterator<T> source = stream.spliterator();
@@ -54,5 +54,9 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T>{
             return buffer.size()>0;
      }
 
-   
+
+    @Override
+    public Spliterator<T> copy() {
+        return new LimitLastSpliterator<T>(CopyableSpliterator.copy(source),limit);
+    }
 }

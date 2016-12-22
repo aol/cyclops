@@ -13,7 +13,7 @@ public class FillSpliterator<T> implements Spliterator<T> {
 
     private final T value;
     
- 
+    private static final int characteristics = IMMUTABLE & SIZED;
 
     public FillSpliterator(T value) {
         super();
@@ -27,7 +27,7 @@ public class FillSpliterator<T> implements Spliterator<T> {
 
     @Override
     public int characteristics() {
-        return IMMUTABLE;
+        return characteristics;
     }
 
 

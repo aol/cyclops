@@ -19,6 +19,17 @@ public class OnEmptySpliterator<T> extends Spliterators.AbstractSpliterator<T> i
         this.value = value;
     }
 
+    @Override
+    public void forEachRemaining(Consumer<? super T> action) {
+        source.forEachRemaining(e->{
+            found =true;
+            action.accept(e);
+        });
+        if(!found) {
+            action.accept(value);
+            sent =true;
+        }
+    }
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
@@ -27,20 +38,23 @@ public class OnEmptySpliterator<T> extends Spliterators.AbstractSpliterator<T> i
         if(found)
             return source.tryAdvance(action);
         else{
-            if(!source.tryAdvance(e->{
+            boolean result = source.tryAdvance(e->{
                 found =true;
                 action.accept(e);
-            })){
+            });
+            if(!found){
+                System.out.println("Not found - sending!!");
                 sent =true;
                 action.accept(value);
             }
+            return result;
         }
 
-        return found;
+
     }
 
     @Override
     public Spliterator<T> copy() {
-        return new OnEmptySpliterator<T>(source,value);
+        return new OnEmptySpliterator<T>(CopyableSpliterator.copy(source),value);
     }
 }

@@ -70,7 +70,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     @Override
     public ReversableSpliterator copy() {
         return new ReversingRangeLongSpliterator(
-                                                 index, max, reverse);
+                                                 min, max, reverse);
     }
 
     /* (non-Javadoc)

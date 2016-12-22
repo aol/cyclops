@@ -41,6 +41,6 @@ public class LimitLastOneSpliterator<T> extends AbstractSpliterator<T> implement
 
     @Override
     public Spliterator<T> copy() {
-        return new LimitLastOneSpliterator<T>(source);
+        return new LimitLastOneSpliterator<T>(CopyableSpliterator.copy(source));
     }
 }

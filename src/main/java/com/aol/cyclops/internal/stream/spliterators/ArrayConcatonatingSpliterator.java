@@ -40,7 +40,7 @@ public class ArrayConcatonatingSpliterator<T> extends Spliterators.AbstractSplit
 
     @Override
     public Spliterator<T> copy() {
-        return new ArrayConcatonatingSpliterator<T>(spliterators);
+        return new ArrayConcatonatingSpliterator<T>(CopyableSpliterator.copy(spliterators));
     }
 
     @Override

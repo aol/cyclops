@@ -55,6 +55,6 @@ public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements 
 
     @Override
     public Spliterator<T> copy() {
-        return new FoldingSinkSpliterator<>(this.estimateSize(),this.characteristics(),s,monoid);
+        return new FoldingSinkSpliterator<>(this.estimateSize(),this.characteristics(),CopyableSpliterator.copy(s),monoid);
     }
 }

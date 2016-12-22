@@ -123,6 +123,7 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
         List<T> list = get().subList(fromIndex, toIndex);
       return from(list);
     }
+
     /**
     @Override
     public ReactiveSeq<T> stream() {

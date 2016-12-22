@@ -9,7 +9,7 @@ import java.util.function.Function;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public class MappingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R> {
+public class MappingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R> implements CopyableSpliterator<R> {
     Spliterator<T> source;
     Function<? super T, ? extends R> mapper;
     public MappingSpliterator(final Spliterator<T> source,Function<? super T, ? extends R> mapper) {
@@ -32,5 +32,10 @@ public class MappingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
         return source.tryAdvance(t->{
             action.accept(mapper.apply(t));
         });
+    }
+
+    @Override
+    public Spliterator<R> copy() {
+        return new MappingSpliterator<T, R>(CopyableSpliterator.copy(source),mapper);
     }
 }

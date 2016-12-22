@@ -23,26 +23,42 @@ public class OnEmptyThrowSpliterator<T> extends Spliterators.AbstractSpliterator
 
 
     @Override
+    public void forEachRemaining(Consumer<? super T> action) {
+        source.forEachRemaining(e->{
+            found =true;
+            action.accept(e);
+        });
+        if(!found) {
+            sent =true;
+            throw ExceptionSoftener.throwSoftenedException(t.get());
+
+        }
+    }
+
+    @Override
     public boolean tryAdvance(Consumer<? super T> action) {
         if(sent)
             return false;
         if(found)
             return source.tryAdvance(action);
         else{
-            if(!source.tryAdvance(e->{
+            boolean result = source.tryAdvance(e->{
                 found =true;
                 action.accept(e);
-            })){
-                sent = true;
+            });
+            if(!found){
+                System.out.println("Not found - sending!!");
+                sent =true;
                 throw ExceptionSoftener.throwSoftenedException(t.get());
             }
+            return result;
         }
 
-        return found;
+
     }
 
     @Override
     public Spliterator<T> copy() {
-        return new OnEmptyThrowSpliterator<T>(source,t);
+        return new OnEmptyThrowSpliterator<T>(CopyableSpliterator.copy(source),t);
     }
 }

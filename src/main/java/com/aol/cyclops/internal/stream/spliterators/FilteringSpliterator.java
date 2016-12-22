@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T> {
+public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>{
     Spliterator<T> source;
     Predicate<? super T> mapper;
     public FilteringSpliterator(final Spliterator<T> source, Predicate<? super T> mapper) {
@@ -42,5 +42,10 @@ public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T>
             });
         }while(!accepted[0] && advance);
         return accepted[0] && advance;
+    }
+
+    @Override
+    public Spliterator<T> copy() {
+        return new FilteringSpliterator<T>(CopyableSpliterator.copy(source),mapper);
     }
 }

@@ -73,6 +73,6 @@ public class ScanLeftSpliterator<T,U> implements CopyableSpliterator<U> {
 
     @Override
     public Spliterator<U> copy() {
-        return new ScanLeftSpliterator<T, U>(source,identity,function);
+        return new ScanLeftSpliterator<T, U>(CopyableSpliterator.copy(source),identity,function);
     }
 }

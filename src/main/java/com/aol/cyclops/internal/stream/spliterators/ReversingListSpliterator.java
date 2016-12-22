@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
-public class ReversingListSpliterator<T> implements Spliterator<T>, ReversableSpliterator {
+public class ReversingListSpliterator<T> implements Spliterator<T>, ReversableSpliterator<T> {
 
     private final List<T> list;
     private ListIterator<T> it;

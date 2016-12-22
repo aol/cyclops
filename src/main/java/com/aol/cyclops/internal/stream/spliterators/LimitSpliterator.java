@@ -21,7 +21,8 @@ public class LimitSpliterator<T> extends Spliterators.AbstractSpliterator<T> imp
     }
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
-        if(source.getExactSizeIfKnown()<=take) {
+
+        if(source.hasCharacteristics(Spliterator.SIZED) && source.getExactSizeIfKnown()>0 && source.getExactSizeIfKnown()<=take) {
             source.forEachRemaining(action);
             return;
         }
@@ -49,6 +50,6 @@ public class LimitSpliterator<T> extends Spliterators.AbstractSpliterator<T> imp
 
     @Override
     public Spliterator<T> copy() {
-        return new LimitSpliterator<>(source,take);
+        return new LimitSpliterator<>(CopyableSpliterator.copy(source),take);
     }
 }

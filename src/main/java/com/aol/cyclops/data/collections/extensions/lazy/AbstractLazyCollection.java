@@ -169,4 +169,9 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     public Stream<T> parallelStream() {
         return get().parallelStream();
     }
+
+    @Override
+    public String toString() {
+        return list.toString();
+    }
 }

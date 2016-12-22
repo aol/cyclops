@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 /**
  * Created by johnmcclean on 15/12/2016.
  */
-@AllArgsConstructor
+//@AllArgsConstructor
 public class ZippingSpliterator<T1,T2,R> implements CopyableSpliterator<R> {
     private final Spliterator<T1> left;
     private final Spliterator<T2> right;
@@ -20,6 +20,11 @@ public class ZippingSpliterator<T1,T2,R> implements CopyableSpliterator<R> {
     private final QueueConsumer<T1> leftQueue = new QueueConsumer<T1>();
     private final QueueConsumer<T2> rightQueue = new QueueConsumer<T2>();
 
+    public ZippingSpliterator(Spliterator<T1> left, Spliterator<T2> right, BiFunction<? super T1, ? super T2, ? extends R> fn) {
+        this.left = CopyableSpliterator.copy(left);
+        this.right = CopyableSpliterator.copy(right);
+        this.fn = fn;
+    }
 
     static class QueueConsumer<T> implements Consumer<T>{
 
@@ -94,7 +99,8 @@ public class ZippingSpliterator<T1,T2,R> implements CopyableSpliterator<R> {
 
     @Override
     public Spliterator<R> copy() {
-        return new ZippingSpliterator(left,right,fn);
+        return new ZippingSpliterator(CopyableSpliterator.copy(left),
+                                        CopyableSpliterator.copy(right),fn);
     }
 
     @Override

@@ -21,6 +21,9 @@ public class IterableFlatMappingSpliterator<T,R> extends Spliterators.AbstractSp
     }
     @Override
     public void forEachRemaining(Consumer<? super R> action) {
+        if(active!=null){
+            active.forEachRemaining(action);
+        }
         source.forEachRemaining(t->{
             Iterable<R> flatten = mapper.apply(t);
             flatten.forEach(action);
@@ -49,6 +52,6 @@ public class IterableFlatMappingSpliterator<T,R> extends Spliterators.AbstractSp
 
     @Override
     public Spliterator<R> copy() {
-        return new IterableFlatMappingSpliterator<>(source,mapper);
+        return new IterableFlatMappingSpliterator<>(CopyableSpliterator.copy(source),mapper);
     }
 }

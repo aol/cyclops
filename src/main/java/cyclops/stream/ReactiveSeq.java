@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.*;
 import java.util.stream.*;
 
+import com.sun.xml.internal.ws.util.StreamUtils;
 import cyclops.monads.AnyM;
 import cyclops.async.*;
 import cyclops.control.Trampoline;
@@ -712,7 +713,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<Tuple2<T, Long>> zipWithIndex() {
-        return fromStream(seq().zipWithIndex());
+        return zipS(ReactiveSeq.rangeLong(0,Long.MAX_VALUE));
     }
 
   
@@ -2811,7 +2812,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static <T> ReactiveSeq<T> fromIterable(final Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
-        return Streams.reactiveSeq(StreamSupport.stream(iterable.spliterator(), false), Optional.empty(), Optional.empty());
+        return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty(), Optional.empty());
     }
 
     /**
@@ -3840,4 +3841,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return !findAny().isPresent();
     }
 
+    static <T> ReactiveSeq<T> concat(Stream<? extends T>...streams){
+        Spliterator[] array = new Spliterator[streams.length];
+        int index = 0;
+        for(Stream<? extends T> next : streams){
+            array[index++] = next.spliterator();
+        }
+        return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T>(array),Optional.empty(),Optional.empty());
+    }
+    static <T> ReactiveSeq<T> concat(Spliterator<? extends T>...array){
+
+        return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T>((Spliterator[])array),Optional.empty(),Optional.empty());
+    }
 }

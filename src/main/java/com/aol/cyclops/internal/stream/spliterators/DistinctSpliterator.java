@@ -52,6 +52,6 @@ public class DistinctSpliterator<T> extends Spliterators.AbstractSpliterator<T> 
 
     @Override
     public Spliterator<T> copy() {
-        return new DistinctSpliterator<T>(source);
+        return new DistinctSpliterator<T>(CopyableSpliterator.copy(source));
     }
 }
