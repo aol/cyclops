@@ -10,8 +10,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
-import com.aol.cyclops.Matchables;
-import com.aol.cyclops.control.FluentFunctions;
+import cyclops.Matchables;
+import cyclops.function.FluentFunctions;
 import com.aol.cyclops.util.ExceptionSoftener;
 import com.aol.cyclops.util.stream.scheduling.cron.CronExpression;
 

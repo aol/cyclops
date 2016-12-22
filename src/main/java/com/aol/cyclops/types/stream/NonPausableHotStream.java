@@ -4,8 +4,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.Matchables;
-import com.aol.cyclops.control.FluentFunctions;
+import cyclops.Matchables;
+import cyclops.function.FluentFunctions;
 import com.aol.cyclops.internal.stream.BaseHotStreamImpl;
 
 /**

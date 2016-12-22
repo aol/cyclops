@@ -12,21 +12,19 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.*;
-import com.aol.cyclops.types.anyM.transformers.TransformerSeq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.anyM.transformers.ValueTransformer;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
+import cyclops.function.F4;
+import cyclops.function.F3;
 
 /**
 * Monad Transformer for FutureW's nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
@@ -172,7 +170,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
     /**
      * Lift a function into one that accepts and returns an FutureWT
-     * This allows multiple monad types to add functionality to existing functions and methods
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
      * e.g. to add list handling  / iteration (via FutureW) and iteration (via Stream) to an existing function
      * <pre>
@@ -205,7 +203,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
     /**
      * Lift a BiFunction into one that accepts and returns  FutureWTs
-     * This allows multiple monad types to add functionality to existing functions and methods
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
      * e.g. to add list handling / iteration (via FutureW), iteration (via Stream)  and asynchronous execution (FutureW) 
      * to an existing function

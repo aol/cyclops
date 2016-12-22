@@ -8,7 +8,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.aol.cyclops.Reducers;
+import cyclops.Reducers;
 
 public class ScanningTest {
 	@Test

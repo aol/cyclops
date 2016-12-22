@@ -13,11 +13,13 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.FoldableTraversable;
+import cyclops.function.F3;
+import cyclops.function.F4;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
-import com.aol.cyclops.Monoid;
+import cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
@@ -27,7 +29,6 @@ import com.aol.cyclops.data.collections.extensions.standard.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.anyM.transformers.FoldableTransformerSeq;
@@ -353,7 +354,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.ListT#cycle(com.aol.cyclops.Monoid, int)
+     * @see com.aol.cyclops.control.monads.transformers.values.ListT#cycle(cyclops.Monoid, int)
      */
     @Override
     public ListT<W,T> cycle(final Monoid<T> m, final int times) {
@@ -556,7 +557,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.ListT#scanLeft(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.control.monads.transformers.values.ListT#scanLeft(cyclops.Monoid)
      */
     @Override
     public ListT<W,T> scanLeft(final Monoid<T> monoid) {
@@ -574,7 +575,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.ListT#scanRight(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.control.monads.transformers.values.ListT#scanRight(cyclops.Monoid)
      */
     @Override
     public ListT<W,T> scanRight(final Monoid<T> monoid) {
@@ -828,4 +829,63 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return false;
     }
 
+
+    public <T2, R1, R2, R3, R> ListT<W,R> forEach4M(Function<? super T, ? extends ListT<W,R1>> value1,
+                                                    BiFunction<? super T, ? super R1, ? extends ListT<W,R2>> value2,
+                                                    F3<? super T, ? super R1, ? super R2, ? extends ListT<W,R3>> value3,
+                                                    F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return this.flatMapT(in->value1.apply(in)
+                .flatMapT(in2-> value2.apply(in,in2)
+                        .flatMapT(in3->value3.apply(in,in2,in3)
+                                .map(in4->yieldingFunction.apply(in,in2,in3,in4)))));
+
+    }
+    public <T2, R1, R2, R3, R> ListT<W,R> forEach4M(Function<? super T, ? extends ListT<W,R1>> value1,
+                                                    BiFunction<? super T, ? super R1, ? extends ListT<W,R2>> value2,
+                                                    F3<? super T, ? super R1, ? super R2, ? extends ListT<W,R3>> value3,
+                                                    F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                    F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return this.flatMapT(in->value1.apply(in)
+                .flatMapT(in2-> value2.apply(in,in2)
+                        .flatMapT(in3->value3.apply(in,in2,in3)
+                                .filter(in4->filterFunction.apply(in,in2,in3,in4))
+                                .map(in4->yieldingFunction.apply(in,in2,in3,in4)))));
+
+    }
+
+    public <T2, R1, R2, R> ListT<W,R> forEach3M(Function<? super T, ? extends ListT<W,R1>> value1,
+                                                BiFunction<? super T, ? super R1, ? extends ListT<W,R2>> value2,
+                                                F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
+        return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2)
+                .map(in3->yieldingFunction.apply(in,in2,in3))));
+
+    }
+
+    public <T2, R1, R2, R> ListT<W,R> forEach3M(Function<? super T, ? extends ListT<W,R1>> value1,
+                                                BiFunction<? super T, ? super R1, ? extends ListT<W,R2>> value2,
+                                                F3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                                F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
+        return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2).filter(in3->filterFunction.apply(in,in2,in3))
+                .map(in3->yieldingFunction.apply(in,in2,in3))));
+
+    }
+    public <R1, R> ListT<W,R> forEach2M(Function<? super T, ? extends ListT<W,R1>> value1,
+                                        BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+
+
+        return this.flatMapT(in->value1.apply(in)
+                .map(in2->yieldingFunction.apply(in,in2)));
+    }
+
+    public <R1, R> ListT<W,R> forEach2M(Function<? super T, ? extends ListT<W,R1>> value1,
+                                        BiFunction<? super T, ? super R1, Boolean> filterFunction,
+                                        BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+
+
+        return this.flatMapT(in->value1.apply(in)
+                .filter(in2->filterFunction.apply(in,in2))
+                .map(in2->yieldingFunction.apply(in,in2)));
+    }
 }

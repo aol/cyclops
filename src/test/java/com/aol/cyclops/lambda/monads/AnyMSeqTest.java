@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -15,17 +14,14 @@ import java.util.stream.Stream;
 import static com.aol.cyclops.types.anyM.Witness.*;
 
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.util.function.MFunc1;
-import com.aol.cyclops.util.function.MFunc2;
+import cyclops.function.MFunction1;
+import cyclops.function.MFunction2;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-
-import lombok.val;
-
 
 
 public class AnyMSeqTest {
@@ -103,7 +99,7 @@ public class AnyMSeqTest {
 
 	@Test
 	public void testLiftMSimplex(){
-        MFunc1<stream,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
+        MFunction1<stream,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)));
 		
@@ -114,7 +110,7 @@ public class AnyMSeqTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-        MFunc2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
+        MFunction2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));
 		
@@ -122,7 +118,7 @@ public class AnyMSeqTest {
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-        MFunc2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
+        MFunction2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of()));
 		
@@ -134,7 +130,7 @@ public class AnyMSeqTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-        MFunc2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
+        MFunction2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));
 		

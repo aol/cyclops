@@ -2,12 +2,9 @@ package com.aol.cyclops.internal.stream.spliterators;
 
 import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import com.aol.cyclops.Monoid;
-
-import lombok.Getter;
+import cyclops.Monoid;
 
 public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements Runnable{
     private final Spliterator<T> s;

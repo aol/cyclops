@@ -1,8 +1,5 @@
 package com.aol.cyclops.util;
 
-import static com.aol.cyclops.control.AnyM.fromCompletableFuture;
-import static java.util.concurrent.CompletableFuture.completedFuture;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
@@ -10,13 +7,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
+import cyclops.function.F3;
+import cyclops.function.F4;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Semigroup;
+import cyclops.Monoid;
+import cyclops.Reducer;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.FutureW;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -38,7 +34,7 @@ public class CompletableFutures {
 
 
     /**
-     * Perform a For Comprehension over a CompletableFuture, accepting 3 generating functions.
+     * Perform a For Comprehension over a CompletableFuture, accepting 3 generating function.
      * This results in a four level nested internal iteration over the provided CompletableFutures.
      *
      *  <pre>
@@ -87,7 +83,7 @@ public class CompletableFutures {
 
 
     /**
-     * Perform a For Comprehension over a CompletableFuture, accepting 2 generating functions.
+     * Perform a For Comprehension over a CompletableFuture, accepting 2 generating function.
      * This results in a three level nested internal iteration over the provided CompletableFutures.
      *
      *  <pre>
@@ -246,7 +242,7 @@ public class CompletableFutures {
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied mapping function to
      * convert the data from each FutureW before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -275,7 +271,7 @@ public class CompletableFutures {
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }
      * 
      * <pre>
      * {@code 
@@ -302,7 +298,7 @@ public class CompletableFutures {
         return result;    
     }
     /**
-     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see com.aol.cyclops.Reducers}
+     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see cyclops.Reducers}
      * <pre>
      * {@code 
      * 
@@ -325,7 +321,7 @@ public class CompletableFutures {
     /**
      * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function to
      * convert the data from each FutureW before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
      * A single Failure results in a Failed  Future.
      * 
      * <pre>
@@ -348,7 +344,7 @@ public class CompletableFutures {
     /**
      * Asynchronously accumulate the results only from the provided Futures,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
      * 
      * A single Failure results in a Failed  Future.
      * 

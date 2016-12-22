@@ -36,7 +36,7 @@ public class DequeXTest extends AbstractCollectionXTest{
         assertThat(DequeX.empty().onEmptySwitch(() -> DequeX.of(1, 2, 3)).toList(), equalTo(ListX.of(1, 2, 3)));
     }
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 * @see com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
 	public <T> FluentCollectionX<T> empty() {

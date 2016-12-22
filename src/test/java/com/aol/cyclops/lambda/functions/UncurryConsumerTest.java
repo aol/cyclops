@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.util.function.UncurryConsumer;
+import cyclops.function.UncurryConsumer;
 
 public class UncurryConsumerTest {
 	Integer value;

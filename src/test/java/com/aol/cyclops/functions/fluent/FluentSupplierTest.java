@@ -1,7 +1,7 @@
 package com.aol.cyclops.functions.fluent;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.FluentFunctions;
+import cyclops.function.FluentFunctions;
 import com.aol.cyclops.control.Try;
 import com.aol.cyclops.types.anyM.Witness;
 import com.google.common.cache.Cache;

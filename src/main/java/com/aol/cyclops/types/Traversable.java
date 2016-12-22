@@ -1,6 +1,6 @@
 package com.aol.cyclops.types;
 
-import com.aol.cyclops.Monoid;
+import cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import org.jooq.lambda.tuple.Tuple2;

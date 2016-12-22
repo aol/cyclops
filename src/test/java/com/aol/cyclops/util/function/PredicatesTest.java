@@ -1,15 +1,15 @@
 package com.aol.cyclops.util.function;
 
-import static com.aol.cyclops.util.function.Predicates.anyOf;
-import static com.aol.cyclops.util.function.Predicates.eq;
-import static com.aol.cyclops.util.function.Predicates.eqv;
-import static com.aol.cyclops.util.function.Predicates.eqv2;
-import static com.aol.cyclops.util.function.Predicates.greaterThan;
-import static com.aol.cyclops.util.function.Predicates.greaterThanOrEquals;
-import static com.aol.cyclops.util.function.Predicates.in;
-import static com.aol.cyclops.util.function.Predicates.lessThan;
-import static com.aol.cyclops.util.function.Predicates.lessThanOrEquals;
-import static com.aol.cyclops.util.function.Predicates.not;
+import static cyclops.function.Predicates.anyOf;
+import static cyclops.function.Predicates.eq;
+import static cyclops.function.Predicates.eqv;
+import static cyclops.function.Predicates.eqv2;
+import static cyclops.function.Predicates.greaterThan;
+import static cyclops.function.Predicates.greaterThanOrEquals;
+import static cyclops.function.Predicates.in;
+import static cyclops.function.Predicates.lessThan;
+import static cyclops.function.Predicates.lessThanOrEquals;
+import static cyclops.function.Predicates.not;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.function.Predicates;
 import org.junit.Test;
 
 import com.aol.cyclops.control.Eval;

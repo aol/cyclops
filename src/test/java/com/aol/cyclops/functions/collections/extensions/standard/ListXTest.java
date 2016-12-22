@@ -11,14 +11,9 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import org.jooq.lambda.tuple.Tuple2;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.Semigroups;
-import com.aol.cyclops.control.Ior;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.async.QueueFactories;
+import cyclops.Semigroups;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
@@ -74,7 +69,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
      * (non-Javadoc)
      * 
      * @see
-     * com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#
+     * com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#
      * empty()
      */
     @Override

@@ -7,7 +7,7 @@ import com.aol.cyclops.control.Try;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.util.function.F1;
+import cyclops.function.F1;
 import org.jooq.lambda.Seq;
 import org.reactivestreams.Subscription;
 

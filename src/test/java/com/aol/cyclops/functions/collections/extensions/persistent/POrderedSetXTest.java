@@ -34,7 +34,7 @@ public class POrderedSetXTest extends AbstractCollectionXTest{
         
     }
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 * @see com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
 	public <T> FluentCollectionX<T> empty() {

@@ -4,17 +4,16 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
+import cyclops.function.F3;
+import cyclops.function.F4;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
+import cyclops.Monoid;
+import cyclops.Reducer;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
@@ -35,7 +34,7 @@ import lombok.experimental.UtilityClass;
 public class Optionals {
 
     /**
-     * Perform a For Comprehension over a Optional, accepting 3 generating functions.
+     * Perform a For Comprehension over a Optional, accepting 3 generating function.
      * This results in a four level nested internal iteration over the provided Optionals.
      *
      *  <pre>
@@ -83,7 +82,7 @@ public class Optionals {
 
     /**
      *
-     * Perform a For Comprehension over a Optional, accepting 3 generating functions.
+     * Perform a For Comprehension over a Optional, accepting 3 generating function.
      * This results in a four level nested internal iteration over the provided Optionals.
      *
      * <pre>
@@ -134,7 +133,7 @@ public class Optionals {
     }
 
     /**
-     * Perform a For Comprehension over a Optional, accepting 2 generating functions.
+     * Perform a For Comprehension over a Optional, accepting 2 generating function.
      * This results in a three level nested internal iteration over the provided Optionals.
      *
      *  <pre>
@@ -176,7 +175,7 @@ public class Optionals {
 
     /**
      *
-     * Perform a For Comprehension over a Optional, accepting 2 generating functions.
+     * Perform a For Comprehension over a Optional, accepting 2 generating function.
      * This results in a three level nested internal iteration over the provided Optionals.
      *
      * <pre>
@@ -257,7 +256,7 @@ public class Optionals {
 
     /**
      *
-     * Perform a For Comprehension over a Optional, accepting a generating functions.
+     * Perform a For Comprehension over a Optional, accepting a generating function.
      * This results in a two level nested internal iteration over the provided Optionals.
      *
      * <pre>
@@ -380,7 +379,7 @@ public class Optionals {
 
     }
     /**
-     * Accummulating operation using the supplied Reducer (@see com.aol.cyclops.Reducers). A typical use case is to accumulate into a Persistent Collection type. 
+     * Accummulating operation using the supplied Reducer (@see cyclops.Reducers). A typical use case is to accumulate into a Persistent Collection type.
      * Accumulates the present results, ignores empty Optionals.
      * 
      * <pre>
@@ -404,7 +403,7 @@ public class Optionals {
     /**
      * Accumulate the results only from those Optionals which have a value present, using the supplied mapping function to
      * convert the data from each Optional before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }. 
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -431,7 +430,7 @@ public class Optionals {
     /**
      * Accumulate the results only from those Optionals which have a value present, using the 
      * supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }. 
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
      * 
      * <pre>
      * {@code 

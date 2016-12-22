@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
-import com.aol.cyclops.control.FluentFunctions;
+import cyclops.function.FluentFunctions;
 public class ExpressionTest {
 
 	@Test

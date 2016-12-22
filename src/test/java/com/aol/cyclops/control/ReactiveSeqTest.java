@@ -1,6 +1,6 @@
 package com.aol.cyclops.control;
 
-import com.aol.cyclops.Monoids;
+import cyclops.Monoids;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.aol.cyclops.util.function.Predicates.*;
+import static cyclops.function.Predicates.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;

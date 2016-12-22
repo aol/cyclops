@@ -1,11 +1,11 @@
 package com.aol.cyclops.lambda.functions;
 
-import static com.aol.cyclops.util.function.PartialApplicator.partial3;
-import static com.aol.cyclops.util.function.PartialApplicator.partial4;
-import static com.aol.cyclops.util.function.PartialApplicator.partial5;
-import static com.aol.cyclops.util.function.PartialApplicator.partial6;
-import static com.aol.cyclops.util.function.PartialApplicator.partial7;
-import static com.aol.cyclops.util.function.PartialApplicator.partial8;
+import static cyclops.function.PartialApplicator.partial3;
+import static cyclops.function.PartialApplicator.partial4;
+import static cyclops.function.PartialApplicator.partial5;
+import static cyclops.function.PartialApplicator.partial6;
+import static cyclops.function.PartialApplicator.partial7;
+import static cyclops.function.PartialApplicator.partial8;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -14,12 +14,12 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
-import com.aol.cyclops.util.function.F7;
-import com.aol.cyclops.util.function.F6;
-import com.aol.cyclops.util.function.F8;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F5;
-import com.aol.cyclops.util.function.F3;
+import cyclops.function.F7;
+import cyclops.function.F6;
+import cyclops.function.F8;
+import cyclops.function.F4;
+import cyclops.function.F5;
+import cyclops.function.F3;
 
 public class PartialApplicatorTest {
 

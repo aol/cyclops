@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -25,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.anyM.transformers.FoldableTransformerSeq;
 import org.junit.Rule;
@@ -33,12 +31,10 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
-import com.aol.cyclops.Reducers;
-import com.aol.cyclops.control.Ior;
+import cyclops.Reducers;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.anyM.NestedFoldable;
 
 public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Rule

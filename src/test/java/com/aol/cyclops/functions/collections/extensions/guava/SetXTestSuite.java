@@ -23,7 +23,7 @@ public class SetXTestSuite {
      
         public TestSuite allTests() {
             TestSuite suite =
-                new TestSuite("com.aol.cyclops.functions.collections.extensions.guava");
+                new TestSuite("com.aol.cyclops.function.collections.extensions.guava");
             suite.addTest(testForOneToWayUseMySet());
             
             return suite;

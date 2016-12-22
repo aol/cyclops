@@ -17,7 +17,7 @@ public class ListXTest extends AbstractAnyMSeqOrderedDependentTest<Witness.list>
 		return AnyM.fromList(ListX.of(values));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 * @see com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.list,T> empty() {

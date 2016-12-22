@@ -1,7 +1,6 @@
 package com.aol.cyclops.types.stream;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -9,18 +8,13 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.cyclops.Reducers;
+import cyclops.Reducers;
 import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.Ior;
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.SimpleReact;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
 import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
 import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;

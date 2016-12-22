@@ -16,14 +16,14 @@ public class SetXTest extends AbstractAnyMSeqTest<Witness.set>{
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 * @see com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.set,T> empty() {
 		return AnyM.fromSet(SetX.empty());
 	}
 	 /* (non-Javadoc)
-     * @see com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
+     * @see com.aol.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
      */
     @Override
     @Test

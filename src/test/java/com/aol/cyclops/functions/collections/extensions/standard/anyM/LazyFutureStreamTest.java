@@ -22,7 +22,7 @@ public class LazyFutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<Wi
 		return AnyM.fromStream(LazyFutureStream.of(values).async());
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 * @see com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.stream,T> empty() {

@@ -20,15 +20,14 @@ import com.aol.cyclops.types.*;
 import com.aol.cyclops.types.futurestream.Continuation;
 import com.aol.cyclops.types.stream.*;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
-import com.aol.cyclops.util.function.Lambda;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
+import cyclops.Monoid;
+import cyclops.Reducer;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -38,10 +37,8 @@ import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
-
-import lombok.val;
+import cyclops.function.F4;
+import cyclops.function.F3;
 
 /**
  * A powerful extended, sequential Stream type.
@@ -1653,7 +1650,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Performs a <a href="package-summary.html#MutableReduction">mutable
      * reduction</a> operation on the elements of this stream using a
      * {@code Collector}.  A {@code Collector}
-     * encapsulates the functions used as arguments to
+     * encapsulates the function used as arguments to
      * {@link #collect(Supplier, BiConsumer, BiConsumer)}, allowing for reuse of
      * collection strategies and composition of collect operations such as
      * multiple-level grouping or partitioning.

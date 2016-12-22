@@ -4,9 +4,10 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.util.function.F1;
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
+import cyclops.function.F1;
+import cyclops.function.F3;
+import cyclops.function.F4;
+import cyclops.function.FluentFunctions;
 
 /**
  * An interface that represents the Reader monad
@@ -69,7 +70,7 @@ public interface Reader<T, R> extends F1<T, R>, Functor<R> {
     }
 
    /*
-    * Perform a For Comprehension over a Reader, accepting 3 generating functions.
+    * Perform a For Comprehension over a Reader, accepting 3 generating function.
             * This results in a four level nested internal iteration over the provided Readers.
      *
              *  <pre>
@@ -127,7 +128,7 @@ public interface Reader<T, R> extends F1<T, R>, Functor<R> {
 
 
     /**
-     * Perform a For Comprehension over a Reader, accepting 2 generating functions.
+     * Perform a For Comprehension over a Reader, accepting 2 generating function.
      * This results in a three level nested internal iteration over the provided Readers.
      *
      *  <pre>

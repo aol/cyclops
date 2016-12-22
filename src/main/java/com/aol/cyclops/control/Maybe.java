@@ -1,7 +1,7 @@
 package com.aol.cyclops.control;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
+import cyclops.Monoid;
+import cyclops.Reducer;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.MonadicValue;
@@ -10,9 +10,9 @@ import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
-import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
+import cyclops.function.Curry;
+import cyclops.function.F3;
+import cyclops.function.F4;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.jooq.lambda.tuple.Tuple;
@@ -377,7 +377,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /**
-     * Accummulating operation using the supplied Reducer (@see com.aol.cyclops.Reducers). A typical use case is to accumulate into a Persistent Collection type. 
+     * Accummulating operation using the supplied Reducer (@see cyclops.Reducers). A typical use case is to accumulate into a Persistent Collection type.
      * Accumulates the present results, ignores empty Maybes.
      * 
      * <pre>
@@ -402,7 +402,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     /**
      * Accumulate the results only from those Maybes which have a value present, using the supplied mapping function to
      * convert the data from each Maybe before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.. 
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }..
      * 
      * <pre>
      * {@code 
@@ -429,7 +429,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     /**
      * Accumulate the results only from those Maybes which have a value present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }. 
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
 
      * 
      * <pre>
@@ -648,7 +648,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid,
+     * @see com.aol.cyclops.types.MonadicValue2#combine(cyclops.Monoid,
      * com.aol.cyclops.types.MonadicValue2)
      */
     @Override

@@ -3,12 +3,11 @@ package com.aol.cyclops.internal.stream.operators;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
+import cyclops.Monoid;
+import cyclops.Reducer;
 import com.aol.cyclops.control.StreamUtils;
 
 import lombok.AllArgsConstructor;

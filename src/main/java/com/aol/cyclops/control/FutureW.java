@@ -1,7 +1,7 @@
 package com.aol.cyclops.control;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
+import cyclops.Monoid;
+import cyclops.Reducer;
 import com.aol.cyclops.control.monads.transformers.FutureT;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -16,8 +16,8 @@ import com.aol.cyclops.types.anyM.WitnessType;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.CompletableFutures;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
+import cyclops.function.F3;
+import cyclops.function.F4;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -454,7 +454,7 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
        return FutureW.of(CompletableFutures.accumulateSuccess(fts.map(FutureW::getFuture), reducer));  
     }
     /**
-     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see com.aol.cyclops.Reducers}
+     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see cyclops.Reducers}
      * <pre>
      * {@code 
      * 
@@ -477,7 +477,7 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied mapping function to
      * convert the data from each FutureW before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -498,7 +498,7 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -520,7 +520,7 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
     /**
      * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function to
      * convert the data from each FutureW before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
      * A single Failure results in a Failed  Future.
      * 
      * <pre>
@@ -544,7 +544,7 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
     /**
      * Asynchronously accumulate the results only from the provided Futures,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }
      * 
      * A single Failure results in a Failed  Future.
      * 
@@ -708,7 +708,7 @@ public class FutureW<T> implements To<FutureW<T>>,MonadicValue<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.MonadicValue2#combine(com.aol.cyclops.Monoid,
+     * @see com.aol.cyclops.types.MonadicValue2#combine(cyclops.Monoid,
      * com.aol.cyclops.types.MonadicValue2)
      */
     @Override

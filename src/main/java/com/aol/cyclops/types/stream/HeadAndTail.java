@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import com.aol.cyclops.control.Eval;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.util.function.Memoize;
+import cyclops.function.Memoize;
 
 import lombok.AllArgsConstructor;
 

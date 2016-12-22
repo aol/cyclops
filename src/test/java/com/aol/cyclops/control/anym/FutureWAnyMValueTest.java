@@ -1,7 +1,7 @@
 package com.aol.cyclops.control.anym;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Semigroups;
+import cyclops.Monoid;
+import cyclops.Semigroups;
 import com.aol.cyclops.types.anyM.Witness;
 import org.junit.Before;
 

@@ -1,8 +1,8 @@
 package com.aol.cyclops.control;
 
-import com.aol.cyclops.CyclopsCollectors;
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
+import cyclops.CyclopsCollectors;
+import cyclops.Monoid;
+import cyclops.Reducer;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
@@ -18,8 +18,8 @@ import com.aol.cyclops.types.stream.HotStream;
 import com.aol.cyclops.types.stream.NonPausableHotStream;
 import com.aol.cyclops.types.stream.PausableHotStream;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
+import cyclops.function.F3;
+import cyclops.function.F4;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -29,7 +29,6 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.io.BufferedReader;
@@ -59,7 +58,7 @@ import java.util.stream.StreamSupport;
 @UtilityClass
 public class StreamUtils {
     /**
-     * Perform a For Comprehension over a Stream, accepting 3 generating functions.
+     * Perform a For Comprehension over a Stream, accepting 3 generating function.
      * This results in a four level nested internal iteration over the provided Publishers.
      *
      *  <pre>
@@ -107,7 +106,7 @@ public class StreamUtils {
     }
 
     /**
-     * Perform a For Comprehension over a Stream, accepting 3 generating functions.
+     * Perform a For Comprehension over a Stream, accepting 3 generating function.
      * This results in a four level nested internal iteration over the provided Publishers.
      * <pre>
      * {@code
@@ -157,7 +156,7 @@ public class StreamUtils {
     }
 
     /**
-     * Perform a For Comprehension over a Stream, accepting 2 generating functions.
+     * Perform a For Comprehension over a Stream, accepting 2 generating function.
      * This results in a three level nested internal iteration over the provided Publishers.
      *
      * <pre>
@@ -200,7 +199,7 @@ public class StreamUtils {
     }
 
     /**
-     * Perform a For Comprehension over a Stream, accepting 2 generating functions.
+     * Perform a For Comprehension over a Stream, accepting 2 generating function.
      * This results in a three level nested internal iteration over the provided Publishers.
      * <pre>
      * {@code

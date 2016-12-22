@@ -5,19 +5,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
-import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.util.function.MFunc1;
-import com.aol.cyclops.util.function.MFunc2;
+import cyclops.function.MFunction2;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.Try;
-
-import lombok.val;
 
 
 public class LiftTest {
@@ -28,7 +22,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLift(){
-		MFunc2<tryType,Integer,Integer,Integer> add =	AnyM.liftF2(this::add);
+		MFunction2<tryType,Integer,Integer,Integer> add =	AnyM.liftF2(this::add);
 		
 		AnyM<tryType,Integer> result = add.apply(Try.of(2, RuntimeException.class).anyM(), Try.of(3,RuntimeException.class).anyM());
 		assertThat(result.<Try<Integer,RuntimeException>>unwrap().get(),equalTo(5));
@@ -36,7 +30,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLiftError(){
-		MFunc2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
+		MFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
 		AnyM<tryType,Integer> result = divide.apply(Try.of(2, ArithmeticException.class).anyM(),Try.of(0,ArithmeticException.class).anyM());
 		System.out.println(result);
@@ -45,7 +39,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLiftErrorAndStream(){
-		MFunc2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
+		MFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
 		AnyM<tryType,Integer> result = divide.apply(Try.of(20, ArithmeticException.class).anyM(), Try.success(4).anyM());
 		System.out.println(result);
@@ -55,7 +49,7 @@ public class LiftTest {
 	@Test
 	public void testLiftAndStream(){
 
-		MFunc2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
+		MFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
 		AnyM<tryType,Integer> result = divide.apply(Try.of(2, ArithmeticException.class).anyM(), Try.success(4).anyM());
 		
@@ -65,7 +59,7 @@ public class LiftTest {
 	
 	@Test(expected=ArithmeticException.class)
 	public void testLiftNoExceptionType(){
-		MFunc2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
+		MFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
 		AnyM<tryType,Integer> result = divide.apply(Try.of(2).anyM(),Try.of(0).anyM());
 		System.out.println(result);

@@ -30,10 +30,10 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.CyclopsCollectors;
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducers;
-import com.aol.cyclops.Semigroups;
+import cyclops.CyclopsCollectors;
+import cyclops.Monoid;
+import cyclops.Reducers;
+import cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;

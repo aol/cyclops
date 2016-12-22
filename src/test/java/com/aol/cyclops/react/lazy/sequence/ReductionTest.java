@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.Reducers;
+import cyclops.Reducers;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 

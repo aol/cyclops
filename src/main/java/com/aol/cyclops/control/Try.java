@@ -17,20 +17,17 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.Monoid;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.stream.ToStream;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
+import cyclops.function.Curry;
+import cyclops.function.F4;
+import cyclops.function.F3;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

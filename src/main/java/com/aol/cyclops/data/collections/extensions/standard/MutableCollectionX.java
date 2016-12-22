@@ -12,19 +12,16 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
-import com.aol.cyclops.Monoid;
+import cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
 
 public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     
@@ -242,7 +239,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanLeft(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanLeft(cyclops.Monoid)
      */
     @Override
     default MutableCollectionX<T> scanLeft(final Monoid<T> monoid) {
@@ -258,7 +255,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanRight(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanRight(cyclops.Monoid)
      */
     @Override
     default MutableCollectionX<T> scanRight(final Monoid<T> monoid) {
@@ -332,7 +329,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#cycle(com.aol.cyclops.Monoid, int)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#cycle(cyclops.Monoid, int)
      */
     @Override
     default MutableCollectionX<T> cycle(final Monoid<T> m, final int times) {

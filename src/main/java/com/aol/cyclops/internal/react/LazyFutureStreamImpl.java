@@ -15,12 +15,11 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.types.futurestream.LazySimpleReactStream;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
+import cyclops.Monoid;
+import cyclops.Reducer;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;

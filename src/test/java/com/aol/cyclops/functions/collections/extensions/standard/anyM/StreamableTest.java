@@ -18,7 +18,7 @@ public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.
 		return AnyM.fromStreamable(Streamable.of(values));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 * @see com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.streamable,T> empty() {

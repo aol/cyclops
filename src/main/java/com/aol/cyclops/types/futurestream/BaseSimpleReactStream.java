@@ -253,7 +253,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
 
     /**
      * Allows aggregate values in a Stream to be flatten into a single Stream.
-     * flatMap functions turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
+     * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
      * into a single flattened stream
      * 
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream

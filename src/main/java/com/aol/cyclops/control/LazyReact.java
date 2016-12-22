@@ -30,7 +30,7 @@ import com.aol.cyclops.react.async.subscription.Subscription;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
-import com.aol.cyclops.util.function.Cacheable;
+import cyclops.function.Cacheable;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 

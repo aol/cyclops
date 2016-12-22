@@ -28,12 +28,9 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.Monoid;
+import cyclops.Monoid;
 import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.async.QueueFactories;
-
 
 
 //see BaseSequentialSeqTest for in order tests

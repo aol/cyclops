@@ -1,17 +1,18 @@
 package com.aol.cyclops.control;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Semigroup;
+import cyclops.Monoid;
+import cyclops.Reducer;
+import cyclops.Semigroup;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.*;
 import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
-import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
+import cyclops.function.Curry;
+import cyclops.function.F3;
+import cyclops.function.F4;
+import cyclops.function.FluentFunctions;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -384,7 +385,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#combine(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
+     * @see com.aol.cyclops.types.MonadicValue#combine(cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
      */
     @Override
     default Ior<ST, PT> combineEager(final Monoid<PT> monoid, final MonadicValue<? extends PT> v2) {
@@ -564,7 +565,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /**
-     * Accumulate the result of the Secondary types in the Collection of Iors provided using the supplied Reducer  {@see com.aol.cyclops.Reducers}.
+     * Accumulate the result of the Secondary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops.Reducers}.
      * 
      * <pre>
      * {@code 
@@ -586,7 +587,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      * Accumulate the results only from those Iors which have a Secondary type present, using the supplied mapping function to
      * convert the data from each Ior before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -614,7 +615,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
     /**
      *  Accumulate the results only from those Iors which have a Secondary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -664,7 +665,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /**
-     * Accumulate the result of the Primary types in the Collection of Iors provided using the supplied Reducer  {@see com.aol.cyclops.Reducers}.
+     * Accumulate the result of the Primary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops.Reducers}.
 
      * <pre>
      * {@code 
@@ -686,7 +687,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      * Accumulate the results only from those Iors which have a Primary type present, using the supplied mapping function to
      * convert the data from each Ior before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+     * input values of the same type and returns the combined result) {@see cyclops.Semigroups }.
      * 
      * <pre>
      * {@code 
@@ -713,7 +714,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
     /**
      *  Accumulate the results only from those Iors which have a Primary type present, using the supplied  Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops.Semigroups }. 
+     * input values of the same type and returns the combined result) {@see cyclops.Semigroups }.
      * 
      * <pre>
      * {@code 

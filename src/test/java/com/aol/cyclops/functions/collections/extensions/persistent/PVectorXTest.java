@@ -33,7 +33,7 @@ public class PVectorXTest extends CollectionXTestsWithNulls{
             assertThat(PVectorX.empty().onEmptySwitch(()->PVectorX.of(1,2,3)),equalTo(PVectorX.of(1,2,3)));
     }
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 * @see com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
 	public <T> FluentCollectionX<T> empty() {

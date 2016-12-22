@@ -13,7 +13,7 @@ import com.aol.cyclops.control.Try;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.function.Memoize;
+import cyclops.function.Memoize;
 
 /**
  * A reactive-streams Subscriber that can take 1 value from a reactive-streams publisher and convert

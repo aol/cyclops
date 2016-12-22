@@ -42,7 +42,7 @@ public class SortedSetXTest extends AbstractCollectionXTest {
      * (non-Javadoc)
      * 
      * @see
-     * com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#
+     * com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#
      * empty()
      */
     @Override

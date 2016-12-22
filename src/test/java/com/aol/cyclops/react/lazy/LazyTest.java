@@ -12,10 +12,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import com.aol.cyclops.control.ReactiveSeq;
 import org.junit.Test;
 
-import com.aol.cyclops.Semigroups;
+import cyclops.Semigroups;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.futurestream.LazyFutureStream;

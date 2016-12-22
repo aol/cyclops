@@ -1,9 +1,9 @@
 package com.aol.cyclops.control.anym;
 
 import com.aol.cyclops.Matchers;
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducers;
-import com.aol.cyclops.Semigroups;
+import cyclops.Monoid;
+import cyclops.Reducers;
+import cyclops.Semigroups;
 import com.aol.cyclops.control.*;
 import com.aol.cyclops.data.Mutable;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;

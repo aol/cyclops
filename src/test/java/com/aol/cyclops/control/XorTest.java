@@ -1,7 +1,7 @@
 package com.aol.cyclops.control;
 
-import com.aol.cyclops.Monoids;
-import com.aol.cyclops.Semigroups;
+import cyclops.Monoids;
+import cyclops.Semigroups;
 import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import org.junit.Test;

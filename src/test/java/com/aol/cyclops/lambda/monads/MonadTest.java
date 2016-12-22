@@ -4,24 +4,20 @@ import static org.junit.Assert.assertThat;
 import static com.aol.cyclops.types.anyM.Witness.*;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.util.function.MFunc1;
-import com.aol.cyclops.util.function.MFunc2;
+import cyclops.function.MFunction1;
+import cyclops.function.MFunction2;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
-
-import lombok.val;
 
 
 public class MonadTest {
@@ -79,7 +75,7 @@ public class MonadTest {
 
 	@Test
 	public void testLiftMSimplex(){
-		MFunc1<completableFuture,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
+		MFunction1<completableFuture,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 		
 		AnyM<completableFuture,Integer> result = lifted.apply(AnyM.fromCompletableFuture(CompletableFuture.completedFuture(3)));
 		
@@ -90,7 +86,7 @@ public class MonadTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		MFunc2<completableFuture,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
+		MFunction2<completableFuture,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<completableFuture,Integer> result = lifted.apply(AnyM.fromCompletableFuture(CompletableFuture.completedFuture(3)),
 																AnyM.fromCompletableFuture(CompletableFuture.completedFuture(4)));
@@ -99,7 +95,7 @@ public class MonadTest {
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		MFunc2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
+		MFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<optional,Integer> result = lifted.apply(AnyM.ofNullable(3),
 														AnyM.ofNullable(null));
@@ -112,7 +108,7 @@ public class MonadTest {
 	}
 	@Test
 	public void testLiftM2Stream(){
-		MFunc2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
+		MFunction2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromArray(3),AnyM.fromArray(4,6,7));
 		

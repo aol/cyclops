@@ -181,7 +181,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * Zip this Stream with an index, but Zip based on the underlying tasks, not completed results.
      *
      * e.g.
-     * two functions that return method name, but take varying lengths of time.
+     * two function that return method name, but take varying lengths of time.
      * <pre>
      * <code>
      * EagerFutureStream.react(()-&gt;takesALotOfTime(),()-&gt;veryQuick()).zipWithIndex();
@@ -644,7 +644,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
 
     /**
      * Allows aggregate values in a Stream to be flatten into a single Stream.
-     * flatMap functions turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
+     * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
      * into a single flattened stream
      *
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream

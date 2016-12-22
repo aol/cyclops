@@ -39,7 +39,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -48,11 +47,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.CyclopsCollectors;
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Monoids;
-import com.aol.cyclops.Reducers;
-import com.aol.cyclops.Semigroups;
+import cyclops.CyclopsCollectors;
+import cyclops.Monoid;
+import cyclops.Monoids;
+import cyclops.Reducers;
+import cyclops.Semigroups;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.LazyReact;
 import com.aol.cyclops.control.Maybe;
@@ -60,18 +59,11 @@ import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Streamable;
 import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.async.QueueFactories;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.util.SimpleTimer;
-import com.aol.cyclops.util.function.Predicates;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 public abstract class AbstractCollectionXTest {
 	public abstract <T> FluentCollectionX<T> empty();

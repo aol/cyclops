@@ -1,11 +1,11 @@
 package com.aol.cyclops.types;
 
-import com.aol.cyclops.Monoid;
+import cyclops.Monoid;
 import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
-import com.aol.cyclops.util.function.Curry;
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
+import cyclops.function.Curry;
+import cyclops.function.F3;
+import cyclops.function.F4;
 import org.jooq.lambda.tuple.Tuple;
 import org.reactivestreams.Publisher;
 

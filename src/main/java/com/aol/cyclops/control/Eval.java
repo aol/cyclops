@@ -1,7 +1,7 @@
 package com.aol.cyclops.control;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
+import cyclops.Monoid;
+import cyclops.Reducer;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeX;
@@ -12,9 +12,9 @@ import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.Zippable;
 import com.aol.cyclops.types.anyM.Witness;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.Memoize;
+import cyclops.function.F3;
+import cyclops.function.F4;
+import cyclops.function.Memoize;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
@@ -289,7 +289,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#combineEager(com.aol.cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
+     * @see com.aol.cyclops.types.MonadicValue#combineEager(cyclops.Monoid, com.aol.cyclops.types.MonadicValue)
      */
     @Override
     default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {

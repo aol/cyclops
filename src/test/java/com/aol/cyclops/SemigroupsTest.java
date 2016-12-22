@@ -17,6 +17,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.Semigroup;
+import cyclops.Semigroups;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 import org.pcollections.PVector;

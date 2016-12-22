@@ -16,16 +16,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Reducers;
+import cyclops.Monoid;
+import cyclops.Reducer;
+import cyclops.Reducers;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;

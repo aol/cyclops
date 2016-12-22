@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.aol.cyclops.util.function.CurryConsumer;
+import cyclops.function.CurryConsumer;
 
 public class CurryConsumerTest {
 

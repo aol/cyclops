@@ -1,14 +1,13 @@
 package com.aol.cyclops.data.collections.extensions.standard;
 
-import com.aol.cyclops.Monoid;
+import cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.StreamUtils;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
-import org.jooq.lambda.Seq;
+import cyclops.function.F3;
+import cyclops.function.F4;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;

@@ -1,15 +1,14 @@
 package com.aol.cyclops.data.collections.extensions;
 
-import com.aol.cyclops.Monoid;
+import cyclops.Monoid;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
 import com.aol.cyclops.types.*;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
+import cyclops.function.F3;
+import cyclops.function.F4;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -165,10 +164,10 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<T> cycle(int times);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycle(com.aol.cyclops.Monoid, int)
+     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.Monoid, int)
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycle(com.aol.cyclops.Monoid, int)
+     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.Monoid, int)
      */
     @Override
     CollectionX<T> cycle(Monoid<T> m, int times);
@@ -477,7 +476,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<ListX<T>> sliding(int windowSize, int increment);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanLeft(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanLeft(cyclops.Monoid)
      */
     @Override
     CollectionX<T> scanLeft(Monoid<T> monoid);
@@ -489,7 +488,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     <U> CollectionX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanRight(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanRight(cyclops.Monoid)
      */
     @Override
     CollectionX<T> scanRight(Monoid<T> monoid);

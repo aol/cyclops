@@ -2,14 +2,11 @@ package com.aol.cyclops.functions.collections.extensions;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
-import static org.hamcrest.Matchers.equalTo;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+
 import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops.Monoids;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 

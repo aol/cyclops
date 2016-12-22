@@ -25,16 +25,16 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.Monoid;
+import cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Trampoline;
 import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.extensability.FunctionalAdapter;
-import com.aol.cyclops.util.function.Predicates;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
+import cyclops.function.Predicates;
+import cyclops.function.F4;
+import cyclops.function.F3;
 
 /**
  * Wrapper around 'Any' non-scalar 'M'onad
@@ -430,7 +430,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycle(com.aol.cyclops.Monoid, int)
+     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.Monoid, int)
      */
     @Override
     default AnyMSeq<W,T> cycle(final Monoid<T> m, final int times) {
@@ -731,7 +731,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanLeft(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanLeft(cyclops.Monoid)
      */
     @Override
     default AnyMSeq<W,T> scanLeft(final Monoid<T> monoid) {
@@ -749,7 +749,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanRight(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanRight(cyclops.Monoid)
      */
     @Override
     default AnyMSeq<W,T> scanRight(final Monoid<T> monoid) {

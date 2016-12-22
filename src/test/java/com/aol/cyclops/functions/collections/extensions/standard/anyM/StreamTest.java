@@ -19,7 +19,7 @@ public class StreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.stre
 		return AnyM.fromStream(Stream.of(values));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest#empty()
+	 * @see com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.stream,T> empty() {

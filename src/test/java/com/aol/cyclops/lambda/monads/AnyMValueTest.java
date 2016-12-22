@@ -8,25 +8,19 @@ import static org.junit.Assert.assertThat;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.anyM.Witness;
-import com.aol.cyclops.util.function.MFunc1;
-import com.aol.cyclops.util.function.MFunc2;
+import cyclops.function.MFunction1;
+import cyclops.function.MFunction2;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Maybe;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.types.anyM.AnyMValue;
-
-import lombok.val;
-
 
 
 public class AnyMValueTest {
@@ -98,7 +92,7 @@ public class AnyMValueTest {
 
 	@Test
 	public void testLiftMSimplex(){
-		MFunc1<Witness.optional,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
+		MFunction1<optional,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)));
 		
@@ -109,7 +103,7 @@ public class AnyMValueTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		MFunc2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a,Integer b)->a+b);
+		MFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.of(4)));
 		
@@ -117,7 +111,7 @@ public class AnyMValueTest {
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		MFunc2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		MFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.ofNullable(null)));
 		
@@ -129,7 +123,7 @@ public class AnyMValueTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		MFunc2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
+		MFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.ofNullable(4));
 		

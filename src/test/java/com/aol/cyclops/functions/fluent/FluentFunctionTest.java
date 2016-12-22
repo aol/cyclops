@@ -10,7 +10,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -22,8 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.FluentFunctions;
-import com.aol.cyclops.control.FluentFunctions.FluentSupplier;
+import cyclops.function.FluentFunctions;
+import cyclops.function.FluentFunctions.FluentSupplier;
 import com.aol.cyclops.control.Try;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

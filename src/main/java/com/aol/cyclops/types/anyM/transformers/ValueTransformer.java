@@ -1,24 +1,20 @@
 package com.aol.cyclops.types.anyM.transformers;
 
-import java.util.Optional;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
-import com.aol.cyclops.types.anyM.NestedFoldable;
-import com.aol.cyclops.util.function.F0;
+import cyclops.function.F0;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.ListT;
 import com.aol.cyclops.types.anyM.WitnessType;
-import com.aol.cyclops.util.function.F4;
-import com.aol.cyclops.util.function.F3;
+import cyclops.function.F4;
+import cyclops.function.F3;
 
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                             Unwrapable,

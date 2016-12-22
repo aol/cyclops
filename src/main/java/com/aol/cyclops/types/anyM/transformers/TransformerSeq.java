@@ -3,7 +3,6 @@ package com.aol.cyclops.types.anyM.transformers;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Random;
-import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -14,14 +13,13 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.aol.cyclops.Monoid;
+import cyclops.Monoid;
 import com.aol.cyclops.control.AnyM;
 import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.control.Streamable;
@@ -71,7 +69,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycle(com.aol.cyclops.Monoid, int)
+     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.Monoid, int)
      */
     @Override
     default Traversable<T> cycle(final Monoid<T> m, final int times) {
@@ -270,7 +268,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanLeft(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanLeft(cyclops.Monoid)
      */
     @Override
     default Traversable<T> scanLeft(final Monoid<T> monoid) {
@@ -286,7 +284,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanRight(com.aol.cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanRight(cyclops.Monoid)
      */
     @Override
     default Traversable<T> scanRight(final Monoid<T> monoid) {

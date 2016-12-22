@@ -6,9 +6,12 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.stream.ToStream;
-import com.aol.cyclops.util.function.F3;
-import com.aol.cyclops.util.function.F4;
-import org.jooq.lambda.Seq;
+import cyclops.function.F3;
+import cyclops.function.F4;
+import cyclops.Monoid;
+import cyclops.Monoids;
+import cyclops.Semigroup;
+import cyclops.Semigroups;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -33,10 +36,10 @@ public interface Zippable<T> extends Iterable<T>, Functor<T>, ToStream<T> {
      * If this Applicative is a scalar value the provided value is combined with that value,
      * otherwise the value is combined pair wise with all value in a non-scalar datastructure
      *
-     * @see com.aol.cyclops.Semigroup
-     * @see com.aol.cyclops.Semigroups
-     * @see com.aol.cyclops.Monoid
-     * @see com.aol.cyclops.Monoids
+     * @see Semigroup
+     * @see Semigroups
+     * @see Monoid
+     * @see Monoids
      *
      * To lift any Semigroup (or monoid) up to handling Applicatives use the combineApplicatives operator in Semigroups
      * {@see com.aol.cyclops.Semigroups#combineApplicatives(BiFunction) } or Monoids

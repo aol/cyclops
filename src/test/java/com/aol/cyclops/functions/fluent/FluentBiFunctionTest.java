@@ -21,9 +21,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.FluentFunctions;
-import com.aol.cyclops.control.FluentFunctions.FluentFunction;
-import com.aol.cyclops.control.FluentFunctions.FluentSupplier;
+import cyclops.function.FluentFunctions;
+import cyclops.function.FluentFunctions.FluentFunction;
+import cyclops.function.FluentFunctions.FluentSupplier;
 import com.aol.cyclops.control.Try;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

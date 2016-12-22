@@ -6,8 +6,8 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.cyclops.Reducer;
-import com.aol.cyclops.Reducers;
+import cyclops.Reducer;
+import cyclops.Reducers;
 
 public class PMapXs {
 

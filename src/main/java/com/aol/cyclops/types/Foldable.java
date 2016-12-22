@@ -11,14 +11,10 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.stream.ToStream;
-import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.cyclops.Monoid;
-import com.aol.cyclops.Reducer;
-import com.aol.cyclops.control.Ior;
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.Monoid;
+import cyclops.Reducer;
 import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.control.Xor;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MapX;
