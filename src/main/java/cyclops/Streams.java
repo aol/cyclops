@@ -1990,6 +1990,12 @@ public class Streams {
                                           stream, rev,(Optional)push);
 
     }
+    public final static <T> ReactiveSeq<T> reactiveSeq(final Spliterator<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<PushingSpliterator<?>> push) {
+
+        return new ReactiveSeqImpl<T>((Spliterator<T>)
+                stream, rev,(Optional)push);
+
+    }
 
     /**
      * Returns a stream with a given value interspersed between any two values

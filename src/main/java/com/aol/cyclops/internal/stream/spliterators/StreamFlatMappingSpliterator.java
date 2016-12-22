@@ -33,6 +33,10 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
     Iterator<R> active;
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
+        if(active!=null && active.hasNext()){
+            action.accept(active.next());
+            return active.hasNext();
+        }
         source.tryAdvance(t->{
             if(active==null || !active.hasNext()) {
                 active = (Iterator<R>)mapper.apply(t).iterator();
@@ -42,6 +46,7 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
 
 
         });
+
         return active.hasNext();
     }
 }

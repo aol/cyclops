@@ -53,7 +53,12 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
         this.split = Optional.empty();
 
     }
+    public ReactiveSeqImpl(final Spliterator<T> stream, final Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+        this.stream = stream;
+        this.reversible = rev;
+        this.split = split;
 
+    }
     public ReactiveSeqImpl(final Stream<T> stream, final Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
         this.stream = stream.spliterator();
         this.reversible = rev;
@@ -644,7 +649,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final <R> ReactiveSeq<R> flatMap(final Function<? super T, ? extends Stream<? extends R>> fn) {
-        return Streams.reactiveSeq(unwrapStream().flatMap(fn), reversible,split);
+        return Streams.reactiveSeq(new StreamFlatMappingSpliterator<>(stream,fn), Optional.empty(),split);
+
     }
 
     @Override
@@ -655,7 +661,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final <R> ReactiveSeq<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return Streams.reactiveSeq(Streams.flatMapIterable(this, fn), Optional.empty(),split);
+        return Streams.reactiveSeq(new IterableFlatMappingSpliterator<>(stream,fn), Optional.empty(),split);
 
     }
 
