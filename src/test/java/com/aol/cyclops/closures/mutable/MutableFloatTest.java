@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.data.MutableFloat;
+import cyclops.box.Mutable;
+import cyclops.box.MutableFloat;
 public class MutableFloatTest {
 
 	@Test

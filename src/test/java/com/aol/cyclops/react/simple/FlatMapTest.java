@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.SimpleReact;
+import cyclops.async.SimpleReact;
 
 public class FlatMapTest {
 

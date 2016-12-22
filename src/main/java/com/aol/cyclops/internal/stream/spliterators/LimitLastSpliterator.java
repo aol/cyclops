@@ -1,15 +1,6 @@
 package com.aol.cyclops.internal.stream.spliterators;
 
 import java.util.ArrayDeque;
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.Spliterators.AbstractSpliterator;
-import java.util.function.Consumer;
-import java.util.stream.Collector.Characteristics;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import com.aol.cyclops.control.StreamUtils;
 import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.function.Consumer;

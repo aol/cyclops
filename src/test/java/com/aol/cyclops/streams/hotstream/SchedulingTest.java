@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 
 public class SchedulingTest {
 

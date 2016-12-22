@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 
 public class BatchByTimeOperator<T, C extends Collection<? super T>> {
@@ -26,7 +26,7 @@ public class BatchByTimeOperator<T, C extends Collection<? super T>> {
     public Stream<C> batchByTime(final long time, final TimeUnit t) {
         final Iterator<T> it = stream.iterator();
         final long toRun = t.toNanos(time);
-        return StreamUtils.stream(new Iterator<C>() {
+        return Streams.stream(new Iterator<C>() {
             long start = System.nanoTime();
 
             @Override

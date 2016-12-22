@@ -3,7 +3,7 @@ package com.aol.cyclops.types;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops.control.Trampoline;
+import cyclops.control.Trampoline;
 
 /* 
  * A type that can perform transformations across a domain with two types. 

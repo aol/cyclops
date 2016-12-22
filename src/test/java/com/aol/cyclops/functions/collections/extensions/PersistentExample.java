@@ -2,12 +2,12 @@ package com.aol.cyclops.functions.collections.extensions;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import cyclops.collections.immutable.PBagX;
+import cyclops.collections.immutable.POrderedSetX;
+import cyclops.collections.immutable.PQueueX;
+import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.PVectorX;
 
 public class PersistentExample {
 

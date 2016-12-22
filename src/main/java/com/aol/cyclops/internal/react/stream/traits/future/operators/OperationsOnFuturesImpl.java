@@ -6,17 +6,17 @@ import com.aol.cyclops.internal.react.async.future.FastFuture;
 import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.types.futurestream.BlockingStreamHelper;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.FutureStream;
 import com.aol.cyclops.types.futurestream.OperationsOnFutures;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class OperationsOnFuturesImpl<T> implements OperationsOnFutures<T> {
-    private final LazyFutureStream<T> lfs;
+    private final FutureStream<T> lfs;
 
     @Override
-    public LazyFutureStream<T> fromStreamOfFutures(final Stream<FastFuture<T>> stream) {
+    public FutureStream<T> fromStreamOfFutures(final Stream<FastFuture<T>> stream) {
         return lfs.fromStreamOfFutures(stream);
     }
 
@@ -26,7 +26,7 @@ public class OperationsOnFuturesImpl<T> implements OperationsOnFutures<T> {
     }
 
     @Override
-    public LazyFutureStream<T> withLastActive(final LazyStreamWrapper<T> active) {
+    public FutureStream<T> withLastActive(final LazyStreamWrapper<T> active) {
         return lfs.withLastActive(active);
     }
 

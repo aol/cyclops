@@ -1,6 +1,6 @@
 package com.aol.cyclops.internal.stream;
 
-import com.aol.cyclops.control.Streamable;
+import cyclops.stream.Streamable;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

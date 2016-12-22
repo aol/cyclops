@@ -12,7 +12,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import cyclops.collections.immutable.PVectorX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
 
 public class PVectorXTest extends CollectionXTestsWithNulls{

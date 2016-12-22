@@ -1,14 +1,18 @@
 package com.aol.cyclops.control.anym;
 
 import com.aol.cyclops.Matchers;
-import cyclops.Monoid;
+import cyclops.async.Future;
+import cyclops.async.LazyReact;
+import cyclops.control.*;
+import cyclops.function.Monoid;
 import cyclops.Reducers;
 import cyclops.Semigroups;
-import com.aol.cyclops.control.*;
-import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.box.Mutable;
+import cyclops.collections.ListX;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.anyM.WitnessType;
+import cyclops.monads.WitnessType;
+import cyclops.Streams;
+import cyclops.monads.AnyM;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -133,7 +137,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testFlatMap() {
-		assertThat(just.flatMap(i->AnyM.ofNullable(i+5)).toMaybe(),equalTo(Maybe.of(15)));
+		assertThat(just.flatMap(i-> AnyM.ofNullable(i+5)).toMaybe(),equalTo(Maybe.of(15)));
 		assertThat(none.flatMap(i->AnyM.ofNullable(i+5)).toMaybe(),equalTo(Maybe.none()));
 	}
 
@@ -164,7 +168,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testConvertToAsync() {
-		FutureW<Stream<Integer>> async = FutureW.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
+		Future<Stream<Integer>> async = Future.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
 		
 		assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
 	}
@@ -451,7 +455,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testToFutureW() {
-		FutureW<Integer> cf = just.toFutureW();
+		Future<Integer> cf = just.toFutureW();
 		assertThat(cf.get(),equalTo(10));
 	}
 
@@ -482,7 +486,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testIterator1() {
-		assertThat(StreamUtils.stream(just.iterator()).collect(Collectors.toList()),
+		assertThat(Streams.stream(just.iterator()).collect(Collectors.toList()),
 				equalTo(Arrays.asList(10)));
 	}
 

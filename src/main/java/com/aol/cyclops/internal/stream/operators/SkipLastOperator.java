@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 
 public class SkipLastOperator<T> {
 
@@ -22,7 +22,7 @@ public class SkipLastOperator<T> {
 
     public Stream<T> skipLast() {
         final Iterator<T> it = stream.iterator();
-        return StreamUtils.stream(new Iterator<T>() {
+        return Streams.stream(new Iterator<T>() {
             boolean finished = false;
 
             @Override

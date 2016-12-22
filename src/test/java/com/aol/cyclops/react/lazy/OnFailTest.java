@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.data.async.Queue.ClosedQueueException;
+import cyclops.async.LazyReact;
+import cyclops.async.Queue.ClosedQueueException;
 
 public class OnFailTest {
 

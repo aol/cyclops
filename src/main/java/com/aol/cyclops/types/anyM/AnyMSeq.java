@@ -18,6 +18,7 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
+import cyclops.monads.WitnessType;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -25,16 +26,16 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.Monoid;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.function.Monoid;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.control.Trampoline;
+import cyclops.control.Xor;
+import cyclops.collections.ListX;
 import com.aol.cyclops.types.extensability.FunctionalAdapter;
 import cyclops.function.Predicates;
-import cyclops.function.F4;
-import cyclops.function.F3;
+import cyclops.function.Fn4;
+import cyclops.function.Fn3;
 
 /**
  * Wrapper around 'Any' non-scalar 'M'onad
@@ -73,8 +74,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      */
     default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
                         final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
-                            final F3<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
-                            final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+                            final Fn3<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
+                            final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
        
         return this.flatMapA(in -> {
 
@@ -112,9 +113,9 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      */
     default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
             final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
-                    final F3<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
-                        final F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+                    final Fn3<? super T, ? super R1, ? super R2, ? extends AnyM<W,R3>> monad3,
+                        final Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
 
         return this.flatMapA(in -> {
 
@@ -151,7 +152,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * 
      * @param monad Nested Monad to iterate over
      * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
-     * @return LazyFutureStream with elements generated via nested iteration
+     * @return FutureStream with elements generated via nested iteration
      */
     default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad,
             BiFunction<? super T,? super R1, ? extends R> yieldingFunction){  
@@ -220,8 +221,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
             BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
-            F3<? super T,? super R1, ? super R2, Boolean> filterFunction,
-            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+            Fn3<? super T,? super R1, ? super R2, Boolean> filterFunction,
+            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
 
         return this.flatMapA(in -> {
 
@@ -259,7 +260,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
             BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
-            F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
         return this.flatMapA(in -> {
 
             AnyM<W,R1> a = monad1.apply(in);
@@ -290,7 +291,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.AnyM#collect(java.util.stream.Collector)
+     * @see cyclops.monads.AnyM#collect(java.util.stream.Collector)
      */
     @Override
     default <R, A> R collect(final Collector<? super T, A, R> collector) {
@@ -430,7 +431,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.Monoid, int)
+     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.function.Monoid, int)
      */
     @Override
     default AnyMSeq<W,T> cycle(final Monoid<T> m, final int times) {
@@ -731,7 +732,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanLeft(cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanLeft(cyclops.function.Monoid)
      */
     @Override
     default AnyMSeq<W,T> scanLeft(final Monoid<T> monoid) {
@@ -749,7 +750,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanRight(cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanRight(cyclops.function.Monoid)
      */
     @Override
     default AnyMSeq<W,T> scanRight(final Monoid<T> monoid) {

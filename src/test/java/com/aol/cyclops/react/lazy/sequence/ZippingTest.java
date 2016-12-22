@@ -1,7 +1,7 @@
 package com.aol.cyclops.react.lazy.sequence;
 
 
-import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
+import static cyclops.stream.FutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -16,18 +16,18 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.ReactiveSeq;
 
 public class ZippingTest {
-	LazyFutureStream<Integer> empty;
-	LazyFutureStream<Integer> nonEmpty;
+	FutureStream<Integer> empty;
+	FutureStream<Integer> nonEmpty;
 
 	@Before
 	public void setup(){

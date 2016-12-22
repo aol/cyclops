@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.lazy;
 
-import static com.aol.cyclops.types.futurestream.LazyFutureStream.parallel;
+import static cyclops.stream.FutureStream.parallel;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -25,19 +25,18 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import org.jooq.lambda.Seq;
+import cyclops.stream.FutureStream;
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.QueueFactories;
-import com.aol.cyclops.data.async.Signal;
+import cyclops.async.LazyReact;
+import cyclops.async.Queue;
+import cyclops.async.QueueFactories;
+import cyclops.async.Signal;
 import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.base.BaseSeqTest;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	volatile Throwable error;
@@ -58,7 +57,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	}
 	@Test
 	public void copy(){
-		LazyFutureStream.of(1,2,3,4,5,6)
+		FutureStream.of(1,2,3,4,5,6)
 				.map(i->i+2)
 				.copy(5)
 				.forEach(s -> System.out.println(s.toList()));
@@ -70,7 +69,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
     }
 	@Test
 	public void lazyCollection(){
-		Collection<Integer> col = LazyFutureStream.of(1,2,3,4,5,6)
+		Collection<Integer> col = FutureStream.of(1,2,3,4,5,6)
 				.map(i->i+2)
 				.toLazyCollection();
 			
@@ -99,8 +98,8 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	
 	@Test
 	public void testZipWithFutures(){
-		LazyFutureStream stream = of("a","b");
-		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
+		FutureStream stream = of("a","b");
+		FutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
 		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
@@ -108,14 +107,14 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Test
 	public void testZipWithFuturesStream(){
 		Stream stream = of("a","b");
-		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
+		FutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
 		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 	@Test
 	public void testZipWithFuturesCoreStream(){
 		Stream stream = Stream.of("a","b");
-		LazyFutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
+		FutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
 		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
@@ -124,7 +123,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Test
 	public void testZipFuturesWithIndex(){
 		
-		 LazyFutureStream<Tuple2<String,Long>> seq = of("a","b").actOnFutures().zipWithIndex();
+		 FutureStream<Tuple2<String,Long>> seq = of("a","b").actOnFutures().zipWithIndex();
 		List<Tuple2<String,Long>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
 		assertThat(result.size(),is(asList(tuple("a",0l),tuple("b",1l)).size()));
 	}
@@ -241,32 +240,32 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Test @Ignore
 	public void shouldZipTwoInfiniteSequences() throws Exception {
 		
-		final LazyFutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1);
-		final LazyFutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100);
+		final FutureStream<Integer> units = FutureStream.iterate(1, n -> n+1);
+		final FutureStream<Integer> hundreds = FutureStream.iterate(100, n-> n+100);
 		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 
 		
-		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
+		assertThat(zipped.limit(5).join(),equalTo(FutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 	}
 
 	@Test
 	public void shouldZipFiniteWithInfiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
-		final ReactiveSeq<Integer> units = LazyFutureStream.iterate(1, n -> n+1).limit(5);
-		final LazyFutureStream<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
+		final ReactiveSeq<Integer> units = FutureStream.iterate(1, n -> n+1).limit(5);
+		final FutureStream<Integer> hundreds = FutureStream.iterate(100, n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
 		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		
-		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
+		assertThat(zipped.limit(5).join(),equalTo(FutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 		ThreadPools.setUseCommon(true);
 	}
 
 	@Test
 	public void shouldZipInfiniteWithFiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
-		final LazyFutureStream<Integer> units = LazyFutureStream.iterate(1,n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
-		final ReactiveSeq<Integer> hundreds = LazyFutureStream.iterate(100,n-> n+100).limit(5);
+		final FutureStream<Integer> units = FutureStream.iterate(1, n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
+		final ReactiveSeq<Integer> hundreds = FutureStream.iterate(100, n-> n+100).limit(5);
 		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
-		assertThat(zipped.limit(5).join(),equalTo(LazyFutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
+		assertThat(zipped.limit(5).join(),equalTo(FutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 		ThreadPools.setUseCommon(true);
 	}
 
@@ -280,20 +279,20 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	}
 
 	@Override
-	protected <U> LazyFutureStream<U> of(U... array) {
+	protected <U> FutureStream<U> of(U... array) {
 		return new LazyReact()
 							.objectPoolingOn()
 							.of(array);
 	}
 	@Override
-	protected <U> LazyFutureStream<U> ofThread(U... array) {
+	protected <U> FutureStream<U> ofThread(U... array) {
 		return new LazyReact()
 							.objectPoolingOn()
 							.of(array);
 	}
 
 	@Override
-	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
+	protected <U> FutureStream<U> react(Supplier<U>... array) {
 		return new LazyReact().objectPoolingOn()
 								.ofAsync(array);
 	}

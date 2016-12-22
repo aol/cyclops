@@ -8,9 +8,9 @@ import java.util.concurrent.locks.LockSupport;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.control.Ior;
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.Xor;
+import cyclops.control.Ior;
+import cyclops.control.Try;
+import cyclops.control.Xor;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.util.ExceptionSoftener;
 import cyclops.function.Memoize;

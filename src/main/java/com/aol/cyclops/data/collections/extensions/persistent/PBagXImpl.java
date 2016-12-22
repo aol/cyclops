@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 
+import cyclops.collections.immutable.PBagX;
 import org.pcollections.PBag;
 
 import lombok.AllArgsConstructor;

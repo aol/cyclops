@@ -5,20 +5,21 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.Queue.ClosedQueueException;
+import cyclops.async.LazyReact;
+import cyclops.async.Queue;
+import cyclops.async.Queue.ClosedQueueException;
 import com.aol.cyclops.internal.react.async.future.CompletedException;
+import cyclops.stream.FutureStream;
 
 public interface LazyToQueue<U> extends ToQueue<U> {
 
-    <R> LazyFutureStream<R> then(final Function<? super U, ? extends R> fn, Executor exec);
+    <R> FutureStream<R> then(final Function<? super U, ? extends R> fn, Executor exec);
 
-    <R> LazyFutureStream<R> thenSync(final Function<? super U, ? extends R> fn);
+    <R> FutureStream<R> thenSync(final Function<? super U, ? extends R> fn);
 
     LazyReact getPopulator();
 
-    LazyFutureStream<U> peekSync(final Consumer<? super U> consumer);
+    FutureStream<U> peekSync(final Consumer<? super U> consumer);
 
     /**
      * Convert the current Stream to a simple-react Queue

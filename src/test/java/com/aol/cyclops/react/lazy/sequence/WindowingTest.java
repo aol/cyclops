@@ -1,7 +1,7 @@
 package com.aol.cyclops.react.lazy.sequence;
 
 
-import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
+import static cyclops.stream.FutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -12,17 +12,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cyclops.stream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Streamable;
+import cyclops.collections.ListX;
 
 public class WindowingTest {
-	LazyFutureStream<Integer> empty;
-	LazyFutureStream<Integer> nonEmpty;
+	FutureStream<Integer> empty;
+	FutureStream<Integer> nonEmpty;
 
 	@Before
 	public void setup(){
@@ -32,10 +32,10 @@ public class WindowingTest {
 	
 	@Test
 	public void windowWhile(){
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
 				.toList().size(),equalTo(2));
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
@@ -44,22 +44,22 @@ public class WindowingTest {
 		
 		
 		
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
 				.toList().size(),equalTo(2));
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void windowUntilEmpty(){
-		assertThat(LazyFutureStream.<Integer>of()
+		assertThat(FutureStream.<Integer>of()
 				.groupedUntil(i->i%3==0)
 				.toList().size(),equalTo(0));
 	}
 	@Test
 	public void windowStatefullyWhile(){
-	    assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+	    assertThat(FutureStream.of(1,2,3,4,5,6)
 	                .groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 	                .toList().size(),equalTo(5));
 		
@@ -68,14 +68,14 @@ public class WindowingTest {
 	@Test
 	public void windowStatefullyWhileEmpty(){
 		
-		assertThat(LazyFutureStream.of()
+		assertThat(FutureStream.of()
 				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(0));
 		
 	}
 	@Test
 	public void sliding() {
-		List<List<Integer>> list = LazyFutureStream.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+		List<List<Integer>> list = FutureStream.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2));
 		assertThat(list.get(1), hasItems(2, 3));
@@ -83,7 +83,7 @@ public class WindowingTest {
 
 	@Test
 	public void slidingIncrement() {
-		List<List<Integer>> list = LazyFutureStream.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+		List<List<Integer>> list = FutureStream.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(3, 4, 5));
@@ -92,7 +92,7 @@ public class WindowingTest {
 	@Test
 	public void grouped() {
 
-		List<List<Integer>> list = LazyFutureStream.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+		List<List<Integer>> list = FutureStream.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(4, 5, 6));
@@ -103,7 +103,7 @@ public class WindowingTest {
 	public void sliding2() {
 		
 
-		List<ListX<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(2).toList();
+		List<ListX<Integer>> sliding = FutureStream.of(1, 2, 3, 4, 5).sliding(2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(2, 3), asList(3, 4), asList(4, 5)));
 	}
@@ -111,7 +111,7 @@ public class WindowingTest {
 	@Test
 	public void slidingOverlap() {
 		
-		List<ListX<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(3,2).toList();
+		List<ListX<Integer>> sliding = FutureStream.of(1, 2, 3, 4, 5).sliding(3,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2, 3), asList(3, 4, 5)));
 	}
@@ -120,14 +120,14 @@ public class WindowingTest {
 	public void slidingEmpty() {
 		
 
-		assertThat(LazyFutureStream.of().sliding(1).toList().size(),equalTo(0));
+		assertThat(FutureStream.of().sliding(1).toList().size(),equalTo(0));
 	}
 
 	@Test
 	public void slidingWithSmallWindowAtEnd() {
 		
 
-		List<ListX<Integer>> sliding = LazyFutureStream.of(1, 2, 3, 4, 5).sliding(2,2).toList();
+		List<ListX<Integer>> sliding = FutureStream.of(1, 2, 3, 4, 5).sliding(2,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
 	}

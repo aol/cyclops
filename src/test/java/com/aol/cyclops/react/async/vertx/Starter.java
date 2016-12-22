@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.async.vertx;
 
-import com.aol.cyclops.control.LazyReact;
+import cyclops.async.LazyReact;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;

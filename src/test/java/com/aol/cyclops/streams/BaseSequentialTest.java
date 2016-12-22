@@ -21,13 +21,13 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 public class BaseSequentialTest {
 
 	<U> ReactiveSeq<U> of(U... array){

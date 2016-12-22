@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.lazy.futures;
 
-import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
+import static cyclops.stream.FutureStream.of;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;

@@ -2,11 +2,11 @@ package com.aol.cyclops.util.stream.pushable;
 
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.Topic;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.LazyReact;
+import cyclops.stream.ReactiveSeq;
+import cyclops.async.Queue;
+import cyclops.async.Topic;
+import cyclops.stream.FutureStream;
 
 /**
  * Build Streams that stream data from the topic instance
@@ -31,7 +31,7 @@ public class MultipleStreamSource<T> {
      * @return a Tuple2 with a Topic&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
      * to push it to the Stream
      */
-    public LazyFutureStream<T> futureStream(final LazyReact s) {
+    public FutureStream<T> futureStream(final LazyReact s) {
 
         return s.fromStream(topic.stream());
 

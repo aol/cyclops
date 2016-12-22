@@ -15,18 +15,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.control.*;
-import com.aol.cyclops.control.monads.transformers.FutureT;
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
+import cyclops.control.Try;
+import cyclops.control.Xor;
+import cyclops.monads.transformers.FutureT;
+import cyclops.monads.Witness;
+import cyclops.Streams;
+import cyclops.async.Future;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.Monoid;
+import cyclops.function.Monoid;
 import cyclops.Reducers;
 import cyclops.Semigroups;
-import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.box.Mutable;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.ListX;
 
 import com.aol.cyclops.types.mixins.Printable;
 
@@ -41,9 +48,9 @@ public class FutureWTTest implements Printable {
 	public void setUp() throws Exception {
 
 
-		just = FutureW.ofResult(10).liftM(Witness.optional.INSTANCE);
+		just = Future.ofResult(10).liftM(Witness.optional.INSTANCE);
 		none = FutureT.of(AnyM.ofNullable(null));
-		one = FutureT.of(AnyM.ofNullable(FutureW.ofResult(1)));
+		one = FutureT.of(AnyM.ofNullable(Future.ofResult(1)));
 	}
 	
 	@Test
@@ -62,7 +69,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testFiltering(){
-	    assertThat(ReactiveSeq.of(Maybe.just(1),Try.success(1)).filter(Xor.primary(1))
+	    assertThat(ReactiveSeq.of(Maybe.just(1), Try.success(1)).filter(Xor.primary(1))
 	                .toListX(),equalTo(ListX.of(Maybe.just(1),Try.success(1))));
 	}
 	@Test
@@ -192,7 +199,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("FutureT[Optional[FutureW[10]]]"));
+		assertThat(just.mkString(),equalTo("FutureT[Optional[Future[10]]]"));
 		assertThat(none.mkString(),equalTo("FutureT[Optional.empty]"));
 	}
 
@@ -372,7 +379,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testIterator1() {
-		assertThat(StreamUtils.stream(just.iterator()).collect(Collectors.toList()),
+		assertThat(Streams.stream(just.iterator()).collect(Collectors.toList()),
 				equalTo(Arrays.asList(10)));
 	}
 

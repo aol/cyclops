@@ -8,15 +8,15 @@ import java.util.SortedSet;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.aol.cyclops.data.collections.extensions.standard.DequeX;
+import cyclops.collections.DequeX;
 import com.aol.cyclops.data.collections.extensions.standard.DequeXImpl;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
-import com.aol.cyclops.data.collections.extensions.standard.QueueX;
+import cyclops.collections.QueueX;
 import com.aol.cyclops.data.collections.extensions.standard.QueueXImpl;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import cyclops.collections.SetX;
 import com.aol.cyclops.data.collections.extensions.standard.SetXImpl;
-import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import cyclops.collections.SortedSetX;
 import com.aol.cyclops.data.collections.extensions.standard.SortedSetXImpl;
 
 /**

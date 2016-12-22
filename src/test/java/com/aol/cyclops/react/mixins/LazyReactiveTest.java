@@ -3,8 +3,8 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Pipes;
-import com.aol.cyclops.data.async.Queue;
+import cyclops.async.Pipes;
+import cyclops.async.Queue;
 public class LazyReactiveTest {
 	
         Pipes<String,String> pipes = Pipes.of();

@@ -2,15 +2,14 @@ package com.aol.cyclops.streams.anyM;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.collections.ListX;
+import cyclops.monads.Witness;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
+import cyclops.monads.AnyM;
 
 public class UnitTest {
 	@Test

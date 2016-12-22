@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
 public class StreamTest {
 	 public static <U> ReactiveSeq<U> of(U... array){
 		 return AnyM.streamOf(array).stream();

@@ -22,9 +22,9 @@ import java.util.stream.Stream;
 import cyclops.function.Predicates;
 import org.junit.Test;
 
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.stream.ReactiveSeq;
 public class PredicatesTest {
 
     @Test

@@ -8,8 +8,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.stream.ReactiveSeq;
+import cyclops.collections.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 
 import lombok.AllArgsConstructor;

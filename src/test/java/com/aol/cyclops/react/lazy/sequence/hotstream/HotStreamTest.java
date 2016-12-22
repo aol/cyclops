@@ -10,8 +10,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.LazyReact;
+import cyclops.stream.FutureStream;
 
 
 
@@ -23,7 +23,7 @@ public class HotStreamTest {
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
 		
-		LazyFutureStream.of(1,2,3)
+		FutureStream.of(1,2,3)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.hotStream(exec);
@@ -35,7 +35,7 @@ public class HotStreamTest {
 	public void hotStreamOwn() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		LazyFutureStream.of(1,2,3)
+		FutureStream.of(1,2,3)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.hotStream();

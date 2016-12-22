@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.SimpleReact;
+import cyclops.async.SimpleReact;
 
 public class StreamTest {
 

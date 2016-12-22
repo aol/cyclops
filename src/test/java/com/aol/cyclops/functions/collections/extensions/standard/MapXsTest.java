@@ -9,13 +9,13 @@ import java.util.Map;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.standard.DequeX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.data.collections.extensions.standard.MapXs;
-import com.aol.cyclops.data.collections.extensions.standard.QueueX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import cyclops.collections.DequeX;
+import cyclops.collections.ListX;
+import cyclops.collections.MapX;
+import cyclops.collections.MapXs;
+import cyclops.collections.QueueX;
+import cyclops.collections.SetX;
+import cyclops.collections.SortedSetX;
 public class MapXsTest {
 
     @Test

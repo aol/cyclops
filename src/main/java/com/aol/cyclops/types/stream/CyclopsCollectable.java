@@ -1,19 +1,13 @@
 package com.aol.cyclops.types.stream;
 
 import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.function.*;
 import java.util.stream.Collector;
-import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import org.jooq.lambda.Collectable;
 
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Try;
+import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops.types.Foldable;
 import org.jooq.lambda.Seq;
 

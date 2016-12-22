@@ -1,7 +1,7 @@
 package com.aol.cyclops;
 
-import com.aol.cyclops.data.async.Adapter;
-import com.aol.cyclops.data.async.QueueFactories;
+import cyclops.async.Adapter;
+import cyclops.async.QueueFactories;
 import cyclops.Matchables;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import org.junit.Test;

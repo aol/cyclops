@@ -31,12 +31,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.CyclopsCollectors;
-import cyclops.Monoid;
+import cyclops.function.Monoid;
 import cyclops.Reducers;
 import cyclops.Semigroups;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.collections.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 

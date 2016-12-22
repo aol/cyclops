@@ -5,11 +5,11 @@ import static org.junit.Assert.assertNotNull;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import cyclops.stream.FutureStream;
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
+import cyclops.async.LazyReact;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class ParallelTest {
 
@@ -40,7 +40,7 @@ public class ParallelTest {
 	@Test
 	public void runThread(){
 		CompletableFuture cf = new CompletableFuture();
-			LazyFutureStream s = LazyReact.sequentialBuilder().withMaxActive(MaxActive.IO).async()
+			FutureStream s = LazyReact.sequentialBuilder().withMaxActive(MaxActive.IO).async()
 				.generateAsync(()->1).limit(1_000_000);
 				
 				for (int x = 0; x < 60; x++) {

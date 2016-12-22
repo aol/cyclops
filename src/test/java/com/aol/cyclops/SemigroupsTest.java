@@ -17,25 +17,25 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Semigroup;
+import cyclops.function.Semigroup;
 import cyclops.Semigroups;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
-import com.aol.cyclops.data.collections.extensions.standard.DequeX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.QueueX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import cyclops.stream.ReactiveSeq;
+import cyclops.collections.immutable.PBagX;
+import cyclops.collections.immutable.POrderedSetX;
+import cyclops.collections.immutable.PQueueX;
+import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.DequeX;
+import cyclops.collections.ListX;
+import cyclops.collections.QueueX;
+import cyclops.collections.SetX;
+import cyclops.collections.SortedSetX;
 public class SemigroupsTest {
 
 

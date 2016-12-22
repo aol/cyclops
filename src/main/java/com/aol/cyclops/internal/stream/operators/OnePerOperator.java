@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 
 import lombok.AllArgsConstructor;
 
@@ -17,7 +17,7 @@ public class OnePerOperator<T> {
     public Stream<T> onePer(final long time, final TimeUnit t) {
         final Iterator<T> it = stream.iterator();
         final long next = t.toNanos(time);
-        return StreamUtils.stream(new Iterator<T>() {
+        return Streams.stream(new Iterator<T>() {
             volatile long last = -1;
 
             @Override

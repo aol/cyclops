@@ -2,8 +2,8 @@ package com.aol.cyclops.react.threads;
 
 import java.util.concurrent.Executors;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.SimpleReact;
+import cyclops.async.LazyReact;
+import cyclops.async.SimpleReact;
 
 /**
  * 

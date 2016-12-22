@@ -6,18 +6,12 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.control.monads.transformers.ListT;
+import cyclops.monads.AnyM;
+import cyclops.monads.transformers.ListT;
 
 
 public class ListTTest {

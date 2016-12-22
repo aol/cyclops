@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Monoid;
-import cyclops.Reducer;
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
+import cyclops.Streams;
 
 import lombok.AllArgsConstructor;
 
@@ -22,7 +22,7 @@ public class MultiReduceOperator<R> {
         final Reducer<List<R>> m = new Reducer<List<R>>() {
             @Override
             public List<R> zero() {
-                return StreamUtils.stream(reducers)
+                return Streams.stream(reducers)
                                   .map(r -> r.zero())
                                   .collect(Collectors.toList());
             }

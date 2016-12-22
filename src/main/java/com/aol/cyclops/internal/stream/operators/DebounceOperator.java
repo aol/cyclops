@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 
 import lombok.AllArgsConstructor;
 
@@ -16,7 +16,7 @@ public class DebounceOperator<T> {
     public Stream<T> debounce(final long time, final TimeUnit t) {
         final Iterator<T> it = stream.iterator();
         final long timeNanos = t.toNanos(time);
-        return StreamUtils.stream(new Iterator<T>() {
+        return Streams.stream(new Iterator<T>() {
             volatile long last = 0;
 
             @Override

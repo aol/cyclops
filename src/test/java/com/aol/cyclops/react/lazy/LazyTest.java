@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import cyclops.stream.FutureStream;
 import org.junit.Test;
 
 import cyclops.Semigroups;
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.LazyReact;
+import cyclops.collections.ListX;
 
 public class LazyTest {
 
@@ -47,7 +47,7 @@ public class LazyTest {
 	public void onePerSecond() {
 
 		long start = System.currentTimeMillis();
-				LazyFutureStream.iterate(0, it -> it + 1)
+				FutureStream.iterate(0, it -> it + 1)
 				.limit(3)
 				.onePer(1, TimeUnit.SECONDS)
 				.map(seconds -> "hello!")
@@ -59,30 +59,30 @@ public class LazyTest {
 	}
 	@Test
 	public void subStream(){
-		List<Integer> list = LazyFutureStream.of(1,2,3,4,5,6).subStream(1,3).toList();
+		List<Integer> list = FutureStream.of(1,2,3,4,5,6).subStream(1,3).toList();
 		assertThat(list,equalTo(Arrays.asList(2,3)));
 	}
 	@Test
     public void emptyPermutations() {
-        assertThat(LazyFutureStream.of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
+        assertThat(FutureStream.of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
     }
 
     @Test
     public void permuations3() {
-    	System.out.println(LazyFutureStream.of(1, 2, 3).permutations().map(s->s.toList()).toList());
-        assertThat(LazyFutureStream.of(1, 2, 3).permutations().map(s->s.toList()).toList(),
-        		equalTo(LazyFutureStream.of(LazyFutureStream.of(1, 2, 3),
-        		LazyFutureStream.of(1, 3, 2), LazyFutureStream.of(2, 1, 3), LazyFutureStream.of(2, 3, 1), LazyFutureStream.of(3, 1, 2), LazyFutureStream.of(3, 2, 1)).map(s->s.toList()).toList()));
+    	System.out.println(FutureStream.of(1, 2, 3).permutations().map(s->s.toList()).toList());
+        assertThat(FutureStream.of(1, 2, 3).permutations().map(s->s.toList()).toList(),
+        		equalTo(FutureStream.of(FutureStream.of(1, 2, 3),
+        		FutureStream.of(1, 3, 2), FutureStream.of(2, 1, 3), FutureStream.of(2, 3, 1), FutureStream.of(3, 1, 2), FutureStream.of(3, 2, 1)).map(s->s.toList()).toList()));
     }
     
     @Test
     public void emptyAllCombinations() {
-        assertThat(LazyFutureStream.of().combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList())));
+        assertThat(FutureStream.of().combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList())));
     }
 
     @Test
     public void allCombinations3() {
-        assertThat(LazyFutureStream.of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
+        assertThat(FutureStream.of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
         		Arrays.asList(3), Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3), Arrays.asList(1, 2, 3))));
     }
 
@@ -90,26 +90,26 @@ public class LazyTest {
 
     @Test
     public void emptyCombinations() {
-        assertThat(LazyFutureStream.of().combinations(2).toList(),equalTo(Arrays.asList()));
+        assertThat(FutureStream.of().combinations(2).toList(),equalTo(Arrays.asList()));
     }
 
     @Test
     public void combinations2() {
-        assertThat(LazyFutureStream.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
+        assertThat(FutureStream.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
                 equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
     }
 	@Test
 	public void onEmptySwitchEmpty(){
-		assertThat(LazyFutureStream.of()
-							.onEmptySwitch(()->LazyFutureStream.of(1,2,3))
+		assertThat(FutureStream.of()
+							.onEmptySwitch(()-> FutureStream.of(1,2,3))
 							.toList(),
 							equalTo(Arrays.asList(1,2,3)));
 				
 	}
 	@Test
 	public void onEmptySwitch(){
-		assertThat(LazyFutureStream.of(4,5,6)
-							.onEmptySwitch(()->LazyFutureStream.of(1,2,3))
+		assertThat(FutureStream.of(4,5,6)
+							.onEmptySwitch(()-> FutureStream.of(1,2,3))
 							.toList(),
 							equalTo(Arrays.asList(4,5,6)));
 				
@@ -119,7 +119,7 @@ public class LazyTest {
 	public void elapsedIsPositive(){
 		
 		
-		assertTrue(LazyFutureStream.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
+		assertTrue(FutureStream.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
 	}
 
 

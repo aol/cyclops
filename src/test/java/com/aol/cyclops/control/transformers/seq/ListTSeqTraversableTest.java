@@ -1,12 +1,9 @@
 package com.aol.cyclops.control.transformers.seq;
 
-import java.util.Arrays;
-
-import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import com.aol.cyclops.types.AbstractTraversableTest;
 import com.aol.cyclops.types.Traversable;
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 
 
 public class ListTSeqTraversableTest extends AbstractTraversableTest {

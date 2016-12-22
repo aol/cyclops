@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.LazyReact;
+import cyclops.stream.FutureStream;
 
 
 public class LazyReactTest {
@@ -41,7 +41,7 @@ public class LazyReactTest {
 		DummySupplier s3 = new DummySupplier(3);
 		
 		Iterable<DummySupplier> iterable = Arrays.asList(s1, s2, s3);
-		LazyFutureStream<Integer> futures = new LazyReact()
+		FutureStream<Integer> futures = new LazyReact()
 				.<Integer> fromIterableAsync(iterable)
 				.withAsync(false);
 
@@ -70,7 +70,7 @@ public class LazyReactTest {
 		DummySupplier s3 = new DummySupplier(3);
 		
 		Stream<DummySupplier> stream = Arrays.asList(s1, s2, s3).stream();
-		LazyFutureStream<Integer> futures = new LazyReact()
+		FutureStream<Integer> futures = new LazyReact()
 				.<Integer> fromStreamAsync(stream).withAsync(false);
 
 		assertThat(futures.get(0).get(), is(lessThan(99)));
@@ -98,7 +98,7 @@ public class LazyReactTest {
 		DummySupplier s3 = new DummySupplier(3);
 		
 		Iterator<DummySupplier> iterator = Arrays.asList(s1, s2, s3).iterator();
-		LazyFutureStream<Integer> futures = new LazyReact()
+		FutureStream<Integer> futures = new LazyReact()
 				.<Integer> fromIteratorAsync(iterator)
 				.withAsync(false);
 

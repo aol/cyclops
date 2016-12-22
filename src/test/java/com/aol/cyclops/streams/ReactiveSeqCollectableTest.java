@@ -2,7 +2,7 @@ package com.aol.cyclops.streams;
 
 import org.jooq.lambda.Collectable;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops.react.lazy.sequence.CollectableTest;
 
 public class ReactiveSeqCollectableTest extends CollectableTest {

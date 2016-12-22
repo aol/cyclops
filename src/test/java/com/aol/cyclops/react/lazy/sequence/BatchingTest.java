@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.lazy.sequence;
 
-import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
+import static cyclops.stream.FutureStream.of;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -19,48 +19,48 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import cyclops.stream.FutureStream;
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.collections.ListX;
 import com.aol.cyclops.util.SimpleTimer;
 
 import lombok.Value;
 public class BatchingTest {
 	@Test
 	public void batchUntil(){
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
 				.toList().size(),equalTo(2));
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void batchWhile(){
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
 				.toList()
 				.size(),equalTo(2));
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
 				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}
 	@Test
 	public void batchUntilCollection(){
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0,()->new ArrayList<>())
 				.toList().size(),equalTo(2));
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0,()->new ArrayList<>())
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void batchWhileCollection(){
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
 				.toList().size(),equalTo(2));
-		assertThat(LazyFutureStream.of(1,2,3,4,5,6)
+		assertThat(FutureStream.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
 				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}
@@ -123,7 +123,7 @@ public class BatchingTest {
 			count2=new AtomicInteger(0);
 			List<Collection<Map>> result = new ArrayList<>();
 					
-					LazyFutureStream.iterate("", last -> "hello")
+					FutureStream.iterate("", last -> "hello")
 					.limit(1000)
 					
 					.peek(i->System.out.println(++otherCount))
@@ -150,7 +150,7 @@ public class BatchingTest {
 	public void batchByTimex() {
 
 		
-			LazyFutureStream.iterate("", last -> "next")
+			FutureStream.iterate("", last -> "next")
 				.limit(100)
 				
 				
@@ -168,7 +168,7 @@ public class BatchingTest {
 	public void windowByTimex() {
 
 		
-		LazyFutureStream.iterate("", last -> "next")
+		FutureStream.iterate("", last -> "next")
 				.limit(100)
 				
 				

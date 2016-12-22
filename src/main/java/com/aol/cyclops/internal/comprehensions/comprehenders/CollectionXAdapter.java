@@ -1,17 +1,16 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
-import static com.aol.cyclops.control.AnyM.fromCollectionX;
-import static com.aol.cyclops.types.anyM.Witness.collectionX;
+import static cyclops.monads.AnyM.fromCollectionX;
+import static cyclops.monads.Witness.collectionX;
 
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.AnyM;
+import cyclops.monads.AnyM;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 
 import lombok.AllArgsConstructor;

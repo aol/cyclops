@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import cyclops.collections.immutable.POrderedSetX;
 import org.pcollections.POrderedSet;
 
 import lombok.AllArgsConstructor;

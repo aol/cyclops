@@ -15,19 +15,15 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
+import cyclops.async.*;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.stream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.Pipes;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.QueueFactories;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.ReactiveSeq;
+import cyclops.collections.ListX;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 
 import lombok.val;
@@ -278,9 +274,9 @@ public class PipesTest {
         pipes.push("hello", "world2");
         q.close();
         assertThat(pipes.oneOrErrorAsync("hello", ex).get(),
-                equalTo(FutureW.ofResult("world").get()));  
+                equalTo(Future.ofResult("world").get()));
         assertThat(pipes.oneOrErrorAsync("hello", ex).get(),
-                equalTo(FutureW.ofResult("world2").get()));  
+                equalTo(Future.ofResult("world2").get()));
 	}
 	@Test
     public void oneOrError() throws InterruptedException{
@@ -352,7 +348,7 @@ public class PipesTest {
 	    Pipes<String,Integer> pipes = Pipes.of();
 		Queue queue = new Queue();
 		pipes.register("hello", queue);
-		pipes.publishToAsync("hello",LazyFutureStream.of(1,2,3));
+		pipes.publishToAsync("hello", FutureStream.of(1,2,3));
 		Thread.sleep(100);
 		queue.offer(4);
 		queue.close();

@@ -1,8 +1,8 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
-import static com.aol.cyclops.control.AnyM.fromOptional;
-import static com.aol.cyclops.types.anyM.Witness.optional;
-import static com.aol.cyclops.util.Optionals.combine;
+import static cyclops.monads.AnyM.fromOptional;
+import static cyclops.monads.Witness.optional;
+import static cyclops.Optionals.combine;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -10,14 +10,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.types.MonadicValue;
+import cyclops.monads.AnyM;
+import cyclops.control.Maybe;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 import com.aol.cyclops.types.extensability.ValueAdapter;
-import com.aol.cyclops.util.Optionals;
+import cyclops.Optionals;
 
 import lombok.AllArgsConstructor;
 
@@ -78,7 +77,7 @@ public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional>
     }
    
     @Override
-    public <T> AnyM<com.aol.cyclops.types.anyM.Witness.optional, T> unit(T o) {
+    public <T> AnyM<Witness.optional, T> unit(T o) {
         return fromOptional(this.<T>getUnit().apply(o));
     }
 

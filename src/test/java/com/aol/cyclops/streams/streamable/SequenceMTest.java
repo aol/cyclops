@@ -20,12 +20,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.Streams;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.control.Streamable;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Streamable;
 
 public class SequenceMTest {
 	
@@ -326,7 +326,7 @@ public class SequenceMTest {
 		Stream<String> s = Stream.of("hello","world");
 		Iterator<String> it = s.iterator();
 		String head = it.next();
-		Stream<String> tail = StreamUtils.stream(it);
+		Stream<String> tail = Streams.stream(it);
 		tail.forEach(System.out::println);
 	}
 	@Test

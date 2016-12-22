@@ -2,10 +2,10 @@ package com.aol.cyclops;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.PVectorX;
 
-import static com.aol.cyclops.data.collections.extensions.persistent.PStackX.range;
+import static cyclops.collections.immutable.PStackX.range;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import lombok.val;

@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.data.MutableByte;
+import cyclops.box.Mutable;
+import cyclops.box.MutableByte;
 public class MutableByteTest {
 
 	@Test

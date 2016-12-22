@@ -1,7 +1,7 @@
 package com.aol.cyclops.types.extensability;
 
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.anyM.WitnessType;
+import cyclops.monads.WitnessType;
 
 import java.util.function.Function;
 

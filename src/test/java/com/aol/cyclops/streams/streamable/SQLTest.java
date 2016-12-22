@@ -2,7 +2,7 @@ package com.aol.cyclops.streams.streamable;
 
 
 
-import static com.aol.cyclops.control.Streamable.of;
+import static cyclops.stream.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;

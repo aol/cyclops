@@ -1,12 +1,11 @@
 package cyclops.function;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Reader;
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.data.MutableInt;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.control.Try;
+import cyclops.box.MutableInt;
 import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
-import com.aol.cyclops.types.anyM.WitnessType;
+import cyclops.monads.WitnessType;
 import com.aol.cyclops.util.ExceptionSoftener;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -198,7 +197,7 @@ public class FluentFunctions {
      * @param fn TriFunction to convert
      * @return FluentTriFunction
      */
-    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(final F3<T1, T2, T3, R> fn) {
+    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(final Fn3<T1, T2, T3, R> fn) {
         return new FluentTriFunction<>(
                                        fn);
     }
@@ -297,7 +296,7 @@ public class FluentFunctions {
         });
     }
 
-    private static <T1, T2, T3, R> F3<T1, T2, T3, R> softenTriFunction(final CheckedTriFunction<T1, T2, T3, R> fn) {
+    private static <T1, T2, T3, R> Fn3<T1, T2, T3, R> softenTriFunction(final CheckedTriFunction<T1, T2, T3, R> fn) {
         return (t1, t2, t3) -> {
             try {
                 return fn.apply(t1, t2, t3);
@@ -546,7 +545,7 @@ public class FluentFunctions {
         }
 
         /* (non-Javadoc)
-         * @see com.aol.cyclops.control.Reader#map(java.util.function.Function)
+         * @see cyclops.function.Reader#map(java.util.function.Function)
          */
         @Override
         public <R1> FluentFunction<T, R1> map(final Function<? super R, ? extends R1> f2) {
@@ -554,7 +553,7 @@ public class FluentFunctions {
         }
 
         /* (non-Javadoc)
-         * @see com.aol.cyclops.control.Reader#flatMap(java.util.function.Function)
+         * @see cyclops.function.Reader#flatMap(java.util.function.Function)
          */
         @Override
         public <R1> FluentFunction<T, R1> flatMap(final Function<? super R, ? extends Reader<T, R1>> f) {
@@ -783,7 +782,7 @@ public class FluentFunctions {
 
         /**
          * @param input Input value, this function will applied to this value to generate the value that will be infinitely repeated in this Stream
-         * @return An infinitely generating Stream {@link com.aol.cyclops.control.ReactiveSeq} of values determined by the application
+         * @return An infinitely generating Stream {@link ReactiveSeq} of values determined by the application
          *        of this function to the input value
          */
         public ReactiveSeq<R> generate(final T input) {
@@ -835,7 +834,7 @@ public class FluentFunctions {
          * @see java.util.function.Function#compose(java.util.function.Function)
          */
         @Override
-        public <V> Function<V, R> compose(final Function<? super V, ? extends T> before) {
+        public <V> FluentFunction<V, R> compose(final Function<? super V, ? extends T> before) {
 
             return FluentFunctions.of(Reader.super.compose(before));
         }
@@ -844,7 +843,7 @@ public class FluentFunctions {
          * @see java.util.function.Function#andThen(java.util.function.Function)
          */
         @Override
-        public <V> Function<T, V> andThen(final Function<? super R, ? extends V> after) {
+        public <V> FluentFunction<T, V> andThen(final Function<? super R, ? extends V> after) {
 
             return FluentFunctions.of(Reader.super.andThen(after));
         }
@@ -1252,11 +1251,11 @@ public class FluentFunctions {
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentTriFunction<T1, T2, T3, R> implements F3<T1, T2, T3, R> {
-        private final F3<T1, T2, T3, R> fn;
+    public static class FluentTriFunction<T1, T2, T3, R> implements Fn3<T1, T2, T3, R> {
+        private final Fn3<T1, T2, T3, R> fn;
         private final String name;
 
-        public FluentTriFunction(final F3<T1, T2, T3, R> fn) {
+        public FluentTriFunction(final Fn3<T1, T2, T3, R> fn) {
             this.name = null;
             this.fn = fn;
         }
@@ -1377,7 +1376,7 @@ public class FluentFunctions {
          * 
          * @return Curried function 
          */
-        public FluentFunction<? super T1, Function<? super T2, Function<? super T3,? extends R>>> curry() {
+        public FluentFunction<? super T1, Fn1<? super T2, Fn1<? super T3,? extends R>>> curry() {
             return new FluentFunction(
                                         Curry.curry3(fn));
         }
@@ -1499,7 +1498,7 @@ public class FluentFunctions {
          * @param onError Recovery BiFunction
          * @return TriFunction capable of error recovery
          */
-        public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(final Class<X> type, final F3<T1, T2, T3, R> onError) {
+        public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(final Class<X> type, final Fn3<T1, T2, T3, R> onError) {
             return FluentFunctions.of((t1, t2, t3) -> {
                 try {
                     return fn.apply(t1, t2, t3);
@@ -1734,7 +1733,7 @@ public class FluentFunctions {
         public final T1 param1;
         public final T2 param2;
         public final T3 param3;
-        private final F3<T1, T2, T3, R> fn;
+        private final Fn3<T1, T2, T3, R> fn;
 
         /**
          * Proceed and execute wrapped TriFunction with it's input params as captured

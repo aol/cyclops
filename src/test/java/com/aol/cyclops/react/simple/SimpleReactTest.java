@@ -33,10 +33,10 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.SimpleReact;
+import cyclops.async.LazyReact;
+import cyclops.async.SimpleReact;
 import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.FutureStream;
 
 
 public class SimpleReactTest {
@@ -68,7 +68,7 @@ public class SimpleReactTest {
 	
 	@Test
 	public void futureStreamTest(){
-		assertThat(BaseSimpleReactStream.simpleReactStream((Stream)LazyFutureStream.of(1,2,3,4)).block().size(),is(4));
+		assertThat(BaseSimpleReactStream.simpleReactStream((Stream) FutureStream.of(1,2,3,4)).block().size(),is(4));
 	}
 	@Test
 	public void futureStreamFromStreamTest(){

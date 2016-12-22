@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
+import cyclops.async.LazyReact;
 
 public class LFSTest {
    

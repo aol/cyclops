@@ -1,7 +1,7 @@
 package com.aol.cyclops.comprehensions;
 
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.util.CompletableFutures;
+import cyclops.Streams;
+import cyclops.CompletableFutures;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -50,7 +50,7 @@ public class MixedDoTest {
 		
 		
 		
-		Stream<String> results1 = StreamUtils.forEach2(Stream.of("first","second"),
+		Stream<String> results1 = Streams.forEach2(Stream.of("first","second"),
 		                                               a->Stream.of(loadData()),
 									 				   (String local,String loadedData)-> loadedData + ":" + local );
 		

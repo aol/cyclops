@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 
 public class SchedulingTest {
 

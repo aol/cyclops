@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops.types.stream.reactive.ReactiveTask;
 
 public class ForEachSequenceMFutureTest {

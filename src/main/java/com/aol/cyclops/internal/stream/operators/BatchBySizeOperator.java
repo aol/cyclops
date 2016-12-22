@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 
 public class BatchBySizeOperator<T, C extends Collection<? super T>> {
@@ -28,7 +28,7 @@ public class BatchBySizeOperator<T, C extends Collection<? super T>> {
             throw new IllegalArgumentException(
                                                "Batch size must be 1 or more");
         final Iterator<T> it = stream.iterator();
-        return StreamUtils.stream(new Iterator<C>() {
+        return Streams.stream(new Iterator<C>() {
 
             @Override
             public boolean hasNext() {

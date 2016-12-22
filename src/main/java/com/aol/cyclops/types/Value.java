@@ -8,17 +8,17 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import cyclops.function.F0;
+import cyclops.function.Fn0;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.Ior;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.Xor;
+import cyclops.control.Eval;
+import cyclops.control.Ior;
+import cyclops.control.Maybe;
+import cyclops.stream.ReactiveSeq;
+import cyclops.control.Try;
+import cyclops.control.Xor;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import cyclops.function.Predicates;
 
@@ -36,8 +36,8 @@ public interface Value<T> extends Supplier<T>,
                                     Foldable<T>, 
                                     Convertable<T>, 
                                     Publisher<T>, 
-                                    Predicate<T>, 
-                                    F0<T> {
+                                    Predicate<T>,
+        Fn0<T> {
     @Override
     default T apply() {
         return this.orElse(null);

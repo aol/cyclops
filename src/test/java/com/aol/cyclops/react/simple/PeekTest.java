@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.SimpleReact;
+import cyclops.async.SimpleReact;
 
 public class PeekTest {
 

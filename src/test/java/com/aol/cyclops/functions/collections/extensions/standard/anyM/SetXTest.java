@@ -1,10 +1,10 @@
 package com.aol.cyclops.functions.collections.extensions.standard.anyM;
 
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import cyclops.monads.AnyM;
+import cyclops.collections.SetX;
 import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 

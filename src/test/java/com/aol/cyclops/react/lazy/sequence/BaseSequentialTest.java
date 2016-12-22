@@ -21,28 +21,29 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
+import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.ReactiveSeq;
+
 public class BaseSequentialTest {
 
 	<U> ReactiveSeq<U> of(U... array){
-			  return LazyFutureStream.of(array);
+			  return FutureStream.of(array);
 	}
 	
 		
-		LazyFutureStream<Integer> empty;
-		LazyFutureStream<Integer> nonEmpty;
+		FutureStream<Integer> empty;
+		FutureStream<Integer> nonEmpty;
 
 		@Before
 		public void setup(){
-			empty = LazyFutureStream.of();
-			nonEmpty = LazyFutureStream.of(1);
+			empty = FutureStream.of();
+			nonEmpty = FutureStream.of(1);
 		}
 		@Test
 	    public void dropRight(){

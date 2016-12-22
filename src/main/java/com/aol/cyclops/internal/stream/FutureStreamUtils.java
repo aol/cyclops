@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.tuple.Tuple3;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 
 public class FutureStreamUtils {
     /**
@@ -19,7 +19,7 @@ public class FutureStreamUtils {
      * 
      * <pre>
      * {@code
-     *     Subscription next = StreamUtils.forEachX(Stream.of(1,2,3,4),2,System.out::println);
+     *     Subscription next = Streams.forEachX(Stream.of(1,2,3,4),2,System.out::println);
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -55,7 +55,7 @@ public class FutureStreamUtils {
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
      * <pre>
      * {@code
-     *     Subscription next = StreamUtils.forEachXWithError(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
+     *     Subscription next = Streams.forEachXWithError(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
      *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
@@ -95,7 +95,7 @@ public class FutureStreamUtils {
      * 
      * <pre>
      * {@code
-     *     Subscription next = StreamUtils.forEachXEvents(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
+     *     Subscription next = Streams.forEachXEvents(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
      *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
      *          
      *     System.out.println("First batch processed!");
@@ -208,7 +208,7 @@ public class FutureStreamUtils {
      * 
      * <pre>
      * {@code
-     *     Subscription next = StreamUtils.forEachEvents(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
+     *     Subscription next = Streams.forEachEvents(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
      *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
      *          
      *     System.out.println("processed!");
@@ -238,7 +238,7 @@ public class FutureStreamUtils {
         return tuple(subscription, () -> {
             final Iterator<T> it = stream.iterator();
             final Object UNSET = new Object();
-            StreamUtils.stream(new Iterator<T>() {
+            Streams.stream(new Iterator<T>() {
                 boolean errored = false;
 
                 @Override

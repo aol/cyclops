@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.Streams;
+import cyclops.collections.ListX;
 
 import lombok.AllArgsConstructor;
 
@@ -16,7 +16,7 @@ public class WindowStatefullyWhileOperator<T> {
 
     public Stream<ListX<T>> windowStatefullyWhile(final BiPredicate<ListX<? super T>, ? super T> predicate) {
         final Iterator<T> it = stream.iterator();
-        return StreamUtils.stream(new Iterator<ListX<T>>() {
+        return Streams.stream(new Iterator<ListX<T>>() {
             ListX<T> last = ListX.empty();
             T value = (T) UNSET;
 

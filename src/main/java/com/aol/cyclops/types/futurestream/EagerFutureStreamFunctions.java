@@ -1,8 +1,8 @@
 package com.aol.cyclops.types.futurestream;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.Queue.QueueReader;
+import cyclops.stream.ReactiveSeq;
+import cyclops.async.Queue;
+import cyclops.async.Queue.QueueReader;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;

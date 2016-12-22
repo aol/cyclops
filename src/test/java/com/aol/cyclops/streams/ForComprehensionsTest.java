@@ -1,6 +1,6 @@
 package com.aol.cyclops.streams;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import java.util.Arrays;

@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 
 import lombok.AllArgsConstructor;
 
@@ -15,7 +15,7 @@ public class SkipWhileOperator<U> {
 
     public Stream<U> skipWhile(final Predicate<? super U> predicate) {
         final Iterator<U> it = stream.iterator();
-        return StreamUtils.stream(new Iterator<U>() {
+        return Streams.stream(new Iterator<U>() {
             U next;
             boolean nextSet = false;
             boolean init = false;

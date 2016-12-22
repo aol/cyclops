@@ -29,7 +29,7 @@ public class Lambda {
      * @param supplier Lambda / method to assign type of Supplier to  
      * @return Supplier
      */
-    public static <T> F0<T> s(final F0<T> supplier) {
+    public static <T> Fn0<T> s(final Fn0<T> supplier) {
         return supplier;
     }
     /**
@@ -48,7 +48,7 @@ public class Lambda {
      * @param supplier Lambda / method to assign type of Supplier to  
      * @return Supplier
      */
-    public static <T> F0<T> λ(final F0<T> supplier) {
+    public static <T> Fn0<T> λ(final Fn0<T> supplier) {
         return supplier;
     }
     public static <T> Predicate<T> λ(final Predicate<T> pred) {
@@ -67,7 +67,7 @@ public class Lambda {
      * @param func
      * @return supplied function
      */
-    public static <T1, R> F1<T1, R> λ(final F1<T1, R> func) {
+    public static <T1, R> Fn1<T1, R> λ(final Fn1<T1, R> func) {
         return func;
     }
     /**
@@ -79,7 +79,7 @@ public class Lambda {
      * @param func
      * @return supplied function
      */
-    public static <T1, R> F1<T1, R> l1(final F1<T1, R> func) {
+    public static <T1, R> Fn1<T1, R> l1(final Fn1<T1, R> func) {
         return func;
     }
     /**
@@ -93,7 +93,7 @@ public class Lambda {
      * @param biFunc
      * @return supplied function
      */
-    public static <T1, T2, R> F2<T1,T2, R> λ(final F2<T1,T2, R> biFunc) {
+    public static <T1, T2, R> Fn2<T1,T2, R> λ(final Fn2<T1,T2, R> biFunc) {
         return biFunc;
     }
     /**
@@ -107,7 +107,7 @@ public class Lambda {
      * @param triFunc
      * @return supplied function
      */
-    public static <T1, T2, T3,R> F3<T1,T2,T3, R> λ(final F3<T1,T2,T3, R> triFunc) {
+    public static <T1, T2, T3,R> Fn3<T1,T2,T3, R> λ(final Fn3<T1,T2,T3, R> triFunc) {
         return triFunc;
     }
     /**
@@ -121,7 +121,7 @@ public class Lambda {
      * @param quadFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, T4,R> F4<T1,T2,T3, T4,R> λ(final F4<T1,T2,T3,T4, R> quadFunc) {
+    public static <T1, T2, T3, T4,R> Fn4<T1,T2,T3, T4,R> λ(final Fn4<T1,T2,T3,T4, R> quadFunc) {
         return quadFunc;
     }
     /**
@@ -135,7 +135,7 @@ public class Lambda {
      * @param quintFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, T4, T5,R> F5<T1,T2,T3, T4, T5,R> λ(final F5<T1,T2,T3,T4,T5, R> quintFunc) {
+    public static <T1, T2, T3, T4, T5,R> Fn5<T1,T2,T3, T4, T5,R> λ(final Fn5<T1,T2,T3,T4,T5, R> quintFunc) {
         return quintFunc;
     }
     /**
@@ -149,7 +149,7 @@ public class Lambda {
      * @param func6
      * @return supplied function
      */
-    public static <T1, T2, T3, T4, T5, T6,R> F6<T1,T2,T3, T4, T5,T6,R> λ(final F6<T1,T2,T3,T4,T5,T6, R> func6) {
+    public static <T1, T2, T3, T4, T5, T6,R> Fn6<T1,T2,T3, T4, T5,T6,R> λ(final Fn6<T1,T2,T3,T4,T5,T6, R> func6) {
         return func6;
     }
     /**
@@ -163,7 +163,7 @@ public class Lambda {
      * @param quadFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, T4, T5, T6,T7,R> F7<T1,T2,T3, T4, T5,T6,T7,R> λ(final F7<T1,T2,T3,T4,T5,T6,T7, R> func7) {
+    public static <T1, T2, T3, T4, T5, T6,T7,R> Fn7<T1,T2,T3, T4, T5,T6,T7,R> λ(final Fn7<T1,T2,T3,T4,T5,T6,T7, R> func7) {
         return func7;
     }
     /**
@@ -177,7 +177,7 @@ public class Lambda {
      * @param quadFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, T4, T5, T6,T7,T8,R> F8<T1,T2,T3, T4, T5,T6,T7,T8,R> λ(final F8<T1,T2,T3,T4,T5,T6,T7,T8, R> func8) {
+    public static <T1, T2, T3, T4, T5, T6,T7,T8,R> Fn8<T1,T2,T3, T4, T5,T6,T7,T8,R> λ(final Fn8<T1,T2,T3,T4,T5,T6,T7,T8, R> func8) {
         return func8;
     }
     /**
@@ -191,10 +191,10 @@ public class Lambda {
      * @param biFunc
      * @return supplied function
      */
-    public static <T1, T2, R> F1<T1, F1<T2, R>> l2(final F1<T1, F1<T2, R>> biFunc) {
+    public static <T1, T2, R> Fn1<T1, Fn1<T2, R>> l2(final Fn1<T1, Fn1<T2, R>> biFunc) {
         return biFunc;
     }
-    public static <T1, T2, R> F1<? super T1, ? extends F1<? super T2, ? extends R>> v2(final F1<? super T1, F1<? super T2, ? extends R>> biFunc) {
+    public static <T1, T2, R> Fn1<? super T1, ? extends Fn1<? super T2, ? extends R>> v2(final Fn1<? super T1, Fn1<? super T2, ? extends R>> biFunc) {
         return biFunc;
     }
 
@@ -209,7 +209,7 @@ public class Lambda {
      * @param triFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, R> F1<T1, F1<T2, F1<T3, R>>> l3(final F1<T1, F1<T2, F1<T3, R>>> triFunc) {
+    public static <T1, T2, T3, R> Fn1<T1, Fn1<T2, Fn1<T3, R>>> l3(final Fn1<T1, Fn1<T2, Fn1<T3, R>>> triFunc) {
         return triFunc;
     }
 
@@ -224,8 +224,8 @@ public class Lambda {
      * @param quadFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, T4, R> F1<T1, F1<T2, F1<T3, F1<T4, R>>>> l4(
-            final F1<T1, F1<T2, F1<T3, F1<T4, R>>>> quadFunc) {
+    public static <T1, T2, T3, T4, R> Fn1<T1, Fn1<T2, Fn1<T3, Fn1<T4, R>>>> l4(
+            final Fn1<T1, Fn1<T2, Fn1<T3, Fn1<T4, R>>>> quadFunc) {
         return quadFunc;
     }
 
@@ -240,8 +240,8 @@ public class Lambda {
      * @param pentFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, T4, T5, R> F1<T1, F1<T2, F1<T3, F1<T4, F1<T5, R>>>>> l5(
-            final F1<T1, F1<T2, F1<T3, F1<T4, F1<T5, R>>>>> pentFunc) {
+    public static <T1, T2, T3, T4, T5, R> Fn1<T1, Fn1<T2, Fn1<T3, Fn1<T4, Fn1<T5, R>>>>> l5(
+            final Fn1<T1, Fn1<T2, Fn1<T3, Fn1<T4, Fn1<T5, R>>>>> pentFunc) {
         return pentFunc;
     }
 
@@ -256,8 +256,8 @@ public class Lambda {
      * @param hexFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, T4, T5, T6, R> F1<T1, F1<T2, F1<T3, F1<T4, F1<T5, F1<T6, R>>>>>> l6(
-            final F1<T1, F1<T2, F1<T3, F1<T4, F1<T5, F1<T6, R>>>>>> hexFunc) {
+    public static <T1, T2, T3, T4, T5, T6, R> Fn1<T1, Fn1<T2, Fn1<T3, Fn1<T4, Fn1<T5, Fn1<T6, R>>>>>> l6(
+            final Fn1<T1, Fn1<T2, Fn1<T3, Fn1<T4, Fn1<T5, Fn1<T6, R>>>>>> hexFunc) {
         return hexFunc;
     }
 
@@ -272,8 +272,8 @@ public class Lambda {
      * @param heptFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, T4, T5, T6, T7, R> F1<T1, F1<T2, F1<T3, F1<T4, F1<T5, F1<T6, F1<T7, R>>>>>>> l7(
-            final F1<T1, F1<T2, F1<T3, F1<T4, F1<T5, F1<T6, F1<T7, R>>>>>>> heptFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, R> Fn1<T1, Fn1<T2, Fn1<T3, Fn1<T4, Fn1<T5, Fn1<T6, Fn1<T7, R>>>>>>> l7(
+            final Fn1<T1, Fn1<T2, Fn1<T3, Fn1<T4, Fn1<T5, Fn1<T6, Fn1<T7, R>>>>>>> heptFunc) {
         return heptFunc;
     }
 
@@ -288,8 +288,8 @@ public class Lambda {
      * @param octFunc
      * @return supplied function
      */
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> F1<T1, F1<T2, F1<T3, F1<T4, F1<T5, F1<T6, F1<T7, F1<T8, R>>>>>>>> l8(
-            final F1<T1, F1<T2, F1<T3, F1<T4, F1<T5, F1<T6, F1<T7, F1<T8, R>>>>>>>> octFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Fn1<T1, Fn1<T2, Fn1<T3, Fn1<T4, Fn1<T5, Fn1<T6, Fn1<T7, Fn1<T8, R>>>>>>>> l8(
+            final Fn1<T1, Fn1<T2, Fn1<T3, Fn1<T4, Fn1<T5, Fn1<T6, Fn1<T7, Fn1<T8, R>>>>>>>> octFunc) {
         return octFunc;
     }
 }

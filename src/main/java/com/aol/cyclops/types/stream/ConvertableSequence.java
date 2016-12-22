@@ -4,32 +4,32 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import cyclops.async.LazyReact;
+import cyclops.async.SimpleReact;
+import cyclops.control.Eval;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Streamable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import cyclops.Reducers;
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
-import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
-import com.aol.cyclops.data.collections.extensions.standard.DequeX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.data.collections.extensions.standard.QueueX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import cyclops.Streams;
+import cyclops.collections.immutable.PBagX;
+import cyclops.collections.immutable.PMapX;
+import cyclops.collections.immutable.POrderedSetX;
+import cyclops.collections.immutable.PQueueX;
+import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.DequeX;
+import cyclops.collections.ListX;
+import cyclops.collections.MapX;
+import cyclops.collections.QueueX;
+import cyclops.collections.SetX;
+import cyclops.collections.SortedSetX;
 import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.FutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
 /**
@@ -49,11 +49,11 @@ public interface ConvertableSequence<T> extends Iterable<T> {
         return Seq.seq(this);
     }
 
-    default LazyFutureStream<T> toFutureStream(final LazyReact reactor) {
+    default FutureStream<T> toFutureStream(final LazyReact reactor) {
         return reactor.fromIterable(this);
     }
 
-    default LazyFutureStream<T> toFutureStream() {
+    default FutureStream<T> toFutureStream() {
         return new LazyReact().fromIterable(this);
     }
 
@@ -133,7 +133,7 @@ public interface ConvertableSequence<T> extends Iterable<T> {
     }
 
     default Value<ListX<T>> toValue() {
-        return Eval.later(() -> ListX.fromIterable(StreamUtils.stream(this)
+        return Eval.later(() -> ListX.fromIterable(Streams.stream(this)
                                                               .collect(Collectors.toList())));
     }
 

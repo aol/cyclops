@@ -15,16 +15,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.function.FluentFunctions;
 import cyclops.function.FluentFunctions.FluentFunction;
 import cyclops.function.FluentFunctions.FluentSupplier;
-import com.aol.cyclops.control.Try;
+import cyclops.control.Try;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 

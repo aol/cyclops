@@ -11,14 +11,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.ListX;
 import com.aol.cyclops.react.Status;
 import com.aol.cyclops.util.SimpleTimer;
 import com.aol.cyclops.util.ThrowsSoftened;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor

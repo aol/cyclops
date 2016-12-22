@@ -11,10 +11,9 @@ import java.util.function.UnaryOperator;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.DequeX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.DequeX;
+import cyclops.collections.ListX;
 import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
 
 public class DequeXTest extends AbstractCollectionXTest{

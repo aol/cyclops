@@ -9,7 +9,6 @@ import static org.junit.Assert.assertThat;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileSystemException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,9 +16,9 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.Try.Failure;
+import cyclops.control.Maybe;
+import cyclops.control.Try;
+import cyclops.control.Try.Failure;
 
 public class FailureTest {
 

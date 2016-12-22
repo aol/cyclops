@@ -3,19 +3,16 @@ package com.aol.cyclops.types;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.FutureW;
+import cyclops.async.Future;
 
 import lombok.Value;
 
@@ -180,27 +177,27 @@ public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
     }
 
     /**
-     * @return This convertable converted to a FutureW
+     * @return This convertable converted to a Future
      */
-    default FutureW<T> toFutureW() {
-        return FutureW.of(toCompletableFuture());
+    default Future<T> toFutureW() {
+        return Future.of(toCompletableFuture());
     }
 
     /**
-     * @return This convertable converted to a FutureW asyncrhonously
+     * @return This convertable converted to a Future asyncrhonously
      */
-    default FutureW<T> toFutureWAsync() {
-        return FutureW.of(toCompletableFutureAsync());
+    default Future<T> toFutureWAsync() {
+        return Future.of(toCompletableFutureAsync());
     }
 
     /**
-     * This convertable converted to a FutureW asyncrhonously using the supplied Executor
+     * This convertable converted to a Future asyncrhonously using the supplied Executor
      * 
      * @param ex Executor to execute the conversion on
-     * @return  This convertable converted to a FutureW asyncrhonously
+     * @return  This convertable converted to a Future asyncrhonously
      */
-    default FutureW<T> toFutureWAsync(final Executor ex) {
-        return FutureW.of(toCompletableFutureAsync(ex));
+    default Future<T> toFutureWAsync(final Executor ex) {
+        return Future.of(toCompletableFutureAsync(ex));
     }
 
     /**

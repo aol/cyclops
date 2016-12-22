@@ -1,6 +1,6 @@
 package com.aol.cyclops.lambda.monads;
 
-import static com.aol.cyclops.types.anyM.Witness.*;
+import static cyclops.monads.Witness.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
@@ -15,7 +15,6 @@ import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -23,15 +22,14 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.QueueX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import cyclops.monads.AnyM;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.collections.ListX;
+import cyclops.collections.QueueX;
+import cyclops.collections.SetX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 
-import lombok.val;
 import reactor.core.publisher.Flux;
 
 

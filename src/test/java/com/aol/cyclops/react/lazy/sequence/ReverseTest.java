@@ -6,10 +6,10 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
+import cyclops.stream.FutureStream;
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.LazyReact;
 
 public class ReverseTest {
 	@Test
@@ -37,7 +37,7 @@ public class ReverseTest {
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
-		assertThat(LazyFutureStream.of(list.toArray())
+		assertThat(FutureStream.of(list.toArray())
 				 .limit(100)
 				 .count(),equalTo(100L));
 		
@@ -48,7 +48,7 @@ public class ReverseTest {
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
-		assertThat(LazyFutureStream.of(list.toArray())
+		assertThat(FutureStream.of(list.toArray())
 				 .skip(100)
 				 .count(),equalTo(900L));
 		

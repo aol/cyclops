@@ -2,8 +2,8 @@ package com.aol.cyclops;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.PVectorX;
 
 public class NQueens {
     

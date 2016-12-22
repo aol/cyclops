@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.async.subscription;
 
-import com.aol.cyclops.data.async.Queue;
+import cyclops.async.Queue;
 
 public interface Continueable {
 

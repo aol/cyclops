@@ -4,13 +4,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
+import cyclops.monads.AnyM;
 public class FlatMapTest {
 
 

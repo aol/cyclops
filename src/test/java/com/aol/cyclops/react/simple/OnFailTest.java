@@ -9,8 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.data.async.Queue.ClosedQueueException;
+import cyclops.async.SimpleReact;
+import cyclops.async.Queue.ClosedQueueException;
 
 public class OnFailTest {
 

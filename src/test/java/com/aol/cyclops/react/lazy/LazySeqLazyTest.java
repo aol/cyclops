@@ -14,7 +14,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops.react.base.BaseSeqLazyTest;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.FutureStream;
 
 public class LazySeqLazyTest extends BaseSeqLazyTest{
 	
@@ -35,18 +35,18 @@ public class LazySeqLazyTest extends BaseSeqLazyTest{
 
 
 		@Override
-		protected <U> LazyFutureStream<U> of(U... array) {
-			return LazyFutureStream.of(array);
+		protected <U> FutureStream<U> of(U... array) {
+			return FutureStream.of(array);
 		}
 
 		@Override
-		protected <U> LazyFutureStream<U> ofThread(U... array) {
-			return LazyFutureStream.freeThread(array);
+		protected <U> FutureStream<U> ofThread(U... array) {
+			return FutureStream.freeThread(array);
 		}
 
 		@Override
-		protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
-			return LazyFutureStream.react(array);
+		protected <U> FutureStream<U> react(Supplier<U>... array) {
+			return FutureStream.react(array);
 		}
 
 	   

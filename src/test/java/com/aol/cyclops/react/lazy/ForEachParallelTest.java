@@ -1,14 +1,13 @@
 package com.aol.cyclops.react.lazy;
 
+import cyclops.stream.FutureStream;
 import org.junit.Test;
-
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class ForEachParallelTest {
 
 	@Test
 	 public void testOnEmptyThrows(){
-		LazyFutureStream.parallel(1,2,3,4)
+		FutureStream.parallel(1,2,3,4)
 						.peek(i-> System.out.println("A"+Thread.currentThread().getId()))
 						.peekSync(i->sleep(i*100)).forEach(i-> System.out.println(Thread.currentThread().getId()));
 	    	

@@ -11,17 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cyclops.Streams;
+import cyclops.stream.FutureStream;
 import org.junit.Test;
-
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LiftAndBindStreamUtilsTest {
 	@Test
 	public void testLiftAndBindFile(){
 		
 		
-		List<String> result = StreamUtils.flatMapFile(LazyFutureStream.of("input.file")
+		List<String> result = Streams.flatMapFile(FutureStream.of("input.file")
 								
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
@@ -35,7 +34,7 @@ public class LiftAndBindStreamUtilsTest {
 	public void testLiftAndBindURL(){
 		
 		
-		List<String> result = StreamUtils.flatMapURL(LazyFutureStream.of("input.file")
+		List<String> result = Streams.flatMapURL(FutureStream.of("input.file")
 								
 								,getClass().getClassLoader()::getResource)
 								.collect(Collectors.toList());
@@ -46,7 +45,7 @@ public class LiftAndBindStreamUtilsTest {
 	public void testLiftAndBindString(){
 		
 		
-		List<Character> result = StreamUtils.flatMapCharSequence(LazyFutureStream.of("input.file"),i->"hello world")
+		List<Character> result = Streams.flatMapCharSequence(FutureStream.of("input.file"), i->"hello world")
 									.collect(Collectors.toList());
 		
 		assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
@@ -55,7 +54,7 @@ public class LiftAndBindStreamUtilsTest {
 	public void testLiftAndBindBufferedReader(){
 		
 		
-		List<String> result = StreamUtils.flatMapBufferedReader(LazyFutureStream.of("input.file")
+		List<String> result = Streams.flatMapBufferedReader(FutureStream.of("input.file")
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
 								,in-> new BufferedReader(in))

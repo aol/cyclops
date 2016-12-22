@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
 
 import lombok.AllArgsConstructor;

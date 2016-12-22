@@ -6,11 +6,10 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple3;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazyFutureStreamUtils {
 
@@ -44,7 +43,7 @@ public class LazyFutureStreamUtils {
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachX(
-            final LazyFutureStream<T> stream, final long x, final Consumer<? super T> consumerElement) {
+            final FutureStream<T> stream, final long x, final Consumer<? super T> consumerElement) {
         final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
         final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
         return tuple(subscription, () -> {
@@ -111,7 +110,7 @@ public class LazyFutureStreamUtils {
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachXWithError(
-            final LazyFutureStream<T> stream, final long x, final Consumer<? super T> consumerElement,
+            final FutureStream<T> stream, final long x, final Consumer<? super T> consumerElement,
             final Consumer<? super Throwable> consumerError) {
         final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
         final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
@@ -182,7 +181,7 @@ public class LazyFutureStreamUtils {
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachXEvents(
-            final LazyFutureStream<T> stream, final long x, final Consumer<? super T> consumerElement,
+            final FutureStream<T> stream, final long x, final Consumer<? super T> consumerElement,
             final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
         final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
         final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
@@ -242,7 +241,7 @@ public class LazyFutureStreamUtils {
      * @param consumerError To accept incoming processing errors from the Stream
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachWithError(
-            final LazyFutureStream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
+            final FutureStream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
         final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
         final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
         return tuple(subscription, () -> {
@@ -308,7 +307,7 @@ public class LazyFutureStreamUtils {
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachEvent(
-            final LazyFutureStream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
+            final FutureStream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
             final Runnable onComplete) {
         final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
         final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();

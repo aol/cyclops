@@ -1,8 +1,8 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
-import static com.aol.cyclops.control.AnyM.fromStream;
-import static com.aol.cyclops.control.StreamUtils.zipSequence;
-import static com.aol.cyclops.types.anyM.Witness.stream;
+import static cyclops.monads.AnyM.fromStream;
+import static cyclops.Streams.zipSequence;
+import static cyclops.monads.Witness.stream;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -10,10 +10,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.Streams;
+import cyclops.monads.Witness;
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class StreamAdapter extends AbstractFunctionalAdapter<Witness.stream> {
     private final Function<?,Stream<?>> unit;
     private final Function<Iterator<?>,Stream<?>> unitIterator;
     
-    public final static StreamAdapter stream = new StreamAdapter(()->Stream.of(),t->Stream.of(t),it->StreamUtils.stream(()->it));
+    public final static StreamAdapter stream = new StreamAdapter(()->Stream.of(),t->Stream.of(t),it-> Streams.stream(()->it));
     public final static StreamAdapter reactiveSeq = new StreamAdapter(()->ReactiveSeq.of(),t->ReactiveSeq.of(t),it->ReactiveSeq.fromIterator(it));
     
     private <U> Supplier<Stream<U>> getEmpty(){
@@ -72,7 +72,7 @@ public class StreamAdapter extends AbstractFunctionalAdapter<Witness.stream> {
     }
    
     @Override
-    public <T> AnyM<com.aol.cyclops.types.anyM.Witness.stream, T> unit(T o) {
+    public <T> AnyM<Witness.stream, T> unit(T o) {
         return fromStream(this.<T>getUnit().apply(o));
     }
 

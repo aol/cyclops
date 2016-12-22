@@ -9,16 +9,16 @@ import java.util.Map;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
-import com.aol.cyclops.data.collections.extensions.persistent.PMapXs;
-import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapXs;
+import cyclops.collections.immutable.PBagX;
+import cyclops.collections.immutable.PMapX;
+import cyclops.collections.immutable.PMapXs;
+import cyclops.collections.immutable.POrderedSetX;
+import cyclops.collections.immutable.PQueueX;
+import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.ListX;
+import cyclops.collections.MapXs;
 public class PMapXsTest {
     @Test
     public void toPStackX(){

@@ -5,8 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.types.anyM.WitnessType;
+import cyclops.monads.AnyM;
+import cyclops.monads.WitnessType;
 
 import lombok.AllArgsConstructor;
 

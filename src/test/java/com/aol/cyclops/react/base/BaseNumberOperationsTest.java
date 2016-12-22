@@ -7,16 +7,16 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
+import cyclops.stream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 public abstract class BaseNumberOperationsTest {
-	abstract protected <U> LazyFutureStream<U> of(U... array);
-	abstract protected <U> LazyFutureStream<U> ofThread(U... array);
-	abstract protected <U> LazyFutureStream<U> react(Supplier<U>... array);
-	LazyFutureStream<Integer> empty;
-	LazyFutureStream<Integer> nonEmpty;
+	abstract protected <U> FutureStream<U> of(U... array);
+	abstract protected <U> FutureStream<U> ofThread(U... array);
+	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
+	FutureStream<Integer> empty;
+	FutureStream<Integer> nonEmpty;
 	private static final Executor exec = Executors.newFixedThreadPool(1);
 
 	@Before

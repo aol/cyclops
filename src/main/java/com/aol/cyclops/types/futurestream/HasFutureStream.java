@@ -1,5 +1,7 @@
 package com.aol.cyclops.types.futurestream;
 
+import cyclops.stream.FutureStream;
+
 public interface HasFutureStream<T> {
-    LazyFutureStream<T> getStream();
+    FutureStream<T> getStream();
 }

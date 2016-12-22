@@ -5,9 +5,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.stream.ReactiveSeq;
 import cyclops.function.Memoize;
 
 import lombok.AllArgsConstructor;

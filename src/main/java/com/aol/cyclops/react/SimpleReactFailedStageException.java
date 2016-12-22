@@ -1,7 +1,7 @@
 package com.aol.cyclops.react;
 
 
-import com.aol.cyclops.control.Xor;
+import cyclops.control.Xor;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

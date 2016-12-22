@@ -1,13 +1,13 @@
 package com.aol.cyclops.data.collections.extensions.persistent;
 
-import cyclops.Monoid;
-import cyclops.Reducer;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.control.Trampoline;
+import cyclops.Streams;
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
+import cyclops.stream.ReactiveSeq;
+import cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -75,7 +75,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     @Override
     default <R> PersistentCollectionX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return from(this.<R> monoid()
-                        .mapReduce(stream().flatMap(mapper.andThen(StreamUtils::stream))));
+                        .mapReduce(stream().flatMap(mapper.andThen(Streams::stream))));
     }
 
     @Override

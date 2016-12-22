@@ -12,14 +12,15 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import cyclops.Streams;
+import cyclops.collections.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
-import cyclops.Monoid;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.control.Trampoline;
+import cyclops.function.Monoid;
+import cyclops.stream.ReactiveSeq;
+import cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
 
@@ -79,7 +80,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
      */
     @Override
     default <R> CollectionX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return fromStream(stream().flatMap(mapper.andThen(StreamUtils::stream)));
+        return fromStream(stream().flatMap(mapper.andThen(Streams::stream)));
     }
 
     /* (non-Javadoc)
@@ -239,7 +240,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanLeft(cyclops.Monoid)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanLeft(cyclops.function.Monoid)
      */
     @Override
     default MutableCollectionX<T> scanLeft(final Monoid<T> monoid) {
@@ -255,7 +256,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanRight(cyclops.Monoid)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#scanRight(cyclops.function.Monoid)
      */
     @Override
     default MutableCollectionX<T> scanRight(final Monoid<T> monoid) {
@@ -329,7 +330,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#cycle(cyclops.Monoid, int)
+     * @see com.aol.cyclops.data.collections.extensions.CollectionX#cycle(cyclops.function.Monoid, int)
      */
     @Override
     default MutableCollectionX<T> cycle(final Monoid<T> m, final int times) {

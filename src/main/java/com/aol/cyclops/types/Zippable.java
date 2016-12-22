@@ -6,11 +6,11 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.stream.ToStream;
-import cyclops.function.F3;
-import cyclops.function.F4;
-import cyclops.Monoid;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
+import cyclops.function.Monoid;
 import cyclops.Monoids;
-import cyclops.Semigroup;
+import cyclops.function.Semigroup;
 import cyclops.Semigroups;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -18,7 +18,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 
 /**
  *
@@ -43,7 +43,7 @@ public interface Zippable<T> extends Iterable<T>, Functor<T>, ToStream<T> {
      *
      * To lift any Semigroup (or monoid) up to handling Applicatives use the combineApplicatives operator in Semigroups
      * {@see com.aol.cyclops.Semigroups#combineApplicatives(BiFunction) } or Monoids
-     * { {@see com.aol.cyclops.Monoids#combineApplicatives(java.util.function.Function, com.aol.cyclops.Monoid)
+     * { {@see com.aol.cyclops.Monoids#combineApplicatives(java.util.function.Function, com.aol.cyclops.function.Monoid)
      *  }
      * <pre>
      * {@code
@@ -149,8 +149,8 @@ public interface Zippable<T> extends Iterable<T>, Functor<T>, ToStream<T> {
         return zip(second,Tuple::tuple).zip(third,(a,b)->(Tuple3<T,S,U>)Tuple.tuple(a.v1,a.v2,b));
     }
     default <S, U,R> Zippable<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third,
-                                                  final F3<? super T, ? super S, ? super U,? extends R> f3) {
-        return (Zippable<R>)zip3(second,third).map(t->f3.apply(t.v1,t.v2,t.v3));
+                                                  final Fn3<? super T, ? super S, ? super U,? extends R> fn3) {
+        return (Zippable<R>)zip3(second,third).map(t-> fn3.apply(t.v1,t.v2,t.v3));
     }
 
     /**
@@ -172,7 +172,7 @@ public interface Zippable<T> extends Iterable<T>, Functor<T>, ToStream<T> {
     }
     default <T2, T3, T4,R> Zippable<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
                                       final Iterable<? extends T4> fourth,
-                                      final F4<? super T, ? super T2, ? super T3,? super T4,? extends R> fn) {
+                                      final Fn4<? super T, ? super T2, ? super T3,? super T4,? extends R> fn) {
         return (Zippable<R>)zip4(second,third,fourth).map(t->fn.apply(t.v1,t.v2,t.v3,t.v4));
     }
 }

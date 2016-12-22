@@ -16,26 +16,26 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
+import cyclops.async.LazyReact;
 import com.aol.cyclops.react.base.BaseSequentialSeqTest;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 
 	@Override
-	protected <U> LazyFutureStream<U> of(U... array) {
-		return LazyFutureStream.of(array).boundedWaitFree(1000);
+	protected <U> FutureStream<U> of(U... array) {
+		return FutureStream.of(array).boundedWaitFree(1000);
 	}
 	@Override
-	protected <U> LazyFutureStream<U> ofThread(U... array) {
-		return LazyFutureStream.freeThread(array).boundedWaitFree(1000);
+	protected <U> FutureStream<U> ofThread(U... array) {
+		return FutureStream.freeThread(array).boundedWaitFree(1000);
 	}
 
 	@Override
-	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
+	protected <U> FutureStream<U> react(Supplier<U>... array) {
 		return LazyReact.sequentialBuilder().ofAsync(array).boundedWaitFree(1000);
 	}
 
@@ -93,7 +93,7 @@ public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 	@Test
 	public void shouldLazilyFlattenInfiniteStream() throws Exception {
 		
-		assertThat( LazyFutureStream.iterate(1,n -> n+1)
+		assertThat( FutureStream.iterate(1, n -> n+1)
 				.flatMap(i -> Arrays.asList(i, 0, -i).stream())
 				.limit(10).block(),
 				equalTo(Arrays.asList(1, 0, -1, 2, 0, -2, 3, 0, -3, 4)));

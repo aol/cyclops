@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.lazy;
 
-import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
+import static cyclops.stream.FutureStream.of;
 import static org.junit.Assert.assertTrue;
 
 import org.jooq.lambda.tuple.Tuple2;
@@ -8,7 +8,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 public class DuplicationTest {
 	@Test
 	public void testDuplicate(){

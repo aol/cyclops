@@ -9,15 +9,11 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import cyclops.control.*;
 import org.junit.Test;
 
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.Ior;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Try;
-import com.aol.cyclops.control.Xor;
+import cyclops.async.Future;
+import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 
 public class ValueSubscriberTest {
@@ -47,7 +43,7 @@ public class ValueSubscriberTest {
      
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
-        FutureW<Integer> maybe = FutureW.fromPublisher(stream);
+        Future<Integer> maybe = Future.fromPublisher(stream);
         assertThat(maybe.get(),equalTo(1));
         
     }
@@ -56,7 +52,7 @@ public class ValueSubscriberTest {
       
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
-        FutureW<Integer> maybe = FutureW.fromPublisher(stream,ex);
+        Future<Integer> maybe = Future.fromPublisher(stream,ex);
         assertThat(maybe.get(),equalTo(1));
         
     }

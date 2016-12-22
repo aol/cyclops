@@ -11,17 +11,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cyclops.Streams;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.monads.AnyM;
 
 public class LiftAndBindTest {
 	@Test
 	public void testLiftAndBindFile(){
 		
 	
-		List<String> result = StreamUtils.flatMapFile(AnyM.streamOf("input.file")
+		List<String> result = Streams.flatMapFile(AnyM.streamOf("input.file")
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
@@ -35,7 +35,7 @@ public class LiftAndBindTest {
 	public void testLiftAndBindURL(){
 		
 		
-		List<String> result = StreamUtils.flatMapURL(AnyM.streamOf("input.file")
+		List<String> result = Streams.flatMapURL(AnyM.streamOf("input.file")
 								.stream()
 								,getClass().getClassLoader()::getResource)
 								.collect(Collectors.toList());
@@ -46,7 +46,7 @@ public class LiftAndBindTest {
 	public void testLiftAndBindString(){
 		
 		
-		List<Character> result = StreamUtils.flatMapCharSequence(AnyM.streamOf("input.file")
+		List<Character> result = Streams.flatMapCharSequence(AnyM.streamOf("input.file")
 								.stream()
 								,i->"hello world")
 								.collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class LiftAndBindTest {
 	public void testLiftAndBindBufferedReader(){
 		
 		
-		List<String> result = StreamUtils.flatMapBufferedReader(AnyM.streamOf("input.file")
+		List<String> result = Streams.flatMapBufferedReader(AnyM.streamOf("input.file")
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
 								.stream(),

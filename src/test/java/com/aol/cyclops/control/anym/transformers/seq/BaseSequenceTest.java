@@ -1,6 +1,6 @@
 package com.aol.cyclops.control.anym.transformers.seq;
 
-import static com.aol.cyclops.control.ReactiveSeq.of;
+import static cyclops.stream.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -21,16 +21,16 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.Monoid;
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.function.Monoid;
+import cyclops.async.LazyReact;
+import cyclops.stream.ReactiveSeq;
 
 
 //see BaseSequentialSeqTest for in order tests

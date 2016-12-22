@@ -14,10 +14,10 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.data.async.QueueFactory;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.async.LazyReact;
+import cyclops.Streams;
+import cyclops.async.QueueFactory;
+import cyclops.collections.ListX;
 import com.aol.cyclops.internal.react.async.future.FastFuture;
 import com.aol.cyclops.internal.react.async.future.PipelineBuilder;
 import com.aol.cyclops.internal.react.exceptions.FilteredExecutionPathException;
@@ -283,7 +283,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
 
     default ListX<BaseSimpleReactStream<U>> copySimpleReactStream(final int times) {
 
-        return StreamUtils.toBufferingCopier(iterator(), times)
+        return Streams.toBufferingCopier(iterator(), times)
                           .stream()
                           .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator) it, Spliterator.ORDERED), false))
                           .<BaseSimpleReactStream<U>> map(fs -> (BaseSimpleReactStream) this.getSimpleReact()

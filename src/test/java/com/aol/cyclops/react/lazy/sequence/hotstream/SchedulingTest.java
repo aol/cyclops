@@ -9,9 +9,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import cyclops.stream.FutureStream;
 import org.junit.Test;
-
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class SchedulingTest {
 
@@ -19,7 +18,7 @@ public class SchedulingTest {
 	AtomicInteger count = new AtomicInteger(0);
 	@Test
 	public void cronTest() throws InterruptedException{
-		LazyFutureStream.of(1,2,3,4)
+		FutureStream.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				.schedule("* * * * * ?", ex);
@@ -29,7 +28,7 @@ public class SchedulingTest {
 	}
 	@Test
 	public void cronDebounceTest() throws InterruptedException{
-		assertThat(LazyFutureStream.of(1,2,3,4)
+		assertThat(FutureStream.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				.schedule("* * * * * ?", ex)
@@ -42,7 +41,7 @@ public class SchedulingTest {
 	}
 	@Test
 	public void fixedRateTest() throws InterruptedException{
-		assertThat(LazyFutureStream.of(1,2,3,4)
+		assertThat(FutureStream.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				.scheduleFixedRate(1000, ex)
@@ -55,7 +54,7 @@ public class SchedulingTest {
 	}
 	@Test
 	public void fixedRateDelay() throws InterruptedException{
-		assertThat(LazyFutureStream.of(1,2,3,4)
+		assertThat(FutureStream.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				.scheduleFixedDelay(1000, ex)

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.data.async.Queue;
+import cyclops.async.Queue;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -99,7 +99,7 @@ public class Subscription implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.react.async.subscription.Continueable#closeQueueIfFinished(com.aol.cyclops.data.async.Queue)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#closeQueueIfFinished(cyclops.async.Queue)
      */
     @Override
     public void closeQueueIfFinished(final Queue queue) {
@@ -127,7 +127,7 @@ public class Subscription implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.react.async.subscription.Continueable#closeQueueIfFinishedStateless(com.aol.cyclops.data.async.Queue)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#closeQueueIfFinishedStateless(cyclops.async.Queue)
      */
     @Override
     public void closeQueueIfFinishedStateless(final Queue queue) {
@@ -159,7 +159,7 @@ public class Subscription implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.react.async.subscription.Continueable#closeAll(com.aol.cyclops.data.async.Queue)
+     * @see com.aol.cyclops.react.async.subscription.Continueable#closeAll(cyclops.async.Queue)
      */
     @Override
     public void closeAll(final Queue queue) {

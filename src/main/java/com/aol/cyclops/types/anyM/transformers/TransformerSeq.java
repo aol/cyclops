@@ -19,12 +19,12 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import cyclops.Monoid;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.anyM.WitnessType;
+import cyclops.function.Monoid;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Streamable;
+import cyclops.collections.ListX;
+import cyclops.monads.WitnessType;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.ToStream;
 
@@ -69,7 +69,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.Monoid, int)
+     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.function.Monoid, int)
      */
     @Override
     default Traversable<T> cycle(final Monoid<T> m, final int times) {
@@ -268,7 +268,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanLeft(cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanLeft(cyclops.function.Monoid)
      */
     @Override
     default Traversable<T> scanLeft(final Monoid<T> monoid) {
@@ -284,7 +284,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanRight(cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanRight(cyclops.function.Monoid)
      */
     @Override
     default Traversable<T> scanRight(final Monoid<T> monoid) {

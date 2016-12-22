@@ -39,6 +39,12 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.async.LazyReact;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -48,20 +54,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.CyclopsCollectors;
-import cyclops.Monoid;
+import cyclops.function.Monoid;
 import cyclops.Monoids;
 import cyclops.Reducers;
 import cyclops.Semigroups;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.control.Trampoline;
+import cyclops.Streams;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.util.SimpleTimer;
 
@@ -1034,7 +1034,7 @@ public abstract class AbstractCollectionXTest {
 		Stream<String> s = Stream.of("hello","world");
 		Iterator<String> it = s.iterator();
 		String head = it.next();
-		Stream<String> tail = StreamUtils.stream(it);
+		Stream<String> tail = Streams.stream(it);
 		tail.forEach(System.out::println);
 	}
 	

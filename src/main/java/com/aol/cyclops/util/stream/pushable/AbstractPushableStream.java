@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.tuple.Tuple2;
 
-import com.aol.cyclops.data.async.Adapter;
+import cyclops.async.Adapter;
 
 public abstract class AbstractPushableStream<T, X extends Adapter<T>, R extends Stream<T>> extends Tuple2<X, R> {
 

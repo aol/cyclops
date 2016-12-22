@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops.data.LazyImmutable;
+import cyclops.box.LazyImmutable;
 
 import lombok.val;
 public class ImmutableClosedValueTest {

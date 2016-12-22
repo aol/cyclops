@@ -20,15 +20,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.control.Maybe;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Streamable;
 import org.junit.Test;
 
 import cyclops.Semigroups;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.Streams;
+import cyclops.collections.ListX;
 
 public class SequenceMTest {
 	
@@ -381,7 +381,7 @@ public class SequenceMTest {
 		Stream<String> s = Stream.of("hello","world");
 		Iterator<String> it = s.iterator();
 		String head = it.next();
-		Stream<String> tail = StreamUtils.stream(it);
+		Stream<String> tail = Streams.stream(it);
 		tail.forEach(System.out::println);
 	}
 	@Test
@@ -410,7 +410,7 @@ public class SequenceMTest {
 	
 	@Test
 	public void flatMapCompletableFuture(){
-		assertThat(ReactiveSeq.of(1,2,3).flatMapAnyM(i->AnyM.fromArray(i+2))
+		assertThat(ReactiveSeq.of(1,2,3).flatMapAnyM(i-> AnyM.fromArray(i+2))
 				  								.collect(Collectors.toList()),
 				  								equalTo(Arrays.asList(3,4,5)));
 	}

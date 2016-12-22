@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-import com.aol.cyclops.data.async.QueueFactory;
+import cyclops.async.QueueFactory;
 import com.aol.cyclops.internal.react.stream.ReactBuilder;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.nurkiewicz.asyncretry.RetryExecutor;

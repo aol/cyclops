@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 
 import lombok.AllArgsConstructor;
 
@@ -18,7 +18,7 @@ public class LimitWhileTimeOperator<U> {
         final Iterator<U> it = stream.iterator();
         final long start = System.nanoTime();
         final long allowed = unit.toNanos(time);
-        return StreamUtils.stream(new Iterator<U>() {
+        return Streams.stream(new Iterator<U>() {
             U next;
             boolean stillGoing = true;
 

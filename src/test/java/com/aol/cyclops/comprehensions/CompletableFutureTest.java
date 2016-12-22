@@ -5,10 +5,9 @@ import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.CompletableFuture;
 
-import com.aol.cyclops.util.CompletableFutures;
+import cyclops.async.Future;
+import cyclops.CompletableFutures;
 import org.junit.Test;
-
-import com.aol.cyclops.control.FutureW;
 
 import lombok.val;
 
@@ -31,10 +30,10 @@ public class CompletableFutureTest {
 	public void cfFromCallable(){
 		
 		
-		val f = FutureW.of(CompletableFuture.completedFuture("hello world"));
-		val f2 = FutureW.of(CompletableFuture.completedFuture("2"));
-		val f3 = FutureW.of(CompletableFuture.completedFuture("3"));
-		FutureW<String> result =  FutureW.ofSupplier(()->"hello world").forEach3(a->f2,(a,b)->f3,(v1,v2,v3) -> v1 +v2 +v3);
+		val f = Future.of(CompletableFuture.completedFuture("hello world"));
+		val f2 = Future.of(CompletableFuture.completedFuture("2"));
+		val f3 = Future.of(CompletableFuture.completedFuture("3"));
+		Future<String> result =  Future.ofSupplier(()->"hello world").forEach3(a->f2,(a, b)->f3,(v1, v2, v3) -> v1 +v2 +v3);
 									
 		
 		assertThat(result.join(),equalTo("hello world23"));
@@ -43,10 +42,10 @@ public class CompletableFutureTest {
 	public void cfFromSupplier(){
 		
 		
-		val f = FutureW.of(CompletableFuture.completedFuture("hello world"));
-		val f2 = FutureW.of(CompletableFuture.completedFuture("2"));
-		val f3 = FutureW.of(CompletableFuture.completedFuture("3"));
-		FutureW<String> result = FutureW.ofSupplier(()->"hello world").forEach3(a->f2,(a,b)->f3,(v1,v2,v3) -> v1 +v2 +v3);
+		val f = Future.of(CompletableFuture.completedFuture("hello world"));
+		val f2 = Future.of(CompletableFuture.completedFuture("2"));
+		val f3 = Future.of(CompletableFuture.completedFuture("3"));
+		Future<String> result = Future.ofSupplier(()->"hello world").forEach3(a->f2,(a, b)->f3,(v1, v2, v3) -> v1 +v2 +v3);
 		
 		assertThat(result.join(),equalTo("hello world23"));
 	}

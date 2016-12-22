@@ -1,11 +1,18 @@
 package cyclops;
 
-import com.aol.cyclops.control.*;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.*;
-import com.aol.cyclops.data.collections.extensions.standard.*;
 import com.aol.cyclops.types.Zippable;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.Future;
+import cyclops.collections.*;
+import cyclops.collections.immutable.*;
+import cyclops.control.Ior;
+import cyclops.control.Maybe;
+import cyclops.control.Try;
+import cyclops.control.Xor;
+import cyclops.function.Monoid;
+import cyclops.function.Semigroup;
+import cyclops.stream.FutureStream;
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.Seq;
 
 import java.math.BigInteger;
@@ -232,7 +239,7 @@ public interface Monoids {
     /**
      * @return Combination of two LazyFutureStreams Streams b is appended to a
      */
-    static <T> Semigroup<LazyFutureStream<T>> combineFutureStream() {
+    static <T> Semigroup<FutureStream<T>> combineFutureStream() {
         return (a, b) -> a.appendS(b);
     }
     /**
@@ -282,16 +289,16 @@ public interface Monoids {
         return Monoid.of(new CompletableFuture<T>(), Semigroups.firstCompleteCompletableFuture());
     }
     /**
-     * @return Combine two FutureW's by taking the first result
+     * @return Combine two Future's by taking the first result
      */
-    static <T> Monoid<FutureW<T>> firstCompleteFuture() {
-       return Monoid.of(FutureW.future(), Semigroups.firstCompleteFuture());
+    static <T> Monoid<Future<T>> firstCompleteFuture() {
+       return Monoid.of(Future.future(), Semigroups.firstCompleteFuture());
     }
     /**
-     * @return Combine two FutureW's by taking the first successful
+     * @return Combine two Future's by taking the first successful
      */
-    static <T> Monoid<FutureW<T>> firstSuccessfulFuture() {
-        return Monoid.of(FutureW.future(), Semigroups.firstSuccessfulFuture());
+    static <T> Monoid<Future<T>> firstSuccessfulFuture() {
+        return Monoid.of(Future.future(), Semigroups.firstSuccessfulFuture());
     }
     /**
      * @return Combine two Xor's by taking the first primary

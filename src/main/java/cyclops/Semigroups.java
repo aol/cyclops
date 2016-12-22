@@ -1,11 +1,17 @@
 package cyclops;
 
-import com.aol.cyclops.control.*;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.*;
-import com.aol.cyclops.data.collections.extensions.standard.*;
 import com.aol.cyclops.types.Zippable;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.Future;
+import cyclops.collections.*;
+import cyclops.collections.immutable.*;
+import cyclops.control.Ior;
+import cyclops.control.Maybe;
+import cyclops.control.Try;
+import cyclops.control.Xor;
+import cyclops.function.Semigroup;
+import cyclops.stream.FutureStream;
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.Seq;
 import org.pcollections.PCollection;
 
@@ -254,10 +260,11 @@ public interface Semigroups {
     static <T,A extends Zippable<T>> Semigroup<A> combineScalarFunctors(BiFunction<T,T,T> semigroup) {
         return (a, b) -> (A) a.zip(b, semigroup);
     }
+
     /**
      * @return Combination of two LazyFutureStreams Streams b is appended to a
      */
-    static <T> Semigroup<LazyFutureStream<T>> combineFutureStream() {
+    static <T> Semigroup<FutureStream<T>> combineFutureStream() {
         return (a, b) -> a.appendS(b);
     }
 
@@ -310,16 +317,16 @@ public interface Semigroups {
         return (a, b) -> (CompletableFuture<T>)CompletableFuture.<T>anyOf(a,b);
     }
     /**
-     * @return Combine two FutureW's by taking the first result
+     * @return Combine two Future's by taking the first result
      */
-    static <T> Semigroup<FutureW<T>> firstCompleteFuture() {
-        return (a, b) -> FutureW.anyOf(a,b);
+    static <T> Semigroup<Future<T>> firstCompleteFuture() {
+        return (a, b) -> Future.anyOf(a,b);
     }
     /**
-     * @return Combine two FutureW's by taking the first successful
+     * @return Combine two Future's by taking the first successful
      */
-    static <T> Semigroup<FutureW<T>> firstSuccessfulFuture() {
-        return (a, b) -> FutureW.firstSuccess(a,b);
+    static <T> Semigroup<Future<T>> firstSuccessfulFuture() {
+        return (a, b) -> Future.firstSuccess(a,b);
     }
     /**
      * @return Combine two Xor's by taking the first primary

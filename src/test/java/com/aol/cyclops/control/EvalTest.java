@@ -1,5 +1,6 @@
 package com.aol.cyclops.control;
 
+import cyclops.control.Eval;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;

@@ -5,11 +5,10 @@ import static org.junit.Assert.assertThat;
 
 import java.util.stream.Stream;
 
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.monads.AnyM;
 import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 public class StreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.stream>{

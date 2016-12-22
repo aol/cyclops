@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
+import cyclops.monads.AnyM;
 
 public class ForComprehensionsTest {
 

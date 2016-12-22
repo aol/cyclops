@@ -11,16 +11,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.aol.cyclops.types.anyM.Witness.*;
+import static cyclops.monads.Witness.*;
 
-import com.aol.cyclops.types.anyM.Witness;
-import cyclops.function.MFunction1;
-import cyclops.function.MFunction2;
+import cyclops.monads.Witness;
+import cyclops.function.AnyMFn1;
+import cyclops.function.AnyMFn2;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.collections.ListX;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 
 
@@ -99,7 +99,7 @@ public class AnyMSeqTest {
 
 	@Test
 	public void testLiftMSimplex(){
-        MFunction1<stream,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
+        AnyMFn1<stream,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)));
 		
@@ -110,7 +110,7 @@ public class AnyMSeqTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-        MFunction2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+        AnyMFn2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));
 		
@@ -118,7 +118,7 @@ public class AnyMSeqTest {
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-        MFunction2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+        AnyMFn2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of()));
 		
@@ -130,7 +130,7 @@ public class AnyMSeqTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-        MFunction2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
+        AnyMFn2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));
 		

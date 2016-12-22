@@ -2,7 +2,7 @@ package com.aol.cyclops.functions.collections.extensions.guava;
 
 import java.util.Queue;
 
-import com.aol.cyclops.data.collections.extensions.standard.DequeX;
+import cyclops.collections.DequeX;
 import com.google.common.collect.testing.TestStringQueueGenerator;
 
 public class DequeXGenerator extends  TestStringQueueGenerator {

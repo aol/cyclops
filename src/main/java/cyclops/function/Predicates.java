@@ -1,8 +1,8 @@
 package cyclops.function;
 
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.control.Maybe;
+import cyclops.stream.ReactiveSeq;
+import cyclops.collections.ListX;
 import com.aol.cyclops.types.Value;
 
 import java.util.Arrays;

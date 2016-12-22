@@ -12,12 +12,12 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops.types.stream.ToStream;
 
-import cyclops.Monoid;
-import cyclops.Reducer;
-import com.aol.cyclops.control.Streamable;
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
+import cyclops.stream.Streamable;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import cyclops.collections.ListX;
+import cyclops.collections.MapX;
 import com.aol.cyclops.types.stream.HotStream;
 
 /**

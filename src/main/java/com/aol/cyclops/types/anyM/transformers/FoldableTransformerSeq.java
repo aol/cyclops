@@ -5,13 +5,12 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.anyM.NestedCollectable;
 import com.aol.cyclops.types.anyM.NestedFoldable;
-import com.aol.cyclops.types.anyM.WitnessType;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
+import cyclops.monads.WitnessType;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
 /**
@@ -26,7 +25,7 @@ public interface FoldableTransformerSeq<W extends WitnessType<W>,T> extends Tran
                                                                             FilterableFunctor<T> {
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.monads.transformers.values.TransformerSeq#stream()
+     * @see cyclops.monads.transformers.values.TransformerSeq#stream()
      */
     @Override
     default ReactiveSeq<T> stream() {

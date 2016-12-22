@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.types.anyM.WitnessType;
+import cyclops.monads.WitnessType;
 import com.aol.cyclops.types.anyM.transformers.FoldableTransformerSeq;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,9 +32,9 @@ import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
 import cyclops.Reducers;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.control.Maybe;
+import cyclops.stream.ReactiveSeq;
+import cyclops.collections.ListX;
 
 public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Rule

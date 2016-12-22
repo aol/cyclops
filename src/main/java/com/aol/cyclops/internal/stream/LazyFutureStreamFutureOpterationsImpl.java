@@ -5,15 +5,15 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 import com.aol.cyclops.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.FutureStream;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.aol.cyclops.types.stream.reactive.ReactiveTask;
 
 public class LazyFutureStreamFutureOpterationsImpl<T> implements ReactiveStreamsTerminalFutureOperations<T> {
     private final Executor exec;
-    private final LazyFutureStream<T> stream;
+    private final FutureStream<T> stream;
 
-    public LazyFutureStreamFutureOpterationsImpl(final Executor exec, final LazyFutureStream<T> stream) {
+    public LazyFutureStreamFutureOpterationsImpl(final Executor exec, final FutureStream<T> stream) {
         this.exec = exec;
         this.stream = stream;
 

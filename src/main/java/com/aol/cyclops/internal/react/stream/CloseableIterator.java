@@ -2,7 +2,7 @@ package com.aol.cyclops.internal.react.stream;
 
 import java.util.Iterator;
 
-import com.aol.cyclops.data.async.Queue;
+import cyclops.async.Queue;
 import com.aol.cyclops.react.async.subscription.Continueable;
 
 import lombok.AllArgsConstructor;

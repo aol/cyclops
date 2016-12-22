@@ -4,8 +4,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.FutureStream;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
 public class HeadTailTest {
@@ -13,7 +13,7 @@ public class HeadTailTest {
 	@Test
 	public void headTailReplay(){
 	
-		ReactiveSeq<String> helloWorld = LazyFutureStream.of("hello","world","last");
+		ReactiveSeq<String> helloWorld = FutureStream.of("hello","world","last");
 		HeadAndTail<String> headAndTail = helloWorld.headAndTail();
 		 String head = headAndTail.head();
 		 assertThat(head,equalTo("hello"));

@@ -1,11 +1,11 @@
 package com.aol.cyclops.types;
 
-import cyclops.Monoid;
-import com.aol.cyclops.control.Maybe;
+import cyclops.function.Monoid;
+import cyclops.control.Maybe;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import cyclops.function.Curry;
-import cyclops.function.F3;
-import cyclops.function.F4;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 import org.jooq.lambda.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
@@ -117,8 +117,8 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
      */
     default < T2, R1, R2,R3, R>  MonadicValue<R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1,
                                                     final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                    final F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                    final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R>  yieldingFunction){
+                                                    final Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                    final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
         return this.flatMap(in-> { 
             
             MonadicValue<R1> a = value1.apply(in);
@@ -168,9 +168,9 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
      */
     default < T2, R1, R2,R3, R>  MonadicValue<R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            final F3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            final F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R>  yieldingFunction){
+            final Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            final Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
         return this.flatMap(in-> { 
             
             MonadicValue<R1> a = value1.apply(in);
@@ -213,7 +213,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
      */
     default < T2, R1, R2, R>  MonadicValue<R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
                                                     final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                    final F3<? super T, ? super R1, ? super R2, ? extends R>  yieldingFunction){
+                    final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
         return this.flatMap(in-> { 
             
             MonadicValue<R1> a = value1.apply(in);
@@ -257,8 +257,8 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
      */
     default < T2, R1, R2, R>  MonadicValue<R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                    final F3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                    final F3<? super T, ? super R1, ? super R2, ? extends R>  yieldingFunction){
+                    final Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                    final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
         return this.flatMap(in-> { 
             
             MonadicValue<R1> a = value1.apply(in);

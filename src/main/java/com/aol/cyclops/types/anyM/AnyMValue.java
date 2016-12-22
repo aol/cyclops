@@ -1,10 +1,11 @@
 package com.aol.cyclops.types.anyM;
 
-import cyclops.Monoid;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.control.Xor;
+import cyclops.function.Monoid;
+import cyclops.monads.AnyM;
+import cyclops.monads.WitnessType;
+import cyclops.stream.ReactiveSeq;
+import cyclops.control.Trampoline;
+import cyclops.control.Xor;
 import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
@@ -57,7 +58,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     * @see cyclops.monads.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
      */
     @Override
     default AnyMValue<W,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
@@ -85,7 +86,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue2#combine(cyclops.Monoid, com.aol.cyclops.types.MonadicValue2)
+     * @see com.aol.cyclops.types.MonadicValue2#combine(cyclops.function.Monoid, com.aol.cyclops.types.MonadicValue2)
      */
     default AnyMValue<W,T> combineEager(final Monoid<T> monoid, final AnyMValue<W,? extends T> v2) {
         return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.apply(t1, t2)))

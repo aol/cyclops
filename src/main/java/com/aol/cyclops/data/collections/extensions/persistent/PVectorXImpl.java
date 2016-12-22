@@ -11,6 +11,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import cyclops.collections.immutable.PVectorX;
 import org.pcollections.PVector;
 
 import lombok.AllArgsConstructor;

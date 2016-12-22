@@ -3,13 +3,13 @@ package com.aol.cyclops.control.anym;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Xor;
-import com.aol.cyclops.data.Mutable;
+import cyclops.monads.AnyM;
+import cyclops.control.Xor;
+import cyclops.box.Mutable;
 
 public class XorAnyMValueTest extends BaseAnyMValueTest<Witness.xor> {
     @Before

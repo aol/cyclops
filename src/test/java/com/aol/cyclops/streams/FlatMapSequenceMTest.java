@@ -1,6 +1,6 @@
 package com.aol.cyclops.streams;
 
-import com.aol.cyclops.control.AnyM;
+import cyclops.monads.AnyM;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 

@@ -8,8 +8,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.stream.ReactiveSeq;
+import cyclops.Streams;
 import com.aol.cyclops.internal.stream.spliterators.ClosingSpliterator;
 import com.aol.cyclops.types.stream.HotStream;
 
@@ -54,7 +54,7 @@ public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T>implement
         connections.getAndSet(connected, queue);
         connected++;
         unpause();
-        return StreamUtils.reactiveSeq(StreamSupport.stream(new ClosingSpliterator(
+        return Streams.reactiveSeq(StreamSupport.stream(new ClosingSpliterator(
                                                                                    Long.MAX_VALUE, queue, open),
                                                             false),
                                        Optional.empty(), Optional.empty());

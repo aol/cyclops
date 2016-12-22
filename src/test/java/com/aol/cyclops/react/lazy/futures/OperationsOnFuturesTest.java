@@ -24,31 +24,30 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
-
 public class OperationsOnFuturesTest {
 
 	
-	protected <U> LazyFutureStream<U> of(U... array) {
-		return LazyFutureStream.of(array);
+	protected <U> FutureStream<U> of(U... array) {
+		return FutureStream.of(array);
 	}
 	
-	protected <U> LazyFutureStream<U> ofThread(U... array) {
-		return LazyFutureStream.freeThread(array);
+	protected <U> FutureStream<U> ofThread(U... array) {
+		return FutureStream.freeThread(array);
 	}
 
 
-	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
-		return LazyFutureStream.react(array);
+	protected <U> FutureStream<U> react(Supplier<U>... array) {
+		return FutureStream.react(array);
 	}
 		
-		LazyFutureStream<Integer> empty;
-		LazyFutureStream<Integer> nonEmpty;
+		FutureStream<Integer> empty;
+		FutureStream<Integer> nonEmpty;
 
 		@Before
 		public void setup(){
@@ -79,7 +78,7 @@ public class OperationsOnFuturesTest {
 		@Test
 		public void testIntersperse() {
 			
-			assertThat(LazyFutureStream.of(1,2,3)
+			assertThat(FutureStream.of(1,2,3)
 							.actOnFutures()
 							.intersperse(0)
 							.toList(),
@@ -92,7 +91,7 @@ public class OperationsOnFuturesTest {
 		@Test
 		public void testIntersperseCf() {
 			
-			assertThat(LazyFutureStream.of(1,2,3)
+			assertThat(FutureStream.of(1,2,3)
 							.actOnFutures()
 							.intersperse(CompletableFuture.completedFuture(0))
 							.toList(),
@@ -223,7 +222,7 @@ public class OperationsOnFuturesTest {
 		@Test
 		public void testShuffleRandom() {
 			Random r = new Random();
-			Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3);
+			Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3);
 
 			assertEquals(3, s.get().actOnFutures().shuffle(r).toList().size());
 			assertThat(s.get().actOnFutures().shuffle(r).toList(),
@@ -379,7 +378,7 @@ public class OperationsOnFuturesTest {
 		public void zipEmpty() throws Exception {
 			
 			
-			final LazyFutureStream<Tuple2<Integer,Integer>> zipped = empty.actOnFutures().zip(this.<Integer>of());
+			final FutureStream<Tuple2<Integer,Integer>> zipped = empty.actOnFutures().zip(this.<Integer>of());
 			assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 		}
 
@@ -388,7 +387,7 @@ public class OperationsOnFuturesTest {
 			
 			
 			
-			final LazyFutureStream<Tuple2<Integer,Integer>> zipped = empty.actOnFutures().zip(nonEmpty);
+			final FutureStream<Tuple2<Integer,Integer>> zipped = empty.actOnFutures().zip(nonEmpty);
 			assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 		}
 
@@ -396,7 +395,7 @@ public class OperationsOnFuturesTest {
 		public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
 			
 			
-			final LazyFutureStream<Tuple2<Integer,Integer>> zipped = nonEmpty.actOnFutures().zip(empty);
+			final FutureStream<Tuple2<Integer,Integer>> zipped = nonEmpty.actOnFutures().zip(empty);
 
 			
 			assertTrue(zipped.collect(Collectors.toList()).isEmpty());
@@ -405,11 +404,11 @@ public class OperationsOnFuturesTest {
 		@Test
 		public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
 			
-			final LazyFutureStream<String> first = of("A", "B", "C");
-			final LazyFutureStream<Integer> second = of(1, 2, 3);
+			final FutureStream<String> first = of("A", "B", "C");
+			final FutureStream<Integer> second = of(1, 2, 3);
 
 			
-			LazyFutureStream<Tuple2<String, Integer>> zipped = first.actOnFutures().zip(second);
+			FutureStream<Tuple2<String, Integer>> zipped = first.actOnFutures().zip(second);
 
 			
 			assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -419,20 +418,20 @@ public class OperationsOnFuturesTest {
 
 		@Test
 		public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
-			final LazyFutureStream<String> first = of("A", "B", "C");
-			final LazyFutureStream<Integer> second = of(1, 2, 3, 4);
+			final FutureStream<String> first = of("A", "B", "C");
+			final FutureStream<Integer> second = of(1, 2, 3, 4);
 
 			
-			LazyFutureStream<Tuple2<String, Integer>> zipped = first.actOnFutures().zip(second);
+			FutureStream<Tuple2<String, Integer>> zipped = first.actOnFutures().zip(second);
 
 			assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
 		}
 
 		@Test
 		public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
-			final LazyFutureStream<String> first = of("A", "B", "C","D");
-			final LazyFutureStream<Integer> second = of(1, 2, 3);
-			LazyFutureStream<Tuple2<String, Integer>> zipped = first.actOnFutures().zip(second);
+			final FutureStream<String> first = of("A", "B", "C","D");
+			final FutureStream<Integer> second = of(1, 2, 3);
+			FutureStream<Tuple2<String, Integer>> zipped = first.actOnFutures().zip(second);
 
 			assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
 		}
@@ -447,7 +446,7 @@ public class OperationsOnFuturesTest {
 
 	    @Test
 	    public void testShuffle() {
-	        Supplier<LazyFutureStream<Integer>> s = () ->of(1, 2, 3);
+	        Supplier<FutureStream<Integer>> s = () ->of(1, 2, 3);
 
 	        assertEquals(3, s.get().actOnFutures().shuffle().toList().size());
 	        assertThat(s.get().actOnFutures().shuffle().toList(), hasItems(1, 2, 3));
@@ -468,7 +467,7 @@ public class OperationsOnFuturesTest {
 	    @Test
 	    public void testReduce() {
 	    	
-	       CompletableFuture<Integer> sum = LazyFutureStream.of(1, 2, 3)
+	       CompletableFuture<Integer> sum = FutureStream.of(1, 2, 3)
 	    		   											.actOnFutures()
 	    		   											.reduce((cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b)).get();
 
@@ -516,7 +515,7 @@ public class OperationsOnFuturesTest {
 		
 		@Test
 		public void testDuplicate(){
-			 Tuple2<LazyFutureStream<Integer>, LazyFutureStream<Integer>> copies =of(1,2,3,4,5,6).actOnFutures().duplicate();
+			 Tuple2<FutureStream<Integer>, FutureStream<Integer>> copies =of(1,2,3,4,5,6).actOnFutures().duplicate();
 			 assertTrue(copies.v1.anyMatch(i->i==2));
 			 assertTrue(copies.v2.anyMatch(i->i==2));
 		}
@@ -590,7 +589,7 @@ public class OperationsOnFuturesTest {
 
 	@Test
 	public void testFoldLeft() {
-		Supplier<LazyFutureStream<String>> s = () -> of("a", "b", "c");
+		Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
 
 		CompletableFuture<String> identity = CompletableFuture.completedFuture("");
 		BinaryOperator<CompletableFuture<String>> concat = (cf1,cf2)-> cf1.thenCombine(cf2, String::concat);
@@ -610,7 +609,7 @@ public class OperationsOnFuturesTest {
 
 	@Test
 	public void testFoldRight() {
-		Supplier<LazyFutureStream<String>> s = () -> of("a", "b", "c");
+		Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
 		CompletableFuture<String> identity = CompletableFuture.completedFuture("");
 		BinaryOperator<CompletableFuture<String>> concat = (cf1,cf2)-> cf1.thenCombine(cf2, String::concat);
 

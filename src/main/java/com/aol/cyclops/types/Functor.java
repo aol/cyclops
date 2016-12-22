@@ -2,9 +2,8 @@ package com.aol.cyclops.types;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
-import com.aol.cyclops.control.Trampoline;
+import cyclops.control.Trampoline;
 
 /** 
  * An interface that represents a type that can transform a value from one type to another

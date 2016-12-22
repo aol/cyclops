@@ -23,10 +23,10 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Test;
 
 import cyclops.Semigroups;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Trampoline;
+import cyclops.stream.ReactiveSeq;
+import cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import com.aol.cyclops.types.stream.HeadAndTail;
 
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {

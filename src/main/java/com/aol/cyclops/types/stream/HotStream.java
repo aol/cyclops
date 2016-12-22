@@ -1,15 +1,12 @@
 package com.aol.cyclops.types.stream;
 
 import java.util.Queue;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 
 /**
  * A HotStream - Stream already emitting data
@@ -62,7 +59,7 @@ public interface HotStream<T> {
     /**
      * Connect to this HotStream using the provided transfer async.Queue.
      * The transfer Queue can be used to apply backpressure to the HotStream if it produces
-     * data faster than the connected Stream can consume it {@see com.aol.cyclops.data.async.wait.WaitStrategy}
+     * data faster than the connected Stream can consume it {@see cyclops.async.wait.WaitStrategy}
      * 
      * <pre>
      * {@code 
@@ -91,7 +88,7 @@ public interface HotStream<T> {
     /**
      * Connect to this HotStream using the provided transfer async.Queue.
      * The transfer Queue can be used to apply backpressure to the HotStream if it produces
-     * data faster than the connected Stream can consume it {@see com.aol.cyclops.data.async.wait.WaitStrategy}
+     * data faster than the connected Stream can consume it {@see cyclops.async.wait.WaitStrategy}
      * Convert the output Stream to the required type with the provided function
      * 
      * @param queue  Transfer Queue between the Streams

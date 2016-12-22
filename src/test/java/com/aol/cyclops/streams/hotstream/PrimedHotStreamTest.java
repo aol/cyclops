@@ -13,10 +13,9 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.LockSupport;
 
-import com.aol.cyclops.types.FoldableTraversable;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops.types.stream.PausableHotStream;
 
 public class PrimedHotStreamTest {

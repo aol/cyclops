@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
+import cyclops.async.LazyReact;
 
 public class AutoMemoizationTest {
    AtomicInteger called = new AtomicInteger(0);

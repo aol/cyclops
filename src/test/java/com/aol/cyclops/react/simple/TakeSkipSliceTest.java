@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
-import com.aol.cyclops.control.SimpleReact;
+import cyclops.async.SimpleReact;
 import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 public class TakeSkipSliceTest {

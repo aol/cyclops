@@ -1,8 +1,11 @@
 package com.aol.cyclops.control;
 
 import cyclops.Monoids;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
+import cyclops.async.Future;
+import cyclops.control.Eval;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -224,7 +227,7 @@ public class ReactiveSeqTest {
         ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
         ReactiveSeq<String> stream = pushable.stream();
         Executor ex= Executors.newFixedThreadPool(1);
-        FutureW<List<String>> list = stream.peek(System.err::println)
+        Future<List<String>> list = stream.peek(System.err::println)
                                            .foldFuture(s->s.collect(Collectors.toList()),ex);
       
         pushable.onNext("hello");

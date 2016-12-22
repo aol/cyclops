@@ -2,8 +2,9 @@ package com.aol.cyclops.control;
 
 import cyclops.Monoids;
 import cyclops.Semigroups;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.ListX;
+import cyclops.control.Xor;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

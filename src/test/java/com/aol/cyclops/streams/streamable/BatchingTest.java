@@ -1,9 +1,9 @@
 package com.aol.cyclops.streams.streamable;
 
 
-import static com.aol.cyclops.control.Streamable.fromIntStream;
-import static com.aol.cyclops.control.Streamable.iterate;
-import static com.aol.cyclops.control.Streamable.of;
+import static cyclops.stream.Streamable.fromIntStream;
+import static cyclops.stream.Streamable.iterate;
+import static cyclops.stream.Streamable.of;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -27,8 +27,8 @@ import java.util.stream.IntStream;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.stream.Streamable;
+import cyclops.collections.ListX;
 import com.aol.cyclops.util.SimpleTimer;
 
 import lombok.Value;

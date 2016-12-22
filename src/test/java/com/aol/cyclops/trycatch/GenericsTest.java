@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.Try;
+import cyclops.control.Try;
 
 public class GenericsTest {
 

@@ -1,16 +1,16 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
-import static com.aol.cyclops.control.AnyM.fromStreamable;
-import static com.aol.cyclops.types.anyM.Witness.streamable;
+import static cyclops.monads.AnyM.fromStreamable;
+import static cyclops.monads.Witness.streamable;
 
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.AnyM;
+import cyclops.stream.Streamable;
+import cyclops.monads.Witness;
 
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 
@@ -69,7 +69,7 @@ public class StreamableAdapter extends AbstractFunctionalAdapter<Witness.streama
     }
    
     @Override
-    public <T> AnyM<com.aol.cyclops.types.anyM.Witness.streamable, T> unit(T o) {
+    public <T> AnyM<Witness.streamable, T> unit(T o) {
         return fromStreamable(this.<T>getUnit().apply(o));
     }
 

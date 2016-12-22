@@ -14,11 +14,12 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import cyclops.stream.FutureStream;
 import org.jooq.lambda.Seq;
 
-import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.QueueFactory;
+import cyclops.async.SimpleReact;
+import cyclops.async.Queue;
+import cyclops.async.QueueFactory;
 import com.aol.cyclops.internal.react.SimpleReactStreamImpl;
 import com.aol.cyclops.internal.react.stream.CloseableIterator;
 import com.aol.cyclops.internal.react.stream.ReactBuilder;
@@ -583,9 +584,9 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      */
     static <T> SimpleReactStream<T> simpleReactStream(Stream<T> stream) {
 
-        if (stream instanceof LazyFutureStream)
-            stream = ((LazyFutureStream) stream).toQueue()
-                                                .stream(((LazyFutureStream) stream).getSubscription());
+        if (stream instanceof FutureStream)
+            stream = ((FutureStream) stream).toQueue()
+                                                .stream(((FutureStream) stream).getSubscription());
 
         final SimpleReact sr = new SimpleReact(
                                                ThreadPools.getCurrentThreadExecutor(), RetryBuilder.getDefaultInstance()

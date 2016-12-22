@@ -7,15 +7,15 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.Vector;
 
+import cyclops.stream.FutureStream;
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
+import cyclops.async.LazyReact;
 import com.aol.cyclops.react.base.BaseJDKStreamTest;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class JDKLazyStreamTest extends BaseJDKStreamTest{
 
-	public <U> LazyFutureStream<U> of(U... array){
+	public <U> FutureStream<U> of(U... array){
 	 
 		return LazyReact.parallelBuilder().from(Arrays.asList(array));
 	}

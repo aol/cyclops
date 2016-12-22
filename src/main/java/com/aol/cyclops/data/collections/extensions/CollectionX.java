@@ -1,14 +1,14 @@
 package com.aol.cyclops.data.collections.extensions;
 
-import cyclops.Monoid;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
+import cyclops.function.Monoid;
+import cyclops.stream.ReactiveSeq;
+import cyclops.control.Trampoline;
+import cyclops.collections.ListX;
+import cyclops.collections.MapX;
 import com.aol.cyclops.types.*;
 import com.aol.cyclops.types.stream.HeadAndTail;
-import cyclops.function.F3;
-import cyclops.function.F4;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -164,10 +164,10 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<T> cycle(int times);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.Monoid, int)
+     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.function.Monoid, int)
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.Monoid, int)
+     * @see com.aol.cyclops.types.Traversable#cycle(cyclops.function.Monoid, int)
      */
     @Override
     CollectionX<T> cycle(Monoid<T> m, int times);
@@ -476,7 +476,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<ListX<T>> sliding(int windowSize, int increment);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanLeft(cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanLeft(cyclops.function.Monoid)
      */
     @Override
     CollectionX<T> scanLeft(Monoid<T> monoid);
@@ -488,7 +488,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     <U> CollectionX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#scanRight(cyclops.Monoid)
+     * @see com.aol.cyclops.types.Traversable#scanRight(cyclops.function.Monoid)
      */
     @Override
     CollectionX<T> scanRight(Monoid<T> monoid);
@@ -597,8 +597,8 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
      */
     default <R1, R2, R3,R> CollectionX<R> forEach4(final Function<? super T, ? extends Iterable<R1>> iterable1,
                         final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
-                            final F3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
-                            final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                            final Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
+                            final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
@@ -651,9 +651,9 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
      */
     default <R1, R2, R3, R> CollectionX<R> forEach4(final Function<? super T, ? extends Iterable<R1>> iterable1,
             final BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
-            final F3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
-            final F4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            final F4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            final Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
+            final Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
@@ -699,7 +699,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
      */
     default <R1, R2, R> CollectionX<R> forEach3(final Function<? super T, ? extends Iterable<R1>> iterable1,
                                                 final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
-                                                final F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return this.flatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);
@@ -746,8 +746,8 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
      */
     default <R1, R2, R> CollectionX<R> forEach3(final Function<? super T, ? extends Iterable<R1>> iterable1,
             final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
-                    final F3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                    final F3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                    final Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                    final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return this.flatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);

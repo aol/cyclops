@@ -8,14 +8,15 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.FutureT;
-import com.aol.cyclops.control.monads.transformers.ListT;
+import cyclops.monads.AnyM;
+import cyclops.async.Future;
+import cyclops.monads.WitnessType;
+import cyclops.stream.ReactiveSeq;
+import cyclops.monads.transformers.FutureT;
+import cyclops.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import cyclops.collections.ListX;
+import cyclops.collections.SetX;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 /**
@@ -40,7 +41,7 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
     }
     
     default <R> FutureT<W,R> futureT(Function<? super Iterable<T>,? extends R> fn,Executor exec) {
-        final AnyM<W,FutureW<R>> anyM = nestedCollectables().map(s -> FutureW.ofSupplier(()->fn.apply(s),exec));
+        final AnyM<W,Future<R>> anyM = nestedCollectables().map(s -> Future.ofSupplier(()->fn.apply(s),exec));
         return FutureT.of(anyM);
     }
 

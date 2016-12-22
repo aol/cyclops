@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 import com.aol.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ public class RecoverOperator<T> {
     public Stream<T> recover(final Function<Throwable, ? extends T> fn) {
         final Iterator<T> it = stream.iterator();
 
-        return StreamUtils.stream(new Iterator<T>() {
+        return Streams.stream(new Iterator<T>() {
             T result = (T) UNSET;
 
             @Override

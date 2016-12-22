@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import cyclops.Streams;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.QueueFactories;
+import cyclops.async.LazyReact;
+import cyclops.stream.ReactiveSeq;
+import cyclops.async.Queue;
+import cyclops.async.QueueFactories;
 
 public class Javaone {
 
@@ -282,7 +281,7 @@ public class Javaone {
    
     public void streamEmission(){
         
-        StreamUtils.scheduleFixedDelay(Stream.iterate(0,i->i+1)
+        Streams.scheduleFixedDelay(Stream.iterate(0, i->i+1)
                                              .peek(System.out::println), 
                                        1_000, Executors.newScheduledThreadPool(1));
         

@@ -8,47 +8,48 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.Streams;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.stream.ReactiveSeq;
+
 public class FlatMapStreamUtilsTest {
 
 	@Test
 	public void flatMap(){
-		assertThat(StreamUtils.flatMapStream(Stream.of(1,2,3),i->(Stream<Integer>)Stream.of(i)).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
+		assertThat(Streams.flatMapStream(Stream.of(1,2,3), i->(Stream<Integer>)Stream.of(i)).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void flatMapCrossType(){
-		assertThat(StreamUtils.flatMapOptional(Stream.of(1,2,3,null),Optional::ofNullable).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
+		assertThat(Streams.flatMapOptional(Stream.of(1,2,3,null),Optional::ofNullable).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void flatMapCollection(){
-		assertThat(StreamUtils.flatMapIterable(Stream.of(20),i->Arrays.asList(1,2,i)).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,20)));
+		assertThat(Streams.flatMapIterable(Stream.of(20), i->Arrays.asList(1,2,i)).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,20)));
 
 	}
 	@Test
 	public void flatMap2(){
-		assertThat(StreamUtils.flatMapStream(Stream.of(1,2,3),i->(Stream<Integer>)Stream.of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
+		assertThat(Streams.flatMapStream(Stream.of(1,2,3), i->(Stream<Integer>)Stream.of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
 	}
 	
 	@Test
 	public void flatMapToSeq(){
 		
-		assertThat(StreamUtils.flatMapStream(Stream.of(1,2,3),i->Seq.<Integer>of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
+		assertThat(Streams.flatMapStream(Stream.of(1,2,3), i->Seq.<Integer>of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
 	}
 	@Test
 	public void flatMapSeqToStream(){
-		assertThat(StreamUtils.flatMapStream(Seq.of(1,2,3),i->Stream.<Integer>of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
+		assertThat(Streams.flatMapStream(Seq.of(1,2,3), i->Stream.<Integer>of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
 	}
 	@Test
 	public void flatMapSeqToCompletableFuture(){
-		assertThat(StreamUtils.flatMapCompletableFuture(Seq.of(1,2,3),i->CompletableFuture.<Integer>completedFuture(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
+		assertThat(Streams.flatMapCompletableFuture(Seq.of(1,2,3), i->CompletableFuture.<Integer>completedFuture(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
 		}
 	@Test
 	public void flatMapSeqToSequenceM(){
-		assertThat(StreamUtils.flatMapSequenceM(Seq.of(1,2,3),i-> ReactiveSeq.<Integer>of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
+		assertThat(Streams.flatMapSequenceM(Seq.of(1,2,3), i-> ReactiveSeq.<Integer>of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
 	}
 	
 	

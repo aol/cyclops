@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.MapX;
-import com.aol.cyclops.data.collections.extensions.standard.MapXs;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.collections.ListX;
+import cyclops.collections.MapX;
+import cyclops.collections.MapXs;
+import cyclops.collections.SetX;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

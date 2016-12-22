@@ -1,10 +1,14 @@
 package com.aol.cyclops.control;
 
-import cyclops.Monoid;
+import cyclops.async.Future;
+import cyclops.async.LazyReact;
+import cyclops.control.*;
+import cyclops.function.Monoid;
 import cyclops.Reducers;
 import cyclops.Semigroups;
-import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.box.Mutable;
+import cyclops.collections.ListX;
+import cyclops.Streams;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
@@ -147,7 +151,7 @@ public class TryTest {
 
     @Test
     public void testConvertToAsync() {
-        FutureW<Stream<Integer>> async = FutureW.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
+        Future<Stream<Integer>> async = Future.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
         assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -437,7 +441,7 @@ public class TryTest {
 	
 	@Test
 	public void testToFutureW() {
-		FutureW<Integer> cf = just.toFutureW();
+		Future<Integer> cf = just.toFutureW();
 		assertThat(cf.get(),equalTo(10));
 	}
 
@@ -469,7 +473,7 @@ public class TryTest {
 
 	@Test
 	public void testIterator1() {
-		assertThat(StreamUtils.stream(just.iterator()).collect(Collectors.toList()),
+		assertThat(Streams.stream(just.iterator()).collect(Collectors.toList()),
 				equalTo(Arrays.asList(10)));
 	}
 

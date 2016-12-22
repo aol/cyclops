@@ -1,6 +1,6 @@
 package com.aol.cyclops.react.lazy.sequence;
 
-import static com.aol.cyclops.types.futurestream.LazyFutureStream.of;
+import static cyclops.stream.FutureStream.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -23,27 +23,25 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
+import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.Monoid;
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
-
-
+import cyclops.function.Monoid;
+import cyclops.async.LazyReact;
+import cyclops.stream.ReactiveSeq;
 
 
 //see BaseSequentialSeqTest for in order tests
 public  class LFSNoOrderTest {
 	
 	
-	LazyFutureStream<Integer> empty;
-	LazyFutureStream<Integer> nonEmpty;
+	FutureStream<Integer> empty;
+	FutureStream<Integer> nonEmpty;
 	public static Executor ex =  Executors.newFixedThreadPool(10);
     public static final LazyReact r = new LazyReact(10,10);
 	@Before
@@ -83,7 +81,7 @@ public  class LFSNoOrderTest {
     }
 	@Test
 	public void toStream(){
-		List<Integer> list = LazyFutureStream.of(1,2,3).<Integer>toStream().collect(Collectors.toList());
+		List<Integer> list = FutureStream.of(1,2,3).<Integer>toStream().collect(Collectors.toList());
 		assertThat(list,equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
@@ -150,19 +148,19 @@ public  class LFSNoOrderTest {
     @Test
     public void testReverseList() {
     	
-        assertThat( LazyFutureStream.lazyFutureStreamFromIterable(Arrays.asList(10,400,2,-1))
+        assertThat( FutureStream.lazyFutureStreamFromIterable(Arrays.asList(10,400,2,-1))
         				.reverse().toList(), equalTo(asList(-1, 2, 400,10)));
     }
     @Test
     public void testReverseListLimit() {
     	
-        assertThat( LazyFutureStream.lazyFutureStreamFromIterable(Arrays.asList(10,400,2,-1)).reverse().limit(2)
+        assertThat( FutureStream.lazyFutureStreamFromIterable(Arrays.asList(10,400,2,-1)).reverse().limit(2)
         				.toList(), equalTo(asList(-1, 2)));
     }
     @Test
     public void testReverseRange() {
     	
-        assertThat( LazyFutureStream.lazyFutureStream(IntStream.range(0,10).boxed())
+        assertThat( FutureStream.lazyFutureStream(IntStream.range(0,10).boxed())
         				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
 
@@ -295,7 +293,7 @@ public  class LFSNoOrderTest {
 	   
 	    @Test
 	    public void testSkipWhile() {
-	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertTrue(s.get().skipWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	      
@@ -304,7 +302,7 @@ public  class LFSNoOrderTest {
 
 	    @Test
 	    public void testSkipUntil() {
-	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
 	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
@@ -312,14 +310,14 @@ public  class LFSNoOrderTest {
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
-	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
+	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 	       
 	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
 	    }
 
 	    @Test
 	    public void testLimitWhile() {
-	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().limitWhile(i -> false).toList());
 	        assertTrue( s.get().limitWhile(i -> i < 3).toList().size()!=5);       
@@ -347,7 +345,7 @@ public  class LFSNoOrderTest {
 
 	    @Test
 	    public void testMinByMaxBy() {
-	        Supplier<LazyFutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
 	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
@@ -362,7 +360,7 @@ public  class LFSNoOrderTest {
 	    @Test
 	    public void testFoldLeft() {
 	    	for(int i=0;i<100;i++){
-		        Supplier<LazyFutureStream<String>> s = () -> of("a", "b", "c");
+		        Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
 	
 		        assertTrue(s.get().reduce("", String::concat).contains("a"));
 		        assertTrue(s.get().reduce("", String::concat).contains("b"));
@@ -377,7 +375,7 @@ public  class LFSNoOrderTest {
 	    
 	    @Test
 	    public void testFoldRight(){
-	    	 	Supplier<LazyFutureStream<String>> s = () -> of("a", "b", "c");
+	    	 	Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().foldRight("", String::concat).contains("a"));
 		        assertTrue(s.get().foldRight("", String::concat).contains("b"));
@@ -390,13 +388,13 @@ public  class LFSNoOrderTest {
 	    //tests converted from lazy-seq suite
 	    @Test
 		public void flattenEmpty() throws Exception {
-				assertTrue(LazyFutureStream.<Stream<Integer>>of()
-				                           .to(LazyFutureStream::flatten).toList().isEmpty());
+				assertTrue(FutureStream.<Stream<Integer>>of()
+				                           .to(FutureStream::flatten).toList().isEmpty());
 		}
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(LazyFutureStream.of(Stream.of(1,2)).to(LazyFutureStream::flatten).toList().size(),equalTo(asList(1,  2).size()));		
+			assertThat(FutureStream.of(Stream.of(1,2)).to(FutureStream::flatten).toList().size(),equalTo(asList(1,  2).size()));
 		}
 
 		

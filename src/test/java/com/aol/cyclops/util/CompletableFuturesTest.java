@@ -5,10 +5,11 @@ import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.CompletableFuture;
 
+import cyclops.CompletableFutures;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 
 public class CompletableFuturesTest {
     
@@ -28,7 +29,7 @@ public class CompletableFuturesTest {
     
     @Test
     public void testSequenceError() {
-        CompletableFuture<ListX<Integer>> maybes =CompletableFutures.sequence(ListX.of(just,none));
+        CompletableFuture<ListX<Integer>> maybes = CompletableFutures.sequence(ListX.of(just,none));
         assertThat(maybes.isCompletedExceptionally(),equalTo(true));
     }
     @Test

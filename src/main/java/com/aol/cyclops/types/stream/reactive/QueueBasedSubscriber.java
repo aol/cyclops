@@ -12,18 +12,18 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.stream.FutureStream;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.Queue.ClosedQueueException;
-import com.aol.cyclops.data.async.QueueFactory;
-import com.aol.cyclops.data.collections.extensions.standard.QueueX;
+import cyclops.control.Eval;
+import cyclops.stream.ReactiveSeq;
+import cyclops.async.Queue;
+import cyclops.async.Queue.ClosedQueueException;
+import cyclops.async.QueueFactory;
+import cyclops.collections.QueueX;
 import com.aol.cyclops.react.async.subscription.Continueable;
 import com.aol.cyclops.types.futurestream.Continuation;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -81,9 +81,9 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         return queue.stream(subscription);
     }
 
-    private LazyFutureStream<T> genStream() {
+    private FutureStream<T> genStream() {
         final Continueable subscription = new com.aol.cyclops.react.async.subscription.Subscription();
-        return LazyFutureStream.of()
+        return FutureStream.of()
                                .withSubscription(subscription)
                                .fromStream(queue.stream(subscription));
     }
@@ -95,8 +95,8 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     @Getter
     volatile Subscription subscription;
 
-    private volatile LazyFutureStream<T> stream;
-    private volatile Supplier<LazyFutureStream<T>> futureStream = Eval.later(this::genStream);
+    private volatile FutureStream<T> stream;
+    private volatile Supplier<FutureStream<T>> futureStream = Eval.later(this::genStream);
     private volatile Supplier<Stream<T>> jdkStream = Eval.later(this::genJdkStream);
     private volatile Supplier<ReactiveSeq<T>> reactiveSeq = Eval.later(() -> ReactiveSeq.fromStream(jdkStream.get()));
     @Setter
@@ -143,9 +143,9 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     }
 
     /**
-     * @return LazyFutureStream generated from this QueueBasedSubscriber
+     * @return FutureStream generated from this QueueBasedSubscriber
      */
-    public LazyFutureStream<T> futureStream() {
+    public FutureStream<T> futureStream() {
         return stream = futureStream.get();
     }
 

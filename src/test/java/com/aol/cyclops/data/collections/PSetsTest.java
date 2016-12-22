@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import cyclops.Reducers;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
+import cyclops.stream.ReactiveSeq;
+import cyclops.collections.immutable.PSetX;
 
 public class PSetsTest {
 

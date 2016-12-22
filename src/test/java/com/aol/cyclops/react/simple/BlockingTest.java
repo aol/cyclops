@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.SimpleReact;
+import cyclops.async.SimpleReact;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 
 public class BlockingTest {

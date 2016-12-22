@@ -5,27 +5,27 @@ import static org.junit.Assert.assertThat;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import cyclops.stream.FutureStream;
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.LazyReact;
 
 public class LazySeqAutoOptimizeTest extends LazySeqTest {
 	@Override
-	protected <U> LazyFutureStream<U> of(U... array) {
+	protected <U> FutureStream<U> of(U... array) {
 		return new LazyReact()
 							.autoOptimizeOn()
 							.of(array);
 	}
 	@Override
-	protected <U> LazyFutureStream<U> ofThread(U... array) {
+	protected <U> FutureStream<U> ofThread(U... array) {
 		return new LazyReact()
 							.autoOptimizeOn()
 							.of(array);
 	}
 
 	@Override
-	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
+	protected <U> FutureStream<U> react(Supplier<U>... array) {
 		return new LazyReact().autoOptimizeOn()
 								.ofAsync(array);
 	}

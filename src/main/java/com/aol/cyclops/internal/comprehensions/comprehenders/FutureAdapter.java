@@ -1,22 +1,21 @@
 package com.aol.cyclops.internal.comprehensions.comprehenders;
 
-import static com.aol.cyclops.control.AnyM.fromCompletableFuture;
-import static com.aol.cyclops.types.anyM.Witness.completableFuture;
-import static com.aol.cyclops.util.CompletableFutures.combine;
+import static cyclops.monads.AnyM.fromCompletableFuture;
+import static cyclops.monads.Witness.completableFuture;
+import static cyclops.CompletableFutures.combine;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.types.MonadicValue;
+import cyclops.monads.AnyM;
+import cyclops.async.Future;
 import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 import com.aol.cyclops.types.extensability.ValueAdapter;
-import com.aol.cyclops.util.CompletableFutures;
+import cyclops.CompletableFutures;
 
 import lombok.AllArgsConstructor;
 
@@ -46,7 +45,7 @@ public class FutureAdapter extends AbstractFunctionalAdapter<Witness.completable
 
     @Override
     public <T> Iterable<T> toIterable(AnyM<completableFuture, T> t) {
-        return FutureW.of(completableFuture(t));
+        return Future.of(completableFuture(t));
     }
     
 
@@ -75,7 +74,7 @@ public class FutureAdapter extends AbstractFunctionalAdapter<Witness.completable
     }
    
     @Override
-    public <T> AnyM<com.aol.cyclops.types.anyM.Witness.completableFuture, T> unit(T o) {
+    public <T> AnyM<Witness.completableFuture, T> unit(T o) {
         return fromCompletableFuture(this.<T>getUnit().apply(o));
     }
 

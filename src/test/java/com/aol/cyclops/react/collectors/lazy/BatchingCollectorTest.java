@@ -9,13 +9,13 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import cyclops.stream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.aol.cyclops.control.LazyReact;
+import cyclops.async.LazyReact;
 import com.aol.cyclops.internal.react.async.future.FastFuture;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class BatchingCollectorTest {
 
@@ -41,7 +41,7 @@ public class BatchingCollectorTest {
 	}
 	@Test
 	public void testAcceptMock495() {
-		collector = new BatchingCollector(new MaxActive(500,5),LazyFutureStream.of(1)).withResults(new ArrayList<>());
+		collector = new BatchingCollector(new MaxActive(500,5), FutureStream.of(1)).withResults(new ArrayList<>());
 		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
@@ -51,7 +51,7 @@ public class BatchingCollectorTest {
 	}
 	@Test
 	public void testAcceptMock50() {
-		collector = new BatchingCollector(new MaxActive(500,450),LazyFutureStream.of(1)).withResults(new ArrayList<>());
+		collector = new BatchingCollector(new MaxActive(500,450), FutureStream.of(1)).withResults(new ArrayList<>());
 		FastFuture cf = mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
@@ -62,7 +62,7 @@ public class BatchingCollectorTest {
 
 	@Test
 	public void testBuilder() {
-		collector = BatchingCollector.builder().blocking(LazyFutureStream.of(1)).maxActive(new MaxActive(2,1)).results(new ArrayList<>()).build();
+		collector = BatchingCollector.builder().blocking(FutureStream.of(1)).maxActive(new MaxActive(2,1)).results(new ArrayList<>()).build();
 		FastFuture cf = Mockito.mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){
@@ -84,7 +84,7 @@ public class BatchingCollectorTest {
 
 	@Test
 	public void testBatchingCollectorMaxActive() {
-		collector = new BatchingCollector(new MaxActive(10,5),LazyFutureStream.of(1)).withResults(new HashSet<>());
+		collector = new BatchingCollector(new MaxActive(10,5), FutureStream.of(1)).withResults(new HashSet<>());
 		FastFuture cf = Mockito.mock(FastFuture.class);
 		given(cf.isDone()).willReturn(true);
 		for(int i=0;i<1000;i++){

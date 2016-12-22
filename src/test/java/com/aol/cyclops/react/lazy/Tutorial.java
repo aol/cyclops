@@ -11,24 +11,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.aol.cyclops.control.*;
+import cyclops.async.*;
+import cyclops.control.Eval;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.QueueFactories;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.FutureStream;
 import com.aol.cyclops.types.futurestream.SimpleReactStream;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
@@ -43,7 +42,7 @@ public class Tutorial {
     @Test
     public void futureOperationsExamaple(){
        
-        FutureW<Integer> asyncResult = ReactiveSeq.of(1,2,3,4)
+        Future<Integer> asyncResult = ReactiveSeq.of(1,2,3,4)
                                                             .foldFuture(s->s.reduce( 50,(acc,next) -> acc+next),Executors.newFixedThreadPool(1));
         //CompletableFuture[1550]
         
@@ -94,9 +93,9 @@ public class Tutorial {
 	@Test
 	public void zipByResults() {
 
-		LazyFutureStream<String> a = LazyReact.parallelCommonBuilder().ofAsync(
+		FutureStream<String> a = LazyReact.parallelCommonBuilder().ofAsync(
 				() -> slowest(), () -> fast(), () -> slow());
-		LazyFutureStream<Integer> b = LazyReact.sequentialCommonBuilder().of(
+		FutureStream<Integer> b = LazyReact.sequentialCommonBuilder().of(
 				1, 2, 3, 4, 5, 6);
 
 		a.zip(b).peek(System.out::println);
@@ -155,9 +154,9 @@ public class Tutorial {
 				.ofAsync(() -> slowest(), () -> fast(), () -> slow())
 				.flatMap(it -> it.chars().boxed()).forEach(System.out::println);
 
-		LazyFutureStream<String> a = LazyReact.parallelCommonBuilder()
+		FutureStream<String> a = LazyReact.parallelCommonBuilder()
 				.ofAsync(() -> slowest(), () -> fast(), () -> slow());
-		LazyFutureStream<Integer> b = LazyReact.sequentialCommonBuilder()
+		FutureStream<Integer> b = LazyReact.sequentialCommonBuilder()
 				.of(1, 2, 3, 4, 5, 6);
 
 		a.actOnFutures().zip(b).forEach(System.out::println);
@@ -211,7 +210,7 @@ public class Tutorial {
 		shards.put(1, new Queue<>());
 		shards.put(2, new Queue<>());
 
-		Map<Integer, LazyFutureStream<User>> sharded = LazyReact
+		Map<Integer, FutureStream<User>> sharded = LazyReact
 				.sequentialCommonBuilder().ofAsync(() -> loadUserData())
 				.flatMap(Collection::stream)
 				.shard(shards, user -> user.getUserId() % 3);
@@ -577,7 +576,7 @@ public class Tutorial {
 
 	@Test
 	public void filterAndLimit(){
-		LazyFutureStream.of(1,2,3,4,5,6,7,8,9,10)
+		FutureStream.of(1,2,3,4,5,6,7,8,9,10)
 					.limit(6)
 					.filter(i->i%2==0)
 					.forEach(System.out::println);
@@ -597,7 +596,7 @@ public class Tutorial {
 	@Test
 	public void testFilterAndFlatMapWithFilter(){
 		count=0;
-		LazyFutureStream.of(1,2,3).limit(2)
+		FutureStream.of(1,2,3).limit(2)
 		.flatMap(a->Arrays.asList(10,20,30,40).stream())
 		.limit(6)
 		.forEach(next->count++);
@@ -607,7 +606,7 @@ public class Tutorial {
 	@Test
 	public void testFilterAndFlatMapWithFilterRunOnCurrent(){
 		count=0;
-		LazyFutureStream.of(1,2,3).limit(2)
+		FutureStream.of(1,2,3).limit(2)
 		.flatMap(a->Arrays.asList(10,20,30,40).stream())
 		.limit(6)
 		.peek(next->count++)
@@ -618,7 +617,7 @@ public class Tutorial {
 	@Test
 	public void testFilterAndFlatMapWithFilterList(){
 		count=0;
-		List list = LazyFutureStream.of(1,2,3).limit(2)
+		List list = FutureStream.of(1,2,3).limit(2)
 		.flatMap(a->Arrays.asList(10,20,30,40).stream())
 		.limit(6)
 		.toList();

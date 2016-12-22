@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import cyclops.Semigroups;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
 import com.aol.cyclops.types.Zippable;
 

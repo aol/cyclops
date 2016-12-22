@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 
+import cyclops.collections.immutable.PSetX;
 import org.pcollections.PSet;
 
 import lombok.AllArgsConstructor;

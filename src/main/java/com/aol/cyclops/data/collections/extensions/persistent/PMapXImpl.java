@@ -8,11 +8,12 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import cyclops.collections.immutable.PMapX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.PMap;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import cyclops.collections.SetX;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;

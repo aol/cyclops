@@ -1,6 +1,6 @@
 package com.aol.cyclops.streams;
 
-import static com.aol.cyclops.control.ReactiveSeq.of;
+import static cyclops.stream.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -21,7 +21,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 
 public class ZippingTest {
 	ReactiveSeq<Integer> empty;

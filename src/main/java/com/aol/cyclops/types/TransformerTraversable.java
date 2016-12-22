@@ -3,10 +3,10 @@ package com.aol.cyclops.types;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.anyM.Witness.stream;
+import cyclops.stream.ReactiveSeq;
+import cyclops.monads.transformers.ListT;
+import cyclops.collections.ListX;
+import cyclops.monads.Witness.stream;
 
 /**
  * Represents a Traversable Monad Transformer, the monad transformer instance manipulates a nested non-scalar data type

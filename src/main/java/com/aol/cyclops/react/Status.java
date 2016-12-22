@@ -2,7 +2,7 @@ package com.aol.cyclops.react;
 
 import org.pcollections.PStack;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
+import cyclops.collections.immutable.PStackX;
 
 import lombok.AllArgsConstructor;
 

@@ -1,16 +1,14 @@
 package com.aol.cyclops.comprehensions;
 
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.monads.transformers.ListT;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
-
-import reactor.core.publisher.Flux;
+import cyclops.stream.ReactiveSeq;
+import cyclops.monads.transformers.ListT;
+import cyclops.collections.ListX;
+import cyclops.collections.SetX;
 
 public class ForPublishersTest {
 

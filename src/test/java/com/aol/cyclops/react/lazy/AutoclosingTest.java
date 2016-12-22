@@ -10,12 +10,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.LazyReact;
+import cyclops.async.Queue;
 
 public class AutoclosingTest {
 
@@ -102,7 +102,7 @@ public class AutoclosingTest {
 		added = new AtomicInteger();
 		//subscription fills from outside in (right to left), need to store open / closed for each queue
 		List<Tuple2<List<List<String>>, Integer>> results = new LazyReact().generateAsync(()->nextValues()).withQueueFactory(()-> eventQueue())
-													  .zip(LazyFutureStream.parallel(1,2,3))
+													  .zip(FutureStream.parallel(1,2,3))
 													  .collect(Collectors.toList());
 		System.out.println("finished");
 	
@@ -121,7 +121,7 @@ public class AutoclosingTest {
 			added = new AtomicInteger();
 			//subscription fills from outside in (right to left), need to store open / closed for each queue
 			List<Tuple2<List<List<String>>, Integer>> results = new LazyReact().generate(()->nextValues()).withQueueFactory(()-> eventQueue())
-														  .zip(LazyFutureStream.parallel(1,2,3))
+														  .zip(FutureStream.parallel(1,2,3))
 														  .collect(Collectors.toList());
 			System.out.println("finished");
 		

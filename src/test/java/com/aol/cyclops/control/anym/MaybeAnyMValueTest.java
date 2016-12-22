@@ -1,9 +1,9 @@
 package com.aol.cyclops.control.anym;
 
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.data.Mutable;
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.AnyM;
+import cyclops.control.Maybe;
+import cyclops.box.Mutable;
+import cyclops.monads.Witness;
 import org.junit.Before;
 import org.junit.Test;
 

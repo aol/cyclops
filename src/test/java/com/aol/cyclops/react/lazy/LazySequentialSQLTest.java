@@ -4,26 +4,26 @@ import static org.junit.Assert.fail;
 
 import java.util.function.Supplier;
 
+import cyclops.stream.FutureStream;
 import org.junit.Test;
 
 import com.aol.cyclops.react.base.BaseSequentialSQLTest;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 public class LazySequentialSQLTest extends BaseSequentialSQLTest {
 
 	@Override
-	protected <U> LazyFutureStream<U> of(U... array) {
-		return LazyFutureStream.of(array);
+	protected <U> FutureStream<U> of(U... array) {
+		return FutureStream.of(array);
 	}
 
 	@Override
-	protected <U> LazyFutureStream<U> ofThread(U... array) {
-		return LazyFutureStream.freeThread(array);
+	protected <U> FutureStream<U> ofThread(U... array) {
+		return FutureStream.freeThread(array);
 	}
 
 	@Override
-	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
-		return LazyFutureStream.react(array);
+	protected <U> FutureStream<U> react(Supplier<U>... array) {
+		return FutureStream.react(array);
 	}
 
 	Throwable ex;

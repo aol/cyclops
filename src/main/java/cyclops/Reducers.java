@@ -2,6 +2,8 @@ package cyclops;
 
 import java.util.List;
 
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
 import org.pcollections.AmortizedPQueue;
 import org.pcollections.ConsPStack;
 import org.pcollections.HashTreePBag;
@@ -17,13 +19,13 @@ import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.data.collections.extensions.persistent.PMapX;
-import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PQueueX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import cyclops.collections.immutable.PBagX;
+import cyclops.collections.immutable.PMapX;
+import cyclops.collections.immutable.POrderedSetX;
+import cyclops.collections.immutable.PQueueX;
+import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.PVectorX;
 import com.aol.cyclops.types.mixins.TupleWrapper;
 
 import lombok.experimental.UtilityClass;

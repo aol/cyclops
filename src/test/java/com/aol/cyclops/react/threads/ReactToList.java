@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
+import cyclops.async.LazyReact;
 import com.aol.cyclops.react.collectors.lazy.MaxActive;
 import com.aol.cyclops.util.SimpleTimer;
 

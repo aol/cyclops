@@ -2,7 +2,7 @@ package com.aol.cyclops.data.collections.extensions;
 
 import java.util.Collection;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 
 public interface LazyFluentCollection<T, C extends Collection<T>> {
 

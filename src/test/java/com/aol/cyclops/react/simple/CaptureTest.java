@@ -9,8 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.SimpleReact;
+import cyclops.async.LazyReact;
+import cyclops.async.SimpleReact;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
 
 public class CaptureTest {

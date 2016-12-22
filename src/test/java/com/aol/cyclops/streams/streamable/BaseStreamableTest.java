@@ -1,7 +1,7 @@
 package com.aol.cyclops.streams.streamable;
 
 
-import static com.aol.cyclops.control.Streamable.of;
+import static cyclops.stream.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -20,16 +20,16 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.collections.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.Monoid;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Streamable;
+import cyclops.function.Monoid;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Streamable;
 
 
 

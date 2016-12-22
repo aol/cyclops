@@ -1,12 +1,13 @@
 package com.aol.cyclops.types.futurestream;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.QueueFactory;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.async.LazyReact;
+import cyclops.stream.FutureStream;
+import cyclops.stream.ReactiveSeq;
+import cyclops.async.SimpleReact;
+import cyclops.Streams;
+import cyclops.async.Queue;
+import cyclops.async.QueueFactory;
+import cyclops.collections.ListX;
 import com.aol.cyclops.internal.react.exceptions.FilteredExecutionPathException;
 import com.aol.cyclops.internal.react.stream.EagerStreamWrapper;
 import com.aol.cyclops.react.SimpleReactFailedStageException;
@@ -343,7 +344,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
 
     default ListX<SimpleReactStream<U>> copySimpleReactStream(final int times) {
 
-        return (ListX) StreamUtils.toBufferingCopier(getLastActive().stream()
+        return (ListX) Streams.toBufferingCopier(getLastActive().stream()
                                                                     .iterator(),
                                                      times)
                                   .stream()
@@ -766,12 +767,12 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     /*
       * Merge two simple-react Streams, by merging the Stream of underlying
      * futures - not suitable for merging infinite Streams - use
-     * see LazyFutureStream#switchOnNext for infinite Streams
+     * see FutureStream#switchOnNext for infinite Streams
      *
      * <pre>
      * {@code
      * List<String> result = 	SimpleReactStream.of(1,2,3)
-     * 											 .merge(LazyFutureStream.of(100,200,300))
+     * 											 .merge(FutureStream.of(100,200,300))
                                                   .map(it ->it+"!!")
                                                   .toList();
         assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -1086,7 +1087,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
      */
-    default LazyFutureStream<U> convertToLazyStream() {
+    default FutureStream<U> convertToLazyStream() {
         return new LazyReact(
                              getTaskExecutor()).withRetrier(getRetrier())
                                                .fromStreamFutures((Stream) getLastActive().stream());

@@ -4,7 +4,7 @@ import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.function.Consumer;
 
-import cyclops.Monoid;
+import cyclops.function.Monoid;
 
 public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements Runnable{
     private final Spliterator<T> s;

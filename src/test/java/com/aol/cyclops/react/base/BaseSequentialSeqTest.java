@@ -1,9 +1,7 @@
 package com.aol.cyclops.react.base;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.mapping;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -31,27 +29,26 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import org.jooq.lambda.Seq;
+import cyclops.stream.FutureStream;
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.Queue;
+import cyclops.collections.ListX;
 import com.aol.cyclops.util.SimpleTimer;
 
 public abstract class BaseSequentialSeqTest {
 
-	abstract protected  <U> LazyFutureStream<U> of(U... array);
-	abstract protected  <U> LazyFutureStream<U> ofThread(U... array);
-	abstract protected <U> LazyFutureStream<U> react(Supplier<U>... array);
+	abstract protected  <U> FutureStream<U> of(U... array);
+	abstract protected  <U> FutureStream<U> ofThread(U... array);
+	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
 	
-	LazyFutureStream<Integer> empty;
-	LazyFutureStream<Integer> nonEmpty;
+	FutureStream<Integer> empty;
+	FutureStream<Integer> nonEmpty;
 
 	@Before
 	public void setup(){
@@ -61,22 +58,22 @@ public abstract class BaseSequentialSeqTest {
 	
 	@Test
 	public void syncTest(){
-		LazyFutureStream stream = of(1,2,3,4).sync();
+		FutureStream stream = of(1,2,3,4).sync();
 		assertThat(stream.isAsync(),is(false));
 	}
 	@Test
 	public void asyncTest(){
-		LazyFutureStream stream = of(1,2,3,4).async();
+		FutureStream stream = of(1,2,3,4).async();
 		assertThat(stream.isAsync(),is(true));
 	}
 	@Test
 	public void syncAndAsyncTest(){
-		LazyFutureStream stream = of(1,2,3,4).sync().async();
+		FutureStream stream = of(1,2,3,4).sync().async();
 		assertThat(stream.isAsync(),is(true));
 	}
 	@Test
 	public void asyncSyncTest(){
-		LazyFutureStream stream = of(1,2,3,4).async().sync();
+		FutureStream stream = of(1,2,3,4).async().sync();
 		assertThat(stream.isAsync(),is(false));
 	}
 	
@@ -320,8 +317,8 @@ public abstract class BaseSequentialSeqTest {
 	@Test
 	public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
 		
-		final LazyFutureStream<String> first = of("A", "B", "C");
-		final LazyFutureStream<Integer> second = of(1, 2, 3);
+		final FutureStream<String> first = of("A", "B", "C");
+		final FutureStream<Integer> second = of(1, 2, 3);
 
 		
 		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
@@ -334,8 +331,8 @@ public abstract class BaseSequentialSeqTest {
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
-		final LazyFutureStream<String> first = of("A", "B", "C");
-		final LazyFutureStream<Integer> second = of(1, 2, 3, 4);
+		final FutureStream<String> first = of("A", "B", "C");
+		final FutureStream<Integer> second = of(1, 2, 3, 4);
 
 		
 		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
@@ -345,8 +342,8 @@ public abstract class BaseSequentialSeqTest {
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
-		final LazyFutureStream<String> first = of("A", "B", "C","D");
-		final LazyFutureStream<Integer> second = of(1, 2, 3);
+		final FutureStream<String> first = of("A", "B", "C","D");
+		final FutureStream<Integer> second = of(1, 2, 3);
 		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		

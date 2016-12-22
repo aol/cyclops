@@ -11,16 +11,12 @@ import java.util.function.UnaryOperator;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
+import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.PVectorX;
 import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNulls;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
-
-import reactor.core.publisher.Flux;
 
 public class PStackXTest extends CollectionXTestsWithNulls{
 

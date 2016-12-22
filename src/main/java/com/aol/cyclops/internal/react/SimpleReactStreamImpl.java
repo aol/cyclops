@@ -8,10 +8,10 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.QueueFactories;
-import com.aol.cyclops.data.async.QueueFactory;
+import cyclops.async.SimpleReact;
+import cyclops.async.Queue;
+import cyclops.async.QueueFactories;
+import cyclops.async.QueueFactory;
 import com.aol.cyclops.internal.react.stream.EagerStreamWrapper;
 import com.aol.cyclops.react.async.subscription.AlwaysContinue;
 import com.aol.cyclops.react.async.subscription.Continueable;

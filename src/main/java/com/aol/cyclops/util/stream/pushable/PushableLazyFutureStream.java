@@ -1,7 +1,7 @@
 package com.aol.cyclops.util.stream.pushable;
 
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.async.Queue;
+import cyclops.stream.FutureStream;
 
 /**
  * A more concrete Tuple2 impl
@@ -12,9 +12,9 @@ import com.aol.cyclops.types.futurestream.LazyFutureStream;
  *
  * @param <T> data type
  */
-public class PushableLazyFutureStream<T> extends AbstractPushableStream<T, Queue<T>, LazyFutureStream<T>> {
+public class PushableLazyFutureStream<T> extends AbstractPushableStream<T, Queue<T>, FutureStream<T>> {
 
-    public PushableLazyFutureStream(final Queue<T> v1, final LazyFutureStream<T> v2) {
+    public PushableLazyFutureStream(final Queue<T> v1, final FutureStream<T> v2) {
         super(v1, v2);
 
     }

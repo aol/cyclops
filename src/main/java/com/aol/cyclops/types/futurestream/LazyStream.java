@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import com.aol.cyclops.control.SimpleReact;
+import cyclops.async.SimpleReact;
 import com.aol.cyclops.internal.react.async.future.FastFuture;
 import com.aol.cyclops.internal.react.exceptions.SimpleReactProcessingException;
 import com.aol.cyclops.internal.react.stream.LazyStreamWrapper;

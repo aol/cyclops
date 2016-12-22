@@ -1,6 +1,6 @@
 package com.aol.cyclops.streams;
 
-import static com.aol.cyclops.control.ReactiveSeq.of;
+import static cyclops.stream.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 
 public class PartitionAndSplittingTest {
 	@Test

@@ -2,7 +2,7 @@ package com.aol.cyclops.types;
 
 import java.util.concurrent.TimeUnit;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 
 /**
  * A sequential non-scalar data type
@@ -14,7 +14,7 @@ import com.aol.cyclops.control.ReactiveSeq;
 public interface Sequential<T> {
 
     /**
-     * @return This Sequential converted to a Stream (@link {@link com.aol.cyclops.control.ReactiveSeq}
+     * @return This Sequential converted to a Stream (@link {@link ReactiveSeq}
      */
     ReactiveSeq<T> stream();
 

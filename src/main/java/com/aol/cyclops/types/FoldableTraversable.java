@@ -1,13 +1,13 @@
 package com.aol.cyclops.types;
 
-import com.aol.cyclops.control.Eval;
-import com.aol.cyclops.control.FutureW;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Try;
+import cyclops.control.Eval;
+import cyclops.async.Future;
+import cyclops.stream.ReactiveSeq;
+import cyclops.control.Try;
 import com.aol.cyclops.types.stream.ConvertableSequence;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
-import cyclops.function.F1;
+import cyclops.function.Fn1;
 import org.jooq.lambda.Seq;
 import org.reactivestreams.Subscription;
 
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 /**
  * Created by johnmcclean on 17/12/2016.
  */
-public interface FoldableTraversable<T> extends F1<Long,T>,
+public interface FoldableTraversable<T> extends Fn1<Long,T>,
                                                 Traversable<T>,
                                                 CyclopsCollectable<T>,
                                                 ConvertableSequence<T>,
@@ -34,24 +34,24 @@ public interface FoldableTraversable<T> extends F1<Long,T>,
      *
      *  <pre>
      *  {@code
-     *    FutureW<Integer> sum =  ListX.of(1,2,3)
+     *    Future<Integer> sum =  ListX.of(1,2,3)
      *                                 .map(this::load)
      *                                 .foldFuture(list->list.reduce(0,(a,b)->a+b),exec)
      *
      *  }
      *  </pre>
      *
-     * Similar to @see {@link ReactiveSeq#futureOperations(Executor)}, but returns FutureW
+     * Similar to @see {@link ReactiveSeq#futureOperations(Executor)}, but returns Future
      *
      * @param fn Folding function
      * @param ex Executor to perform fold on
      * @return Future that will contain the result when complete
      */
-    default <R> FutureW<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
-        return FutureW.ofSupplier(()->fn.apply(this),ex);
+    default <R> Future<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
+        return Future.ofSupplier(()->fn.apply(this),ex);
     }
-    default  FutureW<Void> runFuture(Executor ex,Consumer<? super FoldableTraversable<T>> fn){
-        return FutureW.ofSupplier(()-> { fn.accept(this); return null;},ex);
+    default Future<Void> runFuture(Executor ex, Consumer<? super FoldableTraversable<T>> fn){
+        return Future.ofSupplier(()-> { fn.accept(this); return null;},ex);
     }
 
     /**

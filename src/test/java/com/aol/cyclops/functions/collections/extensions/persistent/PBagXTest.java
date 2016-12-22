@@ -1,7 +1,7 @@
 package com.aol.cyclops.functions.collections.extensions.persistent;
 
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
+import cyclops.collections.immutable.PBagX;
 import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;

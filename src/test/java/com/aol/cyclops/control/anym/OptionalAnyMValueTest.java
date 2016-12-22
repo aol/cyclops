@@ -2,10 +2,10 @@ package com.aol.cyclops.control.anym;
 
 import java.util.Optional;
 
-import com.aol.cyclops.types.anyM.Witness;
+import cyclops.monads.Witness;
 import org.junit.Before;
 
-import com.aol.cyclops.control.AnyM;
+import cyclops.monads.AnyM;
 
 public class OptionalAnyMValueTest extends BaseAnyMValueTest<Witness.optional> {
     @Before

@@ -6,7 +6,7 @@ import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.stream.ReactiveSeq;
 @Test
 public class TckSynchronousPublisherTraversableTest extends PublisherVerification<Long>{
 

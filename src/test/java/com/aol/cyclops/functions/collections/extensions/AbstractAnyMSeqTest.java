@@ -33,7 +33,13 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.types.anyM.WitnessType;
+import cyclops.async.LazyReact;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
+import cyclops.monads.WitnessType;
+import cyclops.monads.AnyM;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -42,17 +48,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.CyclopsCollectors;
-import cyclops.Monoid;
+import cyclops.function.Monoid;
 import cyclops.Reducers;
 import cyclops.Semigroups;
-import com.aol.cyclops.control.AnyM;
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.Maybe;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamUtils;
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
+import cyclops.Streams;
+import cyclops.collections.ListX;
 import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import com.aol.cyclops.util.SimpleTimer;
@@ -661,7 +661,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	public void testPeek() {
 		peek = 0 ;
 		   AnyM.fromStream(Stream.of(asList(1,3)))
-				  				.flatMap(c->AnyM.fromStream(c.stream()))
+				  				.flatMap(c-> AnyM.fromStream(c.stream()))
 				  				.stream()
 				  				.map(i->i*2)
 				  				.peek(i-> peek=i)
@@ -683,7 +683,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 		Stream<String> s = Stream.of("hello","world");
 		Iterator<String> it = s.iterator();
 		String head = it.next();
-		Stream<String> tail = StreamUtils.stream(it);
+		Stream<String> tail = Streams.stream(it);
 		tail.forEach(System.out::println);
 	}
 	

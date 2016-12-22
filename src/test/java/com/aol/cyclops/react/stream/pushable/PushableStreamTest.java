@@ -12,22 +12,21 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
+import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.StreamSource;
-import com.aol.cyclops.data.async.Queue;
-import com.aol.cyclops.data.async.QueueFactories;
-import com.aol.cyclops.data.async.Signal;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
+import cyclops.async.LazyReact;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.StreamSource;
+import cyclops.async.Queue;
+import cyclops.async.QueueFactories;
+import cyclops.async.Signal;
+import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.SetX;
 import com.aol.cyclops.react.threads.SequentialElasticPools;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 import com.aol.cyclops.util.stream.pushable.MultipleStreamSource;
 import com.aol.cyclops.util.stream.pushable.PushableLazyFutureStream;
 import com.aol.cyclops.util.stream.pushable.PushableReactiveSeq;
@@ -164,7 +163,7 @@ public class PushableStreamTest {
 	@Test
 	public void testLazyFutureStreamAdapter() {
 		Signal<Integer> signal = Signal.queueBackedSignal();
-		LazyFutureStream<Integer> pushable = StreamSource
+		FutureStream<Integer> pushable = StreamSource
 				                                .futureStream(signal.getDiscrete(),new LazyReact());
 		signal.set(100);
 		signal.close();
@@ -195,7 +194,7 @@ public class PushableStreamTest {
 	public void testLazyFutureStreamTopic() {
 		MultipleStreamSource<Integer> multi = StreamSource
 		                                        .ofMultiple();
-		LazyFutureStream<Integer> pushable = multi
+		FutureStream<Integer> pushable = multi
 				.futureStream(new LazyReact());
 		multi.getInput().offer(100);
 		multi.getInput().close();
@@ -206,7 +205,7 @@ public class PushableStreamTest {
     public void testLazyFutureStreamTopicBackPressure() {
         MultipleStreamSource<Integer> multi = StreamSource
                                                 .ofMultiple(2);
-        LazyFutureStream<Integer> pushable = multi
+        FutureStream<Integer> pushable = multi
                 .futureStream(new LazyReact());
         multi.getInput().offer(100);
         multi.getInput().close();
@@ -217,7 +216,7 @@ public class PushableStreamTest {
     public void testLazyFutureStreamTopicQueueFactory() {
         MultipleStreamSource<Integer> multi = StreamSource
                                                 .ofMultiple(QueueFactories.boundedQueue(100));
-        LazyFutureStream<Integer> pushable = multi
+        FutureStream<Integer> pushable = multi
                 .futureStream(new LazyReact());
         multi.getInput().offer(100);
         multi.getInput().close();
@@ -228,7 +227,7 @@ public class PushableStreamTest {
 	public void testReactPoolTopic() {
 		MultipleStreamSource<Integer> multi =  StreamSource
 		                                            .ofMultiple();
-		LazyFutureStream<Integer> pushable = multi
+		FutureStream<Integer> pushable = multi
 										.futureStream(SequentialElasticPools.lazyReact.nextReactor());
 		multi.getInput().offer(100);
 		multi.getInput().close();
@@ -259,7 +258,7 @@ public class PushableStreamTest {
 	public void testMultiple() {
 		MultipleStreamSource<Integer> multi = StreamSource
 												.ofMultiple();
-		LazyFutureStream<Integer> pushable = multi
+		FutureStream<Integer> pushable = multi
 				.futureStream(new LazyReact());
 		ReactiveSeq<Integer> seq = multi.reactiveSeq();
 		Stream<Integer> stream = multi.stream();

@@ -2,22 +2,22 @@ package com.aol.cyclops.react.lazy;
 
 import java.util.function.Supplier;
 
-import com.aol.cyclops.control.LazyReact;
+import cyclops.async.LazyReact;
 import com.aol.cyclops.react.base.BaseNumberOperationsTest;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
+import cyclops.stream.FutureStream;
 
 public class LazyFutureNumberOperationsTest extends BaseNumberOperationsTest{
 	@Override
-	protected <U> LazyFutureStream<U> of(U... array) {
-		return LazyFutureStream.parallel(array);
+	protected <U> FutureStream<U> of(U... array) {
+		return FutureStream.parallel(array);
 	}
 	@Override
-	protected <U> LazyFutureStream<U> ofThread(U... array) {
-		return LazyFutureStream.freeThread(array);
+	protected <U> FutureStream<U> ofThread(U... array) {
+		return FutureStream.freeThread(array);
 	}
 	
 	@Override
-	protected <U> LazyFutureStream<U> react(Supplier<U>... array) {
+	protected <U> FutureStream<U> react(Supplier<U>... array) {
 		return LazyReact.parallelBuilder().ofAsync(array);
 		
 	}

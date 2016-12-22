@@ -17,13 +17,13 @@ public class Uncurry extends UncurryConsumer {
                                  .apply(t2);
     }
 
-    public static <T1, T2, T3, R> F3<T1, T2, T3, R> uncurry3(final Function<T1, Function<T2, Function<T3, R>>> triFunc) {
+    public static <T1, T2, T3, R> Fn3<T1, T2, T3, R> uncurry3(final Function<T1, Function<T2, Function<T3, R>>> triFunc) {
         return (t1, t2, t3) -> triFunc.apply(t1)
                                       .apply(t2)
                                       .apply(t3);
     }
 
-    public static <T1, T2, T3, T4, R> F4<T1, T2, T3, T4, R> uncurry4(
+    public static <T1, T2, T3, T4, R> Fn4<T1, T2, T3, T4, R> uncurry4(
             final Function<T1, Function<T2, Function<T3, Function<T4, R>>>> quadFunc) {
         return (t1, t2, t3, t4) -> quadFunc.apply(t1)
                                            .apply(t2)
@@ -31,7 +31,7 @@ public class Uncurry extends UncurryConsumer {
                                            .apply(t4);
     }
 
-    public static <T1, T2, T3, T4, T5, R> F5<T1, T2, T3, T4, T5, R> uncurry5(
+    public static <T1, T2, T3, T4, T5, R> Fn5<T1, T2, T3, T4, T5, R> uncurry5(
             final Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, R>>>>> pentFunc) {
         return (t1, t2, t3, t4, t5) -> pentFunc.apply(t1)
                                                .apply(t2)
@@ -40,7 +40,7 @@ public class Uncurry extends UncurryConsumer {
                                                .apply(t5);
     }
 
-    public static <T1, T2, T3, T4, T5, T6, R> F6<T1, T2, T3, T4, T5, T6, R> uncurry6(
+    public static <T1, T2, T3, T4, T5, T6, R> Fn6<T1, T2, T3, T4, T5, T6, R> uncurry6(
             final Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, R>>>>>> hexFunc) {
         return (t1, t2, t3, t4, t5, t6) -> hexFunc.apply(t1)
                                                   .apply(t2)
@@ -50,7 +50,7 @@ public class Uncurry extends UncurryConsumer {
                                                   .apply(t6);
     }
 
-    public static <T1, T2, T3, T4, T5, T6, T7, R> F7<T1, T2, T3, T4, T5, T6, T7, R> uncurry7(
+    public static <T1, T2, T3, T4, T5, T6, T7, R> Fn7<T1, T2, T3, T4, T5, T6, T7, R> uncurry7(
             final Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, Function<T7, R>>>>>>> heptFunc) {
         return (t1, t2, t3, t4, t5, t6, t7) -> heptFunc.apply(t1)
                                                        .apply(t2)
@@ -61,7 +61,7 @@ public class Uncurry extends UncurryConsumer {
                                                        .apply(t7);
     }
 
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> F8<T1, T2, T3, T4, T5, T6, T7, T8, R> uncurry8(
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> uncurry8(
             final Function<T1, Function<T2, Function<T3, Function<T4, Function<T5, Function<T6, Function<T7, Function<T8, R>>>>>>>> octFunc) {
         return (t1, t2, t3, t4, t5, t6, t7, t8) -> octFunc.apply(t1)
                                                           .apply(t2)

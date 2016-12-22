@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 
 /**
  * An interface that represents a non-scalar Filterable
@@ -33,7 +33,7 @@ public interface IterableFilterable<T> extends Filterable<T>, Iterable<T> {
      * @return Filterable with all supplied elements removed
      */
     default Filterable<T> removeAll(final Iterable<? extends T> it) {
-        return removeAll(StreamUtils.stream(it));
+        return removeAll(Streams.stream(it));
     }
 
     /**
@@ -54,7 +54,7 @@ public interface IterableFilterable<T> extends Filterable<T>, Iterable<T> {
      * @return Filterable with supplied values retained, and others removed
      */
     default Filterable<T> retainAll(final Iterable<? extends T> it) {
-        return retainAll(StreamUtils.stream(it));
+        return retainAll(Streams.stream(it));
     }
 
     /**

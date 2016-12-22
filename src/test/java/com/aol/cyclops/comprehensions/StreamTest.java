@@ -4,18 +4,15 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.control.StreamUtils;
+import cyclops.Streams;
 import org.junit.Test;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.Trampoline;
+import cyclops.stream.ReactiveSeq;
+import cyclops.control.Trampoline;
 
 public class StreamTest {
 	@Test
@@ -40,7 +37,7 @@ public class StreamTest {
 	@Test
 	public void arrayStream() {
 		
-		List<String> res =  StreamUtils.forEach2(Stream.of("hello world","hello"),
+		List<String> res =  Streams.forEach2(Stream.of("hello world","hello"),
 												a->Stream.of("boo!"),
 										(v1,v2)->  v1 + "1" + v2).collect(Collectors.toList());
 		List<String> expected = Arrays.asList("hello world1boo!", "hello1boo!");
@@ -52,7 +49,7 @@ public class StreamTest {
 	@Test
 	public void stringStream() {
 		
-		List<String> res = StreamUtils.forEach2("hello world".chars()
+		List<String> res = Streams.forEach2("hello world".chars()
 															  .boxed()
 																.map(i->Character.toChars(i)[0]),
 													i->Stream.of(i),

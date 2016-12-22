@@ -1,7 +1,6 @@
 package com.aol.cyclops.types;
 
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.types.stream.ConvertableSequence;
+import cyclops.stream.ReactiveSeq;
 
 /**
  * Represents a finite traversable type

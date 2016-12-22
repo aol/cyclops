@@ -1,15 +1,14 @@
 package com.aol.cyclops.types.stream;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
+import cyclops.async.LazyReact;
+import cyclops.stream.FutureStream;
+import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops.internal.stream.ReversedIterator;
 import com.aol.cyclops.internal.stream.SeqUtils;
-import com.aol.cyclops.types.futurestream.LazyFutureStream;
 
 /**
  * Interface that represents a data type that can be converted to a Stream
@@ -21,13 +20,13 @@ import com.aol.cyclops.types.futurestream.LazyFutureStream;
 public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
 
     /**
-     * Convert this type to a LazyFutureStream using the provided LazyReact futureStream builder
+     * Convert this type to a FutureStream using the provided LazyReact futureStream builder
      * to configure parallelism / executors and more.
      * 
      * @param react LazyReact futureStream builder (configurer)
-     * @return This convertable type converted to a LazyFutureStream
+     * @return This convertable type converted to a FutureStream
      */
-    default LazyFutureStream<T> futureStream(final LazyReact react) {
+    default FutureStream<T> futureStream(final LazyReact react) {
         return react.fromIterable(this);
     }
 

@@ -7,20 +7,20 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.aol.cyclops.control.LazyReact;
-import com.aol.cyclops.control.ReactiveSeq;
-import com.aol.cyclops.control.SimpleReact;
-import com.aol.cyclops.control.Streamable;
-import com.aol.cyclops.data.collections.extensions.persistent.PBagX;
-import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PStackX;
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorX;
-import com.aol.cyclops.data.collections.extensions.standard.DequeX;
-import com.aol.cyclops.data.collections.extensions.standard.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.QueueX;
-import com.aol.cyclops.data.collections.extensions.standard.SetX;
-import com.aol.cyclops.data.collections.extensions.standard.SortedSetX;
+import cyclops.async.LazyReact;
+import cyclops.stream.ReactiveSeq;
+import cyclops.async.SimpleReact;
+import cyclops.stream.Streamable;
+import cyclops.collections.immutable.PBagX;
+import cyclops.collections.immutable.POrderedSetX;
+import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.DequeX;
+import cyclops.collections.ListX;
+import cyclops.collections.QueueX;
+import cyclops.collections.SetX;
+import cyclops.collections.SortedSetX;
 import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
 
 import reactor.core.publisher.Flux;
