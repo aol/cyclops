@@ -14,6 +14,7 @@ import lombok.Setter;
 public class ReversingRangeLongSpliterator implements Spliterator.OfLong, ReversableSpliterator<Long> {
 
     private long index;
+    private long start;
     private final long min;
     private final long max;
     @Getter
@@ -24,13 +25,13 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
         this.min = Math.min(min, max) - 1;
         this.max = Math.max(min, max);
         this.reverse = this.max >= this.min ? reverse : !reverse;
-        index = Math.min(min, max);
+        start= index = Math.min(min, max);
     }
 
     @Override
     public ReversableSpliterator invert() {
         setReverse(!isReverse());
-        index = max - 1;
+        start=index = max - 1;
         return this;
     }
 
@@ -70,7 +71,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     @Override
     public ReversableSpliterator copy() {
         return new ReversingRangeLongSpliterator(
-                                                 min, max, reverse);
+                                                 start, max, reverse);
     }
 
     /* (non-Javadoc)
@@ -78,7 +79,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
      */
     @Override
     public void forEachRemaining(LongConsumer action) {
-        long index = this.index; //use local index making spliterator reusable
+
         if (!reverse) {
             for( ;index < max && index > min;) {
                 action.accept(index++);
@@ -99,7 +100,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
      */
     @Override
     public void forEachRemaining(Consumer<? super Long> action) {
-        long index = this.index; //use local index making spliterator reusable
+
         if (!reverse) {
             for( ;index < max && index > min;) {
                 action.accept(index++);

@@ -31,6 +31,15 @@ public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
     @Test
+    public void rangeLongMultiReverse(){
+        assertThat(ReactiveSeq.rangeLong(0,5).reverse().reverse().count(),equalTo(5l));
+    }
+    @Test
+    public void rangeLong(){
+        ReactiveSeq.rangeLong(0,5).reverse().reverse().reverse().printOut();
+        ReactiveSeq.of('a').zipS(ReactiveSeq.rangeLong(0,100)).printOut();
+    }
+    @Test
     public void testParallel(){
         assertThat(ReactiveSeq.range(0,1000)
                               .parallel(s->s.map(i->i*2))
