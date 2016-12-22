@@ -50,19 +50,19 @@ public interface Traversable<T> extends Publisher<T>,
         return ReactiveSeq.fromIterable(this);
     }
 
-                                             /**
-                                              * Create an IterableFunctor instance of the same type from an Iterator
-                                              * <pre>
-                                              * {@code
-                                              *       ReactiveSeq<Integer> newSeq = seq.unitIterable(myIterator);
-                                              *
-                                              * }
-                                              * </pre>
-                                              *
-                                              * @param U Iterator to create new IterableFunctor from
-                                              * @return New IterableFunctor instance
-                                              */
-                                             <U> Traversable<U> unitIterator(Iterator<U> U);
+    /**
+     * Create an IterableFunctor instance of the same type from an Iterator
+     * <pre>
+     * {@code
+     *       ReactiveSeq<Integer> newSeq = seq.unitIterable(myIterator);
+     *
+     * }
+     * </pre>
+     *
+     * @param U Iterator to create new IterableFunctor from
+     * @return New IterableFunctor instance
+     */
+    <U> Traversable<U> unitIterator(Iterator<U> U);
     /* (non-Javadoc)
      * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
      */

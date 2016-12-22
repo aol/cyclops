@@ -37,10 +37,10 @@ import java.util.stream.Stream;
  */
 public interface ListX<T> extends To<ListX<T>>,
                                   List<T>,
-        MutableCollectionX<T>,
-        MutableSequenceX<T>,
-                                 Comparable<T>,
-                                 OnEmptySwitch<T, List<T>> {
+                                  MutableCollectionX<T>,
+                                  MutableSequenceX<T>,
+                                  Comparable<T>,
+                                  OnEmptySwitch<T, List<T>> {
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
         return ListT.of(witness.adapter().unit(this));
@@ -1148,6 +1148,34 @@ public interface ListX<T> extends To<ListX<T>>,
         if (isEmpty())
             return ListX.fromIterable(supplier.get());
         return this;
+    }
+
+    @Override
+    default int compareTo(final T o) {
+        if (o instanceof List) {
+            final List l = (List) o;
+            if (this.size() == l.size()) {
+                final Iterator i1 = iterator();
+                final Iterator i2 = l.iterator();
+                if (i1.hasNext()) {
+                    if (i2.hasNext()) {
+                        final int comp = Comparator.<Comparable> naturalOrder()
+                                .compare((Comparable) i1.next(), (Comparable) i2.next());
+                        if (comp != 0)
+                            return comp;
+                    }
+                    return 1;
+                } else {
+                    if (i2.hasNext())
+                        return -1;
+                    else
+                        return 0;
+                }
+            }
+            return this.size() - ((List) o).size();
+        } else
+            return 1;
+
     }
 
     /**

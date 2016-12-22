@@ -36,8 +36,30 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
     }
 
     @Override
+    public void forEachRemaining(Consumer<? super T> action) {
+        Objects.requireNonNull(action);
+        System.out.println("For each remaining!");
+        int index = this.index; //local index for replayability
+
+        if (!reverse) {
+            for (;index < array.length && index > -1;) {
+                action.accept((T) array[index++]);
+
+            }
+        } else {
+            for (;index > -1 & index < array.length;) {
+                action.accept((T) array[index--]);
+
+            }
+        }
+
+    }
+
+    @Override
     public boolean tryAdvance(final Consumer<? super T> action) {
         Objects.requireNonNull(action);
+
+        System.out.println("Try advance!");
 
         if (!reverse) {
             if (index < array.length && index > -1) {

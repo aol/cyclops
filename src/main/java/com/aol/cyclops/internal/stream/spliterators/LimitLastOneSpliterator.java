@@ -24,7 +24,9 @@ public class LimitLastOneSpliterator<T> extends AbstractSpliterator<T>{
     
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
+        System.out.println("Limit last one " + source);
         source.forEachRemaining(e -> { // onNext add to buffer
+            System.out.println("Buffer " + e );
             buffer = e;
         });
         if (buffer == UNSET)

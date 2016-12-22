@@ -632,8 +632,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final <R> ReactiveSeq<R> map(final Function<? super T, ? extends R> fn) {
-        return new ReactiveSeqImpl(
-                                   unwrapStream().map(fn), reversible,split);
+
+        return new ReactiveSeqImpl(StreamSupport.stream(new MappingSpliterator<T,R>(this.stream,fn),false), reversible,split);
     }
 
     @Override
@@ -692,7 +692,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<T> filter(final Predicate<? super T> fn) {
-        return Streams.reactiveSeq(unwrapStream().filter(fn), reversible,split);
+        return Streams.reactiveSeq(StreamSupport.stream(new FilteringSpliterator<T>(stream,fn),false), reversible,split);
     }
 
     @Override
