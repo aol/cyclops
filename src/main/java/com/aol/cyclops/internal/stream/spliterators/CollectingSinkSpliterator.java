@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collector;
 
 
-public class CollectingSinkSpliterator<T,A,R> extends AbstractSpliterator<R> implements Runnable {
+public class CollectingSinkSpliterator<T,A,R> extends AbstractSpliterator<R> implements Runnable, CopyableSpliterator<R> {
     private final Spliterator<T> s;
     private final Collector<? super T,A,R> monoid;
     volatile A total;
@@ -45,5 +45,9 @@ public class CollectingSinkSpliterator<T,A,R> extends AbstractSpliterator<R> imp
         return false;
     }
 
-    
+
+    @Override
+    public Spliterator<R> copy() {
+        return new CollectingSinkSpliterator<>(this.estimateSize(),this.characteristics(),s,monoid);
+    }
 }

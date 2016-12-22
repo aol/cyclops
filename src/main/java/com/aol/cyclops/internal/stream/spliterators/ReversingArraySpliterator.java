@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
-public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableSpliterator {
+public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableSpliterator<T> {
 
     private final Object[] array;
     @Getter
@@ -83,7 +83,7 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
     }
 
     @Override
-    public ReversableSpliterator copy() {
+    public ReversableSpliterator<T> copy() {
         return new ReversingArraySpliterator<T>(
                                                 array, reverse, index);
     }

@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
-public class ReversingRangeLongSpliterator implements Spliterator.OfLong, ReversableSpliterator {
+public class ReversingRangeLongSpliterator implements Spliterator.OfLong, ReversableSpliterator<Long> {
 
     private long index;
     private final long min;

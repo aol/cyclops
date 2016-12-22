@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * Created by johnmcclean on 15/12/2016.
  */
 @AllArgsConstructor
-public class ZippingSpliterator<T1,T2,R> implements Spliterator<R> {
+public class ZippingSpliterator<T1,T2,R> implements CopyableSpliterator<R> {
     private final Spliterator<T1> left;
     private final Spliterator<T2> right;
     private final BiFunction<? super T1, ? super T2, ? extends R> fn;
@@ -85,11 +85,16 @@ public class ZippingSpliterator<T1,T2,R> implements Spliterator<R> {
             }
 
         }else{
-            Spliterator.super.forEachRemaining(action);
+            CopyableSpliterator.super.forEachRemaining(action);
             return;
         }
 
 
+    }
+
+    @Override
+    public Spliterator<R> copy() {
+        return new ZippingSpliterator(left,right,fn);
     }
 
     @Override

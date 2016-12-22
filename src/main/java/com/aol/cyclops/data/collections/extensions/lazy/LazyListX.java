@@ -154,9 +154,9 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
 
         ReactiveSeq<Integer> stream = ReactiveSeq.of(1,2,3);
         stream.map(i->i*2).printOut();
-        ReactiveSeq<Integer> r2 = stream.map(i->i*2).filter(i->i<5);
-        r2.map(i->i*100).filter(i->i<401).printOut();
-        r2.map(i->i*1000).filter(i->i<4001).takeRight(1).printOut();
+        ReactiveSeq<Integer> r2 = stream.map(i->i*2);
+        r2.map(i->i*100).zipWithIndex().printOut();
+        r2.map(i->i*1000).zipWithIndex().printOut();
        /**
         LazyListX<Integer> l2 = new LazyListX<>(null,ReactiveSeq.of(1,2,3), Collectors.toList());
         l2.map(i->i*100).printOut();

@@ -1,15 +1,15 @@
 package com.aol.cyclops.internal.stream.spliterators;
 
-public interface ReversableSpliterator {
+public interface ReversableSpliterator<T> extends CopyableSpliterator<T>{
 
     boolean isReverse();
 
     void setReverse(boolean reverse);
 
-    default ReversableSpliterator invert() {
+    default ReversableSpliterator<T> invert() {
         setReverse(!isReverse());
         return this;
     }
 
-    ReversableSpliterator copy();
+    ReversableSpliterator<T> copy();
 }

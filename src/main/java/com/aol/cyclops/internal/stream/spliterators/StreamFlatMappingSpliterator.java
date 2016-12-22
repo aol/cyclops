@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R> {
+public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R> implements CopyableSpliterator<R> {
     Spliterator<T> source;
     Function<? super T, ? extends Stream<? extends R>> mapper;
     public StreamFlatMappingSpliterator(final Spliterator<T> source, Function<? super T, ? extends Stream<? extends R>> mapper) {
@@ -48,5 +48,9 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
         });
 
         return active.hasNext();
+    }
+    @Override
+    public Spliterator<R> copy() {
+        return new StreamFlatMappingSpliterator<>(source,mapper);
     }
 }

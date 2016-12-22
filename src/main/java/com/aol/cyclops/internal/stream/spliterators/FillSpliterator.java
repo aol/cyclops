@@ -22,7 +22,7 @@ public class FillSpliterator<T> implements Spliterator<T> {
 
     @Override
     public long estimateSize() {
-        return 1l;
+        return Long.MAX_VALUE;
     }
 
     @Override

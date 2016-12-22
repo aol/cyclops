@@ -7,7 +7,7 @@ import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class OnEmptyGetSpliterator<T> extends Spliterators.AbstractSpliterator<T> {
+public class OnEmptyGetSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T> {
     private final Spliterator<T> source;
     private final Supplier<? extends T> value;
     private boolean found=false;
@@ -37,5 +37,10 @@ public class OnEmptyGetSpliterator<T> extends Spliterators.AbstractSpliterator<T
         }
 
         return found;
+    }
+
+    @Override
+    public Spliterator<T> copy() {
+        return new OnEmptyGetSpliterator<T>(source,value);
     }
 }

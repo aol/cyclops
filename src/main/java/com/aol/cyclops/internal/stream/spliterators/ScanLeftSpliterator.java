@@ -9,16 +9,18 @@ import org.jooq.lambda.Seq;
 import lombok.AllArgsConstructor;
 
 
-public class ScanLeftSpliterator<T,U> implements Spliterator<U>{
+public class ScanLeftSpliterator<T,U> implements CopyableSpliterator<U> {
 
     private final Spliterator<T> source;
-    private U current; 
+    private U current;
+    private final U identity;
     private final BiFunction<? super U, ? super T, ? extends U> function;
     private final long size;
     private final int characteristics;
     public ScanLeftSpliterator(Spliterator<T> source, U identity,
             BiFunction<? super U, ? super T, ? extends U> function) {
         super();
+        this.identity=identity;
         this.source = source;
         this.current = identity;
         this.function = function;
@@ -68,6 +70,9 @@ public class ScanLeftSpliterator<T,U> implements Spliterator<U>{
        return characteristics;
     }
 
-   
 
+    @Override
+    public Spliterator<U> copy() {
+        return new ScanLeftSpliterator<T, U>(source,identity,function);
+    }
 }

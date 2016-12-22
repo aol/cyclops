@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 
 
-public class LazySingleSpliterator<T, X extends Stream<T>,R> implements Spliterator<R> {
+public class LazySingleSpliterator<T, X extends Stream<T>,R> implements Spliterator<R>, CopyableSpliterator<R> {
 
     private final X in;
     private final Function<? super X,? extends R> fn;
@@ -47,5 +47,9 @@ public class LazySingleSpliterator<T, X extends Stream<T>,R> implements Splitera
         return this;
     }
 
-    
+
+    @Override
+    public Spliterator<R> copy() {
+        return new LazySingleSpliterator<>(in,fn);
+    }
 }

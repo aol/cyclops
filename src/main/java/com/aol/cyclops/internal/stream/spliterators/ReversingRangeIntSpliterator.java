@@ -8,7 +8,7 @@ import java.util.function.IntConsumer;
 import lombok.Getter;
 import lombok.Setter;
 
-public class ReversingRangeIntSpliterator implements Spliterator.OfInt, ReversableSpliterator {
+public class ReversingRangeIntSpliterator implements Spliterator.OfInt, ReversableSpliterator<Integer> {
 
     private final int min;
     private final int max;

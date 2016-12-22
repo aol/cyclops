@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 import cyclops.function.Monoid;
 
-public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements Runnable{
+public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements Runnable, CopyableSpliterator<T>{
     private final Spliterator<T> s;
     private final Monoid<T> monoid;
     
@@ -52,5 +52,9 @@ public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements 
         return false;
     }
 
-    
+
+    @Override
+    public Spliterator<T> copy() {
+        return new FoldingSinkSpliterator<>(this.estimateSize(),this.characteristics(),s,monoid);
+    }
 }

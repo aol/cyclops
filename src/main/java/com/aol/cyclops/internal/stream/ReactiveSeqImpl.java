@@ -698,7 +698,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<T> filter(final Predicate<? super T> fn) {
-        return Streams.reactiveSeq(StreamSupport.stream(new FilteringSpliterator<T>(stream,fn),false), reversible,split);
+        return Streams.reactiveSeq(new FilteringSpliterator<T>(stream,fn), reversible,split);
     }
 
     @Override
@@ -782,10 +782,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> intersperse(final T value) {
+        return flatMap(t -> Stream.of(value, t)).skip(1l);
 
-        return Streams.reactiveSeq(unwrapStream().flatMap(t -> Stream.of(value, t))
-                                             .skip(1l),
-                reversible,split);
     }
 
     @Override

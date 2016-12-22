@@ -8,9 +8,9 @@ import java.util.function.Function;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public class LimitSpliterator<T> extends Spliterators.AbstractSpliterator<T> {
-    Spliterator<T> source;
-    long take;
+public class LimitSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T> {
+    private final Spliterator<T> source;
+    private final long take;
     long index =0;
     public LimitSpliterator(final Spliterator<T> source, long take) {
         super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
@@ -45,5 +45,10 @@ public class LimitSpliterator<T> extends Spliterators.AbstractSpliterator<T> {
             });
         }
         return false;
+    }
+
+    @Override
+    public Spliterator<T> copy() {
+        return new LimitSpliterator<>(source,take);
     }
 }
