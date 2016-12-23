@@ -257,7 +257,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      * @see org.pcollections.PQueue#minus()
      */
     @Override
-    public PQueue<T> minus() {
+    public PQueueX<T> minus() {
         return set.minus();
     }
 
