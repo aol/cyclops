@@ -3,6 +3,8 @@ package cyclops.collections;
 import com.aol.cyclops.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableSequenceX;
+import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.Traversable;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
@@ -22,6 +24,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -1176,6 +1179,77 @@ public interface ListX<T> extends To<ListX<T>>,
         } else
             return 1;
 
+    }
+
+
+    @Override
+    default <R> ListX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (ListX<R>)MutableCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> ListX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (ListX<R>)MutableCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> ListX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (ListX<R>)MutableCollectionX.super.flatMapS(fn);
+    }
+
+    @Override
+    default <R> ListX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (ListX<R>)MutableCollectionX.super.flatMapP(fn);
+    }
+
+    @Override
+    default ListX<T> prependS(Stream<? extends T> stream) {
+        return (ListX<T>)MutableCollectionX.super.prependS(stream);
+    }
+
+    @Override
+    default ListX<T> append(T... values) {
+        return (ListX<T>)MutableCollectionX.super.append(values);
+    }
+
+    @Override
+    default ListX<T> append(T value) {
+        return (ListX<T>)MutableCollectionX.super.append(value);
+    }
+
+    @Override
+    default ListX<T> prepend(T value) {
+        return (ListX<T>)MutableCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default ListX<T> prepend(T... values) {
+        return (ListX<T>)MutableCollectionX.super.prepend(values);
+    }
+
+    @Override
+    default ListX<T> insertAt(int pos, T... values) {
+        return (ListX<T>)MutableCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default ListX<T> deleteBetween(int start, int end) {
+        return (ListX<T>)MutableCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default ListX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (ListX<T>)MutableCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default ListX<T> recover(final Function<Throwable, ? extends T> fn) {
+        return (ListX<T>)MutableCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> Traversable<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (ListX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
 
     /**
