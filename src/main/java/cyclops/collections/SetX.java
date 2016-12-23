@@ -1,7 +1,7 @@
 package cyclops.collections;
 
+import com.aol.cyclops.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.SetXImpl;
 import cyclops.Streams;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
@@ -150,9 +150,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         if (it instanceof SetX)
             return (SetX) it;
         if (it instanceof Set)
-            return new SetXImpl<T>(
+            return new LazySetX<T>(
                                    (Set) it, defaultCollector());
-        return new SetXImpl<T>(
+        return new LazySetX<T>(
                                Streams.stream(it)
                                           .collect(defaultCollector()),
                                           defaultCollector());
@@ -162,9 +162,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         if (it instanceof SetX)
             return ((SetX) it).withCollector(collector);
         if (it instanceof Set)
-            return new SetXImpl<T>(
+            return new LazySetX<T>(
                                    (Set) it, collector);
-        return new SetXImpl<T>(
+        return new LazySetX<T>(
                                Streams.stream(it)
                                           .collect(collector),
                                collector);
@@ -336,7 +336,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
 
     @Override
     default <X> SetX<X> fromStream(final Stream<X> stream) {
-        return new SetXImpl<>(
+        return new LazySetX<>(
                               stream.collect(getCollector()), getCollector());
     }
 

@@ -3,14 +3,10 @@ package com.aol.cyclops.data.collections.extensions.lazy;
 
 import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
 
 import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -39,12 +35,12 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements ListX<T> {
+public class LazyListX<T> extends AbstractLazyMutableCollection<T,List<T>> implements ListX<T> {
 
 
     public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector) {
         super(list, seq, collector);
-        System.out.println("New lazy list " + list);
+
     }
 
     @Override

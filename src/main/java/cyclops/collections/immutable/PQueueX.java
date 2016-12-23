@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PQueueXImpl;
+
+import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -140,12 +141,12 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
             result = result.plus(value);
         }
 
-        return new PQueueXImpl<>(
+        return new LazyPQueueX<>(
                                  result);
     }
 
     public static <T> PQueueX<T> empty() {
-        return new PQueueXImpl<>(
+        return new LazyPQueueX<>(
                                  AmortizedPQueue.empty());
     }
 
@@ -170,14 +171,14 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
         if (iterable instanceof PQueueX)
             return (PQueueX) iterable;
         if (iterable instanceof PQueue)
-            return new PQueueXImpl<>(
+            return new LazyPQueueX<>(
                                      (PQueue) iterable);
         PQueue<T> res = empty();
         final Iterator<T> it = iterable.iterator();
         while (it.hasNext())
             res = res.plus(it.next());
 
-        return new PQueueXImpl<>(
+        return new LazyPQueueX<>(
                                  res);
     }
 
@@ -185,7 +186,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
         if (stream instanceof PQueueX)
             return (PQueueX) stream;
         if (stream instanceof PQueue)
-            return new PQueueXImpl<>(
+            return new LazyPQueueX<>(
                                      (PQueue) stream);
         return PQueueX.<T> empty()
                       .plusAll(stream);
@@ -389,6 +390,8 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
     @Override
     public PQueueX<T> plusAll(Collection<? extends T> list);
 
+    @Override
+    public PQueueX<T> minus();
     /*
      * (non-Javadoc)
      * 

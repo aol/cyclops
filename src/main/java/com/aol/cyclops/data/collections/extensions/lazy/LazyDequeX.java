@@ -2,12 +2,9 @@ package com.aol.cyclops.data.collections.extensions.lazy;
 
 
 import cyclops.collections.DequeX;
-import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
-import lombok.experimental.Delegate;
 
 import java.util.*;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -37,7 +34,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements DequeX<T> {
+public class LazyDequeX<T> extends AbstractLazyMutableCollection<T,Deque<T>> implements DequeX<T> {
 
 
     public LazyDequeX(Deque<T> list, ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector) {
@@ -73,13 +70,13 @@ public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements
 
     @Override
     public <X> LazyDequeX<X> fromStream(Stream<X> stream) {
-        System.out.println("From stream!");
+
         return new LazyDequeX<X>((Deque)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }
 
     @Override
     public <T1> LazyDequeX<T1> from(Collection<T1> c) {
-        if(c instanceof List)
+        if(c instanceof Deque)
             return new LazyDequeX<T1>((Deque)c,null,(Collector)this.getCollectorInternal());
         return fromStream(ReactiveSeq.fromIterable(c));
     }

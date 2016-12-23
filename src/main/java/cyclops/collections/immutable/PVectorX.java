@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PVectorXImpl;
+
+import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
 public interface PVectorX<T> extends To<PVectorX<T>>,
                                      PVector<T>, 
                                      FluentSequenceX<T>,
-        PersistentCollectionX<T>,
+                                     PersistentCollectionX<T>,
                                      OnEmptySwitch<T, 
                                      PVector<T>> {
 
@@ -166,7 +167,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
      * @return new PVector
      */
     public static <T> PVectorX<T> of(final T... values) {
-        return new PVectorXImpl<>(
+        return new LazyPVectorX<>(
                                   TreePVector.from(Arrays.asList(values)));
     }
     /**
@@ -191,7 +192,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
      * @return an empty PVector
      */
     public static <T> PVectorX<T> empty() {
-        return new PVectorXImpl<>(
+        return new LazyPVectorX<>(
                                   TreePVector.empty());
     }
 
@@ -212,7 +213,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
      * @return PVector with a single value
      */
     public static <T> PVectorX<T> singleton(final T value) {
-        return new PVectorXImpl<>(
+        return new LazyPVectorX<>(
                                   TreePVector.singleton(value));
     }
 
@@ -232,14 +233,14 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
         if (iterable instanceof PVectorX)
             return (PVectorX) iterable;
         if (iterable instanceof PVector)
-            return new PVectorXImpl<>(
+            return new LazyPVectorX<>(
                                       (PVector) iterable);
         PVector<T> res = TreePVector.<T> empty();
         final Iterator<T> it = iterable.iterator();
         while (it.hasNext())
             res = res.plus(it.next());
 
-        return new PVectorXImpl<>(
+        return new LazyPVectorX<>(
                                   res);
     }
 
@@ -259,9 +260,9 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
         if (values instanceof PVectorX)
             return (PVectorX) values;
         if (values instanceof PVector)
-            return new PVectorXImpl<>(
+            return new LazyPVectorX<>(
                                       (PVector) values);
-        return new PVectorXImpl<>(
+        return new LazyPVectorX<>(
                                   TreePVector.from(values));
     }
 

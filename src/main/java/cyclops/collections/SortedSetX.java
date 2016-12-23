@@ -1,7 +1,7 @@
 package cyclops.collections;
 
+import com.aol.cyclops.data.collections.extensions.lazy.LazySortedSetX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.SortedSetXImpl;
 import cyclops.Streams;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
@@ -155,9 +155,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         if (it instanceof SortedSetX)
             return (SortedSetX<T>) it;
         if (it instanceof SortedSet)
-            return new SortedSetXImpl<T>(
+            return new LazySortedSetX<T>(
                                          (SortedSet) it, defaultCollector());
-        return new SortedSetXImpl<T>(
+        return new LazySortedSetX<T>(
                                      Streams.stream(it)
                                                 .collect(defaultCollector()),
                                                 defaultCollector());
@@ -170,9 +170,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         if (it instanceof SortedSetX)
             return ((SortedSetX<T>) it).withCollector(collector);
         if (it instanceof SortedSet)
-            return new SortedSetXImpl<T>(
+            return new LazySortedSetX<T>(
                                          (SortedSet) it, collector);
-        return new SortedSetXImpl<T>(
+        return new LazySortedSetX<T>(
                                      Streams.stream(it)
                                                 .collect(collector),
                                      collector);
@@ -333,7 +333,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
     @Override
     default <X> SortedSetX<X> fromStream(final Stream<X> stream) {
-        return new SortedSetXImpl<>(
+        return new LazySortedSetX<>(
                                     stream.collect(getCollector()), getCollector());
     }
 

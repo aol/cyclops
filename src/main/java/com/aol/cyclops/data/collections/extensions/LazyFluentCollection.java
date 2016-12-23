@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import cyclops.stream.ReactiveSeq;
 
-public interface LazyFluentCollection<T, C extends Collection<T>> {//extends Collection<T> {
+public interface LazyFluentCollection<T, C extends Collection<T>> {
 
     C get();
 

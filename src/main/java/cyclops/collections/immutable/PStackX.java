@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PStackXImpl;
+
+import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPStackX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -166,7 +167,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
      */
     @SafeVarargs
     public static <T> PStackX<T> of(final T... values) {
-        return new PStackXImpl<>(
+        return new LazyPStackX<>(
                                  ConsPStack.from(Arrays.asList(values)), true);
     }
     /**
@@ -195,14 +196,14 @@ public interface PStackX<T> extends To<PStackX<T>>,
         if (iterable instanceof PStackX)
             return (PStackX) iterable;
         if (iterable instanceof PStack)
-            return new PStackXImpl<>(
+            return new LazyPStackX<T>(
                                      (PStack) iterable, true);
         PStack<T> res = ConsPStack.<T> empty();
         final Iterator<T> it = iterable.iterator();
         while (it.hasNext())
             res = res.plus(it.next());
 
-        return new PStackXImpl<>(
+        return new LazyPStackX<>(
                                  res, true);
     }
 
@@ -225,9 +226,9 @@ public interface PStackX<T> extends To<PStackX<T>>,
         if (values instanceof PStackX)
             return (PStackX) values;
         if (values instanceof PStack)
-            return new PStackXImpl<>(
+            return new LazyPStackX<>(
                                      (PStack) values, true);
-        return new PStackXImpl<>(
+        return new LazyPStackX<>(
                                  ConsPStack.from(values), true);
     }
 
@@ -243,7 +244,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
      * @return an empty PStack
      */
     public static <T> PStackX<T> empty() {
-        return new PStackXImpl<>(
+        return new LazyPStackX<>(
                                  ConsPStack.empty(), true);
     }
 
@@ -264,7 +265,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
      * @return PVector with a single value
      */
     public static <T> PStackX<T> singleton(final T value) {
-        return new PStackXImpl<>(
+        return new LazyPStackX<>(
                                  ConsPStack.singleton(value), true);
     }
 

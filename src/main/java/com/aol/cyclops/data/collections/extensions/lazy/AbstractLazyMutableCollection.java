@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public abstract class AbstractLazyCollection<T, C extends Collection<T>> implements LazyFluentCollection<T, C>, MutableCollectionX<T> {
+public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> implements LazyFluentCollection<T, C>, MutableCollectionX<T> {
     @Getter(AccessLevel.PROTECTED)
     private volatile C list;
     @Getter(AccessLevel.PROTECTED)
@@ -30,7 +30,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     AtomicBoolean updating = new AtomicBoolean(false);
     AtomicReference<Throwable> error = new AtomicReference<>(null);
 
-    public AbstractLazyCollection(C list, ReactiveSeq<T> seq, Collector<T, ?, C> collector) {
+    public AbstractLazyMutableCollection(C list, ReactiveSeq<T> seq, Collector<T, ?, C> collector) {
         this.list = list;
         this.seq = new AtomicReference<>(seq);
         this.collectorInternal = collector;
@@ -70,7 +70,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
 
     @Override
     public Iterator<T> iterator() {
-        return stream().iterator();
+        return get().iterator();
     }
 
     @Override
