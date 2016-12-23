@@ -258,7 +258,7 @@ public class PQueueXImpl<T> implements PQueueX<T> {
      */
     @Override
     public PQueueX<T> minus() {
-        return set.minus();
+        return from(set.minus());
     }
 
     /**
