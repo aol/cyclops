@@ -16,7 +16,8 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PBagXImpl;
+
+import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -232,17 +233,17 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     public static <T> PBagX<T> of(final T... values) {
-        return new PBagXImpl<>(
+        return new LazyPBagX<>(
                                HashTreePBag.from(Arrays.asList(values)));
     }
 
     public static <T> PBagX<T> empty() {
-        return new PBagXImpl<>(
+        return new LazyPBagX<>(
                                HashTreePBag.empty());
     }
 
     public static <T> PBagX<T> singleton(final T value) {
-        return new PBagXImpl<>(
+        return new LazyPBagX<>(
                                HashTreePBag.singleton(value));
     }
 
@@ -262,14 +263,14 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
         if (iterable instanceof PBagX)
             return (PBagX) iterable;
         if (iterable instanceof PBag)
-            return new PBagXImpl<>(
+            return new LazyPBagX<>(
                                    (PBag) iterable);
         MapPBag<T> res = HashTreePBag.<T> empty();
         final Iterator<T> it = iterable.iterator();
         while (it.hasNext())
             res = res.plus(it.next());
 
-        return new PBagXImpl<>(
+        return new LazyPBagX<>(
                                res);
     }
 
@@ -277,10 +278,10 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
         if (stream instanceof PBagX)
             return (PBagX) stream;
         if (stream instanceof PBag)
-            return new PBagXImpl<>(
+            return new LazyPBagX<>(
                                    (PBag) stream);
 
-        return new PBagXImpl<>(
+        return new LazyPBagX<>(
                                HashTreePBag.from(stream));
     }
 

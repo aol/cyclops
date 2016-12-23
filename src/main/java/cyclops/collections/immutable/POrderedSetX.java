@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
-import com.aol.cyclops.data.collections.extensions.persistent.POrderedSetXImpl;
+
+import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -119,17 +120,17 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     }
 
     public static <T> POrderedSetX<T> of(final T... values) {
-        return new POrderedSetXImpl<>(
+        return new LazyPOrderedSetX<>(
                                       OrderedPSet.from(Arrays.asList(values)));
     }
 
     public static <T> POrderedSetX<T> empty() {
-        return new POrderedSetXImpl<>(
+        return new LazyPOrderedSetX<>(
                                       OrderedPSet.empty());
     }
 
     public static <T> POrderedSetX<T> singleton(final T value) {
-        return new POrderedSetXImpl<>(
+        return new LazyPOrderedSetX<>(
                                       OrderedPSet.singleton(value));
     }
 
@@ -157,9 +158,9 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
         if (stream instanceof POrderedSetX)
             return (POrderedSetX) stream;
         if (stream instanceof POrderedSet)
-            return new POrderedSetXImpl<>(
+            return new LazyPOrderedSetX<>(
                                           (POrderedSet) stream);
-        return new POrderedSetXImpl<>(
+        return new LazyPOrderedSetX<>(
                                       OrderedPSet.from(stream));
     }
 
@@ -179,14 +180,14 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
         if (iterable instanceof POrderedSetX)
             return (POrderedSetX) iterable;
         if (iterable instanceof POrderedSet)
-            return new POrderedSetXImpl<>(
+            return new LazyPOrderedSetX<>(
                                           (POrderedSet) iterable);
         POrderedSet<T> res = OrderedPSet.<T> empty();
         final Iterator<T> it = iterable.iterator();
         while (it.hasNext())
             res = res.plus(it.next());
 
-        return new POrderedSetXImpl<>(
+        return new LazyPOrderedSetX<>(
                                       res);
     }
 

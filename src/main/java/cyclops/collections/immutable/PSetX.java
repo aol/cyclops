@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PSetXImpl;
+
+import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPSetX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -121,17 +122,17 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
 
     public static <T> PSetX<T> of(final T... values) {
 
-        return new PSetXImpl<>(
+        return new LazyPSetX<>(
                                HashTreePSet.from(Arrays.asList(values)));
     }
 
     public static <T> PSetX<T> empty() {
-        return new PSetXImpl<>(
+        return new LazyPSetX<>(
                                HashTreePSet.empty());
     }
 
     public static <T> PSetX<T> singleton(final T value) {
-        return new PSetXImpl<>(
+        return new LazyPSetX<>(
                                HashTreePSet.singleton(value));
     }
 
@@ -139,14 +140,14 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         if (iterable instanceof PSetX)
             return (PSetX) iterable;
         if (iterable instanceof PSet)
-            return new PSetXImpl<>(
+            return new LazyPSetX<>(
                                    (PSet) iterable);
         PSet<T> res = HashTreePSet.<T> empty();
         final Iterator<T> it = iterable.iterator();
         while (it.hasNext())
             res = res.plus(it.next());
 
-        return new PSetXImpl<>(
+        return new LazyPSetX<>(
                                res);
     }
 
@@ -166,9 +167,9 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         if (stream instanceof PSetX)
             return (PSetX) stream;
         if (stream instanceof PSet)
-            return new PSetXImpl<>(
+            return new LazyPSetX<>(
                                    (PSet) stream);
-        return new PSetXImpl<>(
+        return new LazyPSetX<>(
                                HashTreePSet.from(stream));
     }
 

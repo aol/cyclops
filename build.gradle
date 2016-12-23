@@ -98,12 +98,14 @@ task testNG(type: Test) {
     reports.html.destination = file("$buildDir/reports/test")
 }
 
+/**
 task testSuite(type: Test) {
-    //include '**/*SuiteOne.*'
+
     include '**/*TestSuite.class'
     reports.junitXml.destination = "$buildDir/reports/test"
     reports.html.destination = "$buildDir/reports/test"
  }
+**/
  
 
 test {
