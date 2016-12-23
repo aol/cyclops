@@ -19,6 +19,7 @@ import org.reactivestreams.Publisher;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -935,6 +936,77 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     default SortedSetX<ReactiveSeq<T>> combinations() {
         return fromStream(stream().combinations()
                                   .map(Comparables::comparable));
+    }
+
+
+    @Override
+    default <R> SortedSetX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (SortedSetX<R>)MutableCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> SortedSetX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (SortedSetX<R>)MutableCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> SortedSetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (SortedSetX<R>)MutableCollectionX.super.flatMapS(fn);
+    }
+
+    @Override
+    default <R> SortedSetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (SortedSetX<R>)MutableCollectionX.super.flatMapP(fn);
+    }
+
+    @Override
+    default SortedSetX<T> prependS(Stream<? extends T> stream) {
+        return (SortedSetX<T>)MutableCollectionX.super.prependS(stream);
+    }
+
+    @Override
+    default SortedSetX<T> append(T... values) {
+        return (SortedSetX<T>)MutableCollectionX.super.append(values);
+    }
+
+    @Override
+    default SortedSetX<T> append(T value) {
+        return (SortedSetX<T>)MutableCollectionX.super.append(value);
+    }
+
+    @Override
+    default SortedSetX<T> prepend(T value) {
+        return (SortedSetX<T>)MutableCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default SortedSetX<T> prepend(T... values) {
+        return (SortedSetX<T>)MutableCollectionX.super.prepend(values);
+    }
+
+    @Override
+    default SortedSetX<T> insertAt(int pos, T... values) {
+        return (SortedSetX<T>)MutableCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default SortedSetX<T> deleteBetween(int start, int end) {
+        return (SortedSetX<T>)MutableCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default SortedSetX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (SortedSetX<T>)MutableCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default SortedSetX<T> recover(final Function<Throwable, ? extends T> fn) {
+        return (SortedSetX<T>)MutableCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> SortedSetX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (SortedSetX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
 
     /**

@@ -1248,7 +1248,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     @Override
-    default <EX extends Throwable> Traversable<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+    default <EX extends Throwable> ListX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
         return (ListX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
 

@@ -1,5 +1,7 @@
 package com.aol.cyclops.types.anyM;
 
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
@@ -11,11 +13,15 @@ import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.Zippable;
 import cyclops.function.Predicates;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -101,6 +107,57 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
         final Optional<T> opt = toOptional();
         return opt.isPresent() ? "AnyMValue[" + get() + "]" : "AnyMValue[]";
     }
+
+    @Override
+    default <R> AnyMValue<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (AnyMValue<W,R>)MonadicValue.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> AnyMValue<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (AnyMValue<W,R>)MonadicValue.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> AnyMValue<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return null;
+    }
+
+    @Override
+    default <R> AnyMValue<W,R> retry(final Function<? super T, ? extends R> fn) {
+        return (AnyMValue<W,R>)MonadicValue.super.retry(fn);
+    }
+
+    @Override
+    default <U> AnyMValue<W,Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (AnyMValue)MonadicValue.super.zipP(other);
+    }
+
+    @Override
+    default <R> AnyMValue<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (AnyMValue<W,R>)MonadicValue.super.retry(fn,retries,delay,timeUnit);
+    }
+
+    @Override
+    default <S, U> AnyMValue<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
+        return (AnyMValue)MonadicValue.super.zip3(second,third);
+    }
+
+    @Override
+    default <S, U, R> AnyMValue<W,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (AnyMValue<W,R>)MonadicValue.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4> AnyMValue<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
+        return (AnyMValue)MonadicValue.super.zip4(second,third,fourth);
+    }
+
+    @Override
+    default <T2, T3, T4, R> AnyMValue<W,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (AnyMValue<W,R>)MonadicValue.super.zip4(second,third,fourth,fn);
+    }
+
 
 
     /* (non-Javadoc)

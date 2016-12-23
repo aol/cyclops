@@ -1,13 +1,10 @@
 package cyclops.control;
 
+import com.aol.cyclops.types.*;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
-import com.aol.cyclops.types.Zippable;
 import cyclops.monads.Witness;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
 import cyclops.function.Curry;
@@ -19,10 +16,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -455,10 +455,64 @@ public interface Maybe<T> extends To<Maybe<T>>,
         return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 
-    
+    @Override
+    default <R> Maybe<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (Maybe<R>)MonadicValue.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> Maybe<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (Maybe<R>)MonadicValue.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> Maybe<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return null;
+    }
+
+    @Override
+    default <R> Maybe<R> retry(final Function<? super T, ? extends R> fn) {
+        return (Maybe<R>)MonadicValue.super.retry(fn);
+    }
+
+    @Override
+    default <U> Maybe<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (Maybe)MonadicValue.super.zipP(other);
+    }
+
+    @Override
+    default <R> Maybe<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (Maybe<R>)MonadicValue.super.retry(fn,retries,delay,timeUnit);
+    }
+
+    @Override
+    default <S, U> Maybe<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
+        return (Maybe)MonadicValue.super.zip3(second,third);
+    }
+
+    @Override
+    default <S, U, R> Maybe<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (Maybe<R>)MonadicValue.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4> Maybe<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
+        return (Maybe)MonadicValue.super.zip4(second,third,fourth);
+    }
+
+    @Override
+    default <T2, T3, T4, R> Maybe<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (Maybe<R>)MonadicValue.super.zip4(second,third,fourth,fn);
+    }
+
+    @Override
+    default <R> Maybe<R> flatMapS(final Function<? super T, ? extends Stream<? extends R>> mapper) {
+        return (Maybe<R>)MonadicValue.super.flatMapS(mapper);
+    }
+
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
-     */
+         * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+         */
     @Override
     default <T2, R1, R2, R3, R> Maybe<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,

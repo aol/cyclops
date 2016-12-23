@@ -16,6 +16,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -1095,6 +1096,77 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         if (isEmpty())
             return DequeX.fromIterable(supplier.get());
         return this;
+    }
+
+
+    @Override
+    default <R> DequeX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (DequeX<R>)MutableCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> DequeX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (DequeX<R>)MutableCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> DequeX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (DequeX<R>)MutableCollectionX.super.flatMapS(fn);
+    }
+
+    @Override
+    default <R> DequeX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (DequeX<R>)MutableCollectionX.super.flatMapP(fn);
+    }
+
+    @Override
+    default DequeX<T> prependS(Stream<? extends T> stream) {
+        return (DequeX<T>)MutableCollectionX.super.prependS(stream);
+    }
+
+    @Override
+    default DequeX<T> append(T... values) {
+        return (DequeX<T>)MutableCollectionX.super.append(values);
+    }
+
+    @Override
+    default DequeX<T> append(T value) {
+        return (DequeX<T>)MutableCollectionX.super.append(value);
+    }
+
+    @Override
+    default DequeX<T> prepend(T value) {
+        return (DequeX<T>)MutableCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default DequeX<T> prepend(T... values) {
+        return (DequeX<T>)MutableCollectionX.super.prepend(values);
+    }
+
+    @Override
+    default DequeX<T> insertAt(int pos, T... values) {
+        return (DequeX<T>)MutableCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default DequeX<T> deleteBetween(int start, int end) {
+        return (DequeX<T>)MutableCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default DequeX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (DequeX<T>)MutableCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default DequeX<T> recover(final Function<Throwable, ? extends T> fn) {
+        return (DequeX<T>)MutableCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> DequeX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (DequeX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
 
     /**

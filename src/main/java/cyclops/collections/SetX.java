@@ -16,6 +16,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -927,6 +928,76 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         return (SetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
+
+    @Override
+    default <R> SetX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (SetX<R>)MutableCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> SetX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (SetX<R>)MutableCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> SetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (SetX<R>)MutableCollectionX.super.flatMapS(fn);
+    }
+
+    @Override
+    default <R> SetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (SetX<R>)MutableCollectionX.super.flatMapP(fn);
+    }
+
+    @Override
+    default SetX<T> prependS(Stream<? extends T> stream) {
+        return (SetX<T>)MutableCollectionX.super.prependS(stream);
+    }
+
+    @Override
+    default SetX<T> append(T... values) {
+        return (SetX<T>)MutableCollectionX.super.append(values);
+    }
+
+    @Override
+    default SetX<T> append(T value) {
+        return (SetX<T>)MutableCollectionX.super.append(value);
+    }
+
+    @Override
+    default SetX<T> prepend(T value) {
+        return (SetX<T>)MutableCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default SetX<T> prepend(T... values) {
+        return (SetX<T>)MutableCollectionX.super.prepend(values);
+    }
+
+    @Override
+    default SetX<T> insertAt(int pos, T... values) {
+        return (SetX<T>)MutableCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default SetX<T> deleteBetween(int start, int end) {
+        return (SetX<T>)MutableCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default SetX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (SetX<T>)MutableCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default SetX<T> recover(final Function<Throwable, ? extends T> fn) {
+        return (SetX<T>)MutableCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> SetX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (SetX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
+    }
 
     /**
      * Narrow a covariant Set

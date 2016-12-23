@@ -16,6 +16,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -948,6 +949,75 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
 
 
 
+    @Override
+    default <R> QueueX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (QueueX<R>)MutableCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> QueueX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (QueueX<R>)MutableCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> QueueX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (QueueX<R>)MutableCollectionX.super.flatMapS(fn);
+    }
+
+    @Override
+    default <R> QueueX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (QueueX<R>)MutableCollectionX.super.flatMapP(fn);
+    }
+
+    @Override
+    default QueueX<T> prependS(Stream<? extends T> stream) {
+        return (QueueX<T>)MutableCollectionX.super.prependS(stream);
+    }
+
+    @Override
+    default QueueX<T> append(T... values) {
+        return (QueueX<T>)MutableCollectionX.super.append(values);
+    }
+
+    @Override
+    default QueueX<T> append(T value) {
+        return (QueueX<T>)MutableCollectionX.super.append(value);
+    }
+
+    @Override
+    default QueueX<T> prepend(T value) {
+        return (QueueX<T>)MutableCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default QueueX<T> prepend(T... values) {
+        return (QueueX<T>)MutableCollectionX.super.prepend(values);
+    }
+
+    @Override
+    default QueueX<T> insertAt(int pos, T... values) {
+        return (QueueX<T>)MutableCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default QueueX<T> deleteBetween(int start, int end) {
+        return (QueueX<T>)MutableCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default QueueX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (QueueX<T>)MutableCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default QueueX<T> recover(final Function<Throwable, ? extends T> fn) {
+        return (QueueX<T>)MutableCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> QueueX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (QueueX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
+    }
     /**
      * Narrow a covariant Queue
      * 

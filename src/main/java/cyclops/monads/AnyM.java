@@ -10,6 +10,7 @@ import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
@@ -38,6 +39,9 @@ import cyclops.stream.Streamable;
 import org.jooq.lambda.function.Function3;
 import org.jooq.lambda.function.Function4;
 import org.jooq.lambda.function.Function5;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
@@ -145,6 +149,58 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     default <T> AnyM<W,T> fromIterable(Iterable<T> t){
         return  (AnyM<W,T>)adapter().unitIterable(t);
     }
+
+    @Override
+    default <R> AnyM<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (AnyM<W,R>)Zippable.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> AnyM<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (AnyM<W,R>)Zippable.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> AnyM<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return null;
+    }
+
+    @Override
+    default <R> AnyM<W,R> retry(final Function<? super T, ? extends R> fn) {
+        return (AnyM<W,R>)Zippable.super.retry(fn);
+    }
+
+    @Override
+    default <U> AnyM<W,Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (AnyM)Zippable.super.zipP(other);
+    }
+
+    @Override
+    default <R> AnyM<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (AnyM<W,R>)Zippable.super.retry(fn,retries,delay,timeUnit);
+    }
+
+    @Override
+    default <S, U> AnyM<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
+        return (AnyM)Zippable.super.zip3(second,third);
+    }
+
+    @Override
+    default <S, U, R> AnyM<W,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (AnyM<W,R>)Zippable.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4> AnyM<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
+        return (AnyM)Zippable.super.zip4(second,third,fourth);
+    }
+
+    @Override
+    default <T2, T3, T4, R> AnyM<W,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (AnyM<W,R>)Zippable.super.zip4(second,third,fourth,fn);
+    }
+
+
     /**
      * Construct a new instanceof AnyM using the type of the underlying wrapped monad
      * 
