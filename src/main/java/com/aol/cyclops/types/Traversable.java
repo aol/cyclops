@@ -1051,5 +1051,50 @@ public interface Traversable<T> extends Publisher<T>,
         return traversable().insertStreamAt(pos,stream);
     }
 
+    /**
+     * Recover from an exception with an alternative value
+     *
+     * <pre>
+     * {@code
+     * assertThat(ReactiveSeq.of(1,2,3,4)
+     * 						   .map(i->i+2)
+     * 						   .map(u->{throw new RuntimeException();})
+     * 						   .recover(e->"hello")
+     * 						   .firstValue(),equalTo("hello"));
+     * }
+     * </pre>
+     *
+     * @param fn
+     *            Function that accepts a Throwable and returns an alternative
+     *            value
+     * @return ReactiveSeq that can recover from an Exception
+     */
+    default Traversable<T> recover(final Function<Throwable, ? extends T> fn){
+        return traversable().recover(fn);
+    }
+
+    /**
+     * Recover from a particular exception type
+     *
+     * <pre>
+     * {@code
+     * assertThat(ReactiveSeq.of(1,2,3,4)
+     * 					.map(i->i+2)
+     * 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
+     * 					.recover(IOException.class,e->"hello")
+     * 					.firstValue(),equalTo("hello"));
+     *
+     * }
+     * </pre>
+     *
+     * @param exceptionClass
+     *            Type to recover from
+     * @param fn
+     *            That accepts an error and returns an alternative value
+     * @return Traversable that can recover from a particular exception
+     */
+    default <EX extends Throwable> Traversable<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn){
+        return traversable().recover(exceptionClass,fn);
+    }
 
 }

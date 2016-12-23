@@ -108,6 +108,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
         return EMPTY;
     }
 
+
+
     
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
