@@ -39,8 +39,6 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-//@AllArgsConstructor(access= AccessLevel.PRIVATE)
-//@Wither
 public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements ListX<T> {
 
 

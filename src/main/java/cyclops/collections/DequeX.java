@@ -1,6 +1,6 @@
 package cyclops.collections;
 
-import com.aol.cyclops.data.collections.extensions.standard.DequeXImpl;
+import com.aol.cyclops.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
@@ -209,9 +209,9 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         if (it instanceof DequeX)
             return (DequeX) it;
         if (it instanceof Deque)
-            return new DequeXImpl<T>(
+            return new LazyDequeX<T>(
                                      (Deque) it, defaultCollector());
-        return new DequeXImpl<T>(
+        return new LazyDequeX<T>(
                                  Streams.stream(it)
                                             .collect(defaultCollector()),
                                             defaultCollector());
@@ -228,9 +228,9 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         if (it instanceof DequeX)
             return ((DequeX) it).withCollector(collector);
         if (it instanceof Deque)
-            return new DequeXImpl<T>(
+            return new LazyDequeX<T>(
                                      (Deque) it, collector);
-        return new DequeXImpl<T>(
+        return new LazyDequeX<T>(
                                  Streams.stream(it)
                                             .collect(collector),
                                  collector);
@@ -334,8 +334,8 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      */
     @Override
     default <X> DequeX<X> fromStream(final Stream<X> stream) {
-        return new DequeXImpl<>(
-                                stream.collect(getCollector()), getCollector());
+        return new LazyDequeX<>(
+                                ReactiveSeq.fromStream(stream), getCollector());
     }
 
     /**

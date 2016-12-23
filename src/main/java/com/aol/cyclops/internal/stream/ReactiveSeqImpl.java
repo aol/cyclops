@@ -373,7 +373,10 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<T> sorted(final Comparator<? super T> c) {
-        return Streams.reactiveSeq(unwrapStream().sorted(c), reversible,split);
+        final Supplier<TreeSet<T>> supplier =  () -> new TreeSet<T>(c);
+        return coflatMap(r-> r.collect(Collectors.toCollection(supplier))  )
+                .flatMap(col->col.stream());
+
     }
 
     @Override
@@ -841,9 +844,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> shuffle() {
-        return Streams.reactiveSeq(Streams.shuffle(unwrapStream())
-                                                  .stream(),
-                reversible,split);
+        return coflatMap(r->{ List<T> list = r.toList(); Collections.shuffle(list); return list;})
+                .flatMap(c->c.stream());
 
     }
 
@@ -966,8 +968,9 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> shuffle(final Random random) {
-        return Streams.reactiveSeq(Seq.shuffle((Stream<T>)this,random),
-                reversible,split);
+        return coflatMap(r->{ List<T> list = r.toList(); Collections.shuffle(list,random); return list;})
+                .flatMap(c->c.stream());
+
     }
 
     @Override

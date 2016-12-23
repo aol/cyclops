@@ -11,11 +11,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
@@ -274,6 +270,17 @@ public  class CoreReactiveSeqTest {
 
 		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
 	}
+	@Test
+	public void shuffle(){
+
+		assertEquals(3, ReactiveSeq.of(1, 2, 3).shuffle().toListX().size());
+	}
+	@Test
+	public void shuffleRandom(){
+		Random r = new Random();
+		assertEquals(3, ReactiveSeq.of(1, 2, 3).shuffle(r).toListX().size());
+	}
+
 
 	@Test
 	public void prependStreams(){

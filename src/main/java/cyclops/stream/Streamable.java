@@ -2914,7 +2914,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @param fn Function to retry if fails
      * 
      */
-    default <R> Streamable<R> retry(final Function<T, R> fn) {
+    @Override
+    default <R> Streamable<R> retry(final Function<? super T,? extends  R> fn) {
         return fromStream(reactiveSeq().retry(fn));
     }
 
