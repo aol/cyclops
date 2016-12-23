@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
@@ -21,6 +22,8 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import cyclops.function.Monoid;
@@ -210,6 +213,61 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     public static <T, X extends Throwable> Try<T, X> fromIterable(final Iterable<T> iterable) {
         final Iterator<T> it = iterable.iterator();
         return Try.success(it.hasNext() ? it.next() : null);
+    }
+
+    @Override
+    default <R> Try<R,X> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (Try<R,X>)MonadicValue.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> Try<R,X> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (Try<R,X>)MonadicValue.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> Try<R,X> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (Try<R,X>)MonadicValue.super.zipWithP(fn);
+    }
+
+    @Override
+    default <R> Try<R,X> retry(final Function<? super T, ? extends R> fn) {
+        return (Try<R,X>)MonadicValue.super.retry(fn);
+    }
+
+    @Override
+    default <U> Try<Tuple2<T, U>,X> zipP(final Publisher<? extends U> other) {
+        return (Try)MonadicValue.super.zipP(other);
+    }
+
+    @Override
+    default <R> Try<R,X> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (Try<R,X>)MonadicValue.super.retry(fn,retries,delay,timeUnit);
+    }
+
+    @Override
+    default <S, U> Try<Tuple3<T, S, U>,X> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
+        return (Try)MonadicValue.super.zip3(second,third);
+    }
+
+    @Override
+    default <S, U, R> Try<R,X> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (Try<R,X>)MonadicValue.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4> Try<Tuple4<T, T2, T3, T4>,X> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
+        return (Try)MonadicValue.super.zip4(second,third,fourth);
+    }
+
+    @Override
+    default <T2, T3, T4, R> Try<R,X> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (Try<R,X>)MonadicValue.super.zip4(second,third,fourth,fn);
+    }
+
+    @Override
+    default <R> Try<R,X> flatMapS(final Function<? super T, ? extends Stream<? extends R>> mapper) {
+        return (Try<R,X>)MonadicValue.super.flatMapS(mapper);
     }
 
     /* (non-Javadoc)
