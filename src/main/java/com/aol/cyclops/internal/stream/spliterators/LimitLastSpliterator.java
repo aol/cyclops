@@ -39,13 +39,15 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T> implements C
      boolean requestedAll =false;
      @Override
      public boolean tryAdvance(Consumer<? super T> action) {
-           source.forEachRemaining(e->{
-                    if (buffer.size() == limit) {
-                        buffer.poll();
-                    }
-                    buffer.offer(e);
-               });
-         
+         if(!requestedAll) {
+             source.forEachRemaining(e -> {
+                 if (buffer.size() == limit) {
+                     buffer.poll();
+                 }
+                 buffer.offer(e);
+             });
+         }
+            requestedAll=true;
          
             if(buffer.size()>0){
                 action.accept(buffer.pop());

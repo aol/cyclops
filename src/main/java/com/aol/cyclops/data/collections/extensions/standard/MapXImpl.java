@@ -286,27 +286,27 @@ public class MapXImpl<K, V> implements MapX<K, V> {
     }
 
     @Override
-    public <X extends Throwable> Subscription forEachX(long numberOfElements, Consumer<? super Tuple2<K, V>> consumer) {
-        return stream().forEachX(numberOfElements,consumer);
+    public <X extends Throwable> Subscription forEach(long numberOfElements, Consumer<? super Tuple2<K, V>> consumer) {
+        return stream().forEach(numberOfElements,consumer);
     }
 
     @Override
-    public <X extends Throwable> Subscription forEachXWithError(long numberOfElements, Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError) {
-        return stream().forEachXWithError(numberOfElements,consumer,consumerError);
+    public <X extends Throwable> Subscription forEach(long numberOfElements, Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError) {
+        return stream().forEach(numberOfElements,consumer,consumerError);
     }
 
     @Override
-    public <X extends Throwable> Subscription forEachXEvents(long numberOfElements, Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-        return stream().forEachXEvents(numberOfElements,consumer,consumerError,onComplete);
+    public <X extends Throwable> Subscription forEach(long numberOfElements, Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+        return stream().forEach(numberOfElements,consumer,consumerError,onComplete);
     }
 
     @Override
-    public <X extends Throwable> void forEachWithError(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError) {
-        stream().forEachWithError(consumerElement,consumerError);
+    public <X extends Throwable> void forEach(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError) {
+        stream().forEach(consumerElement,consumerError);
     }
 
     @Override
-    public <X extends Throwable> void forEachEvent(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-            stream().forEachEvent(consumerElement,consumerError,onComplete);
+    public <X extends Throwable> void forEach(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+            stream().forEach(consumerElement,consumerError,onComplete);
     }
 }

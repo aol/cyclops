@@ -1098,13 +1098,13 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     
 
     @Override
-    public <X extends Throwable> Subscription forEachX(final long numberOfElements, final Consumer<? super T> consumer) {
+    public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {
         return Streams.forEachX(this, numberOfElements, consumer);
     }
 
     @Override
-    public <X extends Throwable> Subscription forEachXWithError(final long numberOfElements, final Consumer<? super T> consumer,
-            final Consumer<? super Throwable> consumerError) {
+    public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
+                                                      final Consumer<? super Throwable> consumerError) {
         this.split.ifPresent(s->{
             s.setError(consumerError);
         });
@@ -1112,8 +1112,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     }
 
     @Override
-    public <X extends Throwable> Subscription forEachXEvents(final long numberOfElements, final Consumer<? super T> consumer,
-            final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
+    public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
+                                                      final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
         this.split.ifPresent(s->{
             s.setError(consumerError);
             s.setOnComplete(onComplete);
@@ -1122,7 +1122,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     }
 
     @Override
-    public <X extends Throwable> void forEachWithError(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
+    public <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
         this.split.ifPresent(s->{
             s.setHold(false);
             s.setError(consumerError);
@@ -1130,12 +1130,12 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
         new ForEachWithError<T>(this.copyOrGet(),consumerError).forEachRemaining(consumerElement);
 
-      //  Streams.forEachWithError(this, consumerElement, consumerError);**/
+    //    Streams.forEach(this, consumerElement, consumerError);**/
     }
 
     @Override
-    public <X extends Throwable> void forEachEvent(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
-            final Runnable onComplete) {
+    public <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
+                                              final Runnable onComplete) {
         this.split.ifPresent(s->{
             s.setHold(false);
             s.setError(consumerError);

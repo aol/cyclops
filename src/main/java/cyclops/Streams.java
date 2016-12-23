@@ -399,7 +399,7 @@ public class Streams {
      * 
      * <pre>
      * @{code
-     *     Subscription next = Streams.forEachX(Stream.of(1,2,3,4),2,System.out::println);
+     *     Subscription next = Streams.forEach(Stream.of(1,2,3,4),2,System.out::println);
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -433,7 +433,7 @@ public class Streams {
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
      * <pre>
      * @{code
-     *     Subscription next = Streams.forEachXWithError(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
@@ -475,7 +475,7 @@ public class Streams {
      * 
      * <pre>
      * @{code
-     *     Subscription next = Streams.forEachXEvents(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
      *          
      *     System.out.println("First batch processed!");
@@ -514,7 +514,7 @@ public class Streams {
      *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
      * <pre>
      * @{code
-     *     Subscription next = StreanUtils.forEachWithError(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     *     Subscription next = StreanUtils.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
@@ -1139,7 +1139,8 @@ public class Streams {
      * @return Reversed stream
      */
     public static <U> Stream<U> reverse(final Stream<U> stream) {
-        return reversedStream(stream.collect(Collectors.toList()));
+        return ReactiveSeq.of(1).flatMap(i->reversedStream(stream.collect(Collectors.toList())));
+
     }
 
     /**
@@ -1162,9 +1163,9 @@ public class Streams {
      */
     public static <U> Stream<U> reversedStream(final List<U> list) {
         return new ReversedIterator<>(
-                                      list).stream();
-    }
+                list).stream();
 
+    }
     /**
      * Create a new Stream that infiniteable cycles the provided Stream
      * 
@@ -1987,13 +1988,13 @@ public class Streams {
             return (ReactiveSeq) stream;
         
             return new ReactiveSeqImpl<T>((Stream<T>)
-                                          stream, rev,(Optional)push);
+                                          stream, Optional.empty(),(Optional)push);
 
     }
     public final static <T> ReactiveSeq<T> reactiveSeq(final Spliterator<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<PushingSpliterator<?>> push) {
 
         return new ReactiveSeqImpl<T>((Spliterator<T>)
-                stream, rev,(Optional)push);
+                stream, Optional.empty(),(Optional)push);
 
     }
 

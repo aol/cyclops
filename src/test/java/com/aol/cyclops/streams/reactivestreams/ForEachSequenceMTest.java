@@ -30,14 +30,14 @@ public class ForEachSequenceMTest {
 	volatile int times = 0;
 	@Test
 	public void emptyOnComplete(){
-	    ReactiveSeq.empty().forEachEvent(e->{}, e->{}, ()->complete=true);
+	    ReactiveSeq.empty().forEach(e->{}, e->{}, ()->complete=true);
 	    assertTrue(complete);
 	}
 	@Test
 	public void onComplete(){
         ReactiveSeq.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .map(this::load)
-                    .forEachEvent(System.out::println,
+                    .forEach(System.out::println,
                 aEx -> System.err.println(aEx + ":" + aEx.getMessage()), () -> {
                     times++;
                     System.out.println("Over");
@@ -48,7 +48,7 @@ public class ForEachSequenceMTest {
     public void onCompleteXEvents(){
         ReactiveSeq.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .map(this::load)
-                   .forEachXEvents(Long.MAX_VALUE,System.out::println,
+                   .forEach(Long.MAX_VALUE,System.out::println,
                 aEx -> System.err.println(aEx + ":" + aEx.getMessage()), () -> {
                     times++;
                     System.out.println("Over");
@@ -67,13 +67,13 @@ public class ForEachSequenceMTest {
 
 	@Test
 	public void forEachX(){
-		Subscription s = ReactiveSeq.of(1,2,3).forEachX( 2, System.out::println);
+		Subscription s = ReactiveSeq.of(1,2,3).forEach( 2, System.out::println);
 		s.request(1);
 	}
 	@Test
 	public void forEachXTest(){
 		List<Integer> list = new ArrayList<>();
-		Subscription s = ReactiveSeq.of(1,2,3).forEachX( 2,  i->list.add(i));
+		Subscription s = ReactiveSeq.of(1,2,3).forEach( 2, i->list.add(i));
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
 		s.request(1);
@@ -83,7 +83,7 @@ public class ForEachSequenceMTest {
 	@Test
 	public void forEachXTestIsComplete(){
 		List<Integer> list = new ArrayList<>();
-		Subscription s = ReactiveSeq.of(1,2,3).forEachX( 2,  i->list.add(i));
+		Subscription s = ReactiveSeq.of(1,2,3).forEach( 2, i->list.add(i));
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
 		s.request(1);
@@ -97,9 +97,10 @@ public class ForEachSequenceMTest {
 		List<Integer> result = new ArrayList<>();
 		ReactiveSeq.of(1,2,3,4,5,6)
 				.map(this::errors)
-				.forEachWithError(e->result.add(e),e->error=e);
+				.forEach(e->result.add(e), e->error=e);
 		
 		assertNotNull(error);
+		System.out.println(result);
 		assertThat(result,hasItems(1,3,4,5,6));
 		assertThat(result,not(hasItems(2)));
 	}
@@ -111,7 +112,7 @@ public class ForEachSequenceMTest {
 		List<Integer> result = new ArrayList<>();
 		ReactiveSeq.of(1,2,3,4,5,6)
 				.map(this::errors)
-				.forEachEvent(e->result.add(e),e->error=e,()->complete=true);
+				.forEach(e->result.add(e), e->error=e,()->complete=true);
 		
 		assertNotNull(error);
 		assertThat(result,hasItems(1,3,4,5,6));
@@ -131,7 +132,7 @@ public class ForEachSequenceMTest {
 	   
 	    Subscription s = ReactiveSeq.of(10,20,30)
                                     .map(this::process)
-                                    .forEachXWithError( 2,System.out::println, System.err::println);
+                                    .forEach( 2,System.out::println, System.err::println);
         
         System.out.println("Completed 2");
         s.request(1);
@@ -147,7 +148,7 @@ public class ForEachSequenceMTest {
 		
 		Subscription s = ReactiveSeq.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
 							.map(Supplier::get)
-							.forEachXWithError( 2, i->list.add(i),
+							.forEach( 2, i->list.add(i),
 								e->error=e);
 		
 		assertThat(list,hasItems(1,2));
@@ -166,7 +167,7 @@ public class ForEachSequenceMTest {
 		List<Integer> list = new ArrayList<>();
 		
 		Subscription s = ReactiveSeq.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
-						.forEachXEvents( 2, i->list.add(i),
+						.forEach( 2, i->list.add(i),
 								e->error=e,()->complete=true);
 		
 		assertThat(list,hasItems(1,2));
@@ -190,7 +191,7 @@ public class ForEachSequenceMTest {
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
 		ReactiveSeq.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
-							.forEachWithError(  i->list.add(i),
+							.forEach(i->list.add(i),
 								e->error=e);
 		
 		assertThat(list,hasItems(1,2,3));
@@ -210,7 +211,7 @@ public class ForEachSequenceMTest {
 		assertThat(error,nullValue());
 		ReactiveSeq.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
 				.map(Supplier::get)
-				 .forEachEvent( i->list.add(i),e->error=e,()->complete=true);
+				 .forEach(i->list.add(i), e->error=e,()->complete=true);
 		
 		
 		

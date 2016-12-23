@@ -52,7 +52,7 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
 
         });
 
-        return active.hasNext();
+        return active!=null && active.hasNext();
     }
     @Override
     public Spliterator<R> copy() {

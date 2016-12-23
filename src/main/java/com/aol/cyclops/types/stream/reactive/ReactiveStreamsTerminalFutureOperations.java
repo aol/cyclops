@@ -19,7 +19,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      * {@code
      *     ReactiveTask next = ReactiveSeq.of(1,2,3,4)
      *                                  .futureOperations(exec)
-     *          					    .forEachX(2,System.out::println)
+     *          					    .forEach(2,System.out::println)
      *          						.join();
      *          
      *     System.out.println("First batch processed!");
@@ -53,7 +53,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .futureOperations(exec)
      *                                  .map(Supplier::get)
-     *          					    .forEachXWithError(2,System.out::println, e->e.printStackTrace());
+     *          					    .forEach(2,System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -92,7 +92,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .futureOperations(exec)
      *                                  .map(Supplier::get)
-     *          					    .forEachXEvents(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *          					    .forEach(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -128,7 +128,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .futureOperations(exec)
      *                                  .map(Supplier::get)
-     *          					    .forEachWithError(System.out::println, e->e.printStackTrace());
+     *          					    .forEach(System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
      *     

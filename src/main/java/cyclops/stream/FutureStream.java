@@ -3058,7 +3058,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * <pre>
      * {@code
      *     Subscription next = FutureStream.of(1,2,3,4)
-     *          					    .forEachX(2,System.out::println);
+     *          					    .forEach(2,System.out::println);
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -3082,7 +3082,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @return Subscription so that further processing can be continued or cancelled.
      */
     @Override
-    default <X extends Throwable> Subscription forEachX(final long numberOfElements, final Consumer<? super U> consumer) {
+    default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super U> consumer) {
         val t2 = LazyFutureStreamUtils.forEachX(this, numberOfElements, consumer);
         t2.v2.run();
         return t2.v1.join();
@@ -3095,7 +3095,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
-     *          					    .forEachXWithError(2,System.out::println, e->e.printStackTrace());
+     *          					    .forEach(2,System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -3122,8 +3122,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @return Subscription so that further processing can be continued or cancelled.
      */
     @Override
-    default <X extends Throwable> Subscription forEachXWithError(final long numberOfElements, final Consumer<? super U> consumer,
-            final Consumer<? super Throwable> consumerError) {
+    default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super U> consumer,
+                                                       final Consumer<? super Throwable> consumerError) {
         val t2 = LazyFutureStreamUtils.forEachXWithError(this, numberOfElements, consumer, consumerError);
         t2.v2.run();
         return t2.v1.join();
@@ -3138,7 +3138,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * {@code
      *     Subscription next = LazyFurtureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
-     *          					    .forEachXEvents(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *          					    .forEach(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -3165,8 +3165,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @return Subscription so that further processing can be continued or cancelled.
      */
     @Override
-    default <X extends Throwable> Subscription forEachXEvents(final long numberOfElements, final Consumer<? super U> consumer,
-            final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
+    default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super U> consumer,
+                                                       final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
         val t2 = LazyFutureStreamUtils.forEachXEvents(this, numberOfElements, consumer, consumerError, onComplete);
         t2.v2.run();
         return t2.v1.join();
@@ -3178,7 +3178,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
-     *          					    .forEachWithError(System.out::println, e->e.printStackTrace());
+     *          					    .forEach(System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
      *     
@@ -3197,7 +3197,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @param consumerError To accept incoming processing errors from the Stream
      */
     @Override
-    default <X extends Throwable> void forEachWithError(final Consumer<? super U> consumerElement, final Consumer<? super Throwable> consumerError) {
+    default <X extends Throwable> void forEach(final Consumer<? super U> consumerElement, final Consumer<? super Throwable> consumerError) {
         val t2 = LazyFutureStreamUtils.forEachWithError(this, consumerElement, consumerError);
         t2.v2.run();
     }
@@ -3230,8 +3230,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @param onComplete To run after an onComplete event
      */
     @Override
-    default <X extends Throwable> void forEachEvent(final Consumer<? super U> consumerElement, final Consumer<? super Throwable> consumerError,
-            final Runnable onComplete) {
+    default <X extends Throwable> void forEach(final Consumer<? super U> consumerElement, final Consumer<? super Throwable> consumerError,
+                                               final Runnable onComplete) {
         val t2 = LazyFutureStreamUtils.forEachEvent(this, consumerElement, consumerError, onComplete);
         t2.v2.run();
     }

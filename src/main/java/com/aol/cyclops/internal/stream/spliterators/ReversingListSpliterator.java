@@ -22,7 +22,10 @@ public class ReversingListSpliterator<T> implements Spliterator<T>, ReversableSp
     public ReversingListSpliterator(final List<T> elements, final boolean reverse) {
         this.list = elements;
         this.reverse = reverse;
-        this.it = elements.listIterator();
+        if(reverse)
+            this.it = elements.listIterator(list.size());
+        else
+            this.it = elements.listIterator();
 
     }
 

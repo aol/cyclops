@@ -270,10 +270,14 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     @SafeVarargs
     public static <T> ListX<T> of(final T... values) {
-        List<T> list = Arrays.asList(values);
+      //  List<T> list = Arrays.asList(values);
+        final List<T> res = (List<T>) defaultCollector().supplier()
+                .get();
+        for (final T v : values)
+            res.add(v);
+       // return fromIterable(res);
 
-
-        return fromIterable(list);
+        return fromIterable(res);
     }
     public static <T> ListX<T> fromIterator(final Iterator<T> it) {
         return fromIterable(()->it);

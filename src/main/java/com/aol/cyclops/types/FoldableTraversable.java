@@ -162,27 +162,27 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
         return stream().headAndTail();
     }
     @Override
-    default <X extends Throwable> Subscription forEachX(long numberOfElements, Consumer<? super T> consumer){
-        return stream().forEachX(numberOfElements,consumer);
+    default <X extends Throwable> Subscription forEach(long numberOfElements, Consumer<? super T> consumer){
+        return stream().forEach(numberOfElements,consumer);
     }
 
     @Override
-    default <X extends Throwable> Subscription forEachXWithError(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
-        return stream().forEachXWithError(numberOfElements,consumer,consumerError);
+    default <X extends Throwable> Subscription forEach(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
+        return stream().forEach(numberOfElements,consumer,consumerError);
     }
 
     @Override
-    default <X extends Throwable> Subscription forEachXEvents(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
-        return stream().forEachXEvents(numberOfElements,consumer,consumerError,onComplete);
+    default <X extends Throwable> Subscription forEach(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
+        return stream().forEach(numberOfElements,consumer,consumerError,onComplete);
     }
 
     @Override
-    default <X extends Throwable> void forEachWithError(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError){
-        stream().forEachWithError(consumerElement,consumerError);
+    default <X extends Throwable> void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError){
+        stream().forEach(consumerElement,consumerError);
     }
 
     @Override
-    default <X extends Throwable> void forEachEvent(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete){
-        stream().forEachEvent(consumerElement, consumerError, onComplete);
+    default <X extends Throwable> void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete){
+        stream().forEach(consumerElement, consumerError, onComplete);
     }
 }

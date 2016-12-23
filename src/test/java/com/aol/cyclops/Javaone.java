@@ -73,7 +73,7 @@ public class Javaone {
         
         
         Subscription s = ReactiveSeq.of(1,2,3,4)
-                                    .forEachXEvents(2, 
+                                    .forEach(2,
                                                     System.out::println, 
                                                     System.err::println,
                                                     ()->System.out.println("complete"));

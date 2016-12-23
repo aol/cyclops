@@ -172,6 +172,6 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
 
     @Override
     public String toString() {
-        return list.toString();
+        return get().toString();
     }
 }

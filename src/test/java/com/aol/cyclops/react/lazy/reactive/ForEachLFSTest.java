@@ -29,14 +29,14 @@ public class ForEachLFSTest {
 
 	@Test
 	public void forEachX(){
-		Subscription s = FutureStream.of(1,2,3).forEachX( 2, System.out::println);
+		Subscription s = FutureStream.of(1,2,3).forEach( 2, System.out::println);
 		System.out.println("first batch");
 		s.request(1);
 	}
 	@Test
 	public void forEachXTest(){
 		List<Integer> list = new ArrayList<>();
-		Subscription s = FutureStream.of(1,2,3).forEachX( 2, i->list.add(i));
+		Subscription s = FutureStream.of(1,2,3).forEach( 2, i->list.add(i));
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
 		s.request(1);
@@ -46,7 +46,7 @@ public class ForEachLFSTest {
 	@Test
 	public void forEachXTestIsComplete(){
 		List<Integer> list = new ArrayList<>();
-		Subscription s = FutureStream.of(1,2,3).forEachX( 2, i->list.add(i));
+		Subscription s = FutureStream.of(1,2,3).forEach( 2, i->list.add(i));
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
 		s.request(1);
@@ -61,7 +61,7 @@ public class ForEachLFSTest {
 		
 		Subscription s = FutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
 							.map(Supplier::get)
-							.forEachXWithError( 2, i->list.add(i),
+							.forEach( 2, i->list.add(i),
 								e->error=e);
 		
 		assertThat(list,hasItems(1,2));
@@ -80,7 +80,7 @@ public class ForEachLFSTest {
 		List<Integer> list = new ArrayList<>();
 		
 		Subscription s = FutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
-						.forEachXEvents( 2, i->list.add(i),
+						.forEach( 2, i->list.add(i),
 								e->error=e,()->complete=true);
 		
 		assertThat(list,hasItems(1,2));
@@ -104,7 +104,7 @@ public class ForEachLFSTest {
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
 		FutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
-											.forEachWithError(  i->list.add(i),
+											.forEach(i->list.add(i),
 															e->error=e);
 		
 		assertThat(list,hasItems(1,2,3));
@@ -123,7 +123,7 @@ public class ForEachLFSTest {
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
 		FutureStream<Integer> stream = FutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
-		stream.forEachWithError(i->list.add(i),
+		stream.forEach(i->list.add(i),
 								e->error=e);
 		
 		assertThat(list,hasItems(1,2,3));
@@ -143,7 +143,7 @@ public class ForEachLFSTest {
 		assertThat(error,nullValue());
 		FutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();})
 				.map(Supplier::get)
-				 .forEachEvent( i->list.add(i),e->error=e,()->complete=true);
+				 .forEach(i->list.add(i), e->error=e,()->complete=true);
 		
 		
 		

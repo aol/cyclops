@@ -75,7 +75,7 @@ import cyclops.function.Fn3;
  *      Lazy execution
  *      Empty handling
  *      Cycling / repeating
- *      Controlled iteration (forEachX)
+ *      Controlled iteration (forEach)
  *      Event handling (on next, on error, on complete)
  *      
  * 
@@ -2652,7 +2652,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @SafeVarargs
     public static <T> ReactiveSeq<T> of(final T... elements) {
         final ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
-                                                                                    elements, false, 0);
+                                                                                    elements, false);
         return Streams.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array),Optional.empty());
 
     }
@@ -2668,7 +2668,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @SafeVarargs
     public static <T> ReactiveSeq<T> reversedOf(final T... elements) {
         final ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
-                                                                                    elements, false, 0).invert();
+                                                                                    elements, false).invert();
         return Streams.reactiveSeq(StreamSupport.stream(array, false), Optional.ofNullable(array),Optional.empty());
 
     }

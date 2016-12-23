@@ -154,7 +154,7 @@ public  class BaseSequenceMTest {
     public void testReverseListLimit() {
     	
         assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1)).limit(2)
-        				.reverse().toList(), equalTo(asList(-1, 2)));
+        				.reverse().toList(), equalTo(asList(400, 10)));
     }
     @Test
     public void testReverseRange() {

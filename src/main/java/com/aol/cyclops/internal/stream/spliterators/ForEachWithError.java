@@ -31,33 +31,25 @@ public class ForEachWithError<T> extends Spliterators.AbstractSpliterator<T> {
     }
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-      boolean result = source.tryAdvance(e->{
-           try{
-               action.accept(e);
+        boolean result = true;
+        while(result) { //loop while more data, but erroring
+            try {
+                result = source.tryAdvance(e -> {
 
-           }catch(Throwable t){
+                    action.accept(e);
 
-               onError.accept(t);
-
-           }
-       });
-      if(!result)
-          onComplete.run();
-      return result;
-    }
-
-    @Override
-    public void forEachRemaining(Consumer<? super T> action) {
-        source.forEachRemaining(e->{
-            try{
-                action.accept(e);
-
-            }catch(Throwable t){
+                });
+                if (!result) //completed
+                    onComplete.run();
+                return result;
+            } catch (Throwable t) {
 
                 onError.accept(t);
 
             }
-        });
-       onComplete.run();
+        }
+        onComplete.run(); //completed
+        return false;
     }
+
 }

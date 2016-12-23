@@ -6,7 +6,6 @@ import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.control.Eval;
 import cyclops.stream.ReactiveSeq;
-import lombok.ToString;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -23,6 +22,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static cyclops.function.Predicates.*;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -31,8 +31,35 @@ public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
     @Test
+    public void testReverseList() {
+
+        assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1))
+                .reverse().toList(), equalTo(asList(-1, 2, 400,10)));
+    }
+    @Test
+    public void testReverseListLimitFirst() {
+        assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1)).reverse().limit(2)
+                .toList(), equalTo(asList(-1, 2)));
+
+    }
+
+    @Test
+    public void testReverseListLimit() {
+
+        assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1)).limit(2)
+                .reverse().toList(), equalTo(asList(400, 10)));
+    }
+    @Test
+    public void testReverseRange() {
+
+        assertThat( ReactiveSeq.range(0,10)
+                .reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
+    }
+
+    @Test
     public void rangeLongMultiReverse(){
         assertThat(ReactiveSeq.rangeLong(0,5).reverse().reverse().count(),equalTo(5l));
+
     }
     @Test
     public void rangeLong(){
@@ -133,7 +160,7 @@ public class ReactiveSeqTest {
         ReactiveSeq<String> stream = pushable.stream();
       //  pushable.onComplete();
         stream.map(i->i+"-hello")
-                 .forEachWithError(System.out::println,s->System.out.println("Error" + s));
+                 .forEach(System.out::println, s->System.out.println("Error" + s));
 
         pushable.onNext("hello");
         pushable.onError(new RuntimeException());
@@ -232,7 +259,7 @@ public class ReactiveSeqTest {
         pushable.onComplete();
         stream.map(s->s.length())
                 .flatMap(s-> IntStream.range(0,s).boxed())
-                .forEachWithError(System.out::println,System.err::println);
+                .forEach(System.out::println,System.err::println);
         pushable.onNext("world");
     }
     

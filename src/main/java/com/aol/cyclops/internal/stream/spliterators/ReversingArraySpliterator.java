@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@AllArgsConstructor
+//@AllArgsConstructor
 public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableSpliterator<T> {
 
     private final Object[] array;
@@ -17,6 +17,12 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
     private boolean reverse;
 
     int index = 0;
+
+    public ReversingArraySpliterator(Object[] array,boolean reverse) {
+        this.array = array;
+        this.reverse=reverse;
+        this.index = calcIndex();
+    }
 
     @Override
     public long estimateSize() {
@@ -30,9 +36,18 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
 
     @Override
     public ReversingArraySpliterator<T> invert() {
+        System.out.println("inverting!");
         setReverse(!isReverse());
-        index = array.length - 1;
+        index = calcIndex();
         return this;
+    }
+
+    private int calcIndex() {
+        if(isReverse()) {
+            return array.length - 1;
+        }else{
+            return 0;
+        }
     }
 
     @Override
@@ -84,9 +99,9 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
 
     @Override
     public ReversableSpliterator<T> copy() {
-        System.out.println("Copying reversing array spliterator");
+        System.out.println("Copying reversing array spliterator " + index);
         return new ReversingArraySpliterator<T>(
-                                                array, reverse, 0);
+                                                array, reverse);
     }
 
 }
