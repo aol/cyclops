@@ -467,7 +467,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     @Override
     default <R> Maybe<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return null;
+        return (Maybe<R>)MonadicValue.super.zipWithP(fn);
     }
 
     @Override

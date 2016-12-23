@@ -1,21 +1,17 @@
 package cyclops.control;
 
-import cyclops.function.Monoid;
-import cyclops.function.Reducer;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
-import cyclops.collections.immutable.PVectorX;
-import cyclops.collections.DequeX;
-import cyclops.collections.ListX;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.Zippable;
-import cyclops.monads.Witness;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
-import cyclops.function.Memoize;
+import cyclops.collections.DequeX;
+import cyclops.collections.ListX;
+import cyclops.collections.immutable.PVectorX;
+import cyclops.function.*;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -489,7 +485,7 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     @Override
     default <R> Eval<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return null;
+        return (Eval<R>)MonadicValue.super.zipWithP(fn);
     }
 
     @Override

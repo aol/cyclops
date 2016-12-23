@@ -120,7 +120,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
     @Override
     default <R> AnyMValue<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return null;
+        return (AnyMValue<W,R>)MonadicValue.super.zipWithP(fn);
     }
 
     @Override

@@ -162,7 +162,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     @Override
     default <R> AnyM<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return null;
+        return (AnyM<W,R>)Zippable.super.zipWithP(fn);
     }
 
     @Override

@@ -21,11 +21,14 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -229,6 +232,63 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
         return new Primary<>(
                              value);
     }
+
+    @Override
+    default <R> Xor<ST,R> zipWith(Iterable<Function<? super PT, ? extends R>> fn) {
+        return (Xor<ST,R>)MonadicValue.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> Xor<ST,R> zipWithS(Stream<Function<? super PT, ? extends R>> fn) {
+        return (Xor<ST,R>)MonadicValue.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> Xor<ST,R> zipWithP(Publisher<Function<? super PT, ? extends R>> fn) {
+        return (Xor<ST,R>)MonadicValue.super.zipWithP(fn);
+    }
+
+    @Override
+    default <R> Xor<ST,R> retry(final Function<? super PT, ? extends R> fn) {
+        return (Xor<ST,R>)MonadicValue.super.retry(fn);
+    }
+
+    @Override
+    default <U> Xor<ST,Tuple2<PT, U>> zipP(final Publisher<? extends U> other) {
+        return (Xor)MonadicValue.super.zipP(other);
+    }
+
+    @Override
+    default <R> Xor<ST,R> retry(final Function<? super PT, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (Xor<ST,R>)MonadicValue.super.retry(fn,retries,delay,timeUnit);
+    }
+
+    @Override
+    default <S, U> Xor<ST,Tuple3<PT, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
+        return (Xor)MonadicValue.super.zip3(second,third);
+    }
+
+    @Override
+    default <S, U, R> Xor<ST,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super PT, ? super S, ? super U, ? extends R> fn3) {
+        return (Xor<ST,R>)MonadicValue.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4> Xor<ST,Tuple4<PT, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
+        return (Xor)MonadicValue.super.zip4(second,third,fourth);
+    }
+
+    @Override
+    default <T2, T3, T4, R> Xor<ST,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super PT, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (Xor<ST,R>)MonadicValue.super.zip4(second,third,fourth,fn);
+    }
+
+    @Override
+    default <R> Xor<ST,R> flatMapS(final Function<? super PT, ? extends Stream<? extends R>> mapper) {
+        return (Xor<ST,R>)MonadicValue.super.flatMapS(mapper);
+    }
+
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
      */
