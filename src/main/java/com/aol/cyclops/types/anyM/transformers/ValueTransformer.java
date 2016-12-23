@@ -241,14 +241,14 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
    
     public <R> ValueTransformer<W,R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
         
-        return unitAnyM(this.transformerStream().map(v->v.flatMapIterable(mapper)));
+        return unitAnyM(this.transformerStream().map(v->v.flatMapIe(mapper)));
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMapPublisher(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
    
     public <R> ValueTransformer<W,R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return unitAnyM(this.transformerStream().map(v->v.flatMapPublisher(mapper)));
+        return unitAnyM(this.transformerStream().map(v->v.flatMapP(mapper)));
     }
 
 

@@ -13,6 +13,10 @@ import lombok.Setter;
 
 public class PushingSpliterator<T> implements Spliterator<T> {
 
+    //TODO push based analoguges for the following Spliterators / operators
+    //recover, iterate, foreach (error, oncomplete), zip, group
+    //limit, skip
+
    
     public static void main(String[] args) throws InterruptedException{
         PushingSpliterator<String> push =new PushingSpliterator<String>();
@@ -74,7 +78,7 @@ public class PushingSpliterator<T> implements Spliterator<T> {
         if(capture!=null && capture.size()>0){
             action.accept(capture.remove(0));
         }
-        return capture.size()>0 || hold;
+        return (capture!=null && capture.size()>0) || hold;
     }
 
     @Override

@@ -320,16 +320,16 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      * @see com.aol.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
-    default <R> Ior<ST, R> flatMapIterable(Function<? super PT, ? extends Iterable<? extends R>> mapper) {
-        return (Ior<ST, R>)MonadicValue.super.flatMapIterable(mapper);
+    default <R> Ior<ST, R> flatMapIe(Function<? super PT, ? extends Iterable<? extends R>> mapper) {
+        return (Ior<ST, R>)MonadicValue.super.flatMapIe(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMapPublisher(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
-    default <R> Ior<ST, R> flatMapPublisher(Function<? super PT, ? extends Publisher<? extends R>> mapper) {
-        return (Ior<ST, R>)MonadicValue.super.flatMapPublisher(mapper);
+    default <R> Ior<ST, R> flatMapP(Function<? super PT, ? extends Publisher<? extends R>> mapper) {
+        return (Ior<ST, R>)MonadicValue.super.flatMapP(mapper);
     }
 
     /* (non-Javadoc)

@@ -405,7 +405,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
      * @param mapper  transformation function
      * @return  MonadicValue
      */
-    default <R> MonadicValue<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> MonadicValue<R> flatMapIe(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return this.flatMap(a -> {
             return Maybe.fromIterable(mapper.apply(a));
         });
@@ -421,7 +421,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
      * A flattening transformation operation that takes the first value from the returned Publisher.
      * <pre>
      * {@code 
-     *   FutureW.ofResult(1).map(i->i+2).flatMapPublisher(i->Flux.just(()->i*3,20);
+     *   FutureW.ofResult(1).map(i->i+2).flatMapP(i->Flux.just(()->i*3,20);
      *   //FutureW[9]
      * 
      * }</pre>
@@ -429,7 +429,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
      * @param mapper transformation function
      * @return  MonadicValue
      */
-    default <R> MonadicValue<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    default <R> MonadicValue<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
         return this.flatMap(a -> {
             final Publisher<? extends R> publisher = mapper.apply(a);

@@ -3,6 +3,7 @@ package cyclops.collections.immutable;
 
 import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPStackX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.Reducers;
@@ -24,6 +25,7 @@ import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -1101,6 +1103,75 @@ public interface PStackX<T> extends To<PStackX<T>>,
         return (PStackX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
     }
 
+    @Override
+    default <R> PStackX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (PStackX<R>)PersistentCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> PStackX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (PStackX<R>)PersistentCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> PStackX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (PStackX<R>)PersistentCollectionX.super.flatMapS(fn);
+    }
+
+    @Override
+    default <R> PStackX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (PStackX<R>)PersistentCollectionX.super.flatMapP(fn);
+    }
+
+    @Override
+    default PStackX<T> prependS(Stream<? extends T> stream) {
+        return (PStackX<T>)PersistentCollectionX.super.prependS(stream);
+    }
+
+    @Override
+    default PStackX<T> append(T... values) {
+        return (PStackX<T>)PersistentCollectionX.super.append(values);
+    }
+
+    @Override
+    default PStackX<T> append(T value) {
+        return (PStackX<T>)PersistentCollectionX.super.append(value);
+    }
+
+    @Override
+    default PStackX<T> prepend(T value) {
+        return (PStackX<T>)PersistentCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default PStackX<T> prepend(T... values) {
+        return (PStackX<T>)PersistentCollectionX.super.prepend(values);
+    }
+
+    @Override
+    default PStackX<T> insertAt(int pos, T... values) {
+        return (PStackX<T>)PersistentCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default PStackX<T> deleteBetween(int start, int end) {
+        return (PStackX<T>)PersistentCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default PStackX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (PStackX<T>)PersistentCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default PStackX<T> recover(final Function<Throwable, ? extends T> fn) {
+        return (PStackX<T>)PersistentCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> PStackX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (PStackX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
+    }
 
 
 }

@@ -26,6 +26,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import cyclops.control.*;
+import cyclops.control.either.Either;
+import cyclops.control.either.Either3;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
@@ -62,6 +64,7 @@ import cyclops.monads.Witness.stream;
 import cyclops.monads.Witness.streamable;
 import cyclops.monads.Witness.tryType;
 import cyclops.monads.Witness.xor;
+import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.future;
 import com.aol.cyclops.types.extensability.FunctionalAdapter;
 import com.aol.cyclops.types.stream.ToStream;
@@ -706,6 +709,26 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return AnyMFactory.instance.value(xor,Witness.xor.INSTANCE);
     }
 
+    /**
+     * Create an AnyMValue instance that wraps an Either3
+     *
+     * @param xor Xor to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Either
+     */
+    public static <LT1,T> AnyMValue<either,T> fromEither(final Either<LT1, T> xor) {
+        Objects.requireNonNull(xor);
+        return AnyMFactory.instance.value(xor,Witness.either.INSTANCE);
+    }
+    /**
+     * Create an AnyMValue instance that wraps an Either3
+     *
+     * @param xor Xor to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Either3
+     */
+    public static <LT1,LT2,T> AnyMValue<either3,T> fromEither3(final Either3<LT1, LT2, T> xor) {
+        Objects.requireNonNull(xor);
+        return AnyMFactory.instance.value(xor,Witness.either3.INSTANCE);
+    }
 
 
     /**
@@ -822,7 +845,41 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
                             .map(i -> AnyM.fromStreamable(i))
                             .collect(ListX.listXCollector());
     }
-
+    /**
+     * Take an iterable containing Either3s and convert them into a List of AnyMs
+     * e.g.
+     * {@code
+     *     List<AnyM<Integer>> anyMs = listFromEither3(Arrays.asList(Either3.right(1),Either3.left(10));
+     *
+     *     //List[AnyM[Either3:right[1],Either3:left[10]]]
+     * }
+     *
+     * @param anyM Iterable containing Eithers
+     * @return List of AnyMs
+     */
+    public static <ST, LT2, T> ListX<AnyMValue<either3,T>> listFromEither3(final Iterable<Either3<ST, LT2, T>> anyM) {
+        return ReactiveSeq.fromIterable(anyM)
+                .map(e -> AnyM.fromEither3(e))
+                .toListX();
+    }
+    /**
+     * Take an iterable containing Either3s and convert them into a List of AnyMs
+     * e.g.
+     * {@code
+     *     List<AnyM<Integer>> anyMs = anyMList(Arrays.asList(Either.right(1),Either.left(10));
+     *
+     *     //List[AnyM[Either.right[1],Either:left[10]]]
+     * }
+     *
+     * @param anyM Iterable containing Eithers
+     * @return List of AnyMs
+     */
+    public static <ST,  T> ListX<AnyMValue<either,T>> listFromEither(final Iterable<Either<ST, T>> anyM) {
+        Objects.requireNonNull(anyM);
+        return ReactiveSeq.fromIterable(anyM)
+                .map(e -> AnyM.fromEither(e))
+                .toListX();
+    }
     /**
      * Take an iterable containing Streams and convert them into a List of AnyMs
      * e.g.

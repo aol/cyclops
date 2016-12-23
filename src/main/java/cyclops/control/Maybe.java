@@ -115,17 +115,17 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @see com.aol.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
-    default <R> Maybe<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (Maybe<R>) MonadicValue.super.flatMapIterable(mapper);
+    default <R> Maybe<R> flatMapIe(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (Maybe<R>) MonadicValue.super.flatMapIe(mapper);
     }
 
    
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMapPublisher(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
-    default <R> Maybe<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        final MonadicValue<R> m = MonadicValue.super.flatMapPublisher(mapper);
+    default <R> Maybe<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        final MonadicValue<R> m = MonadicValue.super.flatMapP(mapper);
         return (Maybe<R>) m;
     }
   
@@ -933,14 +933,14 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
         @Override
-        public <R> Just<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-            final Maybe<R> maybe = Maybe.super.flatMapIterable(mapper);
+        public <R> Just<R> flatMapIe(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+            final Maybe<R> maybe = Maybe.super.flatMapIe(mapper);
             return (Just<R>) Maybe.just(maybe.get());
         }
 
         @Override
-        public <R> Just<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-            final Maybe<R> m = Maybe.super.flatMapPublisher(mapper);
+        public <R> Just<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+            final Maybe<R> m = Maybe.super.flatMapP(mapper);
             return (Just<R>) Maybe.just(m.get());
         }
 
@@ -1094,15 +1094,15 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
         @Override
-        public <R> Lazy<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-            final Maybe<R> m = Maybe.super.flatMapIterable(mapper);
+        public <R> Lazy<R> flatMapIe(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+            final Maybe<R> m = Maybe.super.flatMapIe(mapper);
             return new Lazy(
                             Eval.later(() -> m.get()));
         }
 
         @Override
-        public <R> Lazy<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-            final Maybe<R> m = (Lazy<R>) Maybe.super.flatMapPublisher(mapper);
+        public <R> Lazy<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+            final Maybe<R> m = (Lazy<R>) Maybe.super.flatMapP(mapper);
             return new Lazy(
                             Eval.later(() -> m.get()));
         }
@@ -1193,12 +1193,12 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
         @Override
-        public <R> Nothing<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        public <R> Nothing<R> flatMapIe(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
             return (Nothing<R>) EMPTY;
         }
 
         @Override
-        public <R> Nothing<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        public <R> Nothing<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
             return (Nothing<R>) EMPTY;
         }
     }

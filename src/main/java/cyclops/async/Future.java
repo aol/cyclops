@@ -1269,17 +1269,17 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
      * @see com.aol.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
-    public <R> Future<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (Future<R>) MonadicValue.super.flatMapIterable(mapper);
+    public <R> Future<R> flatMapIe(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (Future<R>) MonadicValue.super.flatMapIe(mapper);
     }
 
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMapPublisher(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
-    public <R> Future<R> flatMapPublisher(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return (Future<R>) MonadicValue.super.flatMapPublisher(mapper);
+    public <R> Future<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return (Future<R>) MonadicValue.super.flatMapP(mapper);
     }
 
     @Override

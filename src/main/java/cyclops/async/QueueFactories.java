@@ -77,7 +77,7 @@ public class QueueFactories {
      * <pre>
      * {@code 
      *   ReactiveSeq.of(1,2,3)
-                    .flatMapPublisher(i->ReactiveSeq.range(i,1500),1000,QueueFactories.unboundedQueue())
+                    .flatMapP(i->ReactiveSeq.range(i,1500),1000,QueueFactories.unboundedQueue())
                     .toListX()
      * }
      * </pre>

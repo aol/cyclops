@@ -460,7 +460,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#flatMapPublisher(java.util.function.Function)
+     * @see cyclops.monads.transformers.values.ValueTransformer#flatMapP(java.util.function.Function)
      */
     @Override
     public <R> FutureT<W, R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {

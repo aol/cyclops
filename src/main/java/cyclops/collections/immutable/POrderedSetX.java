@@ -21,6 +21,7 @@ import org.pcollections.POrderedSet;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -960,6 +961,75 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     default <C extends Collection<? super T>> POrderedSetX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (POrderedSetX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
+    }
+    @Override
+    default <R> POrderedSetX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (POrderedSetX<R>)PersistentCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> POrderedSetX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (POrderedSetX<R>)PersistentCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> POrderedSetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (POrderedSetX<R>)PersistentCollectionX.super.flatMapS(fn);
+    }
+
+    @Override
+    default <R> POrderedSetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (POrderedSetX<R>)PersistentCollectionX.super.flatMapP(fn);
+    }
+
+    @Override
+    default POrderedSetX<T> prependS(Stream<? extends T> stream) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.prependS(stream);
+    }
+
+    @Override
+    default POrderedSetX<T> append(T... values) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.append(values);
+    }
+
+    @Override
+    default POrderedSetX<T> append(T value) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.append(value);
+    }
+
+    @Override
+    default POrderedSetX<T> prepend(T value) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default POrderedSetX<T> prepend(T... values) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.prepend(values);
+    }
+
+    @Override
+    default POrderedSetX<T> insertAt(int pos, T... values) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default POrderedSetX<T> deleteBetween(int start, int end) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default POrderedSetX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default POrderedSetX<T> recover(final Function<Throwable, ? extends T> fn) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> POrderedSetX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 
 

@@ -2887,7 +2887,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @param fn That accepts an error and returns an alternative value
      * @return Streamable that can recover from a particular exception
      */
-    default <EX extends Throwable> Streamable<T> recover(final Class<EX> exceptionClass, final Function<EX, T> fn) {
+    default <EX extends Throwable> Streamable<T> recover(final Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
         return fromStream(reactiveSeq().recover(exceptionClass, fn));
 
     }

@@ -24,6 +24,7 @@ import org.pcollections.TreePVector;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -1044,6 +1045,76 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     default <C extends Collection<? super T>> PVectorX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (PVectorX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
+    }
+
+    @Override
+    default <R> PVectorX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (PVectorX<R>)PersistentCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> PVectorX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (PVectorX<R>)PersistentCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> PVectorX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (PVectorX<R>)PersistentCollectionX.super.flatMapS(fn);
+    }
+
+    @Override
+    default <R> PVectorX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (PVectorX<R>)PersistentCollectionX.super.flatMapP(fn);
+    }
+
+    @Override
+    default PVectorX<T> prependS(Stream<? extends T> stream) {
+        return (PVectorX<T>)PersistentCollectionX.super.prependS(stream);
+    }
+
+    @Override
+    default PVectorX<T> append(T... values) {
+        return (PVectorX<T>)PersistentCollectionX.super.append(values);
+    }
+
+    @Override
+    default PVectorX<T> append(T value) {
+        return (PVectorX<T>)PersistentCollectionX.super.append(value);
+    }
+
+    @Override
+    default PVectorX<T> prepend(T value) {
+        return (PVectorX<T>)PersistentCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default PVectorX<T> prepend(T... values) {
+        return (PVectorX<T>)PersistentCollectionX.super.prepend(values);
+    }
+
+    @Override
+    default PVectorX<T> insertAt(int pos, T... values) {
+        return (PVectorX<T>)PersistentCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default PVectorX<T> deleteBetween(int start, int end) {
+        return (PVectorX<T>)PersistentCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default PVectorX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (PVectorX<T>)PersistentCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default PVectorX<T> recover(final Function<Throwable, ? extends T> fn) {
+        return (PVectorX<T>)PersistentCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> PVectorX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (PVectorX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 
 

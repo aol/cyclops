@@ -696,13 +696,13 @@ public class MaybeTest implements Printable {
 
 	@Test
 	public void testFlatMapIterable() {
-		Maybe<Integer> maybe = just.flatMapIterable(i -> Arrays.asList(i, 20, 30));
+		Maybe<Integer> maybe = just.flatMapIe(i -> Arrays.asList(i, 20, 30));
 		assertThat(maybe.get(), equalTo(10));
 	}
 
 	@Test
 	public void testFlatMapPublisher() {
-		Maybe<Integer> maybe = Maybe.of(100).flatMapPublisher(i -> Flux.just(10, i));
+		Maybe<Integer> maybe = Maybe.of(100).flatMapP(i -> Flux.just(10, i));
 		assertThat(maybe.get(), equalTo(10));
 	}
 }

@@ -97,7 +97,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     ReactiveSeq<T> fold(Monoid<T> monoid);
-    
+
+    //here be dragons, experimental - nearly all spliterators are iterative
     public static  <T> ReactiveSubscriber<T> pushable(){
         return new ReactiveSubscriber<>();
     }

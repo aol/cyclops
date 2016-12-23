@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -983,6 +984,76 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     default <C extends Collection<? super T>> PBagX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (PBagX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
+    }
+
+    @Override
+    default <R> PBagX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (PBagX<R>)PersistentCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> PBagX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (PBagX<R>)PersistentCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> PBagX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (PBagX<R>)PersistentCollectionX.super.flatMapS(fn);
+    }
+
+    @Override
+    default <R> PBagX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (PBagX<R>)PersistentCollectionX.super.flatMapP(fn);
+    }
+
+    @Override
+    default PBagX<T> prependS(Stream<? extends T> stream) {
+        return (PBagX<T>)PersistentCollectionX.super.prependS(stream);
+    }
+
+    @Override
+    default PBagX<T> append(T... values) {
+        return (PBagX<T>)PersistentCollectionX.super.append(values);
+    }
+
+    @Override
+    default PBagX<T> append(T value) {
+        return (PBagX<T>)PersistentCollectionX.super.append(value);
+    }
+
+    @Override
+    default PBagX<T> prepend(T value) {
+        return (PBagX<T>)PersistentCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default PBagX<T> prepend(T... values) {
+        return (PBagX<T>)PersistentCollectionX.super.prepend(values);
+    }
+
+    @Override
+    default PBagX<T> insertAt(int pos, T... values) {
+        return (PBagX<T>)PersistentCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default PBagX<T> deleteBetween(int start, int end) {
+        return (PBagX<T>)PersistentCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default PBagX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (PBagX<T>)PersistentCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default PBagX<T> recover(final Function<Throwable, ? extends T> fn) {
+        return (PBagX<T>)PersistentCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> PBagX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (PBagX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 
 

@@ -43,7 +43,7 @@ public class ForEachWithError<T> extends Spliterators.AbstractSpliterator<T> {
                     onComplete.run();
                 return result;
             } catch (Throwable t) {
-
+                t.printStackTrace();
                 onError.accept(t);
 
             }

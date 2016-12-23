@@ -75,7 +75,7 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 	    /**
 	    PStackX.of(1,2,3)
 	            .minusAll(PBagX.of(2,3))
-                .flatMapPublisher(i->Flux.just(10+i,20+i,30+i));
+                .flatMapP(i->Flux.just(10+i,20+i,30+i));
 
 	    **/
 	}

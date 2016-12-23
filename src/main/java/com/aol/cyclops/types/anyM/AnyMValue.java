@@ -110,52 +110,52 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
     @Override
     default <R> AnyMValue<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (AnyMValue<W,R>)MonadicValue.super.zipWith(fn);
+        return (AnyMValue<W,R>)AnyM.super.zipWith(fn);
     }
 
     @Override
     default <R> AnyMValue<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (AnyMValue<W,R>)MonadicValue.super.zipWithS(fn);
+        return (AnyMValue<W,R>)AnyM.super.zipWithS(fn);
     }
 
     @Override
     default <R> AnyMValue<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (AnyMValue<W,R>)MonadicValue.super.zipWithP(fn);
+        return (AnyMValue<W,R>)AnyM.super.zipWithP(fn);
     }
 
     @Override
     default <R> AnyMValue<W,R> retry(final Function<? super T, ? extends R> fn) {
-        return (AnyMValue<W,R>)MonadicValue.super.retry(fn);
+        return (AnyMValue<W,R>)AnyM.super.retry(fn);
     }
 
     @Override
     default <U> AnyMValue<W,Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (AnyMValue)MonadicValue.super.zipP(other);
+        return (AnyMValue)AnyM.super.zipP(other);
     }
 
     @Override
     default <R> AnyMValue<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (AnyMValue<W,R>)MonadicValue.super.retry(fn,retries,delay,timeUnit);
+        return (AnyMValue<W,R>)AnyM.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override
     default <S, U> AnyMValue<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return (AnyMValue)MonadicValue.super.zip3(second,third);
+        return (AnyMValue)AnyM.super.zip3(second,third);
     }
 
     @Override
     default <S, U, R> AnyMValue<W,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (AnyMValue<W,R>)MonadicValue.super.zip3(second,third,fn3);
+        return (AnyMValue<W,R>)AnyM.super.zip3(second,third,fn3);
     }
 
     @Override
     default <T2, T3, T4> AnyMValue<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
-        return (AnyMValue)MonadicValue.super.zip4(second,third,fourth);
+        return (AnyMValue)AnyM.super.zip4(second,third,fourth);
     }
 
     @Override
     default <T2, T3, T4, R> AnyMValue<W,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (AnyMValue<W,R>)MonadicValue.super.zip4(second,third,fourth,fn);
+        return (AnyMValue<W,R>)AnyM.super.zip4(second,third,fourth,fn);
     }
 
 
@@ -273,10 +273,10 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
         
     }
     default <R> AnyM<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn){
-        return (AnyMValue<W,R>)MonadicValue.super.flatMapIterable(fn);
+        return (AnyMValue<W,R>)MonadicValue.super.flatMapIe(fn);
     }
     default <R> AnyM<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
-        return (AnyMValue<W,R>)MonadicValue.super.flatMapPublisher(fn);
+        return (AnyMValue<W,R>)MonadicValue.super.flatMapP(fn);
     }
     default <R> AnyMValue<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
         return (AnyMValue<W,R>)MonadicValue.super.flatMapS(fn);

@@ -21,6 +21,7 @@ import org.pcollections.PSet;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -939,6 +940,75 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         return (PSetX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
     }
 
+    @Override
+    default <R> PSetX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (PSetX<R>)PersistentCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> PSetX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (PSetX<R>)PersistentCollectionX.super.retry(fn);
+    }
+
+    @Override
+    default <R> PSetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (PSetX<R>)PersistentCollectionX.super.flatMapS(fn);
+    }
+
+    @Override
+    default <R> PSetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (PSetX<R>)PersistentCollectionX.super.flatMapP(fn);
+    }
+
+    @Override
+    default PSetX<T> prependS(Stream<? extends T> stream) {
+        return (PSetX<T>)PersistentCollectionX.super.prependS(stream);
+    }
+
+    @Override
+    default PSetX<T> append(T... values) {
+        return (PSetX<T>)PersistentCollectionX.super.append(values);
+    }
+
+    @Override
+    default PSetX<T> append(T value) {
+        return (PSetX<T>)PersistentCollectionX.super.append(value);
+    }
+
+    @Override
+    default PSetX<T> prepend(T value) {
+        return (PSetX<T>)PersistentCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default PSetX<T> prepend(T... values) {
+        return (PSetX<T>)PersistentCollectionX.super.prepend(values);
+    }
+
+    @Override
+    default PSetX<T> insertAt(int pos, T... values) {
+        return (PSetX<T>)PersistentCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default PSetX<T> deleteBetween(int start, int end) {
+        return (PSetX<T>)PersistentCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default PSetX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (PSetX<T>)PersistentCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default PSetX<T> recover(final Function<Throwable, ? extends T> fn) {
+        return (PSetX<T>)PersistentCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> PSetX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (PSetX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
+    }
 
 
 

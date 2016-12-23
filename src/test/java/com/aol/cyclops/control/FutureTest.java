@@ -716,16 +716,16 @@ public class FutureTest {
     
     @Test
     public void testFlatMapIterable() {
-        Future<Integer> f = just.flatMapIterable(i -> Arrays.asList(i, 20, 30));
+        Future<Integer> f = just.flatMapIe(i -> Arrays.asList(i, 20, 30));
         assertThat(f.get(), equalTo(10));
 
-        f = just.flatMapIterable(i -> AnyM.fromStream(ReactiveSeq.of(20, i, 30)));
+        f = just.flatMapIe(i -> AnyM.fromStream(ReactiveSeq.of(20, i, 30)));
         assertThat(f.get(), equalTo(20));
     }
     
     @Test
     public void testFlatMapPublisher() {
-        Future<Integer> f = just.flatMapPublisher(i -> Flux.just(100, i));
+        Future<Integer> f = just.flatMapP(i -> Flux.just(100, i));
         assertThat(f.get(), equalTo(100));
     }
 

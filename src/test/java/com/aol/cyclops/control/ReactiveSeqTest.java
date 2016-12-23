@@ -31,6 +31,14 @@ public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
     @Test
+    public void lastOneBug(){
+        assertThat(ReactiveSeq.of(1, 2, 3, 4)
+                .takeRight(1)
+                .singleOptional()
+                .orElse(-1),equalTo(4));
+    }
+
+    @Test
     public void testReverseList() {
 
         assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1))
@@ -153,16 +161,31 @@ public class ReactiveSeqTest {
         assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12, 22, 32)));
     }
 
+    @Test
+    public void limitPushTest(){
+        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSeq<String> stream = pushable.stream();
+        ReactiveSeq<List<String>> res = stream.map(i->i+"-hello").limit(2)
+                                               .collectSeq(Collectors.toList());
+        pushable.onNext("hello1");
+        pushable.onNext("hello2");
+        pushable.onNext("hello3");
+
+
+       //LimitSpliterator only supports iteration
+        assertThat(res.single().size(),equalTo(3));
+    }
 
     @Test
     public void forEachWithErrorPush(){
         ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
         ReactiveSeq<String> stream = pushable.stream();
       //  pushable.onComplete();
-        stream.map(i->i+"-hello")
+        stream.map(i->i+"-hello").limit(2)
                  .forEach(System.out::println, s->System.out.println("Error" + s));
 
-        pushable.onNext("hello");
+        pushable.onNext("hello1");
+
         pushable.onError(new RuntimeException());
     }
     @Test

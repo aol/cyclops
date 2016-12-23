@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -1013,7 +1014,68 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
         return (AnyMSeq<W,R>)AnyM.super.flatMapA(fn);
     }
 
-    
+    @Override
+    default <R> AnyMSeq<W,R> retry(final Function<? super T, ? extends R> fn) {
+        return (AnyMSeq<W,R>)AnyM.super.retry(fn);
+    }
+
+    @Override
+    default <R> AnyMSeq<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (AnyMSeq<W,R>)AnyM.super.retry(fn);
+    }
+
+    @Override
+    default AnyMSeq<W,T> prependS(Stream<? extends T> stream) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.prependS(stream);
+    }
+
+    @Override
+    default AnyMSeq<W,T> append(T... values) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.append(values);
+    }
+
+    @Override
+    default AnyMSeq<W,T> append(T value) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.append(value);
+    }
+
+    @Override
+    default AnyMSeq<W,T> prepend(T value) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.prepend(value);
+    }
+
+    @Override
+    default AnyMSeq<W,T> prepend(T... values) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.prepend(values);
+    }
+
+    @Override
+    default AnyMSeq<W,T> insertAt(int pos, T... values) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.insertAt(pos,values);
+    }
+
+    @Override
+    default AnyMSeq<W,T> deleteBetween(int start, int end) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default AnyMSeq<W,T> insertStreamAt(int pos, Stream<T> stream) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default AnyMSeq<W,T> recover(final Function<Throwable, ? extends T> fn) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> AnyMSeq<W,T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.recover(exceptionClass,fn);
+    }
+
+
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.monad.AnyM#unit(java.lang.Object)

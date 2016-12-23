@@ -12,6 +12,10 @@ import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
+import cyclops.control.either.Either;
+import cyclops.control.either.Either3;
+import cyclops.control.either.Either4;
+import cyclops.control.either.Either5;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import cyclops.control.Try;
@@ -93,6 +97,19 @@ public interface Witness {
         return anyM.unwrap();
     }
     public static <ST,T> Xor<ST,T> xor(AnyM<xor,? extends T> anyM){
+        return anyM.unwrap();
+    }
+
+    public static <L,R> Either<L,R> either(AnyM<either,? extends R> anyM){
+        return anyM.unwrap();
+    }
+    public static <L1,L2,R> Either3<L1,L2,R> either3(AnyM<either3,? extends R> anyM){
+        return anyM.unwrap();
+    }
+    public static <L1,L2,L3,R> Either4<L1,L2,L3,R> either(AnyM<either4,? extends R> anyM){
+        return anyM.unwrap();
+    }
+    public static <L1,L2,L3,L4,R> Either5<L1,L2,L3,L4,R> either5(AnyM<either5,? extends R> anyM){
         return anyM.unwrap();
     }
     public static <ST,T> Ior<ST,T> ior(AnyM<ior,? extends T> anyM){
@@ -220,6 +237,50 @@ public interface Witness {
                     Ior::primary,Ior::fromIterable,false,this);
         }
         
+    }
+    public static enum either implements MonadicValueWitness<either>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<either> adapter() {
+            return new MonadicValueAdapter<Witness.either>(()-> Either.left(null),
+                    Either::right,Either::fromIterable,false,this);
+        }
+
+    }
+    public static enum either3 implements MonadicValueWitness<either3>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<either3> adapter() {
+            return new MonadicValueAdapter<Witness.either3>(()-> Either3.left1(null),
+                    Either3::right,Either3::fromIterable,false,this);
+        }
+
+    }
+    public static enum either4 implements MonadicValueWitness<either4>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<either4> adapter() {
+            return new MonadicValueAdapter<Witness.either4>(()-> Either4.left1(null),
+                    Either4::right, Either4::fromIterable,false,this);
+        }
+
+    }
+    public static enum either5 implements MonadicValueWitness<either5>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<either5> adapter() {
+            return new MonadicValueAdapter<Witness.either5>(()-> Either5.left1(null),
+                    Either5::right, Either5::fromIterable,false,this);
+        }
+
     }
     public static enum xor implements MonadicValueWitness<xor>{
         INSTANCE;
