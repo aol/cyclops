@@ -25,7 +25,7 @@ public class FlatMapSequenceMTest {
 	}
 	@Test
 	public void flatMapCollection(){
-	assertThat(	AnyM.fromOptional(Optional.of(20)).stream().flatMapIterable(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
+	assertThat(	AnyM.fromOptional(Optional.of(20)).stream().flatMapI(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
 	}
 	
 	@Test

@@ -301,7 +301,7 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMapIterable(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
     default <R> Eval<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {

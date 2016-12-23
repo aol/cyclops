@@ -26,6 +26,7 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -348,7 +349,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     @Override
     public final <U> ReactiveSeq<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
-        return Streams.reactiveSeq(Stream.concat(Stream.of(seed), StreamSupport.stream(new ScanLeftSpliterator<T,U>(copyOrGet(),
+        return Streams.reactiveSeq(ReactiveSeq.concat(ReactiveSeq.of(seed), StreamSupport.stream(new ScanLeftSpliterator<T,U>(copyOrGet(),
                                         seed,function),false)),reversible,this.split);
 
 
@@ -635,13 +636,12 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     @Override
     public final <R> ReactiveSeq<R> map(final Function<? super T, ? extends R> fn) {
 
-        return new ReactiveSeqImpl(StreamSupport.stream(new MappingSpliterator<T,R>(this.copyOrGet(),fn),false), reversible,split);
+        return new ReactiveSeqImpl(StreamSupport.stream(new MappingSpliterator<T,R>(this.copyOrGet(),fn).compose(),false), reversible,split);
     }
 
     @Override
     public final ReactiveSeq<T> peek(final Consumer<? super T> c) {
-        return new ReactiveSeqImpl(
-                                   unwrapStream().peek(c), reversible,split);
+        return map(i->{c.accept(i); return i;});
     }
 
     @Override
@@ -651,14 +651,18 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     }
 
     @Override
-
     public final <R> ReactiveSeq<R> flatMapAnyM(final Function<? super T, AnyM<Witness.stream,? extends R>> fn) {
         return Streams.reactiveSeq(Streams.flatMapAnyM(this, fn), reversible,split);
     }
 
     @Override
-    public final <R> ReactiveSeq<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> fn) {
+    public final <R> ReactiveSeq<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> fn) {
         return Streams.reactiveSeq(new IterableFlatMappingSpliterator<>(copyOrGet(),fn), Optional.empty(),split);
+
+    }
+    @Override
+    public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return Streams.reactiveSeq(new PublisherFlatMappingSpliterator<>(copyOrGet(),fn), Optional.empty(),split);
 
     }
 
@@ -695,7 +699,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<T> filter(final Predicate<? super T> fn) {
-        return Streams.reactiveSeq(new FilteringSpliterator<T>(copyOrGet(),fn), reversible,split);
+        return Streams.reactiveSeq(new FilteringSpliterator<T>(copyOrGet(),fn).compose(), reversible,split);
     }
 
     @Override

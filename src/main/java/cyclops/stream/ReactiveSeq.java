@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.*;
 import java.util.stream.*;
 
-import com.sun.xml.internal.ws.util.StreamUtils;
 import cyclops.monads.AnyM;
 import cyclops.async.*;
 import cyclops.control.Trampoline;
@@ -427,7 +426,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return nested.flatMap(Function.identity());
     }
     static <T1> ReactiveSeq<T1> flattenI(ReactiveSeq<? extends Iterable<T1>> nested){
-        return nested.flatMapIterable(Function.identity());
+        return nested.flatMapI(Function.identity());
     }
     static <T1> ReactiveSeq<T1> flattenO(ReactiveSeq<? extends Optional<T1>> nested){
         return nested.flatMap(Streams::optionalToStream);
@@ -1952,12 +1951,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param fn
      * @return
      */
-    <R> ReactiveSeq<R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> ReactiveSeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
 
 
-    default <R> ReactiveSeq<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
-        return this.flatMapIterable(fn.andThen(ReactiveSeq::fromPublisher));
-    }
+    <R> ReactiveSeq<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
     /**
      * flatMap operation
      * 
@@ -2165,7 +2162,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to append
      * @return ReactiveSeq with appended values
      */
-
     ReactiveSeq<T> append(T... values);
 
 
@@ -3794,33 +3790,33 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     String format();
 
     @Override
-    default ReactiveSeq<T> removeAll(final Stream<? extends T> stream) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.removeAll(stream);
+    default ReactiveSeq<T> removeAllS(final Stream<? extends T> stream) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllS(stream);
     }
 
     @Override
-    default ReactiveSeq<T> removeAll(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.removeAll(it);
+    default ReactiveSeq<T> removeAllS(final Iterable<? extends T> it) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllS(it);
     }
 
     @Override
-    default ReactiveSeq<T> removeAll(final T... values) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.removeAll(values);
+    default ReactiveSeq<T> removeAllS(final T... values) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllS(values);
     }
 
     @Override
-    default ReactiveSeq<T> retainAll(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.retainAll(it);
+    default ReactiveSeq<T> retainAllS(final Iterable<? extends T> it) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllS(it);
     }
 
     @Override
-    default ReactiveSeq<T> retainAll(final Stream<? extends T> stream) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.retainAll(stream);
+    default ReactiveSeq<T> retainAllS(final Stream<? extends T> stream) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllS(stream);
     }
 
     @Override
-    default ReactiveSeq<T> retainAll(final T... values) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.retainAll(values);
+    default ReactiveSeq<T> retainAllS(final T... values) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllS(values);
     }
 
     @Override

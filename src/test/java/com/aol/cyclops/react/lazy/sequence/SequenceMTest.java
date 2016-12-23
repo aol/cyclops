@@ -370,7 +370,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void flatMapOptional(){
-		assertThat(FutureStream.of(1,2,3,null).flatMapIterable(Maybe::ofNullable)
+		assertThat(FutureStream.of(1,2,3,null).flatMapI(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

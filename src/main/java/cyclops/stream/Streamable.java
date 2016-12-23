@@ -1799,7 +1799,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return
      */
     default <R> Streamable<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return fromStream(reactiveSeq().flatMapIterable(fn));
+        return fromStream(reactiveSeq().flatMapI(fn));
     }
 
     /**
@@ -1971,6 +1971,19 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      */
     default Streamable<T> prependStreamable(final Streamable<T> stream) {
         return fromStream(reactiveSeq().prependS(stream.reactiveSeq()));
+    }
+    default Streamable<T> prependS(final Stream<? extends T> stream) {
+        return fromStream(reactiveSeq().prependS(stream));
+    }
+
+    @Override
+    default Streamable<T> append(T value){
+        return fromStream(reactiveSeq().append(value));
+    }
+
+    @Override
+    default Traversable<T> insertStreamAt(int pos, Stream<T> stream){
+        return fromStream(reactiveSeq().insertStreamAt(pos,stream));
     }
 
     /**

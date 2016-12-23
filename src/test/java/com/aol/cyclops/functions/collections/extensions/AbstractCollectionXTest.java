@@ -171,30 +171,30 @@ public abstract class AbstractCollectionXTest {
     }
 	@Test
 	public void retainAll(){
-	    assertThat(of(1,2,3,4,5).retainAll((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
+	    assertThat(of(1,2,3,4,5).retainAllS((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
 	}
 	
 
 	@Test
     public void retainAllStream(){
-        assertThat(of(1,2,3,4,5).retainAll(Stream.of(1,2,3)),hasItems(1,2,3));
+        assertThat(of(1,2,3,4,5).retainAllS(Stream.of(1,2,3)),hasItems(1,2,3));
     }
 	@Test
     public void retainAllValues(){
-        assertThat(of(1,2,3,4,5).retainAll(1,2,3),hasItems(1,2,3));
+        assertThat(of(1,2,3,4,5).retainAllS(1,2,3),hasItems(1,2,3));
     }
 	@Test
     public void removeAll(){
-        assertThat(of(1,2,3,4,5).removeAll((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).removeAllS((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
     }
 
     @Test
     public void removeAllStream(){
-        assertThat(of(1,2,3,4,5).removeAll(Stream.of(1,2,3)),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).removeAllS(Stream.of(1,2,3)),hasItems(4,5));
     }
     @Test
     public void removeAllValues(){
-        assertThat(of(1,2,3,4,5).removeAll(1,2,3),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).removeAllS(1,2,3),hasItems(4,5));
     }
 	@Test
     public void testAnyMatch(){
@@ -1356,6 +1356,7 @@ public abstract class AbstractCollectionXTest {
 
 	    @Test
 	    public void testShuffle() {
+
 	        Supplier<CollectionX<Integer>> s = () ->of(1, 2, 3);
 
 	        assertEquals(3, ((CollectionX<Integer>)s.get().shuffle()).toListX().size());

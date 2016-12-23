@@ -920,5 +920,136 @@ public interface Traversable<T> extends Publisher<T>,
         return stream();
     }
 
+    /**
+     * Prepend Stream to this ReactiveSeq
+     *
+     * <pre>
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3)
+     *                                   .prependS(of(100, 200, 300))
+     *                                   .map(it -> it + "!!")
+     *                                   .collect(Collectors.toList());
+     *
+     *  assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!", "1!!", "2!!", "3!!")));
+     * }
+     * </pre>
+     *
+     * @param stream
+     *            to Prepend
+     * @return ReactiveSeq with Stream prepended
+     */
+    default Traversable<T> prependS(Stream<? extends T> stream){
+        return traversable().prependS(stream);
+    }
+
+    /**
+     * Append values to the end of this ReactiveSeq
+     *
+     * <pre>
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -> it + "!!").collect(Collectors.toList());
+     *
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
+     * </pre>
+     *
+     * @param values
+     *            to append
+     * @return ReactiveSeq with appended values
+     */
+    default Traversable<T> append(T... values){
+        return traversable().append(values);
+    }
+
+
+    default Traversable<T> append(T value){
+        return traversable().append(value);
+    }
+
+
+    default Traversable<T> prepend(T value){
+        return traversable().prepend(value);
+    }
+
+    /**
+     * Prepend given values to the start of the Stream
+     *
+     * <pre>
+     * {@code
+     * List<String> result = 	ReactiveSeq.of(1,2,3)
+     * 									 .prepend(100,200,300)
+     * 										 .map(it ->it+"!!")
+     * 										 .collect(Collectors.toList());
+     *
+     * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+     * }
+     * @param values to prepend
+     * @return ReactiveSeq with values prepended
+     */
+    default Traversable<T> prepend(T... values){
+        return traversable().prepend(values);
+    }
+
+    /**
+     * Insert data into a stream at given position
+     *
+     * <pre>
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -> it + "!!").collect(Collectors.toList());
+     *
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));     *
+     * }
+     * </pre>
+     *
+     * @param pos
+     *            to insert data at
+     * @param values
+     *            to insert
+     * @return Stream with new data inserted
+     */
+    default Traversable<T> insertAt(int pos, T... values){
+        return traversable().insertAt(pos,values);
+    }
+
+    /**
+     * Delete elements between given indexes in a Stream
+     *
+     * <pre>
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -> it + "!!").collect(Collectors.toList());
+     *
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "5!!", "6!!")));     * }
+     * </pre>
+     *
+     * @param start
+     *            index
+     * @param end
+     *            index
+     * @return Stream with elements removed
+     */
+    default Traversable<T> deleteBetween(int start, int end){
+        return traversable().deleteBetween(start,end);
+    }
+
+    /**
+     * Insert a Stream into the middle of this stream at the specified position
+     *
+     * <pre>
+     * {@code
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertStreamAt(1, of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
+     *
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
+     * }
+     * </pre>
+     *
+     * @param pos
+     *            to insert Stream at
+     * @param stream
+     *            to insert
+     * @return newly conjoined Traversable
+     */
+    default Traversable<T> insertStreamAt(int pos, Stream<T> stream){
+        return traversable().insertStreamAt(pos,stream);
+    }
+
 
 }

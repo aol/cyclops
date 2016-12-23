@@ -2821,12 +2821,17 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     }
 
     /*
-     * @see cyclops.stream.ReactiveSeq#flatMapCollection(java.util.function.Function)
+     * @see cyclops.stream.ReactiveSeq#flatMapI(java.util.function.Function)
      */
     @Override
-    default <R> FutureStream<R> flatMapIterable(final Function<? super U, ? extends Iterable<? extends R>> fn) {
+    default <R> FutureStream<R> flatMapI(final Function<? super U, ? extends Iterable<? extends R>> fn) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                                     .flatMapIterable(fn));
+                                     .flatMapI(fn));
+    }
+    @Override
+    default <R> FutureStream<R> flatMapP(final Function<? super U, ? extends Publisher<? extends R>> fn) {
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                .flatMapP(fn));
     }
 
     /*

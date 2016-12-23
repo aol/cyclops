@@ -265,7 +265,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMapIterable(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
     default <R> Ior<ST, R> flatMapIterable(Function<? super PT, ? extends Iterable<? extends R>> mapper) {

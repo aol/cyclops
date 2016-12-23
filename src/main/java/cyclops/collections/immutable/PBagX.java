@@ -884,57 +884,57 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.util.stream.Stream)
      */
     @Override
-    default PBagX<T> removeAll(final Stream<? extends T> stream) {
+    default PBagX<T> removeAllS(final Stream<? extends T> stream) {
 
-        return (PBagX<T>) PersistentCollectionX.super.removeAll(stream);
+        return (PBagX<T>) PersistentCollectionX.super.removeAllS(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Iterable)
      */
     @Override
-    default PBagX<T> removeAll(final Iterable<? extends T> it) {
+    default PBagX<T> removeAllS(final Iterable<? extends T> it) {
 
-        return (PBagX<T>) PersistentCollectionX.super.removeAll(it);
+        return (PBagX<T>) PersistentCollectionX.super.removeAllS(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Object[])
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Object[])
      */
     @Override
-    default PBagX<T> removeAll(final T... values) {
+    default PBagX<T> removeAllS(final T... values) {
 
-        return (PBagX<T>) PersistentCollectionX.super.removeAll(values);
+        return (PBagX<T>) PersistentCollectionX.super.removeAllS(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Iterable)
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Iterable)
      */
     @Override
-    default PBagX<T> retainAll(final Iterable<? extends T> it) {
+    default PBagX<T> retainAllS(final Iterable<? extends T> it) {
 
-        return (PBagX<T>) PersistentCollectionX.super.retainAll(it);
+        return (PBagX<T>) PersistentCollectionX.super.retainAllS(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.util.stream.Stream)
      */
     @Override
-    default PBagX<T> retainAll(final Stream<? extends T> seq) {
+    default PBagX<T> retainAllS(final Stream<? extends T> seq) {
 
-        return (PBagX<T>) PersistentCollectionX.super.retainAll(seq);
+        return (PBagX<T>) PersistentCollectionX.super.retainAllS(seq);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Object[])
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Object[])
      */
     @Override
-    default PBagX<T> retainAll(final T... values) {
+    default PBagX<T> retainAllS(final T... values) {
 
-        return (PBagX<T>) PersistentCollectionX.super.retainAll(values);
+        return (PBagX<T>) PersistentCollectionX.super.retainAllS(values);
     }
 
     /* (non-Javadoc)

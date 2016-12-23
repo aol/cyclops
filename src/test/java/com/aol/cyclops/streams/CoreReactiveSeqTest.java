@@ -1,10 +1,10 @@
-package com.aol.cyclops.streams.streamable;
+package com.aol.cyclops.streams;
 
-
-import static cyclops.stream.Streamable.of;
+import static cyclops.stream.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -16,7 +16,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -28,29 +29,49 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
+import cyclops.async.LazyReact;
+import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
-
 
 
 //see BaseSequentialSeqTest for in order tests
-public  class BaseStreamableTest {
+public  class CoreReactiveSeqTest {
+    public static Executor ex =  Executors.newFixedThreadPool(10);
+    public static final LazyReact r = new LazyReact(10,10);
 	
-	
-	Streamable<Integer> empty;
-	Streamable<Integer> nonEmpty;
+	ReactiveSeq<Integer> empty;
+	ReactiveSeq<Integer> nonEmpty;
 
 	@Before
 	public void setup(){
-		empty = Streamable.of();
+		empty = of();
 		nonEmpty = of(1);
 	}
+	
+	
+	
+	
 
-	@Test
-    public void testContains() {
-        assertThat(Streamable.of(1, 2, 3, 4, 5).contains(3), equalTo(true));
-        assertThat(Streamable.of(1, 2, 3, 4, 5).contains(6), equalTo(false));
+    @Test
+    public void flatMapPublisher() throws InterruptedException{
+
+        assertThat(of(1,2,3)
+                        .flatMapP(i->Maybe.of(i))
+                        .toListX(),equalTo(Arrays.asList(1,2,3)));
+        
+        
     }
+    
+
+    private void sleep2(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
 	
 	protected Object value() {
 		
@@ -123,6 +144,24 @@ public  class BaseStreamableTest {
 
         assertThat( of(1, 2, 3).reverse().toList(), equalTo(asList(3, 2, 1)));
     }
+    @Test
+    public void testReverseList() {
+    	
+        assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1))
+        				.reverse().toList(), equalTo(asList(-1, 2, 400,10)));
+    }
+    @Test
+    public void testReverseListLimit() {
+    	
+        assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1)).limit(2)
+        				.reverse().toList(), equalTo(asList(400, 10)));
+    }
+    @Test
+    public void testReverseRange() {
+    	
+        assertThat( ReactiveSeq.range(0,10)
+        				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
+    }
 
    
     @Test
@@ -143,13 +182,13 @@ public  class BaseStreamableTest {
 	
 	@Test
 	public void testDuplicate(){
-		 Tuple2<Streamable<Integer>,Streamable<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 	}
 	@Test
 	public void testTriplicate(){
-		 Tuple3<Streamable<Integer>, Streamable<Integer>, Streamable<Integer>> copies =of(1,2,3,4,5,6).triplicate();
+		 Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 		 assertTrue(copies.v3.anyMatch(i->i==2));
@@ -157,7 +196,7 @@ public  class BaseStreamableTest {
 	
 	@Test
 	public void testQuadriplicate(){
-		 Tuple4<Streamable<Integer>, Streamable<Integer>, Streamable<Integer>,Streamable<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
+		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 		 assertTrue(copies.v3.anyMatch(i->i==2));
@@ -166,20 +205,20 @@ public  class BaseStreamableTest {
 
 	@Test
 	public void testDuplicateFilter(){
-		 Tuple2<Streamable<Integer>, Streamable<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 	} 
 	@Test
 	public void testTriplicateFilter(){
-		Tuple3<Streamable<Integer>, Streamable<Integer>, Streamable<Integer>> copies =of(1,2,3,4,5,6).triplicate();
+		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
 	} 
 	@Test
 	public void testQuadriplicateFilter(){
-		 Tuple4<Streamable<Integer>, Streamable<Integer>, Streamable<Integer>,Streamable<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
+		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
 		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
@@ -187,20 +226,20 @@ public  class BaseStreamableTest {
 	}
 	@Test
 	public void testDuplicateLimit(){
-		 Tuple2<Streamable<Integer>, Streamable<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 	} 
 	@Test
 	public void testTriplicateLimit(){
-		Tuple3<Streamable<Integer>, Streamable<Integer>, Streamable<Integer>> copies =of(1,2,3,4,5,6).triplicate();
+		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 		 assertTrue(copies.v3.limit(3).toList().size()==3);
 	} 
 	@Test
 	public void testQuadriplicateLimit(){
-		 Tuple4<Streamable<Integer>, Streamable<Integer>, Streamable<Integer>,Streamable<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
+		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 		 assertTrue(copies.v3.limit(3).toList().size()==3);
@@ -214,7 +253,35 @@ public  class BaseStreamableTest {
 	    				.peek(it ->System.out.println(it)).toList();
 	    		
 	    }
-	   
+
+	public void prepend(){
+		List<String> result = 	of(1,2,3).prepend(100,200,300)
+				.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+	}
+	@Test
+	public void append(){
+		List<String> result = 	of(1,2,3).append(100,200,300)
+				.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	}
+	@Test
+	public void concatStreams(){
+		List<String> result = 	of(1,2,3).appendS(of(100,200,300))
+				.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
+	}
+
+	@Test
+	public void prependStreams(){
+		List<String> result = 	of(1,2,3).prependS(of(100,200,300))
+				.map(it ->it+"!!").collect(Collectors.toList());
+
+		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+	}
 	   
 
 		
@@ -249,7 +316,7 @@ public  class BaseStreamableTest {
 	   
 	    @Test
 	    public void testSkipWhile() {
-	        Supplier<Streamable<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertTrue(s.get().skipWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	      
@@ -258,7 +325,7 @@ public  class BaseStreamableTest {
 
 	    @Test
 	    public void testSkipUntil() {
-	        Supplier<Streamable<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
 	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
@@ -266,14 +333,14 @@ public  class BaseStreamableTest {
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
-	        Supplier<Streamable<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 	       
 	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
 	    }
 
 	    @Test
 	    public void testLimitWhile() {
-	        Supplier<Streamable<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().limitWhile(i -> false).toList());
 	        assertTrue( s.get().limitWhile(i -> i < 3).toList().size()!=5);       
@@ -301,7 +368,7 @@ public  class BaseStreamableTest {
 
 	    @Test
 	    public void testMinByMaxBy() {
-	        Supplier<Streamable<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
 	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
@@ -316,7 +383,7 @@ public  class BaseStreamableTest {
 	    @Test
 	    public void testFoldLeft() {
 	    	for(int i=0;i<100;i++){
-		        Supplier<Streamable<String>> s = () -> of("a", "b", "c");
+		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 	
 		        assertTrue(s.get().reduce("", String::concat).contains("a"));
 		        assertTrue(s.get().reduce("", String::concat).contains("b"));
@@ -331,7 +398,7 @@ public  class BaseStreamableTest {
 	    
 	    @Test
 	    public void testFoldRight(){
-	    	 	Supplier<Streamable<String>> s = () -> of("a", "b", "c");
+	    	 	Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().foldRight("", String::concat).contains("a"));
 		        assertTrue(s.get().foldRight("", String::concat).contains("b"));
@@ -341,11 +408,10 @@ public  class BaseStreamableTest {
 	    }
 	    
 	   
-
+	    //tests converted from lazy-seq suite
 	    @Test
-		public void flattenOptional() throws Exception {
-	    	
-				assertTrue(ReactiveSeq.of(Optional.of(1)).to(ReactiveSeq::flattenO).toList().get(0).equals(new Integer(1)));
+		public void flattenEmpty() throws Exception {
+				assertTrue(ReactiveSeq.<ReactiveSeq<Integer>>of().to(ReactiveSeq::flatten).toList().isEmpty());
 		}
 
 		@Test

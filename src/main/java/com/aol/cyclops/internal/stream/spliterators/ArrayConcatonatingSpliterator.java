@@ -46,7 +46,7 @@ public class ArrayConcatonatingSpliterator<T> extends Spliterators.AbstractSplit
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
         while(index < spliterators.length){
-            if(!spliterators[index].tryAdvance(action)){
+            if(spliterators[index].tryAdvance(action)){
                 return true;
             }else{
                 index++;

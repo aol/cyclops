@@ -41,10 +41,49 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     AnyM<W,? extends FoldableTraversable<T>> transformerStream();
 
 
+    @Override
+    default Traversable<T> prependS(Stream<? extends T> stream){
+        return unitAnyM(transformerStream().map(s -> s.prependS(stream)));
+    }
+
+    @Override
+    default Traversable<T> append(T... values){
+        return unitAnyM(transformerStream().map(s -> s.append(values)));
+    }
+
+    @Override
+    default Traversable<T> append(T value){
+        return unitAnyM(transformerStream().map(s -> s.append(value)));
+    }
+
+    @Override
+    default Traversable<T> prepend(T value){
+        return unitAnyM(transformerStream().map(s -> s.prepend(value)));
+    }
+
+    @Override
+    default Traversable<T> prepend(T... values){
+        return unitAnyM(transformerStream().map(s -> s.prepend(values)));
+    }
+
+    @Override
+    default Traversable<T> insertAt(int pos, T... values){
+        return unitAnyM(transformerStream().map(s -> s.insertAt(pos,values)));
+    }
+
+    @Override
+    default Traversable<T> deleteBetween(int start, int end){
+        return unitAnyM(transformerStream().map(s -> s.deleteBetween(start,end)));
+    }
+
+    @Override
+    default Traversable<T> insertStreamAt(int pos, Stream<T> stream){
+        return unitAnyM(transformerStream().map(s -> s.insertStreamAt(pos,stream)));
+    }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
-     */
+         * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+         */
     @Override
     default Traversable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return unitAnyM(transformerStream().map(s -> s.combine(predicate, op)));

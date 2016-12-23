@@ -416,7 +416,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void flatMapMaybe(){
-		assertThat(ReactiveSeq.of(1,2,3,null).flatMapIterable(Maybe::ofNullable)
+		assertThat(ReactiveSeq.of(1,2,3,null).flatMapI(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

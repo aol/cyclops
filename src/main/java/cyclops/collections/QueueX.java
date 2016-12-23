@@ -839,57 +839,57 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.stream.Stream)
      */
     @Override
-    default QueueX<T> removeAll(final Stream<? extends T> stream) {
+    default QueueX<T> removeAllS(final Stream<? extends T> stream) {
 
-        return (QueueX<T>) MutableCollectionX.super.removeAll(stream);
+        return (QueueX<T>) MutableCollectionX.super.removeAllS(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Iterable)
      */
     @Override
-    default QueueX<T> removeAll(final Iterable<? extends T> it) {
+    default QueueX<T> removeAllS(final Iterable<? extends T> it) {
 
-        return (QueueX<T>) MutableCollectionX.super.removeAll(it);
+        return (QueueX<T>) MutableCollectionX.super.removeAllS(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Object[])
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Object[])
      */
     @Override
-    default QueueX<T> removeAll(final T... values) {
+    default QueueX<T> removeAllS(final T... values) {
 
-        return (QueueX<T>) MutableCollectionX.super.removeAll(values);
+        return (QueueX<T>) MutableCollectionX.super.removeAllS(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Iterable)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Iterable)
      */
     @Override
-    default QueueX<T> retainAll(final Iterable<? extends T> it) {
+    default QueueX<T> retainAllS(final Iterable<? extends T> it) {
 
-        return (QueueX<T>) MutableCollectionX.super.retainAll(it);
+        return (QueueX<T>) MutableCollectionX.super.retainAllS(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.stream.Stream)
      */
     @Override
-    default QueueX<T> retainAll(final Stream<? extends T> seq) {
+    default QueueX<T> retainAllS(final Stream<? extends T> seq) {
 
-        return (QueueX<T>) MutableCollectionX.super.retainAll(seq);
+        return (QueueX<T>) MutableCollectionX.super.retainAllS(seq);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Object[])
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Object[])
      */
     @Override
-    default QueueX<T> retainAll(final T... values) {
+    default QueueX<T> retainAllS(final T... values) {
 
-        return (QueueX<T>) MutableCollectionX.super.retainAll(values);
+        return (QueueX<T>) MutableCollectionX.super.retainAllS(values);
     }
 
     /* (non-Javadoc)

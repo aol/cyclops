@@ -110,7 +110,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMapIterable(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
     default <R> Maybe<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> mapper) {

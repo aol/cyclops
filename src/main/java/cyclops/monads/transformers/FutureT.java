@@ -451,7 +451,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#flatMapIterable(java.util.function.Function)
+     * @see cyclops.monads.transformers.values.ValueTransformer#flatMapI(java.util.function.Function)
      */
     @Override
     public <R> FutureT<W, R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {

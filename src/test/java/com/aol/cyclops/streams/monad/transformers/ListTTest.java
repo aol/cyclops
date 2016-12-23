@@ -37,7 +37,7 @@ public class ListTTest {
 		ListT<Witness.optional,Integer> streamT = ListT.ofList(AnyM.fromOptional(Optional.of(Arrays.asList(10))));
 		
 		streamT.peek(num->result = "hello world"+num)
-				.unwrap().<Optional<List<String>>>unwrap().get();
+				.unwrap().<Optional<List<String>>>unwrap().get().get(0);
 		assertThat(result,  equalTo("hello world10"));
 	}
 	@Test

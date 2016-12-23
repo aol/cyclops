@@ -69,7 +69,8 @@ public class PushingSpliterator<T> implements Spliterator<T> {
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        this.action = action;
+        if(this.action==null)
+            this.action = action;
         if(capture!=null && capture.size()>0){
             action.accept(capture.remove(0));
         }

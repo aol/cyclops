@@ -9,10 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import cyclops.stream.Streamable;
-public class StreamTest {
+public class StreamableStreamOperatorsTest {
 	 public static <U> Streamable<U> of(U... array){
 		 return Streamable.of(array);
 	 }

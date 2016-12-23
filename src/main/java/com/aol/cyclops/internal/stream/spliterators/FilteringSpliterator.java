@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>{
+public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>, Composable<T>{
     Spliterator<T> source;
     Predicate<? super T> mapper;
     public FilteringSpliterator(final Spliterator<T> source, Predicate<? super T> mapper) {
@@ -47,5 +47,18 @@ public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T>
     @Override
     public Spliterator<T> copy() {
         return new FilteringSpliterator<T>(CopyableSpliterator.copy(source),mapper);
+    }
+
+    @Override
+    public Spliterator<T> compose() {
+        if(source instanceof FilteringSpliterator){
+            return compose((FilteringSpliterator)source,this);
+        }
+
+        return this;
+    }
+    public static <T> FilteringSpliterator<T> compose(FilteringSpliterator<T> before, FilteringSpliterator<T> after){
+
+        return new FilteringSpliterator<>(before.source,((Predicate<T>)before.mapper).and(after.mapper));
     }
 }

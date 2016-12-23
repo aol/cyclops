@@ -293,57 +293,57 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.util.stream.Stream)
      */
     @Override
-    default MapX<K, V> removeAll(final Stream<? extends Tuple2<K, V>> stream) {
+    default MapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
 
-        return (MapX<K, V>) IterableFilterable.super.removeAll(stream);
+        return (MapX<K, V>) IterableFilterable.super.removeAllS(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.lang.Iterable)
      */
     @Override
-    default MapX<K, V> removeAll(final Iterable<? extends Tuple2<K, V>> it) {
+    default MapX<K, V> removeAllS(final Iterable<? extends Tuple2<K, V>> it) {
 
-        return (MapX<K, V>) IterableFilterable.super.removeAll(it);
+        return (MapX<K, V>) IterableFilterable.super.removeAllS(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Object[])
+     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.lang.Object[])
      */
     @Override
-    default MapX<K, V> removeAll(final Tuple2<K, V>... values) {
+    default MapX<K, V> removeAllS(final Tuple2<K, V>... values) {
 
-        return (MapX<K, V>) IterableFilterable.super.removeAll(values);
+        return (MapX<K, V>) IterableFilterable.super.removeAllS(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Iterable)
+     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.lang.Iterable)
      */
     @Override
-    default MapX<K, V> retainAll(final Iterable<? extends Tuple2<K, V>> it) {
+    default MapX<K, V> retainAllS(final Iterable<? extends Tuple2<K, V>> it) {
 
-        return (MapX<K, V>) IterableFilterable.super.retainAll(it);
+        return (MapX<K, V>) IterableFilterable.super.retainAllS(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.util.stream.Stream)
      */
     @Override
-    default MapX<K, V> retainAll(final Stream<? extends Tuple2<K, V>> stream) {
+    default MapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {
 
-        return (MapX<K, V>) IterableFilterable.super.retainAll(stream);
+        return (MapX<K, V>) IterableFilterable.super.retainAllS(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
+     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.lang.Object[])
      */
     @Override
-    default MapX<K, V> retainAll(final Tuple2<K, V>... values) {
+    default MapX<K, V> retainAllS(final Tuple2<K, V>... values) {
 
-        return (MapX<K, V>) IterableFilterable.super.retainAll(values);
+        return (MapX<K, V>) IterableFilterable.super.retainAllS(values);
     }
 
 

@@ -1,10 +1,8 @@
 package cyclops.collections;
 
 import com.aol.cyclops.data.collections.extensions.lazy.LazyListX;
-import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableSequenceX;
-import cyclops.Streams;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
@@ -1031,57 +1029,57 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.stream.Stream)
      */
     @Override
-    default ListX<T> removeAll(final Stream<? extends T> stream) {
+    default ListX<T> removeAllS(final Stream<? extends T> stream) {
 
-        return (ListX<T>) MutableCollectionX.super.removeAll(stream);
+        return (ListX<T>) MutableCollectionX.super.removeAllS(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Iterable)
      */
     @Override
-    default ListX<T> removeAll(final Iterable<? extends T> it) {
+    default ListX<T> removeAllS(final Iterable<? extends T> it) {
 
-        return (ListX<T>) MutableCollectionX.super.removeAll(it);
+        return (ListX<T>) MutableCollectionX.super.removeAllS(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Object[])
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Object[])
      */
     @Override
-    default ListX<T> removeAll(final T... values) {
+    default ListX<T> removeAllS(final T... values) {
 
-        return (ListX<T>) MutableCollectionX.super.removeAll(values);
+        return (ListX<T>) MutableCollectionX.super.removeAllS(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Iterable)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Iterable)
      */
     @Override
-    default ListX<T> retainAll(final Iterable<? extends T> it) {
+    default ListX<T> retainAllS(final Iterable<? extends T> it) {
 
-        return (ListX<T>) MutableCollectionX.super.retainAll(it);
+        return (ListX<T>) MutableCollectionX.super.retainAllS(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.stream.Stream)
      */
     @Override
-    default ListX<T> retainAll(final Stream<? extends T> seq) {
+    default ListX<T> retainAllS(final Stream<? extends T> seq) {
 
-        return (ListX<T>) MutableCollectionX.super.retainAll(seq);
+        return (ListX<T>) MutableCollectionX.super.retainAllS(seq);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAll(java.lang.Object[])
+     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Object[])
      */
     @Override
-    default ListX<T> retainAll(final T... values) {
+    default ListX<T> retainAllS(final T... values) {
 
-        return (ListX<T>) MutableCollectionX.super.retainAll(values);
+        return (ListX<T>) MutableCollectionX.super.retainAllS(values);
     }
 
     /* (non-Javadoc)

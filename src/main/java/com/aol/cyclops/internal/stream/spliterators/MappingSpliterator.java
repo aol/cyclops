@@ -9,7 +9,7 @@ import java.util.function.Function;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public class MappingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R> implements CopyableSpliterator<R> {
+public class MappingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R> implements CopyableSpliterator<R>, Composable<R> {
     Spliterator<T> source;
     Function<? super T, ? extends R> mapper;
     public MappingSpliterator(final Spliterator<T> source,Function<? super T, ? extends R> mapper) {
@@ -19,6 +19,17 @@ public class MappingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
         this.mapper = mapper;
 
     }
+    public Spliterator<R> compose(){
+
+        if(source instanceof MappingSpliterator){
+            return compose((MappingSpliterator)source,this);
+        }
+        return this;
+    }
+    public static <T1,T2,R> MappingSpliterator<T1,R> compose(MappingSpliterator<T1,T2> before, MappingSpliterator<T2,R> after){
+        return new MappingSpliterator<T1, R>(before.source,before.mapper.andThen(after.mapper));
+    }
+
     @Override
     public void forEachRemaining(Consumer<? super R> action) {
         source.forEachRemaining(t->{

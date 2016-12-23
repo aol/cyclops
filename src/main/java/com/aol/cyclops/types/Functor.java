@@ -1,9 +1,12 @@
 package com.aol.cyclops.types;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.aol.cyclops.util.ExceptionSoftener;
 import cyclops.control.Trampoline;
+import cyclops.stream.ReactiveSeq;
 
 /** 
  * An interface that represents a type that can transform a value from one type to another
@@ -108,6 +111,88 @@ public interface Functor<T> {
         return map(in -> mapper.apply(in)
                                .result());
     }
+
+    /**
+     * Retry a transformation if it fails. Default settings are to retry up to 7
+     * times, with an doubling backoff period starting @ 2 seconds delay before
+     * retry.
+     *
+     * <pre>
+     * {@code
+     * given(serviceMock.apply(anyInt())).willThrow(
+     * 				new RuntimeException(new SocketException("First")),
+     * 				new RuntimeException(new IOException("Second"))).willReturn(
+     * 				"42");
+     *
+     *
+     * 		String result = ReactiveSeq.of( 1,  2, 3)
+     * 				.retry(serviceMock)
+     * 				.firstValue();
+     *
+     * 		//result = 42
+     * }
+     * </pre>
+     *
+     * @param fn
+     *            Function to retry if fails
+     *
+     */
+    default <R> Functor<R> retry(final Function<? super T, ? extends R> fn) {
+        return retry(fn, 7, 2, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Retry a transformation if it fails. Retries up to <b>retries</b>
+     * times, with an doubling backoff period starting @ <b>delay</b> TimeUnits delay before
+     * retry.
+     *
+     * <pre>
+     * {@code
+     * given(serviceMock.apply(anyInt())).willThrow(
+     * 				new RuntimeException(new SocketException("First")),
+     * 				new RuntimeException(new IOException("Second"))).willReturn(
+     * 				"42");
+     *
+     *
+     * 		String result = ReactiveSeq.of( 1,  2, 3)
+     * 				.retry(serviceMock, 7, 2, TimeUnit.SECONDS)
+     * 				.firstValue();
+     *
+     * 		//result = 42
+     * }
+     * </pre>
+     *
+     * @param fn
+     *            Function to retry if fails
+     * @param retries
+     *            Number of retries
+     * @param delay
+     *            Delay in TimeUnits
+     * @param timeUnit
+     *            TimeUnit to use for delay
+     */
+    default <R> Functor<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        final Function<T, R> retry = t -> {
+            int count = retries;
+            final long[] sleep = { timeUnit.toMillis(delay) };
+            Throwable exception = null;
+            while (count-- > 0) {
+                ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep[0]))
+                        .run();
+                try {
+                    return fn.apply(t);
+                } catch (final Throwable e) {
+                    exception = e;
+                }
+
+                sleep[0] = sleep[0] * 2;
+            }
+            ExceptionSoftener.throwSoftenedException(exception);
+            return null;
+        };
+        return map(retry);
+    }
+
 
 
 }

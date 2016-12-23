@@ -512,43 +512,43 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<T> sorted();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.types.IterableFilterable#removeAllS(java.util.stream.Stream)
      */
     @Override
-    CollectionX<T> removeAll(Stream<? extends T> stream);
+    CollectionX<T> removeAllS(Stream<? extends T> stream);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops.types.IterableFilterable#removeAllS(java.lang.Iterable)
      */
     @Override
-    CollectionX<T> removeAll(Iterable<? extends T> it);
+    CollectionX<T> removeAllS(Iterable<? extends T> it);
 
-
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFilterable#removeAll(java.lang.Object[])
-     */
-    @Override
-    CollectionX<T> removeAll(T... values);
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.lang.Iterable)
-     */
-    @Override
-    CollectionX<T> retainAll(Iterable<? extends T> it);
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.types.IterableFilterable#removeAllS(java.lang.Object[])
      */
     @Override
-    CollectionX<T> retainAll(Stream<? extends T> seq);
+    CollectionX<T> removeAllS(T... values);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFilterable#retainAll(java.lang.Object[])
+     * @see com.aol.cyclops.types.IterableFilterable#retainAllS(java.lang.Iterable)
      */
     @Override
-    CollectionX<T> retainAll(T... values);
+    CollectionX<T> retainAllS(Iterable<? extends T> it);
+
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.IterableFilterable#retainAllS(java.util.stream.Stream)
+     */
+    @Override
+    CollectionX<T> retainAllS(Stream<? extends T> seq);
+
+    /* (non-Javadoc)
+     * @see com.aol.cyclops.types.IterableFilterable#retainAllS(java.lang.Object[])
+     */
+    @Override
+    CollectionX<T> retainAllS(T... values);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)

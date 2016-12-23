@@ -396,7 +396,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterab
      * 
      * <pre>
      * {@code 
-     *   Maybe.just(1).map(i->i+2).flatMapIterable(i->Arrays.asList(()->i*3,20);
+     *   Maybe.just(1).map(i->i+2).flatMapI(i->Arrays.asList(()->i*3,20);
      *   //Maybe[9]
      * 
      * }</pre>

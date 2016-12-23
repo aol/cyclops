@@ -11,6 +11,7 @@ import cyclops.collections.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -539,66 +540,66 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.util.stream.Stream)
      */
     @Override
-    default PersistentCollectionX<T> removeAll(final Stream<? extends T> stream) {
+    default PersistentCollectionX<T> removeAllS(final Stream<? extends T> stream) {
 
         return from(this.<T> monoid()
-                        .mapReduce((Stream<?>)stream().removeAll(stream)));
+                        .mapReduce((Stream<?>)stream().removeAllS(stream)));
     }
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.lang.Iterable)
      */
     @Override
-    default PersistentCollectionX<T> removeAll(final Iterable<? extends T> it) {
+    default PersistentCollectionX<T> removeAllS(final Iterable<? extends T> it) {
 
         return from(this.<T> monoid()
-                        .mapReduce(stream().removeAll(it)));
+                        .mapReduce(stream().removeAllS(it)));
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAll(java.lang.Object[])
+     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.lang.Object[])
      */
     @Override
-    default PersistentCollectionX<T> removeAll(final T... values) {
+    default PersistentCollectionX<T> removeAllS(final T... values) {
 
         return from(this.<T> monoid()
-                        .mapReduce(stream().removeAll(values)));
+                        .mapReduce(stream().removeAllS(values)));
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Iterable)
+     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.lang.Iterable)
      */
     @Override
-    default PersistentCollectionX<T> retainAll(final Iterable<? extends T> it) {
+    default PersistentCollectionX<T> retainAllS(final Iterable<? extends T> it) {
 
         return from(this.<T> monoid()
-                        .mapReduce(stream().retainAll(it)));
+                        .mapReduce(stream().retainAllS(it)));
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.util.stream.Stream)
      */
     @Override
-    default PersistentCollectionX<T> retainAll(final Stream<? extends T> seq) {
+    default PersistentCollectionX<T> retainAllS(final Stream<? extends T> seq) {
 
         return from(this.<T> monoid()
-                        .mapReduce(stream().retainAll(seq)));
+                        .mapReduce(stream().retainAllS(seq)));
     }
 
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAll(java.lang.Object[])
+     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.lang.Object[])
      */
     @Override
-    default PersistentCollectionX<T> retainAll(final T... values) {
+    default PersistentCollectionX<T> retainAllS(final T... values) {
 
         return from(this.<T> monoid()
-                        .mapReduce(stream().retainAll(values)));
+                        .mapReduce(stream().retainAllS(values)));
     }
 
     /* (non-Javadoc)
@@ -688,6 +689,56 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
 
         return from(this.<C> monoid()
                         .mapReduce(stream().groupedUntil(predicate, factory)));
+    }
+    @Override
+    default <R> PersistentCollectionX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return from(this.<R>monoid().mapReduce(stream().flatMap(fn)));
+    }
+
+    @Override
+    default <R> PersistentCollectionX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return from(this.<R>monoid().mapReduce(stream().flatMapP(fn)));
+    }
+
+    @Override
+    default PersistentCollectionX<T> prependS(Stream<? extends T> stream){
+        return from(this.<T>monoid().mapReduce(stream().prependS(stream)));
+    }
+
+    @Override
+    default PersistentCollectionX<T> append(T... values){
+        return from(this.<T>monoid().mapReduce(stream().append(values)));
+    }
+
+    @Override
+    default PersistentCollectionX<T> append(T value){
+        return from(this.<T>monoid().mapReduce(stream().append(value)));
+    }
+
+    @Override
+    default PersistentCollectionX<T> prepend(T value){
+        return from(this.<T>monoid().mapReduce(stream().prepend(value)));
+    }
+
+    @Override
+    default PersistentCollectionX<T> prepend(T... values){
+        return from(this.<T>monoid().mapReduce(stream().prepend(values)));
+    }
+
+    @Override
+    default PersistentCollectionX<T> insertAt(int pos,T... values){
+        return from(this.<T>monoid().mapReduce(stream().insertAt(pos,values)));
+    }
+
+    @Override
+    default PersistentCollectionX<T> deleteBetween(int start, int end){
+        return from(this.<T>monoid().mapReduce(stream().deleteBetween(start,end)));
+    }
+
+    @Override
+    default PersistentCollectionX<T> insertStreamAt(int pos, Stream<T> stream){
+        return from(this.<T>monoid().mapReduce(stream().insertStreamAt(pos,stream)));
+
     }
 
 }

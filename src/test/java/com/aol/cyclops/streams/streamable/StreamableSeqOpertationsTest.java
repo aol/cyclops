@@ -19,13 +19,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.collections.ListX;
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.stream.Streamable;
-public class BaseSequentialTest {
+public class StreamableSeqOpertationsTest {
 
 	<U> Streamable<U> of(U... array){
 			  return Streamable.of(array);

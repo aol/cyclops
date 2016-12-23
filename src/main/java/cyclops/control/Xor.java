@@ -314,7 +314,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMapIterable(java.util.function.Function)
+     * @see com.aol.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
     default <R> Xor<ST, R> flatMapIterable(Function<? super PT, ? extends Iterable<? extends R>> mapper) {

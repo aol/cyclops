@@ -863,57 +863,57 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.util.stream.Stream)
      */
     @Override
-    default POrderedSetX<T> removeAll(final Stream<? extends T> stream) {
+    default POrderedSetX<T> removeAllS(final Stream<? extends T> stream) {
 
-        return (POrderedSetX<T>) PersistentCollectionX.super.removeAll(stream);
+        return (POrderedSetX<T>) PersistentCollectionX.super.removeAllS(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Iterable)
      */
     @Override
-    default POrderedSetX<T> removeAll(final Iterable<? extends T> it) {
+    default POrderedSetX<T> removeAllS(final Iterable<? extends T> it) {
 
-        return (POrderedSetX<T>) PersistentCollectionX.super.removeAll(it);
+        return (POrderedSetX<T>) PersistentCollectionX.super.removeAllS(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Object[])
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Object[])
      */
     @Override
-    default POrderedSetX<T> removeAll(final T... values) {
+    default POrderedSetX<T> removeAllS(final T... values) {
 
-        return (POrderedSetX<T>) PersistentCollectionX.super.removeAll(values);
+        return (POrderedSetX<T>) PersistentCollectionX.super.removeAllS(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Iterable)
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Iterable)
      */
     @Override
-    default POrderedSetX<T> retainAll(final Iterable<? extends T> it) {
+    default POrderedSetX<T> retainAllS(final Iterable<? extends T> it) {
 
-        return (POrderedSetX<T>) PersistentCollectionX.super.retainAll(it);
+        return (POrderedSetX<T>) PersistentCollectionX.super.retainAllS(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.util.stream.Stream)
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.util.stream.Stream)
      */
     @Override
-    default POrderedSetX<T> retainAll(final Stream<? extends T> seq) {
+    default POrderedSetX<T> retainAllS(final Stream<? extends T> seq) {
 
-        return (POrderedSetX<T>) PersistentCollectionX.super.retainAll(seq);
+        return (POrderedSetX<T>) PersistentCollectionX.super.retainAllS(seq);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAll(java.lang.Object[])
+     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Object[])
      */
     @Override
-    default POrderedSetX<T> retainAll(final T... values) {
+    default POrderedSetX<T> retainAllS(final T... values) {
 
-        return (POrderedSetX<T>) PersistentCollectionX.super.retainAll(values);
+        return (POrderedSetX<T>) PersistentCollectionX.super.retainAllS(values);
     }
 
     /* (non-Javadoc)

@@ -276,7 +276,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     @Override
     public ReactiveSeq<T> stream() {
         return run.stream()
-                  .flatMapIterable(e -> e);
+                  .flatMapI(e -> e);
     }
 
     @Override
@@ -828,6 +828,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         }
         return false;
     }
+
 
 
     public <T2, R1, R2, R3, R> ListT<W,R> forEach4M(Function<? super T, ? extends ListT<W,R1>> value1,

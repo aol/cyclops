@@ -1050,12 +1050,12 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
      * 
      * @see
      * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
-     * removeAll(java.util.stream.Stream)
+     * removeAllS(java.util.stream.Stream)
      */
     @Override
-    default PQueueX<T> removeAll(final Stream<? extends T> stream) {
+    default PQueueX<T> removeAllS(final Stream<? extends T> stream) {
 
-        return (PQueueX<T>) PersistentCollectionX.super.removeAll(stream);
+        return (PQueueX<T>) PersistentCollectionX.super.removeAllS(stream);
     }
 
     /*
@@ -1063,12 +1063,12 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
      * 
      * @see
      * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
-     * removeAll(java.lang.Iterable)
+     * removeAllS(java.lang.Iterable)
      */
     @Override
-    default PQueueX<T> removeAll(final Iterable<? extends T> it) {
+    default PQueueX<T> removeAllS(final Iterable<? extends T> it) {
 
-        return (PQueueX<T>) PersistentCollectionX.super.removeAll(it);
+        return (PQueueX<T>) PersistentCollectionX.super.removeAllS(it);
     }
 
     /*
@@ -1076,12 +1076,12 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
      * 
      * @see
      * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
-     * removeAll(java.lang.Object[])
+     * removeAllS(java.lang.Object[])
      */
     @Override
-    default PQueueX<T> removeAll(final T... values) {
+    default PQueueX<T> removeAllS(final T... values) {
 
-        return (PQueueX<T>) PersistentCollectionX.super.removeAll(values);
+        return (PQueueX<T>) PersistentCollectionX.super.removeAllS(values);
     }
 
     /*
@@ -1089,12 +1089,12 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
      * 
      * @see
      * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
-     * retainAll(java.lang.Iterable)
+     * retainAllS(java.lang.Iterable)
      */
     @Override
-    default PQueueX<T> retainAll(final Iterable<? extends T> it) {
+    default PQueueX<T> retainAllS(final Iterable<? extends T> it) {
 
-        return (PQueueX<T>) PersistentCollectionX.super.retainAll(it);
+        return (PQueueX<T>) PersistentCollectionX.super.retainAllS(it);
     }
 
     /*
@@ -1102,12 +1102,12 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
      * 
      * @see
      * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
-     * retainAll(java.util.stream.Stream)
+     * retainAllS(java.util.stream.Stream)
      */
     @Override
-    default PQueueX<T> retainAll(final Stream<? extends T> seq) {
+    default PQueueX<T> retainAllS(final Stream<? extends T> seq) {
 
-        return (PQueueX<T>) PersistentCollectionX.super.retainAll(seq);
+        return (PQueueX<T>) PersistentCollectionX.super.retainAllS(seq);
     }
 
     /*
@@ -1115,12 +1115,12 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
      * 
      * @see
      * com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#
-     * retainAll(java.lang.Object[])
+     * retainAllS(java.lang.Object[])
      */
     @Override
-    default PQueueX<T> retainAll(final T... values) {
+    default PQueueX<T> retainAllS(final T... values) {
 
-        return (PQueueX<T>) PersistentCollectionX.super.retainAll(values);
+        return (PQueueX<T>) PersistentCollectionX.super.retainAllS(values);
     }
 
     /*

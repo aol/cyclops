@@ -20,12 +20,12 @@ public class SkipSpliterator<T> extends Spliterators.AbstractSpliterator<T> impl
     }
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
-        System.out.println("Skipping For each! " + index + " " + skip);
+
         for(;index<skip;index++){
             source.tryAdvance(e->{});
 
         }
-        System.out.println("Reading " + index + " " + skip);
+
         source.forEachRemaining(action);
 
 
@@ -33,9 +33,15 @@ public class SkipSpliterator<T> extends Spliterators.AbstractSpliterator<T> impl
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        if(++index<skip) {
-            return source.tryAdvance(e->{});
+
+        boolean cont = true;
+        while(index++<skip && cont) {
+            cont =source.tryAdvance(e->{});
+            System.out.println("continue " + cont);
+
         }
+        if(!cont)
+            return false;
         return source.tryAdvance(t -> {
 
                 action.accept(t);
