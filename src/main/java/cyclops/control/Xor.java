@@ -358,7 +358,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#anyM()
+     * @see com.aol.cyclops.types.MonadicValue#fromEither5()
      */
     default AnyMValue<Witness.xor,PT> anyM() {
         return AnyM.fromXor(this);

@@ -48,8 +48,8 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
                                                    BiFunctor<LT3, RT>, 
                                                    To<Either4<LT1, LT2,LT3, RT>>,
                                                    MonadicValue<RT>,
-                                                   Supplier<RT>, 
-                                                   ApplicativeFunctor<RT> {
+                                                   Supplier<RT>
+                                                    {
     
     /**
      * Static method useful as a method reference for fluent consumption of any value type stored in this Either 
@@ -98,34 +98,9 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
                   .isPresent() ? Either4.right(mv4.get()) : Either4.left1(null);
 
     }
-    /**
-     * Create an AnyMValue instance that wraps an Either4
-     * 
-     * @param xor Either4 to wrap inside an AnyM
-     * @return AnyM instance that wraps the provided Either4
-     */
-    public static <LT1,LT2,LT3,T> AnyMValue<T> anyM(final Either4<LT1, LT2, LT3, T> xor) {
-        Objects.requireNonNull(xor);
-        return AnyM.ofValue(xor);
-    }
 
-    /**
-     * Take an iterable containing Either3s and convert them into a List of AnyMs
-     * e.g.
-     * {@code 
-     *     List<AnyM<Integer>> anyMs = anyMList(Arrays.asList(Either4.right(1),Either4.left(10));
-     *     
-     *     //List[AnyM[Either4:right[1],Either4:left[10]]]
-     * }
-     * 
-     * @param anyM Iterable containing Eithers
-     * @return List of AnyMs
-     */
-    public static <ST, LT2, LT3,T> ListX<AnyMValue<T>> anyMList(final Iterable<Either4<ST, LT2, LT3, T>> anyM) {
-        return ReactiveSeq.fromIterable(anyM)
-                          .map(e -> anyM(e))
-                          .toListX();
-    }
+
+  
 
     /**
      *  Turn a collection of Either3 into a single Either with Lists of values.
@@ -148,8 +123,9 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
      * @return Either3 Sequenced
      */
     public static <LT1,LT2,LT3, PT> Either4<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<PT>> sequence(final CollectionX<Either4<LT1, LT2, LT3, PT>> xors) {
-        return AnyM.sequence(anyMList(xors))
-                   .unwrap();
+        Objects.requireNonNull(xors);
+        return AnyM.sequence(xors.stream().filter(Either4::isRight).map(AnyM::fromEither4).toListX(),Witness.either4.INSTANCE)
+                .to(Witness::either4);
     }
     /**
      * Traverse a Collection of Either3 producing an Either4 with a ListX, applying the transformation function to every
@@ -486,8 +462,8 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
     @Override
     default <T2, R1, R2, R3, R> Either4<LT1,LT2,LT3,R> forEach4(Function<? super RT, ? extends MonadicValue<R1>> value1,
                                                                 BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                                TriFunction<? super RT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                                QuadFunction<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                Fn3<? super RT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                                Fn4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
@@ -497,9 +473,9 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
     @Override
     default <T2, R1, R2, R3, R> Either4<LT1,LT2,LT3,R> forEach4(Function<? super RT, ? extends MonadicValue<R1>> value1,
                                                                 BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                                TriFunction<? super RT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                                QuadFunction<? super RT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                                QuadFunction<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                Fn3<? super RT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                                Fn4<? super RT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                                Fn4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -509,7 +485,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
     @Override
     default <T2, R1, R2, R> Either4<LT1,LT2,LT3,R> forEach3(Function<? super RT, ? extends MonadicValue<R1>> value1,
                                                             BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                            TriFunction<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                            Fn3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
@@ -519,8 +495,8 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
     @Override
     default <T2, R1, R2, R> Either4<LT1,LT2,LT3,R> forEach3(Function<? super RT, ? extends MonadicValue<R1>> value1,
                                                             BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                            TriFunction<? super RT, ? super R1, ? super R2, Boolean> filterFunction,
-                                                            TriFunction<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                            Fn3<? super RT, ? super R1, ? super R2, Boolean> filterFunction,
+                                                            Fn3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
@@ -561,7 +537,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
     default <T2, R> Either4<LT1, LT2, LT3, R> combine(final Value<? extends T2> app,
                                                       final BiFunction<? super RT, ? super T2, ? extends R> fn) {
 
-        return (Either4<LT1, LT2, LT3, R>) ApplicativeFunctor.super.combine(app, fn);
+        return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.combine(app, fn);
     }
 
     /*
@@ -572,22 +548,12 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
      * com.aol.cyclops.types.Combiner)
      */
     @Override
-    default Either4<LT1, LT2, LT3, RT> combine(final BinaryOperator<Combiner<RT>> combiner, final Combiner<RT> app) {
+    default Either4<LT1, LT2, LT3, RT> zip(final BinaryOperator<Zippable<RT>> combiner, final Zippable<RT> app) {
 
-        return (Either4<LT1, LT2, LT3, RT>) ApplicativeFunctor.super.combine(combiner, app);
+        return (Either4<LT1, LT2, LT3, RT>) MonadicValue.super.zip(combiner, app);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq,
-     * java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Either4<LT1, LT2, LT3, R> zip(final Seq<? extends U> other,
-                                                 final BiFunction<? super RT, ? super U, ? extends R> zipper) {
-        return (Either4<LT1, LT2, LT3, R>) ApplicativeFunctor.super.zip(other, zipper);
-    }
+
 
     /*
      * (non-Javadoc)
@@ -596,10 +562,10 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
      * java.util.function.BiFunction)
      */
     @Override
-    default <U, R> Either4<LT1, LT2, LT3, R> zip(final Stream<? extends U> other,
+    default <U, R> Either4<LT1, LT2, LT3, R> zipS(final Stream<? extends U> other,
                                                  final BiFunction<? super RT, ? super U, ? extends R> zipper) {
 
-        return (Either4<LT1, LT2, LT3, R>) ApplicativeFunctor.super.zip(other, zipper);
+        return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.zipS(other, zipper);
     }
 
     /*
@@ -608,20 +574,9 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
      * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> Either4<LT1, LT2, LT3, Tuple2<RT, U>> zip(final Stream<? extends U> other) {
+    default <U> Either4<LT1, LT2, LT3, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {
 
-        return (Either4) ApplicativeFunctor.super.zip(other);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.aol.cyclops.types.Zippable#zip(org.jooq.lambda.Seq)
-     */
-    @Override
-    default <U> Either4<LT1, LT2, LT3, Tuple2<RT, U>> zip(final Seq<? extends U> other) {
-
-        return (Either4) ApplicativeFunctor.super.zip(other);
+        return (Either4) MonadicValue.super.zipS(other);
     }
 
     /*
@@ -632,7 +587,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
     @Override
     default <U> Either4<LT1, LT2, LT3, Tuple2<RT, U>> zip(final Iterable<? extends U> other) {
 
-        return (Either4) ApplicativeFunctor.super.zip(other);
+        return (Either4) MonadicValue.super.zip(other);
     }
 
     /*
@@ -646,27 +601,27 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.
+     * @see com.aol.cyclops.types.applicative.MonadicValue#zip(java.lang.
      * Iterable, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Either4<LT1, LT2, LT3, R> zip(final Iterable<? extends T2> app,
                                                   final BiFunction<? super RT, ? super T2, ? extends R> fn) {
 
-        return (Either4<LT1, LT2, LT3, R>) ApplicativeFunctor.super.zip(app, fn);
+        return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.zip(app, fn);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.
+     * @see com.aol.cyclops.types.applicative.MonadicValue#zip(java.util.
      * function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> Either4<LT1, LT2,LT3, R> zip(final BiFunction<? super RT, ? super T2, ? extends R> fn,
-                                                 final Publisher<? extends T2> app) {
+    default <T2, R> Either4<LT1, LT2,LT3, R> zipP(final Publisher<? extends T2> app,
+                                                 final BiFunction<? super RT, ? super T2, ? extends R> fn) {
 
-        return (Either4<LT1, LT2, LT3, R>) ApplicativeFunctor.super.zip(fn, app);
+        return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.zipP(app,fn);
     }
 
     /*
@@ -716,7 +671,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
     @Override
     default <U> Either4<LT1, LT2, LT3, U> cast(final Class<? extends U> type) {
 
-        return (Either4<LT1, LT2, LT3, U>) ApplicativeFunctor.super.cast(type);
+        return (Either4<LT1, LT2, LT3, U>) MonadicValue.super.cast(type);
     }
 
     /*
@@ -727,7 +682,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
     @Override
     default Either4<LT1, LT2, LT3, RT> peek(final Consumer<? super RT> c) {
 
-        return (Either4<LT1, LT2, LT3, RT>) ApplicativeFunctor.super.peek(c);
+        return (Either4<LT1, LT2, LT3, RT>) MonadicValue.super.peek(c);
     }
 
     /*
@@ -739,22 +694,9 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
     @Override
     default <R> Either4<LT1, LT2, LT3, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Either4<LT1, LT2, LT3, R>) ApplicativeFunctor.super.trampoline(mapper);
+        return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.trampoline(mapper);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.aol.cyclops.types.Functor#patternMatch(java.util.function.Function,
-     * java.util.function.Supplier)
-     */
-    @Override
-    default <R> Either4<LT1, LT2, LT3, R> patternMatch(final Function<CheckValue1<RT, R>, CheckValue1<RT, R>> case1,
-                                                       final Supplier<? extends R> otherwise) {
-
-        return (Either4<LT1, LT2, LT3, R>) ApplicativeFunctor.super.patternMatch(case1, otherwise);
-    }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     final static class Lazy<ST, M,M2, PT> implements Either4<ST, M,M2, PT> {
@@ -993,7 +935,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
         /*
          * (non-Javadoc)
          * 
-         * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.
+         * @see com.aol.cyclops.types.applicative.MonadicValue#ap(com.aol.
          * cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override
@@ -1181,7 +1123,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
         /*
          * (non-Javadoc)
          * 
-         * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.
+         * @see com.aol.cyclops.types.applicative.MonadicValue#ap(com.aol.
          * cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override
@@ -1357,7 +1299,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
         /*
          * (non-Javadoc)
          * 
-         * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.
+         * @see com.aol.cyclops.types.applicative.MonadicValue#ap(com.aol.
          * cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override
@@ -1539,7 +1481,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Functor<RT>,
         /*
          * (non-Javadoc)
          * 
-         * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.
+         * @see com.aol.cyclops.types.applicative.MonadicValue#ap(com.aol.
          * cyclops.types.Value, java.util.function.BiFunction)
          */
         @Override

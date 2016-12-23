@@ -333,7 +333,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#anyM()
+     * @see com.aol.cyclops.types.MonadicValue#fromEither5()
      */
     default AnyMValue<Witness.ior,PT> anyM() {
         return AnyM.fromIor(this);

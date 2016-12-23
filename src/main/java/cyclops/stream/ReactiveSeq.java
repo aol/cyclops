@@ -1923,7 +1923,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * <pre>
      * {@code 
-     * 	assertThat(ReactiveSeq.of(1,2,3)).flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
+     * 	assertThat(ReactiveSeq.of(1,2,3)).flatMapAnyM(i-> fromEither5(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
      * 
      * }
      * </pre>

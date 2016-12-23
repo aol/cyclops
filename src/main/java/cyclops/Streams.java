@@ -1434,7 +1434,7 @@ public class Streams {
      * <pre>
      * {@code
      * Stream<List<Integer>> zipped = Streams.zip(Stream.of(1,2,3)
-    									,anyM(Optional.of(2)), 
+    									,fromEither5(Optional.of(2)),
     										(a,b) -> Arrays.asList(a,b));
     	
     	

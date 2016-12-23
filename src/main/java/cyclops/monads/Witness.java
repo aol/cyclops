@@ -106,7 +106,7 @@ public interface Witness {
     public static <L1,L2,R> Either3<L1,L2,R> either3(AnyM<either3,? extends R> anyM){
         return anyM.unwrap();
     }
-    public static <L1,L2,L3,R> Either4<L1,L2,L3,R> either(AnyM<either4,? extends R> anyM){
+    public static <L1,L2,L3,R> Either4<L1,L2,L3,R> either4(AnyM<either4,? extends R> anyM){
         return anyM.unwrap();
     }
     public static <L1,L2,L3,L4,R> Either5<L1,L2,L3,L4,R> either5(AnyM<either5,? extends R> anyM){

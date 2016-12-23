@@ -411,7 +411,7 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.MonadicValue#anyM()
+     * @see com.aol.cyclops.types.MonadicValue#fromEither5()
      */
 
     default AnyM<Witness.either,PT> anyMEither() {

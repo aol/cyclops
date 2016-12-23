@@ -319,7 +319,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.anyM.AnyMValue#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     * @see com.aol.cyclops.types.fromEither5.AnyMValue#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> AnyMValue<W,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {

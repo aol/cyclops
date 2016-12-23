@@ -3,9 +3,8 @@ package cyclops.collections;
 import com.aol.cyclops.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableSequenceX;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.Traversable;
 import cyclops.function.Monoid;
+import com.aol.cyclops.hkt.Higher;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -42,7 +41,11 @@ public interface ListX<T> extends To<ListX<T>>,
                                   MutableCollectionX<T>,
                                   MutableSequenceX<T>,
                                   Comparable<T>,
-                                  OnEmptySwitch<T, List<T>> {
+                                  OnEmptySwitch<T, List<T>>,
+                                  Higher<ListX.µ,T> {
+
+    public static class µ {
+    }
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
         return ListT.of(witness.adapter().unit(this));

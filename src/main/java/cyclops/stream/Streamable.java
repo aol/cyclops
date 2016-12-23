@@ -1080,7 +1080,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * 
      * <pre>
      * {@code 
-     * List<List<Integer>> list = anyM(Stream.of(1,2,3,4,5,6))
+     * List<List<Integer>> list = fromEither5(Stream.of(1,2,3,4,5,6))
     								.asSequence()
     								.sliding(2)
     								.collect(Collectors.toList());
@@ -1105,7 +1105,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      *  Create a sliding view over this Sequence
      * <pre>
      * {@code 
-     * List<List<Integer>> list = anyM(Stream.of(1,2,3,4,5,6))
+     * List<List<Integer>> list = fromEither5(Stream.of(1,2,3,4,5,6))
     								.asSequence()
     								.sliding(3,2)
     								.collect(Collectors.toList());
@@ -1767,7 +1767,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * Allows flatMap return type to be any Monad type
      * <pre>
      * {@code 
-     * 	assertThat(Streamable.of(1,2,3)).flatMapAnyM(i-> anyM(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
+     * 	assertThat(Streamable.of(1,2,3)).flatMapAnyM(i-> fromEither5(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
     
      * }</pre>
      * 

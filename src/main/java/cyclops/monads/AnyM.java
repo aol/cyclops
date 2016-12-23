@@ -28,6 +28,8 @@ import java.util.stream.StreamSupport;
 import cyclops.control.*;
 import cyclops.control.either.Either;
 import cyclops.control.either.Either3;
+import cyclops.control.either.Either4;
+import cyclops.control.either.Either5;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
@@ -414,12 +416,12 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * <pre>{@code 
      * 
      * AnyM.fromStream(Stream.of(1,2,3,4))
-     * 							.aggregate(anyM(Optional.of(5)))
+     * 							.aggregate(fromEither5(Optional.of(5)))
      * 
      * AnyM[Stream[List[1,2,3,4,5]]
      * 
      * List<Integer> result = AnyM.fromStream(Stream.of(1,2,3,4))
-     * 							.aggregate(anyM(Optional.of(5)))
+     * 							.aggregate(fromEither5(Optional.of(5)))
      * 							.toSequence()
      *                          .flatten()
      * 							.toList();
@@ -729,8 +731,26 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         Objects.requireNonNull(xor);
         return AnyMFactory.instance.value(xor,Witness.either3.INSTANCE);
     }
-
-
+    /**
+     * Create an AnyMValue instance that wraps an Either4
+     *
+     * @param xor Either4 to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Either4
+     */
+    public static <LT1,LT2,LT3,T> AnyMValue<either4,T> fromEither4(final Either4<LT1, LT2, LT3, T> xor) {
+        Objects.requireNonNull(xor);
+        return AnyMFactory.instance.value(xor,Witness.either4.INSTANCE);
+    }
+    /**
+     * Create an AnyMValue instance that wraps an Either4
+     *
+     * @param xor Either4 to wrap inside an AnyM
+     * @return AnyM instance that wraps the provided Either4
+     */
+    public static <LT1,LT2,LT3,LT4,T> AnyMValue<either5,T> fromEither5(final Either5<LT1, LT2, LT3, LT4, T> xor) {
+        Objects.requireNonNull(xor);
+        return AnyMFactory.instance.value(xor,Witness.either5.INSTANCE);
+    }
     /**
      * Create an AnyMValue instance that wraps a Try
      * 
@@ -849,6 +869,41 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * Take an iterable containing Either3s and convert them into a List of AnyMs
      * e.g.
      * {@code
+     *     List<AnyM<Integer>> anyMs = anyMList(Arrays.asList(Either4.right(1),Either4.left(10));
+     *
+     *     //List[AnyM[Either4:right[1],Either4:left[10]]]
+     * }
+     *
+     * @param anyM Iterable containing Eithers
+     * @return List of AnyMs
+     */
+    public static <ST, LT2, LT3,LT4,T> ListX<AnyMValue<either5,T>> listFromEither5(final Iterable<Either5<ST, LT2, LT3, LT4, T>> anyM) {
+        return ReactiveSeq.fromIterable(anyM)
+                .map(e -> fromEither5(e))
+                .toListX();
+    }
+
+    /**
+     * Take an iterable containing Either3s and convert them into a List of AnyMs
+     * e.g.
+     * {@code
+     *     List<AnyM<Integer>> anyMs = anyMList(Arrays.asList(Either4.right(1),Either4.left(10));
+     *
+     *     //List[AnyM[Either4:right[1],Either4:left[10]]]
+     * }
+     *
+     * @param anyM Iterable containing Eithers
+     * @return List of AnyMs
+     */
+    public static <ST, LT2, LT3,T> ListX<AnyMValue<either4,T>> listFromEither4(final Iterable<Either4<ST, LT2, LT3, T>> anyM) {
+        return ReactiveSeq.fromIterable(anyM)
+                .map(e -> fromEither4(e))
+                .toListX();
+    }
+    /**
+     * Take an iterable containing Either3s and convert them into a List of AnyMs
+     * e.g.
+     * {@code
      *     List<AnyM<Integer>> anyMs = listFromEither3(Arrays.asList(Either3.right(1),Either3.left(10));
      *
      *     //List[AnyM[Either3:right[1],Either3:left[10]]]
@@ -943,11 +998,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      *     //List[AnyM[Streamable[1,2,3],Streamable[10,20,30]]]
      * }
      * 
-     * @param anyM Iterable containing Streamables
+     * @param fromEither5 Iterable containing Streamables
      * @return List of AnyMs
      
-    public static <T> ListX<AnyMSeq<T>> listFromIterable(final Iterable<Iterable<T>> anyM) {
-        return StreamSupport.stream(anyM.spliterator(), false)
+    public static <T> ListX<AnyMSeq<T>> listFromIterable(final Iterable<Iterable<T>> fromEither5) {
+        return StreamSupport.stream(fromEither5.spliterator(), false)
                             .map(i -> AnyM.fromIterable(i))
                             .collect(ListX.listXCollector());
     }
@@ -1051,11 +1106,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      *     //List[AnyM[Stream[1,2,3],Stream[10,20,30]]]
      * }
      * 
-     * @param anyM Iterable containing Iterators
+     * @param fromEither5 Iterable containing Iterators
      * @return List of AnyMs
      
-    public static <T> ListX<AnyMSeq<T>> listFromIterator(final Iterable<Iterator<T>> anyM) {
-        return StreamSupport.stream(anyM.spliterator(), false)
+    public static <T> ListX<AnyMSeq<T>> listFromIterator(final Iterable<Iterator<T>> fromEither5) {
+        return StreamSupport.stream(fromEither5.spliterator(), false)
                             .map(i -> AnyM.fromIterable(() -> i))
                             .collect(ListX.listXCollector());
     }*/
