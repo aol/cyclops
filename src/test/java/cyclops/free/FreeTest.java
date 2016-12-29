@@ -2,9 +2,9 @@ package cyclops.free;
 
 
 import cyclops.function.Fn0;
-import cyclops.free.Free;
 import org.junit.Test;
 
+import cyclops.free.CharToy.*;
 import static cyclops.function.Lambda.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,25 +46,41 @@ public final class FreeTest {
                 "bell \n" +
                 "output B\n" +
                 "done\n";
+
+
         assertThat(expected,equalTo(
-                showProgram(CharToy.output('A').forEach4(unit1 -> CharToy.bell(),
-                                                            (unit1,unit2) -> CharToy.output('B'),
-                                                            (u1,u2,u3)->CharToy.done()))));
+                showProgram(CharToy.output('A')
+                                   .forEach4(unit1 -> CharToy.bell(),
+                                             (unit1,unit2) -> CharToy.output('B'),
+                                             (u1,u2,u3)->CharToy.done()))));
     }
 
 
-    static <R> String showProgram(Free<CharToy.µ, R> program){
-        return
-                program.resume(CharToy.functor).visit(
-                        r ->
-                                ((CharToy<Free<CharToy.µ, R>>)r).fold(
-                                        (a, next) -> "output " + a + "\n" + showProgram(next),
-                                        (next -> "bell " + "\n" + showProgram(next)),
-                                        "done\n"
-                                )
+    static <R> String showProgram(Free<CharToy.µ,R> program){
+
+       return program.resume(CharToy.functor, CharToy::narrowK)
+                .visit(
+                        r ->   r.match()
+                                .visit(FreeTest::handleOutput,
+                                       FreeTest::handleBell,
+                                       FreeTest::handleDone)
                         ,
-                        r ->
-                                "return " + r + "\n"
+                        FreeTest::handleReturn
                 );
+
+    }
+    static <R> String handleReturn(R r){
+        return "return " + r + "\n";
+    }
+    static <R> String handleOutput(CharOutput<Free<CharToy.µ,R>> output){
+        return output.fold((a, next) -> "output " + a + "\n" + showProgram(next));
+    }
+
+    static <R> String handleBell(CharBell<Free<CharToy.µ, R>> bell){
+       return bell.fold(next -> "bell " + "\n" + showProgram(next));
+    }
+
+    static <T> String handleDone(CharDone<T> done){
+        return "done\n";
     }
 }

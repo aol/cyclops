@@ -74,7 +74,7 @@ import com.aol.cyclops.types.Value;
  * @param <T> Return type
  */
 @FunctionalInterface
-public interface Trampoline<T> extends Supplier<T>, Value<T>, To<Trampoline<T>> {
+public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
 
     /**
      * @return next stage in Trampolining

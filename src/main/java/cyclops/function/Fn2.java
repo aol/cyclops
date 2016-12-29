@@ -84,6 +84,7 @@ public interface Fn2<T1, T2, R> extends Function2<T1,T2,R> {
     }
 
     interface FunctionalOperations<T1,T2,R> extends Fn2<T1,T2,R> {
+        
         default <W extends WitnessType<W>> Fn2<AnyM<W,T1>,AnyM<W,T2>,AnyM<W,R>> anyMZip() {
             return (a,b) -> (AnyM<W,R>)a.zip(b,this);
         }

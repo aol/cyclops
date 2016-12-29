@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import cyclops.async.Future;
 
+import cyclops.function.Fn0;
 import lombok.Value;
 
 /**
@@ -23,7 +24,7 @@ import lombok.Value;
  *
  * @param <T> Type of this convertable
  */
-public interface Convertable<T> extends Iterable<T>, Supplier<T>, Visitable<T> {
+public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector

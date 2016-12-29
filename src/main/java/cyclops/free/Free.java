@@ -2,6 +2,7 @@ package cyclops.free;
 
 import com.aol.cyclops.hkt.Higher;
 
+import com.aol.cyclops.types.mixins.Printable;
 import cyclops.control.Xor;
 import cyclops.control.either.Either;
 import cyclops.control.either.Either3;
@@ -24,11 +25,13 @@ import java.util.function.Function;
  * and https://github.com/scalaz/scalaz/blob/series/7.2.x/core/src/main/scala/scalaz/Free.scala
  * and https://github.com/typelevel/cats/blob/master/free/src/main/scala/cats/free/Free.scala
  *
+ * Org attempt : https://github.com/aol/cyclops/blob/v4.0.1/cyclops-free-monad/src/main/java/com/aol/cyclops/monad/Free.java
+ *
  * @param <F> Functor type
  * @param <T> Data type of Functor
  */
 @NoArgsConstructor(access=AccessLevel.PRIVATE)
-public abstract class Free<F, T>{
+public abstract class Free<F, T> implements Printable {
 
     public <R1, R2, R3,R4,R5> Free<F,R5> forEach6(Function<? super T, ? extends Free<F,R1>> value2,
                                                BiFunction<? super T, ? super R1, ? extends Free<F,R2>> value3,
@@ -170,7 +173,7 @@ public abstract class Free<F, T>{
     public final T go(final Function<? super Higher<F, Free<F, T>>,? extends Free<F,T>> fn, final Functor<F> functor){
         Free<F,T> toUse = this;
         for(;;) {
-            Xor<Higher<F, Free<F, T>>, T> xor = toUse.resume(functor);
+            Xor<Higher<F, Free<F, T>>, T> xor = (Xor)toUse.resume(functor);
             if (xor.isPrimary())
                 return xor.get();
             toUse =  fn.apply(xor.secondaryGet());
@@ -186,8 +189,12 @@ public abstract class Free<F, T>{
 
     public abstract <R> Free<F, R> flatMap(final Function<? super T,? extends Free<F, ? extends R>> f);
 
+    public final <R> Xor<R, T> resume(final Functor<F> functor, Function<Higher<F,Free<F,T>>,R> decoder) {
+        return resume(functor).secondaryMap(decoder);
+    }
     public final Xor<Higher<F, Free<F, T>>, T> resume(final Functor<F> functor) {
         return resumeInternal( functor).visit(Xor::secondary,Xor::primary,t->null);
+
     }
    abstract <T1, U> Either3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor);
 

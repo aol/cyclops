@@ -116,13 +116,15 @@ public interface Fn0< R> extends Function0<R>, Higher<Fn0.µ,R>{
         return Free.suspend(f);
     }
     public static <A> A run(final Free<Fn0.µ, A> f){
-        return f.go(a -> ((Fn0<Free<Fn0.µ, A>>)a).apply(), Fn0.functor);
+        return f.go(a -> ((Fn0<Free<Fn0.µ, A>>)a).apply(), Fn0.Instances.functor);
     }
-    public static final Functor<Fn0.µ> functor =
-            new Functor<µ>() {
-                @Override
-                public <T, R> Fn0<R> map(Function<? super T,? extends R> f, Higher<µ, T> fa) {
-                    return ((Fn0<T>)fa).functionOps().map(f);
-                }
-            };
+    static class Instances {
+        public static final Functor<Fn0.µ> functor =
+                new Functor<µ>() {
+                    @Override
+                    public <T, R> Fn0<R> map(Function<? super T, ? extends R> f, Higher<µ, T> fa) {
+                        return ((Fn0<T>) fa).functionOps().map(f);
+                    }
+                };
+    }
 }

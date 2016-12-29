@@ -32,12 +32,10 @@ import lombok.AllArgsConstructor;
  * @param <T> Data type of element in this value
  */
 @FunctionalInterface
-public interface Value<T> extends Supplier<T>, 
-                                    Foldable<T>, 
+public interface Value<T> extends   Foldable<T>,
                                     Convertable<T>, 
                                     Publisher<T>, 
-                                    Predicate<T>,
-        Fn0<T> {
+                                    Predicate<T> {
     @Override
     default T apply() {
         return this.orElse(null);
