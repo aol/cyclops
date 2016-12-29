@@ -116,6 +116,11 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
 
     }
 
+    static <ST,PT> Either<ST,PT> fromXor(Xor<ST,PT> xor){
+        return xor.visit(Either::left, Either::right);
+    }
+
+
 
 
 
@@ -1544,7 +1549,7 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
            final Eval<Either<LT1, PT>> e3 =  (Eval<Either<LT1,  PT>>)et;
            return new Lazy<>(
                              e3);
-           
+
         }
 
         @Override

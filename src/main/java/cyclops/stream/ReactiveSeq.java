@@ -2899,10 +2899,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * <pre>
      * {@code 
-     * unzip4(ReactiveSeq.of(new Tuple4(1, "a", 2l,'z'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
+     * unzip4(ReactiveSeq.of(new Tuple4(1, "a", 2l,'µ'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
      * 						"c", 4l,'x')));
      * 		}
-     * 		// ReactiveSeq[1,2,3], ReactiveSeq[a,b,c], ReactiveSeq[2l,3l,4l], ReactiveSeq[z,y,x]
+     * 		// ReactiveSeq[1,2,3], ReactiveSeq[a,b,c], ReactiveSeq[2l,3l,4l], ReactiveSeq[µ,y,x]
      * </pre>
      */
     public static <T1, T2, T3, T4> Tuple4<ReactiveSeq<T1>, ReactiveSeq<T2>, ReactiveSeq<T3>, ReactiveSeq<T4>> unzip4(

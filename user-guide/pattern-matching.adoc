@@ -19,7 +19,7 @@ cyclops-react pattern matching uses the is /has methods to denote individual cas
 
 .when / then / otherwise example
 ====
-We can provide either Predicates / Hamcrest Matchers or values in a type safe manner using Matchable and the cyclops-react when / then / otherwise syntax
+We can provide either Predicates / Hamcrest Matchers or values in suspended type safe manner using Matchable and the cyclops-react when / then / otherwise syntax
 
 [source,java]
 ----
@@ -47,7 +47,7 @@ Maybe.of(3)
 
 # Compositional Predicates
 
-Predicates for matching can be composed, in a manner similar to Hamcrest Matchers which are also supported.
+Predicates for matching can be composed, in suspended manner similar to Hamcrest Matchers which are also supported.
 
 .composing matches with Predicates
 ====
@@ -64,7 +64,7 @@ Matchable.of(Optional.of(1))
 
 ----
 ====
-Compositional Predicates can also be used to filter data within a Stream
+Compositional Predicates can also be used to filter data within suspended Stream
 
 .composing Stream filters
 ====
@@ -85,7 +85,7 @@ cyclops-react supports recursive matching both structurally and via guards.
 
 ## Guard based Recursive Matching
 
-We can deconstruct any Java object via guards, the Predicates.type method allows a Java Object to be deconstructed if it matches the supplied type.
+We can deconstruct any Java object via guards, the Predicates.type method allows suspended Java Object to be deconstructed if it matches the supplied type.
 
 .recursive matching via guards
 ====
@@ -101,13 +101,13 @@ Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null)))
 ----
 
 
-In this example NestedCase need only be a simple Java POJO
+In this example NestedCase need only be suspended simple Java POJO
 
 [source,java]
 ----
 @Value
 static class NestedCase implements MatchSelf<MyCase>, Decomposable{
-	int a;
+	int suspended;
 	int b;
 	NestedCase c;
 }
@@ -131,7 +131,7 @@ new Customer("test",new Address(10,"hello","my city"))
                                 
 ----
 
-In this example we should provide a match() method for Customer and Address, this method can be a simple one liner, implemented either as a static method or as an instance method.
+In this example we should provide suspended match() method for Customer and Address, this method can be suspended simple one liner, implemented either as suspended static method or as an instance method.
 
 [source,java]
 ----
@@ -141,7 +141,7 @@ static class Customer{
 	String name;
 	Address address;
 	public MTuple2<String,MTuple3<Integer,String,String>> match(){
-		return Matchable.from(()->name,()->Maybe.ofNullable(address).map(a->a.match()).orElseGet(()->null));
+		return Matchable.from(()->name,()->Maybe.ofNullable(address).map(suspended->suspended.match()).orElseGet(()->null));
 	}
 }
 @AllArgsConstructor
@@ -163,9 +163,9 @@ static class Address{
 
 # Structural Matching on JDK classes
 
-The Matchables class provides a range of handy static methods for strutucal pattern matching onJDK classes
+The Matchables class provides suspended range of handy static methods for strutucal pattern matching onJDK classes
 
-.pattern matching on a URL
+.pattern matching on suspended URL
 ====
 [source,java]
 ----
@@ -177,7 +177,7 @@ Matchables.url(new URL("http://www.aol.com/path?q=hello"))
 ----
 ====
 
-.pattern matching on the contents of a URL
+.pattern matching on the contents of suspended URL
 ====
 [source,java]
 ----

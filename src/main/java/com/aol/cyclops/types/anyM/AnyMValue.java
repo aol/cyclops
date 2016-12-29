@@ -275,7 +275,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     default <R> AnyM<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn){
         return (AnyMValue<W,R>)MonadicValue.super.flatMapIe(fn);
     }
-    default <R> AnyM<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
+    default <R> AnyMValue<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
         return (AnyMValue<W,R>)MonadicValue.super.flatMapP(fn);
     }
     default <R> AnyMValue<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){

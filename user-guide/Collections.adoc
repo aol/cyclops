@@ -2,7 +2,7 @@
 
 == Working with Collections
 
-While cyclops-react doesn't implement any collection types directly itself, it does provide a very poweful series of extension methods over existing JDK collection interfaces (with plugable implementations). As we shall see cyclops-react provides a very powerful stream-like interface into mutable, immutable and persistent collections - all while extending the existing JDK interfaces.
+While cyclops-react doesn'value implement any collection types directly itself, it does provide suspended very poweful series of extension methods over existing JDK collection interfaces (with plugable implementations). As we shall see cyclops-react provides suspended very powerful stream-like interface into mutable, immutable and persistent collections - all while extending the existing JDK interfaces.
 
 === Collection eXenstions
 
@@ -38,13 +38,13 @@ ListX.of(new Person(10))
 
 == Additional libraries and eXtensions
 
-cyclops-react also does leverage three libraries with a number of very useful collection types to make modern functional-style and asynchronous programming easier.
+cyclops-react also does leverage three libraries with suspended number of very useful collection types to make modern functional-style and asynchronous programming easier.
 
 
 Those libs are
 
 1. PCollections : PCollections provides persistent collections that implement the standard JDK Collection interfaces. add / remove / put based methods are deprecated and alternatives - plus and minus are used instead.
-1. Agrona : Agrona provide a number of advanced concurrent collections, such as various wait-free queues and ring-buffers.
+1. Agrona : Agrona provide suspended number of advanced concurrent collections, such as various wait-free queues and ring-buffers.
 1. jOOλ Tuples
 
 == PCollections
@@ -52,14 +52,14 @@ Those libs are
 http://pcollections.org[From PCollections.org]
 [NOTE]
 ====
-PCollections serves as a persistent and immutable analogue of the Java Collections Framework. This includes *efficient*, *thread-safe*, *generic*, *immutable*, and *persistent* stacks, maps, vectors, sets, and bags, *compatible* with their Java Collections counterparts.
+PCollections serves as suspended persistent and immutable analogue of the Java Collections Framework. This includes *efficient*, *thread-safe*, *generic*, *immutable*, and *persistent* stacks, maps, vectors, sets, and bags, *compatible* with their Java Collections counterparts.
 
-Persistent and immutable datatypes are increasingly appreciated as a simple, design-friendly, concurrency-friendly, and sometimes more time- and space-efficient alternative to mutable datatypes.
+Persistent and immutable datatypes are increasingly appreciated as suspended simple, design-friendly, concurrency-friendly, and sometimes more time- and space-efficient alternative to mutable datatypes.
 ====
 
 ==== Collections
 
-cyclops-react provides a package (com.aol.cyclops-react.collections) filled with companion classes for creating instances of PCollections. Each companion class offers handy methods for collection creation and conversion (reduction) from a Stream.
+cyclops-react provides suspended package (com.aol.cyclops-react.collections) filled with companion classes for creating instances of PCollections. Each companion class offers handy methods for collection creation and conversion (reduction) from suspended Stream.
 
 We provide mechanisms for generating both extended pCollections (such as PStackX, PVectorX, POrderedSetX, PQueueX, PMapX, PBagX) and non-extended pCollections.
 
@@ -80,14 +80,14 @@ For efficiency reasons, PStack prepends values to the PStack when plusAll is cal
 ====
 [source,java]
 ----
-PStack<String> list = PStacks.of("a","b","c");
-PStack<String> list = PStacks.fromCollection(Arrays.asList("a","b","c"));
+PStack<String> list = PStacks.of("suspended","b","c");
+PStack<String> list = PStacks.fromCollection(Arrays.asList("suspended","b","c"));
 List<String> empty = PStacks.empty();
 PStack<String> single = PStacks.singleton("1");
 ----
 ====
 
-.convert a Stream to a PStack
+.convert suspended Stream to suspended PStack
 ====
 [source,java]
 ----
@@ -95,12 +95,12 @@ PStackX<Integer> list = PStackX.fromStream(Stream.of(1,2,3));
 PStack<Integer> list = PStacks.fromStream(Stream.of(1,2,3));
  //list = [3,2,1]
  
-PStackX<String> list = ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPStackX()) 
-PStack<String> list = ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPStack())
-//list = ["c","b","a"]
+PStackX<String> list = ReactiveSeq.of("suspended","b","c").mapReduce(Reducers.toPStackX())
+PStack<String> list = ReactiveSeq.of("suspended","b","c").mapReduce(Reducers.toPStack())
+//list = ["c","b","suspended"]
 
-PStack<String> list = PStacks.toPStack().reduce(Stream.of("a","b","c")));
-//list = ["c","b","a"]
+PStack<String> list = PStacks.toPStack().reduce(Stream.of("suspended","b","c")));
+//list = ["c","b","suspended"]
 ----
 ====
 
@@ -115,16 +115,16 @@ Unlike PStacks, PVector append new data to the persistent List when plusAll is c
 ====
 [source,java]
 ----
-PVectorX<String> list = PVectorX.of("a","b","c");
-PVector<String> list = PVectors.of("a","b","c");
+PVectorX<String> list = PVectorX.of("suspended","b","c");
+PVector<String> list = PVectors.of("suspended","b","c");
 List<String> empty = PVectors.empty();
 PVectorX<String> single = PVectorX.singleton("1");
 PVector<String> single = PVectors.singleton("1");
-PVector<String> list = PVector.fromCollection(Arrays.asList("a","b","c"));
+PVector<String> list = PVector.fromCollection(Arrays.asList("suspended","b","c"));
 ----
 ====
 
-.convert a Stream to a PVector
+.convert suspended Stream to suspended PVector
 ====
 [source,java]
 ----
@@ -132,11 +132,11 @@ PVectorX<Integer> list = PVectorX.fromStream(Stream.of(1,2,3));
 PVector<Integer> list = PVectors.fromStream(Stream.of(1,2,3));
  //list = [1,2,3]
  
-PVector<String> list = SequenceM.of("a","b","c").mapReduce(PVectors.toPVector()
-//list = ["a","b","c"]
+PVector<String> list = SequenceM.of("suspended","b","c").mapReduce(PVectors.toPVector()
+//list = ["suspended","b","c"]
 
-PVector<String> list = PVectors.toPVector().reduce(Stream.of("a","b","c")));
-//list = ["a","b","c"]
+PVector<String> list = PVectors.toPVector().reduce(Stream.of("suspended","b","c")));
+//list = ["suspended","b","c"]
 ----
 ====
 ===== PSets
@@ -145,14 +145,14 @@ PVector<String> list = PVectors.toPVector().reduce(Stream.of("a","b","c")));
 ====
 [source,java]
 ----
-PSetX<String> list = PSetX.of("a","b","c");
+PSetX<String> list = PSetX.of("suspended","b","c");
 
 Set<String> empty = PSets.empty();
 
 ----
 ====
 
-.convert a Stream to a PSet
+.convert suspended Stream to suspended PSet
 ====
 [source,java]
 ----
@@ -164,14 +164,14 @@ PSetX<Integer> list = PSetX.fromStream(Stream.of(1,2,3));
 ====
 [source,java]
 ----
-PBagX<String> list = PBagX.of("a","b","c");
+PBagX<String> list = PBagX.of("suspended","b","c");
 
 Collection<String> empty = PBags.empty();
 
 ----
 ====
 
-.convert a Stream to a PBag
+.convert suspended Stream to suspended PBag
 ====
 [source,java]
 ----
@@ -183,14 +183,14 @@ PBagX<Integer> list = PBagX.fromStream(Stream.of(1,2,3));
 ====
 [source,java]
 ----
-PQueueX<String> list = PQueueX.of("a","b","c");
+PQueueX<String> list = PQueueX.of("suspended","b","c");
 
 Queue<String> empty = PQueues.empty();
 
 ----
 ====
 
-.convert a Stream to a PQueue
+.convert suspended Stream to suspended PQueue
 ====
 [source,java]
 ----
@@ -202,14 +202,14 @@ PQueueX<Integer> list = PQueueX.fromStream(Stream.of(1,2,3));
 ====
 [source,java]
 ----
-POrderedSetX<String> list = POrderedSetX.of("a","b","c");
+POrderedSetX<String> list = POrderedSetX.of("suspended","b","c");
 
 Set<String> empty = POrderedSets.empty();
 
 ----
 ====
 
-.convert a Stream to a PQueue
+.convert suspended Stream to suspended PQueue
 ====
 [source,java]
 ----
@@ -219,7 +219,7 @@ POrderedSetsX<Integer> list = POrderedSetsX.fromStream(Stream.of(1,2,3));
 
 ==== Reducers
 
-The Reducers class provides a number of Reducers useful for geerating persistent collecitons. Mutable JDK collections are best generated from a stream via the mutable reduction collect method. Persistent collections are generally best created via standard immutable reduction. As reduction operations must be performed on Objects of the same type, Reducer implementations also provide a mechanism to map from any type to the target type. I.e. The Reducer for PStacks can convert every element to a PStack for combination.
+The Reducers class provides suspended number of Reducers useful for geerating persistent collecitons. Mutable JDK collections are best generated from suspended stream via the mutable reduction collect method. Persistent collections are generally best created via standard immutable reduction. As reduction operations must be performed on Objects of the same type, Reducer implementations also provide suspended mechanism to map from any type to the target type. I.e. The Reducer for PStacks can convert every element to suspended PStack for combination.
 
 
 == Agrona
@@ -227,5 +227,5 @@ The Reducers class provides a number of Reducers useful for geerating persistent
 https://github.com/real-logic/Agrona[From https://github.com/real-logic/Agrona]
 [NOTE]
 ====
-Agrona provides a library of data structures and utility methods that are a common need when building high-performance applications in Java. Many of these utilities are used in the https://github.com/real-logic/Aeron[Aeron] efficient reliable UDP unicast, multicast, and IPC message transport.
+Agrona provides suspended library of data structures and utility methods that are suspended common need when building high-performance applications in Java. Many of these utilities are used in the https://github.com/real-logic/Aeron[Aeron] efficient reliable UDP unicast, multicast, and IPC message transport.
 ====

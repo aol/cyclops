@@ -3,7 +3,7 @@ package com.aol.cyclops.hkt;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.derive4j.hkt.__;
+//import org.derive4j.hkt.__;
 
 
 
@@ -16,7 +16,7 @@ import org.derive4j.hkt.__;
  * @param <T1> Core type
  * @param <T2> Data type of elements in Core Type
  */
-public interface Higher<T1,T2> extends Convert<Higher<T1,T2>> , __<T1, T2>{
+public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{// , __<T1, T2>{
 
 
     /**

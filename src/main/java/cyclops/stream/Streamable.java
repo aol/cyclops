@@ -2452,10 +2452,10 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * 
      * <pre>
      * {@code 
-     * unzip4(Streamable.of(new Tuple4(1, "a", 2l,'z'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
+     * unzip4(Streamable.of(new Tuple4(1, "a", 2l,'µ'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
     					"c", 4l,'x')));
     	}
-    	// Streamable[1,2,3], Streamable[a,b,c], Streamable[2l,3l,4l], Streamable[z,y,x]
+    	// Streamable[1,2,3], Streamable[a,b,c], Streamable[2l,3l,4l], Streamable[µ,y,x]
      * </pre>
      */
     public static <T1, T2, T3, T4> Tuple4<Streamable<T1>, Streamable<T2>, Streamable<T3>, Streamable<T4>> unzip4(

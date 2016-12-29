@@ -3,7 +3,9 @@ package cyclops.function;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
+import com.aol.cyclops.hkt.Higher;
 import cyclops.control.*;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
@@ -17,11 +19,12 @@ import cyclops.async.Future;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
+import cyclops.typeclasses.functor.Functor;
 import org.jooq.lambda.function.Function1;
 
 @FunctionalInterface
 public interface Fn1<T1,  R> extends Function1<T1,R> {
-
+    static class µ {}
     public static <T1,  T3,R> Fn1<T1, R> λ(final Fn1<T1, R> triFunc){
         return triFunc;
     }
@@ -83,7 +86,7 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
 
 
 
-    default FunctionalOperations<T1,R> fnOps(){
+    default FunctionalOperations<T1,R> functionOps(){
         return in->apply(in);
     }
 
@@ -93,12 +96,15 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
             return a -> applicative.apply(a).apply(this.apply(a));
         }
 
-        default <R1> Fn1<T1, R1> mapFn1(final Function<? super R, ? extends R1> f2) {
+        default <R1> Fn1<T1, R1> map(final Function<? super R, ? extends R1> f2) {
             return andThen(f2);
         }
 
-        default <R1> Fn1<T1, R1> flatMapFn1(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
+        default <R1> Fn1<T1, R1> flatMap(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
             return a -> f.apply(apply(a)).apply(a);
+        }
+        default <R1> Fn1<T1,R1> coflatMap(final Function<? super Fn1<? super T1,? extends R>, ? extends  R1> f) {
+            return in-> f.apply(this);
         }
 
         default <W extends WitnessType<W>> AnyM<W, R> mapF(AnyM<W, T1> functor) {
@@ -180,4 +186,5 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
             return in -> PVectorX.of(apply(in));
         }
     }
+
 }
