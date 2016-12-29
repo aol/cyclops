@@ -92,6 +92,7 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
 
     interface FunctionalOperations<T1,R> extends Fn1<T1,R> {
 
+
         default <V> Fn1<T1, V> apply(final Function<? super T1,? extends Function<? super R,? extends V>> applicative) {
             return a -> applicative.apply(a).apply(this.apply(a));
         }

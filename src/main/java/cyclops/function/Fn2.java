@@ -2,6 +2,7 @@ package cyclops.function;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import cyclops.control.Eval;
@@ -84,7 +85,18 @@ public interface Fn2<T1, T2, R> extends Function2<T1,T2,R> {
     }
 
     interface FunctionalOperations<T1,T2,R> extends Fn2<T1,T2,R> {
-        
+
+        default <V> Fn2<T1,T2, V> apply(final BiFunction<? super T1,? super T2,? extends Function<? super R,? extends V>> applicative) {
+            return (a,b) -> applicative.apply(a,b).apply(this.apply(a,b));
+        }
+
+        default <R1> Fn2<T1,T2, R1> map(final Function<? super R, ? extends R1> f2) {
+            return andThen(f2);
+        }
+
+        default <R1> Fn2<T1, T2, R1> flatMap(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
+            return (a,b)-> f.apply(apply(a,b)).apply(a);
+        }
         default <W extends WitnessType<W>> Fn2<AnyM<W,T1>,AnyM<W,T2>,AnyM<W,R>> anyMZip() {
             return (a,b) -> (AnyM<W,R>)a.zip(b,this);
         }
