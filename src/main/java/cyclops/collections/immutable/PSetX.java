@@ -548,13 +548,13 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     @Override
-    default PSetX<ListX<T>> sliding(final int windowSize) {
-        return (PSetX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize);
+    default PSetX<PVectorX<T>> sliding(final int windowSize) {
+        return (PSetX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize);
     }
 
     @Override
-    default PSetX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return (PSetX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
+    default PSetX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return (PSetX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override

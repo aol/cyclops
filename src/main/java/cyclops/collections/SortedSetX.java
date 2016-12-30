@@ -3,6 +3,7 @@ package cyclops.collections;
 import com.aol.cyclops.data.collections.extensions.lazy.LazySortedSetX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import cyclops.Streams;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -501,13 +502,13 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     @Override
-    default SortedSetX<ListX<T>> sliding(final int windowSize) {
-        return (SortedSetX<ListX<T>>) (SortedSetX<T>) MutableCollectionX.super.sliding(windowSize);
+    default SortedSetX<PVectorX<T>> sliding(final int windowSize) {
+        return (SortedSetX<PVectorX<T>>) (SortedSetX<T>) MutableCollectionX.super.sliding(windowSize);
     }
 
     @Override
-    default SortedSetX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return (SortedSetX<ListX<T>>) (SortedSetX<T>) MutableCollectionX.super.sliding(windowSize, increment);
+    default SortedSetX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return (SortedSetX<PVectorX<T>>) (SortedSetX<T>) MutableCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override

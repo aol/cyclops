@@ -601,13 +601,13 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     @Override
-    default PBagX<ListX<T>> sliding(final int windowSize) {
-        return (PBagX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize);
+    default PBagX<PVectorX<T>> sliding(final int windowSize) {
+        return (PBagX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize);
     }
 
     @Override
-    default PBagX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return (PBagX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
+    default PBagX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return (PBagX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override

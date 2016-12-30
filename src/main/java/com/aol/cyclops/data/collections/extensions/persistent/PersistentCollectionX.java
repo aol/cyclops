@@ -1,6 +1,7 @@
 package com.aol.cyclops.data.collections.extensions.persistent;
 
 import cyclops.Streams;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
@@ -240,14 +241,14 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default PersistentCollectionX<ListX<T>> sliding(final int windowSize) {
-        return from(this.<ListX<T>> monoid()
+    default PersistentCollectionX<PVectorX<T>> sliding(final int windowSize) {
+        return from(this.<PVectorX<T>> monoid()
                         .mapReduce(stream().sliding(windowSize)));
     }
 
     @Override
-    default PersistentCollectionX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return from(this.<ListX<T>> monoid()
+    default PersistentCollectionX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return from(this.<PVectorX<T>> monoid()
                         .mapReduce(stream().sliding(windowSize, increment)));
     }
 

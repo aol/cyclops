@@ -13,6 +13,7 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
+import cyclops.collections.immutable.PVectorX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -206,7 +207,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
      * @see com.aol.cyclops.types.Traversable#sliding(int)
      */
     @Override
-    default Traversable<ListX<T>> sliding(final int windowSize) {
+    default Traversable<PVectorX<T>> sliding(final int windowSize) {
         return unitAnyM(transformerStream().map(s -> s.sliding(windowSize)));
 
     }
@@ -215,7 +216,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
      * @see com.aol.cyclops.types.Traversable#sliding(int, int)
      */
     @Override
-    default Traversable<ListX<T>> sliding(final int windowSize, final int increment) {
+    default Traversable<PVectorX<T>> sliding(final int windowSize, final int increment) {
         return unitAnyM(transformerStream().map(s -> s.sliding(windowSize, increment)));
     }
 

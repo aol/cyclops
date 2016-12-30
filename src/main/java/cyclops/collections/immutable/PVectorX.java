@@ -662,13 +662,13 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
     @Override
-    default PVectorX<ListX<T>> sliding(final int windowSize) {
-        return (PVectorX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize);
+    default PVectorX<PVectorX<T>> sliding(final int windowSize) {
+        return (PVectorX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize);
     }
 
     @Override
-    default PVectorX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return (PVectorX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
+    default PVectorX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return (PVectorX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override

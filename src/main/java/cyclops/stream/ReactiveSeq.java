@@ -14,6 +14,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
 import cyclops.async.*;
 import cyclops.control.Trampoline;
@@ -296,7 +297,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Infinite ReactiveSeq consisting of a single value
      */
     public static <T> ReactiveSeq<T> fill(T t){
-        return ReactiveSeq.fromStream(StreamSupport.stream(new FillSpliterator<T>(t), false));
+        return ReactiveSeq.fromSpliterator(new FillSpliterator<T>(t));
     }
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
@@ -317,7 +318,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return
      */
     default <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
-        return ReactiveSeq.fromStream(StreamSupport.<R>stream(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(this,fn), false));
+        return ReactiveSeq.fromSpliterator(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(this,fn));
 
     }
 
@@ -738,7 +739,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with sliding view
      */
     @Override
-    ReactiveSeq<ListX<T>> sliding(int windowSize);
+    ReactiveSeq<PVectorX<T>> sliding(int windowSize);
 
     /**
      * Create a sliding view over this Sequence
@@ -761,7 +762,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with sliding view
      */
     @Override
-    ReactiveSeq<ListX<T>> sliding(int windowSize, int increment);
+    ReactiveSeq<PVectorX<T>> sliding(int windowSize, int increment);
 
     /**
      * Group elements in a Stream

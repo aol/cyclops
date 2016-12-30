@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops.types.Traversable;
 import cyclops.Streams;
 import cyclops.collections.ListX;
+import cyclops.collections.immutable.PVectorX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -227,18 +228,16 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#sliding(int)
      */
     @Override
-    default MutableCollectionX<ListX<T>> sliding(final int windowSize) {
-        return fromStream(stream().sliding(windowSize)
-                                  .map(ListX::fromIterable));
+    default MutableCollectionX<PVectorX<T>> sliding(final int windowSize) {
+        return fromStream(stream().sliding(windowSize));
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#sliding(int, int)
      */
     @Override
-    default MutableCollectionX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return fromStream(stream().sliding(windowSize, increment)
-                                  .map(ListX::fromIterable));
+    default MutableCollectionX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return fromStream(stream().sliding(windowSize, increment));
     }
 
     /* (non-Javadoc)

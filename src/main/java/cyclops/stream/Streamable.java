@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
 import com.aol.cyclops.types.*;
 import lombok.val;
@@ -1097,7 +1098,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return Streamable with sliding view
      */
     @Override
-    default Streamable<ListX<T>> sliding(final int windowSize) {
+    default Streamable<PVectorX<T>> sliding(final int windowSize) {
         return fromStream(reactiveSeq().sliding(windowSize));
     }
 
@@ -1123,7 +1124,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return Streamable with sliding view
      */
     @Override
-    default Streamable<ListX<T>> sliding(final int windowSize, final int increment) {
+    default Streamable<PVectorX<T>> sliding(final int windowSize, final int increment) {
         return fromStream(reactiveSeq().sliding(windowSize, increment));
     }
 

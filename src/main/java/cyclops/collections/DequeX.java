@@ -2,6 +2,7 @@ package cyclops.collections;
 
 import com.aol.cyclops.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.Streams;
@@ -605,16 +606,16 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sliding(int)
      */
     @Override
-    default DequeX<ListX<T>> sliding(final int windowSize) {
-        return (DequeX<ListX<T>>) MutableCollectionX.super.sliding(windowSize);
+    default DequeX<PVectorX<T>> sliding(final int windowSize) {
+        return (DequeX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sliding(int, int)
      */
     @Override
-    default DequeX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return (DequeX<ListX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
+    default DequeX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return (DequeX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)

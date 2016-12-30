@@ -7,6 +7,7 @@ import com.aol.cyclops.hkt.Higher;
 import com.aol.cyclops.types.OnEmptySwitch;
 import com.aol.cyclops.types.To;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -906,16 +907,16 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sliding(int)
      */
     @Override
-    default ListX<ListX<T>> sliding(final int windowSize) {
-        return (ListX<ListX<T>>) MutableCollectionX.super.sliding(windowSize);
+    default ListX<PVectorX<T>> sliding(final int windowSize) {
+        return (ListX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sliding(int, int)
      */
     @Override
-    default ListX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return (ListX<ListX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
+    default ListX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return (ListX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)

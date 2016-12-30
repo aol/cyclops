@@ -572,13 +572,13 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     }
 
     @Override
-    default POrderedSetX<ListX<T>> sliding(final int windowSize) {
-        return (POrderedSetX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize);
+    default POrderedSetX<PVectorX<T>> sliding(final int windowSize) {
+        return (POrderedSetX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize);
     }
 
     @Override
-    default POrderedSetX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return (POrderedSetX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
+    default POrderedSetX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return (POrderedSetX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override

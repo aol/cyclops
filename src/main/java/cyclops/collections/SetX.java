@@ -3,6 +3,7 @@ package cyclops.collections;
 import com.aol.cyclops.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import cyclops.Streams;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -503,13 +504,13 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
 
 
     @Override
-    default SetX<ListX<T>> sliding(final int windowSize) {
-        return (SetX<ListX<T>>) MutableCollectionX.super.sliding(windowSize);
+    default SetX<PVectorX<T>> sliding(final int windowSize) {
+        return (SetX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize);
     }
 
     @Override
-    default SetX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return (SetX<ListX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
+    default SetX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return (SetX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override

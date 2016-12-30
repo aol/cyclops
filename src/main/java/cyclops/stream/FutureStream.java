@@ -38,6 +38,7 @@ import com.aol.cyclops.types.futurestream.*;
 import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import cyclops.*;
 import cyclops.async.*;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Trampoline;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
@@ -1858,7 +1859,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @return Stream with sliding view over data in this stream
      */
     @Override
-    default FutureStream<ListX<U>> sliding(final int size) {
+    default FutureStream<PVectorX<U>> sliding(final int size) {
         //    return this.fromStream(SlidingWindow.sliding(this,size, 1));
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                                      .sliding(size));
@@ -1884,7 +1885,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @return Stream with sliding view over data in this stream
      */
     @Override
-    default FutureStream<ListX<U>> sliding(final int size, final int increment) {
+    default FutureStream<PVectorX<U>> sliding(final int size, final int increment) {
 
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                                      .sliding(size, increment));

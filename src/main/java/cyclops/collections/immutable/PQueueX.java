@@ -655,13 +655,13 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
     }
 
     @Override
-    default PQueueX<ListX<T>> sliding(final int windowSize) {
-        return (PQueueX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize);
+    default PQueueX<PVectorX<T>> sliding(final int windowSize) {
+        return (PQueueX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize);
     }
 
     @Override
-    default PQueueX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return (PQueueX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
+    default PQueueX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return (PQueueX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override

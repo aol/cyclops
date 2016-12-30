@@ -1,5 +1,6 @@
 package com.aol.cyclops.types;
 
+import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.ListX;
@@ -254,7 +255,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Size of sliding window
      * @return SequenceM with sliding view
      */
-    default Traversable<ListX<T>> sliding(final int windowSize) {
+    default Traversable<PVectorX<T>> sliding(final int windowSize) {
         return traversable().sliding(windowSize);
     }
 
@@ -279,7 +280,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            for each window
      * @return SequenceM with sliding view
      */
-    default Traversable<ListX<T>> sliding(final int windowSize, final int increment) {
+    default Traversable<PVectorX<T>> sliding(final int windowSize, final int increment) {
         return traversable().sliding(windowSize, increment);
     }
 

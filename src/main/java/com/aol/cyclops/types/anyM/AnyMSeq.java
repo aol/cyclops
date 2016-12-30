@@ -19,6 +19,7 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.WitnessType;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -538,7 +539,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @see com.aol.cyclops.types.Traversable#sliding(int)
      */
     @Override
-    default AnyMSeq<W,ListX<T>> sliding(final int windowSize) {
+    default AnyMSeq<W,PVectorX<T>> sliding(final int windowSize) {
 
         return fromIterable(FoldableTraversable.super.sliding(windowSize));
     }
@@ -547,7 +548,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @see com.aol.cyclops.types.Traversable#sliding(int, int)
      */
     @Override
-    default AnyMSeq<W,ListX<T>> sliding(final int windowSize, final int increment) {
+    default AnyMSeq<W,PVectorX<T>> sliding(final int windowSize, final int increment) {
 
         return fromIterable(FoldableTraversable.super.sliding(windowSize, increment));
     }

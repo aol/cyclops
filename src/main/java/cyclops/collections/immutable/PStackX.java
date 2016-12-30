@@ -724,13 +724,13 @@ public interface PStackX<T> extends To<PStackX<T>>,
     }
 
     @Override
-    default PStackX<ListX<T>> sliding(final int windowSize) {
-        return (PStackX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize);
+    default PStackX<PVectorX<T>> sliding(final int windowSize) {
+        return (PStackX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize);
     }
 
     @Override
-    default PStackX<ListX<T>> sliding(final int windowSize, final int increment) {
-        return (PStackX<ListX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
+    default PStackX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return (PStackX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override

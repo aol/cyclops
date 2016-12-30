@@ -11,6 +11,7 @@ import com.aol.cyclops.internal.stream.spliterators.*;
 import com.aol.cyclops.types.FoldableTraversable;
 import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Eval;
 import cyclops.monads.Witness;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
@@ -313,13 +314,13 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
 
     @Override
-    public final ReactiveSeq<ListX<T>> sliding(final int windowSize) {
-        return Streams.reactiveSeq(Streams.sliding(this, windowSize), reversible,split);
-    }
+    public final ReactiveSeq<PVectorX<T>> sliding(final int windowSize) {
+        return sliding(windowSize,1);
+     }
 
     @Override
-    public final ReactiveSeq<ListX<T>> sliding(final int windowSize, final int increment) {
-        return Streams.reactiveSeq(Streams.sliding(this, windowSize, increment), reversible,split);
+    public final ReactiveSeq<PVectorX<T>> sliding(final int windowSize, final int increment) {
+        return Streams.reactiveSeq(new SlidingSpliterator<>(copyOrGet(),Function.identity(), windowSize,increment), reversible,split);
     }
 
     @Override
