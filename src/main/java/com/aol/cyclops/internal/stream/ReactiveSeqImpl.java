@@ -4,6 +4,7 @@ package com.aol.cyclops.internal.stream;
 import com.aol.cyclops.internal.stream.spliterators.push.FoldingSinkSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.push.ValueEmittingSpliterator;
+import com.aol.cyclops.types.Functor;
 import cyclops.*;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
@@ -468,7 +469,10 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     @Override
     public ReactiveSeq<T> cycle(long times) {
 
-        return Streams.reactiveSeq(Seq.seq((Stream<T>) this).cycle(times),reversible,split );
+        return ReactiveSeq.fill(1)
+                          .limit(times)
+                          .flatMap(i->Streams.reactiveSeq(copyOrGet(),reversible,split));
+
     }
 
     @Override
@@ -478,7 +482,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
-        return Streams.reactiveSeq(Seq.seq((Stream<T>) this).limitWhileClosed(predicate),reversible,split );
+        return Streams.reactiveSeq(new LimitWhileClosedSpliterator<T>(copyOrGet(),predicate),reversible,split);
     }
 
     @Override
@@ -811,16 +815,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public <U> ReactiveSeq<U> ofType(final Class<? extends U> type) {
-        return Streams.reactiveSeq(Streams.ofType(this, type), reversible,split);
-    }
 
-    @Override
-    public <U> ReactiveSeq<U> cast(final Class<? extends U> type) {
-        return Streams.reactiveSeq(Streams.cast(this, type), reversible,split);
-    }
 
     @Override
     public CollectionX<T> toLazyCollection() {
@@ -1051,7 +1046,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> limit(final long time, final TimeUnit unit) {
-        return Streams.reactiveSeq(Streams.limit(this, time, unit), this.reversible,split);
+        return Streams.reactiveSeq(new LimitWhileTimeSpliterator<T>(copyOrGet(),time,unit),reversible,split);
+
     }
 
     @Override

@@ -2036,7 +2036,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     @SuppressWarnings("unchecked")
-    <U> ReactiveSeq<U> ofType(Class<? extends U> type);
+    default <U> ReactiveSeq<U> ofType(Class<? extends U> type){
+        return (ReactiveSeq<U>)FoldableTraversable.super.ofType(type);
+    }
 
     /**
      * Cast all elements in a stream to a given type, possibly throwing a
@@ -2047,7 +2049,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      */
     @Override
-    <U> ReactiveSeq<U> cast(Class<? extends U> type);
+    default <U> ReactiveSeq<U> cast(Class<? extends U> type){
+        return (ReactiveSeq<U>)FoldableTraversable.super.cast(type);
+    }
 
     /**
      * Lazily converts this ReactiveSeq into a Collection. This does not trigger

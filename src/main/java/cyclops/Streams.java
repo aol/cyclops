@@ -1045,8 +1045,8 @@ public class Streams {
     }
 
     public static <U> Stream<U> limit(final Stream<U> stream, final long time, final TimeUnit unit) {
-        return new LimitWhileTimeOperator<U>(
-                                             stream).limitWhile(time, unit);
+        return StreamSupport.stream(
+                new LimitWhileTimeSpliterator<U>(stream.spliterator(),time,unit),stream.isParallel());
     }
 
     public static <U> Stream<U> skip(final Stream<U> stream, final long time, final TimeUnit unit) {
