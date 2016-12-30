@@ -1023,7 +1023,10 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<ListX<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
-        return Streams.reactiveSeq(Streams.batchBySizeAndTime(this, size, time, t), reversible,split);
+        return Streams.reactiveSeq(new GroupedByTimeAndSizeSpliterator(this.copyOrGet(),()->ListX.fromIterable(new ArrayList<>(size)),
+                        Function.identity(),size,time,t),
+                reversible,split);
+
     }
 
     @Override
@@ -1084,7 +1087,21 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     @Override
     public <C extends Collection<? super T>> ReactiveSeq<C> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit,
             final Supplier<C> factory) {
-        return Streams.reactiveSeq(Streams.batchBySizeAndTime(this, size, time, unit, factory), this.reversible,split);
+        return Streams.reactiveSeq(new GroupedByTimeAndSizeSpliterator(this.copyOrGet(),factory,
+                        Function.identity(),size,time,unit),
+                reversible,split);
+
+    }
+
+    @Override
+    public <C extends Collection<? super T>,R> ReactiveSeq<R> groupedBySizeAndTime(final int size, final long time,
+                                                                                 final TimeUnit unit,
+                                                                                 final Supplier<C> factory,
+                                                                                 Function<? super C, ? extends R> finalizer
+    ) {
+        return Streams.reactiveSeq(new GroupedByTimeAndSizeSpliterator(this.copyOrGet(),factory,
+                        finalizer,size,time,unit),
+                reversible,split);
 
     }
 

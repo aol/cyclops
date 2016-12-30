@@ -853,6 +853,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     <C extends Collection<? super T>> ReactiveSeq<C> groupedBySizeAndTime(int size, long time, TimeUnit unit, Supplier<C> factory);
 
+    <C extends Collection<? super T>,R> ReactiveSeq<R> groupedBySizeAndTime(final int size, final long time,
+                                                                                   final TimeUnit unit,
+                                                                                   final Supplier<C> factory,
+                                                                                   Function<? super C, ? extends R> finalizer
+    );
     /**
      * Batch elements in a Stream by time period
      * 

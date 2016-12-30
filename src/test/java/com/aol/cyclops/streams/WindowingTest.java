@@ -8,8 +8,10 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import cyclops.collections.immutable.PVectorX;
 import org.junit.Before;
@@ -27,6 +29,18 @@ public class WindowingTest {
 	public void setup(){
 		empty = of();
 		nonEmpty = of(1);
+	}
+
+	@Test
+	public void compareMap(){
+		long time = System.currentTimeMillis();
+		Stream.generate(()->1).limit(1_000).map(i->i*2).map(i->i*10).map(i->i*100).forEach(System.out::println);
+		long stream = System.currentTimeMillis()-time;
+		long time2 = System.currentTimeMillis();
+		ReactiveSeq.generate(()->1).limit(1_000).map(i->i*2).map(i->i*10).map(i->i*100).forEach(System.out::println);
+		long rs = System.currentTimeMillis()-time2;
+
+		System.out.println("Stream " + stream + " rs " + rs);
 	}
 	
 	@Test
@@ -117,8 +131,8 @@ public class WindowingTest {
 
 	@Test
 	public void slidingEmpty() {
-		
 
+		System.out.println("List " + ReactiveSeq.of().sliding(1).toList());
 		assertThat(ReactiveSeq.of().sliding(1).toList().size(),equalTo(0));
 	}
 
@@ -128,6 +142,14 @@ public class WindowingTest {
 
 		List<PVectorX<Integer>> sliding = ReactiveSeq.of(1, 2, 3, 4, 5).sliding(2,2).toList();
 
+		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
+	}
+	@Test
+	public void slidingWithSmallWindowAtEndIterative() {
+
+
+		Iterator<PVectorX<Integer>> it =  ReactiveSeq.of(1, 2, 3, 4, 5).sliding(2,2).iterator();
+		List<PVectorX<Integer>> sliding = ReactiveSeq.fromIterator(it).toList();
 		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
 	}
 
@@ -168,9 +190,11 @@ public class WindowingTest {
 	public void multipleGrouped() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9,10));
 		assertThat(fixed.reactiveSeq().grouped(3).get(0).get(),equalTo(Arrays.asList(5,7,9)));
+		fixed.reactiveSeq().grouped(3).printOut();
 		assertThat(fixed.reactiveSeq().grouped(3).count(),equalTo(2l));
 		
 	}
+
 
 	
 	@Test

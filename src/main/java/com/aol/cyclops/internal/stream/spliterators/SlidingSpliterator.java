@@ -44,25 +44,38 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
         return new SlidingSpliterator<T,R2>(CopyableSpliterator.copy(source),finalizer.andThen(fn), windowSize,increment);
     }
 
-
+    boolean sent = false;
+    boolean data = false;
     @Override
     public void forEachRemaining(Consumer<? super R> action) {
 
         source.forEachRemaining(t->{
+            if(data==false)
+                 data = true;
             list.mutate(var -> var.plus(Math.max(0, var.size()), t));
             if(list.get().size()==windowSize){
+
                 action.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
+                sent = true;
+                for (int i = 0; i < increment && list.get()
+                        .size() > 0; i++)
                 list.mutate(var -> var.minus(0));
+            }else{
+                sent =false;
             }
 
 
         });
+        if(!sent && data){
+            action.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
+        }
 
     }
-
+    boolean canAdvance = true;
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
-        boolean canAdvance = true;
+       if(!canAdvance)
+           return false;
         for (int i = 0; i < increment && list.get()
                 .size() > 0; i++)
             list.mutate(var -> var.minus(0));
@@ -72,8 +85,9 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
             Mutable<T> box = Mutable.of(null);
             canAdvance = source.tryAdvance(t -> {
                 box.accept(t);
+
             });
-            if (canAdvance) {
+            if (box.get()!=null) {
                 list.mutate(var -> var.plus(Math.max(0, var.size()), box.get()));
             }
 

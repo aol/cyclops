@@ -1,7 +1,6 @@
 package cyclops;
 
-import com.aol.cyclops.internal.stream.spliterators.GroupingSpliterator;
-import com.aol.cyclops.internal.stream.spliterators.SlidingSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.*;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
 import cyclops.function.Monoid;
@@ -13,9 +12,7 @@ import com.aol.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
 import com.aol.cyclops.internal.stream.*;
 import com.aol.cyclops.internal.stream.operators.*;
-import com.aol.cyclops.internal.stream.spliterators.LimitLastSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
-import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.stream;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -2469,13 +2466,10 @@ public class Streams {
      * @return Stream grouped by time and size
      */
     public final static <T> Stream<ListX<T>> groupedBySizeAndTime(final Stream<T> stream, final int size, final long time, final TimeUnit t) {
-        return new BatchByTimeAndSizeOperator<T, ListX<T>>(
-                                                           stream).batchBySizeAndTime(size, time, t);
+        return StreamSupport.stream(new GroupedByTimeAndSizeSpliterator(stream.spliterator(),()->ListX.fromIterable(new ArrayList<>(size)),
+                Function.identity(),size,time,t),stream.isParallel());
     }
-    @Deprecated
-    public final static <T> Stream<ListX<T>> batchBySizeAndTime(final Stream<T> stream, final int size, final long time, final TimeUnit t) {
-        return groupedBySizeAndTime(stream,size,time,t);
-    }
+
     
     /**
      * Group a Stream by size and time constraints
@@ -2491,14 +2485,11 @@ public class Streams {
      */
     public final static <T, C extends Collection<? super T>> Stream<C> groupedBySizeAndTime(final Stream<T> stream, final int size, final long time,
             final TimeUnit t, final Supplier<C> factory) {
-        return new BatchByTimeAndSizeOperator<T, C>(
-                                                    stream, factory).batchBySizeAndTime(size, time, t);
+        return StreamSupport.stream(new GroupedByTimeAndSizeSpliterator(stream.spliterator(),factory,
+                Function.identity(),size,time,t),stream.isParallel());
+
     }
-    @Deprecated
-    public final static <T, C extends Collection<? super T>> Stream<C> batchBySizeAndTime(final Stream<T> stream, final int size, final long time,
-            final TimeUnit t, final Supplier<C> factory) {
-        return groupedBySizeAndTime(stream,size,time,t,factory);
-    }
+
 
     /**
      * Allow one element through per time period, drop all other elements in

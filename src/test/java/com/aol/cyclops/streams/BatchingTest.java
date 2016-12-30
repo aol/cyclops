@@ -13,12 +13,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -274,6 +269,15 @@ public class BatchingTest {
 						.groupedBySizeAndTime(3,10,TimeUnit.SECONDS,()->new ArrayList<>())
 						.toList().get(0)
 						.size(),is(3));
+	}
+	@Test
+	public void batchBySizeAndTimeSizeCollectionIterator(){
+
+		Iterator<ArrayList<Integer>> it = of(1, 2, 3, 4, 5, 6)
+				.groupedBySizeAndTime(3, 10, TimeUnit.SECONDS, () -> new ArrayList<>()).iterator();
+		assertThat(ReactiveSeq.fromIterator(it)
+				.toList().get(0)
+				.size(),is(3));
 	}
 	@Test
 	public void batchBySizeAndTimeSize(){

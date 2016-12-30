@@ -54,7 +54,7 @@ public class ClojureOrJava8 {
         
     }
     private String loadData(int d){
-        return "";
+        return "s";
     }
     
     @Test
