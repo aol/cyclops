@@ -406,12 +406,12 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<T> limitWhile(final Predicate<? super T> p) {
-        return Streams.reactiveSeq(Streams.limitWhile(this, p), reversible,split);
+        return Streams.reactiveSeq(new LimitWhileSpliterator<T>(copyOrGet(), p), reversible,split);
     }
 
     @Override
     public final ReactiveSeq<T> limitUntil(final Predicate<? super T> p) {
-        return Streams.reactiveSeq(Streams.limitUntil(this, p), reversible,split);
+        return limitWhile(p.negate());
     }
 
     @Override

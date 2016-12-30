@@ -1105,8 +1105,7 @@ public class Streams {
      * @return
      */
     public static <U> Stream<U> limitWhile(final Stream<U> stream, final Predicate<? super U> predicate) {
-        return new LimitWhileOperator<U>(
-                                         stream).limitWhile(predicate);
+        return StreamSupport.stream(new LimitWhileSpliterator<>(stream.spliterator(), predicate),stream.isParallel());
     }
 
     /**

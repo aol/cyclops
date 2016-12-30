@@ -329,7 +329,8 @@ public class BaseSequentialTest {
 		@Test
 		public void limitWhileTest(){
 			List<Integer> list = of(1,2,3,4,5,6).limitWhile(it -> it<4).peek(it -> System.out.println(it)).collect(Collectors.toList());
-		
+
+			System.out.println("List " + list);
 			assertThat(list,hasItem(1));
 			assertThat(list,hasItem(2));
 			assertThat(list,hasItem(3));
