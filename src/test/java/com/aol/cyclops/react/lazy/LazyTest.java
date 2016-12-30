@@ -23,10 +23,12 @@ public class LazyTest {
 
 	@Test
 	public void testParallel(){
-
-		assertThat(new LazyReact().range(0,1000)
-				           .parallel(s->s.map(i->i*2))
-				.count(),equalTo(1000L));
+		for (int x = 0; x < 100; x++) {
+			System.out.println("Iteration " + x);
+			assertThat(new LazyReact().range(0, 1000)
+					.parallel(s -> s.map(i -> i * 2))
+					.count(), equalTo(1000L));
+		}
 	}
     @Test
     public void combineNoOrder(){
