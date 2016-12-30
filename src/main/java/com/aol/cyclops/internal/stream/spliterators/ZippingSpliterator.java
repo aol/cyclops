@@ -7,12 +7,14 @@ import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by johnmcclean on 15/12/2016.
  */
 //@AllArgsConstructor
-public class ZippingSpliterator<T1,T2,R> implements CopyableSpliterator<R> {
+public class ZippingSpliterator<T1,T2,R> implements CopyableSpliterator<R>,
+                                            ComposableFunction<R,T1,ZippingSpliterator<T1,T2,?>> {
     private final Spliterator<T1> left;
     private final Spliterator<T2> right;
     private final BiFunction<? super T1, ? super T2, ? extends R> fn;
@@ -25,7 +27,10 @@ public class ZippingSpliterator<T1,T2,R> implements CopyableSpliterator<R> {
         this.right = CopyableSpliterator.copy(right);
         this.fn = fn;
     }
-
+    public <R2> ZippingSpliterator<T1,T2,R2> compose(Function<? super R,? extends R2> fn){
+        return new ZippingSpliterator<>(CopyableSpliterator.copy(left),CopyableSpliterator.copy(right),
+                this.fn.andThen(fn));
+    }
     static class QueueConsumer<T> implements Consumer<T>{
 
         T value;

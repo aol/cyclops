@@ -114,7 +114,7 @@ test {
     
         dependsOn testNG
      //   dependsOn testSuite
-        forkEvery = 10
+        forkEvery = 5
         
         testLogging {
             events "started","passed", "skipped", "failed"//, "standardOut", "standardError"

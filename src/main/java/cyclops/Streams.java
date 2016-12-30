@@ -11,7 +11,7 @@ import cyclops.collections.ListX;
 import com.aol.cyclops.internal.stream.*;
 import com.aol.cyclops.internal.stream.operators.*;
 import com.aol.cyclops.internal.stream.spliterators.LimitLastSpliterator;
-import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.stream;

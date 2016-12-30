@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.*;
 import java.util.stream.*;
 
+import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
 import cyclops.monads.AnyM;
 import cyclops.async.*;
 import cyclops.control.Trampoline;

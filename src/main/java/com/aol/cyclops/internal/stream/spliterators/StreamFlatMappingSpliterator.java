@@ -20,6 +20,11 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
         this.mapper = mapper;
 
     }
+    public static <T2,T,R> StreamFlatMappingSpliterator<T2,R> compose(FunctionSpliterator<T2,T> fnS,Function<? super T, ? extends Stream<? extends R>> mapper){
+        Function<? super T2,? extends T> fn = fnS.function();
+        return new StreamFlatMappingSpliterator<T2,R>(CopyableSpliterator.copy(fnS.source()),mapper.<T2>compose(fn));
+
+    }
     @Override
     public void forEachRemaining(Consumer<? super R> action) {
         if(active!=null){

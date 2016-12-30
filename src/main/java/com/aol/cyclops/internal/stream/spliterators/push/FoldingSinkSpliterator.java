@@ -1,12 +1,13 @@
-package com.aol.cyclops.internal.stream.spliterators;
+package com.aol.cyclops.internal.stream.spliterators.push;
 
 import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.function.Consumer;
 
+import com.aol.cyclops.internal.stream.spliterators.CopyableSpliterator;
 import cyclops.function.Monoid;
 
-public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements Runnable, CopyableSpliterator<T>{
+public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements Runnable, CopyableSpliterator<T> {
     private final Spliterator<T> s;
     private final Monoid<T> monoid;
     

@@ -1,6 +1,6 @@
 package com.aol.cyclops.types.stream.reactive;
 
-import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

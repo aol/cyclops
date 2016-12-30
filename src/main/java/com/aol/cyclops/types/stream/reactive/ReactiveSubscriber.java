@@ -6,7 +6,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops.internal.stream.spliterators.PushingSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
 
 import lombok.AllArgsConstructor;
 import lombok.val;

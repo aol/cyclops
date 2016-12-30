@@ -1,4 +1,4 @@
-package com.aol.cyclops.internal.stream.spliterators;
+package com.aol.cyclops.internal.stream.spliterators.push;
 
 import java.util.ArrayList;
 import java.util.List;

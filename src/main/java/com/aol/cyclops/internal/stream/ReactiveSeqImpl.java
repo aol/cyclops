@@ -1,6 +1,8 @@
 package com.aol.cyclops.internal.stream;
 
 
+import com.aol.cyclops.internal.stream.spliterators.push.FoldingSinkSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
 import cyclops.*;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
