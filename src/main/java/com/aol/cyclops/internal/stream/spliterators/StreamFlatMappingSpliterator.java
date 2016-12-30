@@ -42,7 +42,7 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
     Iterator<R> active;
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
-        System.out.println("try advance flatmap");
+
         if(active!=null && active.hasNext()){
             action.accept(active.next());
             return active.hasNext();

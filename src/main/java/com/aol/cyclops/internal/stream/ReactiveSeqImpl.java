@@ -324,7 +324,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<ListX<T>> grouped(final int groupSize) {
-        return Streams.reactiveSeq(Streams.batchBySize(this, groupSize), reversible,split);
+        return Streams.reactiveSeq(new GroupingSpliterator<>(copyOrGet(),()->new ArrayList(groupSize),c->ListX.fromIterable(c),groupSize), this.reversible,split);
+
     }
 
     @Override
@@ -640,8 +641,11 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final <R> ReactiveSeq<R> map(final Function<? super T, ? extends R> fn) {
-
-        return new ReactiveSeqImpl(StreamSupport.stream(new MappingSpliterator<T,R>(this.copyOrGet(),fn).compose(),false), reversible,split);
+        if(this.stream instanceof ComposableFunction){
+            ComposableFunction f = (ComposableFunction)stream;
+            return Streams.reactiveSeq(f.compose(fn),reversible,split);
+        }
+        return new ReactiveSeqImpl(new MappingSpliterator<T,R>(this.copyOrGet(),fn), reversible,split);
     }
 
     @Override
@@ -651,6 +655,10 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final <R> ReactiveSeq<R> flatMap(final Function<? super T, ? extends Stream<? extends R>> fn) {
+        if(this.stream instanceof FunctionSpliterator){
+            FunctionSpliterator f = (FunctionSpliterator)stream;
+            return Streams.reactiveSeq(StreamFlatMappingSpliterator.compose(f,fn),reversible,split);
+        }
         return Streams.reactiveSeq(new StreamFlatMappingSpliterator<>(copyOrGet(),fn), Optional.empty(),split);
 
     }
@@ -1077,7 +1085,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public <C extends Collection<? super T>> ReactiveSeq<C> grouped(final int size, final Supplier<C> factory) {
-        return Streams.reactiveSeq(Streams.batchBySize(this, size, factory), this.reversible,split);
+        return Streams.reactiveSeq(new GroupingSpliterator<>(copyOrGet(),factory, Function.identity(),size), this.reversible,split);
 
     }
 

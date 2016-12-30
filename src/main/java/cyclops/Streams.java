@@ -1678,6 +1678,7 @@ public class Streams {
     @Deprecated
     public final static <T, C extends Collection<? super T>> Stream<C> batchBySize(final Stream<T> stream, final int groupSize,
             final Supplier<C> factory) {
+
         return new BatchBySizeOperator<T, C>(
                                              stream, factory).batchBySize(groupSize);
 
