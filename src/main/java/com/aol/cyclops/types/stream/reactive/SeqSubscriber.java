@@ -136,7 +136,7 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
     public Iterator<T> iterator() {
         return new Iterator<T>() {
             boolean requested = true;
-            Object next = complete ? UNSET : get();
+            Object next = complete ? !unread ? UNSET : get() : get();
 
             @Override
             public boolean hasNext() {

@@ -35,6 +35,15 @@ import com.aol.cyclops.types.stream.HotStream;
 
 import lombok.val;
 public class StreamUtilsTest {
+
+	@Test
+	public void iterate(){
+		ReactiveSeq<Integer> s = ReactiveSeq.iterate(1,i->i+1);
+		assertThat(s.limit(10).takeRight(1),equalTo(10));
+		assertThat(s.limit(10).takeRight(1),equalTo(10));
+
+
+	}
     
     @Test
     public void debounceIssue(){
@@ -296,7 +305,7 @@ utilResultList:[1]
 	@Test
 	public void grouped(){
 		
-		List<List<Integer>> list = Streams.batchBySize(Stream.of(1,2,3,4,5,6)
+		List<List<Integer>> list = Streams.grouped(Stream.of(1,2,3,4,5,6)
 														,3)
 													.collect(Collectors.toList());
 		

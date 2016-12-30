@@ -452,18 +452,18 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see cyclops.monads.transformers.values.ListT#sliding(int)
      */
     @Override
-    public ListT<W,ListX<T>> sliding(final int windowSize) {
+    public ListT<W,PVectorX<T>> sliding(final int windowSize) {
 
-        return (ListT<W,ListX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
+        return (ListT<W,PVectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
     }
 
     /* (non-Javadoc)
      * @see cyclops.monads.transformers.values.ListT#sliding(int, int)
      */
     @Override
-    public ListT<W,ListX<T>> sliding(final int windowSize, final int increment) {
+    public ListT<W,PVectorX<T>> sliding(final int windowSize, final int increment) {
 
-        return (ListT<W,ListX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
+        return (ListT<W,PVectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)

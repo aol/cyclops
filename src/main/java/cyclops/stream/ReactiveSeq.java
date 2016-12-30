@@ -2830,7 +2830,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see Stream#iterate(Object, UnaryOperator)
      */
     static <T> ReactiveSeq<T> iterate(final T seed, final UnaryOperator<T> f) {
-        return Streams.reactiveSeq(Stream.iterate(seed, f), Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(new IterateSpliterator<T>(seed,f),Optional.empty(),Optional.empty());
 
     }
 

@@ -5,6 +5,7 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Created by johnmcclean on 22/12/2016.
@@ -17,6 +18,11 @@ public class IterableFlatMappingSpliterator<T,R> extends Spliterators.AbstractSp
 
         this.source = source;
         this.mapper = (Function<? super T, ? extends Iterable<R>>)mapper;
+
+    }
+    public static <T2,T,R> IterableFlatMappingSpliterator<T2,R> compose(FunctionSpliterator<T2,T> fnS,Function<? super T, ? extends Iterable<? extends R>> mapper){
+        Function<? super T2,? extends T> fn = fnS.function();
+        return new IterableFlatMappingSpliterator<T2,R>(CopyableSpliterator.copy(fnS.source()),mapper.<T2>compose(fn));
 
     }
     @Override

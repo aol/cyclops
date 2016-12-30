@@ -3,6 +3,7 @@ package com.aol.cyclops.internal.stream;
 
 import com.aol.cyclops.internal.stream.spliterators.push.FoldingSinkSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.push.ValueEmittingSpliterator;
 import cyclops.*;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
@@ -671,14 +672,22 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final <R> ReactiveSeq<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> fn) {
+        if(this.stream instanceof FunctionSpliterator){
+            FunctionSpliterator f = (FunctionSpliterator)stream;
+            return Streams.reactiveSeq(IterableFlatMappingSpliterator.compose(f,fn),reversible,split);
+        }
+
         return Streams.reactiveSeq(new IterableFlatMappingSpliterator<>(copyOrGet(),fn), Optional.empty(),split);
 
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
+        if(this.stream instanceof FunctionSpliterator){
+            FunctionSpliterator f = (FunctionSpliterator)stream;
+            return Streams.reactiveSeq(PublisherFlatMappingSpliterator.compose(f,fn),reversible,split);
+        }
         return Streams.reactiveSeq(new PublisherFlatMappingSpliterator<>(copyOrGet(),fn), Optional.empty(),split);
-
-    }
+   }
 
     @Override
     public final <R> ReactiveSeq<R> flatMapStream(final Function<? super T, BaseStream<? extends R, ?>> fn) {

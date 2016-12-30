@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.monads.AnyM;
@@ -1526,7 +1527,7 @@ public abstract class AbstractCollectionXTest {
 	      
 	        @Test
 	        public void slidingNoOrder() {
-	            ListX<ListX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
+	            ListX<PVectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
 
 	            System.out.println(list);
 	            assertThat(list.get(0).size(), equalTo(2));

@@ -1,5 +1,8 @@
 package cyclops;
 
+import com.aol.cyclops.internal.stream.spliterators.GroupingSpliterator;
+import com.aol.cyclops.internal.stream.spliterators.SlidingSpliterator;
+import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -1510,33 +1513,9 @@ public class Streams {
      *            Size of sliding window
      * @return Stream with sliding view 
      */
-    public final static <T> Stream<ListX<T>> sliding(final Stream<T> stream, final int windowSize, final int increment) {
-        final Iterator<T> it = stream.iterator();
-        final Mutable<PStack<T>> list = Mutable.of(ConsPStack.empty());
-        return Streams.stream(new Iterator<ListX<T>>() {
-
-            @Override
-            public boolean hasNext() {
-                return it.hasNext();
-            }
-
-            @Override
-            public ListX<T> next() {
-                for (int i = 0; i < increment && list.get()
-                                                     .size() > 0; i++)
-                    list.mutate(var -> var.minus(0));
-                for (; list.get()
-                           .size() < windowSize
-                        && it.hasNext();) {
-                    if (it.hasNext()) {
-                        list.mutate(var -> var.plus(Math.max(0, var.size()), it.next()));
-                    }
-
-                }
-                return ListX.fromIterable(list.get());
-            }
-
-        });
+    public final static <T> Stream<PVectorX<T>> sliding(final Stream<T> stream, final int windowSize, final int increment) {
+        return StreamSupport.stream(new SlidingSpliterator<>(stream.spliterator(),Function.identity(),
+                windowSize,increment),stream.isParallel());
     }
 
     /**
@@ -1603,34 +1582,11 @@ public class Streams {
      * @param windowSize size of window
      * @return
      */
-    public final static <T> Stream<ListX<T>> sliding(final Stream<T> stream, final int windowSize) {
+    public final static <T> Stream<PVectorX<T>> sliding(final Stream<T> stream, final int windowSize) {
         return sliding(stream, windowSize, 1);
     }
 
-    /**
-     * Group elements in a Stream by size
-     * 
-       <pre>
-       {@code 
-     * 	List<List<Integer>> list = Streams.batchBySize(Stream.of(1,2,3,4,5,6)
-    													,3)
-    												.collect(Collectors.toList());
-    	
-    	
-    	assertThat(list.get(0),hasItems(1,2,3));
-    	assertThat(list.get(1),hasItems(4,5,6));
-    	}
-     * </pre>
-     * @param stream Stream to group 
-     * @param groupSize
-     *            Size of each Group
-     * @return Stream with elements grouped by size
-     */
-    @Deprecated
-    public final static <T> Stream<ListX<T>> batchBySize(final Stream<T> stream, final int groupSize) {
-        return grouped(stream,groupSize);
 
-    }
     /**
      * Group elements in a Stream by size
      * 
@@ -1651,38 +1607,12 @@ public class Streams {
      * @return Stream with elements grouped by size
      */
     public final static <T> Stream<ListX<T>> grouped(final Stream<T> stream, final int groupSize) {
-        return new BatchBySizeOperator<T, ListX<T>>(
-                                                    stream).batchBySize(groupSize);
+        return StreamSupport.stream(new GroupingSpliterator<>(stream.spliterator(),()->new ArrayList<>(groupSize),
+                c->ListX.fromIterable(c),groupSize),stream.isParallel());
+
 
     }
-    /**
-     * 
-     * 
-       <pre>
-       {@code 
-     *  List<SetX<Integer>> list = Streams.batchBySize(Stream.of(1,2,3,4,5,6)
-                                                        ,3,()->SetX.empty())
-                                                    .collect(Collectors.toList());
-        
-        
-        assertThat(list.get(0),hasItems(1,2,3));
-        assertThat(list.get(1),hasItems(4,5,6));
-        }
-     * </pre>
-     * 
-     * @param stream Stream to group 
-     * @param groupSize Size of each Group
-     * @param factory Supplier for creating Collections for holding grouping
-     * @return  Stream with elements grouped by size
-     */
-    @Deprecated
-    public final static <T, C extends Collection<? super T>> Stream<C> batchBySize(final Stream<T> stream, final int groupSize,
-            final Supplier<C> factory) {
 
-        return new BatchBySizeOperator<T, C>(
-                                             stream, factory).batchBySize(groupSize);
-
-    }  
     
     /**
      * 
@@ -1704,11 +1634,11 @@ public class Streams {
      * @param factory Supplier for creating Collections for holding grouping
      * @return  Stream with elements grouped by size
      */
-    @Deprecated
     public final static <T, C extends Collection<? super T>> Stream<C> grouped(final Stream<T> stream, final int groupSize,
             final Supplier<C> factory) {
-        return new BatchBySizeOperator<T, C>(
-                                             stream, factory).batchBySize(groupSize);
+        return StreamSupport.stream(new GroupingSpliterator<>(stream.spliterator(),factory,
+                Function.identity(),groupSize),stream.isParallel());
+
 
     }
 
