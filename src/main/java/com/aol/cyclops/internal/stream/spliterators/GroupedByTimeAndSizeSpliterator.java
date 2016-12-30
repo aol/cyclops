@@ -71,8 +71,11 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
 
     }
     long start = -1;
+    boolean closed =false;
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
+        if(closed)
+            return false;
         if(start ==-1 )
             start = System.nanoTime();
 
@@ -84,6 +87,7 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
                 action.accept(finalizer.apply(collection));
                 start = System.nanoTime();
                 collection = factory.get();
+                closed = true;
                 return false;
             }
         }

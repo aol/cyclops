@@ -1104,10 +1104,19 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
                 reversible,split);
 
     }
+    @Override
+    public <C extends Collection<? super T>,R> ReactiveSeq<R> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory, Function<? super C, ? extends R> finalizer) {
+        return Streams.reactiveSeq(new GroupedByTimeSpliterator(this.copyOrGet(),factory,
+                        finalizer,time,unit),
+                reversible,split);
 
+    }
     @Override
     public <C extends Collection<? super T>> ReactiveSeq<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
-        return Streams.reactiveSeq(Streams.batchByTime(this, time, unit, factory), this.reversible,split);
+        return Streams.reactiveSeq(new GroupedByTimeSpliterator(this.copyOrGet(),factory,
+                        Function.identity(),time,unit),
+                reversible,split);
+
     }
 
     @Override

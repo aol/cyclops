@@ -2366,8 +2366,8 @@ public class Streams {
     }
     
     public final static <T> Stream<ListX<T>> groupedByTime(final Stream<T> stream, final long time, final TimeUnit t) {
-        return new BatchByTimeOperator<T, ListX<T>>(
-                                                    stream).batchByTime(time, t);
+        return StreamSupport.stream(new GroupedByTimeSpliterator(stream.spliterator(),()->ListX.fromIterable(new ArrayList<>()),
+                Function.identity(),time,t),stream.isParallel());
     }
     @Deprecated
     public final static <T> Stream<ListX<T>> batchByTime(final Stream<T> stream, final long time, final TimeUnit t) {
@@ -2375,8 +2375,9 @@ public class Streams {
     }
     public final static <T, C extends Collection<? super T>> Stream<C> groupedByTime(final Stream<T> stream, final long time, final TimeUnit t,
             final Supplier<C> factory) {
-        return new BatchByTimeOperator<T, C>(
-                                             stream, factory).batchByTime(time, t);
+        return StreamSupport.stream(new GroupedByTimeSpliterator(stream.spliterator(),factory,
+                Function.identity(),time,t),stream.isParallel());
+
     }
     @Deprecated
     public final static <T, C extends Collection<? super T>> Stream<C> batchByTime(final Stream<T> stream, final long time, final TimeUnit t,

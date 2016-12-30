@@ -1129,10 +1129,17 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     default FutureStream<ListX<U>> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                                      .groupedBySizeAndTime(size, time, unit));
-        /**      Queue<U> queue = toQueue();
-        Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize<>(size,time,unit,()->new ListXImpl<>());
-        return (FutureStream)fromStream(queue.streamBatch(getSubscription(), (Function)fn)).filter(c->!((Collection)c).isEmpty());**/
+     }
+    @Override
+    default <C extends Collection<? super U>,R> FutureStream<R> groupedBySizeAndTime(final int size, final long time,
+                                                                            final TimeUnit unit,
+                                                                            final Supplier<C> factory,
+                                                                            Function<? super C, ? extends R> finalizer
+    ){
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                .groupedBySizeAndTime(size, time, unit,factory,finalizer));
     }
+
 
     /**
      * Batch the elements in this stream into Collections of specified size The
@@ -1340,7 +1347,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
                                      .groupedByTime(time, unit, factory));
 
     }
+    @Override
+    default <C extends Collection<? super U>,R> FutureStream<R> groupedByTime(final long time, final TimeUnit unit,
+                                                                            final Supplier<C> factory,
+                                                                            Function<? super C, ? extends R> finalizer) {
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                .groupedByTime(time, unit, factory,finalizer));
 
+    }
     /*
      *
      * React to new events with the supplied function on the supplied
