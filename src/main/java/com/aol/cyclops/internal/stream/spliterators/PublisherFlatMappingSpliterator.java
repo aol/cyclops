@@ -54,14 +54,7 @@ public class PublisherFlatMappingSpliterator<T,R> extends Spliterators.AbstractS
                 action.accept(active.next());
                 if (active.hasNext())
                     return true;
-                else { //added so we can return
-                    return source.tryAdvance(e -> {
-                        Publisher<R> flatten = (Publisher<R>)mapper.apply(e);
-                        SeqSubscriber<R> sub = SeqSubscriber.subscriber();
-                        flatten.subscribe(sub);
-                        active = (Iterator<R>)sub.iterator();
-                    });
-                }
+
             }
             //next publisher
             boolean advance = source.tryAdvance(t -> {

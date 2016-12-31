@@ -45,23 +45,22 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
 
         for(;;) {
             if (active != null) {
-                if(active.tryAdvance(action))
+                if(active.tryAdvance(action)){
                     return true;
-
-                else { //added so we can return
-                    return source.tryAdvance(e -> {
-                        active =  (Spliterator<R>)mapper.apply(e).spliterator();
-                    });
                 }
+
+
+
             }
             //next spliterator
             boolean advance = source.tryAdvance(t -> {
-                if (active == null ) {
+
                     active = (Spliterator<R>) mapper.apply(t).spliterator();
-                }
+
 
 
             });
+
             if(!advance)
                 return false;
         }
