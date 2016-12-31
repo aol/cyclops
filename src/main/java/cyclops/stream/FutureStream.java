@@ -2658,8 +2658,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate() {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                          .duplicate();
+        return Streams.duplicate(toQueue().stream(getSubscription()))
+                .map1(ReactiveSeq::fromStream).map2(ReactiveSeq::fromStream);
     }
 
     /*
@@ -2669,8 +2669,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default Tuple3<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> triplicate() {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                          .triplicate();
+        return Streams.triplicate(toQueue().stream(getSubscription()))
+                .map1(ReactiveSeq::fromStream).map2(ReactiveSeq::fromStream)
+                .map3(ReactiveSeq::fromStream);
 
     }
 
@@ -2680,8 +2681,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default Tuple4<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> quadruplicate() {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                          .quadruplicate();
+        return Streams.quadruplicate(toQueue().stream(getSubscription()))
+                .map1(ReactiveSeq::fromStream).map2(ReactiveSeq::fromStream)
+                .map3(ReactiveSeq::fromStream).map4(ReactiveSeq::fromStream);
 
     }
 
@@ -3366,7 +3368,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      *
      */
     static <T> FutureStream<T> of(final T value) {
-        return lazyFutureStream((Stream) Seq.of(value));
+        return lazyFutureStream((Stream) ReactiveSeq.of(value));
     }
 
     /**
@@ -3375,7 +3377,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @SafeVarargs
     static <T> FutureStream<T> of(final T... values) {
-        return lazyFutureStream((Stream) Seq.of(values));
+        return lazyFutureStream((Stream) ReactiveSeq.of(values));
     }
 
     /**

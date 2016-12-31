@@ -133,7 +133,7 @@ public abstract class BaseSeqTest {
 		
 		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<Integer>()).block().get(0).size(),is(1));
 		
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block().get(1).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block().size(),is(1));
 	}
 	@Test
 	public void batchBySizeInternalSize(){
