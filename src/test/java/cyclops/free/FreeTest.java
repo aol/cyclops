@@ -36,7 +36,7 @@ public final class FreeTest {
     public void testFib(){
 
         long time = System.currentTimeMillis();
-        assertThat(1597,equalTo(Fn0.run(fibonacci(17L))));
+        assertThat(1597l,equalTo(Fn0.run(fibonacci(17L))));
         System.out.println("Taken "  +(System.currentTimeMillis()-time));
     }
 
