@@ -40,27 +40,25 @@ public class GroupedStatefullySpliterator<T, C extends Collection<? super T>,R> 
     }
 
     C collection;
-    boolean sent = false;
-    boolean data = false;
+
     @Override
     public void forEachRemaining(Consumer<? super R> action) {
 
         source.forEachRemaining(t->{
-            if(data==false)
-                data = true;
+
             collection.add(t);
 
-            if(!predicate.test(collection,t)){
-                action.accept(finalizer.apply(collection));
-                sent = true;
-                collection = factory.get();
+            if(!predicate.test(collection,t)) {
+                if (collection.size() > 0) {
+                    action.accept(finalizer.apply(collection));
 
-            }else{
-                sent = false;
+                    collection = factory.get();
+                }
+
             }
 
         });
-        if(data && !sent){
+        if(collection.size()>0){
             action.accept(finalizer.apply(collection));
         }
 
@@ -79,17 +77,20 @@ public class GroupedStatefullySpliterator<T, C extends Collection<? super T>,R> 
                 accepted[0]=  predicate.test(collection,t);
             });
             if (!canAdvance) {
-                action.accept(finalizer.apply(collection));
+                if(collection.size()>0) {
+                    action.accept(finalizer.apply(collection));
 
-                collection = factory.get();
+                    collection = factory.get();
+                }
                 closed = true;
                 return false;
             }
         }
 
-
-        action.accept(finalizer.apply(collection));
-        collection = factory.get();
+        if(collection.size()>0) {
+            action.accept(finalizer.apply(collection));
+            collection = factory.get();
+        }
 
         return true;
     }

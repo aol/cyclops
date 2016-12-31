@@ -34,27 +34,25 @@ public class GroupedWhileSpliterator<T, C extends Collection<? super T>,R> exten
     }
 
     C collection;
-    boolean sent = false;
-    boolean data = false;
+
     @Override
     public void forEachRemaining(Consumer<? super R> action) {
 
         source.forEachRemaining(t->{
-            if(data==false)
-                data = true;
+
             collection.add(t);
 
             if(!predicate.test(t)){
                 action.accept(finalizer.apply(collection));
-                sent = true;
+
                 collection = factory.get();
 
             }else{
-                sent = false;
+
             }
 
         });
-        if(data && !sent){
+        if(collection.size()>0){
             action.accept(finalizer.apply(collection));
         }
 
@@ -70,20 +68,26 @@ public class GroupedWhileSpliterator<T, C extends Collection<? super T>,R> exten
         while (accepted[0]) {
             boolean canAdvance = source.tryAdvance(t -> {
                 collection.add(t);
+
                 accepted[0]=  predicate.test(t);
             });
             if (!canAdvance) {
-                action.accept(finalizer.apply(collection));
+                if(collection.size()>0){
+                    action.accept(finalizer.apply(collection));
 
-                collection = factory.get();
+                    collection = factory.get();
+                }
                 closed = true;
                 return false;
             }
         }
 
+        if(collection.size()>0){
 
-        action.accept(finalizer.apply(collection));
-        collection = factory.get();
+            action.accept(finalizer.apply(collection));
+
+            collection = factory.get();
+        }
 
         return true;
     }

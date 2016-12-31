@@ -75,7 +75,7 @@ public class GroupedByTimeSpliterator<T, C extends Collection<? super T>,R> exte
         if(start ==-1 )
             start = System.nanoTime();
 
-        while (System.nanoTime() - start < toRun) {
+       do  {
             boolean canAdvance = source.tryAdvance(t -> {
                 collection.add(t);
             });
@@ -86,7 +86,7 @@ public class GroupedByTimeSpliterator<T, C extends Collection<? super T>,R> exte
                 closed = true;
                 return false;
             }
-        }
+        }while(System.nanoTime() - start < toRun);
 
 
         action.accept(finalizer.apply(collection));

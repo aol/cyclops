@@ -63,6 +63,9 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchWhileCollection(){
+		System.out.println(Streamable.of(1,2,3,4,5,6)
+				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
+				.toList());
 		assertThat(Streamable.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
 				.toList().size(),equalTo(2));

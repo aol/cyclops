@@ -45,27 +45,23 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
     }
 
     C collection;
-    boolean sent = false;
-    boolean data = false;
+
     @Override
     public void forEachRemaining(Consumer<? super R> action) {
         start = System.nanoTime();
         source.forEachRemaining(t->{
-            if(data==false)
-                data = true;
+
             collection.add(t);
 
             if(collection.size()==groupSize || System.nanoTime() - start >= toRun){
                 action.accept(finalizer.apply(collection));
-                sent = true;
+
                 collection = factory.get();
                 start = System.nanoTime();
-            }else{
-                sent = false;
             }
 
         });
-        if(data && !sent){
+        if(collection.size()>0){
             action.accept(finalizer.apply(collection));
         }
 
@@ -84,17 +80,20 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
                 collection.add(t);
             });
             if (!canAdvance) {
-                action.accept(finalizer.apply(collection));
-                start = System.nanoTime();
-                collection = factory.get();
+                if(collection.size()>0) {
+                    action.accept(finalizer.apply(collection));
+                    start = System.nanoTime();
+                    collection = factory.get();
+                }
                 closed = true;
                 return false;
             }
         }
 
-
-        action.accept(finalizer.apply(collection));
-        collection = factory.get();
+        if(collection.size()>0) {
+            action.accept(finalizer.apply(collection));
+            collection = factory.get();
+        }
         start = System.nanoTime();
         return true;
     }

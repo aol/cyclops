@@ -67,16 +67,21 @@ public class GroupingSpliterator<T, C extends Collection<? super T>,R> extends S
         for(int i=collection.size();i<groupSize;i++) {
             boolean canAdvance = source.tryAdvance(t -> {
                 collection.add(t);
+
             });
             if (!canAdvance) {
-                action.accept(finalizer.apply(collection));
-                collection = factory.get();
+                if(collection.size()>0) {
+                    action.accept(finalizer.apply(collection));
+                    collection = factory.get();
+                }
                 closed = true;
                 return false;
             }
         }
-        action.accept(finalizer.apply(collection));
-        collection = factory.get();
+        if(collection.size()>0) {
+            action.accept(finalizer.apply(collection));
+            collection = factory.get();
+        }
         return true;
     }
 
