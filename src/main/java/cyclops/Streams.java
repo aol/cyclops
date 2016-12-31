@@ -2426,8 +2426,8 @@ public class Streams {
      */
     public final static <T, C extends Collection<? super T>> Stream<C> groupedWhile(final Stream<T> stream, final Predicate<? super T> predicate,
             final Supplier<C> factory) {
-        return new BatchWhileOperator<T, C>(
-                                            stream, factory).batchWhile(predicate);
+        return StreamSupport.stream(new GroupedWhileSpliterator<>(stream.spliterator(),factory,Function.identity(),predicate.negate()),stream.isParallel());
+
     }
     @Deprecated
     public final static <T, C extends Collection<? super T>> Stream<C> batchWhile(final Stream<T> stream, final Predicate<? super T> predicate,
