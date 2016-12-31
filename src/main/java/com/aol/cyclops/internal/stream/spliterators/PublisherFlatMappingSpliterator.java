@@ -49,25 +49,35 @@ public class PublisherFlatMappingSpliterator<T,R> extends Spliterators.AbstractS
     Iterator<R> active;
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
-        System.out.println("try advance flatmap");
-        if(active!=null && active.hasNext()){
-            action.accept(active.next());
-            return active.hasNext();
-        }
-        source.tryAdvance(t->{
-            if(active==null || !active.hasNext()) {
-                Publisher<R> flatten = (Publisher<R>)mapper.apply(t);
-                SeqSubscriber<R> sub = SeqSubscriber.subscriber();
-                flatten.subscribe(sub);
-                active = (Iterator<R>)sub.iterator();
-            }
-            if(active.hasNext())
+        for(;;) {
+            if (active != null && active.hasNext()) {
                 action.accept(active.next());
+                if (active.hasNext())
+                    return true;
+                else { //added so we can return
+                    return source.tryAdvance(e -> {
+                        Publisher<R> flatten = (Publisher<R>)mapper.apply(e);
+                        SeqSubscriber<R> sub = SeqSubscriber.subscriber();
+                        flatten.subscribe(sub);
+                        active = (Iterator<R>)sub.iterator();
+                    });
+                }
+            }
+            //next publisher
+            boolean advance = source.tryAdvance(t -> {
+                if (active == null || !active.hasNext()) {
+                    Publisher<R> flatten = (Publisher<R>)mapper.apply(t);
+                    SeqSubscriber<R> sub = SeqSubscriber.subscriber();
+                    flatten.subscribe(sub);
+                    active = (Iterator<R>)sub.iterator();
+                }
 
 
-        });
+            });
+            if(!advance)
+                return false;
+        }
 
-        return active!=null && active.hasNext();
     }
     @Override
     public Spliterator<R> copy() {

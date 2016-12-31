@@ -107,6 +107,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
         assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
        
     }
+
     int count =0;
     @Test
     public void testCycleWhile() {

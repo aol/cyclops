@@ -76,6 +76,7 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
     public boolean tryAdvance(Consumer<? super R> action) {
        if(!canAdvance)
            return false;
+       data = false;
         for (int i = 0; i < increment && list.get()
                 .size() > 0; i++)
             list.mutate(var -> var.minus(0));
@@ -88,11 +89,13 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
 
             });
             if (box.get()!=null) {
+                data =true;
                 list.mutate(var -> var.plus(Math.max(0, var.size()), box.get()));
             }
 
         }
-        action.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
+        if(data)
+            action.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
 
         return canAdvance;
     }

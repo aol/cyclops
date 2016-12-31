@@ -34,30 +34,38 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
 
 
             Stream<R> flatten = (Stream<R>)mapper.apply(t);
-            flatten.peek(i->System.out.println("next value " + i)).forEach(action);
+            flatten.forEach(action);
         });
 
     }
 
-    Iterator<R> active;
+    Spliterator<R> active;
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
 
-        if(active!=null && active.hasNext()){
-            action.accept(active.next());
-            return active.hasNext();
-        }
-        source.tryAdvance(t->{
-            if(active==null || !active.hasNext()) {
-                active = (Iterator<R>)mapper.apply(t).iterator();
+        for(;;) {
+            if (active != null) {
+                if(active.tryAdvance(action))
+                    return true;
+
+                else { //added so we can return
+                    return source.tryAdvance(e -> {
+                        active =  (Spliterator<R>)mapper.apply(e).spliterator();
+                    });
+                }
             }
-            if(active.hasNext())
-                action.accept(active.next());
+            //next spliterator
+            boolean advance = source.tryAdvance(t -> {
+                if (active == null ) {
+                    active = (Spliterator<R>) mapper.apply(t).spliterator();
+                }
 
 
-        });
+            });
+            if(!advance)
+                return false;
+        }
 
-        return active!=null && active.hasNext();
     }
     @Override
     public Spliterator<R> copy() {

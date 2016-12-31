@@ -28,6 +28,7 @@ public class LimitWhileSpliterator<T> extends Spliterators.AbstractSpliterator<T
                 if(!closed)
                     action.accept(t);
             });
+            System.out.println("can advance " + canAdvance);
             if(!canAdvance){
                 closed = true;
                 return;

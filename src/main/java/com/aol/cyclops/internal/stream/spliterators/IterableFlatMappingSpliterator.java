@@ -40,20 +40,28 @@ public class IterableFlatMappingSpliterator<T,R> extends Spliterators.AbstractSp
     Iterator<R> active;
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
-        if(active!=null && active.hasNext()){
-            action.accept(active.next());
-            return active.hasNext();
-        }
-        source.tryAdvance(t->{
-            if(active==null || !active.hasNext()) {
-                active = mapper.apply(t).iterator();
-            }
-            if(active.hasNext())
+        for(;;) {
+            if (active != null && active.hasNext()) {
                 action.accept(active.next());
+                if (active.hasNext())
+                    return true;
+                else { //added so we can return
+                    return source.tryAdvance(e -> {
+                        active = (Iterator<R>) mapper.apply(e).iterator();
+                    });
+                }
+            }
+            //next iterator
+            boolean advance = source.tryAdvance(t -> {
+                if (active == null || !active.hasNext()) {
+                    active = (Iterator<R>) mapper.apply(t).iterator();
+                }
 
 
-        });
-        return active.hasNext();
+            });
+            if(!advance)
+                return false;
+        }
     }
 
     @Override

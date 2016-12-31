@@ -279,7 +279,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<T> cycleUntil(final Predicate<? super T> predicate) {
-        return cycleUntil(predicate.negate());
+        return cycleWhile(predicate.negate());
     }
 
     @Override
