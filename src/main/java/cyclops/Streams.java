@@ -2394,8 +2394,7 @@ public class Streams {
      */
     public final static <T> Stream<ListX<T>> groupedStatefullyUntil(final Stream<T> stream,
             final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return new WindowStatefullyWhileOperator<>(
-                                                   stream).windowStatefullyWhile(predicate);
+        return StreamSupport.stream(new GroupedStatefullySpliterator<>(stream.spliterator(),predicate.negate()),stream.isParallel());
     }
     
     /**

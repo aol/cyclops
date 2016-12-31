@@ -3000,7 +3000,25 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                                      .groupedStatefullyUntil(predicate));
     }
+    @Override
+    default <C extends Collection<U>,R> FutureStream<R> groupedStatefullyUntil(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
+                                                                      Function<? super C, ? extends R> finalizer){
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                .groupedStatefullyUntil(predicate,factory,finalizer));
 
+    }
+    @Override
+    default FutureStream<ListX<U>> groupedStatefullyWhile(final BiPredicate<ListX<? super U>, ? super U> predicate) {
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                .groupedStatefullyUntil(predicate));
+    }
+    @Override
+    default <C extends Collection<U>,R> FutureStream<R> groupedStatefullyWhile(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
+                                                                               Function<? super C, ? extends R> finalizer){
+        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+                .groupedStatefullyUntil(predicate,factory,finalizer));
+
+    }
     /*
      * @see cyclops.stream.ReactiveSeq#batchUntil(java.util.function.Predicate)
      */

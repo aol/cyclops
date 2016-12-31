@@ -331,10 +331,23 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
         return Streams.reactiveSeq(new GroupingSpliterator<>(copyOrGet(),()->new ArrayList(groupSize),c->ListX.fromIterable(c),groupSize), this.reversible,split);
 
     }
-
+    @Override
+    public ReactiveSeq<ListX<T>> groupedStatefullyWhile(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return Streams.reactiveSeq(new GroupedStatefullySpliterator<>(copyOrGet(),()->ListX.of(),Function.identity(), predicate), this.reversible,split);
+    }
+    @Override
+    public <C extends Collection<T>,R> ReactiveSeq<R> groupedStatefullyWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+                                                                             Function<? super C, ? extends R> finalizer) {
+        return Streams.reactiveSeq(new GroupedStatefullySpliterator<>(copyOrGet(),factory,Function.identity(), predicate), this.reversible,split);
+    }
     @Override
     public ReactiveSeq<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return Streams.reactiveSeq(Streams.groupedStatefullyUntil(this, predicate), this.reversible,split);
+        return Streams.reactiveSeq(new GroupedStatefullySpliterator<>(copyOrGet(),()->ListX.of(),Function.identity(), predicate.negate()), this.reversible,split);
+    }
+    @Override
+    public <C extends Collection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+                                                        Function<? super C, ? extends R> finalizer) {
+        return Streams.reactiveSeq(new GroupedStatefullySpliterator<>(copyOrGet(),factory,Function.identity(), predicate.negate()), this.reversible,split);
     }
 /**
     @Override

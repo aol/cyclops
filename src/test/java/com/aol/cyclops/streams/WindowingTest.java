@@ -68,22 +68,42 @@ public class WindowingTest {
 				.toList().size(),equalTo(0));
 	}
 	@Test
-	public void windowStatefullyWhile(){
+	public void windowStatefullyUntil(){
 		System.out.println(ReactiveSeq.of(1,2,3,4,5,6)
 				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				.toList());
+
 		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
 				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
-				.toList().size(),equalTo(5));
+				.toList().size(),equalTo(2));
 		
 	}
 	@Test
-	public void windowStatefullyWhileEmpty(){
+	public void windowStatefullyUntilEmpty(){
 		
 		assertThat(ReactiveSeq.of()
 				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(0));
 		
+	}
+	@Test
+	public void windowStatefullyWhile(){
+		System.out.println(ReactiveSeq.of(1,2,3,4,5,6)
+				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+				.toList());
+
+		assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+				.toList().size(),equalTo(4));
+
+	}
+	@Test
+	public void windowStatefullyWhileEmpty(){
+
+		assertThat(ReactiveSeq.of()
+				.groupedStatefullyWhile((s,i)->s.contains(4) ? true : false)
+				.toList().size(),equalTo(0));
+
 	}
 	@Test
 	public void sliding() {
