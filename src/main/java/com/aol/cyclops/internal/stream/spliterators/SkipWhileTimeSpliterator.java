@@ -67,7 +67,7 @@ public class SkipWhileTimeSpliterator<T> extends Spliterators.AbstractSpliterato
             }
             });
 
-        return closed = canAdvance;
+        return !(closed = !canAdvance);
     }
 
     @Override
