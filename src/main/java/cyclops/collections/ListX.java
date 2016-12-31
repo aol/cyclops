@@ -1056,7 +1056,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.aol.cyclops.lambda.monads.Traversable#cycle(int)
      */
     @Override
-    default ListX<T> cycle(final int times) {
+    default ListX<T> cycle(final long times) {
 
         return (ListX<T>) MutableCollectionX.super.cycle(times);
     }
@@ -1065,7 +1065,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.aol.cyclops.lambda.monads.Traversable#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default ListX<T> cycle(final Monoid<T> m, final int times) {
+    default ListX<T> cycle(final Monoid<T> m, final long times) {
 
         return (ListX<T>) MutableCollectionX.super.cycle(m, times);
     }
@@ -1530,8 +1530,8 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     @Override
-    default ListX<T> insertStreamAt(int pos, Stream<T> stream) {
-        return (ListX<T>)MutableCollectionX.super.insertStreamAt(pos,stream);
+    default ListX<T> insertAtS(int pos, Stream<T> stream) {
+        return (ListX<T>)MutableCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override

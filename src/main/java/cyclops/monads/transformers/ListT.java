@@ -348,7 +348,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see cyclops.monads.transformers.values.ListT#cycle(int)
      */
     @Override
-    public ListT<W,T> cycle(final int times) {
+    public ListT<W,T> cycle(final long times) {
 
         return (ListT<W,T>) FoldableTransformerSeq.super.cycle(times);
     }
@@ -357,7 +357,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see cyclops.monads.transformers.values.ListT#cycle(cyclops.function.Monoid, int)
      */
     @Override
-    public ListT<W,T> cycle(final Monoid<T> m, final int times) {
+    public ListT<W,T> cycle(final Monoid<T> m, final long times) {
 
         return (ListT<W,T>) FoldableTransformerSeq.super.cycle(m, times);
     }

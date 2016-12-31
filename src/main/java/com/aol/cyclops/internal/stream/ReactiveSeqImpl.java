@@ -28,6 +28,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -194,19 +195,17 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     }
 
-    @Override
-    public final ReactiveSeq<T> cycle(final int times) {
-        return Streams.reactiveSeq(Streams.cycle(times, Streamable.fromStream(unwrapStream())), reversible,split);
-    }
+
 
     @Override
     public final ReactiveSeq<T> cycle() {
-        return Streams.reactiveSeq(Streams.cycle(unwrapStream()), reversible,split);
+        return  ReactiveSeq.fill(1)
+                .flatMap(i->Streams.reactiveSeq(copyOrGet(),reversible,split));
     }
 
     @Override
     public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
-        final Tuple2<Stream<T>, Stream<T>> tuple = Streams.duplicate(unwrapStream());
+        final Tuple2<Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copyOrGet(),copyOrGet());
         return tuple.map1(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split))
                     .map2(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split));
     }
@@ -215,7 +214,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     @SuppressWarnings("unchecked")
     public final Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate() {
 
-        final Tuple3<Stream<T>, Stream<T>, Stream<T>> tuple = Streams.triplicate(unwrapStream());
+        final Tuple3<Spliterator<T>, Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copyOrGet(),copyOrGet(),copyOrGet());
         return tuple.map1(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split))
                     .map2(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split))
                     .map3(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split));
@@ -225,7 +224,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
     @Override
     @SuppressWarnings("unchecked")
     public final Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
-        final Tuple4<Stream<T>, Stream<T>, Stream<T>, Stream<T>> tuple = Streams.quadruplicate(unwrapStream());
+        final Tuple4<Spliterator<T>, Spliterator<T>, Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copyOrGet(),copyOrGet(),copyOrGet(),copyOrGet());
         return tuple.map1(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split))
                     .map2(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split))
                     .map3(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split))
@@ -244,43 +243,43 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitAt(final int where) {
-        return Streams.splitAt(this, where)
-                          .map1(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split))
-                          .map2(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split));
+        final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
+        return new Tuple2(
+                Tuple2.v1.limit(where), Tuple2.v2.skip(where));
+
 
     }
 
     @Override
     public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitBy(final Predicate<T> splitter) {
-        return Streams.splitBy(this, splitter)
-                          .map1(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split))
-                          .map2(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split));
+        final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
+        return new Tuple2(
+                Tuple2.v1.limitWhile(splitter), Tuple2.v2.skipWhile(splitter));
     }
 
     @Override
     public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(final Predicate<? super T> splitter) {
-        return Streams.partition(this, splitter)
-                          .map1(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split))
-                          .map2(s -> Streams.reactiveSeq(s, reversible.map(r -> r.copy()),split));
+        final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
+        return new Tuple2(
+                Tuple2.v1.filter(splitter), Tuple2.v2.filter(splitter.negate()));
+
     }
 
     @Override
-    public final ReactiveSeq<T> cycle(final Monoid<T> m, final int times) {
-        return Streams.reactiveSeq(Streams.cycle(times, Streamable.of(m.reduce(unwrapStream()))), reversible,split);
+    public final ReactiveSeq<T> cycle(final Monoid<T> m, final long times) {
+        return ReactiveSeq.of(m.reduce(this)).cycle(times);
 
     }
 
     @Override
     public final ReactiveSeq<T> cycleWhile(final Predicate<? super T> predicate) {
 
-        return Streams.reactiveSeq(Streams.cycle(unwrapStream()), reversible,split)
-                          .limitWhile(predicate);
+        return cycle().limitWhile(predicate);
     }
 
     @Override
     public final ReactiveSeq<T> cycleUntil(final Predicate<? super T> predicate) {
-        return Streams.reactiveSeq(Streams.cycle(unwrapStream()), reversible,split)
-                          .limitWhile(predicate.negate());
+        return cycleUntil(predicate.negate());
     }
 
     @Override
@@ -476,6 +475,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
                           .flatMap(i->Streams.reactiveSeq(copyOrGet(),reversible,split));
 
     }
+
 
     @Override
     public ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
@@ -873,19 +873,21 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override @SafeVarargs
     public  final ReactiveSeq<T> insertAt(final int pos, final T... values) {
-        return Streams.reactiveSeq(Streams.insertAt(this, pos, values), Optional.empty(),split);
+        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> s = this.splitAt(pos);
+        return ReactiveSeq.concat(s.v1,ReactiveSeq.of(values),s.v2);
 
     }
 
     @Override
     public ReactiveSeq<T> deleteBetween(final int start, final int end) {
-        return Streams.reactiveSeq(Streams.deleteBetween(this, start, end), Optional.empty(),split);
+        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> s = duplicate();
+        return ReactiveSeq.concat(s.v1.limit(start),s.v2.skip(end));
     }
 
     @Override
-    public ReactiveSeq<T> insertStreamAt(final int pos, final Stream<T> stream) {
-
-        return Streams.reactiveSeq(Streams.insertStreamAt(this, pos, stream), Optional.empty(),split);
+    public ReactiveSeq<T> insertAtS(final int pos, final Stream<T> stream) {
+        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> s = this.splitAt(pos);
+        return ReactiveSeq.concat(s.v1,ReactiveSeq.fromStream(stream),s.v2);
 
     }
 
@@ -933,45 +935,37 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> appendS(final Stream<? extends T> other) {
-        return Streams.reactiveSeq(ReactiveSeq.concat(copyOrGet(),other.spliterator()),
-                Optional.empty(),split);
+        return ReactiveSeq.concat(copyOrGet(),other.spliterator());
     }
     public ReactiveSeq<T> append(final Iterable<? extends T> other) {
-        return Streams.reactiveSeq(ReactiveSeq.concat(copyOrGet(),other.spliterator()),
-                Optional.empty(),split);
+        return ReactiveSeq.concat(copyOrGet(),other.spliterator());
     }
 
     @Override
     public ReactiveSeq<T> append(final T other) {
-        return Streams.reactiveSeq(ReactiveSeq.concat(unwrapStream(),Stream.of(other)),
-                                       Optional.empty(),split);
+        return ReactiveSeq.concat(unwrapStream(),Stream.of(other));
     }
 
     @Override
     public ReactiveSeq<T> append(final T... other) {
-        return Streams.reactiveSeq(ReactiveSeq.concat(unwrapStream(),Stream.of(other)),
-                                       Optional.empty(),split);
+        return ReactiveSeq.concat(unwrapStream(),Stream.of(other));
     }
     @Override
     public ReactiveSeq<T> prependS(final Stream<? extends T> other) {
-        return Streams.reactiveSeq(ReactiveSeq.concat(other,unwrapStream()),
-                Optional.empty(),split);
+        return ReactiveSeq.concat(other,unwrapStream());
     }
     public ReactiveSeq<T> prepend(final Iterable<? extends T> other) {
-        return Streams.reactiveSeq(ReactiveSeq.concat(StreamSupport.stream(other.spliterator(),false),unwrapStream()),
-                Optional.empty(),split);
+        return ReactiveSeq.concat(StreamSupport.stream(other.spliterator(),false),unwrapStream());
     }
 
     @Override
     public ReactiveSeq<T> prepend(final T other) {
-        return Streams.reactiveSeq(ReactiveSeq.concat(Stream.of(other),unwrapStream()),
-                Optional.empty(),split);
+        return ReactiveSeq.concat(Stream.of(other),unwrapStream());
     }
 
     @Override
     public ReactiveSeq<T> prepend(final T... other) {
-        return Streams.reactiveSeq(ReactiveSeq.concat(Stream.of(other),unwrapStream()),
-                Optional.empty(),split);
+        return ReactiveSeq.concat(Stream.of(other),unwrapStream());
     }
 
 
@@ -1029,7 +1023,9 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<ListX<T>> groupedByTime(final long time, final TimeUnit t) {
-        return Streams.reactiveSeq(Streams.batchByTime(this, time, t), reversible,split);
+        return Streams.reactiveSeq(new GroupedByTimeSpliterator<>(copyOrGet(),
+                ()->ListX.fromIterable(new ArrayList<>(100)),
+                Function.identity(),time, t), reversible,split);
     }
 
     @Override
@@ -1065,7 +1061,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
-        return Streams.reactiveSeq(Streams.batchUntil(this, predicate), this.reversible,split);
+        return groupedWhile(predicate.negate());
+
     }
 
     @Override
@@ -1080,7 +1077,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public <C extends Collection<? super T>> ReactiveSeq<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
-        return Streams.reactiveSeq(Streams.batchWhile(this, predicate.negate(), factory), this.reversible,split);
+      return groupedWhile(predicate.negate(),factory);
     }
 
     @Override
@@ -1126,12 +1123,12 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> skipLast(final int num) {
-        return Streams.reactiveSeq(Streams.skipLast(this, num), this.reversible,split);
+        return Streams.reactiveSeq(SkipLastSpliterator.skipLast(copyOrGet(), num), this.reversible,split);
     }
 
     @Override
     public ReactiveSeq<T> limitLast(final int num) {
-        return Streams.reactiveSeq(Streams.limitLast(this, num), this.reversible,split);
+        return Streams.reactiveSeq(LimitLastSpliterator.limitLast(copyOrGet(), num), this.reversible,split);
     }
 
     @Override

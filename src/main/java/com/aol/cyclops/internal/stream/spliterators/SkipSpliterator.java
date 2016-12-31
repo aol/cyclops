@@ -27,23 +27,21 @@ public class SkipSpliterator<T> extends Spliterators.AbstractSpliterator<T> impl
         }
 
         source.forEachRemaining(action);
-        closed = true;
+
 
     }
-    boolean closed = false;
+
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        if(closed)
-            return false;
+
         boolean cont = true;
         while(index++<skip && cont) {
             cont =source.tryAdvance(e->{});
 
         }
-        if(!cont)
-            return closed = false;
-        return closed = source.tryAdvance(t -> {
+
+        return  source.tryAdvance(t -> {
 
                 action.accept(t);
             });

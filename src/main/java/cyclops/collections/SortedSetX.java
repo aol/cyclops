@@ -559,7 +559,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)
      */
     @Override
-    default ListX<T> cycle(final int times) {
+    default ListX<T> cycle(final long times) {
 
         return this.stream()
                    .cycle(times)
@@ -570,7 +570,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default ListX<T> cycle(final Monoid<T> m, final int times) {
+    default ListX<T> cycle(final Monoid<T> m, final long times) {
 
         return this.stream()
                    .cycle(m, times)
@@ -996,8 +996,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     @Override
-    default SortedSetX<T> insertStreamAt(int pos, Stream<T> stream) {
-        return (SortedSetX<T>)MutableCollectionX.super.insertStreamAt(pos,stream);
+    default SortedSetX<T> insertAtS(int pos, Stream<T> stream) {
+        return (SortedSetX<T>)MutableCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override

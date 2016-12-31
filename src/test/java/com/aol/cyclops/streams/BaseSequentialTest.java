@@ -197,7 +197,7 @@ public class BaseSequentialTest {
 		}
 		@Test
 		public void insertAtStream(){
-		List<String> result = 	of(1,2,3).insertStreamAt(1,of(100,200,300))
+		List<String> result = 	of(1,2,3).insertAtS(1,of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -543,9 +543,32 @@ public class BaseSequentialTest {
 			        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(7).v1.toList());
 			      	}
 		    }
+	@Test
+	public void skipInvestigate() {
+		System.out.println("0" + of(1, 2, 3).skip(0).toListX());
+
+		assertThat(of(1, 2, 3).skip(0).toListX(), equalTo(ListX.of(1,2, 3)));
+	}
+	@Test
+	public void splitAtInvestigate() {
+		System.out.println("0" + of(1, 2, 3).splitAt(0).v2.toListX());
+
+		assertThat(of(1, 2, 3).splitAt(0).v2.toListX(), equalTo(ListX.of(1,2, 3)));
+	}
+
+		    @Test
+			public void splitAtHeadInvestigate(){
+				System.out.println("0" + of(1, 2, 3).splitAt(0).v2.toListX());
+				System.out.println(of(1, 2, 3).splitAtHead().v1);
+				System.out.println(of(1, 2, 3).splitAtHead().v2.toListX());
+				System.out.println(of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
+				System.out.println(of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
+				assertThat(of(1,2,3).splitAtHead().v2.toListX(),equalTo(ListX.of(2,3)));
+			}
 
 		    @Test
 		    public void testSplitAtHead() {
+
 		        assertEquals(Optional.empty(), of().splitAtHead().v1);
 		        assertEquals(asList(), of().splitAtHead().v2.toList());
 

@@ -643,7 +643,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(int)
      */
     @Override
-    default PBagX<T> cycle(final int times) {
+    default PBagX<T> cycle(final long times) {
 
         return (PBagX<T>) PersistentCollectionX.super.cycle(times);
     }
@@ -652,7 +652,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default PBagX<T> cycle(final Monoid<T> m, final int times) {
+    default PBagX<T> cycle(final Monoid<T> m, final long times) {
 
         return (PBagX<T>) PersistentCollectionX.super.cycle(m, times);
     }
@@ -1042,8 +1042,8 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     @Override
-    default PBagX<T> insertStreamAt(int pos, Stream<T> stream) {
-        return (PBagX<T>)PersistentCollectionX.super.insertStreamAt(pos,stream);
+    default PBagX<T> insertAtS(int pos, Stream<T> stream) {
+        return (PBagX<T>)PersistentCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override

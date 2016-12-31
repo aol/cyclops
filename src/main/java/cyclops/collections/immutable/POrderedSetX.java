@@ -614,7 +614,7 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)
     */
     @Override
-    default PStackX<T> cycle(final int times) {
+    default PStackX<T> cycle(final long times) {
 
         return this.stream()
                    .cycle(times)
@@ -625,7 +625,7 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default PStackX<T> cycle(final Monoid<T> m, final int times) {
+    default PStackX<T> cycle(final Monoid<T> m, final long times) {
 
         return this.stream()
                    .cycle(m, times)
@@ -1018,8 +1018,8 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     }
 
     @Override
-    default POrderedSetX<T> insertStreamAt(int pos, Stream<T> stream) {
-        return (POrderedSetX<T>)PersistentCollectionX.super.insertStreamAt(pos,stream);
+    default POrderedSetX<T> insertAtS(int pos, Stream<T> stream) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override

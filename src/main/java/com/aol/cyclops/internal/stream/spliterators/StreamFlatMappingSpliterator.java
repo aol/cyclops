@@ -31,7 +31,7 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
             active.forEachRemaining(action);
         }
         source.forEachRemaining(t->{
-            System.out.println("next Stream");
+
 
             Stream<R> flatten = (Stream<R>)mapper.apply(t);
             flatten.peek(i->System.out.println("next value " + i)).forEach(action);

@@ -704,7 +704,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(int)
      */
     @Override
-    default PVectorX<T> cycle(final int times) {
+    default PVectorX<T> cycle(final long times) {
 
         return (PVectorX<T>) PersistentCollectionX.super.cycle(times);
     }
@@ -713,7 +713,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default PVectorX<T> cycle(final Monoid<T> m, final int times) {
+    default PVectorX<T> cycle(final Monoid<T> m, final long times) {
 
         return (PVectorX<T>) PersistentCollectionX.super.cycle(m, times);
     }
@@ -1103,8 +1103,8 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
     @Override
-    default PVectorX<T> insertStreamAt(int pos, Stream<T> stream) {
-        return (PVectorX<T>)PersistentCollectionX.super.insertStreamAt(pos,stream);
+    default PVectorX<T> insertAtS(int pos, Stream<T> stream) {
+        return (PVectorX<T>)PersistentCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override

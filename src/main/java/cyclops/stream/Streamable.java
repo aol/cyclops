@@ -821,7 +821,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return Streamable with values repeated
      */
     @Override
-    default Streamable<T> cycle(final int times) {
+    default Streamable<T> cycle(final long times) {
         return Streamable.fromStream(reactiveSeq().cycle(times));
     }
 
@@ -960,7 +960,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return Stream with reduced values repeated
      */
     @Override
-    default Streamable<T> cycle(final Monoid<T> m, final int times) {
+    default Streamable<T> cycle(final Monoid<T> m, final long times) {
         return fromStream(reactiveSeq().cycle(m, times));
     }
 
@@ -1983,8 +1983,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     @Override
-    default Traversable<T> insertStreamAt(int pos, Stream<T> stream){
-        return fromStream(reactiveSeq().insertStreamAt(pos,stream));
+    default Traversable<T> insertAtS(int pos, Stream<T> stream){
+        return fromStream(reactiveSeq().insertAtS(pos,stream));
     }
 
     /**
@@ -2071,7 +2071,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
-     * 									 .insertStreamAt(1,of(100,200,300))
+     * 									 .insertAtS(1,of(100,200,300))
     									 .map(it ->it+"!!")
     									 .collect(Collectors.toList());
     
@@ -2083,7 +2083,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return newly conjoined Streamable
      */
     default Streamable<T> insertStreamableAt(final int pos, final Streamable<T> stream) {
-        return fromStream(reactiveSeq().insertStreamAt(pos, stream.reactiveSeq()));
+        return fromStream(reactiveSeq().insertAtS(pos, stream.reactiveSeq()));
     }
 
 

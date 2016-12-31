@@ -890,7 +890,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> insertAt(final int pos, final T... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .insertStreamAt(pos, Stream.of(values)
+                                       .insertAtS(pos, Stream.of(values)
                                                                   .map(v -> FastFuture.completedFuture(v))));
     }
 
@@ -927,7 +927,7 @@ public interface OperationsOnFutures<T> {
      * <pre>
      * {@code 
      *   List<String> result = 	of(1,2,3).actOnFutures()
-    									.insertStreamAt(1,of(100,200,300))
+    									.insertAtS(1,of(100,200,300))
     									.map(it ->it+"!!")
     									.collect(Collectors.toList());
     
@@ -944,7 +944,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> insertStreamAt(final int pos, final Stream<T> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .insertStreamAt(pos, stream.map(v -> FastFuture.completedFuture(v))));
+                                       .insertAtS(pos, stream.map(v -> FastFuture.completedFuture(v))));
     }
 
     /**
@@ -972,7 +972,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> insertStreamFuturesAt(final int pos, final Stream<CompletableFuture<T>> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .insertStreamAt(pos, stream.map(v -> FastFuture.fromCompletableFuture(v))));
+                                       .insertAtS(pos, stream.map(v -> FastFuture.fromCompletableFuture(v))));
     }
 
     /**

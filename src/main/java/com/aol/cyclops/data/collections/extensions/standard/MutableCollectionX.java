@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.types.Traversable;
 import cyclops.Streams;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
@@ -325,7 +324,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#cycle(int)
      */
     @Override
-    default MutableCollectionX<T> cycle(final int times) {
+    default MutableCollectionX<T> cycle(final long times) {
 
         return fromStream(stream().cycle(times));
     }
@@ -334,7 +333,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#cycle(cyclops.function.Monoid, int)
      */
     @Override
-    default MutableCollectionX<T> cycle(final Monoid<T> m, final int times) {
+    default MutableCollectionX<T> cycle(final Monoid<T> m, final long times) {
 
         return fromStream(stream().cycle(m, times));
     }
@@ -754,8 +753,8 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default MutableCollectionX<T> insertStreamAt(int pos, Stream<T> stream){
-        return fromStream(stream().insertStreamAt(pos,stream));
+    default MutableCollectionX<T> insertAtS(int pos, Stream<T> stream){
+        return fromStream(stream().insertAtS(pos,stream));
 
     }
 }

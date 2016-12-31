@@ -708,7 +708,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      * @see com.aol.cyclops.lambda.monads.Traversable#cycle(int)
      */
     @Override
-    default DequeX<T> cycle(final int times) {
+    default DequeX<T> cycle(final long times) {
 
         return (DequeX<T>) MutableCollectionX.super.cycle(times);
     }
@@ -717,7 +717,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
      * @see com.aol.cyclops.lambda.monads.Traversable#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default DequeX<T> cycle(final Monoid<T> m, final int times) {
+    default DequeX<T> cycle(final Monoid<T> m, final long times) {
 
         return (DequeX<T>) MutableCollectionX.super.cycle(m, times);
     }
@@ -1156,8 +1156,8 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     @Override
-    default DequeX<T> insertStreamAt(int pos, Stream<T> stream) {
-        return (DequeX<T>)MutableCollectionX.super.insertStreamAt(pos,stream);
+    default DequeX<T> insertAtS(int pos, Stream<T> stream) {
+        return (DequeX<T>)MutableCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override

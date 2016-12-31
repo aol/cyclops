@@ -162,7 +162,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
      * @see com.aol.cyclops.types.Traversable#cycle(int)
      */
     @Override
-    CollectionX<T> cycle(int times);
+    CollectionX<T> cycle(long times);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#cycle(cyclops.function.Monoid, int)
@@ -171,7 +171,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
      * @see com.aol.cyclops.types.Traversable#cycle(cyclops.function.Monoid, int)
      */
     @Override
-    CollectionX<T> cycle(Monoid<T> m, int times);
+    CollectionX<T> cycle(Monoid<T> m, long times);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Traversable#cycleWhile(java.util.function.Predicate)

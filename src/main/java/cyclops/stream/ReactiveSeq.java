@@ -172,7 +172,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq of one value
      */
     public static <T> ReactiveSeq<T> of(T value){
-        return fromStream(Stream.of(value));
+        return fromSpliterator(new SingleSpliterator<>(value));
     }
     /**
      * Construct a ReactiveSeq from the Supplied Spliterator
@@ -434,25 +434,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     static <T1> ReactiveSeq<T1> flattenO(ReactiveSeq<? extends Optional<T1>> nested){
         return nested.flatMap(Streams::optionalToStream);
     }
-    /**
-     * Convert to a Stream with the values repeated specified times
-     * 
-     * <pre>
-     * {@code 
-     * 		ReactiveSeq.of(1,2,2)
-     * 								.cycle(3)
-     * 								.collect(Collectors.toList());
-     * 								
-     * 		//List[1,2,2,1,2,2,1,2,2]
-     * 
-     * }
-     * </pre>
-     * 
-     * @param times
-     *            Times values should be repeated within a Stream
-     * @return Stream with values repeated
-     */
-    ReactiveSeq<T> cycle(int times);
+
+
 
     /**
      * Convert to a Stream with the values infinitely cycled
@@ -603,7 +586,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Stream with reduced values repeated
      */
     @Override
-    ReactiveSeq<T> cycle(Monoid<T> m, int times);
+    ReactiveSeq<T> cycle(Monoid<T> m, long times);
 
     /**
      * Repeat in a Stream while specified predicate holds
@@ -2244,7 +2227,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertStreamAt(1, of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
      * 
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }
@@ -2256,7 +2239,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to insert
      * @return newly conjoined ReactiveSeq
      */
-    ReactiveSeq<T> insertStreamAt(int pos, Stream<T> stream);
+    ReactiveSeq<T> insertAtS(int pos, Stream<T> stream);
 
 
 
@@ -2845,6 +2828,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     }
 
+    static <T> ReactiveSeq<T> deferedI(Supplier<? extends Iterable<? extends T>> lazy){
+        return ReactiveSeq.of(1).flatMapI(i->lazy.get());
+    }
+    static <T> ReactiveSeq<T> deferedP(Supplier<? extends Publisher<? extends T>> lazy){
+        return ReactiveSeq.of(1).flatMapP(i->lazy.get());
+    }
+    static <T> ReactiveSeq<T> defered(Supplier<? extends Stream<? extends T>> lazy){
+        return ReactiveSeq.of(1).flatMap(i->lazy.get());
+    }
     /**
      * Unfold a function into a ReactiveSeq
      * 
@@ -3790,8 +3782,25 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> prepend(Iterable<? extends T> other);
 
 
-  
 
+    /**
+     * Convert to a Stream with the values repeated specified times
+     *
+     * <pre>
+     * {@code
+     * 		ReactiveSeq.of(1,2,2)
+     * 								.cycle(3)
+     * 								.collect(Collectors.toList());
+     *
+     * 		//List[1,2,2,1,2,2,1,2,2]
+     *
+     * }
+     * </pre>
+     *
+     * @param times
+     *            Times values should be repeated within a Stream
+     * @return Stream with values repeated
+     */
     ReactiveSeq<T> cycle(long times);
   
 

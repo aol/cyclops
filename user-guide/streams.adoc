@@ -161,11 +161,11 @@ Multiple Streams can connect to suspended single HotStream.
 In the example below 5,000 entries will be written out on the HotStreams executing thread, and 100 of those will also be written out on the current thread.
   
 ReactiveSeq.range(0,Integer.MAX_VALUE)
-                    .limit(5000)
+                    .skip(5000)
                     .peek(System.out::println)
                     .hotStream(exec)
                     .connect()
-                    .limit(100)
+                    .skip(100)
                     .forEach(next->System.out.println("Current thread : " + next);
 ----
 ====
@@ -190,7 +190,7 @@ The default transfer queue used by the connect method on suspended HotStream is 
 In the example below 5,000 entries will be written out on the HotStreams executing thread, the consuming thread will only emit one per second. This will cause the transfer queue to fill up, and the ReactiveSeq generating the HotStream will crash.
   
 ReactiveSeq.range(0,Integer.MAX_VALUE)
-                    .limit(5000)
+                    .skip(5000)
                     .peek(System.out::println)
                     .hotStream(exec)
                     .connect()
@@ -201,7 +201,7 @@ ReactiveSeq.range(0,Integer.MAX_VALUE)
 Instead we connect and use suspended BlockingStream as suspended transfer queue, the producing Stream will ultimately be slowed to the same rate as the consuming Stream.
 
 ReactiveSeq.range(0,Integer.MAX_VALUE)
-                    .limit(5000)
+                    .skip(5000)
                     .peek(System.out::println)
                     .hotStream(exec)
                     .connect(new BlockingQueue(400))
@@ -1238,7 +1238,7 @@ onePer ensures that only one element is emitted per time period, data is not los
 [source,java]
 ----
 ReactiveSeq.iterate(0, it -> it + 1)
-                .limit(100)
+                .skip(100)
                 .onePer(1, TimeUnit.MICROSECONDS)
                 .map(seconds -> "hello!")
                 .peek(System.out::println)
@@ -1466,21 +1466,21 @@ ReactiveSeq.reversedListOf(list)
 ----
 ====
 
-=== limit / skip (take / drop) / cycle
+=== skip / skip (take / drop) / cycle
 
-The JDK Streams api has operators limit and skip as of Java 8. The naming of these operators is relatively unusual compared with other languages where take / drop is more common. JDK 9 looks set to introduce new operators such as takeWhile & dropWile (maintaining the old limit and skip operators also). cyclops-react offers many of these operators already, although we currently extend (like jOOλ) the JDK 8 naming convention and use limitWhile and skipWhile.
+The JDK Streams api has operators skip and skip as of Java 8. The naming of these operators is relatively unusual compared with other languages where take / drop is more common. JDK 9 looks set to introduce new operators such as takeWhile & dropWile (maintaining the old skip and skip operators also). cyclops-react offers many of these operators already, although we currently extend (like jOOλ) the JDK 8 naming convention and use limitWhile and skipWhile.
 
 ==== LimitTime 
 
 The limitTime operator takes values from the Stream while time elapsed is less than the time specified in the method parameter.
 
-.limit time
+.skip time
 ====
 [source,java]
 ----
 ReactiveSeq.range(1,1_000_000)
          .peek(i->sleep(i*100))
-         .limit(1000,TimeUnit.MILLISECONDS)
+         .skip(1000,TimeUnit.MILLISECONDS)
          .toList()
 //takes values from the range for 1,000ms (1 sec)
 ----
@@ -1597,7 +1597,7 @@ Repeat the Stream infinitely
 ====
 [source,java]
 ----
-ReactiveSeq.of(1).cycle().limit(6).toList());
+ReactiveSeq.of(1).cycle().skip(6).toList());
 //List[1, 1, 1, 1, 1,1]
 ----     
 ====

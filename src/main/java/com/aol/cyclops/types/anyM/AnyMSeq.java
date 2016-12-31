@@ -427,7 +427,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @see com.aol.cyclops.types.Traversable#cycle(int)
      */
     @Override
-    default AnyMSeq<W,T> cycle(final int times) {
+    default AnyMSeq<W,T> cycle(final long times) {
 
         return fromIterable(FoldableTraversable.super.cycle(times));
     }
@@ -436,7 +436,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @see com.aol.cyclops.types.Traversable#cycle(cyclops.function.Monoid, int)
      */
     @Override
-    default AnyMSeq<W,T> cycle(final Monoid<T> m, final int times) {
+    default AnyMSeq<W,T> cycle(final Monoid<T> m, final long times) {
 
         return fromIterable(FoldableTraversable.super.cycle(m, times));
     }
@@ -1061,8 +1061,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     @Override
-    default AnyMSeq<W,T> insertStreamAt(int pos, Stream<T> stream) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.insertStreamAt(pos,stream);
+    default AnyMSeq<W,T> insertAtS(int pos, Stream<T> stream) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.insertAtS(pos,stream);
     }
 
     @Override

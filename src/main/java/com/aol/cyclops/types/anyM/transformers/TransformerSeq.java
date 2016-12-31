@@ -78,8 +78,8 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     @Override
-    default Traversable<T> insertStreamAt(int pos, Stream<T> stream){
-        return unitAnyM(transformerStream().map(s -> s.insertStreamAt(pos,stream)));
+    default Traversable<T> insertAtS(int pos, Stream<T> stream){
+        return unitAnyM(transformerStream().map(s -> s.insertAtS(pos,stream)));
     }
 
     /* (non-Javadoc)
@@ -104,7 +104,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
      * @see com.aol.cyclops.types.Traversable#cycle(int)
      */
     @Override
-    default Traversable<T> cycle(final int times) {
+    default Traversable<T> cycle(final long times) {
         return unitAnyM(transformerStream().map(s -> s.cycle(times)));
     }
 
@@ -112,7 +112,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
      * @see com.aol.cyclops.types.Traversable#cycle(cyclops.function.Monoid, int)
      */
     @Override
-    default Traversable<T> cycle(final Monoid<T> m, final int times) {
+    default Traversable<T> cycle(final Monoid<T> m, final long times) {
         return unitAnyM(transformerStream().map(s -> s.cycle(m, times)));
     }
 

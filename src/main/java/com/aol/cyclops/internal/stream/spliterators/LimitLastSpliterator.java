@@ -2,6 +2,7 @@ package com.aol.cyclops.internal.stream.spliterators;
 
 import java.util.ArrayDeque;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -9,17 +10,17 @@ import java.util.stream.StreamSupport;
 
 public class LimitLastSpliterator<T> extends AbstractSpliterator<T> implements CopyableSpliterator<T>{
 
-    public static <T> Stream<T> limitLast(Stream<T> stream, int limit){
-        Spliterator<T> source = stream.spliterator();
+    public static <T> Spliterator<T> limitLast(Spliterator<T> source, int limit){
+
         if(limit==0){
-            return Stream.of();
+            return Spliterators.emptySpliterator();
         }
         if(limit==source.getExactSizeIfKnown()){ //right sized already
-            return StreamSupport.stream(source,false);
+            return source;
         }
         if(limit==1)
-            return StreamSupport.stream(new LimitLastOneSpliterator<T>(source), false);
-        return StreamSupport.stream(new LimitLastSpliterator<T>(source,limit), false);
+            return new LimitLastOneSpliterator<T>(source);
+        return new LimitLastSpliterator<T>(source,limit);
     }
   
     

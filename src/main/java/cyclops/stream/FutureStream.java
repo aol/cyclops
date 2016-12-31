@@ -146,9 +146,18 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     }
 
 
-  
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#cycle(long)
+
+    /**
+     * Create a Stream that finitely cycles this Stream, provided number of times
+     *
+     * <pre>
+     * {@code
+     * assertThat(FutureStream.of(1,2,2).cycle(3)
+    .collect(Collectors.toList()),
+    equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
+     * }
+     * </pre>
+     * @return New cycling stream
      */
     @Override
     default FutureStream<U> cycle(long times) {
@@ -2301,23 +2310,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
 
     }
 
-    /**
-     * Create a Stream that finitely cycles this Stream, provided number of times
-     *
-     * <pre>
-     * {@code
-     * assertThat(FutureStream.of(1,2,2).cycle(3)
-                                .collect(Collectors.toList()),
-                                    equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
-     * }
-     * </pre>
-     * @return New cycling stream
-     */
-    @Override
-    default FutureStream<U> cycle(final int times) {
-        return fromStream(Streams.cycle(times, Streamable.fromStream(this)));
 
-    }
+
 
     /**
      * Repeat in a Stream while specified predicate holds
@@ -2727,7 +2721,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @see cyclops.stream.ReactiveSeq#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default FutureStream<U> cycle(final Monoid<U> m, final int times) {
+    default FutureStream<U> cycle(final Monoid<U> m, final long times) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
                                      .cycle(m, times));
 
@@ -2923,12 +2917,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     }
 
     /*
-     * @see cyclops.stream.ReactiveSeq#insertStreamAt(int, java.util.stream.Stream)
+     * @see cyclops.stream.ReactiveSeq#insertAtS(int, java.util.stream.Stream)
      */
     @Override
-    default FutureStream<U> insertStreamAt(final int pos, final Stream<U> stream) {
+    default FutureStream<U> insertAtS(final int pos, final Stream<U> stream) {
         return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
-                                     .insertStreamAt(pos, stream));
+                                     .insertAtS(pos, stream));
     }
 
 

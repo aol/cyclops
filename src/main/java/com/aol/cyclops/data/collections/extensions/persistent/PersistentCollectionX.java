@@ -281,7 +281,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops.lambda.monads.Traversable#cycle(int)
      */
     @Override
-    default PersistentCollectionX<T> cycle(final int times) {
+    default PersistentCollectionX<T> cycle(final long times) {
 
         return from(this.<T> monoid()
                         .mapReduce(stream().cycle(times)));
@@ -291,7 +291,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops.lambda.monads.Traversable#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default PersistentCollectionX<T> cycle(final Monoid<T> m, final int times) {
+    default PersistentCollectionX<T> cycle(final Monoid<T> m, final long times) {
 
         return from(this.<T> monoid()
                         .mapReduce(stream().cycle(m, times)));
@@ -737,8 +737,8 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default PersistentCollectionX<T> insertStreamAt(int pos, Stream<T> stream){
-        return from(this.<T>monoid().mapReduce(stream().insertStreamAt(pos,stream)));
+    default PersistentCollectionX<T> insertAtS(int pos, Stream<T> stream){
+        return from(this.<T>monoid().mapReduce(stream().insertAtS(pos,stream)));
 
     }
 

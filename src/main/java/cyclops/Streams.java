@@ -929,7 +929,7 @@ public class Streams {
      * Insert a Stream into the middle of this stream at the specified position
      * <pre>
      * {@code 
-     * List<String> result = 	Streams.insertStreamAt(Stream.of(1,2,3),1,of(100,200,300))
+     * List<String> result = 	Streams.insertAtS(Stream.of(1,2,3),1,of(100,200,300))
     										.map(it ->it+"!!")
     										.collect(Collectors.toList());
     
@@ -1009,12 +1009,11 @@ public class Streams {
     }
 
     public static <U> Stream<U> skipLast(final Stream<U> stream, final int num) {
-        return new SkipLastOperator<>(
-                                      stream, num).skipLast();
+        return StreamSupport.stream(SkipLastSpliterator.skipLast(stream.spliterator(),num),stream.isParallel());
     }
 
     public static <U> Stream<U> limitLast(final Stream<U> stream, final int num) {
-        return LimitLastSpliterator.limitLast(stream, num);
+        return StreamSupport.stream(LimitLastSpliterator.limitLast(stream.spliterator(), num),stream.isParallel());
     }
 
     public static <T> Stream<T> recover(final Stream<T> stream, final Function<Throwable, ? extends T> fn) {
@@ -1204,7 +1203,7 @@ public class Streams {
      * @param s Streamable to cycle
      * @return New cycling stream
      */
-    public static <U> Stream<U> cycle(final int times, final Streamable<U> s) {
+    public static <U> Stream<U> cycle(final long times, final Streamable<U> s) {
         return Stream.iterate(s.stream(), s1 -> s.stream())
                      .limit(times)
                      .flatMap(Function.identity());

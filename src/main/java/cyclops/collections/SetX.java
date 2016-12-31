@@ -561,7 +561,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)
      */
     @Override
-    default ListX<T> cycle(final int times) {
+    default ListX<T> cycle(final long times) {
 
         return this.stream()
                    .cycle(times)
@@ -572,7 +572,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default ListX<T> cycle(final Monoid<T> m, final int times) {
+    default ListX<T> cycle(final Monoid<T> m, final long times) {
 
         return this.stream()
                    .cycle(m, times)
@@ -986,8 +986,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
 
     @Override
-    default SetX<T> insertStreamAt(int pos, Stream<T> stream) {
-        return (SetX<T>)MutableCollectionX.super.insertStreamAt(pos,stream);
+    default SetX<T> insertAtS(int pos, Stream<T> stream) {
+        return (SetX<T>)MutableCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override

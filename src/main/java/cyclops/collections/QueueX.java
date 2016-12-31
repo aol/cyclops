@@ -597,7 +597,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)
      */
     @Override
-    default QueueX<T> cycle(final int times) {
+    default QueueX<T> cycle(final long times) {
 
         return (QueueX<T>) MutableCollectionX.super.cycle(times);
     }
@@ -606,7 +606,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
      * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default QueueX<T> cycle(final Monoid<T> m, final int times) {
+    default QueueX<T> cycle(final Monoid<T> m, final long times) {
 
         return (QueueX<T>) MutableCollectionX.super.cycle(m, times);
     }
@@ -1006,8 +1006,8 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
     }
 
     @Override
-    default QueueX<T> insertStreamAt(int pos, Stream<T> stream) {
-        return (QueueX<T>)MutableCollectionX.super.insertStreamAt(pos,stream);
+    default QueueX<T> insertAtS(int pos, Stream<T> stream) {
+        return (QueueX<T>)MutableCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override

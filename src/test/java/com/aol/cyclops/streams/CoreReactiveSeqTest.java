@@ -162,7 +162,7 @@ public  class CoreReactiveSeqTest {
    
     @Test
     public void testCycle() {
-    	
+
     	   assertEquals(asList(1, 1, 1, 1, 1,1),of(1).cycle().limit(6).toList());
       
     }

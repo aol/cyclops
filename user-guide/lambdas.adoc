@@ -319,7 +319,7 @@ FluentFunctions.of(this::gen)
                .forEach(System.out::println);
 ----
 
-In the example above the call to generate results in suspended SequenceM, suspended powerful JDK 8 Stream extension that forms part of cyclops-react. We use the onePer operator to limit the number of emissions by this Stream to one per second.
+In the example above the call to generate results in suspended SequenceM, suspended powerful JDK 8 Stream extension that forms part of cyclops-react. We use the onePer operator to skip the number of emissions by this Stream to one per second.
 
 The output from our Stream will look something like this.
 [source,java]

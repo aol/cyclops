@@ -111,7 +111,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Times values should be repeated within a Stream
      * @return Stream with values repeated
      */
-    default Traversable<T> cycle(final int times) {
+    default Traversable<T> cycle(final long times) {
         return traversable().cycle(times);
     }
 
@@ -134,7 +134,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Number of times value should be repeated
      * @return Stream with reduced values repeated
      */
-    default Traversable<T> cycle(final Monoid<T> m, final int times) {
+    default Traversable<T> cycle(final Monoid<T> m, final long times) {
         return traversable().cycle(m, times);
     }
 
@@ -1036,7 +1036,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertStreamAt(1, of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }
@@ -1048,8 +1048,8 @@ public interface Traversable<T> extends Publisher<T>,
      *            to insert
      * @return newly conjoined Traversable
      */
-    default Traversable<T> insertStreamAt(int pos, Stream<T> stream){
-        return traversable().insertStreamAt(pos,stream);
+    default Traversable<T> insertAtS(int pos, Stream<T> stream){
+        return traversable().insertAtS(pos,stream);
     }
 
     /**

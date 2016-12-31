@@ -3,7 +3,6 @@ package cyclops.collections.immutable;
 
 import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPStackX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
-import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.Reducers;
@@ -760,7 +759,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(int)
      */
     @Override
-    default PStackX<T> cycle(final int times) {
+    default PStackX<T> cycle(final long times) {
 
         return (PStackX<T>) PersistentCollectionX.super.cycle(times);
     }
@@ -769,7 +768,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
      * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default PStackX<T> cycle(final Monoid<T> m, final int times) {
+    default PStackX<T> cycle(final Monoid<T> m, final long times) {
 
         return (PStackX<T>) PersistentCollectionX.super.cycle(m, times);
     }
@@ -1159,8 +1158,8 @@ public interface PStackX<T> extends To<PStackX<T>>,
     }
 
     @Override
-    default PStackX<T> insertStreamAt(int pos, Stream<T> stream) {
-        return (PStackX<T>)PersistentCollectionX.super.insertStreamAt(pos,stream);
+    default PStackX<T> insertAtS(int pos, Stream<T> stream) {
+        return (PStackX<T>)PersistentCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override

@@ -705,7 +705,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
      * cycle(int)
      */
     @Override
-    default PQueueX<T> cycle(final int times) {
+    default PQueueX<T> cycle(final long times) {
 
         return (PQueueX<T>) PersistentCollectionX.super.cycle(times);
     }
@@ -718,7 +718,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
      * cycle(com.aol.cyclops.sequence.Monoid, int)
      */
     @Override
-    default PQueueX<T> cycle(final Monoid<T> m, final int times) {
+    default PQueueX<T> cycle(final Monoid<T> m, final long times) {
 
         return (PQueueX<T>) PersistentCollectionX.super.cycle(m, times);
     }
