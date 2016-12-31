@@ -1,4 +1,6 @@
-package com.aol.cyclops.internal.stream.spliterators;
+package com.aol.cyclops.internal.stream.spliterators.push;
+
+import com.aol.cyclops.internal.stream.spliterators.CopyableSpliterator;
 
 import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;

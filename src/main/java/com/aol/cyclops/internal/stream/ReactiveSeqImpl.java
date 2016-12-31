@@ -1,10 +1,10 @@
 package com.aol.cyclops.internal.stream;
 
 
+import com.aol.cyclops.internal.stream.spliterators.push.CollectingSinkSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.push.FoldingSinkSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.push.ValueEmittingSpliterator;
-import com.aol.cyclops.types.Functor;
 import cyclops.*;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
@@ -42,6 +42,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import static java.util.Comparator.comparing;
 
 public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T> {
 
@@ -392,12 +394,12 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public final ReactiveSeq<T> skipWhile(final Predicate<? super T> p) {
-        return Streams.reactiveSeq(Streams.skipWhile(this, p), reversible,split);
+        return Streams.reactiveSeq(new SkipWhileSpliterator<T>(copyOrGet(),p), reversible,split);
     }
 
     @Override
     public final ReactiveSeq<T> skipUntil(final Predicate<? super T> p) {
-        return Streams.reactiveSeq(Streams.skipUntil(this, p), reversible,split);
+        return skipWhile(p.negate());
     }
 
     @Override
@@ -477,7 +479,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
-        return Streams.reactiveSeq(Seq.seq((Stream<T>) this).skipWhileClosed(predicate),reversible,split );
+        return Streams.reactiveSeq(new SkipWhileSpliterator<T>(copyOrGet(),predicate),reversible,split );
     }
 
     @Override
@@ -487,7 +489,8 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
-        return Streams.reactiveSeq(Seq.seq((Stream<T>) this).sorted(function,comparator),reversible,split );
+        return sorted(Comparator.comparing(function, comparator));
+
     }
 
     @Override
@@ -1041,7 +1044,7 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<T> skip(final long time, final TimeUnit unit) {
-        return Streams.reactiveSeq(Streams.skip(this, time, unit), this.reversible,split);
+        return Streams.reactiveSeq(new SkipWhileTimeSpliterator<T>(copyOrGet(), time, unit), this.reversible,split);
     }
 
     @Override

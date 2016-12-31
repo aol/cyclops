@@ -1040,8 +1040,7 @@ public class Streams {
      * @return
      */
     public static <U> Stream<U> skipWhile(final Stream<U> stream, final Predicate<? super U> predicate) {
-        return new SkipWhileOperator<U>(
-                                        stream).skipWhile(predicate);
+        return StreamSupport.stream(new SkipWhileSpliterator<U>(stream.spliterator(),predicate), stream.isParallel());
     }
 
     public static <U> Stream<U> limit(final Stream<U> stream, final long time, final TimeUnit unit) {
@@ -1050,8 +1049,7 @@ public class Streams {
     }
 
     public static <U> Stream<U> skip(final Stream<U> stream, final long time, final TimeUnit unit) {
-        return new SkipWhileTimeOperator<U>(
-                                            stream).skipWhile(time, unit);
+        return StreamSupport.stream(new SkipWhileTimeSpliterator<U>(stream.spliterator(),time,unit),stream.isParallel());
     }
 
     public static <T> Stream<T> combine(final Stream<T> stream, final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {

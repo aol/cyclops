@@ -1285,7 +1285,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see org.jooq.lambda.Seq#skipUntilClosed(java.util.function.Predicate)
      */
     default ReactiveSeq<T> skipUntilClosed(final Predicate<? super T> p) {
-        return fromStream(seq().skipUntilClosed(p));
+        return skipWhileClosed(p.negate());
     }
 
     /**
