@@ -1080,12 +1080,14 @@ public class ReactiveSeqImpl<T> implements Unwrapable, ReactiveSeq<T>, Iterable<
 
     @Override
     public ReactiveSeq<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
-        return Streams.reactiveSeq(Streams.batchWhile(this, predicate), this.reversible,split);
+        return Streams.reactiveSeq(new GroupedWhileSpliterator<>(copyOrGet(),()->ListX.of(),Function.identity(), predicate), this.reversible,split);
+
+
     }
 
     @Override
     public <C extends Collection<? super T>> ReactiveSeq<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
-        return Streams.reactiveSeq(Streams.batchWhile(this, predicate, factory), this.reversible,split);
+        return Streams.reactiveSeq(new GroupedWhileSpliterator<>(copyOrGet(),factory,Function.identity(), predicate), this.reversible,split);
     }
 
     @Override

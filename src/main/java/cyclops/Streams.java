@@ -2394,7 +2394,7 @@ public class Streams {
      */
     public final static <T> Stream<ListX<T>> groupedStatefullyUntil(final Stream<T> stream,
             final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return StreamSupport.stream(new GroupedStatefullySpliterator<>(stream.spliterator(),predicate.negate()),stream.isParallel());
+        return StreamSupport.stream(new GroupedStatefullySpliterator<>(stream.spliterator(),()->ListX.of(),Function.identity(),predicate.negate()),stream.isParallel());
     }
     
     /**
@@ -2407,8 +2407,8 @@ public class Streams {
      * @return Stream grouped into Lists determined by predicate
      */
     public final static <T> Stream<ListX<T>> groupedWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
-        return new BatchWhileOperator<T, ListX<T>>(
-                                                   stream).batchWhile(predicate);
+        return StreamSupport.stream(new GroupedWhileSpliterator<>(stream.spliterator(),()->ListX.of(),Function.identity(),predicate.negate()),stream.isParallel());
+
     }
     @Deprecated
     public final static <T> Stream<ListX<T>> batchWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
