@@ -455,14 +455,14 @@ public class QueueTest {
 		new SimpleReact().ofAsync(() -> q.offer(1), () -> q.offer(2), () -> {
 			sleep(500);
 			return q.offer(4);
-		}, () -> q.offer(5));
+		}, () -> q.offer(5),()->{ sleep(1000); return q.close();});
 
 		Collection<String> results = parallel().fromStream(q.stream())
 				.then(it -> "*" + it).block();
 
-		assertThat(results.size(), lessThan(4));
-		assertThat(results, not(hasItem("*4")));
-		//assertThat(results, hasItem("*5"));
+		assertThat(results.size(), equalTo(4));
+
+		assertThat(results, hasItem("*5"));
 		
 
 	}

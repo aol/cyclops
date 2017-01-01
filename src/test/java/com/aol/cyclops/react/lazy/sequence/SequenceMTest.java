@@ -126,11 +126,11 @@ public class SequenceMTest {
 	public void limitTime(){
 		List<Integer> result = FutureStream.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
-										.limit(1000,TimeUnit.MILLISECONDS)
+										.limit(900,TimeUnit.MILLISECONDS)
 										.toList();
 		
 		
-		assertThat(result,equalTo(Arrays.asList(1,2,3,4)));
+		assertThat(result,equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void limitTimeEmpty(){
