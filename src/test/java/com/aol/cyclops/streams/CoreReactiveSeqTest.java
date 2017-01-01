@@ -17,7 +17,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import cyclops.Streams;
 import cyclops.collections.ListX;
 import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple2;
@@ -160,6 +162,11 @@ public  class CoreReactiveSeqTest {
         assertThat( ReactiveSeq.range(0,10)
         				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
+	@Test
+	public void testCycleLong() {
+		assertEquals(asList(1, 2, 1, 2, 1, 2), Streams.oneShotStream(Stream.of(1, 2)).cycle(3).toListX());
+		assertEquals(asList(1, 2, 3, 1, 2, 3), Streams.oneShotStream(Stream.of(1, 2,3)).cycle(2).toListX());
+	}
 	@Test
 	public void onEmptySwitchEmpty(){
 		assertThat(of()

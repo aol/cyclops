@@ -227,6 +227,11 @@ public class Queue<T> implements Adapter<T> {
        return jdkStream(2);
     }
 
+    public Stream<T> jdkStream(final Continueable s){
+        this.sub = s;
+        listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
+        return closingStream(this::get, s);
+    }
     @Override
     public ReactiveSeq<T> stream(final Continueable s) {
         this.sub = s;

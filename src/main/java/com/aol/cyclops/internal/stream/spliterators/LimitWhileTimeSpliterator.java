@@ -50,13 +50,18 @@ public class LimitWhileTimeSpliterator<T> extends Spliterators.AbstractSpliterat
     public boolean tryAdvance(Consumer<? super T> action) {
         if(closed)
             return true;
+        if(start == -1) {
+            start = System.nanoTime();
+        }
         boolean canAdvance = source.tryAdvance(t -> {
                 closed = System.nanoTime()-start >= toRun;
                 if(!closed)
                     action.accept(t);
             });
 
-        return canAdvance && !closed;
+        if(closed)
+            return false;
+        return canAdvance;
     }
 
     @Override

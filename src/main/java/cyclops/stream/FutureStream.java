@@ -161,7 +161,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> cycle(long times) {
-        return fromStream(ReactiveSeq.oneShotStream(stream()).cycle(times));
+        return fromStream(stream().cycle(times));
     }
   
     /* (non-Javadoc)
@@ -169,14 +169,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> skipWhileClosed(Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.oneShotStream(stream()).skipWhileClosed(predicate));
+        return fromStream(stream()).skipWhileClosed(predicate);
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#limitWhileClosed(java.util.function.Predicate)
      */
     @Override
     default FutureStream<U> limitWhileClosed(Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.oneShotStream(stream()).limitWhileClosed(predicate));
+        return fromStream(stream()).limitWhileClosed(predicate);
         
     }
 
@@ -2360,7 +2360,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default ReactiveSeq<U> stream() {
-        return toQueue().stream(getSubscription());
+        return Streams.oneShotStream(toQueue().jdkStream(getSubscription()));
+
     }
 
     /*

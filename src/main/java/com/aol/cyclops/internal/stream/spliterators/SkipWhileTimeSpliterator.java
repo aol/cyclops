@@ -56,18 +56,35 @@ public class SkipWhileTimeSpliterator<T> extends Spliterators.AbstractSpliterato
     public boolean tryAdvance(Consumer<? super T> action) {
         if(closed)
             return true;
-        boolean canAdvance = source.tryAdvance(t -> {
-            if(!open) {
-                open = System.nanoTime()-start >= toRun;
+        if(start == -1) {
+            start = System.nanoTime();
+        }
 
-                if (open)
+        boolean[] sent = {false};
+        for(;;) {
+            boolean canAdvance = source.tryAdvance(t -> {
+                if (!open) {
+                    open = System.nanoTime() - start >= toRun;
+
+                    if (open) {
+                        action.accept(t);
+                        sent[0]=true;
+                    }
+                } else {
                     action.accept(t);
-            }else{
-                action.accept(t);
-            }
+                    sent[0]=true;
+                }
             });
 
-        return !(closed = !canAdvance);
+            if(!canAdvance){
+                closed = true;
+                return false;
+            }
+            if(sent[0]){
+                return canAdvance;
+            }
+        }
+
     }
 
     @Override

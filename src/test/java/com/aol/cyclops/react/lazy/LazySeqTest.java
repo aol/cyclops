@@ -38,7 +38,12 @@ import com.aol.cyclops.react.ThreadPools;
 import com.aol.cyclops.react.base.BaseSeqTest;
 
 public abstract class LazySeqTest extends BaseSeqTest {
-	
+
+	@Test
+	public void testCycleLong() {
+		assertEquals(asList(1, 2, 1, 2, 1, 2).size(),of(1, 2).cycle(3).toListX().size());
+		assertEquals(asList(1, 2, 3, 1, 2, 3).size(), of(1, 2, 3).cycle(2).toListX().size());
+	}
 	@Test
 	public void copy(){
 		FutureStream.of(1,2,3,4,5,6)
