@@ -326,29 +326,38 @@ public interface AdaptersModule {
         @Override
         public boolean tryAdvance(final Consumer<? super T> action) {
             Objects.requireNonNull(action);
+            boolean timeoutRetry = false;
 
-            try {
-                if(closed.get()){
-                   return false;
-                }
-                action.accept(s.get());
-                subscription.closeQueueIfFinished(queue);
-                return true;
-            } catch (final ClosedQueueException e) {
-                
-                if (e.isDataPresent()) {
-                    e.getCurrentData()
-                     .forEach(action);
-                }
-                
-                closed.set(true);
-                return false;
-            } catch (final Exception e) {
-                closed.set(true);
-                return false;
-            } finally {
+            do {
+                try {
+                    if (closed.get()) {
+                        return false;
+                    }
+                    action.accept(s.get());
+                    subscription.closeQueueIfFinished(queue);
+                    return true;
+                } catch (final ClosedQueueException e) {
 
-            }
+                    if (e.isDataPresent()) {
+                        e.getCurrentData()
+                                .forEach(action);
+                    }
+
+                    closed.set(true);
+                    return false;
+                }catch(Queue.QueueTimeoutException e){
+                    timeoutRetry =true;
+                } catch(final Exception e) {
+
+
+                    closed.set(true);
+                    return false;
+                } finally {
+
+                }
+            }while(timeoutRetry);
+           // closed.set(true);
+            return false;
 
         }
 

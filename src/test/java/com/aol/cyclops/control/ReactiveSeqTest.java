@@ -77,9 +77,12 @@ public class ReactiveSeqTest {
     }
     @Test
     public void testParallel(){
-        assertThat(ReactiveSeq.range(0,1000)
-                              .parallel(s->s.map(i->i*2))
-                              .count(),equalTo(1000L));
+        for(int k=0;k<1000;k++) {
+            System.out.println("Iteration " + k);
+            assertThat(ReactiveSeq.range(0, 1000)
+                    .parallel(s -> s.map(i -> i * 2))
+                    .count(), equalTo(1000L));
+        }
     }
 
     @Test

@@ -4,16 +4,14 @@ package cyclops.stream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.*;
 import java.util.stream.*;
 
 import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
+import cyclops.async.Future;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
 import cyclops.async.*;
@@ -330,26 +328,34 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     public <T> ReactiveSeq<T> unit(T unit);
 
-
     default <R> ReactiveSeq<R> parallel(Function<? super Stream<T>,? extends Stream<R>> fn){
         Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
                                                                   .build();
 
+        ReactiveSeq<? extends Iterator<R>> stream = ReactiveSeq.generate(() -> foldParallel(fn))
+                                                            .take(1)
+                                                            .map(s->s.iterator());
+        Iterator[] it = {null};
+        Continuation[] store = {null};
+        Continuation cont =
+                new Continuation(()->{
+                    if(it[0]==null)
+                        it[0] = stream.apply(0l);
+                    Iterator<R> local = it[0];
+                    if(!local.hasNext()) {
+                        queue.close();
+                        return Continuation.empty();
+                    }
+                    else{
+                        queue.offer(local.next());
+                    }
+                    return store[0];
 
-        ReactiveSeq seq = ReactiveSeq.generate(()->foldParallel(fn) )
-                .take(1)
-                .map(s-> Future.ofSupplier(()->{s.forEach(queue::offer); return true;}, ForkJoinPool.commonPool())
-                         .peek(b-> queue.close()));
 
-
-
-
-        queue.addContinuation(new Continuation(()->{
-            seq.forEach(e->{});
-            return Continuation.empty();
-
-
-        }));
+                });
+        ;
+        store[0]=cont;
+        queue.addContinuation(cont);
         return queue.stream();
 
 
@@ -358,9 +364,30 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
         cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue().build().withTimeout(1);
-        Future.ofSupplier(()->queue.fromStream(this), ForkJoinPool.commonPool())
-                .peek(b->{queue.close();});
 
+
+        Iterator<T> local = iterator();
+        Continuation[] store = {null};
+        Continuation cont =
+                new Continuation(()->{
+
+                    if(!local.hasNext()) {
+
+                        queue.close();
+                        return Continuation.empty();
+                    }
+                    else{
+
+                        queue.offer(local.next());
+                        return store[0];
+                    }
+
+
+
+                });
+        ;
+        store[0]=cont;
+        queue.addContinuation(cont);
         return fn.apply(queue.jdkStream().parallel());
 
     }
