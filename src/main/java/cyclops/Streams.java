@@ -33,6 +33,7 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 import org.reactivestreams.Subscription;
 
+import javax.swing.text.html.Option;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -1905,6 +1906,10 @@ public class Streams {
         }
         return true;
 
+    }
+
+    public static <T> ReactiveSeq<T> oneShotStream(Stream<T> stream){
+        return new ExtendedStreamImpl<T>(stream,Optional.empty(), Optional.empty());
     }
 
     public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<PushingSpliterator<?>> push) {

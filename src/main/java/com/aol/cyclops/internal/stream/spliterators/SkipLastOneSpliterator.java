@@ -8,13 +8,13 @@ import java.util.function.Consumer;
 public class SkipLastOneSpliterator<T> extends AbstractSpliterator<T> implements CopyableSpliterator<T>{
 
 
-    private static final Object UNSET = new Object();
+    private final Object UNSET = new Object();
     private volatile Object buffer;
     private boolean closed = false;
     private final Spliterator<T> source;
 
     public SkipLastOneSpliterator(final Spliterator<T> source) {
-        super(source.estimateSize(),source.characteristics());
+        super(source.estimateSize(),source.characteristics()& Spliterator.ORDERED);
         buffer = UNSET;
         this.source = source;
         
@@ -22,7 +22,7 @@ public class SkipLastOneSpliterator<T> extends AbstractSpliterator<T> implements
 
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
-
+        
         source.forEachRemaining(e->{
             if (buffer != UNSET){
                 action.accept((T) buffer);
@@ -34,18 +34,23 @@ public class SkipLastOneSpliterator<T> extends AbstractSpliterator<T> implements
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
+
         if(closed)
             return false;
-        if (buffer != UNSET){
-            action.accept((T) buffer);
-        }
 
-        boolean canAdvance = source.tryAdvance(e -> { // onNext add to buffer
-            buffer = e;
-        });
+            boolean canAdvance = source.tryAdvance(e -> { // onNext add to buffer
+
+                buffer = e;
+            });
+            if(!canAdvance)
+                return false;
+            else{
+                action.accept((T) buffer);
+                return true;
+            }
 
 
-        return closed = canAdvance;
+
     }
 
     @Override

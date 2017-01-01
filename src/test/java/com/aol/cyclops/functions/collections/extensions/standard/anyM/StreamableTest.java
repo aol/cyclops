@@ -1,6 +1,9 @@
 package com.aol.cyclops.functions.collections.extensions.standard.anyM;
 
+import static cyclops.stream.Streamable.of;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import cyclops.monads.Witness;
@@ -24,6 +27,10 @@ public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.
 	public <T> AnyMSeq<Witness.streamable,T> empty() {
 		return AnyM.fromStreamable(ListX.empty());
 	}
+    @Test
+    public void testCycleTimesNotAnyM(){
+        assertEquals(asList(1, 2, 1, 2, 1, 2),Streamable.of(1, 2).cycle(3).toListX());
+    }
 	@Test
     public void when(){
         

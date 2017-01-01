@@ -20,13 +20,9 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-import java.util.stream.BaseStream;
-import java.util.stream.Collector;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
+import cyclops.Streams;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
 import com.aol.cyclops.types.*;
@@ -78,6 +74,11 @@ public interface Streamable<T> extends  To<Streamable<T>>,
                                   Impl.collectStream(toCoerce));
     }
 
+    @Override
+    default ReactiveSeq<T> reactiveSeq() {
+        return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
+    }
+
     /**
      * (Lazily) Construct a Streamable from a Stream.
      * 
@@ -96,6 +97,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return Streamable
      */
     public static <T> Streamable<T> fromIterable(final Iterable<T> iterable) {
+        if(iterable instanceof Streamable)
+            return (Streamable<T>)iterable;
         return new StreamableImpl(
                                   Impl.collectStream(iterable));
     }
@@ -351,7 +354,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
         return new Streamable<T>() {
             @Override
             public ReactiveSeq<T> stream() {
-                return ReactiveSeq.of(values);
+                return Streams.oneShotStream(Stream.of(values));
             }
 
             @Override
@@ -361,7 +364,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
 
             @Override
             public ReactiveSeq<T> reactiveSeq() {
-                return ReactiveSeq.of(values);
+                return Streams.oneShotStream(Stream.of(values));
             }
 
         };
@@ -2940,7 +2943,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
 
     @Override
     default Iterator<T> iterator() {
-        return stream().iterator();
+        return this.getStreamable().iterator();
     }
 
 }

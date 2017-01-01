@@ -55,7 +55,7 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
             //next spliterator
             boolean advance = source.tryAdvance(t -> {
 
-                    active = (Spliterator<R>) mapper.apply(t).spliterator();
+                active = (Spliterator<R>) mapper.apply(t).spliterator();
 
 
 

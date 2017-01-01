@@ -59,6 +59,9 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
     }
     @Test
     public void testCycleTimes() {
+
+
+		System.out.println(of(1, 2).cycle(3).toListX());
         assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
        
     }

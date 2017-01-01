@@ -57,7 +57,7 @@ public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
      * @return ReactiveSeq from this Streamable
      */
     default ReactiveSeq<T> stream() {
-        return ReactiveSeq.fromStream(StreamSupport.stream(getStreamable().spliterator(), false));
+        return reactiveSeq();
     }
 
     /**

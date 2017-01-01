@@ -104,13 +104,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @see org.jooq.lambda.Seq#crossApply(java.util.function.Function)
      */
     default <U1> FutureStream<Tuple2<U, U1>> crossApply(Function<? super U, ? extends Iterable<? extends U1>> function) {
-        return fromStream(ReactiveSeq.fromStream(stream()).seq().crossApply(function));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).seq().crossApply(function));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#outerApply(java.util.function.Function)
      */
     default <U1> FutureStream<Tuple2<U, U1>> outerApply(Function<? super U, ? extends Iterable<? extends U1>> function) {
-        return fromStream(ReactiveSeq.fromStream(stream()).seq().outerApply(function));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).seq().outerApply(function));
     }
 
     /* (non-Javadoc)
@@ -118,14 +118,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> appendS(Stream<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).appendS(other));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).appendS(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
      */
     @Override
     default FutureStream<U> append(Iterable<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).append(other));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).append(other));
     }
 
 
@@ -134,7 +134,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> prependS(Stream<? extends U> other) {
-        return fromStream(ReactiveSeq.fromStream(stream()).prependS(other));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).prependS(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#prepend(java.lang.Iterable)
@@ -142,7 +142,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default FutureStream<U> prepend(Iterable<? extends U> other) {
         
-        return fromStream(ReactiveSeq.fromStream(stream()).prepend(other));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).prepend(other));
     }
 
 
@@ -161,7 +161,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> cycle(long times) {
-        return fromStream(ReactiveSeq.fromStream(stream()).cycle(times));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).cycle(times));
     }
   
     /* (non-Javadoc)
@@ -169,14 +169,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> skipWhileClosed(Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(stream()).skipWhileClosed(predicate));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).skipWhileClosed(predicate));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#limitWhileClosed(java.util.function.Predicate)
      */
     @Override
     default FutureStream<U> limitWhileClosed(Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(stream()).limitWhileClosed(predicate));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).limitWhileClosed(predicate));
         
     }
 
@@ -186,7 +186,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <U1> FutureStream<U> sorted(Function<? super U, ? extends U1> function, Comparator<? super U1> comparator) {
-        return fromStream(ReactiveSeq.fromStream(stream()).sorted(function,comparator));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).sorted(function,comparator));
         
     }
 
@@ -263,7 +263,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<Tuple2<U, Long>> elapsed() {
-        return fromStream(ReactiveSeq.fromStream(stream())
+        return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .elapsed());
     }
 
@@ -293,7 +293,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> onEmptySwitch(final Supplier<? extends Stream<U>> switchTo) {
-        return fromStream(ReactiveSeq.fromStream(stream())
+        return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .onEmptySwitch(switchTo));
     }
 
@@ -406,7 +406,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> subStream(final int start, final int end) {
-        return this.fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return this.fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                           .subStream(start, end));
     }
 
@@ -419,7 +419,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<ReactiveSeq<U>> permutations() {
-        return this.fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return this.fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                           .permutations());
 
     }
@@ -439,7 +439,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<ReactiveSeq<U>> combinations() {
-        return this.fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return this.fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                           .combinations());
 
     }
@@ -1067,7 +1067,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> debounce(final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .debounce(time, unit));
 
     }
@@ -1136,7 +1136,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<ListX<U>> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .groupedBySizeAndTime(size, time, unit));
      }
     @Override
@@ -1145,7 +1145,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
                                                                             final Supplier<C> factory,
                                                                             Function<? super C, ? extends R> finalizer
     ){
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                 .groupedBySizeAndTime(size, time, unit,factory,finalizer));
     }
 
@@ -1173,7 +1173,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <C extends Collection<? super U>> FutureStream<C> grouped(final int size, final Supplier<C> supplier) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .grouped(size, supplier));
 
     }
@@ -1203,7 +1203,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> jitter(final long jitterInNanos) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .jitter(jitterInNanos));
     }
 
@@ -1242,7 +1242,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> fixedDelay(final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .fixedDelay(time, unit));
     }
 
@@ -1267,7 +1267,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> onePer(final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .onePer(time, unit));
 
     }
@@ -1296,7 +1296,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> xPer(final int x, final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .xPer(x, time, unit));
     }
 
@@ -1321,7 +1321,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<ListX<U>> groupedByTime(final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .groupedByTime(time, unit));
 
     }
@@ -1352,7 +1352,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <C extends Collection<? super U>> FutureStream<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .groupedByTime(time, unit, factory));
 
     }
@@ -1360,7 +1360,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     default <C extends Collection<? super U>,R> FutureStream<R> groupedByTime(final long time, final TimeUnit unit,
                                                                             final Supplier<C> factory,
                                                                             Function<? super C, ? extends R> finalizer) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                 .groupedByTime(time, unit, factory,finalizer));
 
     }
@@ -1773,7 +1773,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     default FutureStream<U> limit(final long maxSize) {
         final Continueable sub = this.getSubscription();
         sub.registerLimit(maxSize);
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(sub))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(sub))
                                      .limit(maxSize));
 
     }
@@ -1845,7 +1845,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     default FutureStream<U> skip(final long n) {
         final Continueable sub = this.getSubscription();
         sub.registerSkip(n);
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(sub))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(sub))
                                      .skip(n));
 
     }
@@ -1884,7 +1884,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default FutureStream<PVectorX<U>> sliding(final int size) {
         //    return this.fromStream(SlidingWindow.sliding(this,size, 1));
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .sliding(size));
     }
 
@@ -1910,7 +1910,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default FutureStream<PVectorX<U>> sliding(final int size, final int increment) {
 
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .sliding(size, increment));
 
     }
@@ -1955,7 +1955,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partition(final Predicate<? super U> predicate) {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                 .partition(predicate);
     }
 
@@ -1987,7 +1987,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default FutureStream<U> slice(final long from, final long to) {
 
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription())
                                                           .slice(from, to)));
     }
 
@@ -2008,7 +2008,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<Tuple2<U, Long>> zipWithIndex() {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .zipWithIndex());
     }
 
@@ -2028,7 +2028,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
 
     @Override
     default <T, R> FutureStream<R> zipS(final Stream<? extends T> other, final BiFunction<? super U, ? super T, ? extends R> zipper) {
-        return fromStream(LazyFutureStreamFunctions.zip(this, ReactiveSeq.fromStream(other), zipper));
+        return fromStream(LazyFutureStreamFunctions.zip(this, ReactiveSeq.oneShotStream(other), zipper));
     }
 
     @Override
@@ -2046,7 +2046,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <T> FutureStream<T> scanLeft(final T seed, final BiFunction<? super T, ? super U, ? extends T> function) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .scanLeft(seed, function));
 
     }
@@ -2061,14 +2061,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <R> FutureStream<R> scanRight(final R seed, final BiFunction<? super U, ? super R, ? extends R> function) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .scanRight(seed, function));
 
     }
 
     @Override
     default FutureStream<U> scanRight(final Monoid<U> monoid) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .scanRight(monoid));
 
     }
@@ -2098,7 +2098,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> shuffle() {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .shuffle());
     }
 
@@ -2111,7 +2111,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> shuffle(final Random random) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .shuffle(random));
     }
 
@@ -2128,7 +2128,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> skipWhile(final Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .skipWhile(predicate));
     }
 
@@ -2144,7 +2144,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> skipUntil(final Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .skipUntil(predicate));
     }
 
@@ -2160,7 +2160,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> limitWhile(final Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .limitWhile(predicate));
     }
 
@@ -2188,7 +2188,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * }</pre>
      */
     default <T> FutureStream<Tuple2<U, T>> crossJoin(final Stream<? extends T> other) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).seq()
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription())).seq()
                                      .crossJoin(other));
     }
 
@@ -2207,7 +2207,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default FutureStream<U> onEmpty(final U value) {
 
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .onEmpty(value));
     }
 
@@ -2227,7 +2227,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> onEmptyGet(final Supplier<? extends U> supplier) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .onEmptyGet(supplier));
     }
 
@@ -2246,7 +2246,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <X extends Throwable> FutureStream<U> onEmptyThrow(final Supplier<? extends X> supplier) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).onEmptyThrow(supplier));
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription())).onEmptyThrow(supplier));
     }
 
     /**
@@ -2259,7 +2259,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * }</pre>
      */
     default <T> FutureStream<Tuple2<U, T>> innerJoin(final Stream<? extends T> other, final BiPredicate<? super U, ? super T> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).seq()
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription())).seq()
                                      .innerJoin(other, predicate));
 
     }
@@ -2274,7 +2274,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * }</pre>
      */
     default <T> FutureStream<Tuple2<U, T>> leftOuterJoin(final Stream<? extends T> other, final BiPredicate<? super U, ? super T> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).seq()
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription())).seq()
                                      .leftOuterJoin(other, predicate));
     }
 
@@ -2288,7 +2288,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * }</pre>
      */
     default <T> FutureStream<Tuple2<U, T>> rightOuterJoin(final Stream<? extends T> other, final BiPredicate<? super U, ? super T> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription())).seq()
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription())).seq()
                                      .rightOuterJoin(other, predicate));
     }
 
@@ -2415,7 +2415,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> sorted() {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .sorted());
     }
 
@@ -2426,7 +2426,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> sorted(final Comparator<? super U> comparator) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .sorted(comparator));
     }
 
@@ -2600,7 +2600,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default Optional<U> findAny() {
-        return ReactiveSeq.fromStream(stream())
+        return ReactiveSeq.oneShotStream(stream())
                           .findAny();
     }
 
@@ -2633,7 +2633,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <R> ReactiveSeq<U> distinct(final Function<? super U, ? extends R> keyExtractor) {
-        return ReactiveSeq.fromStream(stream())
+        return ReactiveSeq.oneShotStream(stream())
                           .distinct();
     }
 
@@ -2659,7 +2659,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate() {
         return Streams.duplicate(toQueue().stream(getSubscription()))
-                .map1(ReactiveSeq::fromStream).map2(ReactiveSeq::fromStream);
+                .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream);
     }
 
     /*
@@ -2670,8 +2670,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default Tuple3<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> triplicate() {
         return Streams.triplicate(toQueue().stream(getSubscription()))
-                .map1(ReactiveSeq::fromStream).map2(ReactiveSeq::fromStream)
-                .map3(ReactiveSeq::fromStream);
+                .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream)
+                .map3(ReactiveSeq::oneShotStream);
 
     }
 
@@ -2682,8 +2682,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default Tuple4<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> quadruplicate() {
         return Streams.quadruplicate(toQueue().stream(getSubscription()))
-                .map1(ReactiveSeq::fromStream).map2(ReactiveSeq::fromStream)
-                .map3(ReactiveSeq::fromStream).map4(ReactiveSeq::fromStream);
+                .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream)
+                .map3(ReactiveSeq::oneShotStream).map4(ReactiveSeq::oneShotStream);
 
     }
 
@@ -2692,7 +2692,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default Tuple2<Optional<U>, ReactiveSeq<U>> splitAtHead() {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .splitAtHead();
 
     }
@@ -2702,7 +2702,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> splitAt(final int where) {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .splitAt(where);
 
     }
@@ -2712,7 +2712,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> splitBy(final Predicate<U> splitter) {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .splitBy(splitter);
 
     }
@@ -2724,7 +2724,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> cycle(final Monoid<U> m, final long times) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .cycle(m, times));
 
     }
@@ -2734,7 +2734,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <S, R> FutureStream<Tuple3<U, S, R>> zip3(final Iterable<? extends S> second, final Iterable<? extends R> third) {
-        return (FutureStream) fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return (FutureStream) fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                                         .zip3(second, third));
 
     }
@@ -2745,7 +2745,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default <T2, T3, T4> FutureStream<Tuple4<U, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
                                                                   final Iterable<? extends T4> fourth) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .zip4(second, third, fourth));
 
     }
@@ -2757,7 +2757,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<ListX<U>> grouped(final int groupSize) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .grouped(groupSize));
     }
 
@@ -2766,7 +2766,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> scanLeft(final Monoid<U> monoid) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .scanLeft(monoid));
     }
 
@@ -2775,7 +2775,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default Streamable<U> toStreamable() {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .toStreamable();
     }
 
@@ -2792,7 +2792,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default boolean startsWithIterable(final Iterable<U> iterable) {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .startsWithIterable(iterable);
     }
 
@@ -2801,7 +2801,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default boolean startsWith(final Stream<U> iterator) {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .startsWith(iterator);
     }
 
@@ -2810,7 +2810,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default boolean endsWithIterable(final Iterable<U> iterable) {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .endsWithIterable(iterable);
     }
 
@@ -2819,7 +2819,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default boolean endsWith(final Stream<U> stream) {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .endsWith(stream);
     }
 
@@ -2836,12 +2836,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <R> FutureStream<R> flatMapI(final Function<? super U, ? extends Iterable<? extends R>> fn) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .flatMapI(fn));
     }
     @Override
     default <R> FutureStream<R> flatMapP(final Function<? super U, ? extends Publisher<? extends R>> fn) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                 .flatMapP(fn));
     }
 
@@ -2850,7 +2850,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <R> FutureStream<R> flatMapStream(final Function<? super U, BaseStream<? extends R, ?>> fn) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .flatMapStream(fn));
     }
 
@@ -2859,7 +2859,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default CollectionX<U> toLazyCollection() {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .toLazyCollection();
     }
 
@@ -2868,7 +2868,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default CollectionX<U> toConcurrentLazyCollection() {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .toConcurrentLazyCollection();
     }
 
@@ -2877,7 +2877,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default Streamable<U> toConcurrentLazyStreamable() {
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .toConcurrentLazyStreamable();
     }
 
@@ -2887,7 +2887,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> append(final U... values) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .append(values));
     }
 
@@ -2896,7 +2896,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> prepend(final U... values) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .prepend(values));
     }
 
@@ -2905,7 +2905,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> insertAt(final int pos, final U... values) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .insertAt(pos, values));
     }
 
@@ -2914,7 +2914,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> deleteBetween(final int start, final int end) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .deleteBetween(start, end));
     }
 
@@ -2923,7 +2923,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> insertAtS(final int pos, final Stream<U> stream) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .insertAtS(pos, stream));
     }
 
@@ -2934,7 +2934,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> skip(final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .skip(time, unit));
     }
 
@@ -2953,7 +2953,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> skipLast(final int num) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .skipLast(num));
     }
 
@@ -2962,7 +2962,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> limitLast(final int num) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .limitLast(num));
     }
 
@@ -2972,7 +2972,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default U firstValue() {
 
-        return ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                           .firstValue();
     }
 
@@ -2987,7 +2987,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default <C extends Collection<? super U>> FutureStream<C> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit,
                                                                                    final Supplier<C> factory) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .groupedBySizeAndTime(size, time, unit, factory));
         /**         Queue<U> queue = toQueue();
             Function<BiFunction<Long,TimeUnit,U>, Supplier<Collection<U>>> fn = new BatchByTimeAndSize(size,time,unit,factory);
@@ -2999,25 +2999,25 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<ListX<U>> groupedStatefullyUntil(final BiPredicate<ListX<? super U>, ? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .groupedStatefullyUntil(predicate));
     }
     @Override
     default <C extends Collection<U>,R> FutureStream<R> groupedStatefullyUntil(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
                                                                       Function<? super C, ? extends R> finalizer){
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                 .groupedStatefullyUntil(predicate,factory,finalizer));
 
     }
     @Override
     default FutureStream<ListX<U>> groupedStatefullyWhile(final BiPredicate<ListX<? super U>, ? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                 .groupedStatefullyUntil(predicate));
     }
     @Override
     default <C extends Collection<U>,R> FutureStream<R> groupedStatefullyWhile(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
                                                                                Function<? super C, ? extends R> finalizer){
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                 .groupedStatefullyUntil(predicate,factory,finalizer));
 
     }
@@ -3026,7 +3026,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<ListX<U>> groupedUntil(final Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .groupedUntil(predicate));
     }
 
@@ -3035,7 +3035,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<ListX<U>> groupedWhile(final Predicate<? super U> predicate) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .groupedWhile(predicate));
     }
 
@@ -3044,7 +3044,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <C extends Collection<? super U>> FutureStream<C> groupedWhile(final Predicate<? super U> predicate, final Supplier<C> factory) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .groupedWhile(predicate, factory));
     }
 
@@ -3053,7 +3053,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default <R extends Comparable<? super R>> FutureStream<U> sorted(final Function<? super U, ? extends R> function) {
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .sorted(function));
     }
 
@@ -3063,7 +3063,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     @Override
     default <C extends Collection<? super U>> FutureStream<C> groupedUntil(final Predicate<? super U> predicate, final Supplier<C> factory) {
 
-        return fromStream(ReactiveSeq.fromStream(toQueue().stream(getSubscription()))
+        return fromStream(ReactiveSeq.oneShotStream(toQueue().stream(getSubscription()))
                                      .groupedUntil(predicate, factory));
     }
 

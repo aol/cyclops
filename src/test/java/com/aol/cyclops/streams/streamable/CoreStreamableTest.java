@@ -3,9 +3,7 @@ package com.aol.cyclops.streams.streamable;
 
 import static cyclops.stream.Streamable.of;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -241,11 +239,35 @@ public  class CoreStreamableTest {
 	        
 	      
 	    }
-
-	    
+    @Test
+    public void dropRight(){
+        assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
+    }
+    @Test
+    public void skipLast1(){
+        System.out.println("List " + Streamable.of(1,2,3,4).skipLast(1).toList());
+      //  System.out.println(of(1,2,3,4).skipLast(1).toList());
+      //  assertThat(of(1,2,3).skipLast(1).toList(),hasItems(1,2));
+    }
+    @Test
+    public void testSkipLastForEach(){
+        List<Integer> list = new ArrayList();
+        ReactiveSeq.of(1,2,3,4,5).skipLast(2)
+                .forEach(n->{list.add(n);});
+        assertThat(list,equalTo(Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void testSkipLast(){
+        assertThat(of(1,2,3,4,5)
+                .skipLast(2)
+                .toListX(),equalTo(Arrays.asList(1,2,3)));
+    }
 	   
 	  
-
+	    @Test
+		public void testCycleTimes(){
+            assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
+        }
 	   
 	    @Test
 	    public void testSkipWhile() {

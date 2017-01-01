@@ -25,6 +25,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import cyclops.Streams;
 import cyclops.control.*;
 import cyclops.control.either.Either;
 import cyclops.control.either.Either3;
@@ -109,6 +110,10 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
                                                             ToStream<T>,
                                                             Zippable<T>,
                                                             Publisher<T> {
+    @Override
+    default ReactiveSeq<T> reactiveSeq() {
+        return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
+    }
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
@@ -504,6 +509,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         
         return AnyMFactory.instance.seq(Streamable.fromIterable(streamable),Witness.streamable.INSTANCE);
     }
+
 
     /**
      * Create an AnyM from a List

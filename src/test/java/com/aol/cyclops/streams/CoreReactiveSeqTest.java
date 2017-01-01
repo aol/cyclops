@@ -18,6 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import cyclops.collections.ListX;
+import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -158,8 +159,27 @@ public  class CoreReactiveSeqTest {
         assertThat( ReactiveSeq.range(0,10)
         				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
-
-
+	@Test
+	public void dropRight(){
+		assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
+	}
+	@Test
+	public void skipLast1(){
+		assertThat(of(1,2,3).skipLast(1).toList(),hasItems(1,2));
+	}
+	@Test
+	public void testSkipLast(){
+		assertThat(ReactiveSeq.of(1,2,3,4,5)
+				.skipLast(2)
+				.toListX(),equalTo(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void testSkipLastForEach(){
+		List<Integer> list = new ArrayList();
+		ReactiveSeq.of(1,2,3,4,5).skipLast(2)
+				.forEach(n->{list.add(n);});
+		assertThat(list,equalTo(Arrays.asList(1,2,3)));
+	}
     @Test
     public void testCycle() {
 

@@ -42,6 +42,7 @@ public class SkipLastSpliterator<T> extends AbstractSpliterator<T> implements Co
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
         source.forEachRemaining(e->{
+
             if (buffer.size() == skip) {
                 action.accept(buffer.poll());
 
@@ -55,16 +56,23 @@ public class SkipLastSpliterator<T> extends AbstractSpliterator<T> implements Co
      public boolean tryAdvance(Consumer<? super T> action) {
          if(closed)
              return false;
+         sent = false;
          while(canAdvance && !sent) {
+
              canAdvance = source.tryAdvance(e -> {
+
                  if (buffer.size() == skip) {
                      action.accept(buffer.poll());
                      sent = true;
                  }
                  buffer.offer(e);
+
              });
+
          }
-         return closed = canAdvance;
+
+
+         return closed = !(canAdvance && buffer.size()<=skip);
 
 
      }
