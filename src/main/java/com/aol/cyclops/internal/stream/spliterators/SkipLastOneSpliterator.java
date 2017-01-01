@@ -22,7 +22,7 @@ public class SkipLastOneSpliterator<T> extends AbstractSpliterator<T> implements
 
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
-        
+
         source.forEachRemaining(e->{
             if (buffer != UNSET){
                 action.accept((T) buffer);

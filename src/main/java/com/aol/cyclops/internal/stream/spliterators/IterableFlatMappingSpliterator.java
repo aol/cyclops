@@ -45,11 +45,9 @@ public class IterableFlatMappingSpliterator<T,R> extends Spliterators.AbstractSp
                 action.accept(active.next());
                 if (active.hasNext())
                     return true;
-                else { //added so we can return
-                    return source.tryAdvance(e -> {
-                        active = (Iterator<R>) mapper.apply(e).iterator();
-                    });
-                }
+                else
+                    active= null;
+
             }
             //next iterator
             boolean advance = source.tryAdvance(t -> {
@@ -59,7 +57,7 @@ public class IterableFlatMappingSpliterator<T,R> extends Spliterators.AbstractSp
 
 
             });
-            if(!advance)
+            if(!advance && active==null)
                 return false;
         }
     }

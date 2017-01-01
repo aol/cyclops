@@ -47,6 +47,8 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
             if (active != null) {
                 if(active.tryAdvance(action)){
                     return true;
+                }else{
+                    active = null;
                 }
 
 
@@ -61,7 +63,7 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
 
             });
 
-            if(!advance)
+            if(!advance && active==null)
                 return false;
         }
 

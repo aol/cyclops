@@ -57,7 +57,14 @@ public class SequenceMTest {
         assertThat(Streamable.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
                 equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
     }
-   
+	@Test
+	public void onEmpty(){
+		assertThat(Streamable.of()
+						.onEmpty(1)
+						.toList(),
+				equalTo(Arrays.asList(1)));
+
+	}
 	@Test
 	public void onEmptySwitchEmpty(){
 		assertThat(Streamable.of()
@@ -144,7 +151,7 @@ public class SequenceMTest {
 										.toList();
 		
 		
-		assertThat(result,equalTo(Arrays.asList(1,2,3,4)));
+		assertThat(result,equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void limitTimeEmpty(){

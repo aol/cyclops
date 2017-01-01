@@ -54,6 +54,8 @@ public class PublisherFlatMappingSpliterator<T,R> extends Spliterators.AbstractS
                 action.accept(active.next());
                 if (active.hasNext())
                     return true;
+                else
+                    active = null;
 
             }
             //next publisher
@@ -67,7 +69,7 @@ public class PublisherFlatMappingSpliterator<T,R> extends Spliterators.AbstractS
 
 
             });
-            if(!advance)
+            if(!advance && active==null)
                 return false;
         }
 

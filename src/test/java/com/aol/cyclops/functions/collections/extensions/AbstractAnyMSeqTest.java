@@ -701,7 +701,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	
 	@Test(expected=ClassCastException.class)
 	public void cast(){
-		of(1,2,3).cast(String.class).toListX();
+		of(1,2,3).cast(String.class).toList();
 	}
 	@Test
 	public void xMatch(){
@@ -714,7 +714,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	public void zip2of(){
 		
 		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
-											.zip(of(100,200,300,400).stream())
+											.zip(of(100,200,300,400))
 											.toListX();
 				
 	
@@ -725,6 +725,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 		assertThat(right,hasItem(400));
 		
 		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		//System.out.println(left);
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
 	}

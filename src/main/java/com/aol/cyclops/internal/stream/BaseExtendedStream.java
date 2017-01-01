@@ -41,6 +41,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -124,7 +125,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         Spliterator<T> s = this.spliterator();
         CollectingSinkSpliterator<T,A,R> fs = new CollectingSinkSpliterator<T,A,R>(s.estimateSize(), s.characteristics(), s,c);
         split.ifPresent(p->{p.setOnComplete(fs);p.setHold(false);});
-        return ReactiveSeq.fromSpliterator(new ValueEmittingSpliterator<R>(1, s.characteristics(),ReactiveSeq.fromSpliterator(fs)));
+        return createSeq(new ValueEmittingSpliterator<R>(1, s.characteristics(),createSeq(fs)));
 
 
     }
@@ -136,7 +137,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         FoldingSinkSpliterator<T> fs = new FoldingSinkSpliterator<>(s.estimateSize(), s.characteristics(), s, monoid);
         split.ifPresent(p->{p.setOnComplete(fs);p.setHold(false);});
         
-        return ReactiveSeq.fromSpliterator(new ValueEmittingSpliterator<T>(1, s.characteristics(),ReactiveSeq.fromSpliterator(fs)));
+        return createSeq(new ValueEmittingSpliterator<T>(1, s.characteristics(),createSeq(fs)));
     }
     public <R> Future<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
         split.ifPresent(p->p.setHold(true));
@@ -287,7 +288,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final <S> ReactiveSeq<Tuple2<T, S>> zipS(final Stream<? extends S> second) {
-        return ReactiveSeq.fromSpliterator( new ZippingSpliterator<>(copyOrGet(),second.spliterator(),(a, b) -> new Tuple2<>(
+        return createSeq( new ZippingSpliterator<>(copyOrGet(),second.spliterator(),(a, b) -> new Tuple2<>(
                                                         a, b)));
     }
 
@@ -747,6 +748,16 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
                                           Optional<PushingSpliterator<?>> split);
     abstract <X> ReactiveSeq<X> createSeq(Spliterator<X> stream,Optional<ReversableSpliterator> reversible,
                                           Optional<PushingSpliterator<?>> split);
+     <X> ReactiveSeq<X> createSeq(Spliterator<X> stream){
+
+         return createSeq(stream, Optional.empty(), Optional.empty());
+
+     }
+    <X> ReactiveSeq<X> createSeq(Stream<X> stream){
+
+        return createSeq(stream, Optional.empty(), Optional.empty());
+
+    }
     @Override
     public final ReactiveSeq<T> filter(final Predicate<? super T> fn) {
         return createSeq(new FilteringSpliterator<T>(copyOrGet(),fn).compose(), reversible,split);
@@ -937,19 +948,29 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<T> onEmpty(final T value) {
-        return ReactiveSeq.fromSpliterator(new OnEmptySpliterator<>(unwrapStream().spliterator(),value));
+        return createSeq(new OnEmptySpliterator<>(unwrapStream().spliterator(),value));
 
+    }
+    @Override
+    public ReactiveSeq<T> onEmptySwitch(final Supplier<? extends Stream<T>> switchTo) {
+        final Object value = new Object();
+        ReactiveSeq res = createSeq(onEmptyGet((Supplier) () ->value).flatMap(s -> {
+            if (s==value)
+                return (Stream) switchTo.get().peek(System.out::println);
+            return Stream.of(s);
+        })).peek(System.out::println);
+        return res;
     }
 
     @Override
     public ReactiveSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
-        return ReactiveSeq.fromSpliterator(new OnEmptyGetSpliterator<>(unwrapStream().spliterator(),supplier));
+        return createSeq(new OnEmptyGetSpliterator<>(unwrapStream().spliterator(),supplier));
     }
 
     @Override
     public <X extends Throwable> ReactiveSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return ReactiveSeq.fromSpliterator(new OnEmptyThrowSpliterator<>(unwrapStream().spliterator(),supplier));
+        return createSeq(new OnEmptyThrowSpliterator<>(unwrapStream().spliterator(),supplier));
     }
 
 

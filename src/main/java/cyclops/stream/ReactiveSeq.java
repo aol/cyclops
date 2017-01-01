@@ -2946,18 +2946,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq that will switch to an alternative Stream if empty
      */
     @Override
-    default ReactiveSeq<T> onEmptySwitch(final Supplier<? extends Stream<T>> switchTo) {
-        final AtomicBoolean called = new AtomicBoolean(
-                                                       false);
-        return ReactiveSeq.fromStream(onEmptyGet((Supplier) () -> {
-            called.set(true);
-            return switchTo.get();
-        }).flatMap(s -> {
-            if (called.get())
-                return (Stream) s;
-            return Stream.of(s);
-        }));
-    }
+    ReactiveSeq<T> onEmptySwitch(final Supplier<? extends Stream<T>> switchTo) ;
 
 
     /*

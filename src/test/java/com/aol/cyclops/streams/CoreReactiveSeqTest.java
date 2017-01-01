@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -160,6 +161,74 @@ public  class CoreReactiveSeqTest {
         				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
 	@Test
+	public void onEmptySwitchEmpty(){
+		assertThat(of()
+						.onEmptySwitch(()->of(1,2,3))
+						.toList(),
+				equalTo(Arrays.asList(1,2,3)));
+
+	}
+	private int sleep(Integer i) {
+		try {
+			Thread.currentThread().sleep(i);
+		} catch (InterruptedException e) {
+
+		}
+		return i;
+	}
+	@Test
+	public void skipTime(){
+		List<Integer> result = of(1,2,3,4,5,6)
+				.peek(i->sleep(i*100))
+				.skip(1000,TimeUnit.MILLISECONDS)
+				.toList();
+
+
+		assertThat(result,equalTo(Arrays.asList(4,5,6)));
+	}
+	@Test
+	public void limitTime(){
+		List<Integer> result = of(1,2,3,4,5,6)
+				.peek(i->sleep(i*100))
+				.limit(1000, TimeUnit.MILLISECONDS)
+				.toList();
+
+
+		assertThat(result,equalTo(Arrays.asList(1,2,3)));
+	}
+    @Test
+	public void skipUntil(){
+		assertEquals(asList(3, 4, 5), of(1, 2, 3, 4, 5).skipUntil(i -> i % 3 == 0).toList());
+	}
+	@Test
+	public void zip2of(){
+
+		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
+				.zip(of(100,200,300,400).stream())
+				.toListX();
+
+
+		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		assertThat(right,hasItem(100));
+		assertThat(right,hasItem(200));
+		assertThat(right,hasItem(300));
+		assertThat(right,hasItem(400));
+
+		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		System.out.println(left);
+		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+
+	}
+	@Test(expected=ClassCastException.class)
+	public void cast(){
+		of(1,2,3).cast(String.class).printOut();
+	}
+	@Test(expected=ClassCastException.class)
+	public void castList(){
+		of(1,2,3).cast(String.class).toList();
+
+	}
+    @Test
 	public void dropRight(){
 		assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
 	}
